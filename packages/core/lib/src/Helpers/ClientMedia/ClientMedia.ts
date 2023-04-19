@@ -34,6 +34,5 @@ export type MediaDataArrayOrError = DataOrError<MediaArray>
 export type MediaDataOrError = DataOrError<Media>
 
 export type StringData = Data<string>
-
 export type StringDataOrError = DataOrError<string>
 

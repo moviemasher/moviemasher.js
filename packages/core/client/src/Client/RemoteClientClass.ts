@@ -71,7 +71,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
 
     const { 
       [OperationPlugin]: pluginArgs 
-    } = this.clientArgs
+    } = this.remoteClientArgs
     if (pluginArgs) {
       const { request } = pluginArgs
       if (request) pluginRequest(request)
@@ -79,9 +79,13 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
     } else console.log('no plugin args')
     
   }
-  private _clientArgs?: RemoteClientArgs
-  private get clientArgs(): RemoteClientArgs {
-    return this._clientArgs ||= remoteClientArgs(this.options)
+
+  get args(): RemoteClientArgs {
+    return this.remoteClientArgs
+  }
+  private _remoteClientArgs?: RemoteClientArgs
+  private get remoteClientArgs(): RemoteClientArgs {
+    return this._remoteClientArgs ||= remoteClientArgs(this.options)
   }
 
   decode(args: ClientDecodeMethodArgs): Promise<Decoding> {
@@ -89,7 +93,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
   }
   
   enabled(operation?: Operation | Operations): boolean {
-    const { clientArgs } = this
+    const { remoteClientArgs: clientArgs } = this
     const operations = isRemoteOperation(operation) ? [operation] : OperationsRemote
     return operations.every(operation => Boolean(clientArgs[operation]))
   }
@@ -199,7 +203,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
 
   protected saveMediaRow(media: Media, steps: ClientProgessSteps): Promise<MediaDataOrError> {
     const { id } = media
-    const { clientArgs } = this
+    const { remoteClientArgs: clientArgs } = this
 
     const options = clientArgs[OperationWrite]
     if (!options) return errorPromise(ErrorName.ClientDisabledSave)
@@ -349,7 +353,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
 }
 
 
-export const clientInstance = (args: RemoteClientOptions = {}): RemoteClient => (
+export const remoteClientInstance = (args: RemoteClientOptions = {}): RemoteClient => (
   new RemoteClientClass(args)
 )
 

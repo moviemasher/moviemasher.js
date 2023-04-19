@@ -18,18 +18,22 @@
   "scripts": {
     "build-builder-component": "npm run build-builder --builder=component",
     "build-builder-core": "npm run build-builder --builder=core",
+    "build-builder-test": "npm run build-builder --builder=test",
     "build-builder-documentation": "npm run build-builder --builder=documentation",
     "build-builder-plugin": "npm run build-builder --builder=plugin",
     "build-builder": "npm run docker-build --dir=packages/build/${npm_config_builder:=core}",
     "build-builders": "run-s build-builder-core build-builder-component build-builder-plugin build-builder-documentation",
     "build-component": "npm run docker-run-with --with=component",
     "build-core": "npm run docker-run-with --with=core",
+    "test-client-component": "npm run docker-run --dir=packages/build/test",
+    "test-core-lib": "node --test packages/core/lib/src/**/*.test.mjs",
+    "test": "run-s test-core-lib",
     "build-package-json": "npm run cli packages",
     "build-plugin": "npm run docker-run-with --with=plugin",
     "build-documentation": "npm run docker-run-with --with=documentation",
     "build-docs": "typedoc --options ./typedoc.js",
     "build-space": "docker compose --env-file dev/local.env --file packages/builder/dev/docker-compose.yml run --rm service space --space=${npm_config_space:=client-prebuild}",
-    "build-test": "npm run build libs ; npm run test",
+    "build-and-test": "npm run build libs ; npm run test",
     "build": "run-s build-package-json build-builders build-core build-component build-plugin build-documentation",
     "cli": "node dev/build/cli.mjs",
     "docker-build": "npm run docker-do --do='build' --dir=${npm_config_dir}",
@@ -49,13 +53,14 @@
     "stop-documentation": "npm run stop --dir=${npm_config_dir:=dev} --space=${npm_config_space:=documentation}",
     "stop-example-component": "npm run stop --dir=${npm_config_dir:=packages/client} --space=${npm_config_space:=component}",
     "stop": "npm run docker-down --dir=${npm_config_dir:=packages/example} --space=${npm_config_space:=standalone}",
-    "test": "npm run docker-run --dir=images --space=tester",
+    "test-old": "npm run docker-run --dir=images --space=tester",
     "versions": "echo \"NodeJs: $(node -v)\" ; echo \"NPM: $(npm -v)\" ; echo \"TypeScript: $(tsc -v)\""
   },
   "devDependencies": {
     "@types/node": "18.13.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "eslint-plugin-mocha": "^10.1.0"
   },
   "workspaces": [
     "packages/example/*",
@@ -67,6 +72,7 @@
     "packages/server/*"
   ],
   "dependencies": {
-    "@knodes/typedoc-plugin-code-blocks": "^0.23.1"
+    "@knodes/typedoc-plugin-code-blocks": "^0.23.4",
+    "@lit-labs/observers": "^2.0.0"
   }
 }

@@ -45,6 +45,16 @@ import {
 
 // REMOTE CLIENT
 
+export interface RemoteClient extends LocalClient {
+  readonly args: RemoteClientArgs
+
+  enabled(operation?: Operation | Operations): boolean
+
+  decode(args: ClientDecodeMethodArgs): Promise<Decoding>
+  encode(args: ClientEncodeMethodArgs): Promise<Encoding>
+  save(args: ClientSaveMethodArgs): Promise<MediaDataOrError>
+  transcode(args: ClientTranscodeMethodArgs): Promise<Transcoding>
+}
 export const OperationDecode: DecodeOperation = 'decode'
 export const OperationEncode: EncodeOperation = 'encode'
 export const OperationTranscode: TranscodeOperation = 'transcode'
@@ -71,8 +81,6 @@ export const DefaultClientWriteArgs: ClientWriteArgs = {
   saveRequest: { endpoint: { pathname: Endpoints.data.definition.put} }, 
   deleteRequest: { endpoint: { pathname: Endpoints.data.definition.delete } }, 
 }
-
-
 
 export const DefaultClientDecodeArgs: ClientDecodeArgs = {
   autoDecode: {
@@ -135,14 +143,6 @@ export type TranscodeOperation = 'transcode'
 export type UploadOperation = 'upload'
 export type WriteOperation = 'write'
 
-export interface RemoteClient extends LocalClient {
-  enabled(operation?: Operation | Operations): boolean
-
-  decode(args: ClientDecodeMethodArgs): Promise<Decoding>
-  encode(args: ClientEncodeMethodArgs): Promise<Encoding>
-  save(args: ClientSaveMethodArgs): Promise<MediaDataOrError>
-  transcode(args: ClientTranscodeMethodArgs): Promise<Transcoding>
-}
 export type DecodeOutputsByUploadType = Partial<Record<UploadType, DecodeOutput[]>>
 
 export type TranscodeOutputsByUploadType = Partial<Record<UploadType, TranscodeOutput[]>>

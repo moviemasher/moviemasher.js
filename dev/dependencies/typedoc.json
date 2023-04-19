@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "@types/css-font-loading-module": "^0.0.7",
+    "@knodes/typedoc-plugin-code-blocks": "^0.23.4",
+    "@types/css-font-loading-module": "^0.0.8",
     "typedoc": "^0.23.26",
-    "typedoc-plugin-external-resolver": "^1.0.1",
+    "typedoc-plugin-external-resolver": "^1.0.2",
     "typedoc-plugin-resolve-crossmodule-references": "^0.3.3",
-    "typedoc-plugin-mdn-links": "^2.0.2",
-    "@knodes/typedoc-plugin-pages": "^0.23.1",
-    "typedoc-plugin-expand-object-like-types": "^0.1.1",
-    "@knodes/typedoc-plugin-code-blocks": "^0.23.1",
-    "typedoc-plugin-extras": "^2.3.2", 
-    "typedoc-plugin-coverage": "^2.0.0"
+    "typedoc-plugin-mdn-links": "^3.0.3",
+    "@knodes/typedoc-plugin-pages": "^0.23.4",
+    "typedoc-plugin-expand-object-like-types": "^0.1.2",
+    "typedoc-plugin-extras": "2.3.2", 
+    "typedoc-plugin-coverage": "^2.0.1"
   }
 }

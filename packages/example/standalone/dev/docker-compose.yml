@@ -24,8 +24,6 @@ services:
       - ../../../../packages/core/lib/umd/moviemasher.js:${MOVIEMASHER_DIR_ROOT}/packages/example/standalone/public/moviemasher.js
       - ../../../../packages/core/client/umd/client-core.js:${MOVIEMASHER_DIR_ROOT}/packages/example/standalone/public/client-core.js
       - ../../../../packages/client/react/umd/client-react.js:${MOVIEMASHER_DIR_ROOT}/packages/example/standalone/public/client-react.js
-      - ../../../../packages/theme/default/moviemasher.css:${MOVIEMASHER_DIR_ROOT}/packages/example/standalone/public/moviemasher.css
-      - ../../../../packages/theme/default/umd/theme-default.js:${MOVIEMASHER_DIR_ROOT}/packages/example/standalone/public/theme-default.js
 
       # use latest HTML from host computer instead of image
       - ../src/index.html:${MOVIEMASHER_DIR_ROOT}/packages/example/standalone/public/index.html

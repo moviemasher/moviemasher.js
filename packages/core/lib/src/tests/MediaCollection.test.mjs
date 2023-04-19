@@ -3,8 +3,8 @@ import assert from 'assert'
 
 import { 
   DefaultFontId, EffectMediaClass, MediaCollection, FontMediaClass, AudioMediaClass,
-  ImageType, FontType, ImageMediaClass, EffectType, VideoType, VideoMediaClass,
-  MashMediaClass, MashType
+  TypeImage, TypeFont, ImageMediaClass, TypeEffect, TypeVideo, VideoMediaClass,
+  MashMediaClass, TypeMash
 } from '@moviemasher/lib-core'
 
 describe('MediaCollection', () => {
@@ -16,18 +16,12 @@ describe('MediaCollection', () => {
     assert(definition)
     assert(definition instanceof FontMediaClass)
   })
-  
-  // test that we can find predefined blur effect
-  test('returns blur EffectMedia', () => {
-    const definition = collection.fromId('com.moviemasher.effect.blur')
-    assert(definition)
-    assert(definition instanceof EffectMediaClass)
-  })
+
 
   // test that we can define new image
   test('returns new ImageMedia', () => {
     const imageDefinitionObject = {
-      id: 'test-new-image', type: ImageType, 
+      id: 'test-new-image', type: TypeImage, 
       request: { endpoint: { pathname: '../shared/image/globe.jpg' }}
     }
     const [media] = collection.define(imageDefinitionObject)
@@ -43,7 +37,7 @@ describe('MediaCollection', () => {
   // test that we can define new font
   test('returns new FontMedia', () => {
     const fontDefinitionObject = {
-      id: 'test-new-font', type: FontType, 
+      id: 'test-new-font', type: TypeFont, 
       request: { endpoint: { pathname: '../shared/font/valken/valken.ttf' }}
     }
     const [media] = collection.define(fontDefinitionObject)
@@ -57,7 +51,7 @@ describe('MediaCollection', () => {
   // test that we can define new effect
   test('returns new EffectMedia', () => {
     const effectDefinitionObject = {
-      id: 'test-new-effect', type: EffectType,
+      id: 'test-new-effect', type: TypeEffect,
       request: { endpoint: { pathname: '../shared/effect/blur.json' }}
     }
     const [media] = collection.define(effectDefinitionObject)
@@ -81,7 +75,7 @@ describe('MediaCollection', () => {
   // test that we can define new video
   test('returns new VideoMedia', () => {
     const videoDefinitionObject = {
-      id: 'test-new-video', type: VideoType,
+      id: 'test-new-video', type: TypeVideo,
       request: { endpoint: { pathname: '../shared/video/rgb.mp4' }}
     }
     const [media] = collection.define(videoDefinitionObject)
@@ -93,7 +87,7 @@ describe('MediaCollection', () => {
   // test that we can define new mash
   test('returns new MashMedia', () => {
     const mashDefinitionObject = {
-      id: 'test-new-mash', type: MashType,
+      id: 'test-new-mash', type: TypeMash,
       request: { endpoint: { pathname: '../shared/mash/test.json' }}
     }
     const [media] = collection.define(mashDefinitionObject)

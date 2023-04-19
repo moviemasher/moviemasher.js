@@ -1,0 +1,43 @@
+version: "3"
+name: moviemasher-build-test
+services:
+  service:
+    build:
+      dockerfile: packages/build/test/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/build-test:${MOVIEMASHER_VERSION}
+    # environment:
+    #   - CHROME_PATH=/usr/bin/chromium-browser
+    # working_dir: /app
+    # entrypoint: npm init @open-wc -- '--destinationPath=/app --type=scaffold --scaffoldType=wc --features=testing --typescript=true --tagName=@moviemasher/mono-repo --writeToDisk=true --installDependencies=true'
+    # entrypoint: 'cat ./package.json'
+    container_name: moviemasher-build-test
+    env_file:
+      - ../../../dev/local.env
+    volumes:
+      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ./package.json:${MOVIEMASHER_DIR_ROOT}/packages/build/test/package.json
+      - ./web-test-runner.config.mjs:${MOVIEMASHER_DIR_ROOT}/packages/build/test/web-test-runner.config.mjs
+      - ./web-dev-server.config.mjs:${MOVIEMASHER_DIR_ROOT}/packages/build/test/web-dev-server.config.mjs
+
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../packages/core/client/:${MOVIEMASHER_DIR_ROOT}/packages/core/client/
+      - ../../../packages/core/server/:${MOVIEMASHER_DIR_ROOT}/packages/core/server/
+      - ../../../packages/core/lib/:${MOVIEMASHER_DIR_ROOT}/packages/core/lib/
+      - ../../../packages/protocol/:${MOVIEMASHER_DIR_ROOT}/packages/protocol/
+      - ../../../packages/client/component:${MOVIEMASHER_DIR_ROOT}/packages/client/component
+
+
+      # - ../../../node_modules/tslib:${MOVIEMASHER_DIR_ROOT}/tslib/
+      # - ../../../node_modules/@lit:${MOVIEMASHER_DIR_ROOT}/@lit/
+      # - ../../../node_modules/lit:${MOVIEMASHER_DIR_ROOT}/lit/
+      # - ../../../node_modules/lit-html:${MOVIEMASHER_DIR_ROOT}/lit-html/
+      # - ../../../node_modules/@lit-labs:${MOVIEMASHER_DIR_ROOT}/@lit-labs/
+      # - ../../../node_modules/lit-element:${MOVIEMASHER_DIR_ROOT}/lit-element/
+      
+
+      # import { css } from '@lit/reactive-element/css-tag.js'
+      # import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
+      #  import {customElement} from 'lit/decorators.js'
+      # import { property } from '@lit/reactive-element/decorators/property.js'
+      # import { html } from 'lit-html'

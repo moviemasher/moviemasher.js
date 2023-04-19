@@ -18,5 +18,3 @@ services:
       - ../../../packages/core/server/:${MOVIEMASHER_DIR_ROOT}/packages/core/server/
       - ../../../packages/core/lib/:${MOVIEMASHER_DIR_ROOT}/packages/core/lib/
       - ../../../packages/protocol/:${MOVIEMASHER_DIR_ROOT}/packages/protocol/
-      - ../../../packages/theme/:${MOVIEMASHER_DIR_ROOT}/packages/theme/
-      # - ../../../workspaces/client/dev/mitosis.config.js:${MOVIEMASHER_DIR_ROOT}/workspaces/client/dev/mitosis.config.js

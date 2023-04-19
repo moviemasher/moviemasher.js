@@ -1,38 +1,31 @@
 import type { Htmls, SlottedContent } from '../declarations.js'
-import type { LocalClient } from '@moviemasher/client-core'
-
-
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
 
 import { Footer, LeftCenterRight } from '../Base/LeftCenterRight.js'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
-import { consume } from '@lit-labs/context'
-import { clientContext } from '../Context/clientContext.js'
+
+import { customElement } from 'lit/decorators/custom-element.js'
+import { css } from 'lit'
+import { html } from 'lit'
 
 @customElement('moviemasher-viewer-footer')
 export class ViewerFooterElement extends Footer {
 
-  @consume({context: clientContext, subscribe: true })
-  clientContext: LocalClient | undefined
-
   override leftContent(slots: Htmls): SlottedContent {
     const slotsCopy = [...slots]
-    import((new URL('../a.js', import.meta.url)).href)
-    slotsCopy.push(html`<moviemasher-a
+    this.importTags('moviemasher-icon')
+    slotsCopy.push(html`<moviemasher-icon
       icon='play' emit='toggle' detail='play'
-    ></moviemasher-a>`)
+    ></moviemasher-icon>`)
 
     return super.leftContent(slotsCopy)
   }
 
-  override rightContent(slots: Htmls): SlottedContent {
-    const slotsCopy = [...slots]
-    slotsCopy.push(html`<span>!${this.clientContext?.constructor.name}!</span>`)
-    return super.rightContent(slotsCopy)
-    // import((new URL('../right/right.js', import.meta.url)).href)
-    // return html``
-  }
+  // override rightContent(slots: Htmls): SlottedContent {
+  //   const slotsCopy = [...slots]
+  //   // slotsCopy.push(html`<span>!${this.clientContext?.constructor.name}!</span>`)
+  //   return super.rightContent(slotsCopy)
+  //   // import((new URL('../right/right.js', import.meta.url)).href)
+  //   // return html``
+  // }
 
   static override styles = [
     LeftCenterRight.styleHost,

@@ -8,7 +8,8 @@
         "strict": true,
         "rules": {
           "no-unknown-tag-name": "off",
-          "no-missing-import": "warning"
+          "no-missing-import": "warning",
+          "no-unused-locals": "off"
       
         }
       }

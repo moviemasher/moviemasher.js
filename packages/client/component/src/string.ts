@@ -1,8 +1,8 @@
-import type { StringEventDetail } from './declarations.js'
+import type { TranslationEventDetail } from './declarations.js'
 import type { PropertyValues } from 'lit'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { property } from '@lit/reactive-element/decorators/property.js'
+import { css } from 'lit'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { property } from 'lit/decorators/property.js'
 
 
 import { Base } from './Base/Base.js'
@@ -21,14 +21,14 @@ export class StringElement extends Base {
     const { string } = this
     if (!string) return 
 
-    const detail: StringEventDetail = { id: string }
-    const init: CustomEventInit<StringEventDetail> = { 
+    const detail: TranslationEventDetail = { id: string }
+    const init: CustomEventInit<TranslationEventDetail> = { 
       detail, composed: true, bubbles: true, cancelable: true
     }
-    const event = new CustomEvent<StringEventDetail>('string', init)
+    const event = new CustomEvent<TranslationEventDetail>('string', init)
     this.dispatchEvent(event)
 
-    const { string: text } = detail
+    const { id: text } = detail
     if (text) return text
     
     return string

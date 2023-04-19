@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "lit": "^2.0.2"
+    "lit": "^2.0.2",
+    "@lit-labs/observers": "2.0.0"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.4.17",

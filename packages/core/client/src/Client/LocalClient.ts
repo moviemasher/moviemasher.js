@@ -2,15 +2,43 @@ import type {
   MediaType, StringRecord, Strings, Masher, Request,
   MasherOptions, MediaDataArrayOrError,
   MediaTypes, PluginDataOrErrorFunction,
-  PluginDataOrErrorPromiseFunction, Emitter, MediaDataOrError, UploadType
+  PluginDataOrErrorPromiseFunction, Emitter, MediaDataOrError, 
+  UploadType, NestedStringRecord, TranslateArgs
 } from '@moviemasher/lib-core'
+import type { Icon, Translation } from '../declarations.js'
+
+
 import {
   TypeAudio, TypeEffect, TypeFont, TypeImage, TypeMash, TypeVideo,
 } from '@moviemasher/lib-core'
 import {
     Endpoints,
   } from '@moviemasher/lib-core'
+
+export interface LocalClient {
+  readonly args: LocalClientArgs
+  /**
+   *
+   * @returns appropriate accept attribute for file input element
+   */
+  fileAccept: string
+  fileMedia(file: File): Promise<MediaDataOrError>
+  eventTarget: Emitter
+  enabled(operation?: LocalOperation | LocalOperations): boolean
+
+  iconPromise(args: TranslateArgs): Promise<Icon>
+  translationPromise(args: TranslateArgs): Promise<Translation>
   
+  masher(options?: MasherOptions): Masher
+  plugin: PluginDataOrErrorFunction
+  pluginPromise: PluginDataOrErrorPromiseFunction
+
+  get(options?: ClientReadParams): Promise<MediaDataOrError>
+  list(options?: ClientReadParams): Promise<MediaDataArrayOrError>
+}
+
+
+
 export const DefaultClientLimits: ClientLimits = {
   [TypeAudio]: 50,
   [TypeEffect]: 1,
@@ -49,6 +77,8 @@ export const DefaultClientReadArgs: ClientReadArgs = {
 }
 
 export const DefaultLocalClientArgs: LocalClientArgs = {
+  translationSource: '',
+  iconSource: '',
   [OperationImport]: DefaultClientImportArgs,
   [OperationPlugin]: DefaultClientPluginArgs,
   [OperationRead]: DefaultClientReadArgs,
@@ -56,33 +86,13 @@ export const DefaultLocalClientArgs: LocalClientArgs = {
 
 
 export const LocalClientDisabledArgs: LocalClientArgs = {
-  [OperationImport]: DefaultClientImportArgs,
-  [OperationPlugin]: DefaultClientPluginArgs,
+  ...DefaultLocalClientArgs,
   [OperationRead]: false,
 }
-
 
 export interface ClientOperationOptions { }
 
 export interface ClientOperationArgs { }
-
-export interface LocalClient {
-  /**
-   *
-   * @returns appropriate accept attribute for file input element
-   */
-  fileAccept: string
-  fileMedia(file: File): Promise<MediaDataOrError>
-  eventTarget: Emitter
-  enabled(operation?: LocalOperation | LocalOperations): boolean
-  masher(options?: MasherOptions): Masher
-  plugin: PluginDataOrErrorFunction
-  pluginPromise: PluginDataOrErrorPromiseFunction
-
-  get(options?: ClientReadParams): Promise<MediaDataOrError>
-  list(options?: ClientReadParams): Promise<MediaDataArrayOrError>
-}
-
 
 export type ImportOperation = 'import'
 export type PluginOperation = 'plugin'
@@ -94,12 +104,17 @@ export type LocalOperations = LocalOperation[]
 export type ParamPosition = 'search' | 'body' | 'params'
 
 export interface LocalClientOptions {
+  translationSource?: string | NestedStringRecord
+  iconSource?: string | NestedStringRecord
+   
   [OperationPlugin]?: ClientPluginOptions | false | undefined
   [OperationImport]?: ClientImportOptions | false | undefined
   [OperationRead]?: ClientReadOptions | false | undefined
 }
 
 export interface LocalClientArgs {
+  translationSource: string | NestedStringRecord
+  iconSource: string | NestedStringRecord
   [OperationPlugin]: ClientPluginOptions | false
   [OperationImport]: ClientImportArgs | false
   [OperationRead]: ClientReadArgs | false

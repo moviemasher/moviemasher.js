@@ -1,8 +1,8 @@
 
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { LitElement } from 'lit-element'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { css } from 'lit'
+import { LitElement } from 'lit-element/lit-element.js'
 
 @customElement('moviemasher-form')
 export class FileInputlement extends LitElement  {

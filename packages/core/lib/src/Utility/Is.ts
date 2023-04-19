@@ -1,5 +1,5 @@
 import type { DefiniteError } from '../Helpers/Error/Error.js'
-import type { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar } from '../Types/Core.js'
+import type { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar, StringRecord, NestedStringRecord } from '../Types/Core.js'
 import type { Rgb } from '../Helpers/Color/Color.js'
 import type { Time, TimeRange } from '../Helpers/Time/Time.js'
 import type { UnknownFunction } from '../Setup/Constants.js'
@@ -154,6 +154,18 @@ export const isDefiniteError = (value: any): value is DefiniteError => {
 export const isScalar = (value: any): value is Scalar => (
   isBoolean(value) || isValue(value)
 )
+
 export function assertScalar(value: any, name?: string): asserts value is Scalar {
   if (!isScalar(value)) errorThrow(value, 'Scalar', name)
+}
+
+
+export const isStringRecord = (value: any): value is StringRecord => {
+  return isObject(value) && Object.values(value).every(value => isString(value))
+}
+
+export const isNestedStringRecord = (value: any): value is NestedStringRecord => {
+  return isObject(value) && Object.values(value).every(value => (
+    isStringRecord(value) || isNestedStringRecord(value)
+  ))
 }

@@ -25,13 +25,13 @@
   "dependencies": {
     "@moviemasher/lib-core": "5.1.2",
     "@moviemasher/client-core": "5.1.2",
-    "lit-html": "^2.7.0",
-    "lit-element": "3.3.0",
+    "lit-html": "^2.7.2",
+    "lit-element": "3.3.1",
     "tslib": "^2.5.0",
-
     "@lit-labs/context": "^0.3.0",
+    "@lit-labs/observers": "2.0.0",
     "@lit/reactive-element": "1.6.1",
-    "lit": "^2.7.0"
+    "lit": "^2.7.2"
   },
   "imports": {
     "#@moviemasher/lib-core/": "@moviemasher/lib-core/esm/",
@@ -40,6 +40,7 @@
     "#@lit/reactive-element/decorators/": "@lit/reactive-element/decorators/",
     "#lit-element": "lit-element/lit-element.js",
     "#@lit-labs/context": "@lit-labs/context/index.js",
+    "#@lit-labs/observers/mutation_controller.js": "@lit-labs/observers/mutation_controller.js",
     "#lit-html": "lit-html/lit-html.js",
     "#@lit/reactive-element": "@lit/reactive-element/reactive-element.js"
   },

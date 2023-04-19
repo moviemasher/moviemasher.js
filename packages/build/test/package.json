@@ -1,0 +1,56 @@
+{
+  "name": "@moviemasher/build-test",
+  "description": "Runs all tests",
+  "scripts": {
+    "test": "web-test-runner",
+    "start": "web-dev-server --node-resolve --open --watch"
+  },
+  "dependencies": {
+    "lit-element": "2.5.1",
+    "lit-html": "1.4.1"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "2.5.33",
+    "@web/test-runner": "0.15.3",
+    "@web/dev-server": "0.1.38",
+    "@web/test-runner-playwright": "0.9.0",
+    "@web/dev-server-esbuild": "^0.3.6",
+    "web-test-runner-screenshot": "^1.2.0",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "0.4.0",
+    "@types/css-font-loading-module": "^0.0.7",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^4.1.2",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-ts": "^3.2.0",
+    "rollup": "^3.17.2",
+    "terser": "5.16.5",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "socket.io-client": "^4.6.0",
+    "socket.io": "^4.6.0",
+    "eslint-plugin-tsdoc": "0.2.17",
+    "@types/node": "18.13.0",
+    "typescript": "4.9.5",
+    "rollup-plugin-svelte": "^7.1.4",
+    "rollup-plugin-typescript2": "0.34.1",
+    "magic-string": "^0.30.0"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "homepage": "https://moviemasher.com",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "version": "5.1.2"
+}

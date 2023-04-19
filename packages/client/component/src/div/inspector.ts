@@ -1,7 +1,7 @@
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
+import { customElement } from 'lit/decorators/custom-element.js'
 
-import { css } from '@lit/reactive-element/css-tag.js'
+import { css } from 'lit'
 import { Div } from '../Base/LeftCenterRight.js'
 
 

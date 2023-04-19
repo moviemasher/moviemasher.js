@@ -4,7 +4,7 @@
   "description": "Movie Masher Core Client - version 5.1.2",
 
 
-  "files": ["esm"],
+  "files": ["esm", "json"],
   "type": "module",
   "main": "esm/index.js",
   "module": "esm/index.js",

@@ -2,15 +2,12 @@ import type {
   Content, Contents, Htmls, SlottedContent, LeftSlot, RightSlot, 
 } from '../declarations'
 
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
-
-import { property } from '@lit/reactive-element/decorators/property.js'
-
+import { css } from 'lit'
+import { html } from 'lit'
+import { property } from 'lit/decorators/property.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
 import { Slotted } from './Slotted'
-
 
 const LeftSlot: LeftSlot = 'left'
 const RightSlot: RightSlot = 'right'
@@ -23,22 +20,22 @@ export class LeftCenterRight extends Slotted {
     }
   }
 
-  leftContent(slots: Htmls): SlottedContent { 
-    import((new URL('../span.js', import.meta.url)).href)
+  protected leftContent(htmls: Htmls): SlottedContent { 
+    this.importTags('moviemasher-span')
     return html`<moviemasher-span
       exportparts='${ifDefined(this.exportsForSlot(LeftSlot))}'
       part='${LeftSlot}' slotted='${LeftSlot}' class='${LeftSlot}'
-    >${slots}</moviemasher-span>` 
+    >${htmls}</moviemasher-span>` 
   }
-  rightContent(slots: Htmls): SlottedContent { 
-    import((new URL('../span.js', import.meta.url)).href)
+  protected rightContent(htmls: Htmls): SlottedContent { 
+    this.importTags('moviemasher-span')
     return html`<moviemasher-span 
       exportparts='${ifDefined(this.exportsForSlot(RightSlot))}'
       part='${RightSlot}' slotted='${RightSlot}' class='${RightSlot}'
-    >${slots}</moviemasher-span>` 
+    >${htmls}</moviemasher-span>` 
   }
   
-  override slots =[LeftSlot, RightSlot] 
+  override slots = [LeftSlot, RightSlot]
 
   static styleHost = css`
     :host {
@@ -80,11 +77,11 @@ export class LeftCenterRight extends Slotted {
 
 export class Header extends LeftCenterRight {
   @property() icon = ''
-  override leftContent(slots: Htmls): SlottedContent {
-    const slotsCopy = [...slots]
+  override leftContent(htmls: Htmls): SlottedContent {
+    const slotsCopy = [...htmls]
     const { icon } = this
     if (icon) {
-      import((new URL('../icon.js', import.meta.url)).href)
+      this.importTags('moviemasher-icon')
       slotsCopy.push(
         html`<moviemasher-icon 
           exportparts='${ifDefined(this.exportsForSlot('icon'))}'

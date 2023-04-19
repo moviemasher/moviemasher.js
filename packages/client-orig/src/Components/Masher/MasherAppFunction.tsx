@@ -13,7 +13,7 @@ import {
   eventStop, 
   VideoType
 } from '@moviemasher/lib-core'
-import { ClientDisabledArgs, clientInstance, dropDraggable } from "@moviemasher/client-core"
+import { ClientDisabledArgs, remoteClientInstance, dropDraggable } from "@moviemasher/client-core"
 import { elementSetPreviewSize } from '../../Utilities/Element'
 import MasherContext from './MasherContext'
 import { View } from '../../Utilities/View'
@@ -42,7 +42,7 @@ export function MasherApp(props: MasherAppProps) {
     const { client } = clientContext
     if (client) return client
 
-    return clientInstance(clientOptions)
+    return remoteClientInstance(clientOptions)
   }
 //  return <data value='project_url'>https://example.com</data>
 

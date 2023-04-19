@@ -1,23 +1,26 @@
 import type { Htmls, SlottedContent } from '../declarations.js'
-// import type { ClientReadParams } from '@moviemasher/client-core'
+import type { ClientReadParams } from '@moviemasher/client-core'
 
-import { html } from 'lit-html'
+import { consume } from '@lit-labs/context'
+import { html } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
-
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-// import { consume } from '@lit-labs/context'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { property } from 'lit/decorators/property.js'
 
 import { Footer } from '../Base/LeftCenterRight.js'
-// import { selectorContext } from '../Context/selector.js'
+import { clientReadParamsContext } from '../Context/clientReadParamsContext.js'
 
 @customElement('moviemasher-selector-footer')
 export class SelectortFooterElement extends Footer {
-  // @consume({context: selectorContext, subscribe: true })
-  // context?: ClientReadParams
+  @consume({ context: clientReadParamsContext, subscribe: true })
+  @property({ attribute: false })
+  clientReadParams?: ClientReadParams
 
   override leftContent(slots: Htmls): SlottedContent {
-    import((new URL('../a.js', import.meta.url)).href)
-    const mediaType = '' as string//this.context?.type
+
+    this.importTags('moviemasher-a')
+    
+    const mediaType = this.clientReadParams?.type || 'video'
     return super.leftContent([
       ...slots, 
       html`
@@ -51,7 +54,5 @@ export class SelectortFooterElement extends Footer {
 
   override rightContent(slots: Htmls): SlottedContent {
     return super.rightContent(slots)
-    // import((new URL('../right/right.js', import.meta.url)).href)
-    // return html``
   }
 }

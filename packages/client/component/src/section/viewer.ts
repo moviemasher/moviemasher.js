@@ -1,9 +1,9 @@
 import type { Htmls, SlottedContent } from '../declarations.js'
 
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { css } from 'lit'
+import { html } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
 // import { sectionContext, SectionContextClass } from './context.js'
@@ -14,7 +14,7 @@ import { Section } from '../Base/Section.js'
 export class ViewerSectionElement extends Section {
 
   override divContent(htmls: Htmls): SlottedContent {
-    import((new URL('../div/viewer.js', import.meta.url)).href)
+    this.importTags('moviemasher-viewer-div')
     return html`<moviemasher-viewer-div
       exportparts='${ifDefined(this.exportsForSlot('div'))}'
       part='div' slotted='div'
@@ -22,7 +22,7 @@ export class ViewerSectionElement extends Section {
   }
     
   override footerContent(htmls: Htmls): SlottedContent {
-    import((new URL('../footer/viewer.js', import.meta.url)).href)
+    this.importTags('moviemasher-viewer-footer')
     return html`<moviemasher-viewer-footer
       exportparts='${ifDefined(this.exportsForSlot('footer'))}'
       part='footer' slotted='footer'
@@ -30,8 +30,7 @@ export class ViewerSectionElement extends Section {
   }
 
   override headerContent(htmls: Htmls): SlottedContent {
-    // console.debug(this.constructor.name, 'headerContent')
-    import((new URL('../header/viewer.js', import.meta.url)).href)
+    this.importTags('moviemasher-viewer-header')
     return html`<moviemasher-viewer-header 
       exportparts='${ifDefined(this.exportsForSlot('header'))}'
       part='header' slotted='header'

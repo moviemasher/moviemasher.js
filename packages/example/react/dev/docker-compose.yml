@@ -9,8 +9,6 @@ services:
     volumes:
       - ../../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
       - ../../../../packages/core/lib/umd/moviemasher.js:/usr/local/apache2/htdocs/moviemasher.js
-      - ../../../../packages/theme/default/umd/theme-default.js:/usr/local/apache2/htdocs/theme-default.js
-      - ../../../../packages/theme/default/moviemasher.css:/usr/local/apache2/htdocs/moviemasher.css
       - ../../../../packages/core/client/umd/client-core.js:/usr/local/apache2/htdocs/client-core.js
 
       - ../../../../packages/client/react/umd/client-react.js:/usr/local/apache2/htdocs/client-react.js

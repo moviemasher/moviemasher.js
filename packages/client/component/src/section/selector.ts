@@ -1,37 +1,27 @@
 import type { Htmls, SlottedContent } from '../declarations.js'
-import type { MediaType } from '@moviemasher/lib-core'
+import type { ClientReadParams } from '@moviemasher/client-core'
 
-
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { css } from 'lit'
+import { html } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
-import { eventOptions } from '@lit/reactive-element/decorators/event-options.js'
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { property } from '@lit/reactive-element/decorators/property.js'
-
-
+import { eventOptions } from 'lit/decorators/event-options.js'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { property } from 'lit/decorators/property.js'
 
 import { provide } from '@lit-labs/context'
 
 import { Section } from '../Base/Section.js'
-import { mediaTypeContext } from '../Context/mediaType.js'
-// import { ClientReadParams } from '@moviemasher/client-core'
-// import { selectorContext } from '../Context/selector.js'
+import { clientReadParamsContext } from '../Context/clientReadParamsContext.js'
 
 @customElement('moviemasher-selector-section')
 export class SelectorSectionElement extends Section {
 
-  @provide({ context: mediaTypeContext })
+  @provide({ context: clientReadParamsContext })
   @property()
-  mediaType: MediaType = 'video'
-
-
-  // @provide({ context: selectorContext })
-  // @property()
-  // context: ClientReadParams = { type: 'video' }
-
+  clientReadParams: ClientReadParams = { type: 'video' }
+  
   override divContent(slots: Htmls): SlottedContent {
-    import((new URL('../div/selector.js', import.meta.url)).href)
+    this.importTags('moviemasher-selector-div')
     return html`<moviemasher-selector-div
       exportparts='${ifDefined(this.exportsForSlot('div'))}'
       part='div' slotted='div'
@@ -39,7 +29,7 @@ export class SelectorSectionElement extends Section {
   }
     
   override footerContent(slots: Htmls): SlottedContent {
-    import((new URL('../footer/selector.js', import.meta.url)).href)
+    this.importTags('moviemasher-selector-footer')
     return html`<moviemasher-selector-footer
       exportparts='${ifDefined(this.exportsForSlot('footer'))}'
       part='footer' slotted='footer'
@@ -47,25 +37,25 @@ export class SelectorSectionElement extends Section {
   }
 
   override headerContent(slots: Htmls): SlottedContent {
-    import((new URL('../header/selector.js', import.meta.url)).href)
+    this.importTags('moviemasher-selector-header')
     return html`<moviemasher-selector-header
       icon='${this.icon}'
       exportparts='${ifDefined(this.exportsForSlot('header'))}'
       part='header' slotted='header'
-      >${slots}</moviemasher-selector-header>`
+    >${slots}</moviemasher-selector-header>`
   }
 
   @eventOptions({ capture: true })
   protected override onSection(event: CustomEvent<string>) {
-    console.debug(this.constructor.name, 'onSection', this.mediaType)
-        event.stopPropagation()
+    event.stopPropagation()
     const { detail } = event
     switch (detail) {
       case 'audio':
       case 'video':
+      case 'font':
       case 'image': {
-        console.debug(this.constructor.name, 'onSection', detail)
-        // this.context = { type: detail }
+        // console.debug(this.constructor.name, 'onSection', detail)
+        this.clientReadParams = { ...this.clientReadParams, type: detail }
         break
       }
       default: {

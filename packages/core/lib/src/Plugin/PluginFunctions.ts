@@ -41,7 +41,8 @@ export function pluginDataOrErrorPromise(id: string, pluginType: ThemeType): Pro
 export function pluginDataOrErrorPromise(id: string, pluginType: PluginType): Promise<PluginDataOrError> 
 export function pluginDataOrErrorPromise(id: string, pluginType: PluginType): Promise<PluginDataOrError> {
   const plugin = pluginOrVoid(pluginType, id)
-  if (plugin) return Promise.resolve({ data:plugin })
+  // console.log('pluginDataOrErrorPromise', id, pluginType, plugin)
+  if (plugin) return Promise.resolve({ data: plugin })
 
   if (isBoolean(plugin)) return errorPromise(ErrorName.Type)
 
@@ -97,7 +98,7 @@ export type PluginDataOrErrorFunction = typeof pluginDataOrError
 let _pluginRequest: Request = DefaultRequest
 
 export const pluginRequest = (request?: Request): Request => {
-  console.log('pluginRequest', request, _pluginRequest)
+  // console.log('pluginRequest', request, _pluginRequest)
   if (request) _pluginRequest = request
   return _pluginRequest
 }

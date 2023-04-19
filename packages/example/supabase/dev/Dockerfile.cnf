@@ -8,7 +8,6 @@ COPY packages/core/lib/package.json ${DIR_ROOT}/node_modules/@moviemasher/lib-co
 COPY packages/core/client/package.json ${DIR_ROOT}/node_modules/@moviemasher/client-core/package.json
 COPY packages/client/react/package.json ${DIR_ROOT}/node_modules/@moviemasher/client-react/package.json
 COPY packages/protocol-supabase/package.json ${DIR_ROOT}/node_modules/@moviemasher/protocol-supabase/package.json
-COPY packages/theme/default/package.json ${DIR_ROOT}/node_modules/@moviemasher/theme-default/package.json
 
 COPY packages/example/supabase/package.json ${DIR_ROOT}/package.json
 

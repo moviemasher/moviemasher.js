@@ -1,8 +1,7 @@
 import type { ConnectionEventDetail } from '../declarations'
 
-import { property } from '@lit/reactive-element/decorators/property.js'
-
-import { LitElement } from 'lit-element'
+import { LitElement } from 'lit'
+import { property } from 'lit/decorators/property.js'
 
 export class Base extends LitElement {
   @property()
@@ -10,19 +9,38 @@ export class Base extends LitElement {
 
   protected slots: string[] = []
 
+  override connectedCallback() {
+    const { parentElement } = this
+    if (parentElement && parentElement.isConnected) {
+      
+      //instanceof Base
+      this.dispatchConnection(true)
+    }
+    // console.debug(this.tagName, 'connectedCallback', this.parentElement?.tagName)
+    super.connectedCallback()
+  }  
+  
   protected connectionDetail(connected: boolean): ConnectionEventDetail {
     const { slots, slotted } = this
     const detail: ConnectionEventDetail = { slots, slotted, connected }
     return detail
   }
+  
+  override disconnectedCallback() {
 
-  protected dispatchConnection(connected: boolean) {
+    const { parentElement } = this
+    if (parentElement && parentElement.isConnected) {
+      this.dispatchConnection(false)
+    }
+    super.disconnectedCallback()
+  }
 
+  protected dispatchConnection(connected: boolean): boolean {
     const detail = this.connectionDetail(connected)
     const { slots, slotted } = detail
-    if (!(slotted && slots.length)) {
+    if (!(slotted || slots.length)) {
       // console.debug(this.constructor.name, 'dispatchConnection without slotted or slots', slotted, slots)
-      return
+      return false
     }
 
     const init: CustomEventInit<ConnectionEventDetail> = { 
@@ -31,14 +49,11 @@ export class Base extends LitElement {
     const event = new CustomEvent<ConnectionEventDetail>('connection', init)
     // console.debug(this.constructor.name, 'dispatchConnection dispatching', detail)
     this.dispatchEvent(event)
+    return true
   }
-  override connectedCallback() {
-    this.dispatchConnection(true)
-    super.connectedCallback()
-  }  
-  
-  override disconnectedCallback() {
-    this.dispatchConnection(false)
-    super.disconnectedCallback()
-  }
+
+
+  // override async getUpdateComplete(): Promise<boolean> {
+  //   return super.getUpdateComplete()
+  // }
 }

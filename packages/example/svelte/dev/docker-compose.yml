@@ -9,8 +9,6 @@ services:
     volumes:
       - ../../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
       - ../../../../packages/core/lib/esm/moviemasher.js:/usr/local/apache2/htdocs/moviemasher.js
-      - ../../../../packages/theme/default/esm/theme-default.js:/usr/local/apache2/htdocs/theme-default.js
-      - ../../../../packages/theme/default/moviemasher.css:/usr/local/apache2/htdocs/moviemasher.css
       - ../../../../packages/core/client/esm/client-core.js:/usr/local/apache2/htdocs/client-core.js
       - ../../../../packages/client/svelte/esm/client-svelte.js:/usr/local/apache2/htdocs/client-svelte.js
       - ../../../../packages/example/svelte/src/index.html:/usr/local/apache2/htdocs/index.html

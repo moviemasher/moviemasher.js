@@ -1,7 +1,7 @@
 import type { Htmls, SlottedContent } from '../declarations.js'
 
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
+import { customElement } from 'lit/decorators/custom-element.js'
 
 import { Footer } from '../Base/LeftCenterRight.js'
 

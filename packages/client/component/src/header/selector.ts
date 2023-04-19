@@ -1,8 +1,8 @@
 import type { Htmls, Content, Contents, SlottedContent } from '../declarations.js'
 
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { html } from 'lit-html'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { html } from 'lit'
 
 import { Header } from '../Base/LeftCenterRight.js'
 

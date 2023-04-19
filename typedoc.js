@@ -3,10 +3,9 @@ module.exports = {
 
   "entryPoints": [
     "packages/core/lib",
-    // "packages/core/server",ß
+    // "packages/core/server",
     "packages/core/client",
     // "packages/protocol/supabase",
-    // "packages/theme/default",
     // "packages/server/express",
     "packages/client/component"
   ],

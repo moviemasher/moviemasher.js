@@ -48,6 +48,6 @@
   "version": "5.1.2",
   "dependencies": {
     "lit": "^2.0.2",
-    "express": "4.18.2"
+    "@lit-labs/observers": "2.0.0"
   }
 }

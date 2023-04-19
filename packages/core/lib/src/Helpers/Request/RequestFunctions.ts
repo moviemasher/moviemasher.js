@@ -12,7 +12,7 @@ import type { AudioType, FontType, ImageType, RecordsType, RecordType, VideoType
 import type { StringType } from '../../Utility/Scalar.js'
 
 import { TypeAudio, TypeFont, TypeImage, TypeRecords, TypeRecord, TypeVideo } from '../../Setup/Enums.js'
-import { ContentTypeHeader, JsonMimetype } from '../../Setup/Constants.js'
+import { ContentTypeHeader, DotChar, JsonMimetype } from '../../Setup/Constants.js'
 
 import { assertMethod, GetMethod, Method, PostMethod, Request } from './Request.js'
 import { protocolLoadPromise } from '../../Plugin/Protocol/ProtocolFunctions.js'
@@ -33,7 +33,7 @@ export const requestExtension = (request: Request): string => {
   assertEndpoint(endpoint)
   
   const { pathname = '' } = endpoint
-  const last = pathname.split('.').pop() || ''
+  const last = pathname.split(DotChar).pop() || ''
   return last.trim()
 }
 
@@ -111,12 +111,14 @@ export const requestRecordPromise = (request: Request, useResponse = false): Pro
     if (isJsonRecord(response)) return Promise.resolve({ data: response })
   }
   makeRequestEndpointAbsolute(request)
-  return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, TypeRecord).then(onError => {
+  return requestProtocolPromise(request).then(protocolPlugin => {
+    // console.log('requestRecordPromise...', request, protocolPlugin)
+    return protocolPlugin.promise(request, TypeRecord).then(onError => {
+      // console.log('requestRecordPromise!', onError)
       setRequestResponse(request, onError)
       return onError
     })
-  )
+  })
 }
 
 export const requestRecordsPromise = (request: Request, useResponse = false): Promise<JsonRecordsDataOrError> => {

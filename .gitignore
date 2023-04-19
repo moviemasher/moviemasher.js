@@ -2,6 +2,7 @@
 node_modules*
 temporary*
 **/__image_snapshots__*
+**/screenshots*
 *.cache/*
 **/raw/*
 **/cjs/*
@@ -11,3 +12,4 @@ temporary*
 **/dist/*
 **/*-deleted/*
 *.tsbuildinfo
+

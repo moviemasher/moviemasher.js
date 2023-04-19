@@ -1,16 +1,51 @@
-// import type { ClientReadParams } from '@moviemasher/client-core'
-// import { consume } from '@lit-labs/context'
+import type { ClientReadParams } from '@moviemasher/client-core'
+import { consume } from '@lit-labs/context'
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { css } from '@lit/reactive-element/css-tag.js'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { css, html } from 'lit'
 import { Div } from '../Base/LeftCenterRight.js'
-// import { selectorContext } from '../Context/selector.js'
+import { clientReadParamsContext } from '../Context/clientReadParamsContext.js'
+import { property } from 'lit/decorators/property.js'
+import { Htmls, SlottedContent } from '../declarations.js'
+import { ifDefined } from 'lit/directives/if-defined.js'
 
 
 @customElement('moviemasher-selector-div')
 export class SelectorDivElement extends Div {
-  // @consume({context: selectorContext, subscribe: true })
-  // context?: ClientReadParams
+  @consume({ context: clientReadParamsContext, subscribe: true })
+  @property({ attribute: false })
+  clientReadParams?: ClientReadParams
+
+  protected override leftContent(htmls: Htmls): SlottedContent {
+    const slotsCopy = [...htmls]
+    const mediaType = this.clientReadParams?.type || 'video'
+
+    this.importTags('moviemasher-icon')
+    slotsCopy.push(
+      html`<moviemasher-icon 
+        exportparts='${ifDefined(this.exportsForSlot('icon'))}'
+        part='icon' slotted='icon'
+        icon='${mediaType}'
+      ></moviemasher-icon>`
+    )
+    
+    return super.leftContent(slotsCopy)
+  }
+
+  protected override rightContent(htmls: Htmls): SlottedContent {
+
+
+
+    const slotsCopy = [...htmls]
+    const tagged = html`<span>${this.clientReadParams?.type}</span>`
+    // slotsCopy.push(html`${this.clientReadParams?.type || 'video'}`)
+    // this.importTags('moviemasher-span')
+
+    slotsCopy.push(tagged)
+    
+    return super.rightContent(slotsCopy)
+  }
+
 
   static override styles = [css`
     :host {
@@ -45,3 +80,5 @@ export class SelectorDivElement extends Div {
     }
   `]
 }
+
+

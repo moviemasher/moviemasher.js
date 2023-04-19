@@ -1,19 +1,17 @@
 import type { Htmls, SlottedContent } from '../declarations.js'
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
+import { customElement } from 'lit/decorators/custom-element.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { css } from 'lit'
+import { html } from 'lit'
 import { Section } from '../Base/Section.js'
-
-
 
 @customElement('moviemasher-inspector-section')
 export class InspectorSectionElement extends Section {
   
   override divContent(htmls: Htmls): SlottedContent {
-    import((new URL('../div/inspector.js', import.meta.url)).href)
+    this.importTags('moviemasher-inspector-div')
     return html`<moviemasher-inspector-div
       exportparts='${ifDefined(this.exportsForSlot('div'))}'
       part='div' slotted='div'
@@ -21,7 +19,7 @@ export class InspectorSectionElement extends Section {
   }
     
   override footerContent(htmls: Htmls): SlottedContent {
-    import((new URL('../footer/inspector.js', import.meta.url)).href)
+    this.importTags('moviemasher-inspector-footer')
     return html`<moviemasher-inspector-footer
       exportparts='${ifDefined(this.exportsForSlot('footer'))}'
       part='footer' slotted='footer'
@@ -29,9 +27,8 @@ export class InspectorSectionElement extends Section {
   }
 
   override headerContent(htmls: Htmls): SlottedContent {
-    import((new URL('../header/inspector.js', import.meta.url)).href)
+    this.importTags('moviemasher-inspector-header')
     return html`<moviemasher-inspector-header
-    
       exportparts='${ifDefined(this.exportsForSlot('header'))}'
       part='header' slotted='header'
       icon='${this.icon}' 

@@ -1,14 +1,20 @@
 import type {
   UploadType, PotentialError,
   MediaDataArrayOrError,
-  Masher, Strings, MediaDataOrError, MasherOptions, PluginDataOrErrorPromiseFunction, PluginDataOrErrorFunction
+  Masher, Strings, MediaDataOrError, MasherOptions, 
+  PluginDataOrErrorPromiseFunction, PluginDataOrErrorFunction, 
+  TranslateArgs,
+  NestedStringRecord,
+  DataOrError
 } from '@moviemasher/lib-core'
 import type { 
-  ClientLimits, ClientReadParams, LocalClient, LocalClientOptions, ClientImportArgs, 
+  ClientLimits, ClientReadParams, LocalClient, LocalClientOptions, 
+  ClientImportArgs, 
   ClientOperationArgs, ClientPluginArgs, ClientReadArgs, 
   ImportOperation, LocalClientArgs, LocalOperation, PluginOperation, 
   ReadOperation, LocalOperations 
 } from './LocalClient.js'
+import type { Icon, Translation } from '../declarations.js'
 
 import {
   isStorableType, isTyped, mediaTypeFromMime,
@@ -23,16 +29,19 @@ import {
   JsonMimetype, requestPopulate, requestRecordPromise, TypeVideo,
   ErrorName, error, AsteriskChar, CommaChar, errorPromise, isDefiniteError,
   TypesEncoding, isAboveZero, SlashChar, TypesStorable, pluginDataOrError,
-  pluginDataOrErrorPromise, assertObject
+  pluginDataOrErrorPromise, assertObject, isPopulatedString,
+  isNestedStringRecord, DotChar,
+  endpointFromUrl,
+  isStringRecord
 } from '@moviemasher/lib-core'
-
 import { 
   DefaultLocalClientArgs, OperationRead, OperationsLocal, isLocalOperation, 
   OperationImport, OperationPlugin 
 } from './LocalClient.js'
 import { fileMediaObjectPromise } from './File.js'
 
-
+import '../Protocol/Http.js'
+import '../Protocol/Blob.js'
 
 export class LocalClientClass implements LocalClient {
   constructor(public options?: LocalClientOptions) {
@@ -40,6 +49,8 @@ export class LocalClientClass implements LocalClient {
     this.pluginPromise = pluginDataOrErrorPromise
 
   }
+
+  get args(): LocalClientArgs { return this.localClientArgs }
 
   enabled(operation?: LocalOperation | LocalOperations): boolean {
     const { localClientArgs } = this
@@ -198,6 +209,83 @@ export class LocalClientClass implements LocalClient {
     })
   }
 
+  private iconRecordPromise(): Promise<DataOrError<NestedStringRecord>> {
+    const { iconRecord } = this
+    if (iconRecord) return Promise.resolve(iconRecord)
+    
+    const { iconSource } = this.args
+    if (isNestedStringRecord(iconSource)) {
+      this.iconRecord = { data: iconSource }
+      return Promise.resolve(this.iconRecord)
+    }
+    const request = { endpoint: endpointFromUrl(iconSource), init: { method: 'GET' } }
+    // console.log('iconRecordPromise...', request)
+    return requestRecordPromise(request).then(orError => {
+      // console.log('iconRecordPromise!', orError)
+    
+      if (isDefiniteError(orError)) {
+        console.log('iconRecordPromise! isDefiniteError')
+
+        this.iconRecord = orError
+        return orError
+      }
+      // const { data } = orError
+      // console.log('iconRecordPromise!', data || orError)
+
+      this.iconRecord = { data: orError as NestedStringRecord }
+      return this.iconRecord 
+    })
+  }
+  
+  private iconRecord?: DataOrError<NestedStringRecord> 
+
+  private iconLookup(args: TranslateArgs): string {
+    const { iconRecord } = this
+    const { id, locale } = args
+
+    if (!iconRecord || isDefiniteError(iconRecord)) return ''
+
+    const { data } = iconRecord
+    if (isStringRecord(data)) {
+      const string = data[id]
+      // console.log('iconLookup isStringRecord', id, string)
+
+      if (string) return string
+    } else if (locale && isNestedStringRecord(data)) {
+      const record = data[locale] || data
+      if (isStringRecord(record)) {
+        const string = record[id]
+        // console.log('iconLookup isNestedStringRecord', id, string)
+
+        if (string) return string
+      }
+    }
+    return ''
+  }
+
+
+  iconPromise(args: TranslateArgs): Promise<Icon> {
+    return this.iconRecordPromise().then(orError => {
+      if (isDefiniteError(orError)) return {}
+
+      const string = this.iconLookup(args)
+      if (isPopulatedString(string)) {
+        if (string[0] === '<') return { svgString: string } 
+        if (string.split(DotChar).slice(-1)[0] === 'svg') {
+          return { svgUrl: string } 
+        }
+        return  { imgUrl: string } 
+      }
+      return {}
+    })
+  }
+
+  translationPromise(args: TranslateArgs): Promise<Translation> {
+    const data: Translation = { string: args.id }
+    return Promise.resolve(data)
+  }
+  
+
   list(params: ClientReadParams): Promise<MediaDataArrayOrError> {
     const { localClientArgs: clientArgs } = this
     const { read } = clientArgs
@@ -260,11 +348,18 @@ export const localClientArgs = (options: LocalClientOptions = {}): LocalClientAr
 
     return { ...defaultLocalClientArg, ...clientOptions }
   }
-  return {
+
+  const iconSource = options.iconSource || new URL(`../../json/icons.json`, import.meta.url).href
+  const translationSource = options.translationSource || new URL(`../../json/translations.json`, import.meta.url).href
+  const args = {
+    iconSource,
+    translationSource,
     [OperationImport]: clientOperationArgs(OperationImport, options),
     [OperationPlugin]: clientOperationArgs(OperationPlugin, options),
     [OperationRead]: clientOperationArgs(OperationRead, options),
   }
+  // console.log('localClientArgs', args)
+  return args
 }
 
 

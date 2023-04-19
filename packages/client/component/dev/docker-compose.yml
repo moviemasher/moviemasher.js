@@ -9,9 +9,9 @@ services:
     volumes:
       - ../../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
       - ../../../../packages/core/lib/esm/:/usr/local/apache2/htdocs/@moviemasher/lib-core/esm
+      - ../../../../packages/core/client/json/:/usr/local/apache2/htdocs/@moviemasher/client-core/json
       - ../../../../packages/core/client/esm/:/usr/local/apache2/htdocs/@moviemasher/client-core/esm
       - ../../../../packages/client/component/esm/:/usr/local/apache2/htdocs/@moviemasher/client-component/esm
-      - ../../../../packages/theme/default/esm/:/usr/local/apache2/htdocs/@moviemasher/theme-default/esm
       - ../../../../packages/client/component/example/src/index.html:/usr/local/apache2/htdocs/index.html
       - ../../../../node_modules/tslib:/usr/local/apache2/htdocs/tslib/
       - ../../../../node_modules/@lit:/usr/local/apache2/htdocs/@lit/

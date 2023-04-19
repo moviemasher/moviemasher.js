@@ -1,29 +1,28 @@
 import type { Masher, MashMedia } from '@moviemasher/lib-core'
-import type { RemoteClient, LocalClient } from '@moviemasher/client-core'
+import type { 
+  RemoteClient, LocalClient, LocalClientOptions, RemoteClientOptions 
+} from '@moviemasher/client-core'
 
 import type { 
   InspectorFormSlot, ViewerFormSlot, SelectorFormSlot, ComposerFormSlot, 
   Contents, 
-  Htmls, SlottedContent, IconEvent, StringEvent, Content, 
+  Htmls, SlottedContent, IconEvent, TranlationEvent, Content, 
 } from './declarations.js'
 
 
- import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { property } from '@lit/reactive-element/decorators/property.js'
-import { provide } from '@lit-labs/context'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { property } from 'lit/decorators/property.js'
+import { css } from 'lit'
+import { html } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
+import { provide } from '@lit-labs/context'
 
-
-
-import { formContext, FormContext } from './Context/form.js'
-import { masherContext } from './Context/masher.js'
-import { mashMediaContext } from './Context/mashMedia.js'
+import { formContext, FormContext } from './Context/formContext.js'
+import { masherContext } from './Context/masherContext.js'
+import { mashMediaContext } from './Context/mashMediaContext.js'
 import { Slotted } from './Base/Slotted.js'
 import { remoteClientContext } from './Context/remoteClientContext.js'
-import { clientContext } from './Context/clientContext.js'
-
+import { localClientContext } from './Context/localClientContext.js'
 
 const FormSlotInspector: InspectorFormSlot = 'inspector'
 const FormSlotViewer: ViewerFormSlot = 'viewer'
@@ -38,30 +37,47 @@ const FormSlotComposer: ComposerFormSlot = 'composer'
  */
 @customElement('moviemasher-form')
 export class FormElement extends Slotted {
-  constructor() {
-    super()
-    setTimeout(() => { this.clientInitialize() }, 5000)
+  @property({ type: String }) action = ''
+
+  @property({ type: Boolean }) override autofocus = true
+
+
+  private _clientPromise?: Promise<LocalClient | RemoteClient> 
+  private get clientPromise() {
+    return this._clientPromise ||= this.clientInitialize
   }
+  
+  private get clientInitialize(): Promise<LocalClient | RemoteClient> {
+    const { translationSource } = this
 
-  @provide({ context: clientContext })
-  @property()
-  client: LocalClient | undefined
-
-  private clientInitialize() {
     if (this.local) {
-      import('@moviemasher/client-core/esm/Client/LocalClientClass.js').then(lib => {
+      return import('@moviemasher/client-core/esm/Client/LocalClientClass.js').then(lib => {
         const { localClientInstance } = lib
-        this.client = localClientInstance()
+        const options: LocalClientOptions = {
+          translationSource
+        }
+        const client = localClientInstance(options)
+        this._clientPromise = Promise.resolve(client)
+        return this.localClient = client
       })
-    } else {
-      import('@moviemasher/client-core/esm/Client/RemoteClientClass.js').then(lib => {
-        const { clientInstance } = lib
-        this.client = this.remoteClient = clientInstance()
-      })
-    }
+    } 
+    return import('@moviemasher/client-core/esm/Client/RemoteClientClass.js').then(lib => {
+      const { remoteClientInstance } = lib
+      // console.log('imported remote client', remoteClientInstance)
+      const options: RemoteClientOptions = {
+        translationSource
+      }
+      const client = remoteClientInstance(options)
+      this._clientPromise = Promise.resolve(client)
+      return this.localClient = this.remoteClient = client
+    })
   }
 
-  themeIcon?: (id: string) => SVGSVGElement 
+  @provide({ context: localClientContext })
+  @property()
+  localClient: LocalClient | undefined
+
+
 
   @provide({ context: formContext })
   context: FormContext = {
@@ -71,19 +87,14 @@ export class FormElement extends Slotted {
     editorIndex: {},
   }
 
-  @provide({ context: remoteClientContext })
-  @property()
-  remoteClient: RemoteClient | undefined
 
-  @property({ type: Boolean }) override autofocus = true
-  @property({ type: Boolean }) readonly = false
-  @property({ type: String }) action = ''
-  @property({ type: String }) icons = 'default'
-  @property({ type: String }) strings = 'default'
   @property({ type: String }) icon = 'app'
 
+  @property({ type: String }) iconSource = ''
+
   protected override defaultSlottedContent(name: string, htmls: Htmls): SlottedContent {
-    import(`./section/${name}.js`)
+    this.importTags(`moviemasher-${name}-section`)
+    
     switch(name) {
       case FormSlotInspector: {
         return html`<moviemasher-inspector-section
@@ -127,18 +138,25 @@ export class FormElement extends Slotted {
   @property()
   mashMedia: MashMedia | undefined
 
+  // override async getUpdateComplete(): Promise<boolean> {
+  //   return super.getUpdateComplete().then(() => {
+  //     const bases = Array.from(this.childrenBySlot)
+  //     const promises = bases.map(child => child.updateComplete)
+  //     return Promise.all(promises).then(booleans => booleans.some(Boolean))
+  //   })
+  // }
 
 
   private onIcon(event: IconEvent) {
-    if (!this.themeIcon) return
-
     const { detail } = event
-    detail.svgElement = this.themeIcon(detail.icon)
+    detail.promise = this.clientPromise.then(client => client.iconPromise(detail))
+    event.stopPropagation()
   }
 
-  private onString(event: StringEvent) {
+  private onTranslation(event: TranlationEvent) {
     const { detail } = event
-    detail.string = detail.id
+    detail.promise = this.clientPromise.then(client => client.translationPromise(detail))
+    event.stopPropagation()
   }
 
   private onToggle(event: CustomEvent<string>) {
@@ -154,13 +172,20 @@ export class FormElement extends Slotted {
       }
     }
   }
+
+  @property({ type: Boolean }) readonly = false
+
+  @provide({ context: remoteClientContext })
+  @property()
+  remoteClient: RemoteClient | undefined
+
   override slottedContent(contents: Contents): Content {
     return html`<form 
       @connection='${this.onConnection}'
       @slotted='${this.onSlotted}'
       @toggle='${this.onToggle}'
       @icon='${this.onIcon}'
-      @string='${this.onString}'
+      @string='${this.onTranslation}'
     >${contents}</form>`
   }
 
@@ -170,6 +195,7 @@ export class FormElement extends Slotted {
     FormSlotInspector, 
     FormSlotComposer, 
   ]
+  @property({ type: String }) translationSource = ''
 
   static styleBox = css`
     * {
@@ -183,10 +209,8 @@ export class FormElement extends Slotted {
     }
   `
   static styleVariables = css`
-    :host{
+    :host {
       --hue: 281;
-
-
       --gap: 20px;
       --areas:
         "preview media inspect"
@@ -231,7 +255,6 @@ export class FormElement extends Slotted {
       --darkness-fore-secondary: 60%;
       --darkness-fore-tertiary: 75%;
 
-  
       
       --border-size: 1px;
       --border: var(--border-size) solid;
@@ -262,42 +285,42 @@ export class FormElement extends Slotted {
       ;
 
 
-    --div-pad: 20px;
-    --div-space: 20px;
-    --div-back: oklch(var(--lightness-back-primary) 0 0);
-    --div-fore: oklch(var(--lightness-fore-primary) 0 0);
+      --div-pad: 20px;
+      --div-space: 20px;
+      --div-back: oklch(var(--lightness-back-primary) 0 0);
+      --div-fore: oklch(var(--lightness-fore-primary) 0 0);
 
-    --section-padding: 5px;
-    --section-spacing: 5px;
-    --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
-    --section-back: oklch(var(--lightness-back-tertiary) 0 0);
-      
-    --label-fore: red;
-    --label-back: black;
+      --section-padding: 5px;
+      --section-spacing: 5px;
+      --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
+      --section-back: oklch(var(--lightness-back-tertiary) 0 0);
+        
+      --label-fore: red;
+      --label-back: black;
 
-    --control-back: oklch(var(--lightness-back-secondary) 0 0);
-    --control-back-disabled: var(--control-back);
-    --control-back-hover: var(--control-back);
-    --control-back-selected: var(--control-back);
+      --control-back: oklch(var(--lightness-back-secondary) 0 0);
+      --control-back-disabled: var(--control-back);
+      --control-back-hover: var(--control-back);
+      --control-back-selected: var(--control-back);
 
-    --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
-    --control-fore-disabled: oklch(var(--lightness-fore-secondary) var(--chroma-primary) var(--hue));
+      --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
+      --control-fore-disabled: oklch(var(--lightness-fore-secondary) var(--chroma-primary) var(--hue));
 
 
-    --control-fore-hover: var(--control-hover-selected);
-    --control-fore-selected:var(--control-hover-selected);
-    --control-fore: var(--fore-secondary);
-    --control-padding: 5px;
-    --control-spacing: 5px;
+      --control-fore-hover: var(--control-hover-selected);
+      --control-fore-selected:var(--control-hover-selected);
+      --control-fore: var(--fore-secondary);
+      --control-padding: 5px;
+      --control-spacing: 5px;
 
-    --item-fore: yellow;
-    --item-fore-selected: yellow;
-    --item-fore-hover: yellow;
-    --item-back: blue;
-    --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
+      --item-fore: yellow;
+      --item-fore-selected: yellow;
+      --item-fore-hover: yellow;
+      --item-back: blue;
+      --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
 
-    --item-back-selected: var(--item-back-hover-selected);
-    --item-back-hover:  var(--item-back-hover-selected);
+      --item-back-selected: var(--item-back-hover-selected);
+      --item-back-hover:  var(--item-back-hover-selected);
 
 
       --color-drop: red;
@@ -364,6 +387,7 @@ export class FormElement extends Slotted {
     }
   `
   static styleHost = css`
+
   `
   static styleQueries = css`
   /* 
@@ -389,7 +413,7 @@ export class FormElement extends Slotted {
     return [
       FormElement.styleFlex,
       FormElement.styleVariables,
-      // FormElement.styleBox,
+      FormElement.styleBox,
       FormElement.styleHost,
       FormElement.styleForm,
       FormElement.styleQueries,
@@ -398,3 +422,6 @@ export class FormElement extends Slotted {
     ]
   }
 }
+      /* --div-back: oklch(var(--lightness-back-primary) 0 0); */
+      /* --div-fore: yellow; */
+      /* oklch(var(--lightness-fore-primary) 0 0); */

@@ -34,17 +34,17 @@ describe('Url', () => {
 
   describe('urlEndpoint', () => {
     test('returns http localhost endpoint', () => {
-
-      
       const user = 'username'
       assert.deepStrictEqual(urlEndpoint(), { protocol: 'http:', hostname: 'localhost', pathname: '/' })
 
       const { environment } = Runtime
       // const environmentBase = environment.get(EnvironmentKeyUrlBase)
-      const url = 'file://' + path.resolve('./images/standalone/public/media', user)
+      const base = path.resolve('./')
+      const url = 'file://' + path.join(base, 'images/standalone/public/media', user)
+      const pathname = `${base}/images/standalone/public/media/${user}`
       environment.set(EnvironmentKeyUrlBase, url)
       
-      assert.deepStrictEqual(urlEndpoint(), { protocol: 'file:', hostname: '', pathname: `/app/images/standalone/public/media/${user}` })
+      assert.deepStrictEqual(urlEndpoint(), { protocol: 'file:', hostname: '', pathname })
    })
   })
 })

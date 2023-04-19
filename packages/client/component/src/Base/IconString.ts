@@ -1,11 +1,10 @@
 import type { Htmls, SlottedContent, StringSlot, IconSlot } from '../declarations'
+
 import { Slotted } from './Slotted'
 
-import { property } from '@lit/reactive-element/decorators/property.js'
-
-import { html } from 'lit-html'
+import { html } from 'lit'
+import { property } from 'lit/decorators/property.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
-
 
 const StringSlot: StringSlot = 'string'
 const IconSlot: IconSlot = 'icon'
@@ -38,7 +37,7 @@ export class IconString extends Slotted {
     const { [IconSlot]: icon } = this
     if (!icon) return 
 
-    import((new URL('../icon.js', import.meta.url)).href)
+    this.importTags('moviemasher-icon')
     return html`<moviemasher-icon 
       exportparts='${ifDefined(this.exportsForSlot('icon'))}'
       part='icon' slotted='icon'
@@ -52,7 +51,8 @@ export class IconString extends Slotted {
   private stringContent(_htmls: Htmls): SlottedContent { 
     const { [StringSlot]: string } = this
     if (!string) return 
-    import((new URL('../string.js', import.meta.url)).href)
+
+    this.importTags('moviemasher-string')
     return html`<moviemasher-string 
       exportparts='${ifDefined(this.exportsForSlot('string'))}'
       part='string' slotted='string'

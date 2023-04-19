@@ -8,7 +8,6 @@
   },
   "devDependencies": {
     "lit": "dependencies",
-    "rollup": "dependencies",
-    "express": "dependencies"
+    "rollup": "dependencies"
   }
 }

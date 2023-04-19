@@ -21,7 +21,7 @@
   ],
   "exclude": [
     "./packages/server/**/src/*", 
-    "node_modules", "**/*.test.mjs", 
+    "node_modules", "**/*.test.mjs", "**/*.test.e2e.mjs", 
     "**/umd/*", "**/esm/*",
   ]
 }

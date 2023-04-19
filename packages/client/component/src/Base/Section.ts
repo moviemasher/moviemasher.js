@@ -4,10 +4,10 @@ import type {
 } from '../declarations'
 
 
-import { eventOptions } from '@lit/reactive-element/decorators/event-options.js'
-import { property } from '@lit/reactive-element/decorators/property.js'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { css } from 'lit'
+import { html } from 'lit'
+import { property } from 'lit/decorators/property.js'
+import { eventOptions } from 'lit/decorators/event-options.js'
 
 import { Slotted } from './Slotted'
 
@@ -26,16 +26,10 @@ export class Section extends Slotted {
   }
   
   divContent(_htmls: Htmls): SlottedContent { return '[DIV]' }
-  
-  // @property() [DivSlot] = ''
 
   footerContent(_htmls: Htmls): SlottedContent { return '[FOOTER]' }
 
-  // @property() [FooterSlot] = ''
-
   headerContent(_htmls: Htmls): SlottedContent { return '[HEADER]' }
-  
-  // @property() [HeaderSlot] = ''  
   
   @property() icon = 'app'
   
@@ -66,7 +60,6 @@ export class Section extends Slotted {
     }
   `
   static styleSection = css`
-
     section {
       flex-grow: 1;
       overflow: hidden;

@@ -1,9 +1,9 @@
 import type { Contents, Content } from './declarations.js'
 
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { css } from 'lit'
+import { html } from 'lit'
 
 import { IconString } from './Base/IconString.js'
 

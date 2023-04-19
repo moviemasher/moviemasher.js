@@ -153,10 +153,10 @@ export const urlForEndpoint = (endpoint: Endpoint, suffix = ''): string => {
   if (suffix && urlHasProtocol(suffix)) return suffix
   
   const base = urlFromEndpoint(endpoint)
-  const slashed = base.endsWith(SlashChar) ? base : base + SlashChar
-  if (!urlHasProtocol(slashed)) return slashed + suffix
+  // const slashed = base.endsWith(SlashChar) ? base : base + SlashChar
+  if (!urlHasProtocol(base)) return base + suffix
 
-  const url = new URL(suffix, slashed)
+  const url = new URL(suffix, base)
   const { href } = url
   return href
 }

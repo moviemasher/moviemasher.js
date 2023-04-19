@@ -1,29 +1,16 @@
+import type { Icon, Translation } from '@moviemasher/client-core'
 import type { TranslateArgs } from '@moviemasher/lib-core'
-import type { LitElement, TemplateResult } from 'lit-element'
+import type { TemplateResult } from 'lit'
 
 
-export type LitClass = Constructor<LitElement>
-
+export type Constructor<T> = new (...args: any[]) => T
 
 export type Html = TemplateResult<1> 
 export type Htmls = Html[]
 
-export type HtmlOrNode = Html | Node
-export type HtmlOrNodes = HtmlOrNode[]
-
-export type HtmlRecord = Record<string, Html>
-
-export type NodeRecord = Record<string, Node>
-
-export type ContentRecord = Record<string, Html | Htmls>
 export type Nodes = Node[]
-export type NodesRecord = Record<string, Nodes>
 export type Elements = Element[]
-export type ElementsRecord = Record<string, Elements>
-export type ElementRecord = Record<string, Element>
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type Constructor<T> = new (...args: any[]) => T
 
 export type Value = number | string
 export type Scalar = Value | boolean
@@ -51,22 +38,19 @@ export type Contents = Content[]
 
 export type SlottedContent = Content | void
 
-export interface IconEventDetail {
-  icon: string
-  imageElement?: HTMLImageElement
-  imgUrl?: string
-  string?: string
-  svgElement?: SVGSVGElement
-  svgString?: string
-  promise?: Promise<IconEventDetail>
+
+
+export interface IconEventDetail extends TranslateArgs {
+  promise?: Promise<Icon>
 }
+
 export type IconEvent = CustomEvent<IconEventDetail>
 
-export interface StringEventDetail extends TranslateArgs {
-  string?: Text | string
-  promise?: Promise<StringEventDetail>
+export interface TranslationEventDetail extends TranslateArgs {
+  promise?: Promise<Translation>
 }
-export type StringEvent = CustomEvent<StringEventDetail>
+
+export type TranlationEvent = CustomEvent<TranslationEventDetail>
 
 export interface ConnectionEventDetail {
   slotted: string

@@ -1,12 +1,8 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { 
-   pixelToFrame 
-} from '@moviemasher/lib-core'
-import { 
-  pixelFromFrame, pixelPerFrame, 
-} from '@moviemasher/client-core'
+import { pixelToFrame } from '@moviemasher/lib-core'
+import { pixelFromFrame, pixelPerFrame } from '@moviemasher/client-core'
 
 describe('Pixel', () => {
   describe('perFrame', () => {

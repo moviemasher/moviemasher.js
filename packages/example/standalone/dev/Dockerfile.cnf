@@ -8,7 +8,6 @@ COPY package.json ${DIR_ROOT}/package.json
 COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
 COPY packages/server/express/package.json ${DIR_ROOT}/packages/server/express/package.json
 COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json
-COPY packages/theme/default/package.json ${DIR_ROOT}/packages/theme/default/package.json
 COPY packages/client/react/package.json ${DIR_ROOT}/packages/client/react/package.json
 COPY packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
 COPY packages/example/standalone/package.json ${DIR_ROOT}/packages/example/standalone/package.json
@@ -25,8 +24,6 @@ COPY dev/img/mm.svg ${DIR_ROOT}/packages/example/standalone/public/mm.svg
 COPY packages/core/lib/umd/moviemasher.js ${DIR_ROOT}/packages/example/standalone/public/moviemasher.js
 COPY packages/core/client/umd/client-core.js ${DIR_ROOT}/packages/example/standalone/public/client-core.js
 COPY packages/client/react/umd/client-react.js ${DIR_ROOT}/packages/example/standalone/public/client-react.js
-COPY packages/theme/default/moviemasher.css ${DIR_ROOT}/packages/example/standalone/public/moviemasher.css
-COPY packages/theme/default/umd/theme-default.js ${DIR_ROOT}/packages/example/standalone/public/theme-default.js
 
 # server packages files
 COPY packages/core/lib/esm ${DIR_ROOT}/packages/core/lib/esm

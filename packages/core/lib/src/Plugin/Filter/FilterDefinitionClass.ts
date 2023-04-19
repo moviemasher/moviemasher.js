@@ -11,6 +11,7 @@ import { assertPopulatedString, assertValueRecord } from '../../Utility/Is.js'
 import { Property } from '../../Setup/Property.js'
 import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
 import { ErrorName } from '../../Helpers/Error/ErrorName.js'
+import { DotChar } from '../../Setup/Constants.js'
 
 export class FilterDefinitionClass implements FilterDefinition {
   constructor(object: FilterDefinitionObject) {
@@ -50,7 +51,7 @@ export class FilterDefinitionClass implements FilterDefinition {
 
   protected _ffmpegFilter?: string
   get ffmpegFilter(): string {
-    return this._ffmpegFilter ||= this.id.split('.').pop() || this.id
+    return this._ffmpegFilter ||= this.id.split(DotChar).pop() || this.id
   }
 
   filterDefinitionSvgs(args: FilterDefinitionArgs): SvgItems {

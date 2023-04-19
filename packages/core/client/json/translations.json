@@ -1,0 +1,37 @@
+{
+  "translate": {
+    "identifier": "English",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "fr": "French"
+    },
+    "locale": "en"
+  },
+  "audible": "Audible",
+  "clip": "Clip",
+  "update": "Save",
+  "delete": "Remove {{type}}",
+  "unlabeled": "Unlabeled {{type}}",
+  "analyze": "Analyzing...",
+  "load": "Loading...",
+  "complete": "Completed",
+  "create": "New",
+  "render": "Render",
+  "view": "View",
+  "open": "Open...",
+  "undo": "Undo",
+  "redo": "Redo",
+  "mash": "Mash",
+  "internal": "Internal Error",
+  "client": { "internal": "Internal Client Error" },
+  "import": {
+    "bytes": "Size above {{value}}",
+    "extension": "Extension {{value}}",
+    "type": "Type {{value}}",
+    "size": "Dimensions {{value}}",
+    "duration": "Duration {{value}}",
+    "render": "{{value}}",
+    "displaySize": "{{width}}x{{height}}"
+  }
+}

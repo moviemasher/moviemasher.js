@@ -1,16 +1,13 @@
 import type { Contents, Content } from './declarations.js'
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
 
-import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html'
+import { css } from 'lit'
+import { html } from 'lit'
+import { customElement } from 'lit/decorators/custom-element.js'
 
 import { IconString } from './Base/IconString.js'
 
-
 @customElement('moviemasher-a')
 export class AElement extends IconString {
-
-
   static override styles = [css`
     :host {
       --cursor: pointer;

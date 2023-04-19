@@ -1,11 +1,48 @@
+import type { PropertyValues } from 'lit'
+import type { LocalClient } from '@moviemasher/client-core'
+import type { Htmls, SlottedContent } from '../declarations.js'
 
-import { customElement } from '@lit/reactive-element/decorators/custom-element.js'
-import { css } from '@lit/reactive-element/css-tag.js'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { css, html } from 'lit'
 import { Div } from '../Base/LeftCenterRight.js'
+import { consume } from '@lit-labs/context'
+
+import { localClientContext } from '../Context/localClientContext.js'
+// import { ifDefined } from 'lit-html/directives/if-defined.js'
+import { property } from 'lit/decorators/property.js'
 
 
 @customElement('moviemasher-viewer-div')
 export class ViewerDivElement extends Div {
+  @consume({context: localClientContext, subscribe: true })
+  @property({ attribute: false })
+  localClient?: LocalClient
+
+  protected override leftContent(htmls: Htmls): SlottedContent {
+    const slotsCopy = [...htmls]
+    const { localClient } = this
+   slotsCopy.push(html`<span>${localClient?.constructor.name || '...'}</span>`)
+    
+    // this.importTags('moviemasher-icon')
+    // slotsCopy.push(
+    //   html`<moviemasher-icon 
+    //     exportparts='${ifDefined(this.exportsForSlot('icon'))}'
+    //     part='icon' slotted='icon'
+    //     icon='play'
+    //   ></moviemasher-icon>`
+    // )
+    
+    return super.leftContent(slotsCopy)
+  }
+
+  override willUpdate(changedProperties: PropertyValues<this>) {
+    if (changedProperties.has('localClient') && changedProperties.get('localClient')) {
+      console.debug(this.constructor.name, 'willUpdate', changedProperties)
+      this.requestUpdate()
+    }
+  }
+  
+
   static override styles = [css`
     :host {
       display: block;
