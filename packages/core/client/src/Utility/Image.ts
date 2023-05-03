@@ -1,12 +1,12 @@
 import type {
-  Request, ClientImageDataOrError, 
+  EndpointRequest, ClientImageDataOrError, 
 } from '@moviemasher/lib-core'
 import { 
   endpointUrl, ErrorName, error, 
   assertEndpoint 
 } from '@moviemasher/lib-core'
 
-export const imageDataPromise = (request: Request): Promise<ClientImageDataOrError> => {
+export const imageDataPromise = (request: EndpointRequest): Promise<ClientImageDataOrError> => {
   const { endpoint } = request
   assertEndpoint(endpoint)
 

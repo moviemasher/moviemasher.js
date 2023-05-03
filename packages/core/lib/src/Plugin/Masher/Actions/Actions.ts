@@ -1,15 +1,15 @@
-import { ActionType } from '../../../Setup/Enums.js'
-import { isPositive } from '../../../Utility/Is.js'
-import { Masher } from '../Masher.js'
+import type { Masher } from '../Masher.js'
+import { ActionTypeChange } from '../../../Setup/Enums.js'
+import { assertDefined, isPositive } from '../../../Utility/Is.js'
 import { EditorSelectionObject } from '../EditorSelection/EditorSelection.js'
-import { Action, ActionOptions, ActionObject, assertAction } from './Action/Action.js'
+import { ActionOptions, ActionObject, Action } from './Action/Action.js'
 import { actionInstance } from './Action/ActionFactory.js'
-import { isChangeAction, isChangeActionObject } from './Action/ChangeAction.js'
+import { isChangePropertyAction, isChangePropertiesAction, isChangePropertiesActionObject, isChangePropertyActionObject } from "./Action/ActionFunctions.js"
 
 export class Actions  {
   constructor(public editor: Masher) { }
 
-  add(action : Action) : void {
+  add(action: Action) : void {
     const remove = this.instances.length - (this.index + 1)
     if (isPositive(remove)) this.instances.splice(this.index + 1, remove)
 
@@ -22,9 +22,9 @@ export class Actions  {
 
   get canUndo() : boolean { return this.index > -1 }
 
-  create(object: ActionOptions): void {
+  create(object: ActionObject): void {
     const { editor } = this
-    const { undoSelection, redoSelection, type = ActionType.Change, ...rest } = object
+    const { undoSelection, redoSelection, type = ActionTypeChange, ...rest } = object
 
     const clone: ActionObject = {
       ...rest,
@@ -32,17 +32,29 @@ export class Actions  {
       undoSelection: undoSelection || { ...editor.selection.object },
       redoSelection: redoSelection || { ...editor.selection.object },
     }
-    if (isChangeActionObject(object) && this.currentActionLast) {
+    if (this.currentActionLast) {
       const { currentAction } = this
-      if (isChangeAction(currentAction)) {
-        const { target, property } = object
-        if (currentAction.target === target && currentAction.property === property) {
-          currentAction.updateAction(object)
-          editor.handleAction(currentAction)
-          return
+      if (isChangePropertyActionObject(object)) {
+        if (isChangePropertyAction(currentAction)) {
+          const { target, property } = object
+          if (currentAction.target === target && currentAction.property === property) {
+            currentAction.updateAction(object)
+            editor.handleAction(currentAction)
+            return
+          }
+        }
+      } else if (isChangePropertiesActionObject(object)) {
+        if (isChangePropertiesAction(currentAction)) {
+          const { target, property } = object
+          if (currentAction.target === target && currentAction.property === property) {
+            currentAction.updateAction(object)
+            editor.handleAction(currentAction)
+            return
+          }
         }
       }
     }
+   
     const action = actionInstance(clone)
     this.add(action)
     editor.handleAction(this.redo())
@@ -64,7 +76,8 @@ export class Actions  {
   redo() : Action {
     this.index += 1
     const action = this.currentAction
-    assertAction(action)
+    assertDefined(action)
+
     action.redo()
     return action
   }
@@ -78,7 +91,8 @@ export class Actions  {
 
   undo() : Action {
     const action = this.currentAction
-    assertAction(action)
+    assertDefined(action)
+    
     this.index -= 1
     action.undo()
     return action

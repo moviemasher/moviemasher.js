@@ -2,7 +2,7 @@ import React from "react"
 
 import type { PropsClickable } from "../../Types/Props"
 
-import { MasherAction, EventType } from "@moviemasher/lib-core"
+import { ClientActionRedo, EventTypeAction } from "@moviemasher/lib-core"
 
 import { useListeners } from "../../Hooks/useListeners"
 import { useMasher } from "../../Hooks/useMasher"
@@ -14,7 +14,7 @@ export function EditorRedoButton(props: PropsClickable) {
   const [disabled, setDisabled] = React.useState(true)
   const masher = useMasher()
   useListeners({
-    [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Redo)) }
+    [EventTypeAction]: () => { setDisabled(!masher.can(ClientActionRedo)) }
   })
   
   return <Clickable key='redo'

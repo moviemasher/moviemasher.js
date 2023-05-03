@@ -1,5 +1,8 @@
 import React from 'react'
-import { DataType, isDefined, UnknownRecord } from '@moviemasher/lib-core'
+
+import type { UnknownRecord } from '@moviemasher/lib-core'
+
+import { DataTypeRgb, isDefined } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'
@@ -32,4 +35,4 @@ export function RgbTypeInput() {
   return <input {...colorProps} />
 }
 
-DataTypeInputs[DataType.Rgb] = <RgbTypeInput />
+DataTypeInputs[DataTypeRgb] = <RgbTypeInput />

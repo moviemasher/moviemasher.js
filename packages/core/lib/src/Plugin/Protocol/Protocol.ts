@@ -3,7 +3,7 @@ import type {
 } from '../../Helpers/ClientMedia/ClientMedia.js'
 import type {AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from '../../Setup/Enums.js'
 import type {LoadType} from '../../Setup/LoadType.js'
-import type {Request} from '../../Helpers/Request/Request.js'
+import type {EndpointRequest} from '../../Helpers/Request/Request.js'
 import type {Plugin, ProtocolType} from '../Plugin.js'
 import type {JsonRecord, JsonRecords} from '../../Types/Core.js'
 import type {DefiniteError} from '../../Helpers/Error/Error.js'
@@ -38,13 +38,13 @@ export type ProtocolData = Data<ClientImage> | Data<ClientAudio> | Data<ClientFo
 export type ProtocolDataOrError = DefiniteError | ProtocolData
 
 export type ProtocolPromise = {
-  (request: Request, type: ImageType): Promise<DataOrError<ClientImage>>
-  (request: Request, type: AudioType): Promise<DataOrError<ClientAudio>>
-  (request: Request, type: FontType): Promise<DataOrError<ClientFont>>
-  (request: Request, type: VideoType): Promise<DataOrError<ClientVideo>>
-  (request: Request, type: RecordType): Promise<DataOrError<JsonRecord>>
-  (request: Request, type: RecordsType): Promise<DataOrError<JsonRecords>>
-  (request: Request, type: StringType): Promise<DataOrError<string>>
-  (request: Request, type: LoadType): Promise<ProtocolDataOrError>
+  (request: EndpointRequest, type: ImageType): Promise<DataOrError<ClientImage>>
+  (request: EndpointRequest, type: AudioType): Promise<DataOrError<ClientAudio>>
+  (request: EndpointRequest, type: FontType): Promise<DataOrError<ClientFont>>
+  (request: EndpointRequest, type: VideoType): Promise<DataOrError<ClientVideo>>
+  (request: EndpointRequest, type: RecordType): Promise<DataOrError<JsonRecord>>
+  (request: EndpointRequest, type: RecordsType): Promise<DataOrError<JsonRecords>>
+  (request: EndpointRequest, type: StringType): Promise<DataOrError<string>>
+  (request: EndpointRequest, type: LoadType): Promise<ProtocolDataOrError>
 }
 

@@ -1,8 +1,8 @@
 import React from "react"
 import { 
   assertSelectorType, assertTime, ClassButton, ClassSelected, 
-  DataGroup, selectedPropertyObject, PropertyTweenSuffix,
-  assertTimeRange, tweenInputTime
+  selectedPropertyObject, PropertyTweenSuffix,
+  assertTimeRange, tweenInputTime, DataGroupColor
 } from "@moviemasher/lib-core"
 
 
@@ -32,10 +32,10 @@ export function ColorGroupInput(props: DataGroupProps) {
   assertTimeRange(timeRange)
   assertTime(time)
   
-  const endDefined = tweenDefined[DataGroup.Color]
-  const endSelected = tweenSelected[DataGroup.Color]
+  const endDefined = tweenDefined[DataGroupColor]
+  const endSelected = tweenSelected[DataGroupColor]
 
-  const byName = selectedPropertyObject(selectedItems, DataGroup.Color, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroupColor, selectType)
   const { color, [`color${PropertyTweenSuffix}`]: colorEnd } = byName 
   const colorProperty = endSelected ? colorEnd : color
 
@@ -65,7 +65,7 @@ export function ColorGroupInput(props: DataGroupProps) {
  
     onClick: () => {
       editor.goToTime(timeRange.startTime)
-      changeTweening(DataGroup.Color, false)
+      changeTweening(DataGroupColor, false)
     }
   }
 
@@ -74,7 +74,7 @@ export function ColorGroupInput(props: DataGroupProps) {
     children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {      
       editor.goToTime(timeRange.lastTime)
-      changeTweening(DataGroup.Color, true)
+      changeTweening(DataGroupColor, true)
     }
   }
   
@@ -95,4 +95,4 @@ export function ColorGroupInput(props: DataGroupProps) {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Color] = <ColorGroupInput className="color tween row" key="color-group-input" />
+DataGroupInputs[DataGroupColor] = <ColorGroupInput className="color tween row" key="color-group-input" />

@@ -1,9 +1,9 @@
 
 import path from 'path'
-import type { GraphFile, LoadType, PopulatedString } from '@moviemasher/lib-core'
+import type { GraphFile, GraphFileType, LoadType, PopulatedString } from '@moviemasher/lib-core'
 import { 
   assertPopulatedString, TypeAudio, NewlineChar, ErrorName, errorThrow, 
-  TypeFont, GraphFileType, TypeImage, isLoadType, 
+  TypeFont, GraphFileTypeSvgSequence, TypeImage, isLoadType, 
   TypeVideo, Runtime 
 } from "@moviemasher/lib-core"
 import { BasenameCache } from '../Setup/Constants'
@@ -24,7 +24,7 @@ const typeExtension = (type: LoadType): string => {
 }
 
 const graphFileTypeBasename = (type: GraphFileType, content: PopulatedString) => {
-  if (type !== GraphFileType.SvgSequence) return `${BasenameCache}.${type}`
+  if (type !== GraphFileTypeSvgSequence) return `${BasenameCache}.${type}`
   const fileCount = content.split(NewlineChar).length
   const digits = String(fileCount).length
   return `%0${digits}.svg`

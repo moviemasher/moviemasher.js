@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, ClassDisabled, ClassSelected, EventType } from '@moviemasher/lib-core'
+import { ClassButton, ClassDisabled, EventTypeLoaded } from '@moviemasher/lib-core'
 
 
 import { WithClassName } from "../../Types/Core"
@@ -23,7 +23,7 @@ export function TimelineZoom(props: TimelineZoomProps) {
   const getDisabled = () => !masher.mashMedia
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
-  useListeners({ [EventType.Loaded]: updateDisabled })
+  useListeners({ [EventTypeLoaded]: updateDisabled })
 
   const classes = [ClassButton]
   if (className) classes.push(className)

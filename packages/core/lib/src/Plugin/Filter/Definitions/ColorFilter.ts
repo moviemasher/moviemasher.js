@@ -1,7 +1,7 @@
 import { Value } from '../../../Types/Core.js'
 import { SvgItems } from '../../../Helpers/Svg/Svg.js'
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataType, DataTypeNumber, DataTypeString } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { NamespaceSvg } from '../../../Setup/Constants.js'
 import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from '../../../Utility/Is.js'
@@ -29,13 +29,13 @@ export class ColorFilter extends ColorizeFilter {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      tweenable: true, name: 'color', type: DataType.String
+      tweenable: true, name: 'color', type: DataTypeString
     }))
     
     const keys = ['width', 'height']
     keys.forEach(name => {
       this.properties.push(propertyInstance({ 
-        tweenable: true, name, type: DataType.Number 
+        tweenable: true, name, type: DataTypeNumber 
       }))
     })
     this.populateParametersFromProperties()

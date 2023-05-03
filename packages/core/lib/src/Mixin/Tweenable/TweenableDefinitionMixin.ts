@@ -1,7 +1,7 @@
 import type {GraphFiles, PreloadArgs } from '../../Base/Code.js'
 import type {TweenableDefinition, TweenableDefinitionClass} from './Tweenable.js'
 
-import {DataType} from '../../Setup/Enums.js'
+import {DataType, DataTypeBoolean} from '../../Setup/Enums.js'
 import {MediaClass} from '../../Media/Media.js'
 import {propertyInstance} from '../../Setup/Property.js'
 
@@ -11,7 +11,7 @@ export function TweenableDefinitionMixin<T extends MediaClass>(Base: T): Tweenab
     constructor(...args: any[]) {
       super(...args)
       this.properties.push(propertyInstance({ 
-        name: 'muted', type: DataType.Boolean 
+        name: 'muted', type: DataTypeBoolean 
       }))
     }
  

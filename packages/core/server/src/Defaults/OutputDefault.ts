@@ -1,8 +1,21 @@
-import { 
-  VideoEncoderOptions, NumberRecord, OutputFormat, EncodingType, 
-  RenderingCommandOutput, TypeAudio, TypeImage, FontType, TypeVideo, errorThrow, ErrorName 
+import type { 
+  VideoEncoderOptions, NumberRecord, EncodingType, 
+  RenderingCommandOutput,
 } from "@moviemasher/lib-core"
 
+import { 
+  OutputFormatAudioConcat,
+  OutputFormatFlv,
+  OutputFormatHls,
+  OutputFormatJpeg,
+  OutputFormatMdash,
+  OutputFormatMp3,
+  OutputFormatMp4,
+  OutputFormatPng,
+  OutputFormatRtmp,
+  OutputFormatVideoConcat, 
+  TypeAudio, TypeImage, TypeVideo, errorThrow, ErrorName 
+} from "@moviemasher/lib-core"
 
 const outputDefaultAudioJson = {
   "options": {},
@@ -158,23 +171,23 @@ export const renderingCommandOutput = (output: RenderingCommandOutput): Renderin
 
 
 export const outputDefaultTypeByFormat = {
-  [OutputFormat.AudioConcat]: TypeAudio,
-  [OutputFormat.Mdash]: TypeVideo,
-  [OutputFormat.Flv]: TypeVideo,
-  [OutputFormat.Hls]: TypeVideo,
-  [OutputFormat.Jpeg]: TypeImage,
-  [OutputFormat.Mp3]: TypeAudio,
-  [OutputFormat.Mp4]: TypeVideo,
-  [OutputFormat.Png]: TypeImage,
-  [OutputFormat.Rtmp]: TypeVideo,
-  [OutputFormat.VideoConcat]: TypeVideo,
+  [OutputFormatAudioConcat]: TypeAudio,
+  [OutputFormatMdash]: TypeVideo,
+  [OutputFormatFlv]: TypeVideo,
+  [OutputFormatHls]: TypeVideo,
+  [OutputFormatJpeg]: TypeImage,
+  [OutputFormatMp3]: TypeAudio,
+  [OutputFormatMp4]: TypeVideo,
+  [OutputFormatPng]: TypeImage,
+  [OutputFormatRtmp]: TypeVideo,
+  [OutputFormatVideoConcat]: TypeVideo,
 }
 
 export const outputDefaultFormatByType = {
-  [TypeAudio]: OutputFormat.Mp3,
-  [TypeImage]: OutputFormat.Png,
-  [TypeVideo]: OutputFormat.Mp4,
-  // [TypeImageSequence]: OutputFormat.Jpeg,
+  [TypeAudio]: OutputFormatMp3,
+  [TypeImage]: OutputFormatPng,
+  [TypeVideo]: OutputFormatMp4,
+  // [TypeImageSequence]: OutputFormatJpeg,
 }
 
 

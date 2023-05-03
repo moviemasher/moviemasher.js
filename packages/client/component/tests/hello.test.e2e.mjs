@@ -14,7 +14,7 @@ describe('FormElement', function() {
     const parentNode = document.createElement('div');
     parentNode.setAttribute('style', 'width: 100vw; display: flex;');
 
-    const el = await fixture(html`<moviemasher-form translationSource='amazing'></moviemasher-form>`, { parentNode })
+    const el = await fixture(html`<movie-masher translationSource='amazing'></movie-masher>`, { parentNode })
     // await updateCompetedPromise(el)
     expect(el.translationSource).to.eq('amazing')
     expect(true).to.be.true;

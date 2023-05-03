@@ -1,5 +1,5 @@
 import React from "react"
-import { EventType } from "@moviemasher/lib-core"
+import type { EventType } from "@moviemasher/lib-core"
 
 import { useMasher } from "./useMasher"
 

@@ -1,7 +1,8 @@
 import React from 'react'
+import { PositionAt, PositionNone } from '@moviemasher/client-core'
 import { 
-  assertMashMedia, assertTrack, assertTrue, ClassSelected, DroppingPosition, 
-  eventStop, UnknownRecord 
+  assertMashMedia, assertTrack, assertTrue, ClassSelected, 
+  eventStop, UnknownRecord
 } from '@moviemasher/lib-core'
 
 import { JsxElements } from "../../Types/Element"
@@ -78,7 +79,7 @@ export function TimelineTrack(props: TimelineTrackProps) {
     if (!dataTransfer) return
 
     const definitionType = dragTypeValid(dataTransfer)
-    const pos = definitionType ? DroppingPosition.At : DroppingPosition.None
+    const pos = definitionType ? PositionAt : PositionNone
     setDroppingClip()
     setDroppingTrack(definitionType ? track : undefined)
     setDroppingPosition(pos)

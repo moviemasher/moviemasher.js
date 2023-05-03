@@ -1,15 +1,21 @@
 import type { Scalar } from '../Types/Core.js'
+
+import type { DataType } from '../Setup/Enums.js'
 import { IdPrefix, IdSuffix } from '../Setup/Constants.js'
-import { DataType, isDataType} from '../Setup/Enums.js'
+import { 
+  DataTypeBoolean, DataTypeContainerId, DataTypeContentId, 
+  DataTypeDefinitionId, DataTypeFontId, DataTypeFrame, 
+  DataTypeNumber, DataTypePercent, DataTypeRgb, DataTypeString, isDataType
+} from '../Setup/Enums.js'
 import { isMediaType } from '../Setup/MediaType.js'
 import { colorValid } from './Color/ColorFunctions.js'
 import { colorBlack } from './Color/ColorConstants.js'
 import { isBoolean, isNumber, isNumeric, isPopulatedString } from '../Utility/Is.js'
 
 export const PropertyTypesNumeric = [
-  DataType.Frame,
-  DataType.Percent,
-  DataType.Number,
+  DataTypeFrame,
+  DataTypePercent,
+  DataTypeNumber,
 ]
 
 const propertyTypeRepresentedAsNumber = (dataType: DataType): boolean => {
@@ -17,7 +23,7 @@ const propertyTypeRepresentedAsNumber = (dataType: DataType): boolean => {
 }
 
 export const propertyTypeIsString = (dataType: DataType): boolean => {
-  if (dataType === DataType.Boolean) return false
+  if (dataType === DataTypeBoolean) return false
   if (propertyTypeRepresentedAsNumber(dataType)) return false
   return true
 }
@@ -26,8 +32,8 @@ export const propertyTypeDefault = (dataType: DataType): Scalar => {
   if (isMediaType(dataType)) return `${IdPrefix}${dataType}${IdSuffix}`
 
   switch (dataType) {
-    case DataType.Boolean: return false
-    case DataType.Rgb: return colorBlack
+    case DataTypeBoolean: return false
+    case DataTypeRgb: return colorBlack
   }
   return propertyTypeRepresentedAsNumber(dataType) ? 0 : '.js'
 }
@@ -42,23 +48,23 @@ export const propertyTypeValid = (value: Scalar, dataType: DataType): boolean =>
   if (isMediaType(dataType)) return isPopulatedString(value)
 
   switch (dataType) {
-    case DataType.Boolean: return propertyTypeValidBoolean(value)
-    case DataType.Rgb: return colorValid(String(value))
-    case DataType.Frame:
-    case DataType.Percent:
-    case DataType.Number: return isNumeric(value)
-    case DataType.String: return true
-    case DataType.ContainerId:
-    case DataType.ContentId:
-    case DataType.FontId:
-    case DataType.DefinitionId: 
+    case DataTypeBoolean: return propertyTypeValidBoolean(value)
+    case DataTypeRgb: return colorValid(String(value))
+    case DataTypeFrame:
+    case DataTypePercent:
+    case DataTypeNumber: return isNumeric(value)
+    case DataTypeString: return true
+    case DataTypeContainerId:
+    case DataTypeContentId:
+    case DataTypeFontId:
+    case DataTypeDefinitionId: 
     default: return isPopulatedString(value)
   }
   return false
 }
 
 export const propertyTypeCoerce = (value: Scalar, dataType: DataType): Scalar => {
-  if (dataType === DataType.Boolean) {
+  if (dataType === DataTypeBoolean) {
     if (isBoolean(value)) return value as boolean
     if (isNumeric(value)) return !!Number(value)
     return value === 'true.js'

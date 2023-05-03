@@ -1,24 +1,27 @@
-import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative } from '../../Utility/Size.js'
+import type { SvgFilter, SvgFilters, SvgItem, SvgItems } from './Svg.js'
+import type { Rect, RectOptions } from '../../Utility/Rect.js'
+import type { Size } from '../../Utility/Size.js'
+import type { Point } from '../../Utility/Point.js'
+import type { StringRecord } from '../../Types/Core.js'
+import type { Lock } from '../../Setup/Enums.js'
+
+import { assertSizeAboveZero, isSize, sizeCopy,sizeAboveZero, sizeLockNegative } from '../../Utility/Size.js'
 import { NamespaceSvg } from '../../Setup/Constants.js'
 import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from '../../Utility/Is.js'
-import { Orientation } from '../../Setup/Enums.js'
-import { StringRecord } from '../../Types/Core.js'
-import { SvgFilter, SvgFilters, SvgItem, SvgItems } from './Svg.js'
 import { idGenerateString } from '../../Utility/Id.js'
-import { assertPoint, isPoint, Point, pointCopy, pointValueString, PointZero } from '../../Utility/Point.js'
-import { Rect, RectOptions } from '../../Utility/Rect.js'
+import { assertPoint, isPoint, pointCopy, pointValueString, PointZero } from '../../Utility/Point.js'
 import { Runtime } from '../../Runtime/Runtime.js'
 import { EnvironmentKeySupportsLoadSvg } from '../../Runtime/Environment/Environment.js'
 import { TypeBoolean } from '../../Utility/Scalar.js'
 import { colorCurrent } from '../Color/ColorConstants.js'
+import { LockNone } from '../../Setup/Enums.js'
 
 let PatchSvgElement: SVGSVGElement
 
 export const PatchSvgInitialize = (): SVGSVGElement => {
   const { document } = globalThis
   assertDefined(document)
-  // console.log('document',document)
-  // console.log('body', document.body)
+  
   const element = svgSvgElement()
   element.setAttribute('style', 'display:none')
 
@@ -118,9 +121,9 @@ export const svgSvgElement = (size?: Size, svgItems?: SvgItem | SvgItems): SVGSV
   return element
 }
 
-export const svgSetDimensionsLock = (element: SvgItem, dimensions: any, lock?: Orientation) => {
+const svgSetDimensionsLock = (element: SvgItem, dimensions: any, lock: Lock) => {
   assertSizeAboveZero(dimensions)
-  if (!lock) svgSet(element, 'none', 'preserveAspectRatio')
+  if (lock === LockNone) svgSet(element, 'none', 'preserveAspectRatio')
 
   const rect = { 
     ...sizeLockNegative(dimensions, lock), 
@@ -352,7 +355,7 @@ export const svgText = (string: string, family: string, size: number, transform:
 
 export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Promise<SVGImageElement> => {
   return svgImagePromise(url).then(item => {
-    const { lock, ...rest } = options
+    const { lock = LockNone, ...rest } = options
     svgSetDimensionsLock(item, rest, lock)
     return item
   })

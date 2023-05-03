@@ -9,6 +9,7 @@ import type { AudioType } from '../../Setup/Enums.js'
 import { isContent } from '../Content/ContentFunctions.js'
 import { TypeAudio } from '../../Setup/Enums.js'
 import { isMedia } from '../MediaFunctions.js'
+import { ClientAudio } from '../../Helpers/ClientMedia/ClientMedia.js'
 
 export interface AudioObject extends ContentObject, UpdatableDurationObject {
   definition?: AudioMedia
@@ -22,6 +23,7 @@ export const isAudio = (value: any): value is Audio => {
 }
 
 export interface AudioMediaObject extends MediaObject, UpdatableDurationDefinitionObject { 
+  loadedAudio?: ClientAudio
 }
 
 /**

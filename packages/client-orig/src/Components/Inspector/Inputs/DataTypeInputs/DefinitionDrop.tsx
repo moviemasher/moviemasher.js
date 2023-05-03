@@ -1,9 +1,13 @@
 import React from 'react'
+
+import type {Strings, } from '@moviemasher/lib-core'
+
 import {
-  assertMedia, isMediaType, assertPopulatedString, ClassDropping, DataType, 
-  ContainingTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition, 
-  isMediaObject, assertDefined, Strings
+  assertMedia, isMediaType, assertPopulatedString, ClassDropping, 
+  TypesContaining, TypesContenting, assertTrue, eventStop, isContainerDefinition, 
+  isMediaObject, assertDefined, DataTypeContainerId, DataTypeContentId
 } from '@moviemasher/lib-core'
+
 import { 
   DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles 
 } from '@moviemasher/client-core'
@@ -134,14 +138,14 @@ export function DefinitionDrop(props: DefinitionDropProps) {
   return <View {...viewProps} />
 }
 
-DataTypeInputs[DataType.ContainerId] = (
-  <DefinitionDrop types={ContainingTypes} className='drop-container'>
+DataTypeInputs[DataTypeContainerId] = (
+  <DefinitionDrop types={TypesContaining} className='drop-container'>
     <DefinitionItem className='definition preview'/>
   </DefinitionDrop>
 )
 
-DataTypeInputs[DataType.ContentId] = (
-  <DefinitionDrop types={ContentTypes} className='drop-container'>
+DataTypeInputs[DataTypeContentId] = (
+  <DefinitionDrop types={TypesContenting} className='drop-container'>
     <DefinitionItem className='definition preview' />
   </DefinitionDrop>
 )

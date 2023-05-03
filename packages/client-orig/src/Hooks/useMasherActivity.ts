@@ -24,29 +24,29 @@ export const useMasherActivity = ():  ActivityObjects => {
   //     const { current: allActivities } = allActivitiesRef
   //     const existing = allActivities.find(activity => activity.id === id)
 
-  //     const activity: ActivityObject = existing || { id, activityGroup: ActivityGroup.Active, infos: [] }
+  //     const activity: ActivityObject = existing || { id, activityGroup: ActivityGroupActive, infos: [] }
   //     activity.infos.unshift(info)
-  //     if (type === ActivityType.Complete) activity.activityGroup = ActivityGroup.Complete
-  //     else if (type === ActivityType.Error) {
-  //       activity.activityGroup = ActivityGroup.Error
+  //     if (type === ActivityTypeComplete) activity.activityGroup = ActivityGroupComplete
+  //     else if (type === ActivityTypeError) {
+  //       activity.activityGroup = ActivityGroupError
   //     }
   //     if (!existing) allActivities.unshift(activity)
   //   }
   // }
   const externalStore: ActivityObjects = []
   // React.useSyncExternalStore<ActivityObjects>((callback) => {
-  //   eventTarget.addEventListener(EventType.Active, callback)
+  //   eventTarget.addEventListener(EventTypeActive, callback)
   //   return () => {
-  //     eventTarget.removeEventListener(EventType.Active, callback)
+  //     eventTarget.removeEventListener(EventTypeActive, callback)
   //   }
   // }, getSnapshot)
 
   // const removeListener = () => {
-  //   eventTarget.removeEventListener(EventType.Active, handleEvent)
+  //   eventTarget.removeEventListener(EventTypeActive, handleEvent)
   // }
 
   // const addListener = () => {
-  //   eventTarget.addEventListener(EventType.Active, handleEvent)
+  //   eventTarget.addEventListener(EventTypeActive, handleEvent)
 
   //   return () => { removeListener() }
   // }

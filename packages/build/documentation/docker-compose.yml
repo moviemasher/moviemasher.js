@@ -10,16 +10,17 @@ services:
     env_file:
       - ../../../dev/local.env
     volumes:
-      - ../../../:${MOVIEMASHER_DIR_ROOT}/
+      # - ../../../:${MOVIEMASHER_DIR_ROOT}/
 
-      # - ../../../docs/:${MOVIEMASHER_DIR_ROOT}/docs/
-      # - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
-      # - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
-      # - ../../../tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
-      # - ../../../typedoc.js:${MOVIEMASHER_DIR_ROOT}/typedoc.js
+      - ../../../docs/:${MOVIEMASHER_DIR_ROOT}/docs/
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
+      - ../../../typedoc.js:${MOVIEMASHER_DIR_ROOT}/typedoc.js
 
-      # - ../../../packages/build/documentation/package.json:${MOVIEMASHER_DIR_ROOT}/packages/build/documentation/package.json
-      # - ../../../packages/core/client/:${MOVIEMASHER_DIR_ROOT}/packages/core/client/
-      # - ../../../packages/core/lib/:${MOVIEMASHER_DIR_ROOT}/packages/core/lib/
-      # - ../../../packages/core/server/:${MOVIEMASHER_DIR_ROOT}/packages/core/server/
-      # - ../../../packages/protocol/:${MOVIEMASHER_DIR_ROOT}/packages/protocol/
+      - ../../../packages/build/documentation/:${MOVIEMASHER_DIR_ROOT}/packages/build/documentation/
+      - ../../../packages/core/client/:${MOVIEMASHER_DIR_ROOT}/packages/core/client/
+      - ../../../packages/core/lib/:${MOVIEMASHER_DIR_ROOT}/packages/core/lib/
+      - ../../../packages/core/server/:${MOVIEMASHER_DIR_ROOT}/packages/core/server/
+      - ../../../packages/client/component/:${MOVIEMASHER_DIR_ROOT}/packages/client/component/
+      - ../../../packages/protocol/:${MOVIEMASHER_DIR_ROOT}/packages/protocol/

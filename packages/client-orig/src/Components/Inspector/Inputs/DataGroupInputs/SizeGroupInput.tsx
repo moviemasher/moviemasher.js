@@ -1,8 +1,11 @@
 import React from "react"
+
 import { 
-  selectedPropertiesScalarObject, ClassButton, assertString, ClassSelected, 
-  DataGroup, Orientation, PropertyTweenSuffix, isOrientation, 
-  selectedPropertyObject, ScalarRecord, assertSelectorType, assertTime, assertTimeRange, tweenInputTime, EmptyFunction 
+  selectedPropertiesScalarObject, ClassButton, ClassSelected, 
+  PropertyTweenSuffix, assertLock, 
+  selectedPropertyObject, ScalarRecord, assertSelectorType, assertTime, 
+  assertTimeRange, tweenInputTime, EmptyFunction,
+  LockWidth, LockHeight, LockNone, DataGroupSize, 
 } from "@moviemasher/lib-core"
 
 
@@ -15,11 +18,7 @@ import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
 import { useMasher } from "../../../../Hooks/useMasher"
 import MasherContext from "../../../Masher/MasherContext"
-import { PropsAndChild } from "../../../../Types/Props"
 
-const SizeInputOrientations: Record<Orientation, string> = {
-  [Orientation.H]: 'width', [Orientation.V]: 'height'
-}
 
 export function SizeGroupInput(props: DataGroupProps) {
   const masherContext = React.useContext(MasherContext)
@@ -34,10 +33,10 @@ export function SizeGroupInput(props: DataGroupProps) {
   assertTimeRange(timeRange)
   assertTime(time)
   
-  const endDefined = tweenDefined[DataGroup.Size]
-  const endSelected = tweenSelected[DataGroup.Size]
+  const endDefined = tweenDefined[DataGroupSize]
+  const endSelected = tweenSelected[DataGroupSize]
 
-  const byName = selectedPropertyObject(selectedItems, DataGroup.Size, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroupSize, selectType)
   
   const { 
     lock, width, height, 
@@ -49,10 +48,9 @@ export function SizeGroupInput(props: DataGroupProps) {
   const heightProperty = endSelected ? heightEnd : height
   const values: ScalarRecord = selectedPropertiesScalarObject(byName) 
 
-  const { lock: lockValue } = values
-  assertString(lockValue, 'lockValue')
-    
-  const orientation = isOrientation(lockValue) ? lockValue as Orientation : undefined
+  const { lock: lockValue = LockNone } = values
+  assertLock(lockValue, 'lock')
+ 
   
   const elementsByName: Record<string, JsxElement> = {}
   const inspectingProperties = [widthProperty, heightProperty]
@@ -78,7 +76,7 @@ export function SizeGroupInput(props: DataGroupProps) {
       inputContext.defaultValue = values[baseName] 
     }
 
-    if (!(orientation && baseName === SizeInputOrientations[orientation])) {
+    if (baseName !== lockValue) {
       inputContext.changeHandler = changeHandler
     }
     const providerProps = { 
@@ -89,9 +87,9 @@ export function SizeGroupInput(props: DataGroupProps) {
   const lockWidthProps = { 
     key: "lock-width",
     className: ClassButton,
-    children: orientation === Orientation.H ? icons.lock : icons.unlock, 
+    children: lockValue === LockWidth ? icons.lock : icons.unlock, 
     onClick: () => {
-      const value = orientation === Orientation.H ? "" : Orientation.H
+      const value = lockValue === LockWidth ? LockNone : LockWidth
       lock.changeHandler('lock', value)
     }
   }
@@ -99,9 +97,9 @@ export function SizeGroupInput(props: DataGroupProps) {
   const lockHeightProps = { 
     key: "lock-height",
     className: ClassButton,
-    children: orientation === Orientation.V ? icons.lock : icons.unlock, 
+    children: lockValue === LockHeight ? icons.lock : icons.unlock, 
     onClick: () => {
-      const value = orientation === Orientation.V ? "" : Orientation.V
+      const value = lockValue === LockHeight ? LockNone : LockHeight
       lock.changeHandler('lock', value)
     }
   }
@@ -113,7 +111,7 @@ export function SizeGroupInput(props: DataGroupProps) {
     key: 'start',
     onClick: () => {
       editor.goToTime(timeRange.startTime)
-      changeTweening(DataGroup.Size, false)
+      changeTweening(DataGroupSize, false)
     }
   }
   const endProps = {
@@ -122,7 +120,7 @@ export function SizeGroupInput(props: DataGroupProps) {
     children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {
       editor.goToTime(timeRange.lastTime)
-      changeTweening(DataGroup.Size, true)
+      changeTweening(DataGroupSize, true)
     }
   }
   const legendElements = [
@@ -154,4 +152,4 @@ export function SizeGroupInput(props: DataGroupProps) {
   </fieldset>
 }
 
-DataGroupInputs[DataGroup.Size] = <SizeGroupInput key="size-group-input" />
+DataGroupInputs[DataGroupSize] = <SizeGroupInput key="size-group-input" />

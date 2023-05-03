@@ -1,17 +1,21 @@
 
 import { 
-  EmptyFunction, isObject, isPopulatedString, errorThrow, Identified,
+  EmptyFunction, isPopulatedString, errorThrow, Identified,
 } from '@moviemasher/lib-core'
-import { ActivityInfo } from "@moviemasher/client-core"
 
 import { createContext } from '../../Framework/FrameworkFunctions'
+import { ActivityInfo } from '../../Types/Core'
 
-export enum ActivityGroup {
-  Active = 'active',
-  Error = 'error',
-  Complete = 'complete',
-}
-export const ActivityGroups = Object.values(ActivityGroup)
+export type ActiveActivityGroup = 'active' 
+export type ErrorActivityGroup = 'error'
+export type CompleteActivityGroup = 'complete'
+export type ActivityGroup = ActiveActivityGroup | ErrorActivityGroup | CompleteActivityGroup
+
+export const ActivityGroupActive: ActivityGroup = 'active'
+export const ActivityGroupError: ActivityGroup = 'error'
+export const ActivityGroupComplete: ActivityGroup = 'complete'
+
+export const ActivityGroups = [ActivityGroupActive, ActivityGroupError, ActivityGroupComplete]
 export const isActivityGroup = (type?: any): type is ActivityGroup => {
   return isPopulatedString(type) && ActivityGroups.includes(type as ActivityGroup)
 }
@@ -37,7 +41,7 @@ export const ActivityContextDefault: ActivityContextInterface = {
   label: '',
   activities: [],
   allActivities: [],
-  picked: ActivityGroup.Active,
+  picked: ActivityGroupActive,
   pick: EmptyFunction
 }
 

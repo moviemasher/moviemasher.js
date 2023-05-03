@@ -4,18 +4,19 @@
     <script type="importmap">
       {
         "imports": {
-
-          "@moviemasher/": "./@moviemasher/",
-          "tslib/": "./tslib/",
-          "lit-element/": "./lit-element/",
-          "@lit-labs/context/": "./@lit-labs/context/",
-          "@lit-labs/observers/": "./@lit-labs/observers/",
+          "@moviemasher/lib-core": "./@moviemasher/lib-core/dist/lib-core.js",
+          "@moviemasher/client-core": "./@moviemasher/client-core/dist/client-core.js",
+          "@moviemasher/client-component/": "./@moviemasher/client-component/dist/",
+          "tslib": "./tslib/tslib.es6.js",
+          "@lit-labs/context": "./@lit-labs/context/index.js",
           "lit-html/": "./lit-html/",
           "lit-html": "./lit-html/lit-html.js",
           "@lit/reactive-element": "./@lit/reactive-element/reactive-element.js",
           "@lit/": "./@lit/",
           "lit/": "./lit/",
-          "lit": "./lit/index.js"
+          "lit": "./lit/index.js",
+          "lit-element/": "./lit-element/",
+          "lit-element": "./lit-element/lit-element.js"
         }
       }
     </script>
@@ -35,28 +36,32 @@
         body { background-color: #000; color: #fff; }
       }
 
-      moviemasher-form {
+      movie-masher-interceptor-supabase {
         --gap: 20px;
         padding: var(--gap);
       }
 
-      moviemasher-form::part(selector) {
-        border: 2px solid red;
+      movie-masher-interceptor-supabase::part(form-selector) {
+        border: 1px solid red;
         --control-fore: #fff;
       }
-      moviemasher-form::part(selector-footer) {
-        border: 2px solid green;
+      movie-masher-interceptor-supabase::part(form-selector-footer) {
+        border: 1px solid green;
       }
-      moviemasher-form::part(selector-footer-left) {
-        border: 2px solid blue;
+      movie-masher-interceptor-supabase::part(form-selector-footer-left) {
+        border: 1px solid blue;
       }
      
     </style>
-    <script type="module" src="@moviemasher/client-component/esm/form.js"></script>   
+    <script type="module">
+      import "@moviemasher/client-component/interceptor/interceptor-supabase.js"
+    </script>   
   </head>
   <body>
-    <moviemasher-form>
-      <moviemasher-span slot='selector-footer-right'><moviemasher-icon icon='effect'></moviemasher-icon></moviemasher-span>
-    </moviemasher-form>
+    <movie-masher-interceptor-supabase>
+      <movie-masher slotted='form'>
+        <span slot='selector-div-right'><movie-masher-icon icon='effect'></movie-masher-icon></span>
+      </movie-masher>
+    </movie-masher-interceptor-supabase>
   </body>
 </html>

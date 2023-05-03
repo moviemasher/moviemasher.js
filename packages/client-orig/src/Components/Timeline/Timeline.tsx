@@ -1,8 +1,10 @@
+import { PositionAfter, PositionNone } from '@moviemasher/client-core'
+import type { Position } from '@moviemasher/client-core'
 import React from 'react'
 import {
-  Rect, RectZero, Clip, DroppingPosition, EventType, Track, pixelToFrame, Clips, 
+  Rect, RectZero, Clip,  Track, pixelToFrame, Clips, 
   Point, eventStop, MashIndex, isPositive, assertClip, 
-  EffectType, isMediaObject
+  isMediaObject, TypeEffect, EventTypeLoaded, EventTypeAction, EventTypeDuration, EventTypeSelection, EventTypeTime
 } from '@moviemasher/lib-core'
 
 
@@ -36,7 +38,7 @@ export function Timeline(props: TimelineProps) {
   const updateFrames = () => { setFrames(currentFrames()) }
   const updateFrame = () => { setFrame(currentFrame()) }
 
-  const [droppingPosition, setDroppingPosition] = React.useState<DroppingPosition | number>(DroppingPosition.None)
+  const [droppingPosition, setDroppingPosition] = React.useState<Position | number>(PositionNone)
   const [droppingTrack, setDroppingTrack] = React.useState<Track | undefined>()
   const [droppingClip, setDroppingClip] = React.useState<Clip | undefined>()
   const [selectedTrack, setSelectedTrack] = React.useState<Track | undefined>()
@@ -48,14 +50,14 @@ export function Timeline(props: TimelineProps) {
   const refresh = () => { setRefreshed(value => value + 1) }
 
   useListeners({
-    [EventType.Loaded]: () => { setZoom(TimelineDefaultZoom) },
-    [EventType.Action]: refresh,
-    [EventType.Selection]: () => {
+    [EventTypeLoaded]: () => { setZoom(TimelineDefaultZoom) },
+    [EventTypeAction]: refresh,
+    [EventTypeSelection]: () => {
       setSelectedClip(editor.selection.clip)
       setSelectedTrack(editor.selection.track)
     },
-    [EventType.Time]: updateFrame,
-    [EventType.Duration]: updateFrames,
+    [EventTypeTime]: updateFrame,
+    [EventTypeDuration]: updateFrames,
   })
 
   const dragTypeValid = (dataTransfer: DataTransfer, clip?: Clip): boolean => {
@@ -71,12 +73,12 @@ export function Timeline(props: TimelineProps) {
 
     // effects can only be dropped on clips
     const definitionType = dragMediaType(type)
-    return definitionType !== EffectType
+    return definitionType !== TypeEffect
   }
 
   const onDragLeave = (event: DragEvent) => {
     eventStop(event)
-    setDroppingPosition(DroppingPosition.None)
+    setDroppingPosition(PositionNone)
     setDroppingTrack(undefined)
     setDroppingClip(undefined)
   }
@@ -96,7 +98,7 @@ export function Timeline(props: TimelineProps) {
     if (!droppingClip) return 0
 
     const clipIndex = clips.indexOf(droppingClip)
-    if (droppingPosition === DroppingPosition.After) return clipIndex + 1
+    if (droppingPosition === PositionAfter) return clipIndex + 1
     return clipIndex
   }
 

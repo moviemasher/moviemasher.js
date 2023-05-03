@@ -16,7 +16,9 @@ export interface ImageObject extends ContentObject, ContainerObject, UpdatableSi
   definition?: ImageMedia
 }
 
-export interface ImageMediaObject extends MediaObject, UpdatableSizeDefinitionObject {}
+export interface ImageMediaObject extends MediaObject, UpdatableSizeDefinitionObject {
+  loadedImage?: ClientImage
+}
 
 
 export interface Image extends Content, Container, UpdatableSize {

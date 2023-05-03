@@ -1,8 +1,8 @@
 import React from 'react'
 import { 
-  EventType, Rect, eventStop, isMediaType, rectRound,
+  Rect, eventStop, isMediaType, rectRound,
   ClassDropping, sizeAboveZero, UnknownRecord, assertMediaType, 
-  rectCopy, MashIndex, assertObject, EmptyFunction, isMediaObject, ClipType, CurrentIndex, 
+  rectCopy, MashIndex, EmptyFunction, isMediaObject, CurrentIndex, EventTypeDraw, EventTypeSelection, TypeClip, 
 } from '@moviemasher/lib-core'
 
 
@@ -88,7 +88,7 @@ export function PlayerContent(props: PropsWithChildren) {
     watching.timeout = setTimeout(requestItems, PlayerRefreshRate)
   }
 
-  useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
+  useListeners({ [EventTypeDraw]: handleDraw, [EventTypeSelection]: handleDraw })
 
   const dragValid = (dataTransfer?: DataTransfer | null): dataTransfer is DataTransfer => {
     if (!dataTransfer) return false
@@ -140,7 +140,7 @@ export function PlayerContent(props: PropsWithChildren) {
     className: classes.join(' '),
     key: 'player-content', 
     onDragOver, onDrop, onDragLeave, 
-    onPointerDown: () => { masher.selection.unset(ClipType) }
+    onPointerDown: () => { masher.selection.unset(TypeClip) }
   }
 
   if (sizeAboveZero(rect)) {

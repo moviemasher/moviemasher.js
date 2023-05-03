@@ -1,6 +1,6 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataTypeString } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { idGenerate } from '../../../Utility/Id.js'
 import { colorToRgb, colorToRgba } from '../../../Helpers/Color/ColorFunctions.js'
@@ -18,7 +18,7 @@ export class ColorizeFilter extends FilterDefinitionClass {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, name: 'color', type: DataType.String, 
+      tweenable: true, custom: true, name: 'color', type: DataTypeString, 
     }))
     this.populateParametersFromProperties()
   }

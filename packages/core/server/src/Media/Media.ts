@@ -1,5 +1,5 @@
 import { 
-  isIdentified, errorThrow, Identified, isObject, Output, Request, Requests 
+  isIdentified, errorThrow, Identified, isObject, Output, EndpointRequest, EndpointRequests 
 } from "@moviemasher/lib-core"
 import { Input } from "../Types/Core"
 
@@ -8,7 +8,7 @@ export interface MediaEvent {
 }
 
 export interface MediaRequest extends Identified {
-  callback?: Request | Requests
+  callback?: EndpointRequest | EndpointRequests
   input: Input
   output: Output
 }

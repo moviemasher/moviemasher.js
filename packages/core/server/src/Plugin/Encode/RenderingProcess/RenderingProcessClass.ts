@@ -7,7 +7,7 @@ import {
   EmptyFunction, 
   assertTrue, assertSize, isDefined, 
   NumberRecord, assertAboveZero, 
-  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, TypeVideo, TypeImage, ErrorName, errorThrow, Size, Numbers, NewlineChar
+  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, TypeVideo, TypeImage, ErrorName, errorThrow, Size, Numbers, NewlineChar, AVTypeBoth, AVTypeVideo
 } from "@moviemasher/lib-core"
 
 import {
@@ -93,7 +93,7 @@ export class RenderingProcessClass implements RenderingProcess {
       const inputs = audibleCommandDescription?.inputs || []
 
       const description: CommandDescription = { 
-        inputs: [commandInput], duration, avType: AVType.Video
+        inputs: [commandInput], duration, avType: AVTypeVideo
       }
       if (inputs.length) {
         description.commandFilters =  [{ 
@@ -147,7 +147,7 @@ export class RenderingProcessClass implements RenderingProcess {
       if (filters) commandFilters.push(...filters)
       if (duration) durations.push(duration)
     })
-    const avType = types.size === 1 ? [...types.values()].pop()! : AVType.Both
+    const avType = types.size === 1 ? [...types.values()].pop()! : AVTypeBoth
     const commandDescription: CommandDescription = { inputs, commandFilters, avType }
     assertTrue(durations.length === descriptions.length, 'each description has duration')
     commandDescription.duration = Math.max(...durations)

@@ -1,5 +1,5 @@
 import type {ClientVideo} from '../../Helpers/ClientMedia/ClientMedia.js'
-import type {CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs} from '../../Base/Code.js'
+import type {Component, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs} from '../../Base/Code.js'
 import type {Container, ContainerClass, ContainerDefinition, ContainerRectArgs} from './Container.js'
 import type {Content} from '../Content/Content.js'
 import type {Filter} from '../../Plugin/Filter/Filter.js'
@@ -10,17 +10,17 @@ import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
 import type {TweenableClass} from '../../Mixin/Tweenable/Tweenable.js'
 import type {Tweening} from '../../Mixin/Tweenable/Tween.js'
 
-import {Component} from '../../Base/Code.js'
+import { ComponentPlayer, } from '../../Base/Code.js'
 import { rectsEqual} from '../../Utility/Rect.js'
 import { sizeCopy} from '../../Utility/Size.js'
 import { tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect} from '../../Mixin/Tweenable/Tween.js'
-import {Anchors, DataType, DirectionObject, Directions, TypeVideo, TypeImage, TypeSequence} from '../../Setup/Enums.js'
+import {Directions, SideDirectionObject, TypeVideo, TypeImage, TypeSequence, DataTypeBoolean, DataTypePercent, SideDirections} from '../../Setup/Enums.js'
 import {arrayLast} from '../../Utility/Array.js'
 import {assertClientImage, isClientVideo} from '../../Helpers/ClientMedia/ClientMediaFunctions.js'
 import {assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isDefiniteError, isTimeRange} from '../../Utility/Is.js'
 import {assertVideoMedia} from '../Video/Video.js'
 import {colorWhite} from '../../Helpers/Color/ColorConstants.js'
-import {DataGroup, propertyInstance} from '../../Setup/Property.js'
+import {DataGroupOpacity, DataGroupPoint, propertyInstance} from '../../Setup/Property.js'
 import {DefaultContainerId} from './ContainerConstants.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
 import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
@@ -42,25 +42,25 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const { container } = this
       if (container) {
         this.addProperties(object, propertyInstance({
-          name: 'x', type: DataType.Percent, defaultValue: 0.5,
-          group: DataGroup.Point, tweenable: true, 
+          name: 'x', type: DataTypePercent, defaultValue: 0.5,
+          group: DataGroupPoint, tweenable: true, 
         }))
         this.addProperties(object, propertyInstance({
-          name: 'y', type: DataType.Percent, defaultValue: 0.5,
-          group: DataGroup.Point, tweenable: true, 
+          name: 'y', type: DataTypePercent, defaultValue: 0.5,
+          group: DataGroupPoint, tweenable: true, 
         }))
         // offN, offS, offE, offW
-        Directions.forEach(direction => {
+        SideDirections.forEach(direction => {
           this.addProperties(object, propertyInstance({
-            name: `off${direction}`, type: DataType.Boolean, 
-            group: DataGroup.Point,
+            name: `off${direction}`, type: DataTypeBoolean, 
+            group: DataGroupPoint,
           }))
         })
         
         this.addProperties(object, propertyInstance({
           tweenable: true, name: 'opacity', 
-          type: DataType.Percent, defaultValue: 1.0,
-          group: DataGroup.Opacity,
+          type: DataTypePercent, defaultValue: 1.0,
+          group: DataGroupOpacity,
         }))        
       }
     }
@@ -102,7 +102,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const imageTranscoding = definition.preferredTranscoding(TypeImage)
       const { request } = imageTranscoding
 
-      return requestImagePromise(request).then(orError => {
+      return this.definition.requestImagePromise(request).then(orError => {
         if (isDefiniteError(orError)) return errorThrow(orError.error)
 
         const { data: clientImage } = orError
@@ -170,7 +170,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
         assertObject(contentItem, 'contentItem')
         
         if (isClientVideo(contentItem)) {
-          assertTrue(component === Component.Player, 'video in player')
+          assertTrue(component === ComponentPlayer, 'video in player')
           return this.containedVideo(contentItem, containerRect, size, time, range)
         }   
 
@@ -184,7 +184,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           
           defs.push(containerItem)
           let containerId = idGenerateString() 
-          if (updatableContainer && component === Component.Player) {
+          if (updatableContainer && component === ComponentPlayer) {
             // container is image/video so we need to add a polygon for hover
             const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
             polygonElement.setAttribute('vector-effect', 'non-scaling-stroke')
@@ -216,7 +216,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           if (contentSvgFilter) defs.push(contentSvgFilter)
           else contentItem.removeAttribute('filter')
         
-          const useSvg = (updatableContent || updatableContainer) && component === Component.Player
+          const useSvg = (updatableContent || updatableContainer) && component === ComponentPlayer
           const svg = useSvg ? this.svgElement : svgSvgElement()
           svgSetChildren(svg, [svgDefsElement(defs), ...items])
           svgSetDimensions(svg, size)
@@ -326,11 +326,11 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
 
     declare definition: ContainerDefinition
     
-    get directions() { return Anchors }
+    get directions() { return Directions }
 
-    get directionObject(): DirectionObject {
-      return Object.fromEntries(Directions.map(direction => 
-        [direction, !!this.value(`off${direction}`)]
+    get directionObject(): SideDirectionObject {
+      return Object.fromEntries(SideDirections.map(direction => 
+        [direction, !!this.value(`off${direction.slice(0, 1).toUpperCase()}`)]
       ))
     }
 

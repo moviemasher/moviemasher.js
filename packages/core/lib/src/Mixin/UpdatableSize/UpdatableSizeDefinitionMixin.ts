@@ -29,10 +29,10 @@ export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(B
       // console.log(this.constructor.name, 'previewSize transcoding', transcoding)
       if (!transcoding) return this.sourceSize
 
-      const { response: clientMedia } = transcoding.request
-      if (!sizeAboveZero(clientMedia)) return 
+      const { response: response } = transcoding.request
+      if (!sizeAboveZero(response)) return 
 
-      const { width, height } = clientMedia
+      const { width, height } = response
       if (!(isAboveZero(width) && isAboveZero(height))) return 
 
       return { width, height }

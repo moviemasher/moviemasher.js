@@ -2,7 +2,7 @@ import React from "react"
 
 import type { PropsClickable } from "../../Types/Props"
 
-import { assertEndpoint, assertMashMedia, endpointUrl, EventType, isMashMedia } from "@moviemasher/lib-core"
+import { assertEndpoint, assertMashMedia, endpointUrl, EventTypeLoaded, EventTypeRender, isMashMedia } from "@moviemasher/lib-core"
 
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
@@ -24,8 +24,8 @@ export function ViewControl(props: PropsClickable) {
   const updateDisabled = () => setDisabled(getDisabled())
 
   useListeners({
-    [EventType.Render]: updateDisabled,
-    [EventType.Loaded]: updateDisabled
+    [EventTypeRender]: updateDisabled,
+    [EventTypeLoaded]: updateDisabled
   })
 
   return <Clickable key='encode'

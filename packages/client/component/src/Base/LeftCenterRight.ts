@@ -1,121 +1,142 @@
 import type { 
-  Content, Contents, Htmls, SlottedContent, LeftSlot, RightSlot, 
-} from '../declarations'
+  Content, Contents, Htmls, OptionalContent, LeftSlot, RightSlot, CenterSlot
+} from '../declarations.js'
 
 import { css } from 'lit'
 import { html } from 'lit'
 import { property } from 'lit/decorators/property.js'
-import { ifDefined } from 'lit/directives/if-defined.js'
 
-import { Slotted } from './Slotted'
+import { Slotted } from './Slotted.js'
+import { Component } from './Component.js'
 
 const LeftSlot: LeftSlot = 'left'
 const RightSlot: RightSlot = 'right'
+const CenterSlot: CenterSlot = 'center'
 
 export class LeftCenterRight extends Slotted {
-  protected override defaultSlottedContent(key: string, htmls: Htmls): SlottedContent { 
+  protected override defaultSlottedContent(key: string, htmls: Htmls): OptionalContent { 
     switch (key) {
       case LeftSlot: return this.leftContent(htmls)
       case RightSlot: return this.rightContent(htmls)
+      case CenterSlot: return this.centerContent(htmls)
     }
   }
 
-  protected leftContent(htmls: Htmls): SlottedContent { 
-    this.importTags('moviemasher-span')
-    return html`<moviemasher-span
-      exportparts='${ifDefined(this.exportsForSlot(LeftSlot))}'
-      part='${LeftSlot}' slotted='${LeftSlot}' class='${LeftSlot}'
-    >${htmls}</moviemasher-span>` 
+  protected centerContent(htmls: Htmls): OptionalContent { 
+    this.importTags('movie-masher-span')
+    return html`<movie-masher-span
+      part='${CenterSlot}' slotted='${CenterSlot}' class='${CenterSlot}'
+    >${htmls}</movie-masher-span>` 
   }
-  protected rightContent(htmls: Htmls): SlottedContent { 
-    this.importTags('moviemasher-span')
-    return html`<moviemasher-span 
-      exportparts='${ifDefined(this.exportsForSlot(RightSlot))}'
+
+  protected leftContent(htmls: Htmls): OptionalContent { 
+    this.importTags('movie-masher-span')
+    return html`<movie-masher-span
+      part='${LeftSlot}' slotted='${LeftSlot}' class='${LeftSlot}'
+    >${htmls}</movie-masher-span>` 
+  }
+  protected rightContent(htmls: Htmls): OptionalContent { 
+    this.importTags('movie-masher-span')
+    return html`<movie-masher-span 
       part='${RightSlot}' slotted='${RightSlot}' class='${RightSlot}'
-    >${htmls}</moviemasher-span>` 
+    >${htmls}</movie-masher-span>` 
   }
   
-  override slots = [LeftSlot, RightSlot]
+  override slots = [LeftSlot, CenterSlot, RightSlot]
 
-  static styleHost = css`
-    :host {
-      flex-grow: 1;
-      display: flex;
+  static cssHostOverflowY = css`
+  :host {
+    display: flex;
+    overflow-y: auto;
+  }
+`
+
+  static cssHostSection = css`
+   :host {
       --padding: var(--section-padding);
       --spacing: var(--section-spacing);
       --back: var(--section-back);
       --fore: var(--section-fore);
     }
-
-    footer,
-    header {
+  `
+  static cssSection = css`
+    header, footer, div {
+      padding: 0;
       flex-grow: 1;
-      display: flex;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: min-content 1fr min-content;
+    }
+
+
+    header, footer {
       gap: var(--spacing);
-      padding: var(--padding);
       background-color: var(--back);
       color: var(--fore);
       line-height: var(--icon-size);
       font-size: var(--icon-size);
+      /* border: 1px solid yellow; */
     }
-    header>*:first-child,
-    footer>*:first-child {
-      flex-grow: 1;
-    }
-    header>*,
-    footer>* {
-      margin-block: auto;
+    .right {
+      text-align: right;
+      background-color: pink;
     }
 
-
+    header > .left,
+    footer > .left,
+    div > .left {
+      background-color: gold;
+      
+    }
+ 
   `
   static override styles = [
-    this.styleHost
+    Component.cssHostFlex,
+    Component.cssDivFlex,
+    this.cssHostSection,
+    this.cssSection,
   ]
 }
 
 export class Header extends LeftCenterRight {
   @property() icon = ''
-  override leftContent(htmls: Htmls): SlottedContent {
-    const slotsCopy = [...htmls]
+  override leftContent(slots: Htmls): OptionalContent {
+    const slotsCopy = [...slots]
     const { icon } = this
     if (icon) {
-      this.importTags('moviemasher-icon')
+      this.importTags('movie-masher-icon')
       slotsCopy.push(
-        html`<moviemasher-icon 
-          exportparts='${ifDefined(this.exportsForSlot('icon'))}'
+        html`<movie-masher-icon 
           part='icon' slotted='icon'
           icon='${icon}'
-        ></moviemasher-icon>`
+        ></movie-masher-icon>`
       )
     }
     return super.leftContent(slotsCopy)
   }
 
-  override slottedContent(contents: Contents): Content {
+  protected override content(contents: Contents): Content {
     return html`<header 
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
     >${contents}</header>`
   }
 }
 
 export class Footer extends LeftCenterRight {
-  override slottedContent(contents: Contents): Content {
+  protected override content(contents: Contents): Content {
     return html`<footer 
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
     >${contents}</footer>`
   }
 }
 
 
 export class Div extends LeftCenterRight {
-  override slottedContent(contents: Contents): Content {
+  protected override content(contents: Contents): Content {
     return html`<div 
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
     >${contents}</div>`
   }
 }

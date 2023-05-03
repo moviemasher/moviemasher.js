@@ -17,7 +17,8 @@ import {ContainerMixin} from '../Container/ContainerMixin.js'
 import {MediaInstanceBase} from '../MediaInstanceBase.js'
 import {PropertyTweenSuffix} from '../../Base/Propertied.js'
 import {TweenableMixin} from '../../Mixin/Tweenable/TweenableMixin.js'
-import {TypeEffect, TypeNone, SelectorType} from '../../Setup/Enums.js'
+import {TypeEffect, TypeNone, SelectorType, ActionTypeChange} from '../../Setup/Enums.js'
+import { ChangePropertyActionObject } from "../../Plugin/Masher/Actions/Action/Action.js"
 
 
 const EffectContainerWithTweenable = TweenableMixin(MediaInstanceBase)
@@ -78,7 +79,12 @@ export class EffectClass extends EffectContainerWithContainer {
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       
-          const options = { target: this, property, redoValue, undoValue }
+          const options: ChangePropertyActionObject = { 
+            type: ActionTypeChange,
+            target: this, property, redoValue, undoValue,
+            undoSelection: {...actions.selection}, redoSelection: {...actions.selection }
+          }
+
           actions.create(options)
         }
       }

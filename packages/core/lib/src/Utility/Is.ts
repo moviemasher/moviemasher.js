@@ -1,5 +1,5 @@
 import type { DefiniteError } from '../Helpers/Error/Error.js'
-import type { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar, StringRecord, NestedStringRecord } from '../Types/Core.js'
+import type { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar, StringRecord, NestedStringRecord, ScalarRecord } from '../Types/Core.js'
 import type { Rgb } from '../Helpers/Color/Color.js'
 import type { Time, TimeRange } from '../Helpers/Time/Time.js'
 import type { UnknownFunction } from '../Setup/Constants.js'
@@ -160,6 +160,9 @@ export function assertScalar(value: any, name?: string): asserts value is Scalar
 }
 
 
+export const isScalarRecord = (value: any): value is ScalarRecord => {
+  return isObject(value) && Object.values(value).every(value => isScalar(value))
+}
 export const isStringRecord = (value: any): value is StringRecord => {
   return isObject(value) && Object.values(value).every(value => isString(value))
 }

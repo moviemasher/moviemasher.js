@@ -1,5 +1,5 @@
 import type {
-  Request, ClientAudio, ClientFont, ClientMedia, ClientVideo, DecodingObject, 
+  EndpointRequest, ClientAudio, ClientFont, ClientMedia, ClientVideo, DecodingObject, 
   DecodingObjects, MediaObject, MediaObjectData, MediaObjectDataOrError, 
   ProbingData, Size, 
 } from '@moviemasher/lib-core'
@@ -69,7 +69,7 @@ export const fileMediaObjectPromise = (file: File): Promise<MediaObjectDataOrErr
   }
   
   const decodings: DecodingObjects = []
-  const request: Request = {
+  const request: EndpointRequest = {
     endpoint: endpointFromUrl(URL.createObjectURL(file))
   }
   const object: MediaObject = {
@@ -86,9 +86,9 @@ export const fileMediaObjectPromise = (file: File): Promise<MediaObjectDataOrErr
   const promise = requestClientMediaPromise(request, type).then(orError => {
     if (isDefiniteError(orError)) return orError
   
-    const { data: clientMedia } = orError
+    const { data } = orError
     
-    const info = mediaInfo(clientMedia)
+    const info = mediaInfo(data)
     const decoding: DecodingObject = { data: info, type: TypeProbe }
     decodings.push(decoding)
     if (hasDuration) {
@@ -105,10 +105,8 @@ export const fileMediaObjectPromise = (file: File): Promise<MediaObjectDataOrErr
       const inSize = sizeCopy(info)
       if (!sizeAboveZero(inSize)) {
         return errorPromise(ErrorName.ImportSize, { value: sizeString(inSize) })
-      }  
-      object.clientMedia = clientMedia
-    } else object.clientMedia = clientMedia
-    
+      }
+    } 
     const mediaObjectData: MediaObjectData = { data: object }
     return mediaObjectData
   })

@@ -1,6 +1,6 @@
 import { 
   assertEndpoint,
-  endpointAbsolute, Request, StringRecord, Value
+  endpointAbsolute, EndpointRequest, StringRecord, Value
 } from "@moviemasher/lib-core"
 
 import { hashMd5 } from './Hash'
@@ -15,7 +15,7 @@ export interface RequestArgs {
   protocol?: string
 }
 
-export const requestArgs = (request: Request): RequestArgs => {
+export const requestArgs = (request: EndpointRequest): RequestArgs => {
   const { endpoint, init = {} } = request
   assertEndpoint(endpoint)
   
@@ -38,7 +38,7 @@ export const requestArgsHash = (args: RequestArgs): string => (
   hashMd5(JSON.stringify(args))
 )
 
-// export const requestHash = (request: Request): string => (
+// export const requestHash = (request: EndpointRequest): string => (
 //   requestArgsHash(requestArgs(request))
 // )
 

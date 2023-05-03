@@ -1,0 +1,57 @@
+[
+  {
+    "label": "Blur",
+    "type": "effect",
+    "id": "com.moviemasher.effect.blur",
+    "request": { "response": {
+      "filters": [
+        {
+          "id": "com.moviemasher.filter.convolution",
+          "parameters": [
+            {
+              "name": "matrix",
+              "value": "1,1,1,1,1,1,1,1,1"
+            },
+            {
+              "name": "multiplier",
+              "value": "0.11"
+            }
+          ]
+        }
+      ]  
+    }}
+  },
+  {
+    "label": "Chromakey",
+    "type": "effect",
+    "id": "com.moviemasher.effect.chromakey",
+    "properties": [
+      { "name": "blend", "defaultValue": 0.0, "step": 0.01, "min": 0.0, "max": 1.0 },
+      { "name": "similarity", "defaultValue": 0.9, "step": 0.01, "min": 0.0, "max": 1.0 },
+      { "name": "color", "type": "rgb", "defaultValue": "#00FF00" }
+    ],
+    "filters": [
+      {
+        "id": "com.moviemasher.filter.chromakey",
+        "parameters": [
+          {
+            "name": "color",
+            "value": "color",
+            "dataType": "string"
+          },
+          {
+            "name": "blend",
+            "value": "blend",
+            "dataType": "string"
+          },
+          {
+            "name": "similarity",
+            "value": "similarity",
+            "dataType": "string"
+          }
+        ]
+      }
+    ]
+  }
+  
+]

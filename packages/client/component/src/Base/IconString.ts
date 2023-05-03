@@ -1,10 +1,9 @@
-import type { Htmls, SlottedContent, StringSlot, IconSlot } from '../declarations'
-
-import { Slotted } from './Slotted'
+import type { Htmls, OptionalContent, StringSlot, IconSlot } from '../declarations'
 
 import { html } from 'lit'
 import { property } from 'lit/decorators/property.js'
-import { ifDefined } from 'lit/directives/if-defined.js'
+
+import { Slotted } from './Slotted'
 
 const StringSlot: StringSlot = 'string'
 const IconSlot: IconSlot = 'icon'
@@ -15,7 +14,7 @@ export class IconString extends Slotted {
   @property() [StringSlot] = ''
   @property() [IconSlot] = ''
 
-  protected onClicked(event: PointerEvent): void {
+  protected clickHandler(event: PointerEvent): void {
     const { emit } = this
     if (emit) {
       event.stopPropagation()
@@ -26,37 +25,36 @@ export class IconString extends Slotted {
     }
   }
 
-  protected override defaultSlottedContent(key: string, htmls: Htmls): SlottedContent { 
+  protected override defaultSlottedContent(key: string, htmls: Htmls): OptionalContent { 
     switch (key) {
       case StringSlot: return this.stringContent(htmls)
       case IconSlot: return this.iconContent(htmls)
     }
   }
 
-  private iconContent(_htmls: Htmls): SlottedContent { 
+  private iconContent(_htmls: Htmls): OptionalContent { 
     const { [IconSlot]: icon } = this
     if (!icon) return 
 
-    this.importTags('moviemasher-icon')
-    return html`<moviemasher-icon 
-      exportparts='${ifDefined(this.exportsForSlot('icon'))}'
+    this.importTags('movie-masher-icon')
+    return html`<movie-masher-icon 
       part='icon' slotted='icon'
       icon='${icon}'
-    ></moviemasher-icon>` 
+    ></movie-masher-icon>` 
   }
 
   
   override slots = [IconSlot, StringSlot] 
 
-  private stringContent(_htmls: Htmls): SlottedContent { 
+  private stringContent(_htmls: Htmls): OptionalContent { 
     const { [StringSlot]: string } = this
     if (!string) return 
 
-    this.importTags('moviemasher-string')
-    return html`<moviemasher-string 
-      exportparts='${ifDefined(this.exportsForSlot('string'))}'
+    this.importTags('movie-masher-string')
+    return html`<movie-masher-string 
       part='string' slotted='string'
       string='${string}'
-    ></moviemasher-string>` 
+    ></movie-masher-string>` 
   }
+
 }

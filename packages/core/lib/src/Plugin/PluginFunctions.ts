@@ -4,7 +4,7 @@ import type {FilterPlugin} from './Filter/Filter.js'
 import type {MasherPlugin} from './Masher/Masher.js'
 import type {Plugin, PluginDataOrError, PluginType, DecodeType, EncodeType, FilterType, MasherType, ProtocolType, ResolveType, ThemeType, TranscodeType} from './Plugin.js'
 import type {ProtocolPlugin} from './Protocol/Protocol.js'
-import type {Request} from '../Helpers/Request/Request.js'
+import type {EndpointRequest} from '../Helpers/Request/Request.js'
 import type {ResolvePlugin} from './Resolve/Resolve.js'
 import type {ThemePlugin} from './Theme/Theme.js'
 import type {TranscodePlugin} from './Transcode/Transcode.js'
@@ -95,9 +95,9 @@ export function pluginDataOrError(id: string, pluginType: PluginType): PluginDat
 }
 export type PluginDataOrErrorFunction = typeof pluginDataOrError
 
-let _pluginRequest: Request = DefaultRequest
+let _pluginRequest: EndpointRequest = DefaultRequest
 
-export const pluginRequest = (request?: Request): Request => {
+export const pluginRequest = (request?: EndpointRequest): EndpointRequest => {
   // console.log('pluginRequest', request, _pluginRequest)
   if (request) _pluginRequest = request
   return _pluginRequest

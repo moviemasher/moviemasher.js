@@ -1,7 +1,8 @@
-import { jobExtract, JobType } from "@moviemasher/server-core"
-import { JsonRecord, errorObjectCaught, UnknownRecord, Runtime, ColonChar, NumberType } from '@moviemasher/lib-core'
+import { jobExtract } from "@moviemasher/server-core"
+import { JsonRecord, errorObjectCaught, UnknownRecord, Runtime, ColonChar } from '@moviemasher/lib-core'
 import express from 'express'
 import { EnvironmentKeyApiHost, EnvironmentKeyApiPort } from "@moviemasher/server-core"
+import { JobTypeDecoding, JobTypeEncoding } from "@moviemasher/server-core/src/Setup/Enums"
 
 const app = express()
 app.use(express.json())
@@ -22,12 +23,12 @@ const postHandler: express.RequestHandler = (req, res) => {
   try {
     const [jobType, job] = jobExtract(request)
     switch (jobType) {
-      case JobType.Decoding: {
+      case JobTypeDecoding: {
         // assertProbingJob(job)
 
         break
       }
-      case JobType.Encoding: {
+      case JobTypeEncoding: {
         
         break
       }

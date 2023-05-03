@@ -3,13 +3,16 @@
   "version": "5.1.2",
   "description": "Movie Masher Core Client - version 5.1.2",
 
-
-  "files": ["esm", "json"],
+  "files": ["/dist/", "/json/"],
   "type": "module",
-  "main": "esm/index.js",
-  "module": "esm/index.js",
-  "types": "esm/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   
+  "dependencies": {
+    "@moviemasher/lib-core": "5.1.2"
+  },
+
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -28,12 +31,6 @@
     "build": "run-s client package",
     "client": "rollup --config dev/rollup/client.config.mjs",
     "package": "rollup --config dev/rollup/package.config.mjs"
-  },
-  "dependencies": {
-    "@moviemasher/lib-core": "5.1.2"
-  },
-  "imports": {
-    "#@moviemasher/lib-core/": "@moviemasher/lib-core/esm/"
   },
   "typedoc": {
     "entryPoint": "./src/index.ts",

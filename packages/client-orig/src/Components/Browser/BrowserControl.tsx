@@ -6,7 +6,7 @@ import MasherContext from "../Masher/MasherContext"
 import { useClient } from "../../Hooks/useClient"
 import { CurrentIndex, NextIndex } from "@moviemasher/lib-core"
 import { useContext } from "../../Framework/FrameworkFunctions"
-import { ImportOperation } from "@moviemasher/client-core"
+import { OperationImport } from "@moviemasher/client-core"
 
 const BrowserControlId = 'upload-control-id'
 
@@ -15,8 +15,8 @@ export function BrowserControl(props: PropsAndChild) {
   const masherContext = useContext(MasherContext)
   const { drop } = masherContext
 
-  if (!client.enabled(ImportOperation)) {
-    console.log('BrowserControl disabled', ImportOperation)
+  if (!client.enabled(OperationImport)) {
+    console.log('BrowserControl disabled', OperationImport)
     return null
   }
 

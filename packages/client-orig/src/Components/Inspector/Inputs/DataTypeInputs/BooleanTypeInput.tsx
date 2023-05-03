@@ -1,5 +1,7 @@
 import React from 'react'
-import { DataType, UnknownRecord } from '@moviemasher/lib-core'
+import type {  UnknownRecord } from '@moviemasher/lib-core'
+
+import { DataTypeBoolean } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'
@@ -23,4 +25,4 @@ export function BooleanTypeInput() {
   return <input {...inputProps} />
 }
 
-DataTypeInputs[DataType.Boolean] = <BooleanTypeInput />
+DataTypeInputs[DataTypeBoolean] = <BooleanTypeInput />

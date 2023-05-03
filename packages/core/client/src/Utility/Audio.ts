@@ -1,5 +1,5 @@
 import type {
-  Request, ClientAudioDataOrError, 
+  EndpointRequest, ClientAudioDataOrError, 
 
 } from '@moviemasher/lib-core'
 
@@ -22,7 +22,7 @@ const blobAudioPromise = (url: string): Promise<ArrayBuffer> => {
   })
 }
 
-export const audioDataPromise = (request: Request): Promise<ClientAudioDataOrError> => {
+export const audioDataPromise = (request: EndpointRequest): Promise<ClientAudioDataOrError> => {
   const { endpoint } = request
   assertEndpoint(endpoint)
 

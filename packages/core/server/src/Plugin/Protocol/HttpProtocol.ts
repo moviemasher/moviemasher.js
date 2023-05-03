@@ -8,7 +8,7 @@ import type {
   DataOrError, 
  ImageType, 
   LoadType, ProtocolDataOrError,
-  RecordsType, RecordType, Request,  
+  RecordsType, RecordType, EndpointRequest,  
   VideoType, ClientImage, ClientAudio, ClientFont, 
   ClientVideo, JsonRecord, JsonRecords, StringData, FontType, StringType,  
 } from "@moviemasher/lib-core"
@@ -31,7 +31,7 @@ interface FileAndMimetype {
 }
 
 const temporaryExtension = TextExtension
-const filePromise = (request: Request, type: LoadType): Promise<DataOrError<FileAndMimetype>> => {
+const filePromise = (request: EndpointRequest, type: LoadType): Promise<DataOrError<FileAndMimetype>> => {
   const args = requestArgs(request)
   const { protocol } = args
   assertPopulatedString(protocol)
@@ -71,15 +71,15 @@ const filePromise = (request: Request, type: LoadType): Promise<DataOrError<File
   return promise
 }
 
-function promise(request: Request, type: ImageType): Promise<DataOrError<ClientImage>>
-function promise(request: Request, type: AudioType): Promise<DataOrError<ClientAudio>>
-function promise(request: Request, type: FontType): Promise<DataOrError<ClientFont>>
-function promise(request: Request, type: VideoType): Promise<DataOrError<ClientVideo>>
-function promise(request: Request, type: RecordType): Promise<DataOrError<JsonRecord>>
-function promise(request: Request, type: RecordsType): Promise<DataOrError<JsonRecords>>
-function promise(request: Request, type: StringType): Promise<DataOrError<string>>
-function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
-function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
+function promise(request: EndpointRequest, type: ImageType): Promise<DataOrError<ClientImage>>
+function promise(request: EndpointRequest, type: AudioType): Promise<DataOrError<ClientAudio>>
+function promise(request: EndpointRequest, type: FontType): Promise<DataOrError<ClientFont>>
+function promise(request: EndpointRequest, type: VideoType): Promise<DataOrError<ClientVideo>>
+function promise(request: EndpointRequest, type: RecordType): Promise<DataOrError<JsonRecord>>
+function promise(request: EndpointRequest, type: RecordsType): Promise<DataOrError<JsonRecords>>
+function promise(request: EndpointRequest, type: StringType): Promise<DataOrError<string>>
+function promise(request: EndpointRequest, type: LoadType): Promise<ProtocolDataOrError>
+function promise(request: EndpointRequest, type: LoadType): Promise<ProtocolDataOrError>
 {
   return filePromise(request, type).then(onError => {
     if (isDefiniteError(onError)) return onError
@@ -96,7 +96,7 @@ function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
           const resolvePlugin = onError.data
           const url = resolvePlugin.url(file, type)
           if (url) {
-            const request: Request = { endpoint: endpointFromUrl(url) }
+            const request: EndpointRequest = { endpoint: endpointFromUrl(url) }
             return requestPromise(request, TypeString)
             // switch (type) {
             //   case AudioType: { const something = requestClientMediaPromise(request, type).then(onError => {

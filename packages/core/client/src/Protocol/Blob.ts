@@ -1,5 +1,5 @@
 import type {
-  ProtocolPromise, Request, StringData, LoadType, 
+  ProtocolPromise, EndpointRequest, StringData, LoadType, 
 } from '@moviemasher/lib-core'
 
 import { 
@@ -13,7 +13,7 @@ import {  videoDataPromise } from '../Utility/Video.js'
 
 
 
-const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
+const promise: ProtocolPromise = ((request: EndpointRequest, type?: LoadType) => {
   // console.log('blob promise', url, absolute, endpoint)
   switch (type) {
     case TypeAudio: return audioDataPromise(request)

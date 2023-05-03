@@ -1,5 +1,5 @@
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataTypeNumber, DataTypeString } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { idGenerate } from '../../../Utility/Id.js'
@@ -16,17 +16,17 @@ export class CropFilter extends FilterDefinitionClass {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      custom: true, name: 'width', type: DataType.String,
+      custom: true, name: 'width', type: DataTypeString,
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'height', type: DataType.String,
+      custom: true, name: 'height', type: DataTypeString,
     }))
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, name: 'x', type: DataType.Number,
+      tweenable: true, custom: true, name: 'x', type: DataTypeNumber,
       defaultValue: 0, min: 0, step: 1
     }))
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, name: 'y', type: DataType.Number,
+      tweenable: true, custom: true, name: 'y', type: DataTypeNumber,
       defaultValue: 0, min: 0, step: 1
     }))
     this.populateParametersFromProperties()

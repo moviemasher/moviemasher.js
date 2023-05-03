@@ -1,5 +1,5 @@
 import type { Decodings } from '../Plugin/Decode/Decoding/Decoding.js'
-import type { Media, MediaInstance, MediaInstanceObject, MediaObject } from './Media.js'
+import type { ClientAudioEventDetail, ClientFontEventDetail, ClientImageEventDetail, ClientMediaEventDetail, ClientVideoEventDetail, Media, MediaInstance, MediaInstanceObject, MediaObject } from './Media.js'
 import type { MediaType } from '../Setup/MediaType.js'
 import type { PreloadArgs, ServerPromiseArgs } from '../Base/Code.js'
 import type { Property } from '../Setup/Property.js'
@@ -7,20 +7,23 @@ import type { Requestable } from '../Base/Requestable/Requestable.js'
 import type { Size } from '../Utility/Size.js'
 import type { Transcoding, Transcodings, TranscodingTypes } from '../Plugin/Transcode/Transcoding/Transcoding.js'
 import type { UnknownRecord } from '../Types/Core.js'
+import type { EndpointRequest } from '../Helpers/Request/Request.js'
 
 import { assertMediaType } from '../Setup/MediaType.js'
-import { DataType } from '../Setup/Enums.js'
+import { DataTypeString } from '../Setup/Enums.js'
 import { decodingInstance } from '../Plugin/Decode/Decoding/DecodingFactory.js'
 import { Default } from '../Setup/Default.js'
 import { ErrorName } from '../Helpers/Error/ErrorName.js'
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
-import { isDefiniteError } from '../Utility/Is.js'
+import { assertDefined, isDefiniteError } from '../Utility/Is.js'
 import { MediaInstanceBase } from './MediaInstanceBase.js'
 import { propertyInstance } from '../Setup/Property.js'
 import { RequestableClass } from '../Base/Requestable/RequestableClass.js'
 import { requestPromise } from '../Helpers/Request/RequestFunctions.js'
 import { transcodingInstance } from '../Plugin/Transcode/Transcoding/TranscodingFactory.js'
 import { TypeString } from '../Utility/Scalar.js'
+// import {requestImagePromise, requestVideoPromise, requestFontPromise, requestAudioPromise } from '../Helpers/Request/RequestFunctions.js'
+import { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientVideoDataOrError } from '../Helpers/ClientMedia/ClientMedia.js'
 
 export class MediaBase extends RequestableClass implements Media { 
   constructor(object: MediaObject) {
@@ -35,7 +38,7 @@ export class MediaBase extends RequestableClass implements Media {
     
     const defaultValue = Default[type].label
     this.properties.push(propertyInstance({ 
-      name: 'label', type: DataType.String, defaultValue
+      name: 'label', type: DataTypeString, defaultValue
     }))
   }
 
@@ -49,6 +52,7 @@ export class MediaBase extends RequestableClass implements Media {
     return //errorThrow(ErrorName.Unimplemented)
   }
   
+  eventTarget?: EventTarget | undefined
   file?: File | undefined
 
   findTranscoding(type: MediaType, ...kind: string[]): Transcoding | undefined {
@@ -86,6 +90,37 @@ export class MediaBase extends RequestableClass implements Media {
     return this
   }
 
+  requestAudioPromise(request: EndpointRequest): Promise<ClientAudioDataOrError> { 
+    const detail: ClientAudioEventDetail = { request }
+    this.eventTarget?.dispatchEvent(new CustomEvent('clientaudio', { detail }))
+    const { promise } = detail
+    assertDefined(promise)
+    return promise // requestAudioPromise(request)
+  }
+
+  requestFontPromise(request: EndpointRequest): Promise<ClientFontDataOrError> {
+    const detail: ClientFontEventDetail = { request }
+    this.eventTarget?.dispatchEvent(new CustomEvent('clientfont', { detail }))
+    const { promise } = detail
+    assertDefined(promise)
+    return promise // requestFontPromise(request)
+  }
+
+  requestImagePromise(request: EndpointRequest): Promise<ClientImageDataOrError> {
+    const detail: ClientImageEventDetail = { request }
+    this.eventTarget?.dispatchEvent(new CustomEvent('clientimage', { detail }))
+    const { promise } = detail
+    assertDefined(promise)
+    return promise // requestImagePromise(request)
+  }
+  requestVideoPromise(request: EndpointRequest): Promise<ClientVideoDataOrError> {
+    const detail: ClientVideoEventDetail = { request }
+    this.eventTarget?.dispatchEvent(new CustomEvent('clientvideo', { detail }))
+    const { promise } = detail
+    assertDefined(promise)
+    return promise // requestVideoPromise(request)
+  }
+
   serverPromise(args: ServerPromiseArgs): Promise<void> {
     if (this.serverPath) return Promise.resolve()
 
@@ -108,3 +143,4 @@ export class MediaBase extends RequestableClass implements Media {
   decodings: Decodings = []
   serverPath = ''
 }
+

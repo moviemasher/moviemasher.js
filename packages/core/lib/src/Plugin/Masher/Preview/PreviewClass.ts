@@ -1,19 +1,21 @@
-import {Size} from '../../../Utility/Size.js'
-import {Masher} from '../Masher.js'
-import {Time} from '../../../Helpers/Time/Time.js'
-import {Clip, IntrinsicOptions} from '../../../Media/Mash/Track/Clip/Clip.js'
-import {AVType} from '../../../Setup/Enums.js'
-import {sortByTrack} from '../../../Utility/Sort.js'
-import {TrackPreviewArgs, TrackPreviews} from './TrackPreview/TrackPreview.js'
-import {TrackPreviewClass} from './TrackPreview/TrackPreviewClass.js'
-import {MashMedia} from '../../../Media/Mash/Mash.js'
-import {PreviewArgs, Preview} from './Preview.js'
-import {svgAddClass, svgSvgElement} from '../../../Helpers/Svg/SvgFunctions.js'
+import type {Clip, IntrinsicOptions} from '../../../Media/Mash/Track/Clip/Clip.js'
+import type {  PreloadArgs} from '../../../Base/Code.js'
+import type {Masher} from '../Masher.js'
+import type {MashMedia} from '../../../Media/Mash/Mash.js'
+import type {PreviewArgs, Preview} from './Preview.js'
+import type {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'
+import type {Size} from '../../../Utility/Size.js'
+import type {Time} from '../../../Helpers/Time/Time.js'
+import type {TrackPreviewArgs, TrackPreviews} from './TrackPreview/TrackPreview.js'
+
+import { ComponentTimeline,ComponentPlayer } from '../../../Base/Code.js'
 import {assertObject, isObject} from '../../../Utility/Is.js'
-import {Component, PreloadArgs} from '../../../Base/Code.js'
-import {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'
-import {timeRangeFromTime} from '../../../Helpers/Time/TimeUtilities.js'
+import {AVTypeVideo} from '../../../Setup/Enums.js'
 import {EmptyFunction} from '../../../Setup/Constants.js'
+import {sortByTrack} from '../../../Utility/Sort.js'
+import {svgAddClass, svgSvgElement} from '../../../Helpers/Svg/SvgFunctions.js'
+import {timeRangeFromTime} from '../../../Helpers/Time/TimeUtilities.js'
+import {TrackPreviewClass} from './TrackPreview/TrackPreviewClass.js'
 
 /**
  * Preview of a single mash at a single frame
@@ -40,7 +42,7 @@ export class PreviewClass implements Preview {
     const { mash, time, clip } = this
     if (clip) return [clip]
     
-    return mash.clipsInTimeOfType(time, AVType.Video).sort(sortByTrack) 
+    return mash.clipsInTimeOfType(time, AVTypeVideo).sort(sortByTrack) 
   }
 
 
@@ -79,7 +81,7 @@ export class PreviewClass implements Preview {
       const { clips, size, time, clip } = this
     
       let promise = Promise.resolve([] as PreviewItems)
-      const component = clip ? Component.Timeline : Component.Player
+      const component = clip ? ComponentTimeline : ComponentPlayer
 
       clips.forEach(clip => {
         promise = promise.then(lastTuple => {

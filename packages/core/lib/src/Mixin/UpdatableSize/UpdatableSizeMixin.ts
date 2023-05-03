@@ -1,4 +1,4 @@
-import type {CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs} from '../../Base/Code.js'
+import type {Component, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs} from '../../Base/Code.js'
 import type {ContentClass, ContentRectArgs} from '../../Media/Content/Content.js'
 import type {Filter} from '../../Plugin/Filter/Filter.js'
 import type {IntrinsicOptions} from '../../Media/Mash/Track/Clip/Clip.js'
@@ -7,15 +7,15 @@ import type {SvgItem} from '../../Helpers/Svg/Svg.js'
 import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
 import type {Tweening} from '../Tweenable/Tween.js'
 import type {UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject} from './UpdatableSize.js'
-import {Component } from '../../Base/Code.js'
+import {ComponentPlayer,  } from '../../Base/Code.js'
 
 import {arrayLast} from '../../Utility/Array.js'
 import {assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isTimeRange} from '../../Utility/Is.js'
 import {assertSizeAboveZero, sizeAboveZero} from '../../Utility/Size.js'
 import {colorBlackOpaque, colorTransparent} from '../../Helpers/Color/ColorConstants.js'
 import {commandFilesInput} from '../../Utility/CommandFiles.js'
-import {DataGroup, propertyInstance} from '../../Setup/Property.js'
-import {DataType} from '../../Setup/Enums.js'
+import {DataGroupSize, propertyInstance} from '../../Setup/Property.js'
+import {DataTypePercent} from '../../Setup/Enums.js'
 import {ErrorName} from '../../Helpers/Error/ErrorName.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
 import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
@@ -33,12 +33,12 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
       const { container } = object as UpdatableSizeObject
       const min = container ? 0.0 : 1.0
       this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'width', type: DataType.Percent, 
-        group: DataGroup.Size, defaultValue: 1.0, max: 2.0, min
+        tweenable: true, name: 'width', type: DataTypePercent, 
+        group: DataGroupSize, defaultValue: 1.0, max: 2.0, min
       }))
       this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'height', type: DataType.Percent, 
-        group: DataGroup.Size, defaultValue: 1.0, max: 2.0, min
+        tweenable: true, name: 'height', type: DataTypePercent, 
+        group: DataGroupSize, defaultValue: 1.0, max: 2.0, min
       }))
     }
     
@@ -105,7 +105,7 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
     }
     
     containerSvgItemPromise(rect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem> {
-      if (component !== Component.Player) return this.svgItemForTimelinePromise(rect, time, range)
+      if (component !== ComponentPlayer) return this.svgItemForTimelinePromise(rect, time, range)
       
       return this.svgItemForPlayerPromise(rect, time, range).then(svgItem => {
         svgSetDimensions(svgItem, rect)

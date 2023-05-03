@@ -35,10 +35,6 @@ export const errorName = (name: ErrorName, context?: ErrorContext): ErrorObject 
   return { name, message: errorMessage(name, context), cause: context }
 }
 
-export const error = (code: ErrorName, context?: ErrorContext): DefiniteError => (
-  { error: errorName(code, context)}
-)
-
 export const errorCaught = (error: any): DefiniteError => (
   { error: errorObjectCaught(error) }
 )
@@ -68,3 +64,7 @@ export const errorThrow = (value: any, type?: string, property?: string): never 
   console.trace(error.toString())
   throw error
 }
+
+export const error = (code: ErrorName, context?: ErrorContext): DefiniteError => (
+  { error: errorName(code, context)}
+)

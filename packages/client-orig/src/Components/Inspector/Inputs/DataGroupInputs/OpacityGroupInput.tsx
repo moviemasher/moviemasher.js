@@ -1,8 +1,9 @@
 import React from "react"
 import { 
-  assertSelectorType, assertTime, ClassButton, ClassSelected, DataGroup, 
+  assertSelectorType, assertTime, ClassButton, ClassSelected, 
   selectedPropertyObject, PropertyTweenSuffix, assertTimeRange,
-  tweenInputTime
+  tweenInputTime,
+  DataGroupOpacity
 } from "@moviemasher/lib-core"
 
 
@@ -13,7 +14,6 @@ import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
 import { useMasher } from "../../../../Hooks/useMasher"
 import MasherContext from "../../../Masher/MasherContext"
-import { PropsAndChild } from "../../../../Types/Props"
 
 
 export function OpacityGroupInput(props: DataGroupProps) {
@@ -31,10 +31,10 @@ export function OpacityGroupInput(props: DataGroupProps) {
   assertTimeRange(timeRange)
   assertTime(time)
   
-  const endDefined = tweenDefined[DataGroup.Opacity]
-  const endSelected = tweenSelected[DataGroup.Opacity]
+  const endDefined = tweenDefined[DataGroupOpacity]
+  const endSelected = tweenSelected[DataGroupOpacity]
 
-  const byName = selectedPropertyObject(selectedItems, DataGroup.Opacity, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroupOpacity, selectType)
   const { opacity, [`opacity${PropertyTweenSuffix}`]: opacityEnd } = byName 
   const opacityProperty = endSelected ? opacityEnd : opacity
 
@@ -62,7 +62,7 @@ export function OpacityGroupInput(props: DataGroupProps) {
     key: 'start',
     onClick: () => {
       editor.goToTime(timeRange.startTime)
-      changeTweening(DataGroup.Opacity, false)
+      changeTweening(DataGroupOpacity, false)
     }
   }
 
@@ -72,7 +72,7 @@ export function OpacityGroupInput(props: DataGroupProps) {
     children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {
       editor.goToTime(timeRange.lastTime)
-      changeTweening(DataGroup.Opacity, true)
+      changeTweening(DataGroupOpacity, true)
     }
   }
 
@@ -93,4 +93,4 @@ export function OpacityGroupInput(props: DataGroupProps) {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Opacity] = <OpacityGroupInput className="opacity tween row" key="opacity-group-input" />
+DataGroupInputs[DataGroupOpacity] = <OpacityGroupInput className="opacity tween row" key="opacity-group-input" />

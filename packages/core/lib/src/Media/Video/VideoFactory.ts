@@ -5,7 +5,7 @@ import {VideoMediaClass} from './VideoMediaClass.js'
 import {MediaFactories} from '../MediaFactories.js'
 import {TypeVideo} from '../../Setup/Enums.js'
 
-export const videoDefinition = (object : VideoMediaObject) : VideoMedia => {
+export const videoDefinition = (object : VideoMediaObject,) : VideoMedia => {
   const { id } = object
   assertPopulatedString(id)
   return new VideoMediaClass(object)

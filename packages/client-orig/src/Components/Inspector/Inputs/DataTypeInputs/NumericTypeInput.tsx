@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, isDefined, UnknownRecord } from '@moviemasher/lib-core'
+import { DataTypeFrame, DataTypeNumber, isDefined, UnknownRecord } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'
@@ -35,5 +35,5 @@ export function NumericTypeInput() {
 
 }
 
-DataTypeInputs[DataType.Number] = <NumericTypeInput />
-DataTypeInputs[DataType.Frame] = <NumericTypeInput />
+DataTypeInputs[DataTypeNumber] = <NumericTypeInput />
+DataTypeInputs[DataTypeFrame] = <NumericTypeInput />

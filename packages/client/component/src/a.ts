@@ -6,7 +6,7 @@ import { customElement } from 'lit/decorators/custom-element.js'
 
 import { IconString } from './Base/IconString.js'
 
-@customElement('moviemasher-a')
+@customElement('movie-masher-a')
 export class AElement extends IconString {
   static override styles = [css`
     :host {
@@ -38,11 +38,12 @@ export class AElement extends IconString {
       transition: var(--transition);
     }
   `]
-  override slottedContent(contents: Contents): Content {
+  
+  protected override content(contents: Contents): Content {
     return html`<a 
-      @click='${this.onClicked}'
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
+      @click='${this.clickHandler}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
     >${contents}</a>`
   }
 }

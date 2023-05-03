@@ -3,7 +3,7 @@ import React from "react"
 
 import type { PropsClickable } from "../../Types/Props"
 
-import { MasherAction, EventType } from "@moviemasher/lib-core"
+import { ClientActionUndo, EventTypeAction } from "@moviemasher/lib-core"
 
 import { useListeners } from "../../Hooks/useListeners"
 import { useMasher } from "../../Hooks/useMasher"
@@ -15,7 +15,7 @@ export function EditorUndoButton(props: PropsClickable) {
   const masher = useMasher()
   const [disabled, setDisabled] = React.useState(true)
   useListeners({
-    [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Undo)) }
+    [EventTypeAction]: () => { setDisabled(!masher.can(ClientActionUndo)) }
   })
 
   return <Clickable key='undo'

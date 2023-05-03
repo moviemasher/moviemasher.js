@@ -14,7 +14,7 @@ import type { StringType } from '../../Utility/Scalar.js'
 import { TypeAudio, TypeFont, TypeImage, TypeRecords, TypeRecord, TypeVideo } from '../../Setup/Enums.js'
 import { ContentTypeHeader, DotChar, JsonMimetype } from '../../Setup/Constants.js'
 
-import { assertMethod, GetMethod, Method, PostMethod, Request } from './Request.js'
+import { assertMethod, GetMethod, Method, PostMethod, EndpointRequest } from './Request.js'
 import { protocolLoadPromise } from '../../Plugin/Protocol/ProtocolFunctions.js'
 import { assertEndpoint, endpointIsAbsolute, isEndpoint, urlEndpoint } from '../Endpoint/EndpointFunctions.js'
 import { assertPopulatedString, isDefiniteError, isJsonRecord, isJsonRecords, isObject, isUndefined } from '../../Utility/Is.js'
@@ -22,13 +22,13 @@ import { errorPromise, errorThrow } from '../Error/ErrorFunctions.js'
 import { isClientAudio, isClientFont, isClientImage, isClientVideo } from '../ClientMedia/ClientMediaFunctions.js'
 import { ErrorName } from '../Error/ErrorName.js'
 
-const makeRequestEndpointAbsolute = (request: Request): void => {
+const makeRequestEndpointAbsolute = (request: EndpointRequest): void => {
   const { endpoint } = request
   assertEndpoint(endpoint)
   if (!endpointIsAbsolute(endpoint)) request.endpoint = urlEndpoint(endpoint)
 }
 
-export const requestExtension = (request: Request): string => {
+export const requestExtension = (request: EndpointRequest): string => {
   const { endpoint } = request
   assertEndpoint(endpoint)
   
@@ -37,7 +37,7 @@ export const requestExtension = (request: Request): string => {
   return last.trim()
 }
 
-export const requestProtocol = (request: Request): string => {
+export const requestProtocol = (request: EndpointRequest): string => {
   const { endpoint } = request
   assertEndpoint(endpoint)
   const { protocol } = endpoint
@@ -45,7 +45,7 @@ export const requestProtocol = (request: Request): string => {
   return protocol
 }
 
-export const requestAudioPromise = (request: Request): Promise<ClientAudioDataOrError> => {
+export const requestAudioPromise = (request: EndpointRequest): Promise<ClientAudioDataOrError> => {
   const { response } = request
   if (isClientAudio(response)) return Promise.resolve({ data: response })
 
@@ -58,7 +58,7 @@ export const requestAudioPromise = (request: Request): Promise<ClientAudioDataOr
   )
 }
 
-export const requestFontPromise = (request: Request): Promise<ClientFontDataOrError> => {
+export const requestFontPromise = (request: EndpointRequest): Promise<ClientFontDataOrError> => {
   const { response } = request
   if (isClientFont(response)) return Promise.resolve({ data: response })
 
@@ -71,7 +71,7 @@ export const requestFontPromise = (request: Request): Promise<ClientFontDataOrEr
   )
 }
 
-export const requestImagePromise = (request: Request): Promise<ClientImageDataOrError> => {
+export const requestImagePromise = (request: EndpointRequest): Promise<ClientImageDataOrError> => {
   const { response } = request
   if (isClientImage(response)) return Promise.resolve({ data: response })
 
@@ -84,15 +84,15 @@ export const requestImagePromise = (request: Request): Promise<ClientImageDataOr
   )
 }
 
-export const requestProtocolPromise = (request: Request): Promise<ProtocolPlugin> => {
+export const requestProtocolPromise = (request: EndpointRequest): Promise<ProtocolPlugin> => {
   return protocolLoadPromise(requestProtocol(request))
 }
 
-const setRequestResponse = (request: Request, orError: DefiniteError | Data) => {
+const setRequestResponse = (request: EndpointRequest, orError: DefiniteError | Data) => {
   if (!isDefiniteError(orError)) request.response = orError.data
 }
 
-export const requestVideoPromise = (request: Request): Promise<ClientVideoDataOrError> => {
+export const requestVideoPromise = (request: EndpointRequest): Promise<ClientVideoDataOrError> => {
   const { response } = request
   if (isClientVideo(response)) return Promise.resolve({ data: response })
 
@@ -105,7 +105,7 @@ export const requestVideoPromise = (request: Request): Promise<ClientVideoDataOr
   )
 }
 
-export const requestRecordPromise = (request: Request, useResponse = false): Promise<JsonRecordDataOrError> => {
+export const requestRecordPromise = (request: EndpointRequest, useResponse = false): Promise<JsonRecordDataOrError> => {
   if (useResponse) {
     const { response } = request
     if (isJsonRecord(response)) return Promise.resolve({ data: response })
@@ -121,7 +121,7 @@ export const requestRecordPromise = (request: Request, useResponse = false): Pro
   })
 }
 
-export const requestRecordsPromise = (request: Request, useResponse = false): Promise<JsonRecordsDataOrError> => {
+export const requestRecordsPromise = (request: EndpointRequest, useResponse = false): Promise<JsonRecordsDataOrError> => {
   if (useResponse) {
     const { response } = request
     if (isJsonRecords(response)) return Promise.resolve({ data: response })
@@ -135,14 +135,14 @@ export const requestRecordsPromise = (request: Request, useResponse = false): Pr
   )
 }
 
-export function requestPromise(request: Request, type: ImageType): Promise<DataOrError<ClientImage>>
-export function requestPromise(request: Request, type: AudioType): Promise<DataOrError<ClientAudio>>
-export function requestPromise(request: Request, type: FontType): Promise<DataOrError<ClientFont>>
-export function requestPromise(request: Request, type: VideoType): Promise<DataOrError<ClientVideo>>
-export function requestPromise(request: Request, type: RecordType): Promise<DataOrError<JsonRecord>>
-export function requestPromise(request: Request, type: RecordsType): Promise<DataOrError<JsonRecords>>
-export function requestPromise(request: Request, type: StringType): Promise<DataOrError<string>>
-export function requestPromise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
+export function requestPromise(request: EndpointRequest, type: ImageType): Promise<DataOrError<ClientImage>>
+export function requestPromise(request: EndpointRequest, type: AudioType): Promise<DataOrError<ClientAudio>>
+export function requestPromise(request: EndpointRequest, type: FontType): Promise<DataOrError<ClientFont>>
+export function requestPromise(request: EndpointRequest, type: VideoType): Promise<DataOrError<ClientVideo>>
+export function requestPromise(request: EndpointRequest, type: RecordType): Promise<DataOrError<JsonRecord>>
+export function requestPromise(request: EndpointRequest, type: RecordsType): Promise<DataOrError<JsonRecords>>
+export function requestPromise(request: EndpointRequest, type: StringType): Promise<DataOrError<string>>
+export function requestPromise(request: EndpointRequest, type: LoadType): Promise<ProtocolDataOrError>
 {
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
@@ -150,7 +150,7 @@ export function requestPromise(request: Request, type: LoadType): Promise<Protoc
   )
 }
 
-export const requestMethod = (request: Request): Method => {
+export const requestMethod = (request: EndpointRequest): Method => {
   const { init = {} } = request
   const { method = PostMethod } = init
   assertMethod(method)
@@ -158,7 +158,7 @@ export const requestMethod = (request: Request): Method => {
   return method
 }
 
-export const requestContentType = (request: Request): string => {
+export const requestContentType = (request: EndpointRequest): string => {
   const { init = {} } = request
   const { headers = {} } = init
   const { [ContentTypeHeader]: contentType = JsonMimetype } = headers
@@ -181,7 +181,7 @@ export const requestSearch = (values: any = {}): string => {
   return `?${new URLSearchParams(values)}`
 }
 
-export const requestPopulate = (request: Request, params: any = {}): void => {
+export const requestPopulate = (request: EndpointRequest, params: any = {}): void => {
   if (requestMethod(request) === GetMethod) {
     request.endpoint ||= {}
     request.endpoint.search = requestSearch(params)
@@ -196,12 +196,12 @@ export const requestPopulate = (request: Request, params: any = {}): void => {
   }
 }
 
-export function requestClientMediaPromise(request: Request, type: AudioType): Promise<DataOrError<ClientAudio>>
-export function requestClientMediaPromise(request: Request, type: FontType): Promise<DataOrError<ClientFont>>
-export function requestClientMediaPromise(request: Request, type: ImageType): Promise<DataOrError<ClientImage>>
-export function requestClientMediaPromise(request: Request, type: VideoType): Promise<DataOrError<ClientVideo>>
-export function requestClientMediaPromise(request: Request, type: ClientMediaType): Promise<DataOrError<ClientMedia>> 
-export function requestClientMediaPromise(request: Request, type: ClientMediaType): Promise<DataOrError<ClientMedia>> {
+export function requestClientMediaPromise(request: EndpointRequest, type: AudioType): Promise<DataOrError<ClientAudio>>
+export function requestClientMediaPromise(request: EndpointRequest, type: FontType): Promise<DataOrError<ClientFont>>
+export function requestClientMediaPromise(request: EndpointRequest, type: ImageType): Promise<DataOrError<ClientImage>>
+export function requestClientMediaPromise(request: EndpointRequest, type: VideoType): Promise<DataOrError<ClientVideo>>
+export function requestClientMediaPromise(request: EndpointRequest, type: ClientMediaType): Promise<DataOrError<ClientMedia>> 
+export function requestClientMediaPromise(request: EndpointRequest, type: ClientMediaType): Promise<DataOrError<ClientMedia>> {
   switch(type) {
     case TypeAudio: return requestAudioPromise(request)
     case TypeFont: return requestFontPromise(request)
@@ -213,18 +213,13 @@ export function requestClientMediaPromise(request: Request, type: ClientMediaTyp
 
 export type RequestEncodingPromiseFunction = typeof requestClientMediaPromise
 
-// const imageData = await requestClientMediaPromise({}, ImageType)
-// if (!isDefiniteError(imageData)) imageData.data
 
-// const audioData = await requestClientMediaPromise({}, AudioType)
-// if (!isDefiniteError(audioData)) audioData.data
-
-export const isRequest = (value: any): value is Request => {
+export const isRequest = (value: any): value is EndpointRequest => {
   return isObject(value) && (
     ('endpoint' in value && isEndpoint(value.endpoint) || 
     ('response' in value && isObject(value.response))
   ))
 }
-export function assertRequest(value: any, name?: string): asserts value is Request {
+export function assertRequest(value: any, name?: string): asserts value is EndpointRequest {
   if (!isRequest(value)) errorThrow(value, 'Request', name)
 }

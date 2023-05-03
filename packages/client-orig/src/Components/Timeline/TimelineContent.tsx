@@ -1,5 +1,7 @@
 import React from 'react'
-import { ClassDropping, DroppingPosition, eventStop, EventType, TrackType } from '@moviemasher/lib-core'
+
+
+import { ClassDropping, eventStop, EventTypeLoaded, TypeTrack } from '@moviemasher/lib-core'
 
 
 import { PropsWithChildren } from "../../Types/Props"
@@ -7,6 +9,7 @@ import { useListeners } from '../../Hooks/useListeners'
 import { useMasher } from '../../Hooks/useMasher'
 import { View } from '../../Utilities/View'
 import { TimelineContext } from './TimelineContext'
+import { PositionAt, PositionNone } from '@moviemasher/client-core'
 
 /**
  * @parents Timeline
@@ -26,10 +29,10 @@ export function TimelineContent(props: PropsWithChildren) {
 
   const editor = useMasher()
   const resetScroll = () => { ref.current?.scrollTo(0, 0) }
-  useListeners({ [EventType.Loaded]: resetScroll })
+  useListeners({ [EventTypeLoaded]: resetScroll })
 
   const onPointerDown = () => { 
-    editor.selection.unset(TrackType) 
+    editor.selection.unset(TypeTrack) 
   }
   
   const onScroll = () => {
@@ -58,7 +61,7 @@ export function TimelineContent(props: PropsWithChildren) {
     if (!dataTransfer) return
 
     const valid = dragTypeValid(dataTransfer)
-    const pos = valid ? DroppingPosition.At : DroppingPosition.None
+    const pos = valid ? PositionAt : PositionNone
     setDroppingClip()
     setDroppingTrack()
     setDroppingPosition(pos)

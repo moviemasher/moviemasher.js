@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType } from '@moviemasher/lib-core'
+import { EventTypePause, EventTypePlay, EventTypeVolume } from '@moviemasher/lib-core'
 
 
 import { PropsWithChildren } from "../../Types/Props"
@@ -19,8 +19,8 @@ export function Player(props: PlayerProps) {
   const [volume, setVolume] = React.useState(editor.volume)
   const updatePaused = () => { setPaused(editor.paused) }
   useListeners({
-    [EventType.Pause]: updatePaused, [EventType.Play]: updatePaused,
-    [EventType.Volume]: () => { setVolume(editor.volume) },
+    [EventTypePause]: updatePaused, [EventTypePlay]: updatePaused,
+    [EventTypeVolume]: () => { setVolume(editor.volume) },
   })
 
   const changePaused = (value: boolean) => { editor.paused = value }

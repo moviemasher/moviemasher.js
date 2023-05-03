@@ -3,7 +3,7 @@ import {
   EnvironmentKey, EnvironmentKeyPrefix, errorCaught, ErrorName, errorPromise, 
   TypeFont, TypeImage, JsonRecord, JsonRecords, LoadType, TypeNumber, Protocol, 
   ProtocolPlugin, TypeProtocol, JsonRecordDataOrError, 
-  JsonRecordsDataOrError, TypeRecords, TypeRecord, Request, requestClientMediaPromise, 
+  JsonRecordsDataOrError, TypeRecords, TypeRecord, EndpointRequest, requestClientMediaPromise, 
   Runtime, TypeVideo
 } from "@moviemasher/lib-core"
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
@@ -29,7 +29,7 @@ export class ProtocolSupabase implements ProtocolPlugin {
     return supabase
   }
 
-  promise(request: Request, type?: LoadType) {
+  promise(request: EndpointRequest, type?: LoadType) {
     switch (type) {
       case TypeImage: 
       case TypeAudio: 
@@ -64,7 +64,7 @@ export class ProtocolSupabase implements ProtocolPlugin {
     return errorPromise(ErrorName.Type)
   }
 
-  private async recordPromise(request: Request): Promise<JsonRecordDataOrError> {
+  private async recordPromise(request: EndpointRequest): Promise<JsonRecordDataOrError> {
     const { environment } = Runtime
     const table = environment.get(EnvironmentKeySupabaseTable) || 'media'
     const { client } = this
@@ -79,7 +79,7 @@ export class ProtocolSupabase implements ProtocolPlugin {
     return ({ data })
   }
 
-  private async recordsPromise(request: Request): Promise<JsonRecordsDataOrError> {
+  private async recordsPromise(request: EndpointRequest): Promise<JsonRecordsDataOrError> {
     const { environment } = Runtime
     const table = environment.get(EnvironmentKeySupabaseTable) || 'media'
     const { client } = this

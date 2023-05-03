@@ -6,7 +6,7 @@ import { Bar } from '../../Utilities/Bar'
 import { ActivityContent } from './ActivityContent.lite'
 import { ActivityProps } from './Activity'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
-import { ActivityGroup } from './ActivityContext'
+import { ActivityGroupActive } from './ActivityContext'
 import { ActivityPicker } from './ActivityPicker'
 import { CollapseControl } from '../Collapse/CollapseControl'
 import { NotCollapsed } from '../Collapse/NotCollapsed'
@@ -21,7 +21,7 @@ export const ActivityDefaultProps: PropsMethod<ActivityPropsDefault, ActivityPro
   const { icons } = optionsStrict
   optionsStrict.props.className ||= 'panel activity'
   // optionsStrict.props.key ||= 'activity'
-  // optionsStrict.props.initialPicked ||= ActivityGroup.Active
+  // optionsStrict.props.initialPicked ||= ActivityGroupActive
   // if (isUndefined(optionsStrict.props.initialCollapsed)) {
   //   optionsStrict.props.initialCollapsed = true
   // }
@@ -53,7 +53,7 @@ export const ActivityDefaultProps: PropsMethod<ActivityPropsDefault, ActivityPro
   </>
 
   return { 
-    initialPicked: ActivityGroup.Active,
+    initialPicked: ActivityGroupActive,
     initialCollapsed: true,
     key: 'activity',
     ...optionsStrict.props, 

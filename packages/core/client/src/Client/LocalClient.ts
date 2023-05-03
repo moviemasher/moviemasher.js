@@ -1,7 +1,7 @@
 import type {
-  MediaType, StringRecord, Strings, Masher, Request,
+  MediaType, StringRecord, Strings, Masher, EndpointRequest,
   MasherOptions, MediaDataArrayOrError,
-  MediaTypes, PluginDataOrErrorFunction,
+  PluginDataOrErrorFunction,
   PluginDataOrErrorPromiseFunction, Emitter, MediaDataOrError, 
   UploadType, NestedStringRecord, TranslateArgs
 } from '@moviemasher/lib-core'
@@ -101,7 +101,7 @@ export type ReadOperation = 'read'
 export type LocalOperation = ImportOperation | PluginOperation | ReadOperation
 export type LocalOperations = LocalOperation[]
 
-export type ParamPosition = 'search' | 'body' | 'params'
+export type ParamPosition = 'search' | 'body' | 'params' | 'pathname'
 
 export interface LocalClientOptions {
   translationSource?: string | NestedStringRecord
@@ -131,24 +131,22 @@ export interface ClientImportOptions extends ClientOperationOptions {
 export interface ClientImportArgs extends ClientOperationArgs, Required<ClientImportOptions> { }
 
 export interface ClientPluginOptions extends ClientOperationOptions {
-  request?: Request | false
+  request?: EndpointRequest | false
 }
 export interface ClientPluginArgs extends ClientOperationArgs, Required<ClientPluginOptions> { }
 
 export interface ClientReadOptions extends ClientOperationOptions {
   paramPosition: ParamPosition
-  getRequest?: Request | false
-  listRequest?: Request | false
+  getRequest?: EndpointRequest | false
+  listRequest?: EndpointRequest | false
 }
 
 export interface ClientReadArgs extends ClientOperationArgs, Required<ClientReadOptions> { }
 
 
 export interface ClientReadParams {
-  type?: MediaType | MediaTypes
+  type: MediaType 
   kind?: string | Strings
   order?: string | StringRecord
-  offset?: number
-  index?: number
-  count?: number
+  terms?: string
 }

@@ -6,8 +6,8 @@ import { ContentMixin } from '../ContentMixin.js'
 import { filterFromId } from '../../../Plugin/Filter/FilterFactory.js'
 import { TweenableMixin } from '../../../Mixin/Tweenable/TweenableMixin.js'
 import { Time, TimeRange } from '../../../Helpers/Time/Time.js'
-import { DataType } from '../../../Setup/Enums.js'
-import { DataGroup, propertyInstance } from '../../../Setup/Property.js'
+import { DataTypeRgb } from '../../../Setup/Enums.js'
+import { DataGroupColor, propertyInstance } from '../../../Setup/Property.js'
 import { ColorTuple, Component } from '../../../Base/Code.js'
 import { assertPopulatedString, isPopulatedString } from '../../../Utility/Is.js'
 import { MediaInstanceBase } from '../../MediaInstanceBase.js'
@@ -20,8 +20,8 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     const [object] = args
    
     this.addProperties(object, propertyInstance({
-      tweenable: true, name: 'color', type: DataType.Rgb, 
-      defaultValue: this.definition.color, group: DataGroup.Color
+      tweenable: true, name: 'color', type: DataTypeRgb, 
+      defaultValue: this.definition.color, group: DataGroupColor
     }))
   }
 

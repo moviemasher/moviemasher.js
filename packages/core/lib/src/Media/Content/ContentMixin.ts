@@ -8,8 +8,8 @@ import { DefaultContentId } from './ContentConstants.js'
 import { TweenableClass } from '../../Mixin/Tweenable/Tweenable.js'
 import { Time, TimeRange } from '../../Helpers/Time/Time.js'
 import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from '../../Mixin/Tweenable/Tween.js'
-import { DataGroup, Property, propertyInstance } from '../../Setup/Property.js'
-import { DataType, Orientation } from '../../Setup/Enums.js'
+import { DataGroupPoint, DataGroupSize, Property, propertyInstance } from '../../Setup/Property.js'
+import { DataTypePercent, DataTypeString, LockWidth } from '../../Setup/Enums.js'
 import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Base/Code.js'
 import { idGenerate } from '../../Utility/Id.js'
 import { commandFilesInput } from '../../Utility/CommandFiles.js'
@@ -35,16 +35,16 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
 
       if (!(isDefaultOrAudio || container)) {
         this.addProperties(object, propertyInstance({
-          name: 'x', type: DataType.Percent, defaultValue: 0.5,
-          group: DataGroup.Point, tweenable: true, 
+          name: 'x', type: DataTypePercent, defaultValue: 0.5,
+          group: DataGroupPoint, tweenable: true, 
         }))
         this.addProperties(object, propertyInstance({
-          name: 'y', type: DataType.Percent, defaultValue: 0.5,
-          group: DataGroup.Point, tweenable: true, 
+          name: 'y', type: DataTypePercent, defaultValue: 0.5,
+          group: DataGroupPoint, tweenable: true, 
         }))
         this.addProperties(object, propertyInstance({
-          name: 'lock', type: DataType.String, defaultValue: Orientation.H,
-          group: DataGroup.Size, 
+          name: 'lock', type: DataTypeString, defaultValue: LockWidth,
+          group: DataGroupSize, 
         }))  
       }
       const { effects } = object as ContentObject

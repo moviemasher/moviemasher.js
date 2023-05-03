@@ -4,20 +4,21 @@
   "license": "MIT",
   "version": "5.1.2",
   "files": [
-    "esm",
+    "dist",
+    "json",
     "custom-elements.json"
   ],
   "type": "module",
-  "main": "esm/index.js",
-  "module": "esm/index.js",
-  "types": "esm/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
 
 
   "scripts": {
     "package": "rollup -c dev/rollup/package.config.mjs",
     "client": "rollup -c dev/rollup/client.config.mjs",
     "cem": "cem analyze --litelement",
-    "analyze": "npm run cem -- --exclude esm",
+    "analyze": "npm run cem -- --exclude dist",
     "build": "run-s client package analyze",
     "serve": "node ../../../dev/utils/server.mjs",
     "script": "run-s"
@@ -34,8 +35,7 @@
     "lit": "^2.7.2"
   },
   "imports": {
-    "#@moviemasher/lib-core/": "@moviemasher/lib-core/esm/",
-    "#@moviemasher/client-core/": "@moviemasher/client-core/esm/",
+    "#@moviemasher/lib-core/": "@moviemasher/lib-core/dist/",
     "#tslib": "tslib/tslib.es6.js",
     "#@lit/reactive-element/decorators/": "@lit/reactive-element/decorators/",
     "#lit-element": "lit-element/lit-element.js",

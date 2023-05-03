@@ -4,9 +4,9 @@ import React from "react"
 import type { PropsClickable } from "../../Types/Props"
 
 import {
-  EventType, MasherAction, assertMashMedia, assertEncodingType, isEncodingType
+  assertMashMedia, assertEncodingType, isEncodingType, ClientActionRender, EventTypeAction, EventTypeLoaded, EventTypeSave
 } from "@moviemasher/lib-core"
-import { className, EncodeOperation } from "@moviemasher/client-core"
+import { OperationEncode, className } from "@moviemasher/client-core"
 
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
@@ -18,7 +18,7 @@ export function EncodeControl(props: PropsClickable) {
   const masher = useMasher()
 
   const getVisible = () => {
-    if (!client.enabled(EncodeOperation)) return false
+    if (!client.enabled(OperationEncode)) return false
 
     const { mashMedia } = masher
     if (!mashMedia) return false
@@ -27,7 +27,7 @@ export function EncodeControl(props: PropsClickable) {
     return isEncodingType(kind)
   }
   const [visible, setVisible] = React.useState(getVisible)
-  const getDisabled = () => !masher.can(MasherAction.Render)
+  const getDisabled = () => !masher.can(ClientActionRender)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
   const updateVisible = () => setVisible(getVisible())
@@ -37,9 +37,9 @@ export function EncodeControl(props: PropsClickable) {
   }
 
   useListeners({
-    [EventType.Save]: updateDisabled,
-    [EventType.Loaded]: updateBoth,
-    [EventType.Action]: updateDisabled
+    [EventTypeSave]: updateDisabled,
+    [EventTypeLoaded]: updateBoth,
+    [EventTypeAction]: updateDisabled
   })
 
   if (!visible) return null

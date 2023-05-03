@@ -3,8 +3,8 @@ import React from 'react'
 import type { PropsWithChildren, WithOnClick } from '../../Types/Props'
 import { ClassDisabled, Labeled } from '@moviemasher/lib-core'
 import Show from '../../Framework/Show/Show.lite'
-import { WithIcon } from '@moviemasher/client-core'
 import Text from '../Text/Text.lite'
+import { WithIcon } from '../../Types/Core'
 
 export interface PropsButton extends PropsWithChildren, WithOnClick, Labeled, WithIcon {}
 export default function Button(props: PropsButton) {

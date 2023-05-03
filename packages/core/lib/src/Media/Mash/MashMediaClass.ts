@@ -1,37 +1,49 @@
+import type { Scalar, UnknownRecord } from '../../Types/Core.js'
+import type { PreviewItems } from '../../Helpers/Svg/Svg.js'
+import type { PreloadArgs, PreloadOptions } from '../../Base/Code.js'
+import type { SelectedItems, SelectedProperty } from '../../Helpers/Select/SelectedProperty.js'
+import type { Time, Times, TimeRange } from '../../Helpers/Time/Time.js'
+import type { Clip, Clips } from './Track/Clip/Clip.js'
+import type { Track, TrackArgs, TrackObject } from './Track/Track.js'
+import type { AudioPreview } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
+import type { AudioPreviewArgs } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
+import type { MashMasherArgs, MashMedia, MashMediaContent, MashMediaObject, MashMediaRequest } from './Mash.js'
+import type { Preview, PreviewArgs, PreviewOptions } from '../../Plugin/Masher/Preview/Preview.js'
+import type { Selectables } from '../../Plugin/Masher/Selectable.js'
+import type { Encodings } from '../../Plugin/Encode/Encoding/Encoding.js'
+import type { Size } from '../../Utility/Size.js'
+import type { ChangePropertyActionObject } from "../../Plugin/Masher/Actions/Action/Action.js"
+
 import {
-  Scalar, UnknownRecord} from '../../Types/Core.js'
-import { PreviewItems } from '../../Helpers/Svg/Svg.js'
-import { PreloadArgs, PreloadOptions } from '../../Base/Code.js'
-import { SelectedItems, SelectedProperty } from '../../Helpers/Select/SelectedProperty.js'
-import {
-  AVType, DataType, Duration, EventType, TypeMash} from '../../Setup/Enums.js'
+  AVType, AVTypeAudio, AVTypeBoth, AVTypeVideo, ActionTypeChange, DataTypeRgb, DurationNone, DurationUnknown, 
+  EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypeLoaded, 
+  EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, 
+  EventTypeSeeking, EventTypeTime, EventTypeTrack, TypeMash
+} from '../../Setup/Enums.js'
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, 
   timeRangeFromTimes
 } from '../../Helpers/Time/TimeUtilities.js'
 import { Default } from '../../Setup/Default.js'
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isBoolean, isDefiniteError, isNumber, isObject, isPositive } from '../../Utility/Is.js'
+import { 
+  assertAboveZero, assertPopulatedString, assertPositive, assertTime, 
+  assertTrue, isAboveZero, isArray, isBoolean, isDefiniteError, isNumber, 
+  isObject, isPositive 
+} from '../../Utility/Is.js'
 import { sortByIndex } from '../../Utility/Sort.js'
-import { Time, Times, TimeRange } from '../../Helpers/Time/Time.js'
-import { isClip, Clip, Clips } from './Track/Clip/Clip.js'
-import { assertTrack, Track, TrackArgs, TrackObject } from './Track/Track.js'
-import { AudioPreview } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
-import { AudioPreviewArgs } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
-import { MashMasherArgs, MashMedia, MashMediaContent, MashMediaObject, MashMediaRequest } from './Mash.js'
+import { isClip } from './Track/Clip/Clip.js'
+import { assertTrack } from './Track/Track.js'
 import { trackInstance } from './Track/TrackFactory.js'
-import { Preview, PreviewArgs, PreviewOptions } from '../../Plugin/Masher/Preview/Preview.js'
 import { PreviewClass } from '../../Plugin/Masher/Preview/PreviewClass.js'
 import { Actions } from '../../Plugin/Masher/Actions/Actions.js'
 import { NonePreview } from '../../Plugin/Masher/Preview/NonePreview.js'
-import { Selectables } from '../../Plugin/Masher/Selectable.js'
 import { Propertied } from '../../Base/Propertied.js'
 import { Masher, MashingType } from '../../Plugin/Masher/Masher.js'
 import { EmptyFunction } from '../../Setup/Constants.js'
 import { isFont } from '../Font/Font.js'
 import { encodingInstance } from '../../Plugin/Encode/Encoding/EncodingFactory.js'
-import { Encodings } from '../../Plugin/Encode/Encoding/Encoding.js'
 import { Emitter } from '../../Helpers/Emitter.js'
-import { isSize, Size, SizeZero } from '../../Utility/Size.js'
+import { isSize, SizeZero } from '../../Utility/Size.js'
 import { MediaBase } from '../MediaBase.js'
 import { propertyInstance } from '../../Setup/Property.js'
 import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
@@ -64,7 +76,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     if (isArray(encodings)) this.encodings.push(...encodings.map(encodingInstance))
     
     this.properties.push(propertyInstance({
-      name: 'color', defaultValue: colorBlack, type: DataType.Rgb
+      name: 'color', defaultValue: colorBlack, type: DataTypeRgb
     }))
 
     this._preview = new NonePreview({ mash: this, time: timeFromArgs() })
@@ -72,7 +84,6 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     
     this.propertiesInitialize(object)
   }
-
 
   declare color: string
 
@@ -114,7 +125,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     const track = trackInstance(args)
     this.tracks.push(track)
     this.tracks.sort(sortByIndex)
-    this.emitter?.emit(EventType.Track)
+    this.emitter?.emit(EventTypeTrack)
     return track
   }
 
@@ -200,12 +211,13 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     return this.filterIntersecting(this.clips, time)
   }
 
-  clipsInTimeOfType(time: Time, avType = AVType.Both): Clip[] {
+  clipsInTimeOfType(time: Time, avType = AVTypeBoth): Clip[] {
     switch (avType) {
-      case AVType.Both: return this.clipsInTime(time)
-      case AVType.Audio: return this.clipsAudibleInTime(time)
-      case AVType.Video: return this.clipsVisibleInTime(time)
+      case AVTypeBoth: return this.clipsInTime(time)
+      case AVTypeAudio: return this.clipsAudibleInTime(time)
+      case AVTypeVideo: return this.clipsVisibleInTime(time)
     }
+    return errorThrow(ErrorName.Internal)
   }
 
   private get clipsVisible(): Clip[] {
@@ -219,9 +231,9 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   private compositeVisible(time: Time): void {
     this.drawingTime = time
     this.clearPreview()
-    this.emitter?.emit(EventType.Draw)
+    this.emitter?.emit(EventTypeDraw)
   }
-  // private counter = 0
+  
   private compositeVisibleRequest(time: Time): void {
     // console.log(this.constructor.name, 'compositeVisibleRequest', time)
     if (typeof requestAnimationFrame !== 'function') return 
@@ -279,7 +291,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     // console.log(this.constructor.name, 'drawTime', time, timeChange)
     this.drawnTime = time
     this.drawRequest()
-    this.emitter?.emit(timeChange ? EventType.Time : EventType.Loaded)
+    this.emitter?.emit(timeChange ? EventTypeTime : EventTypeLoaded)
   }
 
   private drawingTime?: Time
@@ -293,7 +305,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     method()
     const { frames } = this
     if (origFrames !== frames) {
-      this.emitter?.emit(EventType.Duration)
+      this.emitter?.emit(EventTypeDuration)
       if (this.frame > frames) this.seekToTime(timeFromArgs(frames, this.quantize))
     }
   }
@@ -316,9 +328,9 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       const frames = this.tracks.map(track => track.frames)
       if (isPositive(Math.min(...frames))) return Math.max(0, ...frames)
       
-      return Duration.Unknown
+      return DurationUnknown
     } 
-    return Duration.None
+    return DurationNone
   }
 
   private _gain = Default.mash.gain
@@ -369,7 +381,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       if (this.loop) this.seekToTime(this.time.withFrame(0))
       else {
         this.paused = true
-        this.emitter?.emit(EventType.Ended)
+        this.emitter?.emit(EventTypeEnded)
       }
     } else {
       // are we at or beyond the next frame?
@@ -435,7 +447,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       assertTime(time)
 
       const scaled = time.scale(this.quantize)
-      const type = (audible && visible) ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
+      const type = (audible && visible) ? AVTypeBoth : (audible ? AVTypeAudio : AVTypeVideo)
       const clips = this.clipsInTimeOfType(scaled, type)
 
       const promises = clips.map(clip => {
@@ -472,7 +484,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
 
   private _media?: MediaCollection
   get media(): MediaCollection {
-    return this._media ||= new MediaCollection()
+    return this._media = new MediaCollection(this.emitter)
   } 
 
   private _paused = true
@@ -491,7 +503,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
         delete this._bufferTimer
       }
       this.composition.stopContext()
-      this.emitter?.emit(EventType.Pause)
+      this.emitter?.emit(EventTypePause)
     } else {
       this.composition.startContext()
       this.loadPromise({
@@ -499,8 +511,8 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       }).then(() => { 
         this.bufferStart()
         this.playing = true 
-      // console.log('Mash emit', EventType.Play)
-        this.emitter?.emit(EventType.Play)
+      // console.log('Mash emit', EventTypePlay)
+        this.emitter?.emit(EventTypePlay)
       })
     }
   }
@@ -526,7 +538,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
             return
           }
         }
-        this.emitter?.emit(EventType.Playing)
+        this.emitter?.emit(EventTypePlaying)
         this.setDrawInterval()
       } else {
         this.composition.stopPlaying()
@@ -602,7 +614,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     assertPositive(trackIndex)
  
     this.emitIfFramesChange(() => { this.tracks.splice(trackIndex, 1) })
-    this.emitter?.emit(EventType.Track)
+    this.emitter?.emit(EventTypeTrack)
   }
 
   _rendering = ''
@@ -612,7 +624,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     if (time.equalsTime(this.time)) { // otherwise we must have gotten a seek call
       if (seeking) {
         delete this.seekTime
-        this.emitter?.emit(EventType.Seeked)
+        this.emitter?.emit(EventTypeSeeked)
       }
       this.drawTime(time)
       if (!paused) this.playing = true
@@ -626,8 +638,8 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   seekToTime(time: Time): Promise<void> | undefined {
     if (this.seekTime !== time) {
       this.seekTime = time
-      this.emitter?.emit(EventType.Seeking)
-      this.emitter?.emit(EventType.Time)
+      this.emitter?.emit(EventTypeSeeking)
+      this.emitter?.emit(EventTypeTime)
     }
     return this.stopLoadAndDraw(true)
   }
@@ -647,7 +659,12 @@ export class MashMediaClass extends MediaBase implements MashMedia {
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
 
-          const options = { property, target: this, redoValue, undoValue }
+          const options: ChangePropertyActionObject = { 
+            type: ActionTypeChange,
+            property, target: this, redoValue, undoValue,
+            redoSelection: { ...actions.selection },
+            undoSelection: { ...actions.selection },
+          }
           actions.create(options)
         }
       }
@@ -700,7 +717,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     const { length } = fullRangeClips
     if (!length) return []
 
-    if (length === 1 || !start.isRange || avType === AVType.Audio ) return [time]
+    if (length === 1 || !start.isRange || avType === AVTypeAudio ) return [time]
 
     const frames = new Set<number>()
     fullRangeClips.forEach(clip => {

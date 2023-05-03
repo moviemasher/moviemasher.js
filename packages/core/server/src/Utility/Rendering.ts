@@ -1,8 +1,13 @@
+
+import type {
+   MediaObject, MediaObjects, ContentObject, TrackObject, ClipObject, 
+   ValueRecord, MashAndMediaObject, RenderingCommandOutput, RenderingInput 
+} from "@moviemasher/lib-core"
+
+
 import {
-  MediaObject, MediaObjects, ContentObject, Timing,
-  TrackObject, ClipObject, assertPopulatedString, 
-  ValueRecord, MashAndMediaObject, 
-  RenderingCommandOutput, RenderingInput, TypeImage,
+ assertPopulatedString, 
+ TypeImage, TimingCustom,
 } from "@moviemasher/lib-core"
 
 
@@ -59,7 +64,7 @@ export const renderingClipFromDefinition = (definition: MediaObject, overrides: 
     contentId, content, containerId
   }
   if (type === TypeImage) {
-    visibleClipObject.timing = Timing.Custom
+    visibleClipObject.timing = TimingCustom
     visibleClipObject.frames = 1
   }
   // console.log("renderingClipFromDefinition", overrides, visibleClipObject)

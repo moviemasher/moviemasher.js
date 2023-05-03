@@ -5,11 +5,13 @@ import { TypeFont} from '../../Setup/Enums.js'
 import {IdPrefix, IdSuffix} from '../../Setup/Constants.js'
 import {isContainer} from '../Container/ContainerFunctions.js'
 import {isMedia} from '../MediaFunctions.js'
+import { ClientFont } from '../../Helpers/ClientMedia/ClientMedia.js'
 
 export const DefaultFontId = `${IdPrefix}font${IdSuffix}`
 
 export interface FontMediaObject extends ContainerDefinitionObject {
   string?: string
+  loadedFont?: ClientFont
 }
 
 export interface FontObject extends ContainerObject {}

@@ -1,7 +1,7 @@
 import { ValueRecord } from '../../../Types/Core.js'
 import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataTypePercent, DataTypeString } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { assertPopulatedString, isPopulatedString } from '../../../Utility/Is.js'
 import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
@@ -15,16 +15,16 @@ export class OverlayFilter extends FilterDefinitionClass {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, name: 'x', type: DataType.Percent, defaultValue: 0.5 
+      tweenable: true, custom: true, name: 'x', type: DataTypePercent, defaultValue: 0.5 
     }))
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
+      tweenable: true, custom: true, name: 'y', type: DataTypePercent, defaultValue: 0.5
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420' // yuv420p10
+      custom: true, name: 'format', type: DataTypeString, defaultValue: 'yuv420' // yuv420p10
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'alpha', type: DataType.String, defaultValue: 'straight' // premultiplied
+      custom: true, name: 'alpha', type: DataTypeString, defaultValue: 'straight' // premultiplied
     }))
     this.populateParametersFromProperties()
   }

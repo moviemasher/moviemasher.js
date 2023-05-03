@@ -5,7 +5,7 @@ import { PropsWithChildren } from "../../Types/Props"
 import { TimelineContext } from './TimelineContext'
 import { Slider } from '../../Utilities/Slider'
 import { useMasher } from '../../Hooks/useMasher'
-import { EventType, isArray } from '@moviemasher/lib-core'
+import { EventTypeSelection, isArray } from '@moviemasher/lib-core'
 import { useListeners } from '../../Hooks/useListeners'
 
 
@@ -18,7 +18,7 @@ export function TimelineZoomer(props: PropsWithChildren) {
   const getDisabled = () => !editor.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
-  useListeners({ [EventType.Selection]: updateDisabled })
+  useListeners({ [EventTypeSelection]: updateDisabled })
 
   const handleChange: SliderChangeHandler = (value) => {
     const number = isArray(value) ? value[0] : Number(value)

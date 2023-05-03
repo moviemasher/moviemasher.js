@@ -1,8 +1,8 @@
 import { 
-  assertMashMedia, assertTrue, isAboveZero, idGenerate, AVType, CommandFilter, 
+  assertMashMedia, assertTrue, isAboveZero, idGenerate, CommandFilter, 
   colorTransparent, Clip, sortByTrack, CommandFile, assertMedia, CommandInputs, 
   CommandInput, CommandFiles, CommandFileArgs, CommandFilters, CommandFilterArgs, 
-  timeRangeFromTime, arrayLast, MashMedia, Size, Time 
+  timeRangeFromTime, arrayLast, MashMedia, Size, Time, AVTypeAudio, AVTypeVideo 
 } from "@moviemasher/lib-core"
 import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
 
@@ -33,7 +33,7 @@ export class FilterGraphClass implements FilterGraph {
 
   _id?: string
   get id() { return this._id ||= idGenerate('filtergraph')}
-  get avType() { return this.visible ? AVType.Video : AVType.Audio }
+  get avType() { return this.visible ? AVTypeVideo : AVTypeAudio }
 
   background: string 
 

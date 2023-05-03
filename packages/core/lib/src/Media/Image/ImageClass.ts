@@ -14,7 +14,6 @@ import {MediaInstanceBase} from '../MediaInstanceBase.js'
 import {svgImagePromiseWithOptions} from '../../Helpers/Svg/SvgFunctions.js'
 import {assertEndpoint, endpointUrl} from '../../Helpers/Endpoint/EndpointFunctions.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
-import {requestImagePromise} from '../../Helpers/Request/RequestFunctions.js'
 
 const ImageWithTweenable = TweenableMixin(MediaInstanceBase)
 const ImageWithContainer = ContainerMixin(ImageWithTweenable)
@@ -65,7 +64,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     const { definition } = this
     const requestable = definition.preferredTranscoding(TypeImage)
     const { request } = requestable
-    return requestImagePromise(request).then(orError => {
+    return this.definition.requestImagePromise(request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: clientImage } = orError

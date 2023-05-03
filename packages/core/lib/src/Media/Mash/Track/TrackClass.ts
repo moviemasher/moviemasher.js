@@ -1,5 +1,5 @@
 import {Scalar, UnknownRecord} from '../../../Types/Core.js'
-import {Duration, TypeTrack} from '../../../Setup/Enums.js'
+import {ActionTypeChange, DurationNone, DurationUnknown, DurationUnlimited, TypeTrack} from '../../../Setup/Enums.js'
 import {propertyInstance} from '../../../Setup/Property.js'
 import {sortByFrame} from '../../../Utility/Sort.js'
 import {Clip, ClipArgs, Clips} from './Clip/Clip.js'
@@ -15,6 +15,7 @@ import {Actions} from '../../../Plugin/Masher/Actions/Actions.js'
 import {clipInstance} from './Clip/ClipFactory.js'
 import {Selectables} from '../../../Plugin/Masher/Selectable.js'
 import {arrayLast, arraySet} from '../../../Utility/Array.js'
+import { ChangePropertyActionObject } from "../../../Plugin/Masher/Actions/Action/Action.js"
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -124,13 +125,13 @@ export class TrackClass extends PropertiedClass implements Track {
   get frames() : number {
     const { clips } = this
     const { length } = clips
-    if (!length) return Duration.None
+    if (!length) return DurationNone
 
     for (const clip of clips) {
       const { frames: clipFrames } = clip
       switch(clipFrames) {
-        case Duration.Unknown:
-        case Duration.Unlimited: return clipFrames
+        case DurationUnknown:
+        case DurationUnlimited: return clipFrames
       }
     }
     const clip: Clip = arrayLast(clips)
@@ -172,7 +173,12 @@ export class TrackClass extends PropertiedClass implements Track {
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       
-          const options = { target: this, property, redoValue, undoValue }
+          const options: ChangePropertyActionObject = { 
+            type: ActionTypeChange,
+            target: this, property, redoValue, undoValue,
+            redoSelection: { ...actions.selection },
+            undoSelection: { ...actions.selection },
+          }
           actions.create(options)
         }
       }

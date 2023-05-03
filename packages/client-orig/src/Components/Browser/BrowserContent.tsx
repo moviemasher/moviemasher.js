@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  assertTrue, ClassDropping, eventStop
+  ClassDropping, eventStop
 } from "@moviemasher/lib-core"
 
 
@@ -69,8 +69,6 @@ export function BrowserContent(props: BrowserContentProps) {
   }
 
   const viewProps = {
-
-    
     onDrop, onDragOver, onDragLeave,
   }
   return <View key='browser-content'

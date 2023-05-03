@@ -1,6 +1,6 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataType, DataTypePercent } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { assertPopulatedString, isNumber } from '../../../Utility/Is.js'
 import { idGenerate } from '../../../Utility/Id.js'
@@ -16,17 +16,17 @@ export class ScaleFilter extends FilterDefinitionClass {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      name: 'width', type: DataType.Percent, defaultValue: 1.0, max: 2.0
+      name: 'width', type: DataTypePercent, defaultValue: 1.0, max: 2.0
     }))
     this.properties.push(propertyInstance({
-      name: 'height', type: DataType.Percent, defaultValue: 1.0, max: 2.0
+      name: 'height', type: DataTypePercent, defaultValue: 1.0, max: 2.0
     }))
     this.properties.push(propertyInstance({
-      name: `width${PropertyTweenSuffix}`, type: DataType.Percent, 
+      name: `width${PropertyTweenSuffix}`, type: DataTypePercent, 
       defaultValue: 1.0, max: 2.0
     }))
     this.properties.push(propertyInstance({
-      name: `height${PropertyTweenSuffix}`, type: DataType.Percent, 
+      name: `height${PropertyTweenSuffix}`, type: DataTypePercent, 
       defaultValue: 1.0, max: 2.0
     }))
     this.populateParametersFromProperties()

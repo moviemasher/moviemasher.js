@@ -20,12 +20,13 @@ describe('Url', () => {
       ['http://localhost/prefix/path/file.ext', 'file.ext', '/prefix/path'],
       ['http://localhost/prefix/path/file.ext', 'file.ext', '/prefix/path/'],
       ['http://localhost/prefix/file.ext', '../file.ext', '/prefix/path/'],
+      ['http://localhost/prefix/file.ext', '', '/prefix/file.ext'],
 
     ]
     tests.forEach(testArray => {
       const [expected, suffix, pathname = '', hostname = 'localhost', protocol = 'http:'] = testArray
       const endpoint = { pathname, hostname, protocol }
-      test(`urlForEndpoint('${endpoint}', '${suffix}')`, () => {
+      test(`urlForEndpoint('${protocol} ${hostname} ${pathname}', '${suffix}')`, () => {
         assert.equal(urlForEndpoint(endpoint, suffix), expected)
       })
     })

@@ -13,29 +13,28 @@ form
       center (span)
       right (span)
 
-    --control-fore (text and border)
-    --control-back (background)
-    --control-fore-disabled (text and border)
-    --control-back-disabled (background)
-    --control-fore-hover (text and border)
-    --control-back-hover (background)
-    --control-fore-selected (text and border)
-    --control-back-selected (background)
+
  
-    --label-fore (text)
-    --label-back (background)
+    --control-back (background)
+    --control-back-disabled (background)
+    --control-back-hover (background)
+    --control-back-selected (background)
+    --control-fore (text and border)
+    --control-fore-disabled (text and border)
+    --control-fore-hover (text and border)
+    --control-fore-selected (text and border)
 
-    --section-fore (border)
-    --section-back (header and footer background)
-    --section-pad (just header and footer)
-
+    --div-back (content background)
+    --div-fore (icons and borders in inspector)
     --div-pad (around items in selector/inspector)
     --div-space (between items in inspector and selector)
-    --div-back (content background)
 
-    --div-fore (icons and borders in inspector)
-
-    --item-fore (border, header, footer)
     --item-back (content background)
+    --item-fore (border, header, footer)
 
+    --label-back (background)
+    --label-fore (text)
 
+    --section-back (header and footer background)
+    --section-fore (border)
+    --section-pad (just header and footer)

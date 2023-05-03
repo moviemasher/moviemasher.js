@@ -12,8 +12,8 @@ import {assertPopulatedString, isDefiniteError, isPopulatedString, isUndefined} 
 import {centerPoint} from '../../Utility/Rect.js'
 import {colorCurrent} from '../../Helpers/Color/ColorConstants.js'
 import {ContainerDefinitionMixin} from '../Container/ContainerDefinitionMixin.js'
-import {DataGroup, propertyInstance} from '../../Setup/Property.js'
-import {DataType, Orientation, TypeFont} from '../../Setup/Enums.js'
+import {DataGroupSize, propertyInstance} from '../../Setup/Property.js'
+import {DataTypePercent, DataTypeString, LockHeight, TypeFont} from '../../Setup/Enums.js'
 import {Default} from '../../Setup/Default.js'
 import {EmptyFunction} from '../../Setup/Constants.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
@@ -21,7 +21,6 @@ import {FontClass} from './FontClass.js'
 import {isClientFont} from '../../Helpers/ClientMedia/ClientMediaFunctions.js'
 import {MediaBase} from '../MediaBase.js'
 import {PointZero} from '../../Utility/Point.js'
-import {requestFontPromise} from '../../Helpers/Request/RequestFunctions.js'
 import {stringFamilySizeRect} from '../../Utility/String.js'
 import {svgSvgElement, svgText, svgTransform} from '../../Helpers/Svg/SvgFunctions.js'
 import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
@@ -35,20 +34,22 @@ const FontContainerDefinitionWithContainer = ContainerDefinitionMixin(FontContai
 export class FontMediaClass extends FontContainerDefinitionWithContainer implements FontMedia {
   constructor(object: FontMediaObject) {
     super(object)
-    const { string, label } = object
+    const { string, label, loadedFont } = object
+    if (loadedFont) this.loadedFont = loadedFont
+    
     this.string = string || label || Default.font.string
 
     this.properties.push(propertyInstance({
-      name: 'string', custom: true, type: DataType.String, defaultValue: this.string
+      name: 'string', custom: true, type: DataTypeString, defaultValue: this.string
     }))
     this.properties.push(propertyInstance({
-      name: 'height', tweenable: true, custom: true, type: DataType.Percent, 
-      defaultValue: 0.3, max: 2.0, group: DataGroup.Size
+      name: 'height', tweenable: true, custom: true, type: DataTypePercent, 
+      defaultValue: 0.3, max: 2.0, group: DataGroupSize
     }))
 
     this.properties.push(propertyInstance({
-      name: 'width', tweenable: true, custom: true, type: DataType.Percent, 
-      defaultValue: 0.8, max: 2.0, group: DataGroup.Size
+      name: 'width', tweenable: true, custom: true, type: DataTypePercent, 
+      defaultValue: 0.8, max: 2.0, group: DataGroupSize
     }))
   }
 
@@ -105,7 +106,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
   instanceArgs(object?: FontObject): FontObject {
     const textObject = object || {}
-    if (isUndefined(textObject.lock)) textObject.lock = Orientation.V
+    if (isUndefined(textObject.lock)) textObject.lock = LockHeight
     return super.instanceArgs(textObject)
   }
 
@@ -134,10 +135,11 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
   isVector = true
 
   loadFontPromise(transcoding: Requestable): Promise<ClientFont> {
+    // console.log(this.constructor.name, 'loadFontPromise', transcoding)
     if (this.loadedFont) return Promise.resolve(this.loadedFont)
     
     const { request } = transcoding
-    return requestFontPromise(request).then(orError => {
+    return this.requestFontPromise(request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: loadedFont } = orError

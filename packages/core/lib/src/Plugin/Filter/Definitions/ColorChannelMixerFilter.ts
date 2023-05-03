@@ -1,6 +1,6 @@
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
 import { colorRgbaKeys } from '../../../Helpers/Color/ColorConstants.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataType, DataTypeNumber } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { ScalarRecord, StringRecord } from '../../../Types/Core.js'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
@@ -19,7 +19,7 @@ export class ColorChannelMixerFilter extends FilterDefinitionClass {
     super(object)
     ColorChannelMixerFilterKeys.forEach(name => {
       this.properties.push(propertyInstance({
-        custom: true, name, type: DataType.Number,
+        custom: true, name, type: DataTypeNumber,
         defaultValue: name[0] === name[1] ? 1.0 : 0.0,
         min: 0.0, max: 1.0
       }))

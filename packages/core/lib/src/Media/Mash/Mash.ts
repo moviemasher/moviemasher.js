@@ -8,7 +8,7 @@ import { Track, TrackObject } from './Track/Track.js'
 import { isArray, isObject } from '../../Utility/Is.js'
 
 import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { Request } from '../../Helpers/Request/Request.js'
+import { EndpointRequest } from '../../Helpers/Request/Request.js'
 import { Propertied } from '../../Base/Propertied.js'
 import { Effect } from '../Effect/Effect.js'
 import { Media, MediaObject, MediaObjects } from '../Media.js'
@@ -31,7 +31,7 @@ export interface MashMediaContent {
   media?: MediaObjects
 }
 
-export interface MashMediaRequest extends Request {
+export interface MashMediaRequest extends EndpointRequest {
   response?: MashMediaContent | undefined
 }
 

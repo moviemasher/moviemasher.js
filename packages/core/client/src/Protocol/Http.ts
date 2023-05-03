@@ -1,5 +1,5 @@
 import type {
-  ClientAudioDataOrError, ClientFontDataOrError, Request, RequestInit, 
+  ClientAudioDataOrError, ClientFontDataOrError, EndpointRequest, RequestInit, 
   ProtocolPromise, LoadType, 
 } from '@moviemasher/lib-core'
 
@@ -21,7 +21,7 @@ const arrayBufferPromise = (url: string, init?: RequestInit): Promise<ArrayBuffe
 
 const fontFamily = (url: string): string => url.replace(/[^a-z0-9]/gi, '_')
  
-const fontPromise =  (request: Request): Promise<ClientFontDataOrError> => {
+const fontPromise =  (request: EndpointRequest): Promise<ClientFontDataOrError> => {
   const { endpoint, init } = request
   assertEndpoint(endpoint)
 
@@ -57,7 +57,7 @@ const fontPromise =  (request: Request): Promise<ClientFontDataOrError> => {
   })
 }
 
-const audioPromise =  (request: Request): Promise<ClientAudioDataOrError> => {
+const audioPromise =  (request: EndpointRequest): Promise<ClientAudioDataOrError> => {
   const { endpoint, init } = request
   assertEndpoint(endpoint)
 
@@ -66,7 +66,7 @@ const audioPromise =  (request: Request): Promise<ClientAudioDataOrError> => {
   return arrayBufferPromise(url, init).then(audioBufferPromise)
 }
 
-const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
+const promise: ProtocolPromise = ((request: EndpointRequest, type?: LoadType) => {
   const { endpoint, init } = request
   assertEndpoint(endpoint)
 

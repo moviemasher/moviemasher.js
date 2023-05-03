@@ -12,7 +12,10 @@ import {
   TypeAudio,
   TypeImage,
   errorThrow,
-  ErrorName
+  ErrorName,
+  AVTypeAudio,
+  AVTypeBoth,
+  AVTypeVideo
 } from "@moviemasher/lib-core"
 import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs, RenderingResult } from "./Encode"
 import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
@@ -37,23 +40,23 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get avType() { 
     switch (this.outputType) {
-      case TypeAudio: return AVType.Audio
+      case TypeAudio: return AVTypeAudio
       // case FontType:
       // case SequenceType: 
-      case TypeImage: return AVType.Video
-      case TypeVideo: return AVType.Both 
+      case TypeImage: return AVTypeVideo
+      case TypeVideo: return AVTypeBoth 
     }
   }
 
   get avTypeNeededForClips(): AVType {
     const { avType } = this
-    if (avType !== AVType.Both) return avType
+    if (avType !== AVTypeBoth) return avType
 
     const renderingClips = this.args.mash.clipsInTimeOfType(this.timeRange, this.avType)
     const types = new Set<AVType>()
     renderingClips.forEach(renderingClip => {
-      if (renderingClip.audible) types.add(AVType.Audio)
-      if (renderingClip.visible) types.add(AVType.Video)
+      if (renderingClip.audible) types.add(AVTypeAudio)
+      if (renderingClip.visible) types.add(AVTypeVideo)
     })
     // console.log(this.constructor.name, "avTypeNeededForClips", types)
     if (types.size === 2) return avType
@@ -135,7 +138,7 @@ export class RenderingOutputClass implements RenderingOutput {
   get outputSize(): Size {
     const { width, height } = this.args.commandOutput
     if (!(width && height)) {
-      if (this.avType === AVType.Audio) return { width: 0, height: 0 }
+      if (this.avType === AVTypeAudio) return { width: 0, height: 0 }
 
       // console.error(this.constructor.name, "outputSize", this.args.commandOutput)
       return errorThrow(ErrorName.OutputDuration)
@@ -164,23 +167,23 @@ export class RenderingOutputClass implements RenderingOutput {
       const avType = this.avTypeNeededForClips
       const { filterGraphs } = this
       // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
-      if (avType !== AVType.Audio) {
+      if (avType !== AVTypeAudio) {
         const { filterGraphsVisible } = filterGraphs
         const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
           const { commandInputs: inputs, commandFilters, duration } = filterGraph
-          const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
+          const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVTypeVideo }
         // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
           return commandDescription
         })
         renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
       }
-      if (avType !== AVType.Video) {
+      if (avType !== AVTypeVideo) {
         const { filterGraphAudible, duration } = filterGraphs
         if (filterGraphAudible) {
           const { commandFilters, commandInputs: inputs } = filterGraphAudible
          
           const commandDescription: CommandDescription = {
-            inputs, commandFilters, duration, avType: AVType.Audio
+            inputs, commandFilters, duration, avType: AVTypeAudio
           }
           renderingDescription.audibleCommandDescription = commandDescription
         }
@@ -215,7 +218,7 @@ export class RenderingOutputClass implements RenderingOutput {
   private get clipsLackingSize(): Clips {
     const { timeRange, args } = this
     const { mash } = args
-    const clips = mash.clipsInTimeOfType(timeRange, AVType.Video)
+    const clips = mash.clipsInTimeOfType(timeRange, AVTypeVideo)
     const options: IntrinsicOptions = { size: true }
     return clips.filter(clip => !clip.intrinsicsKnown(options))
   }

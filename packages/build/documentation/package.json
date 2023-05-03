@@ -21,7 +21,7 @@
   "version": "5.1.2",
   "dependencies": {
     "@knodes/typedoc-plugin-code-blocks": "^0.23.4",
-    "@types/css-font-loading-module": "^0.0.8",
+    "@types/css-font-loading-module": "^0.0.7",
     "typedoc": "^0.23.26",
     "typedoc-plugin-external-resolver": "^1.0.2",
     "typedoc-plugin-resolve-crossmodule-references": "^0.3.3",
@@ -29,6 +29,6 @@
     "@knodes/typedoc-plugin-pages": "^0.23.4",
     "typedoc-plugin-expand-object-like-types": "^0.1.2",
     "typedoc-plugin-extras": "2.3.2",
-    "typedoc-plugin-coverage": "^2.0.1"
+    "typedoc-plugin-coverage": "^2.1.0"
   }
 }

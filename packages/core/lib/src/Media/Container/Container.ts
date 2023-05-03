@@ -6,7 +6,7 @@ import type { Size } from '../../Utility/Size.js'
 import type { CommandFilters, CommandFilterArgs, Component } from '../../Base/Code.js'
 import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
 import type { Content } from '../Content/Content.js'
-import type { Anchor, DirectionObject } from '../../Setup/Enums.js'
+import type { Direction, SideDirectionObject } from '../../Setup/Enums.js'
 
 export interface ContainerObject extends TweenableObject {
   height?: number
@@ -38,9 +38,9 @@ export interface Container extends Tweenable {
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
   containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple
-  // containerSvgFilter(svgItem: SvgItem, previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SVGFilterElement | undefined
-  directionObject: DirectionObject
-  directions: Anchor[]
+  containerSvgItemPromise(containerRect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem>
+  directionObject: SideDirectionObject
+  directions: Direction[]
   height: number
   offE: boolean
   offN: boolean
@@ -51,7 +51,6 @@ export interface Container extends Tweenable {
   opacityEnd?: number
   pathElement(rect: Rect): SvgItem 
   previewItemsPromise(content: Content, containerRect: Rect, previewSize: Size, time: Time, range: TimeRange, component: Component): Promise<PreviewItems>
-  containerSvgItemPromise(containerRect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem>
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   width: number
   x: number

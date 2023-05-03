@@ -1,5 +1,5 @@
 import type {
-  Request, 
+  EndpointRequest, 
 } from '@moviemasher/lib-core'
 import { 
   isUndefined, urlForEndpoint, JsonMimetype, assertEndpoint, FormDataMimetype, ContentTypeHeader 
@@ -9,7 +9,7 @@ export interface ResponseObject {
   json(): Promise<any>
 }
 
-export const jsonPromise = (request: Request): Promise<any> => {
+export const jsonPromise = (request: EndpointRequest): Promise<any> => {
   return fetchPromise(request).then(response => {
     return response.json()
   })
@@ -17,7 +17,7 @@ export const jsonPromise = (request: Request): Promise<any> => {
 
 
 
-export const fetchPromise = (request: Request): Promise<ResponseObject> => {
+export const fetchPromise = (request: EndpointRequest): Promise<ResponseObject> => {
   const { endpoint, init = {} } = request
   assertEndpoint(endpoint)
 

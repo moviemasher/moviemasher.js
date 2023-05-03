@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  assertSelectorType, ClassButton, DataGroup, isPopulatedObject, selectedPropertyObject 
+  assertSelectorType, ClassButton, DataGroup, DataGroupTiming, isPopulatedObject, selectedPropertyObject 
 } from "@moviemasher/lib-core"
 
 import { ElementRecord } from "../../../../Types/Element"
@@ -61,7 +61,6 @@ export function OptionGroupInput(props: OptionGroupInputProps) {
   </fieldset>
 }
 
-// [DataGroup.Timing, DataGroup.Clicking].forEach(dataGroup => {
-  const timingProps = { dataGroup: DataGroup.Timing, key: `${DataGroup.Timing}-group-input` }
-  DataGroupInputs[DataGroup.Timing] = <OptionGroupInput { ...timingProps } />
+  const timingProps = { dataGroup: DataGroupTiming, key: `${DataGroupTiming}-group-input` }
+  DataGroupInputs[DataGroupTiming] = <OptionGroupInput { ...timingProps } />
 // })

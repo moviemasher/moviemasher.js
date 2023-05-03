@@ -1,8 +1,8 @@
 
 import { 
-  timeFromArgs, timeRangeFromArgs, assertTrue, AVType, CommandFiles, 
+  timeFromArgs, timeRangeFromArgs, assertTrue, CommandFiles, 
   ServerPromiseArgs, EmptyFunction, Time, 
-  errorThrow, ErrorName, assertMedia, Numbers 
+  errorThrow, ErrorName, assertMedia, Numbers, AVTypeAudio, AVTypeVideo 
 } from "@moviemasher/lib-core"
 import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
@@ -38,15 +38,15 @@ export class FilterGraphsClass implements FilterGraphs {
       this.time = time
     }
 
-    if (avType !== AVType.Video) {
-      assertTrue(length === 1 || avType !== AVType.Audio, 'single time for avtype audio')
+    if (avType !== AVTypeVideo) {
+      assertTrue(length === 1 || avType !== AVTypeAudio, 'single time for avtype audio')
 
       const filterGraphArgs: FilterGraphArgs = {
         ...rest, time: this.time, mash, visible: false,
       }
       this.filterGraphAudible = new FilterGraphClass(filterGraphArgs)
     }
-    if (avType !== AVType.Audio) {
+    if (avType !== AVTypeAudio) {
       this.filterGraphsVisible.push(...times.map(time => {
         const filterGraphArgs: FilterGraphArgs = { 
           ...rest, time, mash, visible: true 

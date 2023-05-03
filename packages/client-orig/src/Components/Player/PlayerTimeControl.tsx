@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, isArray, timeFromArgs, TimeRange } from '@moviemasher/lib-core'
+import { EventTypeDuration, EventTypeTime, isArray, timeFromArgs, TimeRange } from '@moviemasher/lib-core'
 
 
 import { SliderChangeHandler } from "../../Types/Core"
@@ -16,8 +16,8 @@ export function PlayerTimeControl(props: PropsWithChildren) {
 
   const update = () => { setTimeRange(getTimeRange())}
   useListeners({
-    [EventType.Time]: update,
-    [EventType.Duration]: update,
+    [EventTypeTime]: update,
+    [EventTypeDuration]: update,
   })
  
   const onChange: SliderChangeHandler = (values) => {

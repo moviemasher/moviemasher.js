@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react"
-import type { MediaArray, MediaType } from "@moviemasher/lib-core"
-
-import { EventType } from "@moviemasher/lib-core"
+import { EventTypeAdded, EventTypeResize, MediaArray, MediaType } from "@moviemasher/lib-core"
 
 import { useListeners } from "./useListeners"
 import { useMasher } from "./useMasher"
@@ -19,7 +17,7 @@ export const useDefinitions = (types: MediaType[] = []): MediaArray => {
   }, [media, types, refreshed])
 
 
-  useListeners({ [EventType.Added]: refresh, [EventType.Resize]: refresh })
+  useListeners({ [EventTypeAdded]: refresh, [EventTypeResize]: refresh })
   
   const mediaArray = React.useMemo(getMedia, [getMedia])
   return mediaArray

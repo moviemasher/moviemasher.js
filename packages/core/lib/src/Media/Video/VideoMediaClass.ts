@@ -17,7 +17,6 @@ import { TypeSequence, TypeImage, TypeVideo} from '../../Setup/Enums.js'
 import {Requestable} from '../../Base/Requestable/Requestable.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
 import {ErrorName} from '../../Helpers/Error/ErrorName.js'
-import {requestImagePromise, requestVideoPromise} from '../../Helpers/Request/RequestFunctions.js'
 import {isDefiniteError} from '../../Utility/Is.js'
 
 const VideoMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
@@ -28,11 +27,11 @@ const VideoMediaWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoMe
 export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements VideoMedia {
   constructor(object: VideoMediaObject) {
     super(object)
-    const { loadedVideo } = object as VideoMediaObject
+    const { loadedVideo } = object
     if (loadedVideo) this.loadedVideo = loadedVideo
   
     // TODO: support speed
-    // this.properties.push(propertyInstance({ name: 'speed', type: DataType.Number, value: 1.0 }))
+    // this.properties.push(propertyInstance({ name: 'speed', type: DataTypeNumber, value: 1.0 }))
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
@@ -76,7 +75,7 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
     switch (type) {
       case TypeImage: {
 
-        return requestImagePromise(request).then(orError => {
+        return this.requestImagePromise(request).then(orError => {
           if (isDefiniteError(orError)) return errorThrow(orError.error)
           
           return orError.data
@@ -98,11 +97,10 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
     const loaded = this.loadedImage(definitionTime, outSize)
     if (loaded) return Promise.resolve(loaded)
     
-    return requestVideoPromise(previewTranscoding.request).then(orError => {
+    return this.requestVideoPromise(previewTranscoding.request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: clientVideo } = orError
-
       const key = this.loadedImageKey(definitionTime, outSize)
     
       return imageFromVideoPromise(clientVideo, definitionTime, outSize).then(image => {

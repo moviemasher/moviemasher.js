@@ -5,16 +5,16 @@ import { customElement } from 'lit/decorators/custom-element.js'
 import { property } from 'lit/decorators/property.js'
 
 
-import { Base } from './Base/Base.js'
+import { Component } from './Base/Component.js'
 
-@customElement('moviemasher-string')
-export class StringElement extends Base {
+@customElement('movie-masher-string')
+export class StringElement extends Component {
   @property() string = 'app'
 
 
   private contentOrVoid?: Text | string | void 
 
-  private get content () {
+  private get stringContent () {
     return this.contentOrVoid ||= this.contentInitialize
   }
   private get contentInitialize(): Text | string | void {
@@ -34,7 +34,7 @@ export class StringElement extends Base {
     return string
   }
 
-  override render() { return this.content }
+  override render() { return this.stringContent }
 
   override willUpdate(changedProperties: PropertyValues<this>) {
     // console.debug(this.constructor.name, 'willUpdate', changedProperties)

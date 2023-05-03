@@ -1,0 +1,30 @@
+[
+
+  {
+    "label": "Butcherman",
+    "id": "com.moviemasher.font.butcherman",
+    "type": "font",
+    "request": { 
+      "endpoint": { 
+        "protocol": "https:",
+        "hostname": "fonts.googleapis.com", 
+        "pathname": "/css2", 
+        "search": "?family=Butcherman" 
+      } 
+    }
+  },
+  {
+    "label": "Croissant One",
+    "id": "com.moviemasher.font.croissant-one",
+    "type": "font",
+    "request": { 
+      "endpoint": { 
+        "protocol": "https:",
+        "hostname": "fonts.googleapis.com", 
+        "pathname": "/css2", 
+        "search": "?family=Croissant+One" 
+      } 
+    }
+  }
+    
+]

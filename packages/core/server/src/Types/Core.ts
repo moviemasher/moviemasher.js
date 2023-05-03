@@ -1,6 +1,6 @@
-import { Request } from "@moviemasher/lib-core"
+import { EndpointRequest } from "@moviemasher/lib-core"
 
 
 export interface Input {
-  request?: Request
+  request?: EndpointRequest
 }

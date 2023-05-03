@@ -6,7 +6,7 @@ import type {
 
 
 import type { 
-  Request,
+  EndpointRequest,
   DecodeOutput,
   Decoding,
   TranscodeOutput,
@@ -207,14 +207,14 @@ export interface ClientTranscodeOptions extends ClientOperationOptions {
 export interface ClientTranscodeArgs extends ClientOperationArgs, Required<ClientTranscodeOptions> {}
 
 export interface ClientUploadOptions extends ClientOperationOptions {
-  uploadRequest?: Request | false
+  uploadRequest?: EndpointRequest | false
   uploadResponseIsRequest?: boolean
 }
 export interface ClientUploadArgs extends ClientOperationArgs, Required<ClientUploadOptions> {}
 
 export interface ClientWriteOptions extends ClientOperationOptions {
-  saveRequest?: Request | false
-  deleteRequest?: Request | false
+  saveRequest?: EndpointRequest | false
+  deleteRequest?: EndpointRequest | false
 }
 export interface ClientWriteArgs extends ClientOperationArgs, Required<ClientWriteOptions> {}
 

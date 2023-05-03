@@ -28,6 +28,7 @@ export interface UpdatableDurationDefinitionObject extends ContentDefinitionObje
   loop?: boolean
   waveform?: string
   audioUrl?: string
+  loadedAudio?: ClientAudio
 }
 
 export interface UpdatableDuration extends Content {

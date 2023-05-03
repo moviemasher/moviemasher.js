@@ -8,13 +8,13 @@ import { html } from 'lit'
 import { IconString } from './Base/IconString.js'
 
 
-@customElement('moviemasher-button')
+@customElement('movie-masher-button')
 export class ButtonElement extends IconString {
-  override slottedContent(contents: Contents): Content {
+  protected override content(contents: Contents): Content {
     return html`<button 
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
-      @click='${this.onClicked}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
+      @click='${this.clickHandler}'
     >${contents}</button>`
   }
   static override styles = [css`

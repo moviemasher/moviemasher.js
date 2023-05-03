@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownRecord } from '@moviemasher/lib-core'
+import { DataTypeString, UnknownRecord } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'
@@ -21,4 +21,4 @@ export function TextTypeInput() {
   return <input {...inputProps} />
 }
 
-DataTypeInputs[DataType.String] = <TextTypeInput />
+DataTypeInputs[DataTypeString] = <TextTypeInput />

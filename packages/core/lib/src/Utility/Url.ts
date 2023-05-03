@@ -56,11 +56,3 @@ export const urlExtension = (extension: string): string => (
 export const urlFilename = (name: string, extension: string): string =>(
   `${name}.${urlExtension(extension)}`
 )
-
-export const urlFromCss = (string: string): string => {
-  const exp = /url\(([^)]+)\)(?!.*\1)/g
-  const matches = string.matchAll(exp)
-  const matchesArray = [...matches]
-  const url = arrayLast(arrayLast(matchesArray))
-  return url
-}

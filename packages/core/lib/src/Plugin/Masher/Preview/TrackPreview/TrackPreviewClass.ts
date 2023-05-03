@@ -1,22 +1,28 @@
-import {Container, ContainerRectArgs} from '../../../../Media/Container/Container.js'
-import {EventFunction,} from '../../../../Types/Function.js'
-import {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
-import {Point, pointsEqual, PointZero} from '../../../../Utility/Point.js'
-import {Rect, rectsEqual} from '../../../../Utility/Rect.js'
-import {assertSizeAboveZero, Size} from '../../../../Utility/Size.js'
-import {Clip} from '../../../../Media/Mash/Track/Clip/Clip.js'
+import type { Direction } from '../../../../Setup/Enums.js'
+import type {Masher} from '../../Masher.js'
+import type {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
+import type { Size} from '../../../../Utility/Size.js'
+import type {Point} from '../../../../Utility/Point.js'
+import type {Rect} from '../../../../Utility/Rect.js'
+import type {Clip} from '../../../../Media/Mash/Track/Clip/Clip.js'
+import type {TrackPreview, TrackPreviewArgs} from './TrackPreview.js'
+import type {ScalarRecord} from '../../../../Types/Core.js'
+import type { ChangePropertiesActionObject } from '../../Actions/Action/Action.js'
+import type {Container, ContainerRectArgs} from '../../../../Media/Container/Container.js'
+import type {EventFunction,} from '../../../../Types/Function.js'
+import type {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
+
+
+import {pointsEqual, PointZero} from '../../../../Utility/Point.js'
+import { rectsEqual} from '../../../../Utility/Rect.js'
+import {assertSizeAboveZero} from '../../../../Utility/Size.js'
 import {svgAddClass, svgPolygonElement} from '../../../../Helpers/Svg/SvgFunctions.js'
-import {TrackPreview, TrackPreviewArgs} from './TrackPreview.js'
 import {assertTrue} from '../../../../Utility/Is.js'
-import {ActionType, Anchor, assertDirection, Direction} from '../../../../Setup/Enums.js'
-import {Masher} from '../../Masher.js'
-import {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
+import {ActionTypeChangeMultiple, assertSideDirection, DirectionEast, DirectionNorth, DirectionSouth, DirectionWest} from '../../../../Setup/Enums.js'
 import {tweeningPoints, tweenMinMax} from '../../../../Mixin/Tweenable/Tween.js'
 import {PropertyTweenSuffix} from '../../../../Base/Propertied.js'
-import {DataGroup} from '../../../../Setup/Property.js'
-import {ActionOptions} from '../../Actions/Action/Action.js'
+import {DataGroupPoint} from '../../../../Setup/Property.js'
 import {eventStop} from '../../../../Utility/Event.js'
-import {ScalarRecord} from '../../../../Types/Core.js'
 
 export const TrackPreviewHandleSize = 8
 
@@ -118,10 +124,14 @@ export class TrackPreviewClass implements TrackPreview {
         [xKey]: totalWidth ? limitedX / totalWidth : undoValues[xKey],
         [yKey]: totalHeight ? limitedY / totalHeight : undoValues[yKey]
       }
+
       
-      const args: ActionOptions = {
-        property: DataGroup.Point, target: container,
-        type: ActionType.ChangeMultiple, redoValues, undoValues 
+      const args: ChangePropertiesActionObject = {
+        redoSelection: { ...editor.selection.object },
+        undoSelection: { ...editor.selection.object },
+        property: DataGroupPoint,
+        target: container,
+        type: ActionTypeChangeMultiple, redoValues, undoValues 
       }
       editor.actions.create(args)
     }
@@ -231,32 +241,32 @@ export class TrackPreviewClass implements TrackPreview {
     return items
   }
 
-  private svgHandlePoint(dimensions: Size, direction: Anchor): Point {
+  private svgHandlePoint(dimensions: Size, direction: Direction): Point {
     const handle = TrackPreviewHandleSize
     const halfHandle = handle / 2
 
     const { width, height } = dimensions
     const point = { ...PointZero }
     const [first, second] = String(direction).split('')
-    assertDirection(first, direction)
+    assertSideDirection(first, direction)
 
     const last = second || first
-    assertDirection(last)
+    assertSideDirection(last)
 
     switch(last) {
-      case Direction.W:
+      case DirectionWest:
         point.x = - halfHandle
         break
-      case Direction.E:
+      case DirectionEast:
         point.x = width - halfHandle
         break
       default: point.x = Math.round(width / 2) - halfHandle
     }
     switch(first) {
-      case Direction.N:
+      case DirectionNorth:
         point.y = - halfHandle
         break
-      case Direction.S: 
+      case DirectionSouth: 
         point.y = height - halfHandle
         break
       default: point.y = Math.round(height / 2) - halfHandle

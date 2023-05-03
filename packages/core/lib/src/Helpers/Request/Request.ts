@@ -3,12 +3,12 @@ import type { Endpoint } from '../Endpoint/Endpoint.js'
 
 import { errorThrow } from '../Error/ErrorFunctions.js'
 
-export interface Request {
+export interface EndpointRequest {
   response?: any | undefined
-  endpoint?: Endpoint
+  endpoint?: Endpoint | string
   init?: RequestInit
 }
-export type Requests = Request[]
+export type EndpointRequests = EndpointRequest[]
 
 
 
@@ -18,7 +18,7 @@ export interface RequestInit {
   method?: string
 }
 
-export interface RequestRecord extends Record<string, Request> { }
+export interface RequestRecord extends Record<string, EndpointRequest> { }
 
 
 export type GetMethod = 'GET'

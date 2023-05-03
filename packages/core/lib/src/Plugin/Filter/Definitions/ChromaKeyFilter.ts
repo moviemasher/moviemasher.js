@@ -1,6 +1,6 @@
 import { ScalarRecord, StringRecord } from '../../../Types/Core.js'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataTypePercent, DataTypeString } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { colorToRgb } from '../../../Helpers/Color/ColorFunctions.js'
 import { colorGreen } from '../../../Helpers/Color/ColorConstants.js'
@@ -16,15 +16,15 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      custom: true, name: 'color', type: DataType.String,
+      custom: true, name: 'color', type: DataTypeString,
       defaultValue: colorGreen
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'similarity', type: DataType.Percent,
+      custom: true, name: 'similarity', type: DataTypePercent,
       defaultValue: 0.9, min: 0.1, step: 0.01, max: 1.0, 
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'blend', type: DataType.Percent,
+      custom: true, name: 'blend', type: DataTypePercent,
       defaultValue: 0.0, step: 0.01, max: 1.0,
     }))
     this.populateParametersFromProperties()

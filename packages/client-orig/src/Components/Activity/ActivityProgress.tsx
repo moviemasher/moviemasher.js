@@ -6,7 +6,7 @@ import {
 
 import { WithClassName } from "../../Types/Core"
 import { PropsWithoutChild } from "../../Types/Props"
-import { ActivityContext, ActivityGroup } from "./ActivityContext"
+import { ActivityContext, ActivityGroupActive } from "./ActivityContext"
 import { View } from "../../Utilities/View"
 import { ActivityContentContext } from "./ActivityContentContext"
 
@@ -34,7 +34,7 @@ export interface ActivityProgressProps extends PropsWithoutChild, WithClassName 
       elements.push(<label key="label">{label}</label>)
     }
     const active = allActivities.filter(activityObject => (
-      activityObject.activityGroup === ActivityGroup.Active
+      activityObject.activityGroup === ActivityGroupActive
     ))
     if (active.length) {
       active.forEach(activityObject => {

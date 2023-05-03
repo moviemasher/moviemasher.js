@@ -11,10 +11,13 @@ import {ColorContentDefinitionClass} from '../Content/ColorContent/ColorContentD
 import {DefaultContentId} from '../Content/ContentConstants.js'
 
 export const imageDefinition = (object : ImageMediaObject) : ImageMedia => {
-  const { id } = object
+  const { id, kind } = object
   assertPopulatedString(id, 'imageDefinition id')
 
-  return new ImageMediaClass(object)
+  switch(kind) {
+    case 'shape': return new ShapeContainerDefinitionClass(object)
+    default: return new ImageMediaClass(object)
+  }
 }
 
 export const imageDefinitionFromId = (id : string) : ImageMedia => {
@@ -42,9 +45,6 @@ export const imageFromId = (id : string) : Image => {
 MediaFactories[TypeImage] = imageDefinition
 
 
-
-
-
 MediaDefaults[TypeImage].push(
   new ColorContentDefinitionClass({
     id: DefaultContentId,
@@ -56,6 +56,7 @@ MediaDefaults[TypeImage].push(
     id: DefaultContainerId, 
     label: "Rectangle",
     type: "image",
+    kind: "shape",
     request: { response: { } }
   })
 )

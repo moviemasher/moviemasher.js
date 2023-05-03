@@ -1,14 +1,16 @@
 import React from 'react'
 import { 
-  arraySet, assertSelectorType, EventType, SelectedItems, SelectorType, SelectorTypes, 
+  arraySet, assertSelectorType, SelectedItems, SelectorType, 
   assertPositive, assertTrue, timeFromArgs, timeEqualizeRates, assertDataGroup,
   isSelectedProperty, isDefined, PropertyTweenSuffix, DataGroup, 
   SelectedProperties, 
-  NoneType
+  EventTypeAction,
+  EventTypeSelection,
+  TypeNone,
+  TypesSelector
 } from '@moviemasher/lib-core'
 
 
-import { WithClassName } from "../../Types/Core"
 import { PropsWithChildren } from "../../Types/Props"
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
@@ -30,9 +32,9 @@ export function Inspector(props: InspectorProps) {
   const [actionCount, setActionCount] = React.useState(() => 0)
   const info = React.useRef<SelectedInfo>({ 
     tweenDefined: {}, tweenSelected: {}, 
-    selectedType: NoneType, selectTypes: []
+    selectedType: TypeNone, selectTypes: []
   })
-  const [orderedTypes, setOrderedTypes] = React.useState<SelectorType[]>(() => SelectorTypes)
+  const [orderedTypes, setOrderedTypes] = React.useState<SelectorType[]>(() => TypesSelector)
   const [selectedItems, setSelectedItems] = React.useState<SelectedItems>(() => [])
   const handleAction = () => { setActionCount(value => value + 1) }
   const handleSelection = React.useCallback(() => {
@@ -93,8 +95,8 @@ export function Inspector(props: InspectorProps) {
   }, [editor, orderedTypes])
   
   useListeners({
-    [EventType.Action]: handleAction,
-    [EventType.Selection]: handleSelection,
+    [EventTypeAction]: handleAction,
+    [EventTypeSelection]: handleSelection,
   })
 
   const changeSelected = React.useCallback((type: string) => {

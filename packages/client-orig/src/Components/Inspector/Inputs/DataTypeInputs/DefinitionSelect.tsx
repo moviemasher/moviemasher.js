@@ -1,5 +1,5 @@
 import React from 'react'
-import { assertTrue, DataType, FontType } from '@moviemasher/lib-core'
+import { assertTrue, DataTypeFontId, TypeFont } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'
@@ -17,7 +17,7 @@ export function DefinitionSelect() {
     changeHandler(name, event.target.value)
   }
 
-  const options = media.byType(FontType).map(object => {
+  const options = media.byType(TypeFont).map(object => {
     const { id, label } = object
     const optionProps = { value: id, children: label, key: id }
     return <option {...optionProps}/>
@@ -33,4 +33,4 @@ export function DefinitionSelect() {
   return <select {...selectProps} />
 }
 
-DataTypeInputs[DataType.FontId] = <DefinitionSelect />
+DataTypeInputs[DataTypeFontId] = <DefinitionSelect />

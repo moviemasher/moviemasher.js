@@ -1,47 +1,58 @@
-import {
-  StringRecord} from '../../Types/Core.js'
-import {PreviewItems} from '../../Helpers/Svg/Svg.js'
+import type { StringRecord} from '../../Types/Core.js'
+import type {PreviewItems} from '../../Helpers/Svg/Svg.js'
+import type {Media, MediaObject, MediaObjects, MediaArray} from '../../Media/Media.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
+
+import type { ClientAction, } from '../../Setup/Enums.js' 
+import type {
+  ClipOrEffect, Masher, MasherArgs, MashIndex, MashingType,
+} from './Masher.js'
+import type { ClipObject, Clip, Clips} from '../../Media/Mash/Track/Clip/Clip.js'
+import type { MashMedia, MashAndMediaObject, Movable, Movables, MashMediaObject, MashMasherArgs} from '../../Media/Mash/Mash.js'
+import type { Action, MoveActionObject, AddClipActionObject, AddTrackActionObject, RemoveClipActionObject} from './Actions/Action/Action.js'
+import type { Track} from '../../Media/Mash/Track/Track.js'
+
+import type {EditorSelection, EditorSelectionObject} from './EditorSelection/EditorSelection.js'
+import type {PreloadOptions} from '../../Base/Code.js'
+import type {Rect} from '../../Utility/Rect.js'
+
+import { isMashingType } from './Masher.js'
+
 import {sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize} from '../../Utility/Size.js'
-import {Media, MediaObject, MediaObjects, MediaArray} from '../../Media/Media.js'
-import {assertMashMedia, isMashMedia, MashMedia, MashAndMediaObject, Movable, Movables, MashMediaObject, MashMasherArgs} from '../../Media/Mash/Mash.js'
+import {assertMashMedia, isMashMedia} from '../../Media/Mash/Mash.js'
 import {Emitter} from '../../Helpers/Emitter.js'
-import {Time, TimeRange} from '../../Helpers/Time/Time.js'
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
 import {assertEffect} from '../../Media/Effect/Effect.js'
-import {assertTrack, Track} from '../../Media/Mash/Track/Track.js'
+import {assertTrack} from '../../Media/Mash/Track/Track.js'
 import {Default} from '../../Setup/Default.js'
 import {
-  ActionType, EventType, MasherAction, TypeAudio, TypeVideo
+  ActionTypeAddClip,ActionTypeAddTrack, ActionTypeMove, ActionTypeMoveClip, 
+  ActionTypeRemoveClip, ClientActionRedo, ClientActionRemove, ClientActionRender, 
+  ClientActionSave, ClientActionUndo, TypeAudio, TypeVideo, EventTypeAction, 
+  EventTypeAdded, EventTypeDraw, EventTypeFps, EventTypeResize, EventTypeVolume,
 } from '../../Setup/Enums.js'
+
 import {isLoadType} from '../../Setup/LoadType.js'
 import {
   assertAboveZero, assertObject, assertPopulatedObject, isPositive,
   assertPositive, assertTrue, isAboveZero, isArray, 
-  isBoolean, isNumber} from '../../Utility/Is.js'
-import {
-  ClipOrEffect, Masher, MasherArgs, MashIndex, MashingType, isMashingType,
-} from './Masher.js'
+  isBoolean, isNumber
+} from '../../Utility/Is.js'
+
 import {editorSelectionInstance} from './EditorSelection/EditorSelectionFactory.js'
-
-import {EditorSelection, EditorSelectionObject} from './EditorSelection/EditorSelection.js'
-import {Action, ActionOptions} from './Actions/Action/Action.js'
-import {ChangeAction} from './Actions/Action/ChangeAction.js'
 import {Actions} from './Actions/Actions.js'
-
 import {mashMedia} from '../../Media/Mash/MashFactory.js'
-
 import {MediaCollection} from '../../Media/Mash/MediaCollection/MediaCollection.js'
-import {assertClip, isClip, ClipObject, Clip, Clips} from '../../Media/Mash/Track/Clip/Clip.js'
+import {assertClip, isClip } from '../../Media/Mash/Track/Clip/Clip.js'
 import {clipInstance} from '../../Media/Mash/Track/Clip/ClipFactory.js'
 import {assertContent} from '../../Media/Content/ContentFunctions.js'
 import {svgSvgElement, svgPolygonElement, svgPatch} from '../../Helpers/Svg/SvgFunctions.js'
 import {idIsTemporary, idTemporary} from '../../Utility/Id.js'
-import {PreloadOptions} from '../../Base/Code.js'
-import {Rect, rectsEqual} from '../../Utility/Rect.js'
+import { rectsEqual} from '../../Utility/Rect.js'
 import {isPoint, pointCopy, PointZero} from '../../Utility/Point.js'
-import {MoveActionOptions} from './Actions/Action/MoveAction.js'
 import {CurrentIndex, LastIndex, NextIndex} from '../../Setup/Constants.js'
+import { isChangeAction } from './Actions/Action/ActionFunctions.js'
 
 type Timeout = ReturnType<typeof setTimeout>
 
@@ -98,11 +109,13 @@ export class MasherClass implements Masher {
     const insertIndex = isPositive(index) ? index : objects.length
     const redoObjects = [...objects]
     redoObjects.splice(insertIndex, 0, effect)
-    const options: MoveActionOptions = {
+    const options: MoveActionObject = {
       objects,
       undoObjects: [...objects],
       redoObjects,
-      type: ActionType.Move
+      type: ActionTypeMove,
+      redoSelection: { ...this.selection.object },
+      undoSelection: { ...this.selection.object },
     }
     actions.create(options)
     mash.draw()
@@ -115,7 +128,7 @@ export class MasherClass implements Masher {
     
     const installedMedia = this.media.install(mediaArray)
     const definitionTypes = installedMedia.map(media => media.type)
-    this.eventTarget.emit(EventType.Added, { definitionTypes })
+    this.eventTarget.emit(EventTypeAdded, { definitionTypes })
 
     if (!editorIndex) return Promise.resolve(installedMedia)
     
@@ -155,8 +168,9 @@ export class MasherClass implements Masher {
         ...this.selection.object, clip: firstClip 
       }
       const createTracks = trackPositive ? 0 : clips.length
-      const options: ActionOptions = {
-        clips, type: ActionType.AddClipToTrack, trackIndex,
+      const options: AddClipActionObject = {
+        clips, type: ActionTypeAddClip, trackIndex,
+        undoSelection: { ...this.selection.object },
         redoSelection, createTracks
       }
       const clipIndex = this.clipIndex(frameOrIndex, trackClips, mash, dense)
@@ -217,9 +231,11 @@ export class MasherClass implements Masher {
   addTrack(): void {
     const { mashMedia: mash } = this
     const redoSelection: EditorSelectionObject = { mash }
-    this.actions.create({ 
-      redoSelection, type: ActionType.AddTrack, createTracks: 1 
-    })
+    const object: AddTrackActionObject = { 
+      redoSelection, type: ActionTypeAddTrack, createTracks: 1,
+      undoSelection: { ...this.selection.object },
+    }
+    this.actions.create(object)
   }
 
   private assureMash(media: MediaArray) {
@@ -248,15 +264,15 @@ export class MasherClass implements Masher {
     }
   }
 
-  can(masherAction: MasherAction): boolean {
+  can(masherAction: ClientAction): boolean {
     const { selection } = this
     const { track, clip, mash } = selection
     switch (masherAction) {
-      case MasherAction.Save: return this.actions.canSave
-      case MasherAction.Undo: return this.actions.canUndo
-      case MasherAction.Redo: return this.actions.canRedo
-      case MasherAction.Remove: return !!(clip || track)
-      case MasherAction.Render: return !this.actions.canSave && !!(mash?.id && !idIsTemporary(mash.id))
+      case ClientActionSave: return this.actions.canSave
+      case ClientActionUndo: return this.actions.canUndo
+      case ClientActionRedo: return this.actions.canRedo
+      case ClientActionRemove: return !!(clip || track)
+      case ClientActionRender: return !this.actions.canSave && !!(mash?.id && !idIsTemporary(mash.id))
     }
   }
 
@@ -264,7 +280,7 @@ export class MasherClass implements Masher {
     if (!this.actions.instances.length) return
 
     this.actions = new Actions(this)
-    this.eventTarget.emit(EventType.Action)
+    this.eventTarget.emit(EventTypeAction)
   }
 
   get clips(): Clips { return this.mashMedia?.clips || [] }
@@ -336,7 +352,7 @@ export class MasherClass implements Masher {
     // setting to zero means fallback to mash rate
     if (this._fps !== number) {
       this._fps = number
-      this.eventTarget.emit(EventType.Fps)
+      this.eventTarget.emit(EventTypeFps)
       this.time = this.time.scale(this.fps)
     }
   }
@@ -374,7 +390,7 @@ export class MasherClass implements Masher {
   
     if (isMashMedia(mash)) {
       mash.clearPreview()
-      if (action instanceof ChangeAction) {
+      if (isChangeAction(action)) {
         const { property, target } = action
         switch(property) {
           case 'gain': {
@@ -396,7 +412,7 @@ export class MasherClass implements Masher {
     promise.then(() => {
       if (!mash) this.handleDraw()
       // console.log(this.constructor.name, 'handleAction', type)
-      this.eventTarget.emit(EventType.Action, { action })
+      this.eventTarget.emit(EventTypeAction, { action })
     })
   }
 
@@ -406,7 +422,7 @@ export class MasherClass implements Masher {
 
       this.drawTimeout = setTimeout(() => {
         // console.log(this.constructor.name, 'handleDraw drawTimeout')
-        this.eventTarget.dispatch(EventType.Draw)
+        this.eventTarget.emit(EventTypeDraw)
         delete this.drawTimeout
       }, 10)
     
@@ -493,8 +509,10 @@ export class MasherClass implements Masher {
     if (mash) mash.loop = boolean
   }
 
-
-  media = new MediaCollection()
+  private _mediaCollection?: MediaCollection
+  get media(): MediaCollection {
+    return this._mediaCollection ||= new MediaCollection(this.eventTarget)
+  }
 
   move(object: ClipOrEffect, editorIndex: MashIndex = {}): void {
     assertPopulatedObject(object, 'clip')
@@ -525,7 +543,7 @@ export class MasherClass implements Masher {
       clip,
       trackIndex: track,
       undoTrackIndex: undoTrack,
-      type: ActionType.MoveClip
+      type: ActionTypeMoveClip
     }
     const creating = !isPositive(track)
     if (creating) options.createTracks = 1
@@ -568,11 +586,13 @@ export class MasherClass implements Masher {
     const spliceIndex = currentIndex < posIndex ? posIndex - 1 : posIndex
     const redoObjects = objects.filter(e => e !== effect)
     redoObjects.splice(spliceIndex, 0, effect)
-    const options: MoveActionOptions = {
-      type: ActionType.Move, 
+    const options: MoveActionObject = {
+      type: ActionTypeMove, 
       objects, 
       undoObjects: [...objects], 
       redoObjects, 
+      redoSelection: { ...this.selection.object },
+      undoSelection: { ...this.selection.object },
     }
     actions.create(options)
     mash.draw()
@@ -648,7 +668,7 @@ export class MasherClass implements Masher {
       if (!mashMedia) return
  
       mashMedia.imageSize = sizeCopy(rect)
-      eventTarget.emit(EventType.Resize, { rect: value })
+      eventTarget.emit(EventTypeResize, { rect: value })
       this.redraw()
     })
   }
@@ -659,24 +679,25 @@ export class MasherClass implements Masher {
     const { mashMedia } = this
     if (!mashMedia) return
     mashMedia.clearPreview()
-    this.eventTarget.dispatch(EventType.Draw)
+    this.eventTarget.emit(EventTypeDraw)
   }
 
   removeClip(clip: Clip): void {
-    const { mashMedia } = this
+    const { mashMedia, actions } = this
     assertMashMedia(mashMedia)
 
     const { track } = clip
     const { clip: _, ...redoSelection } = this.selection
 
-    const options = {
+    const options: RemoveClipActionObject = {
       redoSelection,
       clip,
       track,
       index: track.clips.indexOf(clip),
-      type: ActionType.RemoveClip
+      type: ActionTypeRemoveClip,
+      undoSelection: { ...actions.selection },
     }
-    this.actions.create(options)
+    actions.create(options)
   }
 
   removeEffect(effect: Movable): void {
@@ -688,11 +709,13 @@ export class MasherClass implements Masher {
     const { content } = clip
     assertContent(content)
     const objects = content.effects as Movables
-    const options: MoveActionOptions = {
-      type: ActionType.Move,
+    const options: MoveActionObject = {
+      type: ActionTypeMove,
       objects: objects,
       undoObjects: [...objects],
       redoObjects: objects.filter(other => other !== effect),
+      redoSelection: { ...actions.selection },
+      undoSelection: { ...actions.selection },
     }
     actions.create(options)
     mash.draw()
@@ -717,7 +740,7 @@ export class MasherClass implements Masher {
       })
     }
     this.actions.save()
-    this.eventTarget.emit(EventType.Action)
+    this.eventTarget.emit(EventTypeAction)
   }
 
   _selection?: EditorSelection
@@ -806,7 +829,7 @@ export class MasherClass implements Masher {
 
       const { mashMedia: mash } = this
       if (mash) mash.gain = this.gain
-      this.eventTarget.emit(EventType.Volume)
+      this.eventTarget.emit(EventTypeVolume)
     }
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownRecord, assertPopulatedArray } from '@moviemasher/lib-core'
+import { DataTypeOption, UnknownRecord, assertPopulatedArray } from '@moviemasher/lib-core'
 
 
 import { DataTypeInputs } from './DataTypeInputs'
@@ -31,4 +31,4 @@ export function OptionTypeInput() {
   return <select {...selectProps} />
 }
 
-DataTypeInputs[DataType.Option] = <OptionTypeInput />
+DataTypeInputs[DataTypeOption] = <OptionTypeInput />

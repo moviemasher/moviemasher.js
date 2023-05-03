@@ -1,6 +1,6 @@
 import { 
   JsonRecord, assertObject, isArray, 
-  Request, PotentialError, StringDataOrError, Requests, Identified, Runtime
+  EndpointRequest, PotentialError, StringDataOrError, EndpointRequests, Identified, Runtime
 } from "@moviemasher/lib-core"
 import { Input } from "../Types/Core"
 import { assertJobType, JobType } from "../Setup/Enums"
@@ -30,7 +30,7 @@ export const jobExtract = (object: JsonRecord): JobTuple => {
   return [jobType, job as JsonRecord]
 }
 
-export const outputPromise = (localPath: string, request: Request): Promise<PotentialError> => {
+export const outputPromise = (localPath: string, request: EndpointRequest): Promise<PotentialError> => {
   throw new Error('outputPromise not implemented')
 }
   
@@ -46,7 +46,7 @@ export const inputPromise = (input: Input): Promise<StringDataOrError> => {
   // return promise
 }
 
-export const callbackPromise = (request: Request | Requests, body: CallbackRequestBody): Promise<PotentialError> => {
+export const callbackPromise = (request: EndpointRequest | EndpointRequests, body: CallbackRequestBody): Promise<PotentialError> => {
   throw new Error('callbackPromise not implemented')
   // const requests = isArray(request) ? request : [request]
   // const promises = requests.map(request => {

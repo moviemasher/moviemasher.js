@@ -116,7 +116,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     if (loadedVideo) return Promise.resolve(loadedVideo)
 
     const { request } = previewTranscoding
-    return requestVideoPromise(request).then(orError => {
+    return this.definition.requestVideoPromise(request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: clientVideo } = orError

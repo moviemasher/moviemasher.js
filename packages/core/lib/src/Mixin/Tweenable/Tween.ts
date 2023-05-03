@@ -4,6 +4,7 @@ import type { Rect, RectTuple } from '../../Utility/Rect.js'
 import type { Size, SizeTuple } from '../../Utility/Size.js'
 import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
 import type { Tweenable } from './Tweenable.js'
+import type { SideDirectionObject, Lock } from '../../Setup/Enums.js'
 
 import { arrayOfNumbers } from '../../Utility/Array.js'
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from '../../Utility/Is.js'
@@ -12,7 +13,7 @@ import { assertSize, sizeCeil, sizeScale, isSize, sizeCover, sizesEqual, sizeLoc
 import { assertTweenable } from './TweenableFunctions.js'
 import { colorMixRbg, colorMixRbga } from '../../Helpers/Color/ColorFunctions.js'
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from '../../Helpers/Color/ColorFunctions.js'
-import { DirectionObject, Orientation } from '../../Setup/Enums.js'
+import { LockHeight, LockWidth } from '../../Setup/Enums.js'
 import { pointsEqual } from '../../Utility/Point.js'
 
 export interface Tweening {
@@ -149,7 +150,7 @@ export const tweenOverSize = (point: Size, pointEnd: any): Size => {
   return { ...point, ...tweenNumberObject(pointEnd) }
 }
 
-export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDirections: DirectionObject = {}): Rect => {
+export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDirections: SideDirectionObject = {}): Rect => {
   assertSize(size)
   assertRect(rect)
   const { width: outWidth, height: outHeight } = size
@@ -163,8 +164,8 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDire
   const evenSize = sizeCeil(scaledSize)
   const result = {
     ...evenSize,
-    x: Math.round(tweenPad(outWidth, evenSize.width, x, offDirections.E, offDirections.W)), 
-    y: Math.round(tweenPad(outHeight, evenSize.height, y, offDirections.N, offDirections.S))
+    x: Math.round(tweenPad(outWidth, evenSize.width, x, offDirections.east, offDirections.west)), 
+    y: Math.round(tweenPad(outHeight, evenSize.height, y, offDirections.north, offDirections.south))
   }
   return result
 }
@@ -203,24 +204,24 @@ export const tweenCoverPoints = (scaledSizes: SizeTuple, outSize: Size | SizeTup
   return [point, pointEnd]
 }
 
-export const tweenRectLock = (rect: Rect, lock?: Orientation): Rect => ({
+const tweenRectLock = (rect: Rect, lock?: Lock): Rect => ({
   ...rect, ...sizeLock(rect, lock)
 })
 
-export const tweenRectsLock = (rects: RectTuple, lock?: Orientation): RectTuple => {
+export const tweenRectsLock = (rects: RectTuple, lock: Lock): RectTuple => {
   return rects.map(rect => tweenRectLock(rect, lock)) as RectTuple
 }
 
-export const tweenScaleSizeRatioLock = (scale: Rect, outputSize: Size, inRatio: number, lock?: Orientation | string): Rect => {
+export const tweenScaleSizeRatioLock = (scale: Rect, outputSize: Size, inRatio: number, lock?: Lock | string): Rect => {
   if (!lock) return scale
 
   const { width: outWidth, height: outHeight } = outputSize
   const forcedScale = { ...scale }
   switch(lock){
-    case Orientation.H:
+    case LockWidth:
       forcedScale.width = ((outHeight * forcedScale.height) * inRatio) / outWidth
       break
-    case Orientation.V:
+    case LockHeight:
       forcedScale.height = ((outWidth * forcedScale.width) / inRatio) / outHeight
       break
   }

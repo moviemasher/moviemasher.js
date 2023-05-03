@@ -5,12 +5,11 @@ import type {UpdatableDurationDefinition, UpdatableDurationDefinitionClass, Upda
 import {assertClientAudio, assertClientVideo, isClientAudio} from '../../Helpers/ClientMedia/ClientMediaFunctions.js'
 import {AudibleContextInstance} from '../../Context/AudibleContext.js'
 import {ContentDefinitionClass} from '../../Media/Content/Content.js'
-import {DataGroup, propertyInstance} from '../../Setup/Property.js'
-import {DataType, Duration, TypeAudio, TypeVideo} from '../../Setup/Enums.js'
+import {DataGroupTiming, propertyInstance} from '../../Setup/Property.js'
+import {DataTypeFrame, DataTypePercent, DurationUnknown, TypeAudio, TypeVideo} from '../../Setup/Enums.js'
 import {endpointFromUrl} from '../../Helpers/Endpoint/EndpointFunctions.js'
 import {isAboveZero, isDefiniteError, isUndefined} from '../../Utility/Is.js'
 import {isProbing} from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
-import {requestAudioPromise} from '../../Helpers/Request/RequestFunctions.js'
 import {timeFromSeconds} from '../../Helpers/Time/TimeUtilities.js'
 import {TypeProbe} from '../../Plugin/Decode/Decoding/Decoding.js'
 
@@ -19,8 +18,9 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { loop } = object as UpdatableDurationDefinitionObject
-    
+      const { loop, loadedAudio } = object as UpdatableDurationDefinitionObject
+      if (loadedAudio) this.loadedAudio = loadedAudio
+      
       // if (audio || audioUrl ) {//|| loadedAudio
       //   this.audio = true
       //   if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
@@ -34,23 +34,23 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
         this.properties.push(propertyInstance({ name: 'loops', defaultValue: 1 }))
       }
       this.properties.push(propertyInstance({ 
-        name: 'gain', defaultValue: 1.0, type: DataType.Percent, 
+        name: 'gain', defaultValue: 1.0, type: DataTypePercent, 
         min: 0, max: 2.0, step: 0.01 
       }))
       this.properties.push(propertyInstance({ 
-        name: 'speed', defaultValue: 1.0, type: DataType.Percent, 
+        name: 'speed', defaultValue: 1.0, type: DataTypePercent, 
         min: 0.1, max: 2.0, step: 0.1,
-        group: DataGroup.Timing,
+        group: DataGroupTiming,
       }))
       this.properties.push(propertyInstance({ 
-        name: 'startTrim', defaultValue: 0, type: DataType.Frame,
+        name: 'startTrim', defaultValue: 0, type: DataTypeFrame,
         step: 1, min: 0,
-        group: DataGroup.Timing,
+        group: DataGroupTiming,
       }))
       this.properties.push(propertyInstance({ 
-        name: 'endTrim', defaultValue: 0, type: DataType.Frame,
+        name: 'endTrim', defaultValue: 0, type: DataTypeFrame,
         step: 1, min: 0,
-        group: DataGroup.Timing,
+        group: DataGroupTiming,
       }))
     }
 
@@ -91,7 +91,7 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
     frames(quantize: number): number {
       const { duration } = this
       // console.log(this.constructor.name, 'frames duration =', duration)
-      if (!duration) return Duration.Unknown
+      if (!duration) return DurationUnknown
 
       return timeFromSeconds(this.duration, quantize, 'floor').frame
     }
@@ -108,7 +108,7 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
         this.loadedAudio = response
         return Promise.resolve()
       }
-      return requestAudioPromise(request).then(orError => {
+      return this.requestAudioPromise(request).then(orError => {
         if (isDefiniteError(orError)) return 
 
         const { data } = orError
@@ -121,7 +121,7 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
         const { src } = data
         const endpoint = endpointFromUrl(src)
         const request = { endpoint }
-        return requestAudioPromise(request).then(orError => {
+        return this.requestAudioPromise(request).then(orError => {
           if (isDefiniteError(orError)) return 
 
           const { data: audio } = orError

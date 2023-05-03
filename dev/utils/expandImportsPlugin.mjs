@@ -46,7 +46,7 @@ const resolveSource = (me, source, importer)=> {
         console.error('resolveId MISSING findImport and findDependency', source, importer, ...Object.keys(imports))
       }
     }
-    // console.debug('resolveId RESOLVED', source, resolveCache[source]);
+    // console.debug('resolveId RESOLVED', source, resolveCache[source], resolution);
     return resolveCache[source]
   })
 }
@@ -119,7 +119,9 @@ const transformImportSpecifier = (source, importer) => {
     id: source,
     external: 'absolute'//source.includes('@moviemasher') ? 'absolute' : false
   }
-  if (Object.values(imports).includes(source)) result.id =  `/app/node_modules/${source}`
+  if (Object.values(imports).includes(source)) {
+    if (!source.includes('@moviemasher')) result.id =  `/app/node_modules/${source}`
+  }
   else {
     const importsKey = Object.keys(importPrefixes).find(key => 
       source.startsWith(importPrefixes[key])
@@ -269,11 +271,13 @@ export function expandImportsPlugin(options = {}) {
     },
     
     async resolveId(source, importer, info) {
-      // console.debug('resolveId', source, importer);
+      // console.debug('resolveId', source, importer, info);
       if (info?.isEntry) {
-        // console.debug('resolveId ENTRY', source, importer);
-        if (!sourceRoot && source.startsWith('/')) {
+        // console.debug('resolveId ENTRY', source, importer, sourceRoot);
+        if (!sourceRoot && source){//}.startsWith('/')) {
           sourceRoot = path.resolve(path.dirname(source));
+          // console.debug('resolveId ENTRY set sourceRoot', sourceRoot);
+          
           await loadPackageJson(this, importer);
         }
         return null;
@@ -306,7 +310,7 @@ export function expandImportsPlugin(options = {}) {
       // console.debug('resolveId NOT RELATIVE', source, importer);
 
       if (sourceRoot && source.startsWith(sourceRoot)) {
-        // // console.log('resolveId ABSOLUTE', source, importer);
+        // console.log('resolveId ABSOLUTE', source, importer);
         return null;
       }
       if (importKeys().includes(source)) {

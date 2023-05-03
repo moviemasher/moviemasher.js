@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  ClassDisabled, eventStop, EventType, pixelToFrame, 
+  ClassDisabled, eventStop, EventTypeSelection, pixelToFrame, 
   timeFromArgs, UnknownRecord 
 } from "@moviemasher/lib-core"
 import { 
@@ -33,7 +33,7 @@ export function TimelineScrubber(props: TimelineScrubber) {
   const getDisabled = () => !editor.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
-  useListeners({ [EventType.Selection]: updateDisabled })
+  useListeners({ [EventTypeSelection]: updateDisabled })
   
   const addHandlers = () => {
     const { window } = globalThis

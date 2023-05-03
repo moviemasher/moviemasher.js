@@ -53,8 +53,6 @@ export const rollupConfiguration = (args) => {
   const isPackage = format === 'esm'
   const outputDir = argsOutput || format
   
-  // const isPackage = outputExtension === 'mjs'
-
   const src = input || `index.${inputExtension}`
   const externalPrefixes = ['react-dom']
   const externals = ['@supabase/supabase-js', 'react']
@@ -73,8 +71,6 @@ export const rollupConfiguration = (args) => {
       if (internals.includes(id)) return false
       if (externalPrefixes.some(prefix => id.startsWith(prefix))) return true
       if (externals.includes(id)) return true
-
-     
       
       if (id.includes('@moviemasher')) {
         // console.log('EXTERNAL', isPackage, id, consumer)
@@ -109,14 +105,6 @@ export const rollupConfiguration = (args) => {
     },
   }
   if (isPackage) {
-    // sharedOutput.entryFileNames = chunkInfo => {
-    //   let name = chunkInfo.name
-    //   if (name === 'index' && preserveModules) name = libName
-    //   const extended = `${name}.${outputExtension}`
-    //   console.log('entryFileNames', chunkInfo.name, '->', extended)
-
-    //   return extended
-    // },
     sharedOutput.dir = outputDir
     sharedOutput.preserveModulesRoot = 'src'
   } else {
@@ -125,41 +113,22 @@ export const rollupConfiguration = (args) => {
 
   const fileName = tsconfigPath(argsSrc)
 
-
   const tsconfigOverride = { 
     compilerOptions: {
       declaration: isPackage, declarationMap: isPackage, 
       rootDir: argsSrc,
-      // module: modulesByFormat[format] || format,
-      // composite: true,
-      // inlineSources: false,
-      // // isolatedModules: false,
       ...tsOverride, 
     },
-    include: [
-      // `${argsSrc}/**/*.ts`, 
-      `${argsSrc}/*.ts`
-    ],
-    exclude: [
-      "**/node_modules/**/*"],
+    include: [`${argsSrc}/*.ts`],
+    exclude: ["**/node_modules/**/*"],
   }
   const typescriptConfig = { 
-    // verbosity: 3,
     cacheRoot: `${rootDir}/node_modules/.cache/rollup-plugin-typescript2`,
     tsconfigOverride,
     tsconfig: fileName,
   }
   
-  // const tsConfig = {
-  //   tsconfig: {
-  //     fileName,
-  //     hook: baseConfig => ({ ...baseConfig, ...tsconfigOverride })
-  //   }
-  // }
-
   const plugins = [ 
-    // json({ preferConst: true, indent: '  ', namedExports: true }),
-
     replace({
       preventAssignment: true,
       values: {
@@ -173,25 +142,13 @@ export const rollupConfiguration = (args) => {
       extensions: ['.mjs', '.js', '.jsx'],
     }),
     typescript(typescriptConfig),
-   
-    
-    // ts(tsConfig),
   ]
   if (isPackage) plugins.push(expandImportsPlugin())
-  // console.log('tsconfig', tsconfigOverride)
-  // if (!isPackage) {
-    // plugins.unshift(importMapsPlugin({
-    //   transformingReport: `${outputDir}/import-map-report.json`,
-    //   // noTransforming: true,
-    //   ,
-    // }))
-    // plugins.push(terser())
-  // }
-  const output = { ...sharedOutput }
 
+  const output = { ...sharedOutput }
   const configuration = {...sharedConfiguration, plugins, output }
 
-  // console.log(JSON.stringify(configuration, null, 2))
+  console.log(JSON.stringify(configuration, null, 2))
 
   return configuration
 }

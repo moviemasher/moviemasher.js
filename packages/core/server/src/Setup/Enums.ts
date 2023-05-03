@@ -1,12 +1,18 @@
 import { errorThrow } from "@moviemasher/lib-core"
 
-export enum JobType {
-  Decoding = 'decoding',
-  Encoding = 'encoding',
-  Transcoding = 'transcoding',
-}
+export type DecodingJobType = 'decoding'
+export type EncodingJobType = 'encoding'
+export type TranscodingType = 'transcoding'
 
-export const JobTypes = Object.values(JobType)
+export type JobType = DecodingJobType | EncodingJobType | TranscodingType
+
+export const JobTypeDecoding: JobType = 'decoding'
+export const JobTypeEncoding: JobType = 'encoding'
+export const JobTypeTranscoding: JobType = 'transcoding'
+
+
+export const JobTypes = [JobTypeDecoding, JobTypeEncoding, JobTypeTranscoding]
+
 export const isJobType = (value: any): value is JobType => {
   return JobTypes.includes(value as JobType)
 }

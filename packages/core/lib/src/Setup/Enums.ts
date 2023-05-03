@@ -1,7 +1,4 @@
-import { isPopulatedString, isString } from '../Utility/Is.js'
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
-
-
 
 export type AudioStreamType = 'audiostream'
 export type AudioType = 'audio'
@@ -20,8 +17,6 @@ export type SequenceType = 'sequence'
 export type TrackType = 'track'
 export type VideoStreamType = 'videostream'
 export type VideoType = 'video'
-
-
 
 export const TypeAudio: AudioType = 'audio'
 export const TypeAudioStream: AudioStreamType = 'audiostream'
@@ -45,9 +40,9 @@ export const TypeVideoStream: VideoStreamType = 'videostream'
 export type StorableType = EffectType | MashType 
 export type StorableTypes = StorableType[]
 export const TypesStorable: StorableTypes = [TypeEffect, TypeMash]
-export const isStorableType = (type?: any): type is StorableType => {
-  return isString(type) && TypesStorable.includes(type as StorableType)
-}
+export const isStorableType = (type?: any): type is StorableType => (
+  TypesStorable.includes(type as StorableType)
+)
 
 export type SizingMediaType = FontType | ImageType | VideoType
 export const TypesSizingMedia: SizingMediaType[] = [TypeFont, TypeImage, TypeVideo]
@@ -73,28 +68,71 @@ export const isContentingType = (type?: any): type is ContentingType => {
   return TypesContenting.includes(type)
 }
 
+export type RedoClientAction = 'redo'
+export type RemoveClientAction = 'remove'
+export type RenderClientAction = 'render'
+export type SaveClientAction = 'save'
+export type UndoClientAction = 'undo'
 
-export enum DroppingPosition {
-  At = 'at',
-  After = 'after',
-  Before = 'before',
-  None = 'none'
+export const ClientActionRedo: RedoClientAction = 'redo'
+export const ClientActionRemove: RemoveClientAction = 'remove'
+export const ClientActionRender: RenderClientAction = 'render'
+export const ClientActionSave: SaveClientAction = 'save'
+export const ClientActionUndo: UndoClientAction = 'undo'
+
+export type ClientAction = RedoClientAction | RemoveClientAction | RenderClientAction | SaveClientAction | UndoClientAction
+
+
+export const DurationUnknown = -1
+export const DurationUnlimited = -2
+export const DurationNone = 0
+
+export type WidthLock = 'width'
+export type HeightLock = 'height'
+export type NoneLock = 'none'
+
+export type Lock = WidthLock | HeightLock | NoneLock
+
+export const LockWidth: Lock = 'width'
+export const LockHeight: Lock = 'height'
+export const LockNone: Lock = 'none'
+
+export const Locks: Lock[] = [LockWidth, LockHeight, LockNone]
+export const isLock = (value: any): value is Lock => (
+  Locks.includes(value as Lock)
+)
+
+export function assertLock(value: any, name?: string): asserts value is Lock {
+  if (!isLock(value)) errorThrow(value, 'Lock', name)
 }
-export enum ActionType {
-  AddClipToTrack = 'addClipToTrack',
-  AddTrack = 'addTrack',
-  Change = 'change',
-  ChangeFrame = 'changeFrame',
-  ChangeMultiple = 'changeMultiple',
-  Move = 'move',
-  MoveClip = 'moveClip',
-  RemoveClip = 'removeClip',
-}
-export enum AVType {
-  Audio = 'audio',
-  Both = 'both',
-  Video = 'video',
-}
+
+
+
+export type CustomTiming = 'custom'
+export type ContentTiming = 'content'
+export type ContainerTiming = 'container'
+export type Timing = CustomTiming | ContentTiming | ContainerTiming
+
+
+export const TimingCustom: Timing = 'custom'
+export const TimingContent: Timing = 'content'
+export const TimingContainer: Timing = 'container'
+
+
+
+export const Timings = [TimingCustom, TimingContent, TimingContainer]
+
+export type PreviewSizing = 'preview' 
+export type ContentSizing = 'content'
+export type ContainerSizing = 'container'
+export type Sizing = PreviewSizing | ContentSizing | ContainerSizing
+
+export const SizingPreview: Sizing = 'preview'
+export const SizingContent: Sizing = 'content'
+export const SizingContainer: Sizing = 'container'
+
+export const Sizings = [SizingPreview, SizingContent, SizingContainer]
+
 
 export type SelectorType = ClipType | ContainerType | ContentType | MashType | NoneType | TrackType | EffectType
 export type SelectorTypes = SelectorType[]
@@ -106,58 +144,147 @@ export function assertSelectorType(value: any, name?: string): asserts value is 
   if (!isSelectorType(value)) errorThrow(value, 'SelectorType', name)
 }
 
+export type AddClipActionType = 'add-clip'
+export type AddTrackActionType = 'add-track'
+export type ChangeActionType = 'change'
+export type ChangeFrameActionType = 'change-frame'
+export type ChangeMultipleActionType = 'change-multiple'
+export type MoveActionType = 'move'
+export type MoveClipActionType = 'move-clip'
+export type RemoveClipActionType = 'remove-clip'
 
-export enum OutputFormat {
-  AudioConcat = 'wav',
-  Flv = 'flv',
-  Hls = 'hls',
-  Jpeg = 'jpeg',
-  Mdash = 'mdash',
-  Mp3 = 'mp3',
-  Mp4 = 'mp4',
-  Png = 'image2',
-  Rtmp = 'rtmp',
-  VideoConcat = 'yuv4mpegpipe',
+export type ActionType = AddClipActionType | AddTrackActionType | ChangeActionType | ChangeFrameActionType | ChangeMultipleActionType | MoveActionType | MoveClipActionType | RemoveClipActionType
+
+export const ActionTypeAddClip: ActionType = 'add-clip'
+export const ActionTypeAddTrack: ActionType = 'add-track'
+export const ActionTypeChange: ActionType = 'change'
+export const ActionTypeChangeFrame: ActionType = 'change-frame'
+export const ActionTypeChangeMultiple: ActionType = 'change-multiple'
+export const ActionTypeMove: ActionType = 'move'
+export const ActionTypeMoveClip: ActionType = 'move-clip'
+export const ActionTypeRemoveClip: ActionType = 'remove-clip'
+
+export type ActionEventType = 'action'
+export type ActiveEventType = 'active'
+export type AddedEventType = 'added'
+export type DrawEventType = 'draw'
+export type DurationEventType = 'durationchange'
+export type EndedEventType = 'ended'
+export type FpsEventType = 'ratechange'
+export type FrameEventType = 'frame'
+export type LoadedEventType = 'loadeddata'
+export type PauseEventType = 'pause'
+export type PlayEventType = 'play'
+export type PlayingEventType = 'playing'
+export type RenderEventType = 'render'
+export type ResizeEventType = 'resize'
+export type SaveEventType = 'save'
+export type SeekedEventType = 'seeked'
+export type SeekingEventType = 'seeking'
+export type SelectionEventType = 'selection'
+export type TimeEventType = 'timeupdate'
+export type TrackEventType = 'track'
+export type VolumeEventType = 'volumechange'
+export type WaitingEventType = 'waiting'
+
+export type EventType = ActionEventType | ActiveEventType | AddedEventType | DrawEventType | DurationEventType | EndedEventType | FpsEventType | FrameEventType | LoadedEventType | PauseEventType | PlayEventType | PlayingEventType | RenderEventType | ResizeEventType | SaveEventType | SeekedEventType | SeekingEventType | SelectionEventType | TimeEventType | TrackEventType | VolumeEventType | WaitingEventType
+
+export const EventTypeAction: EventType = 'action'
+export const EventTypeActive: EventType = 'active'
+export const EventTypeAdded: EventType = 'added'
+export const EventTypeDraw: EventType = 'draw'
+export const EventTypeDuration: EventType = 'durationchange'
+export const EventTypeEnded: EventType = 'ended'
+export const EventTypeFps: EventType = 'ratechange'
+export const EventTypeFrame: EventType = 'frame'
+export const EventTypeLoaded: EventType = 'loadeddata'
+export const EventTypePause: EventType = 'pause'
+export const EventTypePlay: EventType = 'play'
+export const EventTypePlaying: EventType = 'playing'
+export const EventTypeRender: EventType = 'render'
+export const EventTypeResize: EventType = 'resize'
+export const EventTypeSave: EventType = 'save'  
+export const EventTypeSeeked: EventType = 'seeked'
+export const EventTypeSeeking: EventType = 'seeking'
+export const EventTypeSelection: EventType = 'selection'
+export const EventTypeTime: EventType = 'timeupdate'
+export const EventTypeTrack: EventType = 'track'
+export const EventTypeVolume: EventType = 'volumechange'
+export const EventTypeWaiting: EventType = 'waiting'
+
+
+const EventTypes = [
+  EventTypeAction,
+  EventTypeActive,
+  EventTypeAdded,
+  EventTypeDraw,
+  EventTypeDuration,
+  EventTypeEnded,
+  EventTypeFps,
+  EventTypeFrame,
+  EventTypeLoaded,
+  EventTypePause,
+  EventTypePlay,
+  EventTypePlaying,
+  EventTypeRender,
+  EventTypeResize,
+  EventTypeSave,
+  EventTypeSeeked,
+  EventTypeSeeking,
+  EventTypeSelection,
+  EventTypeTime,
+  EventTypeTrack,
+  EventTypeVolume,
+  EventTypeWaiting,
+]
+export const isEventType = (type?: any): type is EventType => {
+  return EventTypes.includes(type as EventType)
 }
 
-// TODO: remove enums
+export type BooleanDataType = 'boolean'
+export type ContainerIdDataType = 'containerid'
+export type ContentIdDataType = 'contentid'
+export type DefinitionIdDataType = 'definitionid'
+export type FontIdDataType = 'fontid'
+export type FrameDataType = 'frame'
+export type IconDataType = 'icon'
+export type NumberDataType = 'number'
+export type OptionDataType = 'option'
+export type PercentDataType = 'percent'
+export type RgbDataType = 'rgb'
+export type StringDataType = 'string'
 
-export enum FillType {
-  Color = 'color',
-  Fill = 'fill',
-}
-export const FillTypes = Object.values(FillType)
-export const isFillType = (type?: any): type is FillType => {
-  return FillTypes.includes(type as FillType)
-}
-
-export enum GraphFileType {
-  Svg = 'svg',
-  SvgSequence = 'svgsequence',
-  Txt = 'txt',
-  // Object = 'object'
-}
-export const GraphFileTypes = Object.values(GraphFileType)
-export const isGraphFileType = (type?: any): type is GraphFileType => {
-  return isPopulatedString(type) && GraphFileTypes.includes(type as GraphFileType)
-}
+export type DataType = BooleanDataType | ContainerIdDataType | ContentIdDataType | DefinitionIdDataType | FontIdDataType | FrameDataType | IconDataType | NumberDataType | OptionDataType | PercentDataType | RgbDataType | StringDataType
+export const DataTypeBoolean: DataType = 'boolean'
+export const DataTypeContainerId: DataType = 'containerid'
+export const DataTypeContentId: DataType = 'contentid'
+export const DataTypeDefinitionId: DataType = 'definitionid'
+export const DataTypeFontId: DataType = 'fontid'
+export const DataTypeFrame: DataType = 'frame'
+export const DataTypeIcon: DataType = 'icon'
+export const DataTypeNumber: DataType = 'number'
+export const DataTypeOption: DataType = 'option'
+export const DataTypePercent: DataType = 'percent'
+export const DataTypeRgb: DataType = 'rgb'
+export const DataTypeString: DataType = 'string'
 
 
-export enum DataType {
-  Boolean = 'boolean',
-  ContainerId = 'containerid',
-  ContentId = 'contentid',
-  DefinitionId = 'definitionid',
-  FontId = 'fontid',
-  Frame = 'frame',
-  Icon = 'icon',
-  Number = 'number',
-  Percent = 'percent',
-  Rgb = 'rgb',
-  String = 'string',
-  Option = 'option',
-}
-export const DataTypes = Object.values(DataType)
+
+
+export const DataTypes = [
+  DataTypeBoolean,
+  DataTypeContainerId,
+  DataTypeContentId,
+  DataTypeDefinitionId,
+  DataTypeFontId,
+  DataTypeFrame,
+  DataTypeIcon,
+  DataTypeNumber,
+  DataTypeOption,
+  DataTypePercent,
+  DataTypeRgb,
+  DataTypeString,
+]
 export const isDataType = (type?: any): type is DataType => {
   return DataTypes.includes(type as DataType)
 }
@@ -165,132 +292,106 @@ export function assertDataType(value: any, name?: string): asserts value is Data
   if (!isDataType(value)) errorThrow(value, 'DataType', name)
 }
 
-export enum Orientation {
-  H = 'H',
-  V = 'V',
-}
-export const Orientations = Object.values(Orientation)
-export const isOrientation = (value: any): value is Orientation => {
-  return isPopulatedString(value) && Orientations.includes(value as Orientation)
-}
+export type EastDirection = 'east'
+export type NorthDirection = 'north'
+export type SouthDirection = 'south'
+export type WestDirection = 'west'
 
-export enum Direction {
-  E = 'E',
-  N = 'N',
-  S = 'S',
-  W = 'W',
-}
-export const Directions = Object.values(Direction)
-export const isDirection = (value?: any): value is Direction => {
-  return Directions.includes(value as Direction)
-}
-export function assertDirection(value: any, name?: string): asserts value is Direction {
-  if (!isDirection(value)) errorThrow(value, 'Direction', name)
-}
-
-export type DirectionObject = {
-  [index in Direction]?: boolean
-}
-
-export enum Anchor {
-  E = 'E',
-  N = 'N',
-  NE = 'NE',
-  NW = 'NW',
-  S = 'S',
-  SE = 'SE',
-  SW = 'SW',
-  W = 'W',
-}
-export const Anchors = Object.values(Anchor)
+export type SideDirection = EastDirection | NorthDirection | SouthDirection | WestDirection
 
 
-export enum TriggerType {
-  Init = 'init',
-  Stop = 'stop',
-  Start = 'start',
+
+export const DirectionEast: SideDirection = 'east'
+export const DirectionNorth: SideDirection = 'north'
+export const DirectionSouth: SideDirection = 'south'
+export const DirectionWest: SideDirection = 'west'
+
+
+export const SideDirections = [
+  DirectionEast,
+  DirectionNorth,
+  DirectionSouth,
+  DirectionWest,
+]
+
+export const isSideDirection = (value?: any): value is SideDirection => {
+  return Directions.includes(value as SideDirection)
 }
-export const TriggerTypes = Object.values(TriggerType)
-export const isTriggerType = (type?: any): type is TriggerType => {
-  return TriggerTypes.includes(type as TriggerType)
+export function assertSideDirection(value: any, name?: string): asserts value is SideDirection {
+  if (!isSideDirection(value)) errorThrow(value, 'SideDirection', name)
 }
 
-export enum TransformType {
-  Scale = 'scale',
-  Translate = 'translate',
+export type SideDirectionObject = {
+  [index in SideDirection]?: boolean
 }
 
-export enum EventType {
-  Action = 'action',
-  Active = 'active',
-  Added = 'added',
-  Draw = 'draw',
-  Duration = 'durationchange',
-  Ended = 'ended',
-  Fps = 'ratechange',
-  Frame = 'frame',
-  Loaded = 'loadeddata',
-  Pause = 'pause',
-  Play = 'play',
-  Playing = 'playing',
-  Render = 'render',
-  Resize = 'resize',
-  Save = 'save',
-  Seeked = 'seeked',
-  Seeking = 'seeking',
-  Selection = 'selection',
-  Time = 'timeupdate',
-  Track = 'track',
-  Volume = 'volumechange',
-  Waiting = 'waiting',
+export type NorthEastDirection = 'northeast'
+export type NorthWestDirection = 'northwest'
+export type SouthEastDirection = 'southeast'
+export type SouthWestDirection = 'southwest'
 
-}
-export const EventTypes = Object.values(EventType)
-export const isEventType = (type?: any): type is EventType => {
-  return EventTypes.includes(type as EventType)
-}
+export type CornerDirection = NorthEastDirection | NorthWestDirection | SouthEastDirection | SouthWestDirection
+export const DirectionNorthEast: CornerDirection = 'northeast'
+export const DirectionNorthWest: CornerDirection = 'northwest'
+export const DirectionSouthEast: CornerDirection = 'southeast'
+export const DirectionSouthWest: CornerDirection = 'southwest'
 
-export enum MasherAction {
-  Redo = 'redo',
-  Remove = 'remove',
-  Render = 'render',
-  Save = 'save',
-  Undo = 'undo',
-}
+export const CornerDirections = [
+  DirectionNorthEast,
+  DirectionNorthWest,
+  DirectionSouthEast,
+  DirectionSouthWest,
+]
 
-export enum ServerType {
-  Api = 'api',
-  Data = 'data',
-  File = 'file',
-  Rendering = 'rendering',
-  Web = 'web',
-}
-export const ServerTypes = Object.values(ServerType)
+export type Direction = SideDirection | CornerDirection
+export type DirectionsArray = Direction[]
 
-export enum Duration {
-  Unknown = -1,
-  Unlimited = -2,
-  None = 0,
-}
+export const Directions: DirectionsArray = [
+  ...CornerDirections,
+  ...SideDirections,
+]
 
-export enum Timing {
-  Custom = 'custom',
-  Content = 'content',
-  Container = 'container',
-}
-export const Timings = Object.values(Timing)
+export type WavOutputFormat = 'wav'
+export type FlvOutputFormat = 'flv'
+export type HlsOutputFormat = 'hls'
+export type JpegOutputFormat = 'jpeg'
+export type MdashOutputFormat = 'mdash'
+export type Mp3OutputFormat = 'mp3'
+export type Mp4OutputFormat = 'mp4'
+export type PngOutputFormat = 'image2'
+export type RtmpOutputFormat = 'rtmp'
+export type VideoConcatOutputFormat = 'yuv4mpegpipe'
 
-export enum Sizing {
-  Preview = 'preview',
-  Content = 'content',
-  Container = 'container',
-}
-export const Sizings = Object.values(Sizing)
+export type OutputFormat = WavOutputFormat | FlvOutputFormat | HlsOutputFormat | JpegOutputFormat | MdashOutputFormat | Mp3OutputFormat | Mp4OutputFormat | PngOutputFormat | RtmpOutputFormat | VideoConcatOutputFormat
 
-export enum Clicking {
-  Show = 'show',
-  Hide = 'hide',
-  Play = 'play',
-}
-export const Clickings = Object.values(Clicking)
+export const OutputFormatWav: OutputFormat = 'wav'
+export const OutputFormatFlv: OutputFormat = 'flv'
+export const OutputFormatHls: OutputFormat = 'hls'
+export const OutputFormatJpeg: OutputFormat = 'jpeg'
+export const OutputFormatMdash: OutputFormat = 'mdash'
+export const OutputFormatMp3: OutputFormat = 'mp3'
+export const OutputFormatMp4: OutputFormat = 'mp4'
+export const OutputFormatPng: OutputFormat = 'image2'
+export const OutputFormatRtmp: OutputFormat = 'rtmp'
+export const OutputFormatVideoConcat: OutputFormat = 'yuv4mpegpipe'
+export const OutputFormatAudioConcat: OutputFormat = 'wav'
 
+export type SvgGraphFileType = 'svg'
+export type SvgSequenceGraphFileType = 'svgsequence'
+export type TxtGraphFileType = 'txt'
+
+export type GraphFileType = SvgGraphFileType | SvgSequenceGraphFileType | TxtGraphFileType
+
+export const GraphFileTypeSvg: GraphFileType = 'svg'
+export const GraphFileTypeSvgSequence: GraphFileType = 'svgsequence'
+export const GraphFileTypeTxt: GraphFileType = 'txt'
+
+export type AudioAVType = 'audio'
+export type BothAVType = 'both'
+export type VideoAVType = 'video'
+
+export type AVType = AudioAVType | BothAVType | VideoAVType
+
+export const AVTypeAudio: AVType = 'audio'
+export const AVTypeBoth: AVType = 'both'
+export const AVTypeVideo: AVType = 'video'

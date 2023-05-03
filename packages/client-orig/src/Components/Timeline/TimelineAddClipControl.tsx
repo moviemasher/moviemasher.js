@@ -2,8 +2,8 @@ import React from "react"
 
 import type { PropsClickable } from "../../Types/Props"
 
-import type { MashIndex, UnknownRecord } from "@moviemasher/lib-core"
-import { assertPopulatedString, DefaultContentId, EventType } from "@moviemasher/lib-core"
+import { EventTypeSelection, MashIndex, UnknownRecord } from "@moviemasher/lib-core"
+import { assertPopulatedString, DefaultContentId } from "@moviemasher/lib-core"
 
 
 import { useMasher } from "../../Hooks/useMasher"
@@ -20,7 +20,7 @@ export function TimelineAddClipControl(props:PropsClickable) {
   const getDisabled = () => !masher.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
-  useListeners({ [EventType.Selection]: updateDisabled })
+  useListeners({ [EventTypeSelection]: updateDisabled })
   
   const { children, ...rest } = props
   const cloneProps: UnknownRecord = { 

@@ -1,5 +1,5 @@
 import React from "react"
-import { EventType } from "@moviemasher/lib-core"
+import { EventTypeSelection } from "@moviemasher/lib-core"
 
 import type { PropsClickable } from "../../Types/Props"
 import { useMasher } from "../../Hooks/useMasher"
@@ -13,7 +13,7 @@ export function TimelineAddTrackControl(props:PropsClickable) {
   const getDisabled = () => !masher.mashMedia
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
-  useListeners({ [EventType.Selection]: updateDisabled })
+  useListeners({ [EventTypeSelection]: updateDisabled })
   
   return <Clickable key='encode'
     button={props.button}

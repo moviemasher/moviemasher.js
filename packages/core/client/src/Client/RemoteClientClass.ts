@@ -1,6 +1,6 @@
 import type {
   DataDefinitionPutRequest, DataDefinitionPutResponse, 
-  MediaDataOrError, Request, 
+  MediaDataOrError, EndpointRequest, 
   Decoding, Encoding, MashMedia, Media, MediaObject, MediaArray, Transcoding, 
 } from '@moviemasher/lib-core'
 
@@ -212,7 +212,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
     if (!saveRequest) return errorPromise(ErrorName.ClientDisabledSave)
 
 
-    const requestObject: Request = { ...saveRequest }
+    const requestObject: EndpointRequest = { ...saveRequest }
     requestObject.init ||= {}
     const definition: MediaObject = { id, ...media.toJSON() }
     const request: DataDefinitionPutRequest = { definition }
@@ -299,8 +299,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
 
   //   }
 
-  //   const { label, type, clientMedia } = media
-  //   if (!clientMedia) return Promise.resolve(error(ErrorName.Internal))
+  //   const { label, type } = media
   
   //   if (isEncodingType(type)) {
   //     type
@@ -364,7 +363,7 @@ export const remoteClientInstance = (args: RemoteClientOptions = {}): RemoteClie
 //   const { label, type, source } = definition
 
 //   const id = idGenerate('activity')
-//   eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
+//   eventTarget.emit(EventTypeActive, { id, label, type: ActivityTypeRender })
 
 //   const { rendering } = Endpoints
 //   console.log("Masher fetch", source)
@@ -546,20 +545,20 @@ export const remoteClientInstance = (args: RemoteClientOptions = {}): RemoteClie
   //           steps += state.total
   //           step += state.completed
   //         })
-  //         if (steps) eventTarget.emit(EventType.Active, { 
-  //           id, step, steps, type: ActivityType.Render 
+  //         if (steps) eventTarget.emit(EventTypeActive, { 
+  //           id, step, steps, type: ActivityTypeRender 
   //         })
   //       }
         
   //       return delayPromise().then(() => handleApiCallback(id, definition, apiCallback))
   //     }
-  //     eventTarget.emit(EventType.Active, { id, type: ActivityType.Complete })
+  //     eventTarget.emit(EventTypeActive, { id, type: ActivityTypeComplete })
   //   })
   // }
 
 //   const handleError = (endpoint: string, error: string, id: string) => {
-//     editor.eventTarget.emit(EventType.Active, { 
-//       id, type: ActivityType.Error, error: 'import.render', value: error 
+//     editor.eventTarget.emit(EventTypeActive, { 
+//       id, type: ActivityTypeError, error: 'import.render', value: error 
 //     })
 //     console.error(endpoint, error)
 //     return Promise.reject(error)
@@ -574,7 +573,7 @@ export const remoteClientInstance = (args: RemoteClientOptions = {}): RemoteClie
 //     //   const { label, type, source } = definition
 
 //     //   const id = idGenerate('activity')
-//     //   eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
+//     //   eventTarget.emit(EventTypeActive, { id, label, type: ActivityTypeRender })
 
 //     //   const { rendering } = Endpoints
 //     //   console.log("Masher fetch", source)

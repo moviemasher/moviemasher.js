@@ -1,7 +1,7 @@
-import type { MasherAction, VideoStreamType, AudioStreamType} from '../../Setup/Enums.js'
+import type { VideoStreamType, AudioStreamType, ClientAction } from '../../Setup/Enums.js'
 import type { MasherType, Plugin} from '../Plugin.js'
-import type {Action} from './Actions/Action/Action.js'
-import type {Clip, Clips} from '../../Media/Mash/Track/Clip/Clip.js'
+import type { Action } from "./Actions/Action/Action.js"
+import type { Clip, Clips } from '../../Media/Mash/Track/Clip/Clip.js'
 import type {EditorSelection} from './EditorSelection/EditorSelection.js'
 import type {Effect} from '../../Media/Effect/Effect.js'
 import type {EncodingType} from '../Encode/Encoding/Encoding.js'
@@ -30,7 +30,7 @@ export interface Masher {
   addTrack(): void
   autoplay: boolean
   buffer: number
-  can(action: MasherAction): boolean
+  can(action: ClientAction): boolean
   clips: Clips
   create(): Promise<void>
   currentTime: number

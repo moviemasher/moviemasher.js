@@ -4,12 +4,16 @@
   "description": "JavaScript video editor and encoder - version 5.1.2",
 
 
-  "files": ["esm"],
+  "files": ["/dist/"],
   "type": "module",
-  "main": "esm/index.js",
-  "module": "esm/index.js",
-  "types": "esm/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -31,7 +35,6 @@
     "composite"
   ],
   "scripts": {
-    "wtf": "echo \"wtf\"",
     "script": "run-s",
     "build": "run-s client package",
     "client": "rollup --config dev/rollup/client.config.mjs",

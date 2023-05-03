@@ -5,8 +5,7 @@ import type { Size } from '../../Utility/Size.js'
 import type { EncodingType } from './Encoding/Encoding.js'
 import type { Plugin, EncodeType } from '../Plugin.js'
 import type { StringDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
-
-import { OutputFormat } from '../../Setup/Enums.js'
+import type { OutputFormat } from '../../Setup/Enums.js'
 
 /**
  * @category Plugin

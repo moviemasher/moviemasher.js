@@ -1,6 +1,6 @@
 import type { UnknownRecord } from '../../Types/Core.js'
 import type { Requestable, RequestableObject } from './Requestable.js'
-import type { Request } from '../../Helpers/Request/Request.js'
+import type { EndpointRequest } from '../../Helpers/Request/Request.js'
 import type { LoadType } from '../../Setup/LoadType.js'
 import { assertLoadType } from '../../Setup/LoadType.js'
 import { assertRequest } from '../../Helpers/Request/RequestFunctions.js'
@@ -16,9 +16,10 @@ export class RequestableClass extends PropertiedClass implements Requestable {
     if (isPopulatedString(type)) this.type = type
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isPopulatedString(kind)) this.kind = kind
-    assertRequest(request) 
-    this.request = request
-    this.relativeRequest = request
+    
+    // assertRequest(request) 
+    this.request = request || {}
+    this.relativeRequest = this.request
   }
 
   createdAt = ''
@@ -37,9 +38,9 @@ export class RequestableClass extends PropertiedClass implements Requestable {
     return type
   }
 
-  private relativeRequest: Request 
+  private relativeRequest: EndpointRequest 
 
-  request: Request
+  request: EndpointRequest
 
   type = ''
 

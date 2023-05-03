@@ -44,20 +44,20 @@ export const useEditorDefinitions = (types: MediaTypes = []): MediaArray => {
   const externalStore: MediaArray = []
   
   // React.useSyncExternalStore<MediaArray>((callback) => {
-  //   eventTarget.addEventListener(EventType.Added, callback)
-  //   eventTarget.addEventListener(EventType.Resize, callback)
+  //   eventTarget.addEventListener(EventTypeAdded, callback)
+  //   eventTarget.addEventListener(EventTypeResize, callback)
   //   return () => {
-  //     eventTarget.removeEventListener(EventType.Added, callback)
-  //     eventTarget.removeEventListener(EventType.Resize, callback)
+  //     eventTarget.removeEventListener(EventTypeAdded, callback)
+  //     eventTarget.removeEventListener(EventTypeResize, callback)
   //   }
   // }, snapshotGet)
 
   // const removeListener = () => {
-  //   eventTarget.removeEventListener(EventType.Added, handleEvent)
+  //   eventTarget.removeEventListener(EventTypeAdded, handleEvent)
   // }
 
   // const addListener = () => {
-  //   eventTarget.addEventListener(EventType.Added, handleEvent)
+  //   eventTarget.addEventListener(EventTypeAdded, handleEvent)
   //   return () => { removeListener() }
   // }
 

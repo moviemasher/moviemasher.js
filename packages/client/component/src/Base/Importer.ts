@@ -1,19 +1,18 @@
 import type { Elements } from '../declarations'
 
-import { Base } from './Base'
+import { Component } from './Component'
 
-export class Importer extends Base {
-  // constructor() {
-  //   super()
-  //   this.importElements(Array.from(this.children))
-  // }
+export class Importer extends Component {
+  override connectedCallback() {
+    super.connectedCallback()
+    this.importElements(Array.from(this.children))
+  }
 
-  elementNames(elements?: Elements): string[] {
+  private elementNames(elements?: Elements): string[] {
     const descendents = elements || Array.from(this.children)
     return descendents.flatMap(element => {
       const name = element.nodeName.toLowerCase()
-      // console.debug(this.constructor.name, 'importElements elementNames', name)
-      if (name.startsWith('moviemasher-')) return [name]
+      if (name.startsWith('movie-masher')) return [name]
       
       if (!element.childElementCount) return [] 
 
@@ -25,16 +24,13 @@ export class Importer extends Base {
     if (!elements.length) return
 
     const names = this.elementNames(elements)
+    // console.log(this.constructor.name, 'importElements', names)
     if (!names.length) return
 
-    // console.debug(this.constructor.name, 'importElements', elements.length, names)
     Importer.importTag(...names)
   } 
 
-  protected importTags(...names: string[]) {
-
-    Importer.importTag(...names)
-  }
+  protected importTags(...names: string[]) { Importer.importTag(...names) }
 
   protected static get importFinished(): boolean {
     return !this.promises.size
@@ -53,9 +49,9 @@ export class Importer extends Base {
     // if (unloaded.length) console.debug(this.name, 'importTag loading', ...unloaded)
 
     unloaded.forEach(name => {
-      const nameComponents = name.split('-').slice(1)
+      const nameComponents = name.split('-').slice(2)
       const [first, second] = nameComponents
-      const lib = second ? `${second}/${first}` : first
+      const lib = second ? `${first}/${first}-${second}` : first || name
       // console.debug(this.name, 'importTag', name, lib)
       const promise = import(new URL(`../${lib}.js`, import.meta.url).href)
       const libPromise = promise.then(() => {

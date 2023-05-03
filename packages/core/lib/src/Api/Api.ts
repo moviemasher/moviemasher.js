@@ -2,9 +2,8 @@
 import { JsonRecord } from '../Types/Core.js'
 import { Identified } from '../Base/Identified.js'
 import { PotentialError } from '../Helpers/Error/Error.js'
-import { ServerType } from '../Setup/Enums.js'
 import { DataServerInit } from './Data.js'
-import { Request } from '../Helpers/Request/Request.js'
+import { EndpointRequest } from '../Helpers/Request/Request.js'
 
 /**
  * @category API
@@ -30,7 +29,7 @@ import { Request } from '../Helpers/Request/Request.js'
 /**
  * @category API
  */
- export interface ApiCallback extends Request {
+ export interface ApiCallback extends EndpointRequest {
   expires?: string
 }
 
@@ -74,9 +73,9 @@ import { Request } from '../Helpers/Request/Request.js'
  * @category API
  */
  export interface ApiServersResponse extends ApiResponse {
-  [ServerType.Api]?: ApiServerInit
-  [ServerType.Data]?: DataServerInit
-  [ServerType.File]?: JsonRecord
-  [ServerType.Rendering]?: JsonRecord
-  [ServerType.Web]?: JsonRecord
+  api?: ApiServerInit
+  data?: DataServerInit
+  file?: JsonRecord
+  rendering?: JsonRecord
+  web?: JsonRecord
 }

@@ -1,6 +1,7 @@
-import { DataType } from '@moviemasher/lib-core'
 
-import { JsxElement } from '../../../../Framework/Framework'
+import type { DataType } from '@moviemasher/lib-core'
+
+import type { JsxElement } from '../../../../Framework/Framework'
 import { EmptyElement } from '../../../../Setup/Constants'
 
 export type DataTypeElements = {
@@ -8,16 +9,16 @@ export type DataTypeElements = {
 }
 
 export const DataTypeInputs: DataTypeElements = {
-  [DataType.Boolean]: EmptyElement,
-  [DataType.ContainerId]: EmptyElement,
-  [DataType.ContentId]: EmptyElement,
-  [DataType.DefinitionId]: EmptyElement,
-  [DataType.FontId]: EmptyElement,
-  [DataType.Frame]: EmptyElement,
-  [DataType.Icon]: EmptyElement,
-  [DataType.Number]: EmptyElement,
-  [DataType.Percent]: EmptyElement,
-  [DataType.Rgb]: EmptyElement,
-  [DataType.String]: EmptyElement,
-  [DataType.Option]: EmptyElement,
+  string: EmptyElement,
+  number: EmptyElement,
+  boolean: EmptyElement,
+  containerid: EmptyElement,
+  contentid: EmptyElement,
+  definitionid: EmptyElement,
+  fontid: EmptyElement,
+  frame: EmptyElement,
+  icon: EmptyElement,
+  option: EmptyElement,
+  percent: EmptyElement,
+  rgb: EmptyElement
 }

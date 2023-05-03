@@ -1,8 +1,8 @@
 import React from "react"
 import { 
-  assertSelectorType, assertTime, ClassButton, ClassSelected, DataGroup, 
+  assertSelectorType, assertTime, ClassButton, ClassSelected, 
   selectedPropertyObject, selectedPropertiesScalarObject, 
-  PropertyTweenSuffix, ScalarRecord, assertTimeRange, tweenInputTime
+  PropertyTweenSuffix, ScalarRecord, assertTimeRange, tweenInputTime, DataGroupPoint
 } from "@moviemasher/lib-core"
 
 import { JsxElement } from "../../../../Framework/Framework"
@@ -14,7 +14,6 @@ import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
 import { useMasher } from "../../../../Hooks/useMasher"
 import MasherContext from "../../../Masher/MasherContext"
-import { PropsAndChild } from "../../../../Types/Props"
 
 
 export function PointGroupInput(props: DataGroupProps) {
@@ -35,10 +34,10 @@ export function PointGroupInput(props: DataGroupProps) {
   assertTimeRange(timeRange)
   assertTime(time)
   
-  const endDefined = tweenDefined[DataGroup.Point]
-  const endSelected = tweenSelected[DataGroup.Point]
+  const endDefined = tweenDefined[DataGroupPoint]
+  const endSelected = tweenSelected[DataGroupPoint]
 
-  const byName = selectedPropertyObject(selectedItems, DataGroup.Point, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroupPoint, selectType)
   const values: ScalarRecord = selectedPropertiesScalarObject(byName) 
   const { 
     offE, offW, offN, offS, x, y, 
@@ -92,7 +91,7 @@ export function PointGroupInput(props: DataGroupProps) {
     key: 'start',
     onClick: () => {
       editor.goToTime(timeRange.startTime)
-      changeTweening(DataGroup.Point, false)
+      changeTweening(DataGroupPoint, false)
     }
   }
 
@@ -102,7 +101,7 @@ export function PointGroupInput(props: DataGroupProps) {
     children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {
       editor.goToTime(timeRange.lastTime)
-      changeTweening(DataGroup.Point, true)
+      changeTweening(DataGroupPoint, true)
     }
   }
 
@@ -175,4 +174,4 @@ export function PointGroupInput(props: DataGroupProps) {
 
 }
 
-DataGroupInputs[DataGroup.Point] = <PointGroupInput key="point-input" />
+DataGroupInputs[DataGroupPoint] = <PointGroupInput key="point-input" />

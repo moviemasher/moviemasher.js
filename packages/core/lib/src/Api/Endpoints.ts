@@ -1,5 +1,4 @@
 import { StringRecord } from '../Types/Core.js'
-import { ServerType } from '../Setup/Enums.js'
 import { isObject, isString } from '../Utility/Is.js'
 
 const EndpointsApi: StringRecord = {
@@ -33,10 +32,10 @@ const EndpointsFile: StringRecord = {
 }
 
 export const Endpoints = {
-  [ServerType.Api]: EndpointsApi,
-  [ServerType.Data]: EndpointsData,
-  [ServerType.File]: EndpointsFile,
-  [ServerType.Rendering]: EndpointsRendering,
+  api: EndpointsApi,
+  data: EndpointsData,
+  file: EndpointsFile,
+  rendering: EndpointsRendering,
 }
 
 // populate Endpoints with key paths...

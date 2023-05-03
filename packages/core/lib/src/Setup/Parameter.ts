@@ -1,6 +1,6 @@
 import { UnknownRecord, Value, ValueRecord } from '../Types/Core.js'
 import { isNumeric, isUndefined } from '../Utility/Is.js'
-import { DataType, DataTypes } from './Enums.js'
+import { DataType, DataTypeNumber, DataTypeString, DataTypes } from './Enums.js'
 
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 import { ErrorName } from '../Helpers/Error/ErrorName.js'
@@ -31,11 +31,11 @@ export class Parameter {
         numeric = this.value.every(condition => isNumeric(condition.value))
       }
       else numeric = isNumeric(this.value)
-      if (numeric) this.dataType = DataType.Number
+      if (numeric) this.dataType = DataTypeNumber
     }
   }
 
-  dataType = DataType.String
+  dataType = DataTypeString
 
   name = ''
   toJSON() : UnknownRecord {

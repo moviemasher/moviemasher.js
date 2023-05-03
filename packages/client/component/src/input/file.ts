@@ -2,9 +2,9 @@
 
 import { customElement } from 'lit/decorators/custom-element.js'
 import { css } from 'lit'
-import { LitElement } from 'lit-element/lit-element.js'
+import { LitElement } from 'lit'
 
-@customElement('moviemasher-form')
+@customElement('movie-masher-file')
 export class FileInputlement extends LitElement  {
 
   static override styles = css`

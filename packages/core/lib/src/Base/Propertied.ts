@@ -21,7 +21,7 @@ export interface PropertiedChangeHandler {
 export class PropertiedClass implements Propertied {
   [index: string]: unknown
 
-  constructor(..._args: any[]) { }
+  constructor(..._args: any[]) {}
 
   addProperties(object: any, ...properties: Property[]) {
     this.properties.push(...properties)

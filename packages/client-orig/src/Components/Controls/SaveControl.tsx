@@ -2,10 +2,10 @@ import React from "react"
 import type { PropsClickable } from "../../Types/Props"
 
 import { 
-  assertMashMedia, EventType, isMashMedia, MasherAction 
+  assertMashMedia, isMashMedia, ClientActionSave, EventTypeAction, EventTypeLoaded, EventTypeSave 
 } from "@moviemasher/lib-core"
 
-import { className, WriteOperation } from "@moviemasher/client-core"
+import { OperationWrite, className } from "@moviemasher/client-core"
 import { useClient } from "../../Hooks/useClient"
 import { useListeners } from "../../Hooks/useListeners"
 import { useMasher } from "../../Hooks/useMasher"
@@ -16,12 +16,12 @@ export function SaveControl(props: PropsClickable) {
   const client = useClient()
   
   const getVisible = () => {
-    if (!client.enabled(WriteOperation)) return false
+    if (!client.enabled(OperationWrite)) return false
 
     return isMashMedia(masher.mashMedia)
   }
   const [visible, setVisible] = React.useState(getVisible)
-  const getDisabled = () => !masher.can(MasherAction.Save)
+  const getDisabled = () => !masher.can(ClientActionSave)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
   const updateVisible = () => setVisible(getVisible())
@@ -31,9 +31,9 @@ export function SaveControl(props: PropsClickable) {
   }
 
   useListeners({
-    [EventType.Action]: updateDisabled, 
-    [EventType.Loaded]: updateBoth,
-    [EventType.Save]: updateDisabled,
+    [EventTypeAction]: updateDisabled, 
+    [EventTypeLoaded]: updateBoth,
+    [EventTypeSave]: updateDisabled,
   })
 
   if (!visible) return null

@@ -1,4 +1,4 @@
-import {Request} from './Request.js'
+import {EndpointRequest} from './Request.js'
 
-export const EmptyRequest: Request = {}
-export const DefaultRequest: Request = { endpoint: {} }
+export const EmptyRequest: EndpointRequest = {}
+export const DefaultRequest: EndpointRequest = { endpoint: {} }

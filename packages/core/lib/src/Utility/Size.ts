@@ -1,7 +1,9 @@
-import { Orientation } from '../Setup/Enums.js'
+import type { Lock } from '../Setup/Enums.js'
+
 import { isAboveZero, isNumber, isObject } from './Is.js'
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 import { EqualsChar, SemicolonChar } from '../Setup/Constants.js'
+import { LockHeight, LockWidth, LockNone } from '../Setup/Enums.js'
 
 export interface Size {
   width: number
@@ -101,13 +103,13 @@ export const sizeCopy = (size: any) => {
   return { width, height }
 }
 
-export const sizeLock = (lockSize: Size, lock?: Orientation): Size => {
+export const sizeLock = (lockSize: Size, lock?: Lock): Size => {
   const copy = sizeCopy(lockSize)
   switch (lock) {
-    case Orientation.H: 
+    case LockWidth: 
       copy.width = copy.height
       break
-    case Orientation.V:
+    case LockHeight:
       copy.height = copy.width
       break
   }
@@ -121,11 +123,11 @@ export const sizeString = (size: Size) => {
   ].join(SemicolonChar)
 }
 
-export const sizeLockNegative = (size: Size, lock?: Orientation): Size => {
+export const sizeLockNegative = (size: Size, lock: Lock): Size => {
   assertSizeAboveZero(size, 'sizeLockNegative')
   const locked = sizeCopy(size)
-  if (lock) {
-    if (lock === Orientation.V) locked.height = -1
+  if (lock !== LockNone) {
+    if (lock === LockHeight) locked.height = -1
     else locked.width = -1
   } 
   return locked

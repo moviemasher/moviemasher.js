@@ -5,13 +5,14 @@ import {Media, MediaObject, MediaObjects, MediaArray} from '../../Media.js'
 import {mediaDefinition} from '../../MediaFactory.js'
 import {MediaDefaults} from '../../MediaDefaults.js'
 import {assertMedia, assertMediaObject} from '../../MediaFunctions.js'
+import { Emitter } from '../../../Helpers/Emitter.js'
 
 const counters = {
   count: 0
 }
 
 export class MediaCollection {
-  constructor() {
+  constructor(public eventTarget?: EventTarget) {
     counters.count++
     this.id = counters.count
     // console.log(this.constructor.name, this.id, 'constructor')
@@ -103,7 +104,9 @@ export class MediaCollection {
     const { type } = object
     assertMediaType(type)
 
-    return mediaDefinition(object)
+    const instance =  mediaDefinition(object)    
+    instance.eventTarget = this.eventTarget
+    return instance
   }
 
   private mediaArraysByType = new Map<MediaType, MediaArray>()
@@ -118,7 +121,7 @@ export class MediaCollection {
   }
 
   predefined(id: string) { 
-    if (id.startsWith(IdPrefix)) return true
+    // if (id.startsWith(IdPrefix)) return true
 
     const mediaType = this.mediaTypeFromId(id)
     if (!mediaType) return false

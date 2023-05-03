@@ -1,13 +1,12 @@
 import type { 
   Content, Contents, DivSectionSlot, FooterSectionSlot, HeaderSectionSlot, 
-  Htmls, SlottedContent 
+  Htmls, OptionalContent 
 } from '../declarations'
 
 
 import { css } from 'lit'
 import { html } from 'lit'
 import { property } from 'lit/decorators/property.js'
-import { eventOptions } from 'lit/decorators/event-options.js'
 
 import { Slotted } from './Slotted'
 
@@ -17,7 +16,7 @@ export const DivSlot: DivSectionSlot = 'div'
 
 export class Section extends Slotted {
 
-  protected override defaultSlottedContent(key: string, htmls: Htmls): SlottedContent { 
+  protected override defaultSlottedContent(key: string, htmls: Htmls): OptionalContent { 
     switch (key) {
       case DivSlot: return this.divContent(htmls)
       case FooterSlot: return this.footerContent(htmls)
@@ -25,31 +24,21 @@ export class Section extends Slotted {
     }
   }
   
-  divContent(_htmls: Htmls): SlottedContent { return '[DIV]' }
+  divContent(_htmls: Htmls): OptionalContent { return '[DIV]' }
 
-  footerContent(_htmls: Htmls): SlottedContent { return '[FOOTER]' }
+  footerContent(_htmls: Htmls): OptionalContent { return '[FOOTER]' }
 
-  headerContent(_htmls: Htmls): SlottedContent { return '[HEADER]' }
+  headerContent(_htmls: Htmls): OptionalContent { return '[HEADER]' }
   
   @property() icon = 'app'
   
-  private onClicked(event: Event) {
-    console.warn(this.constructor.name, 'unhandled click event', event, 'from', event.target)
-  }
 
   override slots = [HeaderSlot, DivSlot, FooterSlot] 
 
-  @eventOptions({ capture: true })
-  protected onSection(event: CustomEvent) {
-    console.warn(this.constructor.name, 'unhandled section event', event, 'from', event.target)
-  }
-
-  override slottedContent(contents: Contents): Content {
+  protected override content(contents: Contents): Content {
     return html`<section
-      @section='${this.onSection}'
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
-      @click='${this.onClicked}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
     >${contents}</section>`
   }
 

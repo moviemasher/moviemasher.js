@@ -1,10 +1,10 @@
 import type { Point, PointTuple } from './Point.js'
 import type { Size, SizeTuple } from './Size.js'
+import type { Lock } from '../Setup/Enums.js'
 
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 import { isPoint, pointCopy, pointRound, pointsEqual, pointString, PointZero } from './Point.js'
 import { isSize, sizeCopy, sizeRound, sizesEqual, sizeString, SizeZero } from './Size.js'
-import { Orientation } from '../Setup/Enums.js'
 import { SemicolonChar } from '../Setup/Constants.js'
 
 export interface Rect extends Size, Point { }
@@ -65,5 +65,5 @@ export const rectString = (dimensions: any): string => {
 
 
 export interface RectOptions extends Partial<Rect> {
-  lock?: Orientation
+  lock?: Lock
 }

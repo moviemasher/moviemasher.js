@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownRecord } from '@moviemasher/lib-core'
+import { DataTypeIcon, UnknownRecord } from '@moviemasher/lib-core'
 
 
 import { DataTypeInputs } from './DataTypeInputs'
@@ -37,4 +37,4 @@ export function IconTypeInput() {
   return <select {...selectProps} />
 }
 
-DataTypeInputs[DataType.Icon] = <IconTypeInput />
+DataTypeInputs[DataTypeIcon] = <IconTypeInput />

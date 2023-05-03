@@ -41,17 +41,6 @@ export function assertEndpoint(value: any, name?: string): asserts value is Endp
   if (!isEndpoint(value)) errorThrow(value, 'Endpoint', name)
 }
 
-export const endpointUrl = (endpoint: Endpoint): string => {
-  const absolute = endpointAbsolute(endpoint)
-  const { protocol, hostname, pathname, port, search  } = absolute
-  const bits = [protocol]
-  if (!urlIsBlob(protocol)) bits.push(SlashChar + SlashChar)
-  bits.push(hostname)
-  if (isNumeric(port)) bits.push(`${ColonChar}${port}`)
-  if (pathname) bits.push(pathname)
-  if (search) bits.push(search)
-  return bits.join('')
-}
 export const endpointFromAbsolute = (urlString: string): Endpoint => {
   const url = new URL(urlString)
   // console.trace('endpointFromAbsolute', urlString, url)
@@ -153,10 +142,10 @@ export const urlForEndpoint = (endpoint: Endpoint, suffix = ''): string => {
   if (suffix && urlHasProtocol(suffix)) return suffix
   
   const base = urlFromEndpoint(endpoint)
-  // const slashed = base.endsWith(SlashChar) ? base : base + SlashChar
-  if (!urlHasProtocol(base)) return base + suffix
+  const slashed = (base.endsWith(SlashChar) || !suffix) ? base : base + SlashChar
+  if (!urlHasProtocol(slashed)) return slashed + suffix
 
-  const url = new URL(suffix, base)
+  const url = new URL(suffix, slashed)
   const { href } = url
   return href
 }
@@ -201,10 +190,26 @@ export const urlFilename = (name: string, extension: string): string =>(
   `${name}.${urlExtension(extension)}`
 )
 
+
+// MOVED: component
+
 export const urlFromCss = (string: string): string => {
   const exp = /url\(([^)]+)\)(?!.*\1)/g
   const matches = string.matchAll(exp)
   const matchesArray = [...matches]
   const url = arrayLast(arrayLast(matchesArray))
   return url
+}
+
+
+export const endpointUrl = (endpoint: Endpoint): string => {
+  const absolute = endpointAbsolute(endpoint)
+  const { protocol, hostname, pathname, port, search  } = absolute
+  const bits = [protocol]
+  if (!urlIsBlob(protocol)) bits.push(SlashChar + SlashChar)
+  bits.push(hostname)
+  if (isNumeric(port)) bits.push(`${ColonChar}${port}`)
+  if (pathname) bits.push(pathname)
+  if (search) bits.push(search)
+  return bits.join('')
 }

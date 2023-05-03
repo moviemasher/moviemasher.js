@@ -1,7 +1,7 @@
 import { ScalarRecord, ValueRecord } from '../../../Types/Core.js'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
 import { NamespaceSvg } from '../../../Setup/Constants.js'
-import { DataType } from '../../../Setup/Enums.js'
+import { DataTypeNumber } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { assertNumber, assertPopulatedString, isNumber } from '../../../Utility/Is.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
@@ -17,7 +17,7 @@ export class OpacityFilter extends FilterDefinitionClass {
     super(object)
     this.properties.push(propertyInstance({
       tweenable: true, custom: true, name: 'opacity', 
-      type: DataType.Number, defaultValue: 1.0, 
+      type: DataTypeNumber, defaultValue: 1.0, 
     }))
     this.populateParametersFromProperties()
   }
@@ -26,7 +26,7 @@ export class OpacityFilter extends FilterDefinitionClass {
     const commandFilters: CommandFilters = []
     const { filterInput: input, filter, duration, videoRate } = args
     const opacity = filter.value('opacity')
-    let filterInput = input
+    const filterInput = input
     assertNumber(opacity)
     assertPopulatedString(filterInput, 'filterInput')
 

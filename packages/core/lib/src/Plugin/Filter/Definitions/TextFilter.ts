@@ -1,5 +1,4 @@
 import { ValueRecord } from '../../../Types/Core.js'
-import { DataType } from '../../../Setup/Enums.js'
 import { propertyInstance } from '../../../Setup/Property.js'
 import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from '../../../Utility/Is.js'
 import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from '../../../Base/Code.js'
@@ -12,6 +11,7 @@ import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorWh
 import { ColorizeFilter } from './ColorizeFilter.js'
 import { Size, sizesEqual } from '../../../Utility/Size.js'
 import { FilterDefinitionObject } from '../Filter.js'
+import { DataTypeString, DataTypeBoolean, DataTypeNumber } from '../../../Setup/Enums.js'
 
 /**
  * @category Filter
@@ -20,38 +20,38 @@ export class TextFilter extends ColorizeFilter {
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      custom: true, type: DataType.String, name: 'fontfile'
+      custom: true, type: DataTypeString, name: 'fontfile'
     }))
     this.properties.push(propertyInstance({
-      custom: true, type: DataType.String, name: 'textfile'
-    }))
-    
-    this.properties.push(propertyInstance({
-      custom: true, type: DataType.Boolean, name: 'stretch'
-    }))
-    this.properties.push(propertyInstance({
-      tweenable: true, custom: true, type: DataType.Number, name: 'height'
-    }))
-    this.properties.push(propertyInstance({
-      tweenable: true, custom: true, type: DataType.Number, name: 'width'
-    }))
-
-    this.properties.push(propertyInstance({
-      custom: true, type: DataType.Number, name: 'intrinsicHeight'
-    }))
-    this.properties.push(propertyInstance({
-      custom: true, type: DataType.Number, name: 'intrinsicWidth'
+      custom: true, type: DataTypeString, name: 'textfile'
     }))
     
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, type: DataType.Number, name: 'x'
+      custom: true, type: DataTypeBoolean, name: 'stretch'
+    }))
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, type: DataTypeNumber, name: 'height'
+    }))
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, type: DataTypeNumber, name: 'width'
     }))
 
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, type: DataType.Number, name: 'y'
+      custom: true, type: DataTypeNumber, name: 'intrinsicHeight'
     }))
     this.properties.push(propertyInstance({
-      tweenable: true, custom: true, type: DataType.String, name: 'color'
+      custom: true, type: DataTypeNumber, name: 'intrinsicWidth'
+    }))
+    
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, type: DataTypeNumber, name: 'x'
+    }))
+
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, type: DataTypeNumber, name: 'y'
+    }))
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, type: DataTypeString, name: 'color'
     }))
     this.populateParametersFromProperties()
   }
@@ -129,7 +129,7 @@ export class TextFilter extends ColorizeFilter {
 
     if (calculatedWidth > maxSize.width) maxSize.width = calculatedWidth
 
-    let scaling = stretch || !sizesEqual(size, sizeEnd)
+    const scaling = stretch || !sizesEqual(size, sizeEnd)
     const scaleOptions: ValueRecord = {}
     const textOptions: ValueRecord = {
       fontsize: maxSize.height, fontfile, textfile, 

@@ -11,6 +11,7 @@ import {
   jobExtract, callbackPromise, transcode, decode, encode, outputPromise, 
   inputPromise 
 } from "@moviemasher/server-core"
+import { JobTypeEncoding, JobTypeDecoding, JobTypeTranscoding } from "@moviemasher/server-core/src/Setup/Enums"
 
 
 export const handleRequest = (jobType: JobType, mediaRequest: MediaRequest): Promise<StringDataOrError> => {
@@ -23,16 +24,16 @@ export const handleRequest = (jobType: JobType, mediaRequest: MediaRequest): Pro
     const { path: localPath } = inputResult
   
     switch(jobType) {
-      case JobType.Encoding: {
+      case JobTypeEncoding: {
         assertEncodeRequest(mediaRequest)
         return encode(localPath, mediaRequest.output)
       }
-      case JobType.Decoding: {
+      case JobTypeDecoding: {
         
         assertDecodeRequest(mediaRequest)
         return decode(localPath, mediaRequest.output)
       }
-      case JobType.Transcoding: {
+      case JobTypeTranscoding: {
         assertTranscodeRequest(mediaRequest)
         return transcode(localPath, mediaRequest.output)
       }

@@ -1,5 +1,5 @@
 import type {
-  ClientAudio, ClientFont, ClientImage, ClientMedia, ResolvePlugin, Request, 
+  ClientAudio, ClientFont, ClientImage, ClientMedia, ResolvePlugin, EndpointRequest, 
   DataOrError, ClientVideo,
   AudioType, FontType, ImageType, 
   ClientMediaType, VideoType,
@@ -32,7 +32,7 @@ function promise(file: string, type: ClientMediaType): Promise<DataOrError<Clien
   const url = PluginResolveTextCss.url(file, type)
   if (!url) return errorPromise(ErrorName.Url)
 
-  const request: Request = { endpoint: endpointFromUrl(url) }
+  const request: EndpointRequest = { endpoint: endpointFromUrl(url) }
   return requestClientMediaPromise(request, type) 
 }
 

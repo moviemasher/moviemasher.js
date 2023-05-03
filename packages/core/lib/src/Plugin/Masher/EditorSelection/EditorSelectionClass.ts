@@ -1,17 +1,27 @@
 
-import {isMashMedia, MashMedia} from '../../../Media/Mash/Mash.js'
-import {isTrack, Track} from '../../../Media/Mash/Track/Track.js'
-import {Clip, isClip} from '../../../Media/Mash/Track/Clip/Clip.js'
-import {TypeClip, TypeContainer, TypeContent, TypeEffect, EventType, TypeMash, TypeNone, SelectorType, TypesSelector, TypeTrack} from '../../../Setup/Enums.js'
-import {Selectable, Selectables} from '../Selectable.js'
-import {EditorSelection, EditorSelectionObject} from './EditorSelection.js'
-import {SelectedItems} from '../../../Helpers/Select/SelectedProperty.js'
-import {assertTrue, isPopulatedString, isPositive} from '../../../Utility/Is.js'
-import {Masher} from '../Masher.js'
-import {Container} from '../../../Media/Container/Container.js'
-import {Content} from '../../../Media/Content/Content.js'
-import {Effect, isEffect} from '../../../Media/Effect/Effect.js'
-import { Selector } from '../../../Helpers/Select/Select.js'
+import type { Clip } from '../../../Media/Mash/Track/Clip/Clip.js'
+import type { Track } from '../../../Media/Mash/Track/Track.js'
+import type { MashMedia} from '../../../Media/Mash/Mash.js'
+import type {SelectedItems} from '../../../Helpers/Select/SelectedProperty.js'
+import type {EditorSelection, EditorSelectionObject} from './EditorSelection.js'
+import type {Selectable, Selectables} from '../Selectable.js'
+import type {Effect} from '../../../Media/Effect/Effect.js'
+import type {Container} from '../../../Media/Container/Container.js'
+import type {Content} from '../../../Media/Content/Content.js'
+import type { Selector } from '../../../Helpers/Select/Select.js'
+import type {Masher} from '../Masher.js'
+import type {SelectorType, } from '../../../Setup/Enums.js'
+
+import {isMashMedia} from '../../../Media/Mash/Mash.js'
+import { isTrack } from '../../../Media/Mash/Track/Track.js'
+import { isClip } from '../../../Media/Mash/Track/Clip/Clip.js'
+import {
+  TypeClip, TypeContainer, TypeContent, TypeEffect, TypeMash, TypeNone, 
+  TypesSelector, TypeTrack, EventTypeDuration, EventTypeLoaded, 
+  EventTypeSelection, EventTypeTrack
+} from '../../../Setup/Enums.js'
+import { assertTrue, isPopulatedString, isPositive } from '../../../Utility/Is.js'
+import { isEffect} from '../../../Media/Effect/Effect.js'
 
 export class EditorSelectionClass implements EditorSelection {
 
@@ -107,12 +117,12 @@ export class EditorSelectionClass implements EditorSelection {
     }
     Object.assign(this._object, populated)
 
-    this.editor.eventTarget.emit(EventType.Selection)  
+    this.editor.eventTarget.emit(EventTypeSelection)  
 
     if (mash !== oldMash) {
-      this.editor.eventTarget.emit(EventType.Loaded)
-      this.editor.eventTarget.emit(EventType.Track)
-      this.editor.eventTarget.emit(EventType.Duration)
+      this.editor.eventTarget.emit(EventTypeLoaded)
+      this.editor.eventTarget.emit(EventTypeTrack)
+      this.editor.eventTarget.emit(EventTypeDuration)
     }
   }
 

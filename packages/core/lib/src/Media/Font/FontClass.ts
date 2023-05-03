@@ -17,7 +17,7 @@ import {assertPopulatedString, assertTrue} from '../../Utility/Is.js'
 import {colorBlack, colorBlackTransparent, colorWhite} from '../../Helpers/Color/ColorConstants.js'
 import {ContainerMixin} from '../Container/ContainerMixin.js'
 import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
-import {GraphFileType, isOrientation, TypeFont} from '../../Setup/Enums.js'
+import { GraphFileTypeTxt, LockNone, TypeFont} from '../../Setup/Enums.js'
 import {isRect} from '../../Utility/Rect.js'
 import {MediaInstanceBase} from '../MediaInstanceBase.js'
 import {PointZero} from '../../Utility/Point.js'
@@ -86,7 +86,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     }
 
     const textFile = commandFiles.find(commandFile => (
-      commandFile.inputId === this.id && commandFile.type === GraphFileType.Txt
+      commandFile.inputId === this.id && commandFile.type === GraphFileTypeTxt
     ))
     assertTrue(textFile, 'text file') 
     const { resolved: textfile } = textFile
@@ -115,7 +115,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     const textSizeEnd = Math.round(rectEnd.height * intrinsicRatio)
     const options: ScalarRecord = { 
       x, y, width, height: textSize, color, textfile, fontfile,
-      stretch: !isOrientation(lock),
+      stretch: lock === LockNone,
       intrinsicHeight: intrinsicRect.height,
       intrinsicWidth: intrinsicRect.width,
     }
@@ -217,7 +217,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     const files = super.visibleCommandFiles(args)
     const { string, definition } = this
     const textGraphFile: CommandFile = {
-      definition, type: GraphFileType.Txt, 
+      definition, type: GraphFileTypeTxt, 
       file: this.id, inputId: this.id,
       content: string, 
     }

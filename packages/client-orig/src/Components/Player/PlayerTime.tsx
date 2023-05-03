@@ -3,7 +3,7 @@ import { View } from "../../Utilities/View"
 
 import { WithClassName } from "../../Types/Core"
 import { PropsWithoutChild } from "../../Types/Props"
-import { EventType, stringSeconds } from "@moviemasher/lib-core"
+import { EventTypeDuration, EventTypeTime, stringSeconds } from "@moviemasher/lib-core"
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
 
@@ -20,7 +20,7 @@ export function PlayerTime(props: PlayerTimeProps) {
   const update = () => { setTimeRange(getTimeRange()) }
 
   useListeners({
-    [EventType.Time]: update, [EventType.Duration]: update,
+    [EventTypeTime]: update, [EventTypeDuration]: update,
   })
 
   const { seconds, fps, lengthSeconds } = timeRange

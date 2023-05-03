@@ -4,7 +4,8 @@ import { ClassCollapsed } from '@moviemasher/lib-core'
 
 import { PropsWithChildren } from "../../Types/Props"
 import { View } from "../../Utilities/View"
-import { ActivityContext, ActivityContextInterface, ActivityGroup, 
+import { ActivityContext, ActivityContextInterface, 
+  ActivityGroupActive, 
   assertActivityGroup 
 } from "./ActivityContext"
 import { CollapseContext, CollapseContextInterface } from "../Collapse/CollapseContext"
@@ -21,7 +22,7 @@ export interface ActivityProps extends PropsWithChildren {
  */
 export function Activity(props: ActivityProps) {
   const { 
-    initialPicked = ActivityGroup.Active, 
+    initialPicked = ActivityGroupActive, 
     initialCollapsed = false, 
     className,
     ...rest 

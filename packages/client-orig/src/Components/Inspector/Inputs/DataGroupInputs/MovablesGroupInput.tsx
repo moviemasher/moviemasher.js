@@ -1,6 +1,6 @@
 import { 
   ClassDropping, SelectedMovable, DataGroup, Movable, 
-  assertPopulatedObject, assertDefined, ScalarRecord
+  assertPopulatedObject, assertDefined, ScalarRecord, DataGroupEffects
 } from '@moviemasher/lib-core'
 import React from 'react'
 
@@ -157,5 +157,5 @@ export function MovablesGroupInput(props: MovablesGroupInputProps) {
   </>
 }
 
-DataGroupInputs[DataGroup.Effects] = <MovablesGroupInput property="effect" key="effects-group-input" />
-// DataGroupInputs[DataGroup.Controls] = <MovablesGroupInput movableGenerator={controlInstance} property="control" key="controls-group-input" />
+DataGroupInputs[DataGroupEffects] = <MovablesGroupInput property="effect" key="effects-group-input" />
+// DataGroupInputs[DataGroupControls] = <MovablesGroupInput movableGenerator={controlInstance} property="control" key="controls-group-input" />

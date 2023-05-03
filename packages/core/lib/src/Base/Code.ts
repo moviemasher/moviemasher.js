@@ -5,7 +5,7 @@ import type { ValueRecord } from '../Types/Core.js'
 import type { Size } from '../Utility/Size.js'
 import type { RectTuple } from '../Utility/Rect.js'
 import type { Media } from '../Media/Media.js'
-import type { Request } from '../Helpers/Request/Request.js'
+import type { EndpointRequest } from '../Helpers/Request/Request.js'
 
 import { isObject } from '../Utility/Is.js'
 import { AVType } from '../Setup/Enums.js'
@@ -148,17 +148,20 @@ export interface CommandFile extends GraphFile {
 
 export type CommandFiles = CommandFile[]
 
+export type BrowserComponent = 'browser'
+export type PlayerComponent = 'player'
+export type InspectorComponent = 'inspector'
+export type TimelineComponent = 'timeline'
+export type Component = BrowserComponent | PlayerComponent | InspectorComponent | TimelineComponent
 
+export const ComponentBrowser: Component = 'browser'
+export const ComponentPlayer: Component = 'player'
+export const ComponentInspector: Component = 'inspector'
+export const ComponentTimeline: Component = 'timeline'
 
-export enum Component {
-  Browser = 'browser',
-  Player = 'player',
-  Inspector = 'inspector',
-  Timeline = 'timeline',
-}
 
 export interface Output {
-  request?: Request
+  request?: EndpointRequest
 }
 export const isOutput = (value: any): value is Output => {
   return isObject(value) 

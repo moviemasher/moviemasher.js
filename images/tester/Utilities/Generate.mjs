@@ -6,8 +6,8 @@ import {
   assertSize, SizePreview, isSize, 
   assertContainerObject, isContainerObject,
   assertPoint, isPoint, errorThrow,
-  Directions, Duration, DefaultContentId, DefaultContainerId, 
-  DefaultFontId, MediaType
+  SideDirections, DurationUnknown, DefaultContentId, DefaultContainerId, 
+  DefaultFontId
 } from '@moviemasher/lib-core'
 
 const GeneratePoint = {
@@ -104,7 +104,7 @@ const MashOpacityDefault = {
   [GenerateOpacity.Z]: { opacity: 0.0 },
 }
 
-const generateClips = (testId, size = SizePreview, frames = Duration.Unknown, includeLabels = false) => {
+const generateClips = (testId, size = SizePreview, frames = DurationUnknown, includeLabels = false) => {
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]
@@ -289,7 +289,7 @@ export const GenerateTestsDefault = {
   ],
   [GenerateArg.Constrain]: [
     [GenerateConstrain.C, {}], 
-    [GenerateConstrain.U, Object.fromEntries(Directions.map(direction => [`off${direction}`, true]))]
+    [GenerateConstrain.U, Object.fromEntries(SideDirections.map(direction => [`off${direction}`, true]))]
   ],
 }
 
@@ -413,7 +413,7 @@ export const generateTests = (generateOptions, testId = 'all', size = SizePrevie
   return [testId, mash]
 }
 
-export const generateTest = (testId, size = SizePreview, frames = Duration.Unknown, doLabels = false) => {
+export const generateTest = (testId, size = SizePreview, frames = DurationUnknown, doLabels = false) => {
   const [clip, labelClip] = generateClips(testId, size, frames, doLabels)
   const tracks = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })

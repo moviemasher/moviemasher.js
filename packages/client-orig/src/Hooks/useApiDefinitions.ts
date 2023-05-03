@@ -2,7 +2,7 @@ import {
   MediaArray, MediaTypes, 
 } from "@moviemasher/lib-core"
 import { 
-  ReadOperation 
+  OperationRead 
 } from "@moviemasher/client-core"
 
 import { useClient } from "./useClient"
@@ -14,7 +14,7 @@ import { useClient } from "./useClient"
 export const useApiDefinitions = (types: MediaTypes = []): MediaArray => {
 
   const client = useClient()
-  if (!client.enabled(ReadOperation)) return []
+  if (!client.enabled(OperationRead)) return []
 
   
   // const storeRef = React.useRef<Record<string, MediaArray>>({})

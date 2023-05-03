@@ -5,23 +5,26 @@ import { html } from 'lit'
 import { customElement } from 'lit/decorators/custom-element.js'
 
 import { Slotted } from './Base/Slotted.js'
+import { Component } from './Base/Component.js'
 
-@customElement('moviemasher-span')
+@customElement('movie-masher-span')
 export class SpanElement extends Slotted {
 
-  override slottedContent(contents: Contents): Content {
+  protected override content(contents: Contents): Content {
     return html`<span 
-      @connection='${this.onConnection}'
-      @slotted='${this.onSlotted}'
+      @connection='${this.connectionHandler}'
+      @slotted='${this.slottedHandler}'
     >${contents}</span>`
   }
 
-  static override styles = [css`
-    :host {
-      display: inline;
-    }
-    span {
-      padding: var(--padding);
-    }
-  `]
+  static override styles = [
+    Component.cssHostFlex,
+    css`
+      span {
+        flex-grow: 1;
+        white-space: nowrap;
+        padding: var(--padding);
+      }
+    `
+  ]
 }

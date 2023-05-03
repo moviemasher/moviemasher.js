@@ -3,7 +3,7 @@
 import type {
   Masher, MashIndex, Media, MediaArray, 
   ScalarRecord} from "@moviemasher/lib-core"
-import type { Client, Draggable } from "@moviemasher/client-core"
+import type { RemoteClient, Draggable } from "@moviemasher/client-core"
 
 
 import type { MasherContextInterface } from './MasherContext'
@@ -11,9 +11,9 @@ import type { MasherContextInterface } from './MasherContext'
 import React from 'react'
 import {
   eventStop, 
-  VideoType
+  TypeVideo
 } from '@moviemasher/lib-core'
-import { ClientDisabledArgs, remoteClientInstance, dropDraggable } from "@moviemasher/client-core"
+import { LocalClientDisabledArgs, remoteClientInstance, dropDraggable } from "@moviemasher/client-core"
 import { elementSetPreviewSize } from '../../Utilities/Element'
 import MasherContext from './MasherContext'
 import { View } from '../../Utilities/View'
@@ -29,8 +29,8 @@ import { MasherAppProps } from "./MasherApp"
 */
 export function MasherApp(props: MasherAppProps) {
   const {
-    mashingType = VideoType,
-    clientOptions = ClientDisabledArgs,
+    mashingType = TypeVideo,
+    clientOptions = LocalClientDisabledArgs,
     previewSize,
     icons = {},
     mashMedia,
@@ -38,7 +38,7 @@ export function MasherApp(props: MasherAppProps) {
   } = props
 
   const clientContext = React.useContext(ClientContext)
-  const clientInitialize = (): Client => {
+  const clientInitialize = (): RemoteClient => {
     const { client } = clientContext
     if (client) return client
 
@@ -49,7 +49,7 @@ export function MasherApp(props: MasherAppProps) {
   // return <masher-icon love="it" id="" />
 
   console.log("MasherApp", mashingType, previewSize)
-  const clientRef = React.useRef<Client>(clientInitialize())
+  const clientRef = React.useRef<RemoteClient>(clientInitialize())
   const { current: client } = clientRef
 
   const masherRef = React.useRef<Masher>(client.masher({mashingType}))

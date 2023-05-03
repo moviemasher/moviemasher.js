@@ -5,8 +5,8 @@ type CustomElement<T> = Partial<T & JSX.IntrinsicClassAttributes<T> & { children
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      ['moviemasher-icon']: CustomElement<IconElement>
-      ['moviemasher-form']: CustomElement<FormElement>
+      ['movie-masher-icon']: CustomElement<IconElement>
+      ['movie-masher']: CustomElement<FormElement>
     }
   }
 }

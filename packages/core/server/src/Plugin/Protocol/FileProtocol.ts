@@ -1,9 +1,9 @@
 import { 
-  Request, ProtocolPromise, ProtocolFile, LoadType, errorPromise, assertEndpoint, 
+  EndpointRequest, ProtocolPromise, ProtocolFile, LoadType, errorPromise, assertEndpoint, 
   ErrorName, assertPopulatedString, TypeProtocol, Runtime 
 } from "@moviemasher/lib-core"
 
-const promise: ProtocolPromise = (request: Request, type?: LoadType) => {
+const promise: ProtocolPromise = (request: EndpointRequest, type?: LoadType) => {
   if (type) return errorPromise(ErrorName.Type)
   
   const { endpoint } = request

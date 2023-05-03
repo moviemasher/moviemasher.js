@@ -1,4 +1,4 @@
-import { Data, DataOrError } from "@moviemasher/lib-core"
+import { DataOrError } from "@moviemasher/lib-core"
 
 export interface Icon {
   imageElement?: HTMLImageElement

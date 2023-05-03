@@ -1,0 +1,80 @@
+import type { Content, Contents, Htmls, MovieMasher, OptionalContent } from '../declarations.js'
+
+import { css, html } from 'lit'
+import { property } from 'lit/decorators/property.js'
+import { customElement } from 'lit/decorators/custom-element.js'
+import { consume } from '@lit-labs/context'
+
+import { movieMasherContext } from '../movie-masher-context.js'
+import { Div, LeftCenterRight } from '../Base/LeftCenterRight.js'
+import { Component } from '../Base/Component.js'
+
+
+@customElement('movie-masher-selector-div')
+export class SelectorDivElement extends Div {
+  @consume({ context: movieMasherContext, subscribe: true })
+  @property({ attribute: false })
+  declare movieMasherContext: MovieMasher
+  override centerContent(slots: Htmls): OptionalContent {
+    const slotsCopy = [...slots]
+    const { movieMasherContext } = this
+    const { mediaObjects } = movieMasherContext
+    if (mediaObjects.length) {
+      this.importTags('movie-masher-selector-span')
+      slotsCopy.push(...mediaObjects.map(media => {
+        return html`<movie-masher-selector-span 
+          media-id='${media.id}'
+        ></movie-masher-selector-span>`
+      }))
+    } 
+    return html`<span class='left'>${slotsCopy}</span>`
+  }
+
+
+  protected override content(contents: Contents): Content { 
+    return html`<div>${contents}</div>` 
+  }
+
+
+  static override styles = [
+    Component.cssHostFlex,
+    Component.cssDivFlex,
+    LeftCenterRight.cssHostOverflowY,
+    css`
+      div > span {
+        flex-grow: 1;
+        padding: var(--padding);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, calc(var(--viewer-width) * var(--icon-ratio)));
+        grid-auto-rows: calc(var(--viewer-height) * var(--icon-ratio));
+        gap: var(--spacing);
+        overflow-y: auto;
+      }
+
+      div > span > *:hover,
+      div > span > *.selected {
+        border-color: var(--item-fore-selected);
+        color: var(--item-fore-selected);
+        background-color: var(--item-back-selected);
+      }
+
+      div > span > *.selected:hover {
+        border-color: var(--item-fore-hover);
+        color: var(--item-fore-hover);
+        background-color: var(--item-back-hover);
+      }    
+      div > span .dropping {
+        box-shadow: var(--dropping-shadow);
+      }
+    `
+  ]
+  // static override styles = [css`
+
+  
+
+
+  
+  // `]
+}
+
+

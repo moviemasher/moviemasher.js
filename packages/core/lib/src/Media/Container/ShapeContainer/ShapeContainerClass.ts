@@ -1,28 +1,32 @@
-import {ShapeContainer, ShapeContainerDefinition} from './ShapeContainer.js'
+import type {ShapeContainer, ShapeContainerDefinition} from './ShapeContainer.js'
+import type {ValueRecord} from '../../../Types/Core.js'
+import type {SvgItem} from '../../../Helpers/Svg/Svg.js'
+import type {Rect, RectTuple} from '../../../Utility/Rect.js'
+import type { Size } from '../../../Utility/Size.js'
+import type {Tweening} from '../../../Mixin/Tweenable/Tween.js'
+import type {Time, TimeRange} from '../../../Helpers/Time/Time.js'
+import type {ContentRectArgs} from '../../Content/Content.js'
+import type {Effects} from '../../Effect/Effect.js'
+import type {IntrinsicOptions} from '../../Mash/Track/Clip/Clip.js'
+import type {CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs} from '../../../Base/Code.js'
+
 import {NamespaceSvg} from '../../../Setup/Constants.js'
 import {colorBlack, colorBlackOpaque, colorWhite} from '../../../Helpers/Color/ColorConstants.js'
-import {ValueRecord} from '../../../Types/Core.js'
-import {SvgItem} from '../../../Helpers/Svg/Svg.js'
-import {Rect, rectsEqual, RectTuple} from '../../../Utility/Rect.js'
-import {Size, sizeAboveZero, sizeEven, sizesEqual} from '../../../Utility/Size.js'
-import {CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs} from '../../../Base/Code.js'
-import {DataType, GraphFileType} from '../../../Setup/Enums.js'
+import { rectsEqual} from '../../../Utility/Rect.js'
+import { sizeAboveZero, sizeEven, sizesEqual} from '../../../Utility/Size.js'
+import {DataTypePercent, GraphFileTypeSvg} from '../../../Setup/Enums.js'
 import {ContainerMixin} from '../ContainerMixin.js'
 import {assertPopulatedArray, assertPopulatedString, isBoolean, isPopulatedArray, isPopulatedString, isTimeRange} from '../../../Utility/Is.js'
 import {commandFilesInput} from '../../../Utility/CommandFiles.js'
 import {arrayLast} from '../../../Utility/Array.js'
 import {TweenableMixin} from '../../../Mixin/Tweenable/TweenableMixin.js'
-import {Tweening, tweenMaxSize} from '../../../Mixin/Tweenable/Tween.js'
-import {DataGroup, propertyInstance} from '../../../Setup/Property.js'
+import { tweenMaxSize} from '../../../Mixin/Tweenable/Tween.js'
+import {DataGroupSize, propertyInstance} from '../../../Setup/Property.js'
 import {idGenerate} from '../../../Utility/Id.js'
 import {PropertyTweenSuffix} from '../../../Base/Propertied.js'
 import {PointZero} from '../../../Utility/Point.js'
 import {svgPathElement, svgPolygonElement, svgSetTransformRects, svgTransform} from '../../../Helpers/Svg/SvgFunctions.js'
 import {MediaInstanceBase} from '../../MediaInstanceBase.js'
-import {Time, TimeRange} from '../../../Helpers/Time/Time.js'
-import {ContentRectArgs} from '../../Content/Content.js'
-import {Effects} from '../../Effect/Effect.js'
-import {IntrinsicOptions} from '../../Mash/Track/Clip/Clip.js'
 
 const ShapeContainerWithTweenable = TweenableMixin(MediaInstanceBase)
 const ShapeContainerWithContainer = ContainerMixin(ShapeContainerWithTweenable)
@@ -31,12 +35,12 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     super(...args)
     const [object] = args
     this.addProperties(object, propertyInstance({
-      tweenable: true, name: 'width', type: DataType.Percent, 
-      group: DataGroup.Size, defaultValue: 1.0, max: 2.0
+      tweenable: true, name: 'width', type: DataTypePercent, 
+      group: DataGroupSize, defaultValue: 1.0, max: 2.0
     }))
     this.addProperties(object, propertyInstance({
-      tweenable: true, name: 'height', type: DataType.Percent, 
-      group: DataGroup.Size, defaultValue: 1.0, max: 2.0
+      tweenable: true, name: 'height', type: DataTypePercent, 
+      group: DataGroupSize, defaultValue: 1.0, max: 2.0
     }))
   }
 
@@ -357,7 +361,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       // options.re = ''
     }
     const commandFile: CommandFile = { 
-      type: GraphFileType.Svg, file: id, content: svgTag, 
+      type: GraphFileTypeSvg, file: id, content: svgTag, 
       input: true, inputId: id, definition, options
     }
   

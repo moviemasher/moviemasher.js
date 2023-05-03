@@ -1,7 +1,7 @@
 import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import {
-  AVType, CommandFilters, isAboveZero, isPopulatedString, isNumber, 
-  isPopulatedObject, isValue, ValueRecord, ColonRegex, CommaRegex
+  CommandFilters, isAboveZero, isPopulatedString, isNumber, 
+  isPopulatedObject, isValue, ValueRecord, ColonRegex, CommaRegex, AVTypeAudio, AVTypeVideo
 } from '@moviemasher/lib-core'
 
 import { Command } from './Command'
@@ -50,8 +50,8 @@ export const commandInstance = (args: CommandOptions): Command => {
   const instance: ffmpeg.FfmpegCommand = commandProcess()
   
   const { inputs, output, commandFilters, avType } = args
-  if (avType === AVType.Video) instance.noAudio()
-  else if (avType === AVType.Audio) instance.noVideo()
+  if (avType === AVTypeVideo) instance.noAudio()
+  else if (avType === AVTypeAudio) instance.noVideo()
   inputs?.forEach(({ source, options }) => {
     // console.log("commandInstance adding", source)
     instance.addInput(source)
@@ -68,17 +68,17 @@ export const commandInstance = (args: CommandOptions): Command => {
     })
     // instance.addOption('-filter_complex_threads 1')
   }
-  if (avType !== AVType.Video) {
+  if (avType !== AVTypeVideo) {
     if (isPopulatedString(output.audioCodec)) instance.audioCodec(output.audioCodec)
     if (isValue(output.audioBitrate)) instance.audioBitrate(output.audioBitrate)
     if (isAboveZero(output.audioChannels)) instance.audioChannels(output.audioChannels)
     if (isAboveZero(output.audioRate)) instance.audioFrequency(output.audioRate)
   }
-  if (avType !== AVType.Audio) {
+  if (avType !== AVTypeAudio) {
     if (isPopulatedString(output.videoCodec)) instance.videoCodec(output.videoCodec)
     if (isAboveZero(output.videoRate)) instance.fpsOutput(output.videoRate)
   }
-  // if (isPopulatedString(output.format) && output.format !== OutputFormat.Png) instance.format(output.format)
+  // if (isPopulatedString(output.format) && output.format !== OutputFormatPng) instance.format(output.format)
 
   const options: ValueRecord = output.options || {}
   const instanceOptions = isPopulatedObject(options) ? options : {}

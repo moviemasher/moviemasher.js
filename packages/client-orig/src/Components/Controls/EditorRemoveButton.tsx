@@ -3,7 +3,7 @@ import React from "react"
 import type { PropsClickable } from "../../Types/Props"
 
 import { 
-  assertSelectorType, ClipType, EventType, isClip, isEffect, isTrack 
+  assertSelectorType, EventTypeSelection, isClip, isEffect, isTrack, TypeClip 
 } from "@moviemasher/lib-core"
 import { useListeners } from "../../Hooks/useListeners"
 import { useMasher } from "../../Hooks/useMasher"
@@ -16,14 +16,14 @@ export interface EditorRemoveButtonProps extends PropsClickable {
 
 
 export function EditorRemoveButton(props: EditorRemoveButtonProps) {
-  const { type = ClipType } = props
+  const { type = TypeClip } = props
   assertSelectorType(type)
 
   const masher = useMasher()
   const getDisabled = () => !masher.selection[type]
   const [disabled, setDisabled] = React.useState(getDisabled)
   useListeners({
-    [EventType.Selection]: () => { setDisabled(getDisabled()) }
+    [EventTypeSelection]: () => { setDisabled(getDisabled()) }
   })
 
   return <Clickable key='remove'

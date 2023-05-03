@@ -7,7 +7,7 @@ import type {
 import type { Filter } from '../../Plugin/Filter/Filter.js'
 import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
 import type { Clip, IntrinsicOptions } from '../../Media/Mash/Track/Clip/Clip.js'
-import type { Orientation } from '../../Setup/Enums.js'
+import type { Lock } from '../../Setup/Enums.js'
 import type { MediaType } from '../../Setup/MediaType.js'
 import type { Property } from '../../Setup/Property.js'
 import type { PointTuple } from '../../Utility/Point.js'
@@ -64,7 +64,7 @@ export interface Tweenable extends MediaInstance, Selectable {
   intrinsicsKnown(options: IntrinsicOptions): boolean
   isDefault: boolean
   loadPromise(args: PreloadArgs): Promise<void>
-  lock: Orientation
+  lock: Lock
   mutable(): boolean
   muted: boolean
   overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters

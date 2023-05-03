@@ -1,13 +1,15 @@
+
+import type { Position } from '@moviemasher/client-core'
 import {
   EmptyFunction,RectZero,
-  Clip, DroppingPosition, NumberSetter, Rect, Track, EmptyFunctionType, Point
+  Clip, NumberSetter, Rect, Track, EmptyFunctionType, Point
 } from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface TimelineContextInterface {
   dragTypeValid(dataTransfer: DataTransfer, clip?: Clip): boolean
   droppingClip?: Clip
-  droppingPosition?: DroppingPosition | number
+  droppingPosition?: Position | number
   droppingTrack?: Track
   frame: number
   frames: number
@@ -21,7 +23,7 @@ export interface TimelineContextInterface {
   selectedClip?: Clip
   selectedTrack?: Track
   setDroppingClip(_?: Clip): void
-  setDroppingPosition(_: DroppingPosition | number): void
+  setDroppingPosition(_: Position | number): void
   setDroppingTrack(_?: Track): void
   setRect(_:Rect): void
   setScroll(_:Point): void

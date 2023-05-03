@@ -18,7 +18,6 @@
     "@moviemasher/client-component": "5.1.2",
     "@moviemasher/lib-core": "5.1.2",
     "@moviemasher/protocol-supabase": "5.1.2",
-    "@moviemasher/theme-default": "5.1.2",
     "@supabase/supabase-js": "2.8.0",
     "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
     "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"

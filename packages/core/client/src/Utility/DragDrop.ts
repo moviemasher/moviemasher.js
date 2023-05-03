@@ -6,12 +6,24 @@ import type {
 import {
   isString, isObject, isMediaType, 
   MediaType, assertMediaType, 
-  DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
+  isUndefined, ClassDropping, ClassDroppingAfter, 
   ClassDroppingBefore, errorThrow, 
   arrayOfNumbers, 
   isDefiniteError, isMashAndMediaObject, isEffect, isClip, 
   isMediaObject, 
 } from '@moviemasher/lib-core'
+
+export const PositionAfter: PositionAfter = 'after'
+export const PositionAt: PositionAt = 'at'
+export const PositionBefore: PositionBefore = 'before'
+export const PositionNone: PositionNone = 'none'
+export type PositionAfter = 'after'
+export type PositionAt = 'at'
+export type PositionBefore = 'before'
+export type PositionNone = 'none'
+
+export type Position = PositionAt | PositionBefore | PositionAfter | PositionNone
+
 
 export type DragFunction = (event: DragEvent) => void
 
@@ -49,7 +61,7 @@ export interface DragLayerObject extends UnknownRecord {
 export type Draggable = MediaObject | MashAndMediaObject | Clip | FileList | Effect
 
 
-export const TransferTypeFiles = "Files"
+export const TransferTypeFiles = 'Files'
 export type TransferType = string 
 export const isTransferType = (value: any): value is TransferType => {
   return isString(value) && value.endsWith(DragSuffix)
@@ -147,13 +159,13 @@ export const DragElementPoint = (event: DragEvent, current: Element | Rect,): Po
 // }
 
 
-export const droppingPositionClass = (droppingPosition?: DroppingPosition | number): string => {
+export const droppingPositionClass = (droppingPosition?: Position | number): string => {
   if (isUndefined(droppingPosition)) return ''
 
   switch (droppingPosition) {
-    case DroppingPosition.After: return ClassDroppingAfter
-    case DroppingPosition.Before: return ClassDroppingBefore
-    case DroppingPosition.None: return ''
+    case PositionAfter: return ClassDroppingAfter
+    case PositionBefore: return ClassDroppingBefore
+    case PositionNone: return ''
   }
   return ClassDropping
 }
@@ -220,5 +232,3 @@ export const dropDraggable = (masher: Masher, client: RemoteClient, draggable: D
   }
   return dropFiles(masher, client, draggable, editorIndex) 
 }
-
-

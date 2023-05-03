@@ -1,7 +1,11 @@
+import type {
+ Scalar, PropertiedChangeHandler, Property, Time, 
+} from '@moviemasher/lib-core'
+
 import { 
-  Scalar, PropertiedChangeHandler, Property, DataType, Time, EmptyFunction 
-} from "@moviemasher/lib-core"
-import { createContext } from "../../../Framework/FrameworkFunctions"
+  EmptyFunction, DataTypeString 
+} from '@moviemasher/lib-core'
+import { createContext } from '../../../Framework/FrameworkFunctions'
 
 export interface InputContextInterface {
   property: Property
@@ -16,7 +20,7 @@ export const InputContextDefault: InputContextInterface = {
   changeHandler: EmptyFunction,
   value: '',
   name: '',
-  property: { type: DataType.String, name: '', defaultValue: '' }
+  property: { type: DataTypeString, name: '', defaultValue: '' }
 }
 
 export const InputContext = createContext(InputContextDefault)

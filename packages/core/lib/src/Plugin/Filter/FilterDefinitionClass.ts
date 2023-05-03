@@ -1,14 +1,18 @@
-import { ScalarRecord, ValueRecord, UnknownRecord } from '../../Types/Core.js'
-import { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
-import { CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from '../../Base/Code.js'
-import { DataType } from '../../Setup/Enums.js'
+import type { ScalarRecord, ValueRecord, UnknownRecord } from '../../Types/Core.js'
+import type { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
+import type { 
+  CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, 
+  FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs 
+} from '../../Base/Code.js'
+import type { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from './Filter.js'
+import type { Property } from '../../Setup/Property.js'
+
+import { DataTypeString } from '../../Setup/Enums.js'
 import { Parameter } from '../../Setup/Parameter.js'
-import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from './Filter.js'
 import { FilterClass } from './FilterClass.js'
 
 import { idGenerate } from '../../Utility/Id.js'
 import { assertPopulatedString, assertValueRecord } from '../../Utility/Is.js'
-import { Property } from '../../Setup/Property.js'
 import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
 import { ErrorName } from '../../Helpers/Error/ErrorName.js'
 import { DotChar } from '../../Setup/Constants.js'
@@ -76,7 +80,7 @@ export class FilterDefinitionClass implements FilterDefinition {
   protected populateParametersFromProperties() {
     this.parameters = this.properties.map(property => {
       const { name } = property
-      return new Parameter({ name, value: name, dataType: DataType.String })
+      return new Parameter({ name, value: name, dataType: DataTypeString })
     })
   }
 

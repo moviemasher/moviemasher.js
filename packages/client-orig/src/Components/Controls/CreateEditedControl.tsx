@@ -3,7 +3,7 @@ import React from "react"
 import type { PropsClickable } from "../../Types/Props"
 
 import {
-  EventType, MasherAction
+  ClientActionSave, EventTypeAction, EventTypeLoaded, EventTypeSave
 } from "@moviemasher/lib-core"
 
 import { useMasher } from "../../Hooks/useMasher"
@@ -14,14 +14,14 @@ import Clickable from "../Clickable/Clickable.lite"
 export function CreateEditedControl(props: PropsClickable) {
   const { children, ...rest } = props
   const editor = useMasher()
-  const getDisabled = () => editor.can(MasherAction.Save)
+  const getDisabled = () => editor.can(ClientActionSave)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled()) }
 
   useListeners({
-    [EventType.Action]: updateDisabled,
-    [EventType.Loaded]: updateDisabled,
-    [EventType.Save]: updateDisabled,
+    [EventTypeAction]: updateDisabled,
+    [EventTypeLoaded]: updateDisabled,
+    [EventTypeSave]: updateDisabled,
   })
 
   return <Clickable key='create-edited'

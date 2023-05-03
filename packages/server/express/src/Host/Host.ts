@@ -1,6 +1,6 @@
 import Express from 'express'
 import cors from 'cors'
-import { ServerType, StringRecord } from '@moviemasher/lib-core'
+import { StringRecord } from '@moviemasher/lib-core'
 
 import { DataServerClass } from "../Server/DataServer/DataServerClass"
 import { FileServerClass } from "../Server/FileServer/FileServerClass"
@@ -24,10 +24,10 @@ export interface HostOptions {
 }
 
 export interface HostServers {
-  [ServerType.Data]?: DataServer
-  [ServerType.File]?: FileServer
-  [ServerType.Rendering]?: RenderingServer
-  [ServerType.Web]?: WebServer
+  data?: DataServer
+  file?: FileServer
+  rendering?: RenderingServer
+  web?: WebServer
 }
 
 export class Host {
@@ -38,10 +38,10 @@ export class Host {
   start() {
     const { corsOptions, host, port, file, data, rendering, web } = this.args
     const HostServers: HostServers = {}
-    if (data) HostServers[ServerType.Data] = new DataServerClass(data)
-    if (file) HostServers[ServerType.File] = new FileServerClass(file)
-    if (rendering) HostServers[ServerType.Rendering] = new RenderingServerClass(rendering)
-    if (web) HostServers[ServerType.Web] = new WebServerClass(web)
+    if (data) HostServers.data = new DataServerClass(data)
+    if (file) HostServers.file = new FileServerClass(file)
+    if (rendering) HostServers.rendering = new RenderingServerClass(rendering)
+    if (web) HostServers.web = new WebServerClass(web)
 
     const servers: Server[] = Object.values(HostServers)
     if (!servers.length) {

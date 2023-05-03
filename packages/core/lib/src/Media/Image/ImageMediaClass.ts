@@ -1,5 +1,5 @@
 import type {ClientImage} from '../../Helpers/ClientMedia/ClientMedia.js'
-import type {Image, ImageMedia, ImageObject} from './Image.js'
+import type {Image, ImageMedia, ImageMediaObject, ImageObject} from './Image.js'
 import type {PreloadArgs} from '../../Base/Code.js'
 import type {Size} from '../../Utility/Size.js'
 
@@ -11,7 +11,6 @@ import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
 import {ImageClass} from './ImageClass.js'
 import {isDefiniteError} from '../../Utility/Is.js'
 import {MediaBase} from '../MediaBase.js'
-import {requestImagePromise} from '../../Helpers/Request/RequestFunctions.js'
 import {svgImagePromiseWithOptions, svgSvgElement} from '../../Helpers/Svg/SvgFunctions.js'
 import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
 import {TypeImage} from '../../Setup/Enums.js'
@@ -22,10 +21,16 @@ const ImageMediaWithContainer = ContainerDefinitionMixin(ImageMediaWithTweenable
 const ImageMediaWithContent = ContentDefinitionMixin(ImageMediaWithContainer)
 const ImageMediaWithUpdatable = UpdatableSizeDefinitionMixin(ImageMediaWithContent)
 export class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMedia {
+  constructor(object: ImageMediaObject) {
+    super(object)
+    const { loadedImage } = object
+    if (loadedImage) this.loadedImage = loadedImage
+  }
+
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     const transcoding = this.preferredTranscoding(TypeImage) 
 
-    return requestImagePromise(transcoding.request).then(orError => {
+    return this.requestImagePromise(transcoding.request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: clientImage } = orError
@@ -57,7 +62,7 @@ export class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMed
     const transcoding = editing ? this.preferredTranscoding(TypeImage) : this
     
     const { request } = transcoding
-    return requestImagePromise(request).then(orError => {
+    return this.requestImagePromise(request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: clientImage } = orError

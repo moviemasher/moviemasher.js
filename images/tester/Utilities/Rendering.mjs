@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import {
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
-  SizePreview, isPopulatedString, EmptyFunction, Duration, 
+  SizePreview, isPopulatedString, EmptyFunction, DurationUnknown, 
   idGenerateString, CommaChar
 } from '@moviemasher/lib-core'
 
@@ -179,7 +179,7 @@ export const renderingMashTestPromise = (mashTest, upload, ...outputs) => {
   return promise
 }
 
-export const renderingTestIdPromise = (id, videoOutput, doLabels = false, duration = Duration.Unknown) => {
+export const renderingTestIdPromise = (id, videoOutput, doLabels = false, duration = DurationUnknown) => {
   assertPopulatedString(id)
 
   const mashTest = generateTest(id, SizePreview, duration, doLabels)

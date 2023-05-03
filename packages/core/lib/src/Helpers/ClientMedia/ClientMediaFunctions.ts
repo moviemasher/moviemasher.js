@@ -1,9 +1,8 @@
 import type { ClientAudio, ClientFont, ClientImage, ClientMedia, ClientMediaType, ClientVideo } from './ClientMedia.js'
 import type { LoadType } from '../../Setup/LoadType.js'
+import type { GraphFileType } from '../../Setup/Enums.js'
 
 import { ClientMediaTypes } from './ClientMediaConstants.js'
-import { GraphFileType, isGraphFileType } from '../../Setup/Enums.js'
-import { isLoadType } from '../../Setup/LoadType.js'
 import { errorThrow } from '../Error/ErrorFunctions.js'
 import { isJsonRecord, isObject } from '../../Utility/Is.js'
 
@@ -22,13 +21,6 @@ export function assertClientImage(value: any, name?: string): asserts value is C
   if (!isClientImage(value)) errorThrow(value, 'ClientImage', name)
 }
 
-export const isClientAudio = (value: any): value is ClientAudio => {
-  return isObject(value) && value instanceof AudioBuffer
-}
-export function assertClientAudio(value: any, name?: string): asserts value is ClientAudio {
-  if (!isClientAudio(value)) errorThrow(value, 'ClientAudio', name)
-}
-
 export const isClientFont = (value: any): value is ClientFont => {
   return isObject(value) && 'family' in value
 }
@@ -38,12 +30,6 @@ export function assertClientFont(value: any, name?: string): asserts value is Cl
 
 
 export type LoaderType = GraphFileType | LoadType
-export const isLoaderType = (value: any): value is LoaderType => { 
-  return isLoadType(value) || isGraphFileType(value)
-}
-export function assertLoaderType(value: any, name?: string): asserts value is LoaderType {
-  if (!isLoaderType(value)) errorThrow(value, 'LoaderType', name)
-}
 
 
 export const isClientMedia = (value: any): value is ClientMedia => (
@@ -62,4 +48,15 @@ export const isClientMediaType = (type?: any): type is ClientMediaType => {
 }
 export function assertClientMediaType(value: any, name?: string): asserts value is ClientMediaType {
   if (!isClientMediaType(value)) errorThrow(value, 'ClientMediaType', name)
+}
+
+
+
+export function assertClientAudio(value: any, name?: string): asserts value is ClientAudio {
+  if (!isClientAudio(value)) errorThrow(value, 'ClientAudio', name)
+}
+
+// MOVED: component 
+export const isClientAudio = (value: any): value is ClientAudio => {
+  return isObject(value) && value instanceof AudioBuffer
 }

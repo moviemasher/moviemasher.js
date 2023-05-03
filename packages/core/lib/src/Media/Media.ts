@@ -8,9 +8,10 @@ import type { MediaType } from '../Setup/MediaType.js'
 import type { Identified } from '../Base/Identified.js'
 import type { Propertied } from '../Base/Propertied.js'
 import type { DecodingObjects, Decodings } from '../Plugin/Decode/Decoding/Decoding.js'
-import type { Data } from '../Helpers/ClientMedia/ClientMedia.js'
+import type { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientMediaDataOrError, ClientVideoDataOrError, Data } from '../Helpers/ClientMedia/ClientMedia.js'
 import type { DefiniteError } from '../Helpers/Error/Error.js'
 import type { Requestable, RequestableObject } from '../Base/Requestable/Requestable.js'
+import type { EndpointRequest } from '../Helpers/Request/Request.js'
 
 export interface MediaInstanceObject extends UnknownRecord {
   mediaId?: string
@@ -58,11 +59,20 @@ export interface Media extends Requestable {
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined
   instanceFromObject(object?: MediaInstanceObject): MediaInstance
   instanceArgs(object?: MediaInstanceObject): MediaInstanceObject
+  eventTarget?: EventTarget
   file?: File
   isVector: boolean
   label: string
   preferredTranscoding(...types: TranscodingTypes): Requestable
   properties: Property[]
+
+  requestAudioPromise(request: EndpointRequest): Promise<ClientAudioDataOrError> 
+  requestFontPromise(request: EndpointRequest): Promise<ClientFontDataOrError> 
+  requestImagePromise(request: EndpointRequest): Promise<ClientImageDataOrError> 
+  requestVideoPromise(request: EndpointRequest): Promise<ClientVideoDataOrError> 
+
+
+
   toJSON(): UnknownRecord
   loadPromise(args: PreloadArgs): Promise<void>
   unload(): void
@@ -73,5 +83,46 @@ export type MediaArray = Media[]
 
 export type MediaClass = Constrained<Media>
 
-export type MediaFactoryMethod = (_: MediaObject) => Media
+export type MediaFactoryMethod = (_mediaObject: MediaObject) => Media
 
+
+
+export interface ClientMediaEventDetail {
+  request: EndpointRequest
+  promise? : Promise<ClientMediaDataOrError>
+}
+
+export type ClientMediaEvent = CustomEvent<ClientMediaEventDetail>
+
+export interface ClientAudioEventDetail {
+  request: EndpointRequest
+  promise? : Promise<ClientAudioDataOrError>
+}
+
+export type ClientAudioEvent = CustomEvent<ClientAudioEventDetail>
+
+
+export interface ClientFontEventDetail {
+  request: EndpointRequest
+  promise? : Promise<ClientFontDataOrError>
+}
+
+export type ClientFontEvent = CustomEvent<ClientFontEventDetail>
+
+
+
+export interface ClientImageEventDetail {
+  request: EndpointRequest
+  promise? : Promise<ClientImageDataOrError>
+}
+
+export type ClientImageEvent = CustomEvent<ClientImageEventDetail>
+
+
+
+export interface ClientVideoEventDetail {
+  request: EndpointRequest
+  promise? : Promise<ClientVideoDataOrError>
+}
+
+export type ClientVideoEvent = CustomEvent<ClientVideoEventDetail>

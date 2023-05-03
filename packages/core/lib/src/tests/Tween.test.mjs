@@ -23,7 +23,7 @@ describe('Tween', () => {
         'problem', 
         { width: 480, height: 270 }, 
         { x: 1, y: 1, width: 0.25, height: 0.25 }, 
-        {},//Object.fromEntries(Directions.map(direction => [direction, true])), 
+        {},
         { width: 120, height: 68, x: 360, y: 202 }
       ],
     ]

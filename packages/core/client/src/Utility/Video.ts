@@ -1,5 +1,5 @@
 import type {
-  Request,ClientVideoDataOrError, 
+  EndpointRequest,ClientVideoDataOrError, 
 } from '@moviemasher/lib-core'
 
 import { 
@@ -18,7 +18,7 @@ const videoFromUrl = (url: string): HTMLVideoElement => {
   return video
 }
 
-export const videoDataPromise = (request: Request): Promise<ClientVideoDataOrError> => {
+export const videoDataPromise = (request: EndpointRequest): Promise<ClientVideoDataOrError> => {
   const { endpoint } = request
   assertEndpoint(endpoint)
 

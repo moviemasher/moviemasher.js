@@ -1,22 +1,36 @@
 import type {Clip, IntrinsicOptions} from '../../Media/Mash/Track/Clip/Clip.js'
-import type {CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs} from '../../Base/Code.js'
+import type {
+  CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, 
+  FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, 
+  VisibleCommandFileArgs, VisibleCommandFilterArgs, 
+} from '../../Base/Code.js'
 import type {Filter} from '../../Plugin/Filter/Filter.js'
 import type {Point, PointTuple} from '../../Utility/Point.js'
 import type {Rect, RectTuple} from '../../Utility/Rect.js'
 import type {Scalar, ScalarRecord} from '../../Types/Core.js'
 import type {Selectables} from '../../Plugin/Masher/Selectable.js'
 import type {SelectedItems, SelectedProperties, SelectedProperty} from '../../Helpers/Select/SelectedProperty.js'
-import type {SelectorType} from '../../Setup/Enums.js'
+import {SelectorType, Lock, DataTypeContainerId, DataTypeContentId, DataTypeFrame,  } from '../../Setup/Enums.js'
 import type {Size, SizeTuple} from '../../Utility/Size.js'
 import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
 import type {Tweenable, TweenableClass, TweenableDefinition, TweenableObject} from './Tweenable.js'
 import type {Tweening} from './Tween.js'
+import type { ChangePropertiesActionObject, ChangePropertyActionObject } from "../../Plugin/Masher/Actions/Action/Action.js"
+import type { Property} from '../../Setup/Property.js'
+import type {MediaInstanceClass} from '../../Media/Media.js'
 
 import {Actions} from '../../Plugin/Masher/Actions/Actions.js'
-import {ActionType, DataType, isSizingMediaType, isTimingMediaType, TypeNone, Orientation,  Sizing, Timing} from '../../Setup/Enums.js'
+import { 
+  ActionTypeChange, ActionTypeChangeFrame, ActionTypeChangeMultiple,
+  DataType, isSizingMediaType, isTimingMediaType, TypeNone, SizingContainer, 
+  SizingContent, TimingContainer, TimingContent, TimingCustom 
+} from '../../Setup/Enums.js'
 import {arrayLast} from '../../Utility/Array.js'
-import {assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, isNumber, isTimeRange, isUndefined} from '../../Utility/Is.js'
-import {assertProperty, Property} from '../../Setup/Property.js'
+import {
+  assertAboveZero, assertArray, assertNumber, assertObject, 
+  assertPopulatedString, isNumber, isTimeRange, isUndefined
+} from '../../Utility/Is.js'
+import {assertProperty} from '../../Setup/Property.js'
 import {assertRect } from '../../Utility/Rect.js'
 import {assertSize, sizeEven, sizesEqual} from '../../Utility/Size.js'
 import {colorBlackOpaque, colorWhite} from '../../Helpers/Color/ColorConstants.js'
@@ -25,7 +39,6 @@ import {ErrorName} from '../../Helpers/Error/ErrorName.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
 import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
 import {idGenerate} from '../../Utility/Id.js'
-import {MediaInstanceClass} from '../../Media/Media.js'
 import {PropertyTweenSuffix} from '../../Base/Propertied.js'
 import {timeFromArgs, timeRangeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
 import {tweenColorStep, tweenNumberStep, tweenOverPoint, tweenOverSize} from './Tween.js'
@@ -248,7 +261,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       return this.definition.loadPromise(args)
     }
 
-    declare lock: Orientation
+    declare lock: Lock
     mutable() { return false }
     
     declare muted: boolean 
@@ -321,15 +334,15 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       const { timing, sizing, track } = clip
       const { media } = track.mash.editor
 
-      const dataType = container ? DataType.ContainerId : DataType.ContentId
+      const dataType = container ? DataTypeContainerId : DataTypeContentId
       const property = clip.properties.find(property => property.type === dataType)
       assertProperty(property)
       
       const { name } = property
       const undoValues: ScalarRecord = { timing, sizing, [name]: undoValue }
       const values: ScalarRecord = { ...undoValues }
-      const relevantTiming = container ? Timing.Container : Timing.Content
-      const relevantSizing = container ? Sizing.Container : Sizing.Content
+      const relevantTiming = container ? TimingContainer : TimingContent
+      const relevantSizing = container ? SizingContainer : SizingContent
       const timingBound = timing === relevantTiming
       const sizingBound = sizing === relevantSizing 
      
@@ -343,15 +356,17 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
             const newDefinition = media.fromId(redoValue)
             const { type } = newDefinition
             if (timingBound && !isTimingMediaType(type)) {
-              redoValues.timing = Timing.Custom
+              redoValues.timing = TimingCustom
             }
             if (sizingBound && !isSizingMediaType(type)) {
-              redoValues.sizing = container ? Sizing.Content : Sizing.Container
+              redoValues.sizing = container ? SizingContent : SizingContainer
             }
           } 
-          const actionObject = { 
-            type: ActionType.ChangeMultiple, 
-            property, target: clip, redoValues, undoValues 
+          const actionObject: ChangePropertiesActionObject = { 
+            type: ActionTypeChangeMultiple, 
+            property, target: clip, redoValues, undoValues,
+            redoSelection: { ...actions.selection },
+            undoSelection: { ...actions.selection },
           }
           actions.create(actionObject)
         },
@@ -374,12 +389,17 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       
       const { selectType } = this
       const undoValue = this.value(name)
-      const type = dataType === DataType.Frame ? ActionType.ChangeFrame : ActionType.Change
+      const type = dataType === DataTypeFrame ? ActionTypeChangeFrame : ActionTypeChange
       const selectedProperty: SelectedProperty = {
         selectType, property, value: undoValue, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
-          actions.create({ type, property, target: this, redoValue, undoValue })
+          const actionObject: ChangePropertyActionObject = { 
+            type, property, target: this, redoValue, undoValue,
+            redoSelection: { ...actions.editor.selection.object },
+            undoSelection: { ...actions.editor.selection.object }, 
+          }
+          actions.create(actionObject)
         }
       }
       // console.log(this.constructor.name, 'selectedProperties', name)
@@ -389,8 +409,14 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
         const undoValue = this.value(tweenName)
         const selectedPropertEnd: SelectedProperty = {
           selectType, property, value: undoValue, name: tweenName,
-          changeHandler: (property: string, redoValue: Scalar) => {            
-            actions.create({ property, target: this, redoValue, undoValue })
+          changeHandler: (property: string, redoValue: Scalar) => {       
+            const actionObject: ChangePropertyActionObject = {
+              property, target: this, redoValue, undoValue,
+              redoSelection: { ...actions.editor.selection.object },
+              undoSelection: { ...actions.editor.selection.object },
+              type: ActionTypeChange,
+            }
+            actions.create(actionObject)
           }
         }
         // console.log(this.constructor.name, 'selectedProperties', tweenName)

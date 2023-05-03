@@ -1,8 +1,12 @@
-import type { SelectorType } from '../../../../Setup/Enums.js'
+import type { SelectorType, Sizing, Timing, } from '../../../../Setup/Enums.js'
 import type {Clip, ClipArgs, IntrinsicOptions} from './Clip.js'
 import type {Container, ContainerObject, ContainerRectArgs} from '../../../Container/Container.js'
 import type {Content, ContentObject} from '../../../Content/Content.js'
-import type {PreloadArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs, Component, ServerPromiseArgs} from '../../../../Base/Code.js'
+import type {
+  PreloadArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, 
+  CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs, 
+  Component, ServerPromiseArgs
+} from '../../../../Base/Code.js'
 import type {Preview, PreviewArgs} from '../../../../Plugin/Masher/Preview/Preview.js'
 import type {PreviewItems, SvgItems, SvgOrImage} from '../../../../Helpers/Svg/Svg.js'
 import type {Rect, RectTuple} from '../../../../Utility/Rect.js'
@@ -12,18 +16,26 @@ import type {SelectedItems} from '../../../../Helpers/Select/SelectedProperty.js
 import type {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
 import type {Track} from '../Track.js'
 import type {Tweening} from '../../../../Mixin/Tweenable/Tween.js'
+import type {Tweenable} from '../../../../Mixin/Tweenable/Tweenable.js'
+import type { ChangePropertyActionObject } from '../../../../Plugin/Masher/Actions/Action/Action.js'
+import type { Size } from '../../../../Utility/Size.js'
+import { DataGroupTiming, Property } from '../../../../Setup/Property.js'
 
 import { isColorContent } from '../../../Content/ColorContent/ColorContentFunctions.js'
 import { rectsEqual } from '../../../../Utility/Rect.js'
 import {Actions} from '../../../../Plugin/Masher/Actions/Actions.js'
-import {ActionType, TypeClip, DataType, Duration, Sizing, Sizings, Timing, Timings} from '../../../../Setup/Enums.js'
+import {
+  SizingContent, DurationUnknown, DurationNone, TypeClip, Sizings, 
+  Timings, SizingContainer, SizingPreview, TimingContainer, TimingCustom, TimingContent,
+  ActionTypeChange, ActionTypeChangeFrame, DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeOption, DataTypeString,
+} from '../../../../Setup/Enums.js'
 import {arrayLast, arrayOfNumbers} from '../../../../Utility/Array.js'
 import {assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedArray, isPopulatedString} from '../../../../Utility/Is.js'
 import {assertContainer, isContainer} from '../../../Container/ContainerFunctions.js'
 import {assertContent, isContent} from '../../../Content/ContentFunctions.js'
-import {assertSizeAboveZero, Size, sizeCover, sizeEven, sizesEqual} from '../../../../Utility/Size.js'
+import {assertSizeAboveZero, sizeCover, sizeEven, sizesEqual} from '../../../../Utility/Size.js'
 import {assertTweenable} from '../../../../Mixin/Tweenable/TweenableFunctions.js'
-import {DataGroup, Property, propertyInstance} from '../../../../Setup/Property.js'
+import {DataGroup, propertyInstance} from '../../../../Setup/Property.js'
 import {Default} from '../../../../Setup/Default.js'
 import {DefaultContainerId} from '../../../Container/ContainerConstants.js'
 import {DefaultContentId} from '../../../Content/ContentConstants.js'
@@ -36,41 +48,40 @@ import {PreviewClass} from '../../../../Plugin/Masher/Preview/PreviewClass.js'
 import {PropertiedClass} from '../../../../Base/Propertied.js'
 import {svgAppend, svgSvgElement, svgSetDimensions} from '../../../../Helpers/Svg/SvgFunctions.js'
 import {timeFromArgs, timeRangeFromArgs} from '../../../../Helpers/Time/TimeUtilities.js'
-import {Tweenable} from '../../../../Mixin/Tweenable/Tweenable.js'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(...args: any[]) {
     super(...args)
 
     this.properties.push(propertyInstance({
-      name: 'containerId', type: DataType.ContainerId,
+      name: 'containerId', type: DataTypeContainerId,
       defaultValue: DefaultContainerId
     }))
     this.properties.push(propertyInstance({
-      name: 'contentId', type: DataType.ContentId,
+      name: 'contentId', type: DataTypeContentId,
       defaultValue: DefaultContentId
     }))
     this.properties.push(propertyInstance({ 
-      name: 'label', type: DataType.String 
+      name: 'label', type: DataTypeString 
     }))
     this.properties.push(propertyInstance({ 
-      name: 'sizing', type: DataType.Option, defaultValue: Sizing.Content,
+      name: 'sizing', type: DataTypeOption, defaultValue: SizingContent,
       options: Sizings,
     }))
     this.properties.push(propertyInstance({ 
-      name: 'timing', type: DataType.Option, defaultValue: Timing.Content,
-      group: DataGroup.Timing, options: Timings
+      name: 'timing', type: DataTypeOption, defaultValue: TimingContent,
+      group: DataGroupTiming, options: Timings
     }))
     this.properties.push(propertyInstance({ 
       name: 'frame',
-      type: DataType.Frame, 
-      group: DataGroup.Timing, 
-      defaultValue: Duration.None, min: 0, step: 1
+      type: DataTypeFrame, 
+      group: DataGroupTiming, 
+      defaultValue: DurationNone, min: 0, step: 1
     }))
     this.properties.push(propertyInstance({ 
-      name: 'frames', type: DataType.Frame, defaultValue: Duration.Unknown,
+      name: 'frames', type: DataTypeFrame, defaultValue: DurationUnknown,
       min: 1, step: 1,
-      group: DataGroup.Timing,
+      group: DataGroupTiming,
     }))
     
     const [object] = args
@@ -97,19 +108,19 @@ export class ClipClass extends PropertiedClass implements Clip {
     timingOk ||= tweenable.hasIntrinsicTiming
     sizingOk ||= tweenable.hasIntrinsicSizing
 
-    // timingOk ||= timing === Timing.Container ? containerOk : contentOk
-    // sizingOk ||= sizing === Sizing.Container ? containerOk : contentOk
+    // timingOk ||= timing === TimingContainer ? containerOk : contentOk
+    // sizingOk ||= sizing === SizingContainer ? containerOk : contentOk
 
     if (!timingOk) {
-      if (timing === Timing.Content && containerId) {
-        this.timing = Timing.Container
-      } else this.timing = Timing.Custom
+      if (timing === TimingContent && containerId) {
+        this.timing = TimingContainer
+      } else this.timing = TimingCustom
       // console.log(this.constructor.name, 'assureTimingAndSizing setting timing', type, isTimingMediaType(type), myTiming, '->', this.timing)
     }
     if (!sizingOk) {
-      if (sizing === Sizing.Content && containerId) {
-        this.sizing = Sizing.Container 
-      } else this.sizing = Sizing.Preview
+      if (sizing === SizingContent && containerId) {
+        this.sizing = SizingContainer 
+      } else this.sizing = SizingPreview
       // console.log(this.constructor.name, 'assureTimingAndSizing setting sizing', type, isSizingMediaType(type), mySizing, '->', this.sizing)
     }
     return !(sizingOk && timingOk)
@@ -287,11 +298,11 @@ export class ClipClass extends PropertiedClass implements Clip {
     assertContainer(instance)
 
 
-    this.assureTimingAndSizing(Timing.Container, Sizing.Container, instance)
+    this.assureTimingAndSizing(TimingContainer, SizingContainer, instance)
 
     instance.clip = this
 
-    if (this.timing === Timing.Container && this._track) this.resetTiming(instance)
+    if (this.timing === TimingContainer && this._track) this.resetTiming(instance)
     
     return this._container = instance
   }
@@ -314,16 +325,16 @@ export class ClipClass extends PropertiedClass implements Clip {
     const instance = definition.instanceFromObject(object)
     assertContent(instance)
 
-    if (this.assureTimingAndSizing(Timing.Content, Sizing.Content, instance)) {
+    if (this.assureTimingAndSizing(TimingContent, SizingContent, instance)) {
       const { container } = this
       if (container) {
-        this.assureTimingAndSizing(Timing.Container, Sizing.Container, container)
+        this.assureTimingAndSizing(TimingContainer, SizingContainer, container)
       }
     }
 
     instance.clip = this
 
-    if (this.timing === Timing.Content && this._track) this.resetTiming(instance)
+    if (this.timing === TimingContent && this._track) this.resetTiming(instance)
     return this._content = instance
   }
 
@@ -447,9 +458,9 @@ export class ClipClass extends PropertiedClass implements Clip {
   rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
     const rect = { ...size, ...PointZero }
     const { sizing } = this
-    if (sizing === Sizing.Preview) return rect
+    if (sizing === SizingPreview) return rect
 
-    const target = sizing === Sizing.Container ? this.container : this.content
+    const target = sizing === SizingContainer ? this.container : this.content
     assertTweenable(target)
     const known = target.intrinsicsKnown({ editing, size: true })
     if (loading && !known) return rect
@@ -479,7 +490,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     // console.log('resetTiming', timing)
     const track = this._track
     switch(timing) {
-      case Timing.Custom: {
+      case TimingCustom: {
         
         // console.log('resetTiming', this.frames)
         if (isAboveZero(this.frames)) break
@@ -487,7 +498,7 @@ export class ClipClass extends PropertiedClass implements Clip {
         this.frames = Default.duration * (quantize || track!.mash.quantize)
         break
       }
-      case Timing.Container: {
+      case TimingContainer: {
         const container = isContainer(tweenable) ? tweenable : this.container
         if (!container) break
 
@@ -496,7 +507,7 @@ export class ClipClass extends PropertiedClass implements Clip {
         this.frames = container.frames(quantize || track!.mash.quantize)
         break
       }
-      case Timing.Content: {
+      case TimingContent: {
         const content = isContent(tweenable) ? tweenable : this.content
         if (!content) break
 
@@ -526,8 +537,11 @@ export class ClipClass extends PropertiedClass implements Clip {
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
 
-          const options = { property, target: this, redoValue, undoValue,
-            type: isFrames ? ActionType.ChangeFrame : ActionType.Change
+          const options: ChangePropertyActionObject = { 
+            property, target: this, redoValue, undoValue,
+            type: isFrames ? ActionTypeChangeFrame : ActionTypeChange,
+            redoSelection: { ...actions.selection },
+            undoSelection: { ...actions.selection },
           }
           actions.create(options)
         }
@@ -539,8 +553,8 @@ export class ClipClass extends PropertiedClass implements Clip {
   private selectedProperty(property: Property): boolean {
     const { name, type } = property
     switch(type) {
-      case DataType.ContainerId:
-      case DataType.ContentId: return false
+      case DataTypeContainerId:
+      case DataTypeContentId: return false
     }
     switch(name) {
       case 'sizing': return !isAudio(this.content)
@@ -549,7 +563,7 @@ export class ClipClass extends PropertiedClass implements Clip {
         return !!this.container?.hasIntrinsicSizing
       }
       case 'frame': return !this.track.dense
-      case 'frames': return this.timing === Timing.Custom
+      case 'frames': return this.timing === TimingCustom
     }
     return true
   }

@@ -13,10 +13,10 @@ export interface DataGroupProps extends PropsWithoutChild, WithClassName {
 }
 
 export const DataGroupInputs: DataGroupElements = {
-  [DataGroup.Size]: EmptyElement,
-  [DataGroup.Point]: EmptyElement,
-  [DataGroup.Opacity]: EmptyElement,
-  [DataGroup.Color]: EmptyElement,
-  [DataGroup.Effects]: EmptyElement,
-  [DataGroup.Timing]: EmptyElement,
+  color: EmptyElement,
+  effects: EmptyElement,
+  opacity: EmptyElement,
+  point: EmptyElement,
+  size: EmptyElement,
+  timing: EmptyElement
 }

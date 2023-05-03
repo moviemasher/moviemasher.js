@@ -1,4 +1,4 @@
-export * from './Base.js'
+export * from './Component.js'
 export * from './IconString.js'
 export * from './Importer.js'
 export * from './LeftCenterRight.js'

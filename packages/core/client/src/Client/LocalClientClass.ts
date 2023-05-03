@@ -178,8 +178,8 @@ export class LocalClientClass implements LocalClient {
   //   if (errors.length) {
   //     errors.forEach(error => {
   //       const id = idGenerate('activity-error')
-  //       const info = { id, type: ActivityType.Error, ...error }
-  //       eventTarget.emit(EventType.Active, info)
+  //       const info = { id, type: ActivityTypeError, ...error }
+  //       eventTarget.emit(EventTypeActive, info)
   //     })
   //   }
   //   if (validFiles.length) return masher.addFiles(validFiles, editorIndex)
@@ -218,20 +218,13 @@ export class LocalClientClass implements LocalClient {
       this.iconRecord = { data: iconSource }
       return Promise.resolve(this.iconRecord)
     }
-    const request = { endpoint: endpointFromUrl(iconSource), init: { method: 'GET' } }
-    // console.log('iconRecordPromise...', request)
-    return requestRecordPromise(request).then(orError => {
-      // console.log('iconRecordPromise!', orError)
-    
-      if (isDefiniteError(orError)) {
-        console.log('iconRecordPromise! isDefiniteError')
 
+    const request = { endpoint: endpointFromUrl(iconSource), init: { method: 'GET' } }
+    return requestRecordPromise(request).then(orError => {
+      if (isDefiniteError(orError)) {
         this.iconRecord = orError
         return orError
       }
-      // const { data } = orError
-      // console.log('iconRecordPromise!', data || orError)
-
       this.iconRecord = { data: orError as NestedStringRecord }
       return this.iconRecord 
     })
@@ -289,12 +282,10 @@ export class LocalClientClass implements LocalClient {
   list(params: ClientReadParams): Promise<MediaDataArrayOrError> {
     const { localClientArgs: clientArgs } = this
     const { read } = clientArgs
-    if (!read)
-      return errorPromise(ErrorName.ClientDisabledList)
+    if (!read) return errorPromise(ErrorName.ClientDisabledList)
 
-    const { listRequest } = read
-    if (!listRequest)
-      return errorPromise(ErrorName.ClientDisabledList)
+    const { listRequest, paramPosition } = read
+    if (!listRequest) return errorPromise(ErrorName.ClientDisabledList)
 
     requestPopulate(listRequest, params)
     return requestRecordsPromise(listRequest).then(orError => {

@@ -1,9 +1,11 @@
+import { PositionAt, PositionNone } from '@moviemasher/client-core'
+
 import React from 'react'
 import {
-  UnknownRecord, DroppingPosition, ClassSelected, eventStop, 
+  UnknownRecord, ClassSelected, eventStop, 
   assertTrue,
   sizeAboveZero, svgPolygonElement,
-  Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject, EventFunction
+  Size, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject, EventFunction, EventTypeAction, EventTypeSave
 } from '@moviemasher/lib-core'
 import { 
   pixelFromFrame, DragSuffix, droppingPositionClass 
@@ -110,7 +112,7 @@ export function ClipItem(props: ClipItemProps) {
     const { type } = event
     if (!isEventType(type)) return
     if (!(event instanceof CustomEvent)) return
-    if (type !== EventType.Action) return
+    if (type !== EventTypeAction) return
     
     const { detail } = event
     if (!detail) return 
@@ -133,7 +135,7 @@ export function ClipItem(props: ClipItemProps) {
     refresh()
   }
 
-  useListeners({ [EventType.Action]: actionCallback, [EventType.Save]: refresh })
+  useListeners({ [EventTypeAction]: actionCallback, [EventTypeSave]: refresh })
 
   const frameSize = () => {
     const { rect } = editor
@@ -239,7 +241,7 @@ export function ClipItem(props: ClipItemProps) {
     if (!dataTransfer) return
 
     const definitionType = dragTypeValid(dataTransfer, clip)
-    const pos = definitionType ? DroppingPosition.At : DroppingPosition.None
+    const pos = definitionType ? PositionAt : PositionNone
     setDroppingTrack(definitionType ? track : undefined)
     setDroppingClip(definitionType ? clip : undefined)
     setDroppingPosition(pos)

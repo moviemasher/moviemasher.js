@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, arrayReversed, Tracks } from '@moviemasher/lib-core'
+import { arrayReversed, Tracks, EventTypeLoaded, EventTypeTrack } from '@moviemasher/lib-core'
 
 import { JsxElements } from "../../Types/Element"
 import { PropsWithChildren } from "../../Types/Props"
@@ -15,7 +15,7 @@ export function TimelineTracks(props: TimelineTracksProps) {
   const updateRefreshed = () => { setRefreshed(nonce => nonce + 1) }
   const editor = useMasher()
   useListeners({
-    [EventType.Loaded]: updateRefreshed, [EventType.Track]: updateRefreshed,
+    [EventTypeLoaded]: updateRefreshed, [EventTypeTrack]: updateRefreshed,
   })
 
   const { children } = props
