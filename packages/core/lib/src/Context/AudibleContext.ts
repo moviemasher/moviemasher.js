@@ -1,5 +1,5 @@
 import type { ClientAudioNode } from '../Helpers/ClientMedia/ClientMedia.js'
-import { assertFunction } from '../Utility/Is.js'
+import { assertFunction } from '../Shared/SharedGuards.js'
 
 const AudibleSampleRate = 44100
 const AudibleChannels = 2

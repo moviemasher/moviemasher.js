@@ -19,7 +19,7 @@
     "target": "ESNext"
   },
   "exclude": [
-    "**/esm/*",
+    "**/dist/*",
     "**/node_modules/**/*"
   ]
 }

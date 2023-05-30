@@ -1,4 +1,4 @@
-import type { Content, Contents, Htmls, MovieMasher, OptionalContent } from '../declarations.js'
+import type { Content, Contents, Htmls, MovieMasherContext, OptionalContent } from '../declarations.js'
 
 import { css, html } from 'lit'
 import { property } from 'lit/decorators/property.js'
@@ -14,20 +14,23 @@ import { Component } from '../Base/Component.js'
 export class SelectorDivElement extends Div {
   @consume({ context: movieMasherContext, subscribe: true })
   @property({ attribute: false })
-  declare movieMasherContext: MovieMasher
+  masherContext: MovieMasherContext | undefined
+
   override centerContent(slots: Htmls): OptionalContent {
     const slotsCopy = [...slots]
-    const { movieMasherContext } = this
-    const { mediaObjects } = movieMasherContext
-    if (mediaObjects.length) {
-      this.importTags('movie-masher-selector-span')
-      slotsCopy.push(...mediaObjects.map(media => {
-        return html`<movie-masher-selector-span 
-          media-id='${media.id}'
-        ></movie-masher-selector-span>`
-      }))
-    } 
-    return html`<span class='left'>${slotsCopy}</span>`
+    const { masherContext } = this
+    if (masherContext) {
+      const { mediaObjects } = masherContext
+      if (mediaObjects.length) {
+        this.importTags('movie-masher-selector-span')
+        slotsCopy.push(...mediaObjects.map(media => {
+          return html`<movie-masher-selector-span 
+            media-id='${media.id}'
+          ></movie-masher-selector-span>`
+        }))
+      }   
+    } else slotsCopy.push(html`<h1>NO MASHER CONTEXT</h1>`)
+    return html`<span class='center'>${slotsCopy}</span>`
   }
 
 
@@ -68,13 +71,6 @@ export class SelectorDivElement extends Div {
       }
     `
   ]
-  // static override styles = [css`
-
-  
-
-
-  
-  // `]
 }
 
 

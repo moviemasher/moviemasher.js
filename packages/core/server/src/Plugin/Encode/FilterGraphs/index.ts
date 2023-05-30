@@ -1,3 +1,3 @@
-export * from './FilterGraphs'
-export * from './FilterGraphsClass'
-export * from "./FilterGraphsFactory"
+export * from './FilterGraphs.js'
+export * from './FilterGraphsClass.js'
+export * from "./FilterGraphsFactory.js"

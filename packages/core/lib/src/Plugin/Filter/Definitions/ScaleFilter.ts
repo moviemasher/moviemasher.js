@@ -1,12 +1,13 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { DataType, DataTypePercent } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
-import { assertPopulatedString, isNumber } from '../../../Utility/Is.js'
+import { DataType } from "@moviemasher/runtime-shared"
+import { DataTypePercent } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { assertPopulatedString, isNumber } from '../../../Shared/SharedGuards.js'
 import { idGenerate } from '../../../Utility/Id.js'
-import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
-import { ValueRecord } from '../../../Types/Core.js'
-import { tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { PropertyTweenSuffix } from "../../../Base/PropertiedConstants.js"
+import { ValueRecord } from '@moviemasher/runtime-shared'
+import { tweenOption, tweenPosition } from '../../../Helpers/TweenFunctions.js'
 import { FilterDefinitionObject } from '../Filter.js'
 
 /**

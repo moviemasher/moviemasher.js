@@ -1,5 +1,5 @@
 import { Rgb, Rgba, RgbaObject, RgbObject } from './Color.js'
-import { isPositive } from '../../Utility/Is.js'
+import { isPositive } from '../../Shared/SharedGuards.js'
 import { colorRgbaKeys, colorRgbKeys } from './ColorConstants.js'
 
 
@@ -88,9 +88,14 @@ export const colorRgbaToHex = (object: RgbaObject): string => {
   return `#${r}${g}${b}${a}`
 }
 
+export const colorValidServer = (color: string): boolean => {
+  const stripped = colorStrip(color)
+  return (colorValidHex(stripped) || colorValidRgba(stripped) || colorValidRgb(stripped)) 
+}
+
 export const colorValid = (color: string): boolean => {
   const stripped = colorStrip(color)
-  if (colorValidHex(stripped) || colorValidRgba(stripped) || colorValidRgb(stripped)) return true
+  if (colorValidServer(stripped)) return true
 
   const style = colorStyle()
 
@@ -100,7 +105,7 @@ export const colorValid = (color: string): boolean => {
   const styleStripped = colorStrip(transformed)
   if (!styleStripped) return false
  
-  if (colorValidRgba(stripped) || colorValidRgb(stripped)) return true
+  if (colorValidRgba(styleStripped) || colorValidRgb(styleStripped)) return true
 
   return styleStripped === stripped
 }

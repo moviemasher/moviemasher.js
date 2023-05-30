@@ -12,6 +12,9 @@ FROM base as stage
 ARG DIR_ROOT
 COPY packages/build/core/package.json ${DIR_ROOT}/packages/build/core/package.json
 
+COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
+COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
+COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
 COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
 COPY packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
 COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json

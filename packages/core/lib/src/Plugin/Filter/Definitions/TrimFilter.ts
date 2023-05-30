@@ -1,5 +1,6 @@
-import { DataType, DataTypeNumber } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
+import { DataType } from "@moviemasher/runtime-shared"
+import { DataTypeNumber } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
 import { FilterDefinitionObject } from '../Filter.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
 

@@ -9,13 +9,13 @@ export const expandCommand = (command: string): string => {
   return execSync(command).toString().trim()
 }
 
-export const expandFileOrScript = (command?: string): string => {
-  if (!command) return ''
+export const expandFileOrScript = (fileOrScript?: string): string => {
+  if (!fileOrScript) return ''
 
-  if (command.endsWith(TextExtension)) return expandFile(command)
+  if (fileOrScript.endsWith(TextExtension)) return expandFile(fileOrScript)
 
-  if (command.startsWith('/')) return expandCommand(command) 
-  return command
+  if (fileOrScript.startsWith('/')) return expandCommand(fileOrScript) 
+  return fileOrScript
 }
 
 export const expandFile = (file?: string): string => {

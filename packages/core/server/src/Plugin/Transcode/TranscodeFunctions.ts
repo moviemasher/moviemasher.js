@@ -1,29 +1,32 @@
-import { ErrorName, errorThrow, isTranscodeOutput, RenderingCommandOutput } from "@moviemasher/lib-core";
-import { RenderingOutput } from "../Encode/Encode";
-import { isMediaRequest } from "../Media/Media";
-import { TranscodeRequest } from "./Transcode";
+import type { TranscodeRequest } from './Transcode.js'
+import type { 
+  TranscodeOutput, StringDataOrError 
+} from '@moviemasher/lib-core'
+
+import { 
+  errorThrow, isDefiniteError, isTranscodeOutput, pluginDataOrErrorPromise, 
+  TypeTranscode, assertTranscodingType
+} from '@moviemasher/lib-core'
+import { isMediaRequest } from '../../Media/MediaFunctions.js'
 
 export const isTranscodeRequest = (value: any): value is TranscodeRequest => {
-  return isMediaRequest(value) && "output" in value && isTranscodeOutput(value.output);
-};
+  return isMediaRequest(value) && 'output' in value && isTranscodeOutput(value.output)
+}
 
 export function assertTranscodeRequest(value: any): asserts value is TranscodeRequest {
   if (!isTranscodeRequest(value))
-    errorThrow(value, 'TranscodeRequest');
+    errorThrow(value, 'TranscodeRequest')
 }
 
+export const transcode = (localPath: string, output: TranscodeOutput): Promise<StringDataOrError>  => {
+  const { type, options } = output
+  assertTranscodingType(type)
 
-export const transcodeFileName = (index: number, commandOutput: RenderingCommandOutput, renderingOutput: RenderingOutput): string => {
-  const { videoRate } = commandOutput
+  return pluginDataOrErrorPromise(type, TypeTranscode).then(orError => {
+    if (isDefiniteError(orError)) return orError
 
-  if (!videoRate) return errorThrow(ErrorName.Internal)
-
-  const { format, extension, basename = '' } = commandOutput
-  const ext = extension || format
-  const { duration } = renderingOutput
-  const framesMax = Math.floor(videoRate * duration) - 2
-  const begin = 1
-  const lastFrame = begin + (framesMax - begin)
-  const padding = String(lastFrame).length
-  return `${basename}%0${padding}d.${ext}`
+    const { data: plugin } = orError
+    return plugin.transcode(localPath, options)
+  })
 }
+

@@ -5,7 +5,7 @@ import { remoteClientInstance } from '../src/Client/index';
 import { RemoteClientClass } from '../src/Client/RemoteClientClass';
 import { OperationsRemote } from '../src/Client/RemoteClient';
 
-import { isPopulatedString, ErrorName, EnvironmentKeyUrlBase, Runtime, isMedia } from '@moviemasher/lib-core'
+import { isPopulatedString, ErrorName } from '@moviemasher/lib-core'
 
 describe('Client', function() {
   it('args', function() {
@@ -62,6 +62,6 @@ describe('Client', function() {
   //   assert.equal(orError.error, undefined)
 
   //   const { data } = orError
-  //   assert(isMedia(data))
+  //   assert(isAsset(data))
   // })
 })

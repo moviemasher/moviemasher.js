@@ -1,4 +1,4 @@
-import type { NumberRecord, Value, ValueRecord } from '../../Types/Core.js'
+import type { NumberRecord, Value, ValueRecord } from '@moviemasher/runtime-shared'
 
 export type Color = Rgb | Rgba
 export type ColorObject = RgbObject | RgbaObject

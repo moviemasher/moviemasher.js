@@ -1,26 +1,30 @@
 import type { ProtocolDataOrError, ProtocolPlugin } from '../../Plugin/Protocol/Protocol.js'
-import type { DefiniteError } from '../Error/Error.js'
-import type { Data, JsonRecordDataOrError, JsonRecordsDataOrError } from '../ClientMedia/ClientMedia.js'
+import type { DefiniteError } from '@moviemasher/runtime-shared'
+import type { JsonRecordDataOrError, JsonRecordsDataOrError } from '../ClientMedia/ClientMedia.js'
+import type { Data } from "@moviemasher/runtime-shared"
 import type { LoadType } from '../../Setup/LoadType.js'
-import type { JsonRecord, JsonRecords } from '../../Types/Core.js'
+import type { JsonRecord, JsonRecords } from '@moviemasher/runtime-shared'
 import type { 
   ClientAudio, ClientAudioDataOrError, ClientFont, ClientFontDataOrError, 
   ClientImage, ClientImageDataOrError, ClientMedia, ClientMediaType, 
-  ClientVideo, ClientVideoDataOrError, DataOrError 
-} from '../ClientMedia/ClientMedia.js'
-import type { AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from '../../Setup/Enums.js'
-import type { StringType } from '../../Utility/Scalar.js'
+  ClientVideo, ClientVideoDataOrError} from '../ClientMedia/ClientMedia.js'
+import type { DataOrError } from "@moviemasher/runtime-shared"
+import type { FontType, RecordsType, RecordType } from '../../Setup/Enums.js'
+import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
+import type { StringType } from "../../Utility/ScalarTypes.js"
 
-import { TypeAudio, TypeFont, TypeImage, TypeRecords, TypeRecord, TypeVideo } from '../../Setup/Enums.js'
+import { TypeFont, TypeRecords, TypeRecord } from "../../Setup/EnumConstantsAndFunctions.js"
+import { TypeAudio, TypeImage, TypeVideo } from "@moviemasher/runtime-shared"
 import { ContentTypeHeader, DotChar, JsonMimetype } from '../../Setup/Constants.js'
 
-import { assertMethod, GetMethod, Method, PostMethod, EndpointRequest } from './Request.js'
-import { protocolLoadPromise } from '../../Plugin/Protocol/ProtocolFunctions.js'
+import { EndpointRequest } from './Request.js'
+import { assertMethod, GetMethod, Method, PostMethod } from "./Method.js"
 import { assertEndpoint, endpointIsAbsolute, isEndpoint, urlEndpoint } from '../Endpoint/EndpointFunctions.js'
-import { assertPopulatedString, isDefiniteError, isJsonRecord, isJsonRecords, isObject, isUndefined } from '../../Utility/Is.js'
-import { errorPromise, errorThrow } from '../Error/ErrorFunctions.js'
+import { assertPopulatedString, isDefiniteError, isJsonRecord, isJsonRecords, isObject, isUndefined } from '../../Shared/SharedGuards.js'
+import { errorThrow } from '../Error/ErrorFunctions.js'
 import { isClientAudio, isClientFont, isClientImage, isClientVideo } from '../ClientMedia/ClientMediaFunctions.js'
-import { ErrorName } from '../Error/ErrorName.js'
+import { pluginDataOrErrorPromise } from '../../Plugin/PluginFunctions.js'
+import { TypeProtocol } from '../../Plugin/PluginConstants.js'
 
 const makeRequestEndpointAbsolute = (request: EndpointRequest): void => {
   const { endpoint } = request
@@ -84,7 +88,16 @@ export const requestImagePromise = (request: EndpointRequest): Promise<ClientIma
   )
 }
 
-export const requestProtocolPromise = (request: EndpointRequest): Promise<ProtocolPlugin> => {
+export const protocolLoadPromise = (protocol: string): Promise<ProtocolPlugin> => {
+  return pluginDataOrErrorPromise(protocol, TypeProtocol).then(orError => {
+    if (isDefiniteError(orError)) return errorThrow(orError)
+  
+    return orError.data
+  })
+}
+
+
+const requestProtocolPromise = (request: EndpointRequest): Promise<ProtocolPlugin> => {
   return protocolLoadPromise(requestProtocol(request))
 }
 
@@ -150,7 +163,7 @@ export function requestPromise(request: EndpointRequest, type: LoadType): Promis
   )
 }
 
-export const requestMethod = (request: EndpointRequest): Method => {
+const requestMethod = (request: EndpointRequest): Method => {
   const { init = {} } = request
   const { method = PostMethod } = init
   assertMethod(method)
@@ -158,14 +171,14 @@ export const requestMethod = (request: EndpointRequest): Method => {
   return method
 }
 
-export const requestContentType = (request: EndpointRequest): string => {
+const requestContentType = (request: EndpointRequest): string => {
   const { init = {} } = request
   const { headers = {} } = init
   const { [ContentTypeHeader]: contentType = JsonMimetype } = headers
   return contentType
 }
 
-export const requestFormData = (values: any = {}): FormData => {
+const requestFormData = (values: any = {}): FormData => {
   const formData = new FormData()
   Object.entries(values).forEach(([key, value]) => {
     if (isUndefined(value)) return
@@ -177,7 +190,7 @@ export const requestFormData = (values: any = {}): FormData => {
   return formData
 }
 
-export const requestSearch = (values: any = {}): string => {
+const requestSearch = (values: any = {}): string => {
   return `?${new URLSearchParams(values)}`
 }
 
@@ -196,6 +209,7 @@ export const requestPopulate = (request: EndpointRequest, params: any = {}): voi
   }
 }
 
+
 export function requestClientMediaPromise(request: EndpointRequest, type: AudioType): Promise<DataOrError<ClientAudio>>
 export function requestClientMediaPromise(request: EndpointRequest, type: FontType): Promise<DataOrError<ClientFont>>
 export function requestClientMediaPromise(request: EndpointRequest, type: ImageType): Promise<DataOrError<ClientImage>>
@@ -208,11 +222,7 @@ export function requestClientMediaPromise(request: EndpointRequest, type: Client
     case TypeImage: return requestImagePromise(request)
     case TypeVideo: return requestVideoPromise(request)
   }
-  return errorPromise(ErrorName.Type)
 }
-
-export type RequestEncodingPromiseFunction = typeof requestClientMediaPromise
-
 
 export const isRequest = (value: any): value is EndpointRequest => {
   return isObject(value) && (

@@ -8,6 +8,10 @@ services:
       - 8578:80
     volumes:
       - ../../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
+
+      - ../../../../packages/runtime/shared/dist/:/usr/local/apache2/htdocs/@moviemasher/runtime-shared/dist
+      - ../../../../packages/runtime/client/dist/:/usr/local/apache2/htdocs/@moviemasher/runtime-client/dist
+
       - ../../../../packages/core/lib/dist/:/usr/local/apache2/htdocs/@moviemasher/lib-core/dist
       - ../../../../packages/core/client/dist/:/usr/local/apache2/htdocs/@moviemasher/client-core/dist
       - ../../../../packages/client/component/dist/:/usr/local/apache2/htdocs/@moviemasher/client-component/dist

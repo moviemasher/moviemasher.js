@@ -1,12 +1,13 @@
 import { AudioPreviewArgs, StartOptions } from './AudioPreview.js'
 import { Default } from '../../../../Setup/Default.js'
-import { isAboveZero, isPositive, isTimeRange } from '../../../../Utility/Is.js'
-import { Time, TimeRange } from '../../../../Helpers/Time/Time.js'
+import { isAboveZero, isPositive, isTimeRange } from '../../../../Shared/SharedGuards.js'
+import { Time, TimeRange } from '@moviemasher/runtime-shared'
 import { AudibleContextInstance } from '../../../../Context/AudibleContext.js'
-import { assertUpdatableDurationDefinition, isUpdatableDuration, UpdatableDuration } from '../../../../Mixin/UpdatableDuration/UpdatableDuration.js'
-import { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import { Clip } from '../../../../Shared/Mash/Clip/Clip.js'
 import { ErrorName } from '../../../../Helpers/Error/ErrorName.js'
 import { errorThrow } from '../../../../Helpers/Error/ErrorFunctions.js'
+import { ClientAudibleInstance } from '../../../../Client/ClientTypes.js'
+import { isClientAudibleInstance } from '../../../../Client/Audible/ClientAudibleInstanceGuards.js'
 
 export class AudioPreviewClass {
   constructor(object: AudioPreviewArgs) {
@@ -16,12 +17,12 @@ export class AudioPreviewClass {
   }
 
   adjustClipGain(clip: Clip, quantize: number): void {
-    const timeRange = clip.timeRange(quantize)
+    const timeRange = clip.timeRange
     const avs = this.clipSources(clip)
     avs.forEach(av => { this.adjustSourceGain(av, timeRange) })
   }
 
-  private adjustSourceGain(av: UpdatableDuration, timeRange: TimeRange | StartOptions): void {
+  private adjustSourceGain(av: ClientAudibleInstance, timeRange: TimeRange | StartOptions): void {
     const source = AudibleContextInstance.getSource(av.id)
       if (!source) {
         // console.log(this.constructor.name, 'adjustSourceGain no source', clip.id)
@@ -66,11 +67,11 @@ export class AudioPreviewClass {
 
   clear() {  }
 
-  private clipSources(clip: Clip): UpdatableDuration[] {
-    const avs: UpdatableDuration[] = []
+  private clipSources(clip: Clip): ClientAudibleInstance[] {
+    const avs: ClientAudibleInstance[] = []
     const { container, content } = clip
-    if (isUpdatableDuration(container) && !container.muted) avs.push(container)
-    if (isUpdatableDuration(content) && !content.muted) avs.push(content)
+    if (isClientAudibleInstance(container) && !container.muted) avs.push(container)
+    if (isClientAudibleInstance(content) && !content.muted) avs.push(content)
     return avs
   }
 
@@ -86,7 +87,7 @@ export class AudioPreviewClass {
     let okay = true
     addingClips.forEach(clip => {
       const avs = this.clipSources(clip)
-      const timeRange = clip.timeRange(quantize)
+      const timeRange = clip.timeRange
       const filtered = avs.filter(av => !AudibleContextInstance.hasSource(av.id))
       okay &&= filtered.every(av => {
         const startSeconds = this.playing ? this.seconds: time?.seconds || 0
@@ -94,8 +95,7 @@ export class AudioPreviewClass {
         const { start, duration, offset } = options
 
         if (isPositive(start) && isAboveZero(duration)) {
-          const { definition, id } = av
-          assertUpdatableDurationDefinition(definition)
+          const { asset: definition, id } = av
           const audibleSource = definition.audibleSource()
           if (!audibleSource) {
             if (!start) {

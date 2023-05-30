@@ -1,8 +1,4 @@
-import type { NumberRecord } from '../Types/Core.js'
-
-const IdTemporaryPrefix = 'temporary'
-const IdCountsByPrefix: NumberRecord = {} 
-
+import { IdTemporaryPrefix, IdCountsByPrefix } from './IdConstants.js'
 
 export const idGenerateString = (): string => {
   const components = [IdTemporaryPrefix]

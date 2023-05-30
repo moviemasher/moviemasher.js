@@ -1,14 +1,14 @@
-import { ScalarRecord, ValueRecord } from '../../../Types/Core.js'
+import { ScalarRecord, ValueRecord } from '@moviemasher/runtime-shared'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
 import { NamespaceSvg } from '../../../Setup/Constants.js'
-import { DataTypeNumber } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
-import { assertNumber, assertPopulatedString, isNumber } from '../../../Utility/Is.js'
+import { DataTypeNumber } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { assertNumber, assertPopulatedString, isNumber } from '../../../Shared/SharedGuards.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { PropertyTweenSuffix } from "../../../Base/PropertiedConstants.js"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { idGenerate } from '../../../Utility/Id.js'
-import { tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { tweenPosition } from '../../../Helpers/TweenFunctions.js'
 import { svgSet } from '../../../Helpers/Svg/SvgFunctions.js'
 import { FilterDefinitionObject } from '../Filter.js'
 

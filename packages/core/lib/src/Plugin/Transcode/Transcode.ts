@@ -1,19 +1,15 @@
 import type { Output} from '../../Base/Code.js'
-import type {Plugin, TranscodeType} from '../Plugin.js'
-import type {RenderingCommandOutput} from '../Encode/Encode.js'
-import type {TranscodingType} from './Transcoding/Transcoding.js'
+import type { Plugin, TranscodeType } from '@moviemasher/runtime-shared'
+import type { OutputOptions } from "../../Helpers/Output/Output.js"
+import type { TranscodingType } from './Transcoding/Transcoding.js'
+import type { StringDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
 
-import {isOutput} from '../../Base/Code.js'
-import {isTyped} from '../../Base/Typed.js'
 
 export interface TranscodeOutput extends Output {
-  options: RenderingCommandOutput
+  options: OutputOptions
   type: TranscodingType
-  
 }
-export const isTranscodeOutput = (value: any): value is TranscodeOutput => {
-  return isOutput(value) && isTyped(value)
-}
+
 
 export interface TranscoderOptions extends Output {}
 
@@ -21,4 +17,7 @@ export interface FontTranscoderOptions extends TranscoderOptions {}
 
 export interface TranscodePlugin extends Plugin {
   type: TranscodeType
+  transcodingType: TranscodingType
+  transcode: TranscodeMethod
 }
+export type TranscodeMethod = (localPath: string, options: OutputOptions) => Promise<StringDataOrError>

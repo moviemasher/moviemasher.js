@@ -17,11 +17,17 @@
     "./packages/core/client/src/**/*", 
     "./packages/client/component/src/*", 
     "./packages/client/component/src/**/*", 
-    "./packages/protocol/**/src/*", 
+    "./packages/runtime/client/src/*", 
+    "./packages/runtime/client/src/**/*", 
+    "./packages/runtime/server/src/*", 
+    "./packages/runtime/server/src/**/*", 
+    "./packages/runtime/shared/src/*", 
+    "./packages/runtime/shared/src/**/*", 
+    "./plugin/protocol/**/src/*"
   ],
   "exclude": [
-    "./packages/server/**/src/*", 
-    "node_modules", "**/*.test.mjs", "**/*.test.e2e.mjs", 
-    "**/umd/*", "**/esm/*",
+    "node_modules", 
+    "**/*.test.ts", "**/*.test.e2e.ts", 
+    "**/umd/*", "**/esm/*", "**/dist/*",
   ]
 }

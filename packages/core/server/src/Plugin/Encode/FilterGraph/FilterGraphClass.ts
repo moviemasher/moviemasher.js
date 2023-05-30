@@ -1,10 +1,10 @@
 import { 
-  assertMashMedia, assertTrue, isAboveZero, idGenerate, CommandFilter, 
-  colorTransparent, Clip, sortByTrack, CommandFile, assertMedia, CommandInputs, 
+  assertMashAsset, assertTrue, isAboveZero, idGenerate, CommandFilter, 
+  colorTransparent, Clip, sortByTrack, CommandFile, assertAsset, CommandInputs, 
   CommandInput, CommandFiles, CommandFileArgs, CommandFilters, CommandFilterArgs, 
-  timeRangeFromTime, arrayLast, MashMedia, Size, Time, AVTypeAudio, AVTypeVideo 
+  timeRangeFromTime, arrayLast, MashServerAsset, Size, Time, AVTypeAudio, AVTypeVideo 
 } from "@moviemasher/lib-core"
-import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
+import { FilterGraph, FilterGraphArgs } from "./FilterGraph.js"
 
 
 
@@ -15,7 +15,7 @@ export const FilterGraphInputAudible = 'SILENCE'
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
     const { mash, background, size, time, streaming, videoRate, visible } = args
-    assertMashMedia(mash)
+    assertMashAsset(mash)
 
     this.mash = mash
     this.time = time
@@ -70,7 +70,7 @@ export class FilterGraphClass implements FilterGraph {
 
   private commandFileKey(commandFile: CommandFile): string {
     const { definition } = commandFile
-    assertMedia(definition)
+    assertAsset(definition)
     // TODO!!
     const { label } = definition
     return label
@@ -79,7 +79,7 @@ export class FilterGraphClass implements FilterGraph {
   get commandInputs(): CommandInputs {
     return this.inputCommandFiles.map(commandFile => {
       const { options, definition } = commandFile
-      assertMedia(definition)
+      assertAsset(definition)
 
       const input: CommandInput = { 
         source: this.commandFileKey(commandFile), options 
@@ -98,7 +98,7 @@ export class FilterGraphClass implements FilterGraph {
     
     // console.log(this.constructor.name, this.id, "commandFilesInitialize", visible, outputSize)
     const commandFiles = clips.flatMap(clip => {
-      const clipTime = clip.timeRange(quantize)
+      const clipTime = clip.timeRange
       const chainArgs: CommandFileArgs = { 
         time, quantize, visible, outputSize, videoRate, clipTime
       }
@@ -138,7 +138,7 @@ export class FilterGraphClass implements FilterGraph {
     
     const { length } = clips
     clips.forEach((clip, index) => {
-      chainArgs.clipTime = clip.timeRange(quantize)
+      chainArgs.clipTime = clip.timeRange
       chainArgs.track = index
       // console.log(this.constructor.name, "commandFilters", chainArgs)
       filters.push(...clip.commandFilters(chainArgs))
@@ -156,7 +156,7 @@ export class FilterGraphClass implements FilterGraph {
 
   get inputCommandFiles(): CommandFiles { return this.filterGraphCommandFiles.filter(file => file.input) }
   
-  mash: MashMedia
+  mash: MashServerAsset
 
   get quantize() { return this.mash.quantize }
 

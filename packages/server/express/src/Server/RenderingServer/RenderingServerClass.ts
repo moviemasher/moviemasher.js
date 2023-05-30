@@ -3,17 +3,32 @@ import fs from 'fs'
 import path from "path"
 
 import {
-  ApiCallback, assertMediaType, assertTrue, EncodingType, Endpoint, 
-  Endpoints, EnvironmentKeyUrlBase, errorCaught, ErrorName, errorName, 
-  errorThrow, isLoadType, LoadType, MashMediaObject, 
-  MediaObject, MediaType, mediaTypeFromMime, RenderingCommandOutput, 
-  RenderingCommandOutputs, RenderingInput, RenderingStartRequest, 
-  RenderingStartResponse, RenderingUploadRequest, RenderingUploadResponse, 
-  RequestInit, Runtime, SizeIcon, SizePreview
+   MediaObjects, TrackObject, ClipObject, 
+  ValueRecord, MashAssetObject,  
+  EncodingType, Endpoint,  LoadType, 
+  MediaObject, MediaType,  
+  RenderingInput, InstanceObject,
+  RequestInit,
+  assertAssetType,
+  OutputOptions, 
 } from "@moviemasher/lib-core"
 
+import type {
+  RenderingCommandOutput,
+   RenderingProcessArgs, 
+} from "@moviemasher/server-core"
+
+
+import { 
+  EnvironmentKeyUrlBase, Runtime, 
+  errorThrow, isLoadType,mediaTypeFromMime,
+   assertTrue,
+TypeImage, TimingCustom,errorCaught, ErrorName, errorName, SizeIcon, SizePreview
+} from "@moviemasher/lib-core"
+
+
 import {
-  BasenameDefinition, renderingInput, RenderingProcessArgs, 
+  BasenameDefinition, 
   renderingProcessInstance, EnvironmentKeyApiDirFilePrefix
 } from "@moviemasher/server-core"
 
@@ -24,39 +39,78 @@ import { FileServer, FileServerFilename } from "../FileServer/FileServer"
 import { RenderingServer, RenderingServerArgs } from "./RenderingServer"
 
 import { idUnique } from "../../Utilities/Id"
+import { ApiCallback } from "../../Api/Api"
+import { Endpoints } from "../../Api/Endpoints"
+import { RenderingStartResponse, RenderingStartRequest, RenderingUploadResponse, RenderingUploadRequest } from "../../Api/Rendering"
 
-export type RenderingCommandOutputRecord = {
-  [index in EncodingType]?: RenderingCommandOutput
+export type OutputOptionsRecord = {
+  [index in EncodingType]?: OutputOptions
+}
+
+const renderingClipFromDefinition = (definition: MediaObject, overrides: ValueRecord = {}): ClipObject => {
+ const { id, type } = definition
+ const { id: _, containerId: suppliedContainerId, ...rest } = overrides
+ const contentId = id || type
+ const supplied = suppliedContainerId ? String(suppliedContainerId) : undefined
+ const containerId = type === 'audio' ? '' : supplied
+ const content: InstanceObject = {...rest}
+ const visibleClipObject: ClipObject = {
+   contentId, content, containerId
+ }
+ if (type === TypeImage) {
+   visibleClipObject.timing = TimingCustom
+   visibleClipObject.frames = 1
+ }
+ // console.log("renderingClipFromDefinition", overrides, visibleClipObject)
+ return visibleClipObject
+}
+
+const renderingInput = (definition: MediaObject, clipObject: ValueRecord = {}): RenderingInput => {
+ const { type, id } = definition
+ const definitionObject = {
+   ...definition,
+   type//: type === SequenceType ? VideoType : type
+ }
+ const definitions: MediaObjects = [definitionObject]
+ const clip: ClipObject = renderingClipFromDefinition(definitionObject, clipObject)
+ const track: TrackObject = {
+   dense: true,// String(type) !== String(AudioType),
+   clips: [clip]
+ }
+ const tracks: TrackObject[] = [track]
+ const mashObject = { id }
+ const mash: MashAssetObject = { ...mashObject, tracks, media: definitions }
+ return { mash }
 }
 
 export class RenderingServerClass extends ServerClass implements RenderingServer {
   constructor(public args: RenderingServerArgs) { super(args) }
 
-  private dataPutCallback(user: string, id: string, renderingId: string, outputs: RenderingCommandOutputs): ApiCallback {
-    // const definitionPath = this.definitionFilePath(user, id)
-    // if (upload) {
-    //   assertTrue(fs.existsSync(definitionPath), definitionPath)
+  // private dataPutCallback(user: string, id: string, renderingId: string, outputs: RenderingCommandOutputs): ApiCallback {
+  //   // const definitionPath = this.definitionFilePath(user, id)
+  //   // if (upload) {
+  //   //   assertTrue(fs.existsSync(definitionPath), definitionPath)
     
-    //   const definitionString = expandFile(definitionPath)
-    //   const definition: MediaObject = JSON.parse(definitionString)
-    //   this.populateDefinition(user, renderingId, definition, outputs)
-    //   const callback: ApiCallback = {
-    //     endpoint: { pathname: Endpoints.data.definition.put },
-    //     init: { body: { definition }}
-    //   }
-    //   return callback
-    // }
-    // it's a mash render
-    const [output] = outputs
-    const mash: MashMediaObject = {
-      id, rendering: `${id}/${renderingId}/${output.outputType}.${output.extension || output.format}`
-    }
-    const callback: ApiCallback = {
-      endpoint: { pathname: Endpoints.data.mash.put },
-      init: { body: { mash }}
-    }
-    return callback
-  }
+  //   //   const definitionString = expandFile(definitionPath)
+  //   //   const definition: MediaObject = JSON.parse(definitionString)
+  //   //   this.populateDefinition(user, renderingId, definition, outputs)
+  //   //   const callback: ApiCallback = {
+  //   //     endpoint: { pathname: Endpoints.data.definition.put },
+  //   //     init: { body: { definition }}
+  //   //   }
+  //   //   return callback
+  //   // }
+  //   // it's a mash render
+  //   const [output] = outputs
+  //   const mash: MashMediaObject = {
+  //     id, rendering: `${id}/${renderingId}/${output.outputType}.${output.extension || output.format}`
+  //   }
+  //   const callback: ApiCallback = {
+  //     endpoint: { pathname: Endpoints.data.mash.put },
+  //     init: { body: { mash }}
+  //   }
+  //   return callback
+  // }
 
   private definitionFilePath(user: string, id: string): string {
     const outputDirectory = this.outputDirectory(user, id)
@@ -148,18 +202,20 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const outputDirectory = this.outputDirectory(user, id, renderingId)
       const processArgs: RenderingProcessArgs = {
         ...rest,
-        // mash,
+        mash,
         defaultDirectory: user,
         validDirectories: ['shared'],
         cacheDirectory,
         temporaryDirectory,
         outputDirectory,
         filePrefix,
-        output
+        outputOptions: output,
       }
       const renderingProcess = renderingProcessInstance(processArgs)
       renderingProcess.runPromise()
-    } catch (error) { response.error = errorCaught(error).error }
+    } catch (error) { 
+      // response.error = errorCaught(error).error
+     }
     res.send(response)
   }
 
@@ -167,12 +223,14 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const { id, type } = definitionObject
     if (!id) return errorThrow(ErrorName.MediaId) 
 
-    assertMediaType(type)
+    assertAssetType(type)
 
     const output: RenderingCommandOutput = this.definitionTypeCommandOutputs(type)
     const clipObject = {}
     const input: RenderingInput = renderingInput(definitionObject, clipObject)
     const renderingStartRequest: RenderingStartRequest = { 
+      outputOptions: {},
+      encodingType: type,
       ...input, output, upload: true 
     }
     const init: RequestInit = { body: renderingStartRequest }
@@ -206,7 +264,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   //       response[outputType] ||= { total: 0, completed: 0 }
   //       const state = response[outputType]!
   //       state.total++
-  //       const resultFileName = renderingOutputFile(index, renderingCommandOutput, ExtensionLoadedInfo)
+  //       const resultFileName = renderingOutputFile(renderingCommandOutput, ExtensionLoadedInfo)
   //       if (filenames.includes(resultFileName)) {
   //         state.completed++
   //         return 0

@@ -1,5 +1,5 @@
-import type { Identified } from '../../../Base/Identified.js'
-import type { UnknownRecord } from '../../../Types/Core.js'
+import type { Identified } from '@moviemasher/runtime-shared'
+import type { UnknownRecord } from '@moviemasher/runtime-shared'
 
 export interface Decoding extends Partial<Identified> {
   type: DecodingType

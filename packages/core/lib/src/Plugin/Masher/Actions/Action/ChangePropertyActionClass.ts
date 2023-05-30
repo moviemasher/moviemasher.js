@@ -1,5 +1,5 @@
-import type { Propertied } from '../../../../Base/Propertied.js'
-import type { Scalar } from '../../../../Types/Core.js'
+import type { Propertied } from '@moviemasher/runtime-shared'
+import type { Scalar } from '@moviemasher/runtime-shared'
 import type { ChangePropertyActionObject, ChangePropertyAction } from './Action.js'
 
 import { ActionClass } from "./ActionClass.js"

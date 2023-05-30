@@ -1,18 +1,18 @@
-import type { ScalarRecord, ValueRecord, UnknownRecord } from '../../Types/Core.js'
+import type { ScalarRecord, ValueRecord, UnknownRecord } from '@moviemasher/runtime-shared'
 import type { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
 import type { 
   CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, 
   FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs 
 } from '../../Base/Code.js'
 import type { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from './Filter.js'
-import type { Property } from '../../Setup/Property.js'
+import type { Properties } from '@moviemasher/runtime-shared'
+import type { Parameters } from '@moviemasher/runtime-shared'
 
-import { DataTypeString } from '../../Setup/Enums.js'
-import { Parameter } from '../../Setup/Parameter.js'
+import { DataTypeString } from "../../Setup/DataTypeConstants.js"
+import { ParameterClass } from "../../Setup/ParameterClass.js"
 import { FilterClass } from './FilterClass.js'
-
 import { idGenerate } from '../../Utility/Id.js'
-import { assertPopulatedString, assertValueRecord } from '../../Utility/Is.js'
+import { assertPopulatedString, assertValueRecord } from '../../Shared/SharedGuards.js'
 import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
 import { ErrorName } from '../../Helpers/Error/ErrorName.js'
 import { DotChar } from '../../Setup/Constants.js'
@@ -73,14 +73,14 @@ export class FilterDefinitionClass implements FilterDefinition {
     return new FilterClass(this.instanceArgs(object))
   }
 
-  properties: Property[] = []
+  properties: Properties = []
 
-  parameters : Parameter[] = []
+  parameters : Parameters = []
 
   protected populateParametersFromProperties() {
     this.parameters = this.properties.map(property => {
       const { name } = property
-      return new Parameter({ name, value: name, dataType: DataTypeString })
+      return new ParameterClass({ name, value: name, dataType: DataTypeString })
     })
   }
 

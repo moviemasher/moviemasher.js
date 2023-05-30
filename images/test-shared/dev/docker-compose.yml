@@ -1,0 +1,17 @@
+version: "3"
+name: moviemasher-test-shared
+services:
+ service:
+    env_file:
+      - ../../../dev/local.env
+    build: 
+      context: ../../../
+      dockerfile: images/test-shared/dev/Dockerfile.cnf
+    image: moviemasher/test-shared:${MOVIEMASHER_VERSION}
+    volumes:
+      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../images/test-shared/package.json:${MOVIEMASHER_DIR_ROOT}/images/test-shared/package.json
+
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
+

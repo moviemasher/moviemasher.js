@@ -1,7 +1,7 @@
-import { assertInteger, assertPositive } from '../../Utility/Is.js'
+import { assertInteger, assertPositive } from '../../Shared/SharedGuards.js'
 import { TimeClass, timeEqualizeRates } from './TimeClass.js'
-import { roundWithMethod } from '../../Utility/Round.js'
-import { Time, TimeRange, TimeRanges, Times } from './Time.js'
+import { roundWithMethod } from '../../Utility/RoundFunctions.js'
+import { Time, TimeRange, TimeRanges, Times } from '@moviemasher/runtime-shared'
 
 export class TimeRangeClass extends TimeClass implements TimeRange {
   frames : number

@@ -112,7 +112,7 @@ const expandDependencies = (dest, optionDependency = []) => {
   if (dependency.length) {
     const uniqueDependencies = [...new Set(dependency)]
     uniqueDependencies.forEach(depend => {
-      replace({ dest, src: path.resolve('dev/dependencies', `${depend}.json`) })
+      replace({ dest, src: path.resolve('dev/packagejson', `${depend}.json`) })
     })
     expandDependencies(dest)
   }

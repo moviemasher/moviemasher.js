@@ -1,0 +1,37 @@
+{ 
+	"request": {
+		"response": {
+			"media": [],
+			"quantize": 10,
+			"label": "Ten Seconds of Green",
+			"backcolor": "red",
+			"tracks": [
+				{
+					"type": "video",
+					"clips": [
+							{
+							"frame": 0,
+							"frames": 100,
+							"content": {
+								"color": "#FF0000"
+							}
+						}, 
+						{
+							"frames": 100,
+							"content": {
+								"color": "#00FF00"
+							}
+						}, 
+						{
+							"frames": 100,
+							"content": {
+								"color": "#0000FF"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}
+

@@ -1,9 +1,7 @@
-import type { Clips } from '../../../../Media/Mash/Track/Clip/Clip.js'
-import type { Track } from '../../../../Media/Mash/Track/Track.js'
 import type { AddClipActionObject } from './Action.js'
+import type { ClientClips, ClientTrack } from '../../../../Client/Mash/MashClientTypes.js'
 
 import { AddTrackActionClass } from './AddTrackActionClass.js'
-
 
 /**
  * @category Action
@@ -20,14 +18,14 @@ export class AddClipActionClass extends AddTrackActionClass {
     this.redoFrame = redoFrame
   }
 
-  clips: Clips
+  clips: ClientClips
 
 
   insertIndex?: number
 
   trackIndex: number
 
-  get track(): Track { return this.mash.tracks[this.trackIndex] }
+  get track(): ClientTrack { return this.mash.tracks[this.trackIndex] }
 
   redoAction(): void {
     super.redoAction()

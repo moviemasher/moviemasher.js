@@ -1,0 +1,32 @@
+{
+  "name": "@moviemasher/test-shared",
+  "version": "5.1.2",
+  "description": "Movie Masher Server Tests",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "scripts": {
+    "test-core-lib": "node --loader tsx --test ../../packages/core/lib/src/Shared/*.test.ts ../../packages/core/lib/src/Shared/**/*.test.ts ",
+    "test-core-shared": "node --loader tsx --test ../../packages/runtime/shared/src/**/**/*.test.ts ../../packages/runtime/shared/src/**/*.test.ts",
+    "test": "run-s test-core-lib"
+  },
+  "dependencies": {
+    "@moviemasher/runtime-shared": "5.1.2",
+    "@moviemasher/lib-core": "5.1.2"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.7",
+    "npm-run-all": "^4.1.5"
+  }
+}

@@ -77,7 +77,7 @@ switch (command) {
     break
   }
   case 'packages': {
-    const srcDir = path.resolve('packages/build')
+    const srcDir = path.resolve('images/')
     const options = {
       src: {
         type: "string",

@@ -33,7 +33,7 @@ export class Section extends Slotted {
   @property() icon = 'app'
   
 
-  override slots = [HeaderSlot, DivSlot, FooterSlot] 
+  protected override slots: string[] = [HeaderSlot, DivSlot, FooterSlot] 
 
   protected override content(contents: Contents): Content {
     return html`<section

@@ -8,12 +8,14 @@ import {
   endpointAbsolute, endpointUrl, errorThrow, TypeFont, 
   TypeImage, isPopulatedString, 
   TypeProtocol, TypeRecords, TypeRecord, 
-  Runtime, TypeVideo, pluginDataOrErrorPromise, TypeResolve, isDefiniteError
+  Runtime, TypeVideo, pluginDataOrErrorPromise, isDefiniteError
 } from '@moviemasher/lib-core'
 import { audioBufferPromise } from '../Utility/Audio.js'
 import { imageDataPromise } from '../Utility/Image.js'
 import { jsonPromise } from '../Utility/Json.js'
 import { videoDataPromise } from '../Utility/Video.js'
+import { errorPromise } from '@moviemasher/lib-core/src/Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '@moviemasher/lib-core/src/Helpers/Error/ErrorName.js'
 
 const arrayBufferPromise = (url: string, init?: RequestInit): Promise<ArrayBuffer> => (
    fetch(url, init).then(response => response.arrayBuffer())
@@ -38,15 +40,16 @@ const fontPromise =  (request: EndpointRequest): Promise<ClientFontDataOrError> 
         return face.load().then(data => ({ data }))
       })
     }
+    return errorPromise(ErrorName.Type)
     //  mimetype does not match load type - see if there is resolver
-    return pluginDataOrErrorPromise(mimetype, TypeResolve).then(orError => {
-      if (isDefiniteError(orError)) return orError
+    // return pluginDataOrErrorPromise(mimetype, TypeResolve).then(orError => {
+    //   if (isDefiniteError(orError)) return orError
       
-      const { data: resolvePlugin } = orError
-      return response.text().then(string => (
-        resolvePlugin.promise(string, TypeFont)
-      ))
-    })
+    //   const { data: resolvePlugin } = orError
+    //   return response.text().then(string => (
+    //     resolvePlugin.promise(string, TypeFont)
+    //   ))
+    // })
   })
   return bufferPromise.then(orError => {
     if (isDefiniteError(orError)) return orError

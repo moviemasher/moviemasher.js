@@ -22,6 +22,12 @@ export default {
     format: 'esm',
     file: 'dist/lib-core.js'
   },
+
+  external: [
+    '@moviemasher/runtime-shared',
+    '@moviemasher/runtime-client',
+    '@moviemasher/runtime-server',
+  ],
   plugins: [
     typescript(typescriptConfig),
     // terser(),

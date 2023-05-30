@@ -1,7 +1,7 @@
-import type { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import type { ClientClip } from '../../../../Client/Mash/MashClientTypes.js'
 import type { MoveClipActionObject } from './Action.js'
-import { AddTrackActionClass } from './AddTrackActionClass.js'
 
+import { AddTrackActionClass } from './AddTrackActionClass.js'
 
 /**
  * @category Action
@@ -27,7 +27,7 @@ export class MoveClipActionClass extends AddTrackActionClass {
     this.undoTrackIndex = undoTrackIndex
   }
 
-  clip: Clip
+  clip: ClientClip
 
   insertIndex : number
 

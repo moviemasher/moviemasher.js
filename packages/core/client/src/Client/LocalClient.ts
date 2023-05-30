@@ -11,9 +11,6 @@ import type { Icon, Translation } from '../declarations.js'
 import {
   TypeAudio, TypeEffect, TypeFont, TypeImage, TypeMash, TypeVideo,
 } from '@moviemasher/lib-core'
-import {
-    Endpoints,
-  } from '@moviemasher/lib-core'
 
 export interface LocalClient {
   readonly args: LocalClientArgs
@@ -41,10 +38,10 @@ export interface LocalClient {
 
 export const DefaultClientLimits: ClientLimits = {
   [TypeAudio]: 50,
-  [TypeEffect]: 1,
+  // [TypeEffect]: 1,
+  // [TypeMash]: 5,
   [TypeFont]: 10,
   [TypeImage]: 20,
-  [TypeMash]: 5,
   [TypeVideo]: 100,
 }
 export const DefaultClientImportArgs: ClientImportArgs = {
@@ -72,8 +69,8 @@ export const isLocalOperation = (value: any): value is LocalOperation => {
 
 export const DefaultClientReadArgs: ClientReadArgs = {
   paramPosition: 'search',
-  getRequest: { endpoint: { pathname: Endpoints.data.definition.get } },
-  listRequest: { endpoint: { pathname: Endpoints.data.definition.retrieve } },
+  getRequest: { endpoint: { pathname: 'data/definition/get' } },
+  listRequest: { endpoint: { pathname: 'data/definition/retrieve' } },
 }
 
 export const DefaultLocalClientArgs: LocalClientArgs = {

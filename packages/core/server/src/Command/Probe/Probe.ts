@@ -1,23 +1,23 @@
-import path from "path"
+import path from 'path'
 import fs from 'fs'
-import Ffmpeg from "fluent-ffmpeg"
-import { ErrorName, errorObject, Numbers, ProbingData, Sizes, NewlineChar } from "@moviemasher/lib-core"
+import Ffmpeg from 'fluent-ffmpeg'
+import { ErrorName, errorObject, Numbers, ProbingData, Sizes, NewlineChar } from '@moviemasher/lib-core'
  
-import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/lib-core"
+import { isPositive, SizeZero, isNumeric, isPopulatedString } from '@moviemasher/lib-core'
 
-import { commandProcess } from "../CommandFactory"
-import { commandArgsString } from "../../Utility/Command"
-import { expandCommand } from "../../Utility/Expand"
+import { ffmpegCommand } from '../CommandFactory.js'
+import { commandArgsString } from '../../Utility/Command.js'
+import { expandCommand } from '../../Utility/Expand.js'
 
 export class Probe {
   private static AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 
   private static _alphaFormats?: string[]
   static get alphaFormats(): string[] {
-    return this._alphaFormats ||= this.alphaFormatsInitialize
+    return Probe._alphaFormats ||= Probe.alphaFormatsInitialize
   }
   private static get alphaFormatsInitialize(): string[] {
-    const result = expandCommand(this.AlphaFormatsCommand)
+    const result = expandCommand(Probe.AlphaFormatsCommand)
     return result.split(NewlineChar)
   }
 
@@ -33,7 +33,7 @@ export class Probe {
   }
 
   static promise(temporaryDirectory: string, file: string, destination?: string): Promise<ProbingData> {
-    const src = this.probeFile(file)
+    const src = Probe.probeFile(file)
     const relative = path.relative('./', file)
     const parentDir = path.dirname(src)
     if (!fs.existsSync(src)) return Promise.reject(`${relative} does not exist`)
@@ -46,7 +46,7 @@ export class Probe {
       ))
     }
 
-    const process = commandProcess()
+    const process = ffmpegCommand()
     process.addInput(src)
     return new Promise((resolve, reject) => {
       fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
@@ -65,7 +65,7 @@ export class Probe {
             const sizes: Sizes = []
             for (const stream of streams) {
               const { rotation, width, height, duration, codec_type, pix_fmt } = stream
-              if (isPopulatedString(pix_fmt)) info.alpha = this.alphaFormats.includes(pix_fmt)
+              if (isPopulatedString(pix_fmt)) info.alpha = Probe.alphaFormats.includes(pix_fmt)
               if (isNumeric(rotation)) rotations.push(Math.abs(Number(rotation)))
               if (codec_type === 'audio') info.audible = true
               if (isPositive(duration)) durations.push(Number(duration))

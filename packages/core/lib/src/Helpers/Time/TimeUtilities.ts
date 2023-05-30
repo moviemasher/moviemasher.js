@@ -1,6 +1,6 @@
-import { assertAboveZero, assertInteger, assertPositive } from '../../Utility/Is.js'
-import { roundWithMethod } from '../../Utility/Round.js'
-import { Time, TimeRange } from './Time.js'
+import { assertAboveZero, assertInteger, assertPositive } from '../../Shared/SharedGuards.js'
+import { roundWithMethod } from '../../Utility/RoundFunctions.js'
+import { Time, TimeRange } from '@moviemasher/runtime-shared'
 import { TimeClass, timeEqualizeRates } from './TimeClass.js'
 import { TimeRangeClass } from './TimeRangeClass.js'
 import { errorThrow } from '../Error/ErrorFunctions.js'
@@ -30,6 +30,9 @@ export const timeRangeFromTimes = (startTime: Time, endTime?: Time): TimeRange =
 
 
 export const timeFromArgs = (frame = 0, fps = 1) : Time => {
+  assertPositive(frame)
+  assertInteger(fps)
+  assertAboveZero(fps)  
   return new TimeClass(frame, fps)
 }
 
@@ -37,7 +40,6 @@ export const timeFromSeconds = (seconds = 0, fps = 1, rounding = '') : Time => {
   assertPositive(seconds)
   assertInteger(fps)
   assertAboveZero(fps)
-
   const rounded = roundWithMethod(seconds * fps, rounding)
   return timeFromArgs(rounded, fps)
 }

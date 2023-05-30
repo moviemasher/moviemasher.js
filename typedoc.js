@@ -5,7 +5,7 @@ module.exports = {
     "packages/core/lib",
     // "packages/core/server",
     "packages/core/client",
-    // "packages/protocol/supabase",
+    // "plugin/protocol/supabase",
     // "packages/server/express",
     "packages/client/component"
   ],

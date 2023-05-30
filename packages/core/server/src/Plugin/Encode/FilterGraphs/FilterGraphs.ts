@@ -1,8 +1,8 @@
 
 import { 
-  GraphFiles, AVType, Size, Time, MashMedia, Times 
+  GraphFiles, AVType, Size, Time, MashServerAsset, Times 
 } from "@moviemasher/lib-core"
-import { FilterGraph } from "../FilterGraph/FilterGraph"
+import { FilterGraph } from "../FilterGraph/FilterGraph.js"
 
 
 export interface FilterGraphs {
@@ -23,7 +23,7 @@ export interface FilterGraphsOptions {
 }
 
 export interface FilterGraphsArgs {
-  mash: MashMedia
+  mash: MashServerAsset
   times: Times
   avType: AVType
   size: Size

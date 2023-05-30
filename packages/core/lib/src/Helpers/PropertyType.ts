@@ -1,16 +1,17 @@
-import type { Scalar } from '../Types/Core.js'
+import type { Scalar } from '@moviemasher/runtime-shared'
 
-import type { DataType } from '../Setup/Enums.js'
+import type { DataType } from "@moviemasher/runtime-shared"
 import { IdPrefix, IdSuffix } from '../Setup/Constants.js'
-import { 
-  DataTypeBoolean, DataTypeContainerId, DataTypeContentId, 
-  DataTypeDefinitionId, DataTypeFontId, DataTypeFrame, 
-  DataTypeNumber, DataTypePercent, DataTypeRgb, DataTypeString, isDataType
-} from '../Setup/Enums.js'
+import { isDataType } from "../Setup/DataTypeFunctions.js"
+import {
+  DataTypeBoolean, DataTypeContainerId, DataTypeContentId,
+  DataTypeDefinitionId, DataTypeFontId, DataTypeFrame,
+  DataTypeNumber, DataTypePercent, DataTypeRgb, DataTypeString
+} from "../Setup/DataTypeConstants.js"
 import { isMediaType } from '../Setup/MediaType.js'
 import { colorValid } from './Color/ColorFunctions.js'
 import { colorBlack } from './Color/ColorConstants.js'
-import { isBoolean, isNumber, isNumeric, isPopulatedString } from '../Utility/Is.js'
+import { isBoolean, isNumber, isNumeric, isPopulatedString } from '../Shared/SharedGuards.js'
 
 export const PropertyTypesNumeric = [
   DataTypeFrame,

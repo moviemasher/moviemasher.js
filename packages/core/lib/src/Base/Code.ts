@@ -1,14 +1,16 @@
 import type { LoaderType } from '../Helpers/ClientMedia/ClientMediaFunctions.js'
-import type { Time, TimeRange } from '../Helpers/Time/Time.js'
+import type { Time, TimeRange } from '@moviemasher/runtime-shared'
 import type { Filter, FilterArgs } from '../Plugin/Filter/Filter.js'
-import type { ValueRecord } from '../Types/Core.js'
-import type { Size } from '../Utility/Size.js'
-import type { RectTuple } from '../Utility/Rect.js'
-import type { Media } from '../Media/Media.js'
+import type { ValueRecord } from '@moviemasher/runtime-shared'
+import type { Size } from '@moviemasher/runtime-shared'
+import type { RectTuple } from '@moviemasher/runtime-shared'
 import type { EndpointRequest } from '../Helpers/Request/Request.js'
+import type { Asset } from '../Shared/Asset/Asset.js'
+import type { AVType } from "../Setup/AVType.js"
 
-import { isObject } from '../Utility/Is.js'
-import { AVType } from '../Setup/Enums.js'
+
+import { isObject } from '../Shared/SharedGuards.js'
+import { isTyped } from "./TypedFunctions.js"
 
 export interface CommandInput {
   source: string
@@ -37,29 +39,49 @@ export interface FilterValueObject {
 }
 export type FilterValueObjects = FilterValueObject[]
 
-export interface PreloadOptionsBase {
+
+export interface CacheOptions {
   audible?: boolean
-  editing?: boolean
   visible?: boolean
-  icon?: boolean
-  streaming?: boolean
-  time: Time
+  quantize?: number
+  time?: Time
+  size?: Size
 }
 
-export interface ServerPromiseArgs {
-  streaming?: boolean
-  visible?: boolean
-  audible?: boolean
-  time: Time
+export interface ClipCacheOptions extends CacheOptions {
 }
 
-export interface PreloadArgs extends PreloadOptionsBase {
+export interface InstanceCacheOptions extends CacheOptions {
+
+}
+
+export interface AssetCacheOptions extends CacheOptions {
+
+}
+
+export interface InstanceCacheArgs extends CacheOptions {
+  clipTime: TimeRange
+  time: Time
+  quantize: number
+}
+
+export interface AssetCacheArgs extends CacheOptions {
+  assetTime: Time
+}
+
+
+export interface PreloadOptionsBase extends CacheOptions {}
+
+export interface ServerPromiseArgs extends CacheOptions {}
+
+
+
+export interface PreloadArgs extends CacheOptions {
   quantize: number
   clipTime: TimeRange
 }
 
-export interface PreloadOptions extends Partial<PreloadOptionsBase> {
-  quantize?: number
+export interface PreloadOptions extends Partial<CacheOptions> {
   clipTime?: TimeRange
 }
 
@@ -136,7 +158,7 @@ export interface GraphFile {
   file: string
   content?: string
   input?: boolean
-  definition: Media
+  definition: Asset
   resolved?: string
 }
 export type GraphFiles = GraphFile[]
@@ -162,8 +184,9 @@ export const ComponentTimeline: Component = 'timeline'
 
 export interface Output {
   request?: EndpointRequest
+  type: string
 }
 export const isOutput = (value: any): value is Output => {
-  return isObject(value) 
+  return isObject(value) && isTyped(value)
 }
 

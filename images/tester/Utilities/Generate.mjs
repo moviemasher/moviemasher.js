@@ -4,10 +4,9 @@ import {
   assertPopulatedArray, assertPopulatedString, isPopulatedArray, 
   isPopulatedString, isString,
   assertSize, SizePreview, isSize, 
-  assertContainerObject, isContainerObject,
   assertPoint, isPoint, errorThrow,
   SideDirections, DurationUnknown, DefaultContentId, DefaultContainerId, 
-  DefaultFontId
+  DefaultFontId, TypeFont
 } from '@moviemasher/lib-core'
 
 const GeneratePoint = {
@@ -171,6 +170,13 @@ const generateClips = (testId, size = SizePreview, frames = DurationUnknown, inc
   
   return objects
 }
+const isContainerObject = (value) => {
+  return isObject(value) && 'opacity' in value
+}
+
+function assertContainerObject(value) {
+  if (!isContainerObject(value)) errorThrow(value, 'ContainerObject')
+}
 
 
 const pointsContainerObject = (...points) => {
@@ -330,7 +336,7 @@ export const GenerateDefinitionObjects = [
     "label": "Valken",
     request: { endpoint: { pathname: "../shared/font/valken/valken.ttf" } },
     transcodings: [
-      { type: FontType, request: { endpoint: { pathname: "../shared/font/valken/valken.woff2" } }}
+      { type: TypeFont, request: { endpoint: { pathname: "../shared/font/valken/valken.woff2" } }}
     ]
   },
   {
@@ -418,7 +424,7 @@ export const generateTest = (testId, size = SizePreview, frames = DurationUnknow
   const tracks = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
   const mash = { 
-    id: testId, color: '#666666', tracks 
-  }
+    id: testId, request: { response: { color: '#666666', tracks 
+  }}}
   return [testId, mash]
 }

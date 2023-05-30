@@ -1,14 +1,14 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { DataTypeString } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
+import { DataTypeString } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
 import { idGenerate } from '../../../Utility/Id.js'
 import { colorToRgb, colorToRgba } from '../../../Helpers/Color/ColorFunctions.js'
 import { colorRgbaKeys, colorRgbKeys } from '../../../Helpers/Color/ColorConstants.js'
-import { assertNumber, assertPopulatedString } from '../../../Utility/Is.js'
-import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
-import { ValueRecord } from '../../../Types/Core.js'
-import { tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { assertNumber, assertPopulatedString } from '../../../Shared/SharedGuards.js'
+import { PropertyTweenSuffix } from "../../../Base/PropertiedConstants.js"
+import { ValueRecord } from '@moviemasher/runtime-shared'
+import { tweenPosition } from '../../../Helpers/TweenFunctions.js'
 import { FilterDefinitionObject } from '../Filter.js'
 
 /**

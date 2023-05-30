@@ -1,15 +1,16 @@
-import { Value } from '../../../Types/Core.js'
+import { Value } from '@moviemasher/runtime-shared'
 import { SvgItems } from '../../../Helpers/Svg/Svg.js'
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
-import { DataType, DataTypeNumber, DataTypeString } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
+import { DataType } from "@moviemasher/runtime-shared"
+import { DataTypeNumber, DataTypeString } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
 import { NamespaceSvg } from '../../../Setup/Constants.js'
-import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from '../../../Utility/Is.js'
+import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from '../../../Shared/SharedGuards.js'
 import { idGenerate } from '../../../Utility/Id.js'
-import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
-import { tweenMaxSize, tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { PropertyTweenSuffix } from "../../../Base/PropertiedConstants.js"
+import { tweenMaxSize, tweenOption, tweenPosition } from '../../../Helpers/TweenFunctions.js'
 import { ColorizeFilter } from './ColorizeFilter.js'
-import { assertSize } from '../../../Utility/Size.js'
+import { assertSize } from "../../../Utility/SizeFunctions.js"
 import { FilterDefinitionObject } from '../Filter.js'
 
 

@@ -1,11 +1,11 @@
-import type { ScalarRecord } from '../../Types/Core.js'
+import type { ScalarRecord } from '@moviemasher/runtime-shared'
 import type { Endpoint } from './Endpoint.js'
 
 import { Runtime } from '../../Runtime/Runtime.js'
 import { 
   assertPopulatedString, isObject, isAboveZero, isNumeric, isPopulatedString 
-} from '../../Utility/Is.js'
-import { arrayLast } from '../../Utility/Array.js'
+} from '../../Shared/SharedGuards.js'
+import { arrayLast } from '../../Utility/ArrayFunctions.js'
 import { ColonChar, DotChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
 
 import { errorThrow } from '../Error/ErrorFunctions.js'

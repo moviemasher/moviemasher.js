@@ -2,7 +2,7 @@ import {Default} from '../../Setup/Default.js'
 import {MasherClass} from './MasherClass.js'
 import {Masher, MasherArgs, MasherOptions, MashingTypes, MasherPlugin} from './Masher.js'
 import {Runtime} from '../../Runtime/Runtime.js'
-import {TypeMasher} from '../Plugin.js'
+import { TypeMasher } from "../PluginConstants.js"
 export let editorSingleton: Masher
 export const editorArgs = (options: MasherOptions = {}): MasherArgs => {
   return {

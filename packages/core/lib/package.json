@@ -10,10 +10,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   
-  "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*"
-  },
+ 
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -39,6 +36,9 @@
     "build": "run-s client package",
     "client": "rollup --config dev/rollup/client.config.mjs",
     "package": "rollup --config dev/rollup/package.config.mjs"
+  },
+  "dependencies": {
+    "@moviemasher/runtime-shared": "5.1.2"
   },
   "typedoc": {
     "entryPoint": "src/index.ts",

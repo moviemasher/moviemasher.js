@@ -1,4 +1,4 @@
-import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { css } from 'lit'
 import { html } from 'lit'
@@ -30,14 +30,7 @@ export class SelectorSectionElement extends Section {
     >${slots}</movie-masher-selector-header>`
   } 
 
-  protected override content(contents: Contents): Content {
-    return html`<section
-      @connection='${this.connectionHandler}'
-      @slotted='${this.slottedHandler}'
-    >${contents}</section>`
-  }
-
-
+  // protected override slots: string[] = ['footer']
 
   static override styles = [...Section.styles, css`
   

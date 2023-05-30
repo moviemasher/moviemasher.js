@@ -1,23 +1,27 @@
+import type { FilterGraphsOptions } from "../Encode/FilterGraphs/FilterGraphs.js"
 
 import { 
-  assertProbing, RenderingCommandOutput, Time, 
+  assertProbing, Time, 
   timeFromArgs, 
   TypeProbe,
-  assertDefined
+  assertDefined,
+  outputAlphaOptions,
+  TypeImage,
+  OutputOptions,
+  assertSize,
+  ImageOutputOptions
 } from "@moviemasher/lib-core"
-import { outputDefaultPng } from "../Defaults/OutputDefault"
-import { FilterGraphsOptions } from "../Encode/FilterGraphs/FilterGraphs"
-import { RenderingOutputClass } from "../Encode/RenderingOutputClass"
+import { RenderingOutputClass } from "../Encode/RenderingOutputClass.js"
 
 export class ImageOutputClass extends RenderingOutputClass {
 
-  protected override get commandOutput(): RenderingCommandOutput { 
-    const {  commandOutput } = this.args
+  protected override get outputOptions(): OutputOptions { 
+    const { outputOptions } = this.args
 
     const renderingClips = this.args.mash.clipsInTimeOfType(this.timeRange, this.avType)
     const [clip] = renderingClips
     const { definition } = clip.content
-    // console.log(this.constructor.name, "commandOutput", definition.label)
+    // console.log(this.constructor.name, "outputOptions", definition.label)
 
     const decoding = definition.decodings.find(object => object.type === TypeProbe)
     assertProbing(decoding)
@@ -28,13 +32,14 @@ export class ImageOutputClass extends RenderingOutputClass {
     const [stream] = streams
     const { codec_name } = stream
     if (codec_name !== 'png') {
-      // console.log("commandOutput codec_name", codec_name)
-      return commandOutput
+      // console.log("outputOptions codec_name", codec_name)
+      return outputOptions
     }
+    assertSize(outputOptions)
     
-    const { width, height, basename } = commandOutput
-    const overrides ={ width, height, basename } 
-    const output = outputDefaultPng(overrides)
+    const { width, height } = outputOptions
+    const overrides: ImageOutputOptions = { width, height } 
+    const output = outputAlphaOptions(TypeImage, overrides)
 
     // console.log("commandOutput output", output, commandOutput)
 

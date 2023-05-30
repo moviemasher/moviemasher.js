@@ -23,6 +23,11 @@ export default {
     preserveModulesRoot: rootDir,
     dir: 'dist'
   },
+  external: [
+    '@moviemasher/runtime-shared',
+    '@moviemasher/runtime-client',
+    '@moviemasher/runtime-server',
+  ],
   plugins: [ typescript(typescriptConfig) ],
 }
 

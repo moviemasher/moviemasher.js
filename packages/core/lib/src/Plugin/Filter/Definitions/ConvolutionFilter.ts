@@ -1,9 +1,9 @@
-import { Numbers, ScalarRecord, StringRecord, ValueRecord } from '../../../Types/Core.js'
+import { Numbers, ScalarRecord, StringRecord, ValueRecord } from '@moviemasher/runtime-shared'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { propertyInstance } from '../../../Setup/Property.js'
-import { assertPopulatedString, isAboveZero, isObject } from '../../../Utility/Is.js'
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { assertPopulatedString, isAboveZero, isObject } from '../../../Shared/SharedGuards.js'
 import { idGenerate } from '../../../Utility/Id.js'
 import { colorRgbaKeys } from '../../../Helpers/Color/ColorConstants.js'
 import { svgFilter } from '../../../Helpers/Svg/SvgFunctions.js'

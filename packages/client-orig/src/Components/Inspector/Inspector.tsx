@@ -73,7 +73,7 @@ export function Inspector(props: InspectorProps) {
 
       if (tweenItems.length) {
         const { time, quantize } = mash
-        const timeRange = clip.timeRange(quantize)
+        const timeRange = clip.timeRange
         current.time = time
         current.timeRange = timeRange
         // console.log("Inspector tweening", time, timeRange)

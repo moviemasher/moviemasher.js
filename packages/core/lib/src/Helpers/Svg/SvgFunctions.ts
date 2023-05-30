@@ -1,20 +1,21 @@
 import type { SvgFilter, SvgFilters, SvgItem, SvgItems } from './Svg.js'
-import type { Rect, RectOptions } from '../../Utility/Rect.js'
-import type { Size } from '../../Utility/Size.js'
-import type { Point } from '../../Utility/Point.js'
-import type { StringRecord } from '../../Types/Core.js'
-import type { Lock } from '../../Setup/Enums.js'
+import type { Rect, RectOptions } from '@moviemasher/runtime-shared'
+import type { Size } from '@moviemasher/runtime-shared'
+import type { Point } from '@moviemasher/runtime-shared'
+import type { StringRecord } from '@moviemasher/runtime-shared'
+import type { Lock } from "@moviemasher/runtime-shared"
 
-import { assertSizeAboveZero, isSize, sizeCopy,sizeAboveZero, sizeLockNegative } from '../../Utility/Size.js'
+import { assertSizeAboveZero, isSize, sizeCopy, sizeAboveZero, sizeLockNegative } from "../../Utility/SizeFunctions.js"
 import { NamespaceSvg } from '../../Setup/Constants.js'
-import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from '../../Utility/Is.js'
+import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from '../../Shared/SharedGuards.js'
 import { idGenerateString } from '../../Utility/Id.js'
-import { assertPoint, isPoint, pointCopy, pointValueString, PointZero } from '../../Utility/Point.js'
+import { PointZero } from "../../Utility/PointConstants.js"
+import { assertPoint, isPoint, pointCopy, pointValueString } from "../../Utility/PointFunctions.js"
 import { Runtime } from '../../Runtime/Runtime.js'
 import { EnvironmentKeySupportsLoadSvg } from '../../Runtime/Environment/Environment.js'
-import { TypeBoolean } from '../../Utility/Scalar.js'
+import { TypeBoolean } from '../../Utility/ScalarFunctions.js'
 import { colorCurrent } from '../Color/ColorConstants.js'
-import { LockNone } from '../../Setup/Enums.js'
+import { LockNone } from "../../Setup/EnumConstantsAndFunctions.js"
 
 let PatchSvgElement: SVGSVGElement
 
@@ -376,3 +377,16 @@ export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Pr
     })
   }
 })()
+
+
+export const svgDFromSize = (size: Size): string => {
+  const { width, height } = size
+  return svgDFromRect({ x: 0, y: 0, width, height })
+}
+
+export const svgDFromRect = (rect: Rect): string => {
+  const { x, y, width, height } = rect
+  const x2 = x + width
+  const y2 = y + height
+  return `M${x},${y}L${x2},${y}L${x2},${y2}L${x},${y2}Z`
+}

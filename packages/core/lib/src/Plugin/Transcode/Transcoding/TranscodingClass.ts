@@ -1,4 +1,4 @@
-import {UnknownRecord} from '../../../Types/Core.js'
+import {UnknownRecord} from '@moviemasher/runtime-shared'
 import {RequestableClass} from '../../../Base/Requestable/RequestableClass.js'
 import {Transcoding, TranscodingObject, TranscodingType} from './Transcoding.js'
 

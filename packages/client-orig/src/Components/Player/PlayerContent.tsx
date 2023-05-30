@@ -2,7 +2,7 @@ import React from 'react'
 import { 
   Rect, eventStop, isMediaType, rectRound,
   ClassDropping, sizeAboveZero, UnknownRecord, assertMediaType, 
-  rectCopy, MashIndex, EmptyFunction, isMediaObject, CurrentIndex, EventTypeDraw, EventTypeSelection, TypeClip, 
+  rectCopy, MashIndex, EmptyFunction, isAssetObject, CurrentIndex, EventTypeDraw, EventTypeSelection, TypeClip, 
 } from '@moviemasher/lib-core'
 
 
@@ -122,7 +122,7 @@ export function PlayerContent(props: PropsWithChildren) {
       const data = dragData(dataTransfer, type)
       assertDragDefinitionObject(data)
       const { mediaObject } = data
-      if (isMediaObject(mediaObject)) drop(mediaObject, mashIndex)
+      if (isAssetObject(mediaObject)) drop(mediaObject, mashIndex)
     }
   } 
 

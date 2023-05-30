@@ -1,6 +1,6 @@
 import path from 'path'
 import {
-  Size, VideoEncoderOptions, AudioType, ImageType, VideoType 
+  Size, VideoOutputOptions, TypeAudio, TypeImage, TypeVideo 
 } from "@moviemasher/lib-core"
 import { expandFileOrScript } from '@moviemasher/server-core'
 
@@ -10,7 +10,7 @@ import { RenderingServerArgs } from "../Server/RenderingServer/RenderingServer"
 import { ServerAuthentication } from "../Server/Server"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
 import { HostOptions } from "./Host"
-import { RenderingCommandOutputRecord } from '../Server/RenderingServer/RenderingServerClass'
+import { OutputOptionsRecord } from '../Server/RenderingServer/RenderingServerClass'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
@@ -29,7 +29,7 @@ export interface HostOptionsDefault {
   privateDirectory?: string
   publicDirectory?: string
   version?: string
-  renderingCommandOutputs?: RenderingCommandOutputRecord
+  outputOptions?: OutputOptionsRecord
 }
 
 export const HostDefaultPort = 8570
@@ -44,7 +44,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     mediaDirectory,
     renderingCacheDirectory, 
     previewSize, outputSize, outputRate, port, auth, 
-    host, version, renderingCommandOutputs,
+    host, version, outputOptions = {},
   } = args
   const definedHost = host || '0.0.0.0'
   const dbDirectory = dataDirectory || `${privateDirectory}/data`
@@ -52,7 +52,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   const uploadDir = mediaDirectory || `${publicDirectory}/media`
   if (!uploadDir.startsWith(publicDirectory)) throw 'mediaDirectory must be public'
 
-  const commandOutput: VideoEncoderOptions = {}
+  const commandOutput: VideoOutputOptions = {}
   const basePort = port || HostDefaultPort
   if (outputSize) {
     const { width, height } = outputSize
@@ -61,7 +61,6 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   }
   if (outputRate) commandOutput.videoRate = outputRate
 
-  const commandOutputs: RenderingCommandOutputRecord = renderingCommandOutputs || {}
 
   const uploadsRelative = path.relative(publicDirectory, uploadDir)
 
@@ -87,18 +86,18 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     uploadsPrefix: uploadDir,
     uploadsRelative,
     extensions: {
-      [AudioType]: [
+      [TypeAudio]: [
         'aiff',
         'mp3',
       ],
-      [ImageType]: [
+      [TypeImage]: [
         'jpeg',
         'jpg',
         'png',
         'svg',
       ],
 
-      [VideoType]: [
+      [TypeVideo]: [
         'mov',
         'mp4',
         'mpeg',
@@ -111,7 +110,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
 
   const rendering: RenderingServerArgs = {
     temporaryDirectory,
-    cacheDirectory, authentication, commandOutputs, previewSize, outputSize
+    cacheDirectory, authentication, outputOptions, previewSize, outputSize
   }
 
 

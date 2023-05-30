@@ -1,3 +1,3 @@
-export * from "./FileProtocol"
-export * from "./HttpProtocol"
+export * from "./FileProtocol.js"
+export * from "./HttpProtocol.js"
 

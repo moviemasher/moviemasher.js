@@ -14,6 +14,7 @@ export const QuestionChar = '?'
 export const SemicolonChar = ';'
 export const SlashChar = '/'
 
+export const SpaceChar = ' '
 export const ColonRegex = /:/g
 export const CommaRegex = /,/g
 export const ReplaceRegex = /{{([a-z0-9_]*)}}/
@@ -33,9 +34,6 @@ export const CssMimetype = `text/${CssExtension}`
 export const FormDataMimetype = 'multipart/form-data'
 export const ContentTypeHeader = 'Content-Type'
 
-export const EmptyFunction = () => {}
-export type UnknownFunction = { (...args: unknown[]): unknown }
-
 // xmlns
 export const NamespaceSvg = 'http://www.w3.org/2000/svg'
 // xmlns:xhtml
@@ -53,3 +51,4 @@ export const ClassSelected = 'selected'
 export const ClassDropping = 'dropping'
 export const ClassDroppingBefore = 'dropping-before'
 export const ClassDroppingAfter = 'dropping-after'
+

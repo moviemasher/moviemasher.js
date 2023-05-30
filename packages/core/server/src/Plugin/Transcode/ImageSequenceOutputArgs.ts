@@ -1,4 +1,4 @@
-import { RenderingOutput, RenderingOutputArgs } from "../Encode/Encode"
+import { RenderingOutput, RenderingOutputArgs } from "../Encode/Encode.js"
 
 export interface ImageSequenceOutputArgs extends RenderingOutputArgs {
 }

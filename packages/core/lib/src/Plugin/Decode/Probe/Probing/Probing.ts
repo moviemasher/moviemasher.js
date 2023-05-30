@@ -1,4 +1,4 @@
-import type { UnknownRecord } from '../../../../Types/Core.js'
+import type { UnknownRecord } from '@moviemasher/runtime-shared'
 import type { Decoding, ProbeType } from '../../Decoding/Decoding.js'
 
 

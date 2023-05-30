@@ -1,3 +1,3 @@
-export * from "./RenderingProcess"
-export * from "./RenderingProcessClass"
-export * from "./RenderingProcessFactory"
+export * from "./RenderingProcess.js"
+export * from "./RenderingProcessClass.js"
+export * from "./RenderingProcessFactory.js"

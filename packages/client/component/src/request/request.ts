@@ -1,6 +1,7 @@
 import type { 
-  Strings, ClientAudio, ClientImage, ClientVideo, EndpointRequest, RequestInit, ClientFont 
+  ClientAudio, ClientImage, ClientVideo, EndpointRequest, RequestInit, ClientFont 
 } from '@moviemasher/lib-core'
+import { Strings } from '@moviemasher/runtime-shared'
 
 const SlashChar = '/'
 const ColonChar = ':'
@@ -33,7 +34,7 @@ export const requestUrl = (request: EndpointRequest): string => {
 
 let _context: AudioContext | undefined = undefined
 
-const context = () => {
+const audioContext = () => {
   if (_context) return _context 
   
   const Klass = AudioContext || window.webkitAudioContext
@@ -77,7 +78,7 @@ export const requestAudioPromise = (request: EndpointRequest) => {
   const promise = bufferPromise.then(buffer => {
     
     return new Promise<ClientAudio>((resolve, reject) => {
-      context().decodeAudioData(
+      audioContext().decodeAudioData(
         buffer,
         audioData => resolve(audioData),
         error => reject(error)

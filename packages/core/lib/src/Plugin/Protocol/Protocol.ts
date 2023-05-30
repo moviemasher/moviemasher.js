@@ -1,13 +1,14 @@
 import type { 
-  DataOrError, ClientImage, ClientAudio, ClientFont, ClientVideo, Data 
-} from '../../Helpers/ClientMedia/ClientMedia.js'
-import type {AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from '../../Setup/Enums.js'
+  ClientImage, ClientAudio, ClientFont, ClientVideo} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type { DataOrError, Data } from "@moviemasher/runtime-shared"
+import type {FontType, RecordsType, RecordType } from '../../Setup/Enums.js'
+import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
 import type {LoadType} from '../../Setup/LoadType.js'
 import type {EndpointRequest} from '../../Helpers/Request/Request.js'
-import type {Plugin, ProtocolType} from '../Plugin.js'
-import type {JsonRecord, JsonRecords} from '../../Types/Core.js'
-import type {DefiniteError} from '../../Helpers/Error/Error.js'
-import type {StringType} from '../../Utility/Scalar.js'
+import type {Plugin, ProtocolType} from '@moviemasher/runtime-shared'
+import type {JsonRecord, JsonRecords} from '@moviemasher/runtime-shared'
+import type {DefiniteError} from '@moviemasher/runtime-shared'
+import type { StringType } from "../../Utility/ScalarTypes.js"
 
 export type Protocol = string | HttpProtocol | HttpsProtocol | BlobProtocol | FileProtocol
 

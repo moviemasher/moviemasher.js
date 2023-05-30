@@ -9,9 +9,9 @@ COPY images/node-ffmpeg/package.json ${DIR_ROOT}/images/node-ffmpeg/package.json
 COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
 COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json
 
-COPY packages/core/lib/esm ${DIR_ROOT}/packages/core/lib/esm
+COPY packages/core/lib/dist ${DIR_ROOT}/packages/core/lib/dist
 
-COPY packages/core/server/esm ${DIR_ROOT}/packages/core/server/esm
+COPY packages/core/server/dist ${DIR_ROOT}/packages/core/server/dist
 
 
 FROM amazonlinux:2022 

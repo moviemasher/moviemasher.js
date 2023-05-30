@@ -15,6 +15,8 @@ COPY packages/build/component/package.json ${DIR_ROOT}/packages/build/component/
 COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
 COPY packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
 COPY packages/client/component/package.json ${DIR_ROOT}/packages/client/component/package.json 
+COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json 
+COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json 
 COPY dev/tsconfig ${DIR_ROOT}/dev/tsconfig
 
 RUN npm install 

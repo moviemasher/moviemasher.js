@@ -1,17 +1,18 @@
-import { ValueRecord } from '../../../Types/Core.js'
-import { propertyInstance } from '../../../Setup/Property.js'
-import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from '../../../Utility/Is.js'
+import { ValueRecord } from '@moviemasher/runtime-shared'
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from '../../../Shared/SharedGuards.js'
 import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from '../../../Base/Code.js'
-import { arrayLast } from '../../../Utility/Array.js'
+import { arrayLast } from '../../../Utility/ArrayFunctions.js'
 import { idGenerate } from '../../../Utility/Id.js'
-import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
-import { tweenMaxSize, tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { PropertyTweenSuffix } from "../../../Base/PropertiedConstants.js"
+import { tweenMaxSize, tweenOption, tweenPosition } from '../../../Helpers/TweenFunctions.js'
 import { colorToRgb, colorToRgba } from '../../../Helpers/Color/ColorFunctions.js'
 import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorWhite, colorWhiteTransparent } from '../../../Helpers/Color/ColorConstants.js'
 import { ColorizeFilter } from './ColorizeFilter.js'
-import { Size, sizesEqual } from '../../../Utility/Size.js'
+import { Size } from '@moviemasher/runtime-shared'
+import { sizesEqual } from "../../../Utility/SizeFunctions.js"
 import { FilterDefinitionObject } from '../Filter.js'
-import { DataTypeString, DataTypeBoolean, DataTypeNumber } from '../../../Setup/Enums.js'
+import { DataTypeString, DataTypeBoolean, DataTypeNumber } from "../../../Setup/DataTypeConstants.js"
 
 /**
  * @category Filter

@@ -23,4 +23,4 @@ services:
       - ../../../packages/core/lib/:${MOVIEMASHER_DIR_ROOT}/packages/core/lib/
       - ../../../packages/core/server/:${MOVIEMASHER_DIR_ROOT}/packages/core/server/
       - ../../../packages/client/component/:${MOVIEMASHER_DIR_ROOT}/packages/client/component/
-      - ../../../packages/protocol/:${MOVIEMASHER_DIR_ROOT}/packages/protocol/
+      - ../../../plugin/protocol/:${MOVIEMASHER_DIR_ROOT}/plugin/protocol/

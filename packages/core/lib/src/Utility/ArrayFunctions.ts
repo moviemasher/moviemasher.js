@@ -1,0 +1,28 @@
+import type { Numbers, Unknowns } from '@moviemasher/runtime-shared'
+import { isArray, isObject } from '../Shared/SharedGuards.js'
+
+
+export const arrayLast = (array: Unknowns): any => array[array.length - 1 ]
+
+export const arraySet = (array: Unknowns, items: Unknowns) => {
+  array.splice(0, array.length, ...items)
+  return array
+}
+
+export const arrayReversed = (array: Unknowns) => {
+  return [...array].reverse()
+}
+
+export const arrayUnique = (array: Unknowns) => {
+  return [...new Set(array)]
+}
+
+export const arrayOfNumbers = (count = 0, start = 0): Numbers => (
+  [...Array(count)].map((_, index) => start + index)
+)
+
+export function arrayFromOneOrMore<T>(value?: T | T[]): T[] {
+  if (!isObject(value)) return []
+
+  return isArray<T>(value) ? value : [value]
+}

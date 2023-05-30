@@ -1,2 +1,2 @@
-export * from "./FilterGraph"
-export * from "./FilterGraphClass"
+export * from "./FilterGraph.js"
+export * from "./FilterGraphClass.js"

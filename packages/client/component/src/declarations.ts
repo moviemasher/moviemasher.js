@@ -1,27 +1,26 @@
 import type { TemplateResult } from 'lit'
 
-import type { ClientReadParams, Icon, Translation } from '@moviemasher/client-core'
-import type { Identified, Media, MediaObject, MediaObjects, MediaType, Scalar, TranslateArgs } from '@moviemasher/lib-core'
+import { AssetType, DataOrError, Identified, Scalar, StringRecord, Strings } from '@moviemasher/runtime-shared'
+import { AssetObject, AssetObjects, TranslateArgs } from '@moviemasher/lib-core'
 
 
 export type CoreLib = typeof import('@moviemasher/lib-core')
-export type CoreClient = typeof import('@moviemasher/client-core')
 
 export type Constructor<T> = new (...args: any[]) => T
 
 export type Html = TemplateResult<1> 
 export type Htmls = Html[]
 
-export type Content = Scalar | Html | Node
+export type Content = Html | Node | Scalar 
 export type Contents = Content[]
 export type OptionalContent = Content | void
 
 export type Nodes = Node[]
 export type Elements = Element[]
 
-export interface MovieMasher {
-  mediaType: MediaType
-  mediaObjects: MediaObjects
+export interface MovieMasherContext {
+  mediaType: AssetType
+  mediaObjects: AssetObjects
   accept: string
 }
 
@@ -44,20 +43,28 @@ export type CenterSlot = 'center'
 export type IconSlot = 'icon'
 export type StringSlot = 'string'
 
-export type ConnectionEvent = CustomEvent<boolean>
-export type MediaTypeEvent = CustomEvent<MediaType>
 
-export interface MediaObjectsEventDetail extends MediaObjectsParams {
-  promise?: Promise<MediaObjects>
+export interface ConnectionEventDetail {
+  connected: boolean
+  handled?: boolean
 }
 
-export type MediaObjectsEvent = CustomEvent<MediaObjectsEventDetail>
+export type ConnectionEvent = CustomEvent<ConnectionEventDetail>
 
-export interface MediaObjectEventDetail extends Identified {
-  mediaObject?: MediaObject
+
+export type MediaTypeEvent = CustomEvent<AssetType>
+
+export interface AssetObjectsEventDetail extends AssetObjectsParams {
+  promise?: Promise<AssetObjects>
 }
 
-export type MediaObjectEvent = CustomEvent<MediaObjectEventDetail>
+export type MediaObjectsEvent = CustomEvent<AssetObjectsEventDetail>
+
+export interface AssetObjectEventDetail extends Identified {
+  mediaObject?: AssetObject
+}
+
+export type MediaObjectEvent = CustomEvent<AssetObjectEventDetail>
 
 export interface ImportEventDetail {
   fileList: FileList
@@ -65,17 +72,11 @@ export interface ImportEventDetail {
 
 export type ImportEvent = CustomEvent<ImportEventDetail>
 
-export interface MediaObjectsParams extends ClientReadParams {
+export interface AssetObjectsParams extends ClientReadParams {
   excludeImported?: boolean
   excludeMash?: boolean
   excludeSource?: boolean
 }
-
-export interface MediaEventDetail {
-  mediaObject: MediaObject
-  promise?: Promise<Media>
-}
-export type MediaEvent = CustomEvent<MediaEventDetail>
 
 
 export interface IconEventDetail extends TranslateArgs {
@@ -89,3 +90,28 @@ export interface TranslationEventDetail extends TranslateArgs {
 }
 
 export type TranslationEvent = CustomEvent<TranslationEventDetail>
+
+
+export interface Icon {
+  imageElement?: HTMLImageElement
+  imgUrl?: string
+  string?: string
+  svgElement?: SVGSVGElement
+  svgString?: string
+}
+
+export type IconDataOrError = DataOrError<Icon>
+
+export interface Translation {
+  text?: Text
+  string?: string
+}
+
+export type TranslationDataOrError = DataOrError<Translation>
+
+export interface ClientReadParams {
+  type: AssetType 
+  kind?: string | Strings
+  order?: string | StringRecord
+  terms?: string
+}

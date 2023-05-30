@@ -4,7 +4,7 @@ import React from 'react'
 import {
   Rect, RectZero, Clip,  Track, pixelToFrame, Clips, 
   Point, eventStop, MashIndex, isPositive, assertClip, 
-  isMediaObject, TypeEffect, EventTypeLoaded, EventTypeAction, EventTypeDuration, EventTypeSelection, EventTypeTime
+  isAssetObject, TypeEffect, EventTypeLoaded, EventTypeAction, EventTypeDuration, EventTypeSelection, EventTypeTime
 } from '@moviemasher/lib-core'
 
 
@@ -138,7 +138,7 @@ export function Timeline(props: TimelineProps) {
       console.log("onDrop", data)
       if (isDragDefinitionObject(data)) {
         const { mediaObject } = data
-        if (isMediaObject(mediaObject)) drop(mediaObject, editorIndex)
+        if (isAssetObject(mediaObject)) drop(mediaObject, editorIndex)
         // console.log("Timeline onDrop definition", definitionObject)
         
       } else {

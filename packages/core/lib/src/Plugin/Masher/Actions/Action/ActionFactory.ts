@@ -4,11 +4,11 @@ import type {
   RemoveClipActionObject 
 } from './Action.js'
 
-import { 
-  ActionTypeAddClip, ActionTypeAddTrack, ActionTypeChange, ActionTypeChangeFrame, 
-  ActionTypeChangeMultiple, ActionTypeMove, ActionTypeMoveClip, 
-  ActionTypeRemoveClip 
-} from '../../../../Setup/Enums.js'
+import {
+  ActionTypeAddClip, ActionTypeAddTrack, ActionTypeChange, ActionTypeChangeFrame,
+  ActionTypeChangeMultiple, ActionTypeMove, ActionTypeMoveClip,
+  ActionTypeRemoveClip
+} from "../../../../Setup/EnumConstantsAndFunctions.js"
 import { ErrorName, errorThrow } from '../../../../Helpers/index.js'
 import { AddClipActionClass } from './AddClipActionClass.js'
 import { AddTrackActionClass } from './AddTrackActionClass.js'

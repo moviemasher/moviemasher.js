@@ -1,9 +1,7 @@
-import type { Track } from '../../../../Media/Mash/Track/Track.js'
-import type { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import type { ClientClip, ClientTrack } from '../../../../Client/Mash/MashClientTypes.js'
 import type { RemoveClipActionObject } from './Action.js'
 
 import { ActionClass } from "./ActionClass.js"
-
 
 /**
  * @category Action
@@ -17,9 +15,9 @@ export class RemoveClipActionClass extends ActionClass {
     this.track = track
   }
 
-  track : Track
+  track : ClientTrack
 
-  clip : Clip
+  clip : ClientClip
 
   index : number
 

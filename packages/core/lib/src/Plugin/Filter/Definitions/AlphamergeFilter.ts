@@ -1,6 +1,6 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { assertPopulatedString } from '../../../Utility/Is.js'
+import { assertPopulatedString } from '../../../Shared/SharedGuards.js'
 import { idGenerate } from '../../../Utility/Id.js'
 
 /**

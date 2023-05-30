@@ -1,5 +1,5 @@
-import { RenderingOutputClass } from "../Encode"
-import { WaveformOutput } from "./ImageSequenceOutputArgs"
+import { RenderingOutputClass } from "../Encode/RenderingOutputClass.js";
+import { WaveformOutput } from "./ImageSequenceOutputArgs.js"
 
 export class WaveformOutputClass extends RenderingOutputClass implements WaveformOutput {
 }

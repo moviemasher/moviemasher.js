@@ -5,6 +5,8 @@
       {
         "imports": {
           "@moviemasher/lib-core": "./@moviemasher/lib-core/dist/lib-core.js",
+          "@moviemasher/runtime-shared": "./@moviemasher/runtime-shared/dist/index.js",
+          "@moviemasher/runtime-client": "./@moviemasher/runtime-client/dist/index.js",
           "@moviemasher/client-core": "./@moviemasher/client-core/dist/client-core.js",
           "@moviemasher/client-component/": "./@moviemasher/client-component/dist/",
           "tslib": "./tslib/tslib.es6.js",
@@ -59,7 +61,7 @@
   </head>
   <body>
     <movie-masher-interceptor-supabase>
-      <movie-masher slotted='form'>
+      <movie-masher slotted='masher'>
         <span slot='selector-div-right'><movie-masher-icon icon='effect'></movie-masher-icon></span>
       </movie-masher>
     </movie-masher-interceptor-supabase>

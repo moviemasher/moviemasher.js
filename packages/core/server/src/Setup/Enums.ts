@@ -2,9 +2,9 @@ import { errorThrow } from "@moviemasher/lib-core"
 
 export type DecodingJobType = 'decoding'
 export type EncodingJobType = 'encoding'
-export type TranscodingType = 'transcoding'
+export type TranscodingJobType = 'transcoding'
 
-export type JobType = DecodingJobType | EncodingJobType | TranscodingType
+export type JobType = DecodingJobType | EncodingJobType | TranscodingJobType
 
 export const JobTypeDecoding: JobType = 'decoding'
 export const JobTypeEncoding: JobType = 'encoding'

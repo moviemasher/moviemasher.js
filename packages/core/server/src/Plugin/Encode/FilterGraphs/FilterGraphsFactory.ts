@@ -1,9 +1,9 @@
 
-import { MashMedia, AVTypeBoth, AVTypeVideo } from "@moviemasher/lib-core"
-import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs"
-import { FilterGraphsClass } from "./FilterGraphsClass"
+import { MashServerAsset, AVTypeBoth, AVTypeVideo } from "@moviemasher/lib-core"
+import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs.js"
+import { FilterGraphsClass } from "./FilterGraphsClass.js"
 
-export const filterGraphsArgs = (mash: MashMedia, options: FilterGraphsOptions = {}): FilterGraphsArgs => {
+export const filterGraphsArgs = (mash: MashServerAsset, options: FilterGraphsOptions = {}): FilterGraphsArgs => {
   const { background, time, avType, size, videoRate, ...rest } = options
   const definedTime = time || mash.time
   const definedAVType = avType || (definedTime.isRange ? AVTypeBoth : AVTypeVideo)

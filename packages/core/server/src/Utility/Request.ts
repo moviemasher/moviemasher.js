@@ -3,7 +3,7 @@ import {
   endpointAbsolute, EndpointRequest, StringRecord, Value
 } from "@moviemasher/lib-core"
 
-import { hashMd5 } from './Hash'
+import { hashMd5 } from './Hash.js'
 
 export interface RequestArgs {
   auth?: string

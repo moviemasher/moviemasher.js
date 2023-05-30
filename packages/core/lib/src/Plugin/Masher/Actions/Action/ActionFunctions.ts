@@ -6,8 +6,8 @@ import type {
 
 import { 
   isObject, isPopulatedString, isScalar, isScalarRecord 
-} from '../../../../Utility/Is.js'
-import { isPropertied } from '../../../../Base/Propertied.js'
+} from '../../../../Shared/SharedGuards.js'
+import { isPropertied } from "../../../../Base/PropertiedFunctions.js";
 
 export const isAction = (value: any): value is Action => {
   return isObject(value) && 'selection' in value && isObject(value.selection)

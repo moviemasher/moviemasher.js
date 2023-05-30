@@ -1,7 +1,7 @@
 import { RawProbeData } from "@moviemasher/lib-core"
 
 import EventEmitter from "events"
-import { CommandDestination } from "../RunningCommand/RunningCommand"
+import { CommandDestination } from "../RunningCommand/RunningCommand.js"
 
 
 export interface CommandProbeFunction {

@@ -1,6 +1,20 @@
-import type {
-  AudioMediaObject,
+import { 
+  AssetType,
   AudioType,
+  ImageType,
+  StringRecord, TypeImage, TypeVideo, TypesAudible,
+  VideoType, 
+  isAudibleAssetType
+} from '@moviemasher/runtime-shared'
+
+
+import { 
+ TypeAudio,
+
+} from '@moviemasher/runtime-shared'
+
+
+import type { 
   ClientAudioEvent,
   ClientFontEvent,
   ClientImageEvent,
@@ -10,24 +24,20 @@ import type {
   DecodingObject,
   DecodingObjects,
   EndpointRequest,
-  FontMediaObject,
   FontType,
-  ImageMediaObject,
-  ImageType,
   Masher,
-  MediaObject,
-  MediaObjects,
-  MediaType, 
+  AssetObject,
+  AssetObjects,
   ProbeType,
   ProbingData,
-  StringRecord,
-  VideoMediaObject,
-  VideoType
+  ImportedClientVideoAssetObject,
+  ImportedClientImageAssetObject,
+  ImportedClientAudioAssetObject,
+  ImportedClientAssetObject,
+  TextClientAssetObject,
+  AssetPromiseEvent
 } from '@moviemasher/lib-core'
 
-import type {
-  Icon, Translation,
-} from '@moviemasher/client-core'
 
 import type {
   ComposerFormSlot,
@@ -39,15 +49,16 @@ import type {
   ImportEvent,
   InspectorFormSlot,
   MediaObjectEvent,
-  MediaObjectsEventDetail,
-  MediaObjectsParams,
+  AssetObjectsEventDetail,
+  AssetObjectsParams,
   MediaTypeEvent,
-  MovieMasher,
+  MovieMasherContext,
   SelectorFormSlot,
   OptionalContent,
   TranslationEvent,
   ViewerFormSlot,
-  MediaEvent,
+  Icon,
+  Translation,
 } from './declarations.js'
 
 import { PropertyValues, css, html } from 'lit'
@@ -66,10 +77,8 @@ const FormSlotViewer: ViewerFormSlot = 'viewer'
 const FormSlotSelector: SelectorFormSlot = 'selector'
 const FormSlotComposer: ComposerFormSlot = 'composer'
 
-const TypeAudio: AudioType = 'audio'
-const TypeImage: ImageType = 'image'
+
 const TypeProbe: ProbeType = 'probe'
-const TypeVideo: VideoType = 'video'
 const TypeFont: FontType = 'font'
 // const TypeMash: MashType = 'mash'
 // const TypeEffect: EffectType = 'effect'
@@ -83,13 +92,12 @@ type ImportSuffix = MaxSuffix | ExtensionsSuffix
 type ImportSuffixes = ImportSuffix[]
 const SuffixesInput: ImportSuffixes = [SuffixMax, SuffixExtensions]
 
-// type MediaType = AudioType | ImageType | VideoType | MashType | EffectType
-// type MediaTypes = MediaType[]
+// type AssetType = AudioType | ImageType | VideoType | MashType | EffectType
+// type MediaTypes = AssetType[]
 type ImportType = AudioType | ImageType | VideoType | FontType
 type ImportTypes = ImportType[]
 
-const AudibleTypes: ImportTypes = [TypeAudio, TypeVideo]
-const TypesImport: ImportTypes = [...AudibleTypes, TypeImage, TypeFont]
+const TypesImport: ImportTypes = [...TypesAudible, TypeImage, TypeFont]
 // const TypesMedia: MediaTypes = [...TypesImport, TypeMash, TypeEffect]
 const isImportType = (type: unknown): type is ImportType => {
   return TypesImport.includes(type as ImportType)
@@ -103,7 +111,15 @@ const isImportType = (type: unknown): type is ImportType => {
  * @tag movie-masher
  */
 @customElement('movie-masher')
-export class MovieMasherElement extends Slotted implements MovieMasher {
+export class MovieMasherElement extends Slotted {
+  constructor() {
+    super()
+    this.masherContext = { 
+      accept: this.accept,
+      mediaType: this.mediaType, 
+      mediaObjects: this.mediaObjects,
+    }
+  }
   private _accept?: string
   @property({ type: String })
   get accept(): string {
@@ -197,7 +213,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
 
   protected override content(contents: Contents): Content {
     return html`<div 
-      @media='${this.mediaHandler}'
+      @asset-promise='${this.mediaHandler}'
       @mediaobject='${this.mediaObjectHandler}'
       @mediatype='${this.mediaTypeHandler}'
       @connection='${this.connectionHandler}'
@@ -250,7 +266,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
     }
   }
 
-  private fileMedia(file: File): Promise<MediaObject | void> {
+  private fileMedia(file: File): Promise<AssetObject | void> {
     const { type: mimetype, size, name } = file
     const sizeInMeg = Math.ceil(size * 10 / 1024 / 1024) / 10
     const extension = name.split('.').pop()
@@ -285,26 +301,26 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
   }
 
 
-  private fileMediaObjectPromise(file: File, type: ImportType): Promise<MediaObject | void> {
+  private fileMediaObjectPromise(file: File, type: ImportType): Promise<AssetObject | void> {
     const { name: label } = file
     const request: EndpointRequest = { response: file }
 
     // we can't reliably tell if there is an audio track so we assume there is 
     // one, and catch problems if it's played before decoded
     const info: ProbingData = {
-      audible: AudibleTypes.includes(type) 
+      audible: isAudibleAssetType(type)// TypesAudible.includes(type) 
     }
     const decoding: DecodingObject = { data: info, type: TypeProbe }
     const decodings: DecodingObjects = [decoding]
     const id = `temporary-${crypto.randomUUID()}`
-    const shared: MediaObject = { file, type, label, request, decodings, id }
+    const shared: ImportedClientAssetObject = { type: TypeImage, label, request, decodings, id }//file, 
 
     switch (type) {
       case TypeAudio: {
         return requestAudioPromise(request).then(loadedAudio => {
           const { duration } = loadedAudio
           info.duration = duration
-          const object: AudioMediaObject = { ...shared, loadedAudio }
+          const object: ImportedClientAudioAssetObject = { ...shared, type, loadedAudio }
           return object
         })
       }
@@ -313,7 +329,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
           const { width, height } = image
           info.width = width
           info.height = height
-          const object: ImageMediaObject = { ...shared, loadedImage: image }
+          const object: ImportedClientImageAssetObject = { ...shared, type, loadedImage: image }
           return object
         })
       }
@@ -325,13 +341,15 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
           info.duration = duration
           info.width = width
           info.height = height
-          const object: VideoMediaObject = { ...shared, loadedVideo: video }
+          const object: ImportedClientVideoAssetObject = { ...shared, type, loadedVideo: video }
           return object
         })
       }
       case TypeFont: {
         return requestFontPromise(request).then(font => {
-          const object: FontMediaObject = { ...shared, loadedFont: font }
+          const object: TextClientAssetObject = { 
+            ...shared, source: TypeFont, loadedFont: font 
+          }
           return object
         })
       }
@@ -345,6 +363,11 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
   fontMax = -1
 
 
+  // override getUpdateComplete(): Promise<boolean> {
+  //   return this.mediaObjectsFetchedPromise.then(() => {
+  //     return super.getUpdateComplete().then(() => true)
+  //   })
+  // }
   @property({ type: String }) 
   icon = 'app'
 
@@ -386,7 +409,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
     const { detail } = event
     const { fileList } = detail
     // console.log(this.constructor.name, 'importHandler', fileList)
-    const media: MediaObjects = []
+    const media: AssetObjects = []
     const [file, ...rest] = Array.from(fileList)
     let promise = this.fileMedia(file)
     rest.forEach(file => {
@@ -405,7 +428,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
   }
 
   @property({ type: Array, attribute: false })
-  importedMediaObjects: MediaObjects = []
+  importedMediaObjects: AssetObjects = []
 
   protected masher?: Masher | undefined
   private _masherPromise?: Promise<void>
@@ -422,20 +445,20 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
     })
   }
 
-  protected mediaHandler(event: MediaEvent) {
+  protected mediaHandler(event: AssetPromiseEvent) {
     const { detail } = event
-    const { mediaObject } = detail
+    const { assetObject } = detail
     // console.log(this.constructor.name, 'mediaHandler', mediaObject.label)
-    detail.promise = this.masherPromise.then(() => {
-      return this.masher!.media.fromObject(mediaObject)
+    detail.assetPromise = this.masherPromise.then(() => {
+      return this.masher!.media.fromObject(assetObject)
     })
-    event.stopPropagation()
+    event.stopImmediatePropagation()
   }
 
   @property({ type: Array, attribute: false })
-  mediaObjectsFetched: MediaObjects = []
+  mediaObjectsFetched: AssetObjects = []
 
-  private _mediaObjects?: MediaObjects 
+  private _mediaObjects?: AssetObjects 
   @property({ type: Array, attribute: false })
   get mediaObjects() {
     return this._mediaObjects ||= this.mediaObjectsInitialize
@@ -459,7 +482,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
     this.updateContext({ mediaObjects: this.mediaObjects })
   }
 
-  mediaObjectsParams: MediaObjectsParams = { type: TypeImage }
+  mediaObjectsParams: AssetObjectsParams = { type: TypeImage }
 
   @property({ type: String }) 
   mediaSource = ''
@@ -467,28 +490,34 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
   protected mediaObjectHandler(event: MediaObjectEvent) {
     const { detail } = event
     const { id } = detail
-    detail.mediaObject = this.movieMasherContext.mediaObjects.find(media => media.id === id)
-    event.stopPropagation()
+    detail.mediaObject = this.masherContext.mediaObjects.find(media => media.id === id)
+    event.stopImmediatePropagation()
   }
 
-  private _mediaObjectsFetchedPromise?: Promise<MediaObjects>
-  private get mediaObjectsFetchedPromise(): Promise<MediaObjects> {
+  private _mediaObjectsFetchedPromise?: Promise<AssetObjects>
+  private get mediaObjectsFetchedPromise(): Promise<AssetObjects> {
     return this._mediaObjectsFetchedPromise ||= this.mediaObjectsFetchedPromiseInitialize
   }
-  private get mediaObjectsFetchedPromiseInitialize(): Promise<MediaObjects> {
+  private get mediaObjectsFetchedPromiseInitialize(): Promise<AssetObjects> {
     const { mediaSource } = this
     const url = mediaSource || (new URL('../json/media.json', import.meta.url)).href
     // console.log(this.tagName, 'mediaObjectsFetchedPromiseInitialize', url)
-    return fetch(url).then(res => res.json())
+    return fetch(url).then(res => {
+      return res.json().then(json => {
+        // this.mediaObjectsRefresh()
+        return this.mediaObjectsFetched = json //as AssetObjects
+      })
+    })
   }
+
   private mediaObjectsFetchedRefresh() {
     // console.log(this.constructor.name, 'mediaObjectsFetchedRefresh', this.movieMasherContext)
 
     delete this._mediaObjectsFetchedPromise
 
     const { mediaObjectsParams: params } = this
-    const detail: MediaObjectsEventDetail = { ...params, type: this.mediaType }
-    const init: CustomEventInit<MediaObjectsEventDetail> = { 
+    const detail: AssetObjectsEventDetail = { ...params, type: this.mediaType }
+    const init: CustomEventInit<AssetObjectsEventDetail> = { 
       detail, composed: true, bubbles: true, cancelable: true
     }
     this.dispatchEvent(new CustomEvent('mediaobjects', init))
@@ -502,22 +531,18 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
   }
 
   @property({ type: String, attribute: 'media-type' })
-  mediaType: MediaType = TypeImage
+  mediaType: AssetType = TypeImage
 
   private mediaTypeHandler(event: MediaTypeEvent) {
     const { detail: mediaType } = event
-    console.log(this.constructor.name, 'mediaTypeHandler', mediaType)
+    // console.log(this.constructor.name, 'mediaTypeHandler', mediaType)
     this.mediaType = mediaType
     this.updateContext({ mediaType })
   }
 
   @provide({ context: movieMasherContext })
   @property({ type: Object, attribute: false })
-  movieMasherContext: MovieMasher = { 
-    accept: this.accept,
-    mediaType: this.mediaType, 
-    mediaObjects: this.mediaObjects,
-  }
+  masherContext: MovieMasherContext 
 
   @property({ type: Boolean }) 
   readonly = false
@@ -570,11 +595,15 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
   @property({ type: String }) 
   translationSource = ''
 
-  private updateContext(options: Partial<MovieMasher>) {
-    const { movieMasherContext } = this
-    if (!movieMasherContext) return 
+  private updateContext(options: Partial<MovieMasherContext>) {
+    const { masherContext } = this
+    if (!masherContext) {
+      console.warn(this.tagName, 'updateContext no movieMasherContext')
+      return 
+    }
+    // console.log(this.tagName, 'updateContext movieMasherContext')
 
-    this.movieMasherContext = { ...movieMasherContext, ...options }
+    this.masherContext = { ...masherContext, ...options }
   }
 
   @property({ type: String, attribute: 'video-extensions' })
@@ -585,7 +614,7 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
 
   protected override willUpdate(values: PropertyValues<this>): void {
     if (values.has('mediaType')) {
-      console.log('willUpdate mediaType', this.mediaType)
+      // console.log('willUpdate mediaType', this.mediaType)
       this.mediaObjectsFetchedRefresh()
     }
     if (values.has('mediaObjectsFetched') || values.has('importedMediaObjects')) {
@@ -601,144 +630,177 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
     }
   }
 
-  static styleBox = css`
-    * {
-      box-sizing: border-box;
-    }
-  `
   
-  static cssVariables = css`
-    :host {
-      --icon-size: 24px;
-      --button-size: 24px;
+ 
+  
+ 
+  static override styles = [
+    Component.cssHostFlex,
+    css`
+      :host {
+        --icon-size: 24px;
+        --button-size: 24px;
       
 
-
-
-
-      --padding: 40px;
-      --spacing: 20px;
-      --header-height: 38px;
-      --footer-height: 38px;
-      
-      --border-size: 1px;
-      --border: var(--border-size) solid;
-      --border-radius: 5px;
-
-      --hue: 281;
-      --gap: 20px;
-      --areas:
-        "preview media inspect"
-        "compose compose inspect";
-      --columns:
-        calc(
-          var(--viewer-width)
-          + (var(--border-size) * 2)
-        )
-        1fr
-        var(--inspector-width);
-      --rows:
-        calc(
-          var(--viewer-height)
-          + var(--header-height)
-          + var(--footer-height)
-        )
-        1fr;
-
-      --button-transition:
-          background-color 0.25s ease-out,
-          border-color 0.25s ease-out,
-          color 0.25s ease-out;
-      --chroma-primary: 0.085;
-      /* --chroma-secondary: 0.1; */
-      /* --chroma-tertiary: 0.125; */
-
-      --lightness-back-primary: 95%;
-      --lightness-back-secondary: 75%;
-      --lightness-back-tertiary: 55%;
-
-      --lightness-fore-primary: 45%;
-      --lightness-fore-secondary: 35%;
-      --lightness-fore-tertiary: 25%;
-    
-
-      --darkness-back-primary: 5%;
-      --darkness-back-secondary: 25%;
-      --darkness-back-tertiary: 30%;
-
-      --darkness-fore-primary: 45%;
-      --darkness-fore-secondary: 60%;
-      --darkness-fore-tertiary: 75%;
-
-
-
-      --viewer-aspect-ratio: 16 / 9;
-      --icon-ratio: 0.25;
-      --viewer-width: 480px;
-      --viewer-height: 270px;
-      --scrubber-height: 16px;
-      --scrubber-width: 16px;
-      --inspector-width: 240px;
-      --track-width: 34px;
-      --track-height: 60px;
-      
-      --drop-size: 2px;
-      --progress-width: calc(2 * var(--icon-size));
-      --dropping-shadow: 
-        var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
-        calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
-      ;
-
-
-      --div-pad: 20px;
-      --div-space: 20px;
-      --div-back: oklch(var(--lightness-back-primary) 0 0);
-      --div-fore: oklch(var(--lightness-fore-primary) 0 0);
-
-      --section-padding: 5px;
-      --section-spacing: 5px;
-      --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
-      --section-back: oklch(var(--lightness-back-tertiary) 0 0);
+        --padding: 40px;
+        --spacing: 20px;
+        --header-height: 38px;
+        --footer-height: 38px;
         
-      --label-fore: red;
-      --label-back: black;
+        --border-size: 1px;
+        --border: var(--border-size) solid;
+        --border-radius: 5px;
 
-      --control-back: oklch(var(--lightness-back-secondary) 0 0);
-      --control-back-disabled: var(--control-back);
-      --control-back-hover: var(--control-back);
-      --control-back-selected: var(--control-back);
+        --hue: 281;
+        --gap: 20px;
+        --areas:
+          "preview media inspect"
+          "compose compose inspect";
+        --columns:
+          calc(
+            var(--viewer-width)
+            + (var(--border-size) * 2)
+          )
+          1fr
+          var(--inspector-width);
+        --rows:
+          calc(
+            var(--viewer-height)
+            + var(--header-height)
+            + var(--footer-height)
+          )
+          1fr;
 
-      --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
-      --control-fore-disabled: oklch(var(--lightness-fore-secondary) var(--chroma-primary) var(--hue));
+        --button-transition:
+            background-color 0.25s ease-out,
+            border-color 0.25s ease-out,
+            color 0.25s ease-out;
+        --chroma-primary: 0.085;
+        /* --chroma-secondary: 0.1; */
+        /* --chroma-tertiary: 0.125; */
 
-      --control-fore-hover: var(--control-hover-selected);
-      --control-fore-selected:var(--control-hover-selected);
-      --control-fore: var(--fore-secondary);
-      --control-padding: 5px;
-      --control-spacing: 5px;
+        --lightness-back-primary: 95%;
+        --lightness-back-secondary: 75%;
+        --lightness-back-tertiary: 55%;
 
-      --item-fore: yellow;
-      --item-fore-selected: yellow;
-      --item-fore-hover: yellow;
-      --item-back: blue;
-      --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
+        --lightness-fore-primary: 45%;
+        --lightness-fore-secondary: 35%;
+        --lightness-fore-tertiary: 25%;
+      
 
-      --item-back-selected: var(--item-back-hover-selected);
-      --item-back-hover:  var(--item-back-hover-selected);
+        --darkness-back-primary: 5%;
+        --darkness-back-secondary: 25%;
+        --darkness-back-tertiary: 30%;
+
+        --darkness-fore-primary: 45%;
+        --darkness-fore-secondary: 60%;
+        --darkness-fore-tertiary: 75%;
 
 
-      --color-drop: red;
+
+        --viewer-aspect-ratio: 16 / 9;
+        --icon-ratio: 0.25;
+        --viewer-width: 480px;
+        --viewer-height: 270px;
+        --scrubber-height: 16px;
+        --scrubber-width: 16px;
+        --inspector-width: 240px;
+        --track-width: 34px;
+        --track-height: 60px;
+        
+        --drop-size: 2px;
+        --progress-width: calc(2 * var(--icon-size));
+        --dropping-shadow: 
+          var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
+          calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
+        ;
 
 
-    /* --color-back-secondary: oklch(var(--lightness-back-secondary) var(--chroma-secondary) var(--hue)); */
-      /* --color-back-tertiary: oklch(var(--lightness-back-tertiary) var(--chroma-tertiary) var(--hue)); */
+        --div-pad: 20px;
+        --div-space: 20px;
+        --div-back: oklch(var(--lightness-back-primary) 0 0);
+        --div-fore: oklch(var(--lightness-fore-primary) 0 0);
 
-      /* --color-fore-secondary: oklch(var(--lightness-fore-secondary) var(--chroma-secondary) var(--hue)); */
-      /* --color-fore-tertiary: oklch(var(--lightness-fore-tertiary) var(--chroma-tertiary) var(--hue)); */
+        --section-padding: 5px;
+        --section-spacing: 5px;
+        --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
+        --section-back: oklch(var(--lightness-back-tertiary) 0 0);
+          
+        --label-fore: red;
+        --label-back: black;
 
-    }
-  `
-  static styleIdk = css`
+        --control-back: oklch(var(--lightness-back-secondary) 0 0);
+        --control-back-disabled: var(--control-back);
+        --control-back-hover: var(--control-back);
+        --control-back-selected: var(--control-back);
+
+        --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
+        --control-fore-disabled: oklch(var(--lightness-fore-secondary) var(--chroma-primary) var(--hue));
+
+        --control-fore-hover: var(--control-hover-selected);
+        --control-fore-selected:var(--control-hover-selected);
+        --control-fore: var(--fore-secondary);
+        --control-padding: 5px;
+        --control-spacing: 5px;
+
+        --item-fore: yellow;
+        --item-fore-selected: yellow;
+        --item-fore-hover: yellow;
+        --item-back: blue;
+        --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
+
+        --item-back-selected: var(--item-back-hover-selected);
+        --item-back-hover:  var(--item-back-hover-selected);
+
+
+        --color-drop: red;
+
+
+      /* --color-back-secondary: oklch(var(--lightness-back-secondary) var(--chroma-secondary) var(--hue)); */
+        /* --color-back-tertiary: oklch(var(--lightness-back-tertiary) var(--chroma-tertiary) var(--hue)); */
+
+        /* --color-fore-secondary: oklch(var(--lightness-fore-secondary) var(--chroma-secondary) var(--hue)); */
+        /* --color-fore-tertiary: oklch(var(--lightness-fore-tertiary) var(--chroma-tertiary) var(--hue)); */
+
+      }
+    `,
+    css`
+      * {
+        box-sizing: border-box;
+      }
+    `,
+    css`
+      div {
+        flex-grow: 1;
+        display: grid;
+        gap: var(--gap);
+        grid-template-areas: var(--areas);
+        grid-template-columns: var(--columns);
+        grid-template-rows: var(--rows);
+      }
+    `,
+
+    css`
+      /* 
+      @media (max-width: 999px) {
+        :host {
+          display: block;
+          grid-template-areas: "preview" "compose" "inspect" "media";
+        }
+      } */
+      @media(prefers-color-scheme: dark) {
+        :host {
+          --lightness-back-primary: var(--darkness-back-primary);
+          --lightness-back-secondary: var(--darkness-back-secondary);
+          --lightness-back-tertiary: var(--darkness-back-tertiary);
+          --lightness-fore-primary: var(--darkness-fore-primary);
+          --lightness-fore-secondary: var(--darkness-fore-secondary);
+          --lightness-fore-tertiary: var(--darkness-fore-tertiary);
+          --color-drop: yellow;
+        } 
+      }
+    `,
+    css`
     :host {
       .panel .content {
         --padding: 20px;
@@ -765,50 +827,12 @@ export class MovieMasherElement extends Slotted implements MovieMasher {
         box-shadow: var(--dropping-shadow);
       }
 
- 
+
       .panel select {
         height: var(--button-size);
       }
     }
 
-  `
-  static styleForm = css`
-    div {
-      flex-grow: 1;
-      display: grid;
-      gap: var(--gap);
-      grid-template-areas: var(--areas);
-      grid-template-columns: var(--columns);
-      grid-template-rows: var(--rows);
-    }
-  `
-
-  static styleQueries = css`
-  /* 
-    @media (max-width: 999px) {
-      :host {
-        display: block;
-        grid-template-areas: "preview" "compose" "inspect" "media";
-      }
-    } */
-    @media(prefers-color-scheme: dark) {
-      :host {
-        --lightness-back-primary: var(--darkness-back-primary);
-        --lightness-back-secondary: var(--darkness-back-secondary);
-        --lightness-back-tertiary: var(--darkness-back-tertiary);
-        --lightness-fore-primary: var(--darkness-fore-primary);
-        --lightness-fore-secondary: var(--darkness-fore-secondary);
-        --lightness-fore-tertiary: var(--darkness-fore-tertiary);
-        --color-drop: yellow;
-      } 
-    }
-  `
-  static override styles = [
-    Component.cssHostFlex,
-    MovieMasherElement.cssVariables,
-    MovieMasherElement.styleBox,
-    MovieMasherElement.styleForm,
-    MovieMasherElement.styleQueries,
-    MovieMasherElement.styleIdk,
+    `
   ]
 }

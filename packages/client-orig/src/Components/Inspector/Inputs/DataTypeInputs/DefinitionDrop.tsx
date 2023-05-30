@@ -3,9 +3,9 @@ import React from 'react'
 import type {Strings, } from '@moviemasher/lib-core'
 
 import {
-  assertMedia, isMediaType, assertPopulatedString, ClassDropping, 
-  TypesContaining, TypesContenting, assertTrue, eventStop, isContainerDefinition, 
-  isMediaObject, assertDefined, DataTypeContainerId, DataTypeContentId
+  assertAsset, isMediaType, assertPopulatedString, ClassDropping, 
+  TypesContaining, TypesContenting, assertTrue, eventStop, isContainerAsset, 
+  isAssetObject, assertDefined, DataTypeContainerId, DataTypeContentId
 } from '@moviemasher/lib-core'
 
 import { 
@@ -49,7 +49,7 @@ export function DefinitionDrop(props: DefinitionDropProps) {
 
     assertPopulatedString(value)
     const definition = media.fromId(value)
-    assertMedia(definition)
+    assertAsset(definition)
 
     const definitionProps = { definition, key: definition.id }
     const children = React.cloneElement(child, definitionProps)
@@ -94,7 +94,7 @@ export function DefinitionDrop(props: DefinitionDropProps) {
         if (!definitions.length) return
 
         const container = name === "containerId"
-        const valid = container ? definitions.filter(isContainerDefinition) : definitions
+        const valid = container ? definitions.filter(isContainerAsset) : definitions
         const [definition] = valid
         if (definition) {
           assertTrue(media.installed(definition.id), `${definition.type} installed`)
@@ -108,9 +108,9 @@ export function DefinitionDrop(props: DefinitionDropProps) {
     const json = dataTransfer.getData(type)
     const data: DragDefinitionObject = JSON.parse(json)
     const { mediaObject } = data
-    if (isMediaObject(mediaObject)) {
+    if (isAssetObject(mediaObject)) {
       const [definition] = media.define(mediaObject)
-      if (name === "containerId" && !isContainerDefinition(definition)) return
+      if (name === "containerId" && !isContainerAsset(definition)) return
 
       changeHandler(name, mediaObject.id!)
     }

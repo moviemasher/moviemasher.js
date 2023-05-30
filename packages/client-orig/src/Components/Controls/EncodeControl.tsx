@@ -4,14 +4,18 @@ import React from "react"
 import type { PropsClickable } from "../../Types/Props"
 
 import {
-  assertMashMedia, assertEncodingType, isEncodingType, ClientActionRender, EventTypeAction, EventTypeLoaded, EventTypeSave
+   assertAssetType, assertAsset, 
+   ClientActionRender, EventTypeAction, EventTypeLoaded, EventTypeSave
 } from "@moviemasher/lib-core"
-import { OperationEncode, className } from "@moviemasher/client-core"
+import { OperationEncode, className
+
+} from "@moviemasher/client-core"
 
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
 import { useClient } from "../../Hooks/useClient"
 import Clickable from "../Clickable/Clickable.lite"
+import { isAssetType } from "@moviemasher/runtime-shared"
 
 export function EncodeControl(props: PropsClickable) {
   const client = useClient()
@@ -24,7 +28,7 @@ export function EncodeControl(props: PropsClickable) {
     if (!mashMedia) return false
 
     const { kind } = mashMedia
-    return isEncodingType(kind)
+    return isAssetType(kind)
   }
   const [visible, setVisible] = React.useState(getVisible)
   const getDisabled = () => !masher.can(ClientActionRender)
@@ -52,10 +56,10 @@ export function EncodeControl(props: PropsClickable) {
       if (disabled) return
 
       const { mashMedia } = masher
-      assertMashMedia(mashMedia)
+      assertAsset(mashMedia)
 
       const { kind } = mashMedia
-      assertEncodingType(kind)
+      assertAssetType(kind)
 
       setDisabled(true)
       client.encode({ media: mashMedia, type: kind })

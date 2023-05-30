@@ -1,7 +1,6 @@
 import type {
-  DataDefinitionPutRequest, DataDefinitionPutResponse, 
   MediaDataOrError, EndpointRequest, 
-  Decoding, Encoding, MashMedia, Media, MediaObject, MediaArray, Transcoding, 
+  Decoding, Encoding, Media, MediaObject, MediaArray, Transcoding, 
 } from '@moviemasher/lib-core'
 
 import type { ClientOperationArgs } from "./LocalClient.js"
@@ -20,11 +19,11 @@ import type {
 import {
   assertObject, 
   errorPromise, isDefiniteError, 
-  assertMashMedia, 
+  assertMashAsset, 
   assertIdentified, 
   requestRecordPromise, transcodingInstance, 
-  ErrorName, error, idIsTemporary, assertPopulatedString, isMedia, 
-  isVideoMedia, isImageMedia, isUpdatableDurationDefinition, 
+  ErrorName, error, idIsTemporary, 
+  
   TypeVideo, TypeProbe, 
   pluginRequest,
 } from '@moviemasher/lib-core'
@@ -102,7 +101,7 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
     throw new Error("Method not implemented.")
 
     // const media = editor.definitions.map(object => object.toJSON()) as MediaObjects
-    // const mashObject = mashMedia.toJSON() as MashMediaObject
+    // const mashObject = mashMedia.toJSON() as MashAsset
     // const mash: MashAndMediaObject = { ...mashObject, media }
     // const request: RenderingStartRequest = {
     //   mash,
@@ -120,9 +119,9 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
 
   save(options: ClientSaveMethodArgs): Promise<MediaDataOrError> {
     const { media } = options
-    assertMashMedia(media)
+    assertMashAsset(media)
     
-    const temporaryIds = media.definitionIds.filter(idIsTemporary)
+    const temporaryIds = media.assetIds.filter(idIsTemporary)
     const temporaryMedia = temporaryIds.map(id => media.media.fromId(id))
 
     const steps: ClientProgessSteps = {
@@ -174,10 +173,10 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
   //   }
   
   //   return mashMedia.putPromise().then(() => {
-  //     if (isMashMedia(mashMedia)) {
+  //     if (isMashAsset(mashMedia)) {
   //       return {
   //         mash: mashMedia.toJSON(),
-  //         definitionIds: mashMedia.definitionIds
+  //         assetIds: mashMedia.assetIds
   //       }
   //     } 
   //   })
@@ -215,13 +214,13 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
     const requestObject: EndpointRequest = { ...saveRequest }
     requestObject.init ||= {}
     const definition: MediaObject = { id, ...media.toJSON() }
-    const request: DataDefinitionPutRequest = { definition }
+    const request = { definition }
     requestObject.init.body = request
     return requestRecordPromise(requestObject).then(result => {
       assertIdentified(result)
-      const { id, error } = result as DataDefinitionPutResponse
+      // const { id, error } = result as DataDefinitionPutResponse
       steps.step++
-      const response: MediaDataOrError = { error, data: media }
+      const response: MediaDataOrError = { ...result, data: media }
       return response
     })
   }
@@ -253,43 +252,43 @@ export class RemoteClientClass extends LocalClientClass implements RemoteClient 
     return Promise.resolve(transcoding)
   }
 
-  private updateMedia(mediaObject: MediaObject, mash: MashMedia, media?: Media): Promise<void> {
+  // private updateMedia(mediaObject: MediaObject, mash: MashAsset, media?: Media): Promise<void> {
     
-    const {id: newId } = mediaObject
-    const id = mediaObject.id || media!.id
-    assertPopulatedString(id)
+  //   const {id: newId } = mediaObject
+  //   const id = mediaObject.id || media!.id
+  //   assertPopulatedString(id)
 
-    const target = media || mash.media.fromId(newId!)
-    const { id: oldId } = target
-    const idChanged = oldId !== id
-    console.log(this.constructor.name, "updateDefinition", idChanged, mediaObject)
-    if (idChanged) {
-      mash.media.updateDefinitionId(target.id, id)
-      console.log(this.constructor.name, "updateDefinition called updateDefinitionId", target.id, id)
+  //   const target = media || mash.media.fromId(newId!)
+  //   const { id: oldId } = target
+  //   const idChanged = oldId !== id
+  //   console.log(this.constructor.name, "updateDefinition", idChanged, mediaObject)
+  //   if (idChanged) {
+  //     mash.media.updateDefinitionId(target.id, id)
+  //     console.log(this.constructor.name, "updateDefinition called updateDefinitionId", target.id, id)
 
-      // TODO - replace assign
-      Object.assign(target, mediaObject)
+  //     // TODO - replace assign
+  //     Object.assign(target, mediaObject)
       
-      if (isMedia(target)) {
-        delete target.file
-        delete target.request.response 
-        if (isVideoMedia(target)) {
-          delete target.loadedVideo 
-        }
-        else if (isUpdatableDurationDefinition(target)) delete target.loadedAudio 
-        else if (isImageMedia(target)) delete target.loadedImage 
-      }    
-    } 
-    if (!idChanged) return Promise.resolve()
+  //     if (isAsset(target)) {
+  //       delete target.file
+  //       delete target.request.response 
+  //       if (isVideoMedia(target)) {
+  //         delete target.loadedVideo 
+  //       }
+  //       else if (isUpdatableDurationDefinition(target)) delete target.loadedAudio 
+  //       else if (isImageMedia(target)) delete target.loadedImage 
+  //     }    
+  //   } 
+  //   if (!idChanged) return Promise.resolve()
     
-    const { tracks } = mash
-    const clips = tracks.flatMap(track => track.clips)
-    clips.forEach(clip => {
-      if (clip.containerId === oldId) clip.setValue(newId, 'containerId')
-      if (clip.contentId === oldId) clip.setValue(newId, 'contentId')
-    })
-    return mash.reload() || Promise.resolve()
-  }
+  //   const { tracks } = mash
+  //   const clips = tracks.flatMap(track => track.clips)
+  //   clips.forEach(clip => {
+  //     if (clip.containerId === oldId) clip.setValue(newId, 'containerId')
+  //     if (clip.contentId === oldId) clip.setValue(newId, 'contentId')
+  //   })
+  //   return mash.reload() || Promise.resolve()
+  // }
   
   protected upload(media: Media, steps: ClientProgessSteps): Promise<MediaDataOrError> {
     return Promise.resolve(error(ErrorName.ClientDisabledDelete))
@@ -501,7 +500,7 @@ export const remoteClientInstance = (args: RemoteClientOptions = {}): RemoteClie
   //         break
   //       }
   //     }
-  //     const commandOutput: VideoEncoderOptions = provided[outputType] || {}
+  //     const commandOutput: VideoOutputOptions = provided[outputType] || {}
   //     const renderingCommandOutput: RenderingCommandOutput = { ...base, ...commandOutput }
   //     return [outputType, renderingCommandOutput]
   //   }))

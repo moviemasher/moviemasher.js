@@ -1,9 +1,8 @@
-import type { Propertied } from '../../../../Base/Propertied.js'
-import type { Clip, Clips } from '../../../../Media/Mash/Track/Clip/Clip.js'
-import type { Track } from '../../../../Media/Mash/Track/Track.js'
-import type { ActionType } from '../../../../Setup/Enums.js'
-import type { Scalar, ScalarRecord } from '../../../../Types/Core.js'
+import type { ActionType } from "../../../../Setup/ActionType.js"
+import type { ClientClip, ClientClips, ClientTrack } from '../../../../Client/Mash/MashClientTypes.js'
 import type { EditorSelectionObject } from '../../EditorSelection/EditorSelection.js'
+import type { Propertied } from '@moviemasher/runtime-shared'
+import type { Scalar, ScalarRecord } from '@moviemasher/runtime-shared'
 
 export interface ActionObject {
   redoSelection: EditorSelectionObject
@@ -20,7 +19,7 @@ export interface Action {
 }
 
 export interface ChangeAction extends Action {
-  property : string
+  property: string
   target: Propertied
   updateAction(object: ChangeActionObject): void
 }
@@ -28,13 +27,13 @@ export interface ChangeAction extends Action {
 export interface ChangePropertyAction extends ChangeAction {
   redoValue: Scalar
 
-  undoValue : Scalar
+  undoValue: Scalar
   updateAction(object: ChangePropertyActionObject): void
 }
 
 export interface ChangePropertiesAction extends ChangeAction {
   redoValues: ScalarRecord
-  undoValues : ScalarRecord
+  undoValues: ScalarRecord
   updateAction(object: ChangePropertiesActionObject): void
 }
 
@@ -54,7 +53,7 @@ export interface ChangePropertiesActionObject extends ChangeActionObject {
 }
 
 export interface AddClipActionObject extends AddTrackActionObject {
-  clips: Clips
+  clips: ClientClips
   insertIndex?: number
   trackIndex: number
   redoFrame?: number
@@ -65,19 +64,19 @@ export interface AddTrackActionObject extends ActionObject {
 }
 
 export interface MoveClipActionObject extends AddTrackActionObject {
-  clip : Clip
-  insertIndex : number
-  redoFrame? : number
-  trackIndex : number
-  undoFrame? : number
-  undoInsertIndex : number
-  undoTrackIndex : number
+  clip: ClientClip
+  insertIndex: number
+  redoFrame?: number
+  trackIndex: number
+  undoFrame?: number
+  undoInsertIndex: number
+  undoTrackIndex: number
 }
 
 export interface RemoveClipActionObject extends ActionObject {
-  clip : Clip
-  index : number
-  track : Track
+  clip: ClientClip
+  index: number
+  track: ClientTrack
 }
 
 export interface MoveActionObject extends ActionObject {

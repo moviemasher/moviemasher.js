@@ -1,5 +1,5 @@
 import {errorThrow} from '../../../Helpers/Error/ErrorFunctions.js'
-import {isObject} from '../../../Utility/Is.js'
+import {isObject} from '../../../Shared/SharedGuards.js'
 import {Decoding, isDecodingType} from './Decoding.js'
 
 export const isDecoding = (value: any): value is Decoding => (

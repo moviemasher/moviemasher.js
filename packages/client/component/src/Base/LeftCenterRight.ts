@@ -24,7 +24,7 @@ export class LeftCenterRight extends Slotted {
 
   protected centerContent(htmls: Htmls): OptionalContent { 
     this.importTags('movie-masher-span')
-    return html`<movie-masher-span
+    return html`<movie-masher-span 
       part='${CenterSlot}' slotted='${CenterSlot}' class='${CenterSlot}'
     >${htmls}</movie-masher-span>` 
   }
@@ -35,6 +35,7 @@ export class LeftCenterRight extends Slotted {
       part='${LeftSlot}' slotted='${LeftSlot}' class='${LeftSlot}'
     >${htmls}</movie-masher-span>` 
   }
+  
   protected rightContent(htmls: Htmls): OptionalContent { 
     this.importTags('movie-masher-span')
     return html`<movie-masher-span 
@@ -84,8 +85,8 @@ export class LeftCenterRight extends Slotted {
     header > .left,
     footer > .left,
     div > .left {
-      background-color: gold;
-      
+      background-color: yellow;
+      display: flex;
     }
  
   `

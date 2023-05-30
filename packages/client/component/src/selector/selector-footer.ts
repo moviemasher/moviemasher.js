@@ -1,4 +1,4 @@
-import type { Htmls, MovieMasher, OptionalContent } from '../declarations.js'
+import type { Htmls, MovieMasherContext, OptionalContent } from '../declarations.js'
 
 import { consume } from '@lit-labs/context'
 import { html } from 'lit'
@@ -8,27 +8,29 @@ import { customElement } from 'lit/decorators/custom-element.js'
 
 import { Footer } from '../Base/LeftCenterRight.js'
 import { movieMasherContext } from '../movie-masher-context.js'
+import { AssetType, TypeVideo } from '@moviemasher/runtime-shared'
 
 @customElement('movie-masher-selector-footer')
 export class SelectorFooterElement extends Footer {
   @consume({ context: movieMasherContext, subscribe: true })//
   // @property({ attribute: false })
-  declare movieMasherContext: MovieMasher
+  declare masherContext: MovieMasherContext
 
   override leftContent(slots: Htmls): OptionalContent {
 
     this.importTags('movie-masher-a')
+    const slotsCopy = [...slots]
+
+    const {masherContext} = this
+    let type: AssetType = TypeVideo 
+
     
-    const { mediaType: type } = this.movieMasherContext
-    console.log(this.tagName, 'leftContent', type)
-    return super.leftContent([
-      ...slots, 
-      html`
-        <movie-masher-a 
-          class='${ifDefined(type === 'mash' ? 'selected' : undefined)}' 
-          icon='mash' emit='mediatype' detail='mash'
-        ></movie-masher-a>
-      `,
+    if (masherContext) type = masherContext.mediaType
+
+  
+
+    // console.log(this.tagName, 'leftContent', type)
+    slotsCopy.push(
       html`
         <movie-masher-a 
           class='${ifDefined(type === 'video' ? 'selected' : undefined)}' 
@@ -43,23 +45,34 @@ export class SelectorFooterElement extends Footer {
       `,
       html`
         <movie-masher-a 
-        class='${ifDefined(type === 'audio' ? 'selected' : undefined)}' 
-        icon='audio' emit='mediatype' detail='audio'
+          class='${ifDefined(type === 'audio' ? 'selected' : undefined)}' 
+          icon='audio' emit='mediatype' detail='audio'
         ></movie-masher-a>
       `,
-      html`
-        <movie-masher-a 
-        class='${ifDefined(type === 'font' ? 'selected' : undefined)}' 
-        icon='font' emit='mediatype' detail='font'
-        ></movie-masher-a>
-      `,
-      html`
-      <movie-masher-a 
-        class='${ifDefined(type === 'effect' ? 'selected' : undefined)}' 
-        icon='effect' emit='mediatype' detail='effect'
-      ></movie-masher-a>
-    `,
-    ]) 
+      // html`
+      //   <movie-masher-a 
+      //     class='${ifDefined(type === 'mash' ? 'selected' : undefined)}' 
+      //     icon='mash' emit='mediatype' detail='mash'
+      //   ></movie-masher-a>
+      // `,
+      
+      // html`
+      //   <movie-masher-a 
+      //   class='${ifDefined(type === 'font' ? 'selected' : undefined)}' 
+      //   icon='font' emit='mediatype' detail='font'
+      //   ></movie-masher-a>
+      // `,
+      // html`
+      // <movie-masher-a 
+      //   class='${ifDefined(type === 'effect' ? 'selected' : undefined)}' 
+      //   icon='effect' emit='mediatype' detail='effect'
+      // ></movie-masher-a>
+    // `,
+    )
+    
+
+    
+    return super.leftContent(slotsCopy) 
   }
 
   override rightContent(slots: Htmls): OptionalContent {
@@ -67,6 +80,7 @@ export class SelectorFooterElement extends Footer {
     return super.rightContent([
       ...slots, 
       html`<movie-masher-selector-input 
+        slotted='input'
         icon='upload' emit='import'
       ></movie-masher-selector-input>`,
     ])

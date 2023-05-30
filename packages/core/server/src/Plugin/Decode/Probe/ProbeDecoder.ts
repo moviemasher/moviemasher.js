@@ -9,7 +9,7 @@ import {
   ProbeDuration, errorCaught, idGenerateString, JsonExtension, NewlineChar, 
   Numbers, StringDataOrError, TypeProbe, ProbingData, Runtime, ProbeSize
 } from "@moviemasher/lib-core"
-import { EnvironmentKeyApiDirTemporary } from '../../../Environment/ServerEnvironment'
+import { EnvironmentKeyApiDirTemporary } from '../../../Environment/ServerEnvironment.js'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 

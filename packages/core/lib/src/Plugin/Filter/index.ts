@@ -1,5 +1,7 @@
 export * from './Definitions/index.js'
 export * from './Filter.js'
+export * from './Filters.js'
 export * from './FilterClass.js'
 export * from './FilterDefinitionClass.js'
 export * from './FilterFactory.js'
+export * from './FilterFunctions.js'

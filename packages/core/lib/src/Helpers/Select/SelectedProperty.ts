@@ -1,9 +1,13 @@
 import type { SelectorType } from '../../Setup/Enums.js'
-import type { PropertiedChangeHandler } from '../../Base/Propertied.js'
-import type { Property } from '../../Setup/Property.js'
-import type { Scalar } from '../../Types/Core.js'
+import type { Property } from '@moviemasher/runtime-shared'
+import type { Scalar } from '@moviemasher/runtime-shared'
 import type { IndexHandler } from './Select.js'
-import type { Movable, Movables } from '../../Media/Mash/Mash.js'
+import type { Movable, Movables } from "../../Setup/Movable.js"
+
+export interface PropertiedChangeHandler {
+  (property: string, value: Scalar): void
+}
+
 
 
 export interface Selected {

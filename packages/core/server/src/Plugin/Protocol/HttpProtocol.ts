@@ -13,14 +13,14 @@ import type {
   ClientVideo, JsonRecord, JsonRecords, StringData, FontType, StringType,  
 } from "@moviemasher/lib-core"
 import {
-  TypeFont, TypeString, TypeResolve, TypeProtocol, ProtocolHttp, 
+  TypeProtocol, ProtocolHttp, 
   error, errorCaught, ErrorName, ProtocolHttps, urlFilename, TextExtension, 
   isDefiniteError, isPopulatedString, requestExtension, 
-  pluginDataOrErrorPromise, endpointFromUrl, requestPromise, assertPopulatedString,
+  assertPopulatedString,
   Runtime,
 } from "@moviemasher/lib-core"
-import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment'
-import { requestArgs, requestArgsHash } from '../../Utility/Request'
+import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment.js'
+import { requestArgs, requestArgsHash } from '../../Utility/Request.js'
 
 
 interface FileAndMimetype { 
@@ -88,41 +88,41 @@ function promise(request: EndpointRequest, type: LoadType): Promise<ProtocolData
     const { file, mimetype, mimeOk, extOk } = data
     if (mimeOk && extOk) return { data: file } as StringData
       // file was saved with temporary extension
-    if (mimetype) {
-      if (type === TypeFont) {
-        return pluginDataOrErrorPromise(mimetype, TypeResolve).then(onError => {
-          if (isDefiniteError(onError)) return onError
+    // if (mimetype) {
+    //   if (type === TypeFont) {
+    //     return pluginDataOrErrorPromise(mimetype, TypeResolve).then(onError => {
+    //       if (isDefiniteError(onError)) return onError
 
-          const resolvePlugin = onError.data
-          const url = resolvePlugin.url(file, type)
-          if (url) {
-            const request: EndpointRequest = { endpoint: endpointFromUrl(url) }
-            return requestPromise(request, TypeString)
-            // switch (type) {
-            //   case AudioType: { const something = requestClientMediaPromise(request, type).then(onError => {
-            //     if (isDefiniteError(onError)) return onError
-            //     const { data } = onError
+    //       const resolvePlugin = onError.data
+    //       const url = resolvePlugin.url(file, type)
+    //       if (url) {
+    //         const request: EndpointRequest = { endpoint: endpointFromUrl(url) }
+    //         return requestPromise(request, TypeString)
+    //         // switch (type) {
+    //         //   case AudioType: { const something = requestClientMediaPromise(request, type).then(onError => {
+    //         //     if (isDefiniteError(onError)) return onError
+    //         //     const { data } = onError
 
-            //    return error(ErrorName.Type)
-            //   }); break }
-            //   case TypeFont: { const something = requestClientMediaPromise(request, type); break }
-            //   case ImageType: { const something = requestClientMediaPromise(request, type); break }
-            //   case VideoType: { const something = requestClientMediaPromise(request, type); break }
-            // }
-          }
+    //         //    return error(ErrorName.Type)
+    //         //   }); break }
+    //         //   case TypeFont: { const something = requestClientMediaPromise(request, type); break }
+    //         //   case ImageType: { const something = requestClientMediaPromise(request, type); break }
+    //         //   case VideoType: { const something = requestClientMediaPromise(request, type); break }
+    //         // }
+    //       }
 
-          // switch (type) {
-          //   case AudioType: return resolvePlugin.promise(file, type)
-          //   case TypeFont: return resolvePlugin.promise(file, type)
-          //   case ImageType: return resolvePlugin.promise(file, type)
-          //   case VideoType: return resolvePlugin.promise(file, type)
-          // }
+    //       // switch (type) {
+    //       //   case AudioType: return resolvePlugin.promise(file, type)
+    //       //   case TypeFont: return resolvePlugin.promise(file, type)
+    //       //   case ImageType: return resolvePlugin.promise(file, type)
+    //       //   case VideoType: return resolvePlugin.promise(file, type)
+    //       // }
         
-          return error(ErrorName.Type)
-          // return data.promise(file, type)
-        })
-      }
-    }
+    //       return error(ErrorName.Type)
+    //       // return data.promise(file, type)
+    //     })
+    //   }
+    // }
     return error(ErrorName.Type)
   })
 }

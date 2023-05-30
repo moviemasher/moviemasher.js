@@ -212,7 +212,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -229,7 +229,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -240,9 +240,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -372,7 +408,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -884,7 +920,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -901,7 +937,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -912,9 +948,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -1044,7 +1116,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -1354,6 +1426,12 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/hello.test.e2e.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/icon.ts",
       "declarations": [
         {
@@ -1637,6 +1715,14 @@
           "name": "*",
           "declaration": {
             "name": "*",
+            "package": "./movie-masher-context.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
             "package": "./icon.js"
           }
         },
@@ -1654,6 +1740,14 @@
           "declaration": {
             "name": "*",
             "package": "./interceptor/index.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./request/index.js"
           }
         },
         {
@@ -1942,7 +2036,7 @@
               "privacy": "private",
               "return": {
                 "type": {
-                  "text": "Promise<MediaObject | void>"
+                  "text": "Promise<AssetObject | void>"
                 }
               },
               "parameters": [
@@ -1960,7 +2054,7 @@
               "privacy": "private",
               "return": {
                 "type": {
-                  "text": "Promise<MediaObject | void>"
+                  "text": "Promise<AssetObject | void>"
                 }
               },
               "parameters": [
@@ -2086,7 +2180,7 @@
               "kind": "field",
               "name": "importedMediaObjects",
               "type": {
-                "text": "MediaObjects"
+                "text": "AssetObjects"
               },
               "default": "[]"
             },
@@ -2127,7 +2221,7 @@
                 {
                   "name": "event",
                   "type": {
-                    "text": "MediaEvent"
+                    "text": "AssetPromiseEvent"
                   }
                 }
               ]
@@ -2136,7 +2230,7 @@
               "kind": "field",
               "name": "mediaObjectsFetched",
               "type": {
-                "text": "MediaObjects"
+                "text": "AssetObjects"
               },
               "default": "[]"
             },
@@ -2144,7 +2238,7 @@
               "kind": "field",
               "name": "_mediaObjects",
               "type": {
-                "text": "MediaObjects | undefined"
+                "text": "AssetObjects | undefined"
               },
               "privacy": "private"
             },
@@ -2166,7 +2260,7 @@
               "kind": "field",
               "name": "mediaObjectsParams",
               "type": {
-                "text": "MediaObjectsParams"
+                "text": "AssetObjectsParams"
               },
               "default": "{ type: TypeImage }"
             },
@@ -2196,7 +2290,7 @@
               "kind": "field",
               "name": "_mediaObjectsFetchedPromise",
               "type": {
-                "text": "Promise<MediaObjects> | undefined"
+                "text": "Promise<AssetObjects> | undefined"
               },
               "privacy": "private"
             },
@@ -2204,7 +2298,7 @@
               "kind": "field",
               "name": "mediaObjectsFetchedPromise",
               "type": {
-                "text": "Promise<MediaObjects>"
+                "text": "Promise<AssetObjects>"
               },
               "privacy": "private"
             },
@@ -2212,7 +2306,7 @@
               "kind": "field",
               "name": "mediaObjectsFetchedPromiseInitialize",
               "type": {
-                "text": "Promise<MediaObjects>"
+                "text": "Promise<AssetObjects>"
               },
               "privacy": "private"
             },
@@ -2225,9 +2319,9 @@
               "kind": "field",
               "name": "mediaType",
               "type": {
-                "text": "MediaType"
+                "text": "AssetType"
               },
-              "default": "'image'",
+              "default": "TypeImage",
               "attribute": "media-type"
             },
             {
@@ -2245,11 +2339,11 @@
             },
             {
               "kind": "field",
-              "name": "movieMasherContext",
+              "name": "masherContext",
               "type": {
-                "text": "MovieMasher"
+                "text": "MovieMasherContext"
               },
-              "default": "{ \n    accept: this.accept,\n    mediaType: this.mediaType, \n    mediaObjects: this.mediaObjects,\n  }"
+              "default": "{ \n      accept: this.accept,\n      mediaType: this.mediaType, \n      mediaObjects: this.mediaObjects,\n    }"
             },
             {
               "kind": "field",
@@ -2340,7 +2434,7 @@
                 {
                   "name": "options",
                   "type": {
-                    "text": "Partial<MovieMasher>"
+                    "text": "Partial<MovieMasherContext>"
                   }
                 }
               ]
@@ -2362,36 +2456,6 @@
               },
               "default": "-1",
               "attribute": "video-max"
-            },
-            {
-              "kind": "field",
-              "name": "styleBox",
-              "static": true,
-              "default": "css`\n    * {\n      box-sizing: border-box;\n    }\n  `"
-            },
-            {
-              "kind": "field",
-              "name": "cssVariables",
-              "static": true,
-              "default": "css`\n    :host {\n      --icon-size: 24px;\n      --button-size: 24px;\n      \n\n\n\n\n      --padding: 40px;\n      --spacing: 20px;\n      --header-height: 38px;\n      --footer-height: 38px;\n      \n      --border-size: 1px;\n      --border: var(--border-size) solid;\n      --border-radius: 5px;\n\n      --hue: 281;\n      --gap: 20px;\n      --areas:\n        \"preview media inspect\"\n        \"compose compose inspect\";\n      --columns:\n        calc(\n          var(--viewer-width)\n          + (var(--border-size) * 2)\n        )\n        1fr\n        var(--inspector-width);\n      --rows:\n        calc(\n          var(--viewer-height)\n          + var(--header-height)\n          + var(--footer-height)\n        )\n        1fr;\n\n      --button-transition:\n          background-color 0.25s ease-out,\n          border-color 0.25s ease-out,\n          color 0.25s ease-out;\n      --chroma-primary: 0.085;\n      /* --chroma-secondary: 0.1; */\n      /* --chroma-tertiary: 0.125; */\n\n      --lightness-back-primary: 95%;\n      --lightness-back-secondary: 75%;\n      --lightness-back-tertiary: 55%;\n\n      --lightness-fore-primary: 45%;\n      --lightness-fore-secondary: 35%;\n      --lightness-fore-tertiary: 25%;\n    \n\n      --darkness-back-primary: 5%;\n      --darkness-back-secondary: 25%;\n      --darkness-back-tertiary: 30%;\n\n      --darkness-fore-primary: 45%;\n      --darkness-fore-secondary: 60%;\n      --darkness-fore-tertiary: 75%;\n\n\n\n      --viewer-aspect-ratio: 16 / 9;\n      --icon-ratio: 0.25;\n      --viewer-width: 480px;\n      --viewer-height: 270px;\n      --scrubber-height: 16px;\n      --scrubber-width: 16px;\n      --inspector-width: 240px;\n      --track-width: 34px;\n      --track-height: 60px;\n      \n      --drop-size: 2px;\n      --progress-width: calc(2 * var(--icon-size));\n      --dropping-shadow: \n        var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,\n        calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;\n      ;\n\n\n      --div-pad: 20px;\n      --div-space: 20px;\n      --div-back: oklch(var(--lightness-back-primary) 0 0);\n      --div-fore: oklch(var(--lightness-fore-primary) 0 0);\n\n      --section-padding: 5px;\n      --section-spacing: 5px;\n      --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);\n      --section-back: oklch(var(--lightness-back-tertiary) 0 0);\n        \n      --label-fore: red;\n      --label-back: black;\n\n      --control-back: oklch(var(--lightness-back-secondary) 0 0);\n      --control-back-disabled: var(--control-back);\n      --control-back-hover: var(--control-back);\n      --control-back-selected: var(--control-back);\n\n      --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));\n      --control-fore-disabled: oklch(var(--lightness-fore-secondary) var(--chroma-primary) var(--hue));\n\n      --control-fore-hover: var(--control-hover-selected);\n      --control-fore-selected:var(--control-hover-selected);\n      --control-fore: var(--fore-secondary);\n      --control-padding: 5px;\n      --control-spacing: 5px;\n\n      --item-fore: yellow;\n      --item-fore-selected: yellow;\n      --item-fore-hover: yellow;\n      --item-back: blue;\n      --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));\n\n      --item-back-selected: var(--item-back-hover-selected);\n      --item-back-hover:  var(--item-back-hover-selected);\n\n\n      --color-drop: red;\n\n\n    /* --color-back-secondary: oklch(var(--lightness-back-secondary) var(--chroma-secondary) var(--hue)); */\n      /* --color-back-tertiary: oklch(var(--lightness-back-tertiary) var(--chroma-tertiary) var(--hue)); */\n\n      /* --color-fore-secondary: oklch(var(--lightness-fore-secondary) var(--chroma-secondary) var(--hue)); */\n      /* --color-fore-tertiary: oklch(var(--lightness-fore-tertiary) var(--chroma-tertiary) var(--hue)); */\n\n    }\n  `"
-            },
-            {
-              "kind": "field",
-              "name": "styleIdk",
-              "static": true,
-              "default": "css`\n    :host {\n      .panel .content {\n        --padding: 20px;\n        --spacing: 10px;\n      }\n\n      .panels {\n        grid-area: panels;\n        display: flex;\n        flex-direction: column;\n        gap: var(--spacing);\n      }\n\n      .panel .content .drop-box {\n        pointer-events: none;\n        position: absolute;\n        top: 0px;\n        left: 0px;\n        bottom: 0px;\n        right: 0px;\n      }\n\n      .panel .content.dropping .drop-box {\n        box-shadow: var(--dropping-shadow);\n      }\n\n \n      .panel select {\n        height: var(--button-size);\n      }\n    }\n\n  `"
-            },
-            {
-              "kind": "field",
-              "name": "styleForm",
-              "static": true,
-              "default": "css`\n    div {\n      flex-grow: 1;\n      display: grid;\n      gap: var(--gap);\n      grid-template-areas: var(--areas);\n      grid-template-columns: var(--columns);\n      grid-template-rows: var(--rows);\n    }\n  `"
-            },
-            {
-              "kind": "field",
-              "name": "styleQueries",
-              "static": true,
-              "default": "css`\n  /* \n    @media (max-width: 999px) {\n      :host {\n        display: block;\n        grid-template-areas: \"preview\" \"compose\" \"inspect\" \"media\";\n      }\n    } */\n    @media(prefers-color-scheme: dark) {\n      :host {\n        --lightness-back-primary: var(--darkness-back-primary);\n        --lightness-back-secondary: var(--darkness-back-secondary);\n        --lightness-back-tertiary: var(--darkness-back-tertiary);\n        --lightness-fore-primary: var(--darkness-fore-primary);\n        --lightness-fore-secondary: var(--darkness-fore-secondary);\n        --lightness-fore-tertiary: var(--darkness-fore-tertiary);\n        --color-drop: yellow;\n      } \n    }\n  `"
             },
             {
               "description": "icon - id of icon to use for viewer section",
@@ -2418,7 +2482,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -2435,7 +2499,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -2446,9 +2510,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -2578,7 +2678,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -2859,11 +2959,11 @@
             {
               "name": "media-type",
               "type": {
-                "text": "MediaType"
+                "text": "AssetType"
               },
               "default": "TypeImage",
               "resolveInitializer": {
-                "module": "src/movie-masher.ts"
+                "package": "@moviemasher/runtime-shared"
               },
               "fieldName": "mediaType"
             },
@@ -2983,82 +3083,9 @@
             },
             {
               "kind": "field",
-              "name": "assignedElements",
+              "name": "contents",
               "type": {
-                "text": "Array<HTMLElement>"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "childAdded",
-              "privacy": "private",
-              "parameters": [
-                {
-                  "name": "child",
-                  "type": {
-                    "text": "Slotted"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "childRemoved",
-              "privacy": "private",
-              "parameters": [
-                {
-                  "name": "child",
-                  "type": {
-                    "text": "Slotted"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "childrenBySlot",
-              "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "connectionHandler",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "ConnectionEvent"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "defaultContent",
-              "type": {
-                "text": "Content | void"
+                "text": "Contents"
               },
               "privacy": "protected",
               "inheritedFrom": {
@@ -3067,264 +3094,10 @@
               }
             },
             {
-              "kind": "method",
-              "name": "defaultSlottedContent",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "Content | void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "slot",
-                  "type": {
-                    "text": "string"
-                  }
-                },
-                {
-                  "name": "slots",
-                  "type": {
-                    "text": "Htmls"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
               "kind": "field",
-              "name": "exportParts",
+              "name": "defaultContent",
               "type": {
-                "text": "string | undefined"
-              },
-              "attribute": "exportParts",
-              "reflects": true,
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "getUpdateComplete",
-              "return": {
-                "type": {
-                  "text": "Promise<boolean>"
-                }
-              },
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "slotsAndPaths",
-              "type": {
-                "text": "SlottedEventDetail"
-              },
-              "privacy": "private",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "slotChangeHandler",
-              "privacy": "private",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "slottedHandler",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "SlottedEvent"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "slotsAssignedInChildren",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "private",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "slotted",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "slotted",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "slots",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "protected",
-              "default": "[]",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "dispatchConnection",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "detail",
-                  "type": {
-                    "text": "boolean"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "elementNames",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "string[]"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "optional": true,
-                  "type": {
-                    "text": "Elements"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importElements",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "type": {
-                    "text": "Elements"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importTags",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "names",
-                  "type": {
-                    "text": "string[]"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "importFinished",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importTag",
-              "privacy": "protected",
-              "static": true,
-              "parameters": [
-                {
-                  "name": "names",
-                  "type": {
-                    "text": "string[]"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "promises",
-              "type": {
-                "text": "Map<string, Promise<string>>"
-              },
-              "privacy": "private",
-              "static": true,
-              "default": "new Map()",
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "contents",
-              "type": {
-                "text": "Contents"
+                "text": "Content | void"
               },
               "privacy": "protected",
               "inheritedFrom": {
@@ -3383,36 +3156,11 @@
             }
           ],
           "superclass": {
-            "name": "Slotted",
-            "module": "/src/Base/Slotted.js"
+            "name": "Component",
+            "module": "/src/Base/Component.js"
           },
           "tagName": "movie-masher-span",
           "customElement": true,
-          "attributes": [
-            {
-              "name": "exportParts",
-              "type": {
-                "text": "string | undefined"
-              },
-              "fieldName": "exportParts",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "name": "slotted",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "slotted",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            }
-          ],
           "events": [
             {
               "name": "error",
@@ -3893,7 +3641,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -3910,7 +3658,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -3921,9 +3669,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -4053,7 +3837,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -4684,7 +4468,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `"
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `"
             },
             {
               "kind": "field",
@@ -4706,7 +4490,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -4723,7 +4507,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -4734,9 +4518,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -4866,7 +4686,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -5277,7 +5097,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -5303,7 +5123,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -5320,7 +5140,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -5331,9 +5151,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -5463,7 +5319,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -5851,7 +5707,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -5877,7 +5733,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -5894,7 +5750,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -5905,9 +5761,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -6037,7 +5929,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -6417,7 +6309,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -6443,7 +6335,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -6460,7 +6352,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -6471,9 +6363,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -6603,7 +6531,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -7049,7 +6977,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -7066,7 +6994,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -7077,9 +7005,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -7209,7 +7173,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -7500,7 +7464,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ]
@@ -7513,16 +7477,40 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ]
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()"
+              "default": "new Map<string, Element>()"
             },
             {
               "kind": "method",
@@ -7649,7 +7637,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -8110,7 +8098,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -8136,7 +8124,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -8153,7 +8141,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -8164,9 +8152,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -8296,7 +8320,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -8702,7 +8726,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -8728,7 +8752,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -8745,7 +8769,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -8756,9 +8780,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -8888,7 +8948,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -9307,7 +9367,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -9333,7 +9393,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -9350,7 +9410,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -9361,9 +9421,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -9493,7 +9589,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -9937,7 +10033,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -9954,7 +10050,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -9965,9 +10061,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -10097,7 +10229,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -10394,42 +10526,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/input/file.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "FileInputlement",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "movie-masher-file",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "FileInputlement",
-          "declaration": {
-            "name": "FileInputlement",
-            "module": "src/input/file.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "movie-masher-file",
-          "declaration": {
-            "name": "FileInputlement",
-            "module": "src/input/file.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/inspector/index.ts",
       "declarations": [],
       "exports": [
@@ -10629,7 +10725,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -10655,7 +10751,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -10672,7 +10768,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -10683,9 +10779,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -10815,7 +10947,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -11221,7 +11353,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -11247,7 +11379,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -11264,7 +11396,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -11275,9 +11407,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -11407,7 +11575,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -11826,7 +11994,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -11852,7 +12020,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -11869,7 +12037,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -11880,9 +12048,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -12012,7 +12216,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -12456,7 +12660,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -12473,7 +12677,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -12484,9 +12688,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -12616,7 +12856,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -13498,6 +13738,134 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/request/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./request.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/request/request.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "requestUrl",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          },
+          "parameters": [
+            {
+              "name": "request",
+              "type": {
+                "text": "EndpointRequest"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "requestAudioPromise",
+          "parameters": [
+            {
+              "name": "request",
+              "type": {
+                "text": "EndpointRequest"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "requestFontPromise",
+          "parameters": [
+            {
+              "name": "request",
+              "type": {
+                "text": "EndpointRequest"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "requestImagePromise",
+          "parameters": [
+            {
+              "name": "request",
+              "type": {
+                "text": "EndpointRequest"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "requestVideoPromise",
+          "parameters": [
+            {
+              "name": "request",
+              "type": {
+                "text": "EndpointRequest"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "requestUrl",
+          "declaration": {
+            "name": "requestUrl",
+            "module": "src/request/request.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "requestAudioPromise",
+          "declaration": {
+            "name": "requestAudioPromise",
+            "module": "src/request/request.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "requestFontPromise",
+          "declaration": {
+            "name": "requestFontPromise",
+            "module": "src/request/request.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "requestImagePromise",
+          "declaration": {
+            "name": "requestImagePromise",
+            "module": "src/request/request.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "requestVideoPromise",
+          "declaration": {
+            "name": "requestVideoPromise",
+            "module": "src/request/request.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/selector/index.ts",
       "declarations": [],
       "exports": [
@@ -13562,9 +13930,9 @@
           "members": [
             {
               "kind": "field",
-              "name": "movieMasherContext",
+              "name": "masherContext",
               "type": {
-                "text": "MovieMasher"
+                "text": "MovieMasherContext | undefined"
               }
             },
             {
@@ -13720,7 +14088,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -13746,7 +14114,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -13763,7 +14131,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -13774,9 +14142,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -13906,7 +14310,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -14161,9 +14565,9 @@
           "members": [
             {
               "kind": "field",
-              "name": "movieMasherContext",
+              "name": "masherContext",
               "type": {
-                "text": "MovieMasher"
+                "text": "MovieMasherContext"
               }
             },
             {
@@ -14319,7 +14723,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -14345,7 +14749,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -14362,7 +14766,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -14373,9 +14777,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -14505,7 +14945,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -14924,7 +15364,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -14950,7 +15390,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -14967,7 +15407,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -14978,9 +15418,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -15110,7 +15586,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -15377,9 +15853,9 @@
           "members": [
             {
               "kind": "field",
-              "name": "movieMasher",
+              "name": "movieMasherContext",
               "type": {
-                "text": "MovieMasher"
+                "text": "MovieMasherContext | undefined"
               }
             },
             {
@@ -15596,7 +16072,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -15613,7 +16089,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -15624,9 +16100,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -15756,7 +16268,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -16132,28 +16644,6 @@
             },
             {
               "kind": "method",
-              "name": "content",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "Content"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "contents",
-                  "type": {
-                    "text": "Contents"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "method",
               "name": "defaultSlottedContent",
               "privacy": "protected",
               "return": {
@@ -16207,6 +16697,28 @@
               }
             },
             {
+              "kind": "method",
+              "name": "content",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Content"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "contents",
+                  "type": {
+                    "text": "Contents"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "styleHost",
               "static": true,
@@ -16246,7 +16758,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -16263,7 +16775,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -16274,9 +16786,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -16406,7 +16954,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -16689,29 +17237,38 @@
             },
             {
               "kind": "field",
-              "name": "media",
+              "name": "clientAsset",
               "type": {
-                "text": "Media | undefined"
-              }
+                "text": "ClientAsset | undefined | undefined"
+              },
+              "privacy": "private"
             },
             {
-              "kind": "method",
-              "name": "mediaRefresh",
-              "privacy": "private",
-              "parameters": [
-                {
-                  "name": "mediaObject",
-                  "type": {
-                    "text": "MediaObject"
-                  }
-                }
-              ]
+              "kind": "field",
+              "name": "_clientAssetPromise",
+              "type": {
+                "text": "Promise<ClientAsset | undefined> | undefined"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "clientAssetPromise",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "clientAssetPromiseInitialize",
+              "type": {
+                "text": "Promise<ClientAsset | undefined>"
+              },
+              "privacy": "private"
             },
             {
               "kind": "field",
               "name": "_mediaObject",
               "type": {
-                "text": "MediaObject | undefined"
+                "text": "AssetObject | undefined"
               },
               "privacy": "private"
             },
@@ -16821,24 +17378,6 @@
               }
             }
           ],
-          "events": [
-            {
-              "name": "media",
-              "type": {
-                "text": "CustomEvent"
-              }
-            },
-            {
-              "name": "error",
-              "type": {
-                "text": "ErrorEvent"
-              },
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            }
-          ],
           "attributes": [
             {
               "name": "media-id",
@@ -16854,7 +17393,19 @@
             "module": "/src/Base/Component.js"
           },
           "tagName": "movie-masher-selector-span",
-          "customElement": true
+          "customElement": true,
+          "events": [
+            {
+              "name": "error",
+              "type": {
+                "text": "ErrorEvent"
+              },
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            }
+          ]
         }
       ],
       "exports": [
@@ -16872,134 +17423,6 @@
           "declaration": {
             "name": "SelectorSpanElement",
             "module": "src/selector/selector-span.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/request/index.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "*",
-          "declaration": {
-            "name": "*",
-            "package": "./request.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/request/request.ts",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "requestUrl",
-          "return": {
-            "type": {
-              "text": "string"
-            }
-          },
-          "parameters": [
-            {
-              "name": "request",
-              "type": {
-                "text": "EndpointRequest"
-              }
-            }
-          ]
-        },
-        {
-          "kind": "function",
-          "name": "requestAudioPromise",
-          "parameters": [
-            {
-              "name": "request",
-              "type": {
-                "text": "EndpointRequest"
-              }
-            }
-          ]
-        },
-        {
-          "kind": "function",
-          "name": "requestFontPromise",
-          "parameters": [
-            {
-              "name": "request",
-              "type": {
-                "text": "EndpointRequest"
-              }
-            }
-          ]
-        },
-        {
-          "kind": "function",
-          "name": "requestImagePromise",
-          "parameters": [
-            {
-              "name": "request",
-              "type": {
-                "text": "EndpointRequest"
-              }
-            }
-          ]
-        },
-        {
-          "kind": "function",
-          "name": "requestVideoPromise",
-          "parameters": [
-            {
-              "name": "request",
-              "type": {
-                "text": "EndpointRequest"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "requestUrl",
-          "declaration": {
-            "name": "requestUrl",
-            "module": "src/request/request.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "requestAudioPromise",
-          "declaration": {
-            "name": "requestAudioPromise",
-            "module": "src/request/request.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "requestFontPromise",
-          "declaration": {
-            "name": "requestFontPromise",
-            "module": "src/request/request.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "requestImagePromise",
-          "declaration": {
-            "name": "requestImagePromise",
-            "module": "src/request/request.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "requestVideoPromise",
-          "declaration": {
-            "name": "requestVideoPromise",
-            "module": "src/request/request.ts"
           }
         }
       ]
@@ -17236,7 +17659,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -17262,7 +17685,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -17279,7 +17702,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -17290,9 +17713,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -17422,7 +17881,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -17797,7 +18256,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -17823,7 +18282,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -17840,7 +18299,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -17851,9 +18310,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -17983,7 +18478,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -18402,7 +18897,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: gold;\n      \n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -18428,7 +18923,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -18445,7 +18940,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -18456,9 +18951,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -18588,7 +19119,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }
@@ -19032,7 +19563,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -19049,7 +19580,7 @@
                 {
                   "name": "child",
                   "type": {
-                    "text": "Slotted"
+                    "text": "Element"
                   }
                 }
               ],
@@ -19060,9 +19591,45 @@
             },
             {
               "kind": "field",
+              "name": "childElements",
+              "type": {
+                "text": "Element[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childSlotteds",
+              "type": {
+                "text": "Slotted[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "childComponents",
+              "type": {
+                "text": "Component[]"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "childrenBySlot",
               "privacy": "protected",
-              "default": "new Map<string, Slotted>()",
+              "default": "new Map<string, Element>()",
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -19192,7 +19759,7 @@
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "detail",
+                  "name": "connected",
                   "type": {
                     "text": "boolean"
                   }

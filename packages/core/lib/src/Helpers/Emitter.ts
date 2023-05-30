@@ -1,5 +1,5 @@
-import type { UnknownRecord } from '../Types/Core.js'
-import type { EventType } from '../Setup/Enums.js'
+import type { UnknownRecord } from '@moviemasher/runtime-shared'
+import type { EventType } from "../Setup/EventType.js"
 
 export class Emitter extends EventTarget {
   emit(type: EventType, detail?: UnknownRecord): void {

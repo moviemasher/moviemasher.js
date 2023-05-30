@@ -1,11 +1,9 @@
 import type {
-  UploadType, PotentialError,
+  UploadType, 
   MediaDataArrayOrError,
-  Masher, Strings, MediaDataOrError, MasherOptions, 
+  Masher, MediaDataOrError, MasherOptions, 
   PluginDataOrErrorPromiseFunction, PluginDataOrErrorFunction, 
   TranslateArgs,
-  NestedStringRecord,
-  DataOrError
 } from '@moviemasher/lib-core'
 import type { 
   ClientLimits, ClientReadParams, LocalClient, LocalClientOptions, 
@@ -17,31 +15,38 @@ import type {
 import type { Icon, Translation } from '../declarations.js'
 
 import {
-  isStorableType, isTyped, mediaTypeFromMime,
-  isMediaObject,
+  isTyped, mediaTypeFromMime,
+  isAssetObject,
   mediaDefinition,
   requestRecordsPromise,
-  assertMediaObject,
+  assertAssetObject,
   Emitter,
   Runtime,
   TypeMasher,
-  errorThrow, isEncodingType,
-  JsonMimetype, requestPopulate, requestRecordPromise, TypeVideo,
+  errorThrow,
+  JsonMimetype, requestPopulate, requestRecordPromise, 
   ErrorName, error, AsteriskChar, CommaChar, errorPromise, isDefiniteError,
-  TypesEncoding, isAboveZero, SlashChar, TypesStorable, pluginDataOrError,
+  isAboveZero, SlashChar, pluginDataOrError,
   pluginDataOrErrorPromise, assertObject, isPopulatedString,
   isNestedStringRecord, DotChar,
   endpointFromUrl,
-  isStringRecord
+  isStringRecord,
+  isUploadType
 } from '@moviemasher/lib-core'
 import { 
   DefaultLocalClientArgs, OperationRead, OperationsLocal, isLocalOperation, 
   OperationImport, OperationPlugin 
 } from './LocalClient.js'
-import { fileMediaObjectPromise } from './File.js'
+import { fileMediaObjectPromise } from '../../client-deleted/File.js'
 
 import '../Protocol/Http.js'
 import '../Protocol/Blob.js'
+import { 
+  TypeVideo, TypesAsset, isAssetType,
+  NestedStringRecord,
+  DataOrError, PotentialError,
+  Strings, 
+} from '@moviemasher/runtime-shared'
 
 export class LocalClientClass implements LocalClient {
   constructor(public options?: LocalClientOptions) {
@@ -72,14 +77,11 @@ export class LocalClientClass implements LocalClient {
       return ''
 
     const accept: Strings = []
-    TypesEncoding.forEach(type => {
+    TypesAsset.forEach(type => {
       const limit = uploadLimits[type]
       if (isAboveZero(limit))
         accept.push(`${type}${SlashChar}${AsteriskChar}`)
     })
-    if (TypesStorable.some(type => isAboveZero(uploadLimits[type]))) {
-      accept.push(JsonMimetype)
-    }
     return accept.join(CommaChar)
   }
 
@@ -92,7 +94,7 @@ export class LocalClientClass implements LocalClient {
           return error(ErrorName.ImportType, { value: '' })
 
         const { type } = json
-        if (!isStorableType(type))
+        if (!isUploadType(type))
           return error(ErrorName.ImportType, { value: type })
 
         return this.fileSizeError(file, uploadLimits, type)
@@ -100,7 +102,7 @@ export class LocalClientClass implements LocalClient {
     }
     const coreType = mediaTypeFromMime(mimetype)
 
-    if (!isEncodingType(coreType))
+    if (!isAssetType(coreType))
       return errorPromise(ErrorName.ImportType, { value: coreType || '' })
 
     return Promise.resolve(this.fileSizeError(file, uploadLimits, coreType))
@@ -202,7 +204,7 @@ export class LocalClientClass implements LocalClient {
         return orError
 
       const { data } = orError
-      if (!isMediaObject(data))
+      if (!isAssetObject(data))
         return error(ErrorName.Url)
       const media = mediaDefinition(data)
       return { data: media }
@@ -292,8 +294,8 @@ export class LocalClientClass implements LocalClient {
       if (isDefiniteError(orError))
         return orError
 
-      const mediaObjects = orError.data.filter(isMediaObject).map(object => {
-        assertMediaObject(object)
+      const mediaObjects = orError.data.filter(isAssetObject).map(object => {
+        assertAssetObject(object)
 
         return object
       })

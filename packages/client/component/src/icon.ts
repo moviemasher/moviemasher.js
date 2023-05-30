@@ -18,21 +18,23 @@ export class IconElement extends Component {
   override async getUpdateComplete(): Promise<boolean> {
     return super.getUpdateComplete().then(complete => {
       if (!complete) {
-        console.debug(this.constructor.name, this.icon, 'getUpdateComplete SUPER', complete)
+        console.log(this.constructor.name, this.icon, 'getUpdateComplete SUPER', complete)
         return false
       }
       const { iconContent: content, icon } = this
+      console.log(this.constructor.name, 'getUpdateComplete SUPER', icon, content, complete)
+
       if (content || !icon) return true
 
       return this.iconPromise.then(() => {  
-        // console.debug(this.constructor.name, this.icon, 'getUpdateComplete iconPromise', !!this.content)
+        console.log(this.constructor.name, this.icon, 'getUpdateComplete iconPromise', !!this.content)
         this.requestUpdate()
-        return true //Boolean(this.content)
+        return Boolean(this.content)
       })
     })
   }
 
-  private iconContent?: OptionalContent 
+  private iconContent?: OptionalContent   
 
   // protected override dispatchConnection(connected: boolean): boolean {
   //   const dispatched = super.dispatchConnection(connected)

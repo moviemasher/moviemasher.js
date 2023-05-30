@@ -3,7 +3,6 @@ import terser from '@rollup/plugin-terser'
 import typescript from 'rollup-plugin-typescript2'
 
 import { monoDir } from '../../../../../dev/utils/file.mjs'
-import { expandImportsPlugin } from '../../../../../dev/utils/expandImportsPlugin.mjs'
 
 const projectDir = monoDir()
 const rootDir = path.resolve('src')

@@ -1,5 +1,5 @@
-import type { ValueRecord } from '../Types/Core.js'
-import type { Identified } from './Identified.js'
+import type { ValueRecord } from '@moviemasher/runtime-shared'
+import type { Identified } from '@moviemasher/runtime-shared'
 
 
 export interface TranslateArgs extends Identified {

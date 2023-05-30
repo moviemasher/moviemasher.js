@@ -1,7 +1,7 @@
 import { SelectorType } from '../../Setup/Enums.js'
-import { DataGroup } from '../../Setup/Property.js'
-import { ScalarRecord } from '../../Types/Core.js'
-import { isObject } from '../../Utility/Is.js'
+import { DataGroup } from "@moviemasher/runtime-shared"
+import { ScalarRecord } from '@moviemasher/runtime-shared'
+import { isObject } from '../../Shared/SharedGuards.js'
 import {SelectedProperty, SelectedItems, SelectedPropertyObject, SelectedProperties} from './SelectedProperty.js'
 
 

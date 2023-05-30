@@ -14,7 +14,7 @@ COPY packages/build/plugin/package.json ${DIR_ROOT}/packages/build/plugin/packag
 COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
 COPY packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
 COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json
-COPY packages/protocol/supabase/package.json ${DIR_ROOT}/packages/protocol/supabase/package.json
+COPY plugin/protocol/supabase/package.json ${DIR_ROOT}/plugin/protocol/supabase/package.json
 
 RUN npm install 
 

@@ -1,34 +1,27 @@
-import {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'
-import {Size} from '../../../Utility/Size.js'
-import {PreloadOptions} from '../../../Base/Code.js'
-import {Masher} from '../Masher.js'
-import {Time} from '../../../Helpers/Time/Time.js'
-import {MashMedia} from '../../../Media/Mash/Mash.js'
-import {Clip} from '../../../Media/Mash/Track/Clip/Clip.js'
+import type { Size, Time } from '@moviemasher/runtime-shared'
+import type { ClientClip, MashClientAsset } from '../../../Client/Mash/MashClientTypes.js'
+import type { Masher } from '../Masher.js'
+import type { PreviewItems, SvgItems } from '../../../Helpers/Svg/Svg.js'
 
-export interface PreviewOptions  {
-  editor?: Masher
+export interface PreviewOptions {
   time?: Time
 }
 
-export interface PreviewArgs extends PreviewOptions {
-  selectedClip?: Clip
-  clip?: Clip
+export interface PreviewArgs extends Required<PreviewOptions> {
+  selectedClip?: ClientClip
+  clip?: ClientClip
   size?: Size
-  time: Time
-  mash: MashMedia
+  mash: MashClientAsset
 }
 
-export interface Preview extends PreloadOptions {
+export interface Preview extends Required<PreviewOptions> {
   audible: boolean
   duration: number
-  editing: boolean
-  editor?: Masher
   quantize: number
-  selectedClip?: Clip
+  selectedClip?: ClientClip
   size: Size
   svgItemsPromise: Promise<SvgItems>
   previewItemsPromise: Promise<PreviewItems>
-  time: Time
   visible: boolean
+  editor: Masher
 }

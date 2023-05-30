@@ -1,4 +1,4 @@
-import {isArray, isObject} from '../../../Utility/Is.js'
+import {isArray, isObject} from '../../../Shared/SharedGuards.js'
 import {errorThrow} from '../../../Helpers/Error/ErrorFunctions.js'
 import {isDecodeOutput} from '../DecodeFunctions.js'
 import {ProbeOptions, ProbeOutput} from './Probe.js'

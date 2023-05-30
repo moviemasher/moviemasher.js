@@ -1,14 +1,12 @@
-
-import {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
-
-import {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
-import {Clip} from '../../../../Media/Mash/Track/Clip/Clip.js'
-import {Preview} from '../Preview.js'
-import {Container} from '../../../../Media/Container/Container.js'
-import {Masher} from '../../Masher.js'
+import type {Time, TimeRange} from '@moviemasher/runtime-shared'
+import type {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
+import type {Preview} from '../Preview.js'
+import type {Masher} from '../../Masher.js'
+import type { ClientInstance } from '../../../../Client/ClientTypes.js'
+import type { ClientClip } from '../../../../Client/Mash/MashClientTypes.js'
 
 export interface TrackPreviewArgs {
-  clip: Clip
+  clip: ClientClip
   preview: Preview
   timeRange: TimeRange
   tweenTime?: Time
@@ -17,11 +15,10 @@ export interface TrackPreviewArgs {
 
 export interface TrackPreview {
   editingSvgItem(classes: string[], inactive?: boolean): SvgItem
-  clip: Clip
+  clip: ClientClip
   editor: Masher
   svgBoundsElement(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems 
-  container: Container
-  // rect: Rect
+  container: ClientInstance
 }
 
 export type TrackPreviews = TrackPreview[]

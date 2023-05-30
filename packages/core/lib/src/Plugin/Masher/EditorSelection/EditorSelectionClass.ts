@@ -1,30 +1,23 @@
 
-import type { Clip } from '../../../Media/Mash/Track/Clip/Clip.js'
-import type { Track } from '../../../Media/Mash/Track/Track.js'
-import type { MashMedia} from '../../../Media/Mash/Mash.js'
 import type {SelectedItems} from '../../../Helpers/Select/SelectedProperty.js'
 import type {EditorSelection, EditorSelectionObject} from './EditorSelection.js'
 import type {Selectable, Selectables} from '../Selectable.js'
-import type {Effect} from '../../../Media/Effect/Effect.js'
-import type {Container} from '../../../Media/Container/Container.js'
-import type {Content} from '../../../Media/Content/Content.js'
+import type {ClientEffect} from '../../../Effect/Effect.js'
 import type { Selector } from '../../../Helpers/Select/Select.js'
 import type {Masher} from '../Masher.js'
 import type {SelectorType, } from '../../../Setup/Enums.js'
+import type { ClientClip, ClientTrack, MashClientAsset } from '../../../Client/Mash/MashClientTypes.js'
+import type { ClientInstance } from '../../../Client/ClientTypes.js'
 
-import {isMashMedia} from '../../../Media/Mash/Mash.js'
-import { isTrack } from '../../../Media/Mash/Track/Track.js'
-import { isClip } from '../../../Media/Mash/Track/Clip/Clip.js'
 import {
-  TypeClip, TypeContainer, TypeContent, TypeEffect, TypeMash, TypeNone, 
-  TypesSelector, TypeTrack, EventTypeDuration, EventTypeLoaded, 
+  TypeClip, TypeContainer, TypeContent, TypeEffect, TypeMash, TypeNone,
+  TypesSelector, TypeTrack, EventTypeDuration, EventTypeLoaded,
   EventTypeSelection, EventTypeTrack
-} from '../../../Setup/Enums.js'
-import { assertTrue, isPopulatedString, isPositive } from '../../../Utility/Is.js'
-import { isEffect} from '../../../Media/Effect/Effect.js'
+} from "../../../Setup/EnumConstantsAndFunctions.js"
+import { assertTrue, isPopulatedString, isPositive } from '../../../Shared/SharedGuards.js'
+import { isClientClip, isClientTrack, isMashClientAsset } from '../../../Client/Mash/MashClientGuards.js'
 
 export class EditorSelectionClass implements EditorSelection {
-
   get selector(): Selector {
     return { type: TypeNone }
   }
@@ -32,33 +25,33 @@ export class EditorSelectionClass implements EditorSelection {
   get [TypeNone](): Selectable | undefined { return undefined }
 
 
-  get [TypeClip](): Clip | undefined { 
+  get [TypeClip](): ClientClip | undefined { 
     const { clip } = this._object
-    if (isClip(clip)) return clip
+    if (isClientClip(clip)) return clip as ClientClip
   }
 
-  get [TypeMash](): MashMedia | undefined { 
+  get [TypeMash](): MashClientAsset | undefined { 
     const { mash } = this._object
-    if (isMashMedia(mash)) return mash
+    if (isMashClientAsset(mash)) return mash
   }
-  get [TypeTrack](): Track | undefined { 
+  get [TypeTrack](): ClientTrack | undefined { 
     const { clip, track } = this._object
-    if (isTrack(track)) return track
+    if (isClientTrack(track)) return track
     
-    if (isClip(clip)) return clip.track
+    if (isClientClip(clip)) return clip.track
   }
   
-  get [TypeContainer](): Container | undefined { 
-    const { clip } = this._object
-    if (isClip(clip)) return clip.container
+  get [TypeContainer](): ClientInstance | undefined { 
+    const { clip } = this
+    if (clip) return clip.container
   }
-  get [TypeContent](): Content | undefined { 
-    const { clip } = this._object
-    if (isClip(clip)) return clip.content
+  get [TypeContent](): ClientInstance | undefined { 
+    const { clip } = this
+    if (clip) return clip.content
   }
-  get [TypeEffect](): Effect | undefined { 
+  get [TypeEffect](): ClientEffect | undefined { 
     const { effect } = this._object
-    if (isEffect(effect)) return effect
+    if ((effect)) return effect as ClientEffect
   }
 
   private _editor?: Masher
@@ -90,6 +83,8 @@ export class EditorSelectionClass implements EditorSelection {
 
   
   _object: EditorSelectionObject = {}
+
+
   get object() { 
     return Object.fromEntries(TypesSelector.map(selectType => (
       [selectType, this.get(selectType)]
@@ -112,8 +107,8 @@ export class EditorSelectionClass implements EditorSelection {
     const { mash, clip } = newObject
 
     if (clip !== oldClip) {
-      if (isClip(clip) && isPositive(clip.trackNumber)) clip.track.mash.clearPreview()
-      if (isClip(oldClip) && isPositive(oldClip.trackNumber)) oldClip.track.mash.clearPreview()
+      if (isClientClip(clip) && isPositive(clip.trackNumber)) clip.track.mash.clearPreview()
+      if (isClientClip(oldClip) && isPositive(oldClip.trackNumber)) oldClip.track.mash.clearPreview()
     }
     Object.assign(this._object, populated)
 
@@ -156,7 +151,7 @@ export class EditorSelectionClass implements EditorSelection {
     if (!track) return selectTypes
 
     selectTypes.push(TypeTrack)
-    if (!isClip(clip)) return selectTypes
+    if (!isClientClip(clip)) return selectTypes
 
     selectTypes.push(TypeClip)
     selectTypes.push(TypeContent)
@@ -174,7 +169,7 @@ export class EditorSelectionClass implements EditorSelection {
     // console.log(this.constructor.name, 'selectedItems', this.object)
     return filteredTypes.flatMap(type => {
       let target = selection[type]
-      if ((type === TypeContainer || type === TypeContent) && isClip(clip)){
+      if ((type === TypeContainer || type === TypeContent) && isClientClip(clip)){
         target = clip[type]
       }
       assertTrue(target, type)

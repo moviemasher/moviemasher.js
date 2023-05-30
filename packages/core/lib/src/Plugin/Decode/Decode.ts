@@ -1,8 +1,9 @@
-import type {Data, StringDataOrError} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {StringDataOrError} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type { Data } from "@moviemasher/runtime-shared"
 import type {Decoding, DecodingType} from './Decoding/Decoding.js'
-import type {DefiniteError} from '../../Helpers/Error/Error.js'
+import type {DefiniteError} from '@moviemasher/runtime-shared'
 import type {Output} from '../../Base/Code.js'
-import type {DecodeType, Plugin} from '../Plugin.js'
+import type {DecodeType, Plugin} from '@moviemasher/runtime-shared'
 
 /**
  * @category Plugin

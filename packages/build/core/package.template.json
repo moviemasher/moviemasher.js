@@ -7,6 +7,10 @@
     "server-core": "npm run script -w @moviemasher/server-core --",
     "build": "run-s lib client server",
     "client": "npm run build -w @moviemasher/client-core",
+    "runtime-shared": "npm run build -w @moviemasher/runtime-shared",
+    "runtime-client": "npm run build -w @moviemasher/runtime-client",
+    "runtime-server": "npm run build -w @moviemasher/runtime-server",
+
     "lib": "npm run build -w @moviemasher/lib-core",
     "server": "npm run build -w @moviemasher/server-core"
   },

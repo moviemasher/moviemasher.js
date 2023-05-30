@@ -1,11 +1,11 @@
-import { ScalarRecord, StringRecord } from '../../../Types/Core.js'
+import { ScalarRecord, StringRecord } from '@moviemasher/runtime-shared'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
-import { DataTypePercent, DataTypeString } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
+import { DataTypePercent, DataTypeString } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
 import { colorToRgb } from '../../../Helpers/Color/ColorFunctions.js'
 import { colorGreen } from '../../../Helpers/Color/ColorConstants.js'
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
-import { assertNumber, assertPopulatedString } from '../../../Utility/Is.js'
+import { assertNumber, assertPopulatedString } from '../../../Shared/SharedGuards.js'
 import { svgFilter } from '../../../Helpers/Svg/SvgFunctions.js'
 import { FilterDefinitionObject } from '../Filter.js'
 

@@ -2,11 +2,11 @@
 import { 
   timeFromArgs, timeRangeFromArgs, assertTrue, CommandFiles, 
   ServerPromiseArgs, EmptyFunction, Time, 
-  errorThrow, ErrorName, assertMedia, Numbers, AVTypeAudio, AVTypeVideo 
+  errorThrow, ErrorName, assertAsset, Numbers, AVTypeAudio, AVTypeVideo 
 } from "@moviemasher/lib-core"
-import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph"
-import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
-import { FilterGraphsArgs, FilterGraphs } from "./FilterGraphs"
+import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph.js"
+import { FilterGraphClass } from "../FilterGraph/FilterGraphClass.js"
+import { FilterGraphsArgs, FilterGraphs } from "./FilterGraphs.js"
 
 export class FilterGraphsClass implements FilterGraphs {
   constructor(public args: FilterGraphsArgs) {
@@ -83,7 +83,7 @@ export class FilterGraphsClass implements FilterGraphs {
     }
     const promises = commandFiles.map(commandFile => {
       const { definition } = commandFile
-      assertMedia(definition)
+      assertAsset(definition)
       return definition.serverPromise(args)
       
     })

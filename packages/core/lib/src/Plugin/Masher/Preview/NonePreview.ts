@@ -1,6 +1,6 @@
-import {Clips} from '../../../Media/Mash/Track/Clip/Clip.js'
+import { ClientClips } from '../../../Client/Mash/MashClientTypes.js'
 import {PreviewClass} from './PreviewClass.js'
 
 export class NonePreview extends PreviewClass {
-  protected get clips(): Clips { return [] }
+  protected get clips(): ClientClips { return [] }
 }

@@ -1,10 +1,13 @@
-import { ScalarRecord } from '../../Types/Core.js'
-import { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
-import { CommandFiles, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs } from '../../Base/Code.js'
-import { isDefined, isNumber, isPopulatedString, isString } from '../../Utility/Is.js'
-import { assertFilterDefinition, Filter, FilterArgs, FilterDefinition, FilterObject } from './Filter.js'
-import { Parameter } from '../../Setup/Parameter.js'
-import { PropertiedClass, PropertyTweenSuffix } from '../../Base/Propertied.js'
+import type { Parameters } from '@moviemasher/runtime-shared'
+import type { Filter, FilterArgs, FilterDefinition, FilterObject } from './Filter.js'
+import type { ScalarRecord } from '@moviemasher/runtime-shared'
+import type { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
+import type { CommandFiles, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs } from '../../Base/Code.js'
+import { isDefined, isNumber, isPopulatedString, isString } from '../../Shared/SharedGuards.js'
+import { assertFilterDefinition } from "./FilterFunctions.js"
+import { ParameterClass } from "../../Setup/ParameterClass.js"
+import { PropertyTweenSuffix } from "../../Base/PropertiedConstants.js"
+import { PropertiedClass } from "../../Base/PropertiedClass.js"
 
 export class FilterClass extends PropertiedClass implements Filter {
   constructor(object: FilterObject) {
@@ -25,7 +28,7 @@ export class FilterClass extends PropertiedClass implements Filter {
         if (existing) parameter.dataType = existing.dataType
       }
       // console.log(this.constructor.name, 'constructor', parameter)
-      return new Parameter(parameter)
+      return new ParameterClass(parameter)
     }))
     this.properties.push(...this.definition.properties)
     this.propertiesInitialize(object)
@@ -42,10 +45,10 @@ export class FilterClass extends PropertiedClass implements Filter {
   declare definition : FilterDefinition
 
 
-  parameters : Parameter[] = []
+  parameters : Parameters = []
 
-  _parametersDefined?: Parameter[]
-  get parametersDefined(): Parameter[] {
+  _parametersDefined?: Parameters
+  get parametersDefined(): Parameters {
     if (this._parametersDefined) return this._parametersDefined
 
     const parameters = [...this.parameters]

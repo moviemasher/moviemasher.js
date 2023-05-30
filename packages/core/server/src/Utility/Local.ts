@@ -6,12 +6,12 @@ import {
   TypeFont, GraphFileTypeSvgSequence, TypeImage, isLoadType, 
   TypeVideo, Runtime 
 } from "@moviemasher/lib-core"
-import { BasenameCache } from '../Setup/Constants'
-import { hashMd5 } from './Hash'
+import { BasenameCache } from '../Setup/Constants.js'
+import { hashMd5 } from './Hash.js'
 import { 
   EnvironmentKeyApiDirCache, EnvironmentKeyApiDirFilePrefix, 
   EnvironmentKeyApiDirValid 
-} from '../Environment/ServerEnvironment'
+} from '../Environment/ServerEnvironment.js'
 
 const typeExtension = (type: LoadType): string => {
   switch(type){

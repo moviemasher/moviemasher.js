@@ -1,10 +1,10 @@
-import { assertAboveZero, assertInteger, assertPositive } from '../../Utility/Is.js'
-import { roundWithMethod } from '../../Utility/Round.js'
-import { Time, TimeRange } from './Time.js'
+import { assertAboveZero, assertInteger, assertPositive } from '../../Shared/SharedGuards.js'
+import { roundWithMethod } from '../../Utility/RoundFunctions.js'
+import { Time, TimeRange } from '@moviemasher/runtime-shared'
 import { errorThrow } from '../Error/ErrorFunctions.js'
 import { ErrorName } from '../Error/ErrorName.js'
-import { arrayOfNumbers } from '../../Utility/Array.js'
-import { Numbers } from '../../Types/Core.js'
+import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
+import { Numbers } from '@moviemasher/runtime-shared'
 
 const timeGreatestCommonDenominator = (fps1 : number, fps2 : number) : number => {
   let a = fps1

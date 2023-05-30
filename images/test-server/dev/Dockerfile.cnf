@@ -1,0 +1,16 @@
+ARG DIR_ROOT=/app
+ARG MOVIEMASHER_VERSION=5.1.2
+FROM moviemasher/node-ffmpeg:${MOVIEMASHER_VERSION} 
+ARG DIR_ROOT
+ARG MOVIEMASHER_VERSION
+
+COPY images/test-server/package.json ${DIR_ROOT}/images/test-server/package.json
+COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
+COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
+
+
+RUN npm install 
+
+ENTRYPOINT ["npm", "run", "--workspace=@moviemasher/test-server"]
+CMD ["test"]
+LABEL org.opencontainers.image.authors="support@moviemasher.com"

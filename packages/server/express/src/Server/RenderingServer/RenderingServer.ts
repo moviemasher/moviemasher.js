@@ -1,12 +1,11 @@
 import {
   Size,
-  RenderingStartRequest, RenderingStartResponse,
-  
-  RenderingUploadRequest, RenderingUploadResponse,
+
 } from "@moviemasher/lib-core"
 
 import { Server, ServerArgs, ExpressHandler } from "../Server"
-import { RenderingCommandOutputRecord } from "./RenderingServerClass"
+import { OutputOptionsRecord } from "./RenderingServerClass"
+import { RenderingStartRequest, RenderingStartResponse, RenderingUploadRequest, RenderingUploadResponse } from "../../Api/Rendering"
 
 
 export interface RenderingServerArgs extends ServerArgs {
@@ -15,7 +14,7 @@ export interface RenderingServerArgs extends ServerArgs {
   previewSize?: Size
   outputSize?: Size
   iconSize?: Size
-  commandOutputs: RenderingCommandOutputRecord
+  outputOptions: OutputOptionsRecord
 }
 
 export interface RenderingServer extends Server {

@@ -16,7 +16,7 @@ import type {
   EncoderOptions,
   Encoding,
   EncodingType,
-  MashMedia,
+  MashClientAsset,
   Media,
   PotentialError,
   MediaDataOrError, UploadType 
@@ -32,10 +32,6 @@ import {
 import { TypeProbe } from '@moviemasher/lib-core' 
 import {
 TypeAudio, TypeImage, TypeVideo, 
-} from '@moviemasher/lib-core'
-
-import {
-  Endpoints,
 } from '@moviemasher/lib-core'
 
 import { 
@@ -74,12 +70,12 @@ export const isRemoteOperation = (value: any): value is RemoteOperation => {
 }
 
 export const DefaultClientUploadArgs: ClientUploadArgs = {
-  uploadRequest: { endpoint: { pathname: Endpoints.data.definition.retrieve } },
+  uploadRequest: { endpoint: { pathname: 'data/definition/retrieve' } },
   uploadResponseIsRequest: true,
 }
 export const DefaultClientWriteArgs: ClientWriteArgs = {
-  saveRequest: { endpoint: { pathname: Endpoints.data.definition.put} }, 
-  deleteRequest: { endpoint: { pathname: Endpoints.data.definition.delete } }, 
+  saveRequest: { endpoint: { pathname: 'data/definition/put'} }, 
+  deleteRequest: { endpoint: { pathname: 'data/definition/delete' } }, 
 }
 
 export const DefaultClientDecodeArgs: ClientDecodeArgs = {
@@ -110,10 +106,7 @@ export const DefaultClientEncodeArgs: ClientEncodeArgs = {
 export const DefaultClientTranscodeArgs: ClientTranscodeArgs = {
   autoTranscode: {
     [TypeAudio]: [
-      { 
-        type: TypeAudio, 
-        options: { outputType: TypeAudio } 
-      }
+      { type: TypeAudio, options: {} }
     ],
   },
 }
@@ -172,14 +165,14 @@ export interface ClientDecodeMethodArgs extends ClientMediaCallback, DecodeOutpu
 export interface ClientEncodeMethodArgs extends ClientMediaCallback {
   type: EncodingType
   options?: EncoderOptions
-  media: MashMedia
+  media: MashClientAsset
 }
 export interface ClientTranscodeMethodArgs extends ClientMediaCallback {
   type: TranscodingType 
   options?: TranscoderOptions
 }
 export interface ClientSaveMethodArgs extends ClientMediaCallback {
-  media: MashMedia
+  media: MashClientAsset
 }
 
 
@@ -223,7 +216,7 @@ export type ClientWriteAsFile = {
 }
 
 export interface ClientProgress extends PotentialError {
-  mash?: MashMedia
+  mash?: MashClientAsset
   media: Media
   processing?: Transcoding | Encoding | Decoding
   completed: number

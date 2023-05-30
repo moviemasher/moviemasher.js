@@ -1,10 +1,13 @@
-import type { ClientAudio, ClientFont, ClientImage, ClientMedia, ClientMediaType, ClientVideo } from './ClientMedia.js'
+import type { ClientAudio, ClientAudioDataOrError, ClientFont, ClientFontDataOrError, ClientImage, ClientImageDataOrError, ClientMedia, ClientMediaType, ClientVideo, ClientVideoDataOrError } from './ClientMedia.js'
 import type { LoadType } from '../../Setup/LoadType.js'
-import type { GraphFileType } from '../../Setup/Enums.js'
+import type { GraphFileType } from "../../Setup/GraphFileType.js"
 
 import { ClientMediaTypes } from './ClientMediaConstants.js'
 import { errorThrow } from '../Error/ErrorFunctions.js'
-import { isJsonRecord, isObject } from '../../Utility/Is.js'
+import { assertDefined, isJsonRecord, isObject } from '../../Shared/SharedGuards.js'
+import { EndpointRequest } from '../Request/Request.js'
+import { ClientAudioEventDetail, ClientFontEventDetail, ClientImageEvent, ClientImageEventDetail, ClientVideoEventDetail } from './ClientMediaEvents.js'
+import { MovieMasher } from '@moviemasher/runtime-client'
 
 
 export const isClientVideo = (value: any): value is ClientVideo => {
@@ -59,4 +62,42 @@ export function assertClientAudio(value: any, name?: string): asserts value is C
 // MOVED: component 
 export const isClientAudio = (value: any): value is ClientAudio => {
   return isObject(value) && value instanceof AudioBuffer
+}
+
+
+
+export const clientMediaAudioPromise = (request: EndpointRequest): Promise<ClientAudioDataOrError> => {
+  const detail: ClientAudioEventDetail = { request }
+  MovieMasher.dispatch(new CustomEvent('clientaudio', { detail }))
+  const { promise } = detail
+  assertDefined(promise)
+  return promise // requestAudioPromise(request)
+}
+
+
+export const clientMediaImagePromise = (request: EndpointRequest): Promise<ClientImageDataOrError> => {
+  const detail: ClientImageEventDetail = { request }
+  const event: ClientImageEvent = new CustomEvent<ClientImageEventDetail>('clientimage', { detail })
+  MovieMasher.dispatch<ClientImageEventDetail>(event)
+  const { promise } = detail
+  assertDefined(promise)
+  return promise // requestImagePromise(request)
+}
+
+export const clientMediaVideoPromise = (request: EndpointRequest): Promise<ClientVideoDataOrError> => {
+  const detail: ClientVideoEventDetail = { request }
+  MovieMasher.dispatch(new CustomEvent('clientvideo', { detail }))
+  const { promise } = detail
+  assertDefined(promise)
+  return promise // requestVideoPromise(request)
+}
+
+
+
+export const clientMediaFontPromise = (request: EndpointRequest): Promise<ClientFontDataOrError> => {
+  const detail: ClientFontEventDetail = { request };
+  MovieMasher.dispatch(new CustomEvent('clientfont', { detail }));
+  const { promise } = detail;
+  assertDefined(promise);
+  return promise; // requestFontPromise(request)
 }

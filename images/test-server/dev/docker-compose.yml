@@ -1,0 +1,18 @@
+version: "3"
+name: moviemasher-test-server
+services:
+ service:
+    env_file:
+      - ../../../dev/local.env
+    build: 
+      context: ../../../
+      dockerfile: images/test-server/dev/Dockerfile.cnf
+    image: moviemasher/test-server:${MOVIEMASHER_VERSION}
+    volumes:
+      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../images/test-server/package.json:${MOVIEMASHER_DIR_ROOT}/images/test-server/package.json
+      - ../../../images/tester:${MOVIEMASHER_DIR_ROOT}/images/tester
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../packages/core/server:${MOVIEMASHER_DIR_ROOT}/packages/core/server
+      - ../../../packages/core/lib:${MOVIEMASHER_DIR_ROOT}/packages/core/lib
+

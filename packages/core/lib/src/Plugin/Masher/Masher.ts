@@ -1,41 +1,44 @@
-import type { VideoStreamType, AudioStreamType, ClientAction } from '../../Setup/Enums.js'
-import type { MasherType, Plugin} from '../Plugin.js'
+import type { VideoStreamType, AudioStreamType } from '../../Setup/Enums.js'
+import type { ClientAction } from "../../Setup/ClientAction.js"
+import { MasherType, Plugin, TypesAsset} from '@moviemasher/runtime-shared'
 import type { Action } from "./Actions/Action/Action.js"
-import type { Clip, Clips } from '../../Media/Mash/Track/Clip/Clip.js'
 import type {EditorSelection} from './EditorSelection/EditorSelection.js'
-import type {Effect} from '../../Media/Effect/Effect.js'
+import type {ClientEffect} from '../../Effect/Effect.js'
 import type {EncodingType} from '../Encode/Encoding/Encoding.js'
 import type {IndexHandler} from '../../Helpers/Select/Select.js'
-import type {MashMedia, Movable, MashMediaObject} from '../../Media/Mash/Mash.js'
-import type {Media, MediaObject, MediaObjects, MediaArray} from '../../Media/Media.js'
+import type { Movable } from "../../Setup/Movable.js"
 import type {PreviewItems} from '../../Helpers/Svg/Svg.js'
-import type {Rect} from '../../Utility/Rect.js'
-import type {Size} from '../../Utility/Size.js'
-import type {StringRecord} from '../../Types/Core.js'
-import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
-import type {Track} from '../../Media/Mash/Track/Track.js'
+import type {Rect} from '@moviemasher/runtime-shared'
+import type {Size} from '@moviemasher/runtime-shared'
+import type {StringRecord} from '@moviemasher/runtime-shared'
+import type {Time, TimeRange} from '@moviemasher/runtime-shared'
+import type {Track} from '../../Shared/Mash/Track/Track.js'
 
-import { TypesEncoding} from '../Encode/Encoding/Encoding.js'
 import {Actions} from './Actions/Actions.js'
 import {Emitter} from '../../Helpers/Emitter.js'
 import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
-import {MediaCollection} from '../../Media/Mash/MediaCollection/MediaCollection.js'
-import {TypeAudioStream, TypeVideoStream } from '../../Setup/Enums.js'
+import { TypeAudioStream, TypeVideoStream } from "../../Setup/EnumConstantsAndFunctions.js"
+import { AssetCollection } from '../../Shared/Asset/AssetCollection/AssetCollection.js'
+import { MashAsset, MashAssetObject } from '../../Shared/Mash/MashTypes.js'
+import { ClientAsset, ClientAssets } from "../../Client/ClientTypes.js"
+import { AssetObject, AssetObjects } from '../../Shared/Asset/Asset.js'
+import { ClientClip, ClientClips } from '../../Client/Mash/MashClientTypes.js'
+import { ClientAssetCollection } from '../../Client/Asset/AssetCollection/ClientAssetCollection.js'
 
 export interface Masher {
   actions: Actions
   addEffect: IndexHandler<Movable>
-  addMedia(media: Media | MediaArray, editorIndex?: MashIndex): Promise<Media[]> 
-  addMediaObjects(object: MediaObject | MediaObjects, editorIndex?: MashIndex): Promise<Media[]>
+  addMedia(media: ClientAsset | ClientAssets, editorIndex?: MashIndex): Promise<ClientAssets> 
+  addMediaObjects(object: AssetObject | AssetObjects, editorIndex?: MashIndex): Promise<ClientAssets>
   addTrack(): void
   autoplay: boolean
   buffer: number
   can(action: ClientAction): boolean
-  clips: Clips
+  clips: ClientClips
   create(): Promise<void>
   currentTime: number
-  definitions: MediaArray
-  definitionsUnsaved: MediaArray
+  definitions: ClientAssets
+  definitionsUnsaved: ClientAssets
   dragging: boolean
   duration: number
   editing: boolean
@@ -43,12 +46,12 @@ export interface Masher {
   fps: number
   goToTime(value: Time): Promise<void>
   handleAction(action: Action): void
-  load(data: MashMediaObject): Promise<void>
+  load(data: MashAssetObject): Promise<void>
   loop: boolean
   mashingType: MashingType
-  media: MediaCollection
+  media: ClientAssetCollection
   move(object: ClipOrEffect, editorIndex?: MashIndex): void
-  moveClip(clip: Clip, editorIndex?: MashIndex): void
+  moveClip(clip: ClientClip, editorIndex?: MashIndex): void
   moveEffect: IndexHandler<Movable>
   muted: boolean
   pause(): void
@@ -58,13 +61,13 @@ export interface Masher {
   positionStep: number
   precision: number
   previewItems(enabled?: boolean): Promise<PreviewItems>
-  readonly mashMedia?: MashMedia
+  readonly mashMedia?: MashAsset
   readonly selection: EditorSelection
   readOnly: boolean
   rect: Rect
   redo(): void
   redraw(): void
-  removeClip(clip: Clip): void
+  removeClip(clip: ClientClip): void
   removeEffect: IndexHandler<Movable>
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringRecord): void
@@ -88,7 +91,7 @@ export interface PluginsByMashing extends Record<MashingType, MasherPlugin> {}
 
 export type MashingType = string | EncodingType | VideoStreamType | AudioStreamType
 export type MashingTypes = MashingType[]
-export const MashingTypes: MashingTypes = [...TypesEncoding, TypeVideoStream, TypeAudioStream]
+export const MashingTypes: MashingTypes = [...TypesAsset, TypeVideoStream, TypeAudioStream]
 export const isMashingType = (type?: any): type is MashingType => {
   return MashingTypes.includes(type)
 }
@@ -112,7 +115,7 @@ export interface MasherArgs {
   eventTarget?: Emitter
   fps: number
   loop: boolean
-  mash?: MashMediaObject
+  mash?: MashAssetObject
   mashingType?: MashingType
   patchSvg?: SVGSVGElement
   precision: number
@@ -122,4 +125,4 @@ export interface MasherArgs {
 
 export interface MasherOptions extends Partial<MasherArgs> { }
 
-export type ClipOrEffect = Clip | Effect
+export type ClipOrEffect = ClientClip | ClientEffect

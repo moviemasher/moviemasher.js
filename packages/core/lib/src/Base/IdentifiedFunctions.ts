@@ -1,6 +1,6 @@
-import type { Identified } from './Identified.js'
+import type { Identified } from '@moviemasher/runtime-shared'
 
-import { isObject, isPopulatedString } from '../Utility/Is.js'
+import { isObject, isPopulatedString } from '../Shared/SharedGuards.js'
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 
 export const isIdentified = (value: any): value is Identified => {

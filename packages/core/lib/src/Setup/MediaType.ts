@@ -1,10 +1,10 @@
 import type {
-  AudioType, EffectType, FontType, ImageType, MashType, VideoType, 
+  EffectType, FontType, MashType, 
 } from '../Setup/Enums.js'
+import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
 
-import { 
-   TypeAudio, TypeEffect, TypeFont, TypeImage, TypeMash, TypeVideo 
-} from './Enums.js'
+import { TypeEffect, TypeFont, TypeMash } from "./EnumConstantsAndFunctions.js"
+import { TypeAudio, TypeImage, TypeVideo } from "@moviemasher/runtime-shared"
 import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 
 

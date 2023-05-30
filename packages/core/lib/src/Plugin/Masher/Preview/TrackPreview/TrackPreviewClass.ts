@@ -1,28 +1,30 @@
-import type { Direction } from '../../../../Setup/Enums.js'
+import type { Direction } from "../../../../Setup/Direction.js"
 import type {Masher} from '../../Masher.js'
-import type {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
-import type { Size} from '../../../../Utility/Size.js'
-import type {Point} from '../../../../Utility/Point.js'
-import type {Rect} from '../../../../Utility/Rect.js'
-import type {Clip} from '../../../../Media/Mash/Track/Clip/Clip.js'
+import type {Time, TimeRange} from '@moviemasher/runtime-shared'
+import type { Size} from '@moviemasher/runtime-shared'
+import type {Point} from '@moviemasher/runtime-shared'
+import type {Rect} from '@moviemasher/runtime-shared'
 import type {TrackPreview, TrackPreviewArgs} from './TrackPreview.js'
-import type {ScalarRecord} from '../../../../Types/Core.js'
+import type {ScalarRecord} from '@moviemasher/runtime-shared'
 import type { ChangePropertiesActionObject } from '../../Actions/Action/Action.js'
-import type {Container, ContainerRectArgs} from '../../../../Media/Container/Container.js'
-import type {EventFunction,} from '../../../../Types/Function.js'
+import type {ContainerRectArgs} from '../../../../Helpers/Container/Container.js'
+import type { EventFunction } from "../../../../Utility/EventFunction.js"
 import type {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
 
 
-import {pointsEqual, PointZero} from '../../../../Utility/Point.js'
-import { rectsEqual} from '../../../../Utility/Rect.js'
-import {assertSizeAboveZero} from '../../../../Utility/Size.js'
+import { PointZero } from "../../../../Utility/PointConstants.js"
+import { pointsEqual } from "../../../../Utility/PointFunctions.js"
+import { rectsEqual } from "../../../../Utility/RectFunctions.js"
+import { assertSizeAboveZero } from "../../../../Utility/SizeFunctions.js"
 import {svgAddClass, svgPolygonElement} from '../../../../Helpers/Svg/SvgFunctions.js'
-import {assertTrue} from '../../../../Utility/Is.js'
-import {ActionTypeChangeMultiple, assertSideDirection, DirectionEast, DirectionNorth, DirectionSouth, DirectionWest} from '../../../../Setup/Enums.js'
-import {tweeningPoints, tweenMinMax} from '../../../../Mixin/Tweenable/Tween.js'
-import {PropertyTweenSuffix} from '../../../../Base/Propertied.js'
-import {DataGroupPoint} from '../../../../Setup/Property.js'
-import {eventStop} from '../../../../Utility/Event.js'
+import {assertTrue} from '../../../../Shared/SharedGuards.js'
+import { ActionTypeChangeMultiple, assertSideDirection, DirectionEast, DirectionNorth, DirectionSouth, DirectionWest } from "../../../../Setup/EnumConstantsAndFunctions.js"
+import {tweeningPoints, tweenMinMax} from '../../../../Helpers/TweenFunctions.js'
+import { PropertyTweenSuffix } from "../../../../Base/PropertiedConstants.js"
+import { DataGroupPoint } from "../../../../Setup/DataGroupConstants.js"
+import {eventStop} from '../../../../Utility/EventConstants.js'
+import { ClientVisibleInstance } from "../../../../Client/ClientTypes.js"
+import { ClientClip } from "../../../../Client/Mash/MashClientTypes.js"
 
 export const TrackPreviewHandleSize = 8
 
@@ -34,9 +36,9 @@ export const TrackPreviewLineSize = 2
 export class TrackPreviewClass implements TrackPreview {
   constructor(public args: TrackPreviewArgs) {}
 
-  get clip(): Clip { return this.args.clip }
+  get clip(): ClientClip { return this.args.clip }
 
-  get container(): Container { return this.clip.container! }
+  get container(): ClientVisibleInstance { return this.clip.container! }
 
   editingSvgItem(classes: string[], inactive?: boolean): SvgItem {
     // console.log(this.constructor.name, 'editingSvgItem', className)
@@ -277,5 +279,5 @@ export class TrackPreviewClass implements TrackPreview {
   private get time(): Time { return this.preview.time }
 
   private _timeRange?: TimeRange
-  private get timeRange() { return this._timeRange ||= this.clip.timeRange(this.quantize) }
+  private get timeRange() { return this._timeRange ||= this.clip.timeRange }
 }

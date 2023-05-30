@@ -1,6 +1,6 @@
-import { MediaType, isMediaType, isSelectorType, isString, Property, SelectorType, CommaChar } from "@moviemasher/lib-core"
+import { MediaType, isMediaType, isSelectorType, isString, Properties, SelectorType, CommaChar } from "@moviemasher/lib-core"
 
-const propsStringArray = (string?: string, array?: string | string[], properties?: Property[]): string[] => {
+const propsStringArray = (string?: string, array?: string | string[], properties?: Properties): string[] => {
   if (string) return [string]
 
   if (!array) return properties ? properties.map(property => property.name) : []

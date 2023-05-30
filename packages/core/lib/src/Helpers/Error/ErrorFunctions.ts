@@ -1,5 +1,5 @@
-import type { ValueRecord } from '../../Types/Core.js'
-import type { DefiniteError, ErrorObject } from './Error.js'
+import type { ValueRecord } from '@moviemasher/runtime-shared'
+import type { DefiniteError, ErrorObject } from '@moviemasher/runtime-shared'
 import { ErrorName, ErrorNames } from './ErrorName.js'
 
 export type ErrorContext = ValueRecord | string | undefined
@@ -61,7 +61,7 @@ export const errorThrow = (value: any, type?: string, property?: string): never 
   const { message, name, cause } = object
 
   const error = errorObject(message, name, cause)
-  console.trace(error.toString())
+  // console.trace(error.toString())
   throw error
 }
 

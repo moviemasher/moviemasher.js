@@ -252,7 +252,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
   }
 
-  private mashInsertPromise(userId: string, mash: MashMediaObject, definitionIds?: string[]): Promise<StringRecord> {
+  private mashInsertPromise(userId: string, mash: MashMediaObject, assetIds?: string[]): Promise<StringRecord> {
     const temporaryLookup: StringRecord = {}
     const { id } = mash
     const temporaryId = id || idUnique()
@@ -261,19 +261,19 @@ export class DataServerClass extends ServerClass implements DataServer {
     const insertPromise = this.createPromise('mash', DataServerInsertRecord(userId, mash))
     const definitionPromise = insertPromise.then(permanentId =>{
       if (permanentId !== temporaryId) temporaryLookup[temporaryId] = permanentId
-      return this.mashUpdateRelationsPromise(permanentId, definitionIds)
+      return this.mashUpdateRelationsPromise(permanentId, assetIds)
     })
     return definitionPromise.then(() => temporaryLookup)
   }
 
-  private mashUpdatePromise(userId: string, mash: MashMediaObject, definitionIds?: string[]): Promise<StringRecord> {
+  private mashUpdatePromise(userId: string, mash: MashMediaObject, assetIds?: string[]): Promise<StringRecord> {
     const { createdAt, icon, id, label, ...rest } = mash
     if (!id) return Promise.reject(401)
 
     const json = JSON.stringify(rest)
     const data = { userId, createdAt, icon, id, label, json }
     return this.updatePromise('mash', data).then(() =>
-      this.mashUpdateRelationsPromise(id, definitionIds)
+      this.mashUpdateRelationsPromise(id, assetIds)
     )
   }
 
@@ -288,13 +288,13 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   putMash: ExpressHandler<DataMashPutResponse | PotentialError, DataMashPutRequest> = async (req, res) => {
-    const { mash, definitionIds } = req.body
+    const { mash, assetIds } = req.body
     // console.log(this.constructor.name, Endpoints.data.mash.put, JSON.stringify(mash, null, 2))
     const response: DataMashPutResponse = {}
 
     try {
       const user = this.userFromRequest(req)
-      response.temporaryIdLookup = await this.writeMashPromise(user, mash, definitionIds)
+      response.temporaryIdLookup = await this.writeMashPromise(user, mash, assetIds)
     } catch (error) { response.error = errorCaught(error).error }
     res.send(response)
   }
@@ -456,9 +456,9 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.updatePromise('definition', data).then(EmptyFunction)
   }
 
-  private mashUpdateRelationsPromise(mashId: string, definitionIds?: string[]): Promise<StringRecord> {
-    // console.log("updateMashDefinitionsPromise", mashId, definitionIds)
-    return this.updateRelationsPromise('mash', 'definition', mashId, definitionIds)
+  private mashUpdateRelationsPromise(mashId: string, assetIds?: string[]): Promise<StringRecord> {
+    // console.log("updateMashDefinitionsPromise", mashId, assetIds)
+    return this.updateRelationsPromise('mash', 'definition', mashId, assetIds)
   }
 
 
@@ -517,14 +517,14 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
   }
 
-  private writeMashPromise(userId: string, mash: MashMediaObject, definitionIds?: string[]): Promise<StringRecord> {
+  private writeMashPromise(userId: string, mash: MashMediaObject, assetIds?: string[]): Promise<StringRecord> {
     const { id } = mash
     const promiseJson = this.rowJsonPromise('mash', userId, id)
     return promiseJson.then(row => {
       if (row) {
-        return this.mashUpdatePromise(userId, { ...row, ...mash }, definitionIds)
+        return this.mashUpdatePromise(userId, { ...row, ...mash }, assetIds)
       }
-      return this.mashInsertPromise(userId, mash, definitionIds)
+      return this.mashInsertPromise(userId, mash, assetIds)
     })
   }
 }

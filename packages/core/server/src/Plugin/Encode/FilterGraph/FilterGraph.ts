@@ -1,9 +1,9 @@
-import { MashMedia, Size, Time, CommandFiles, CommandFilters, CommandInputs } from "@moviemasher/lib-core"
+import type { MashServerAsset, Size, Time, CommandFiles, CommandFilters, CommandInputs } from "@moviemasher/lib-core"
 
 export interface FilterGraphArgs {
   visible?: boolean
   background: string
-  mash: MashMedia
+  mash: MashServerAsset
   size: Size
   streaming?: boolean
   time: Time

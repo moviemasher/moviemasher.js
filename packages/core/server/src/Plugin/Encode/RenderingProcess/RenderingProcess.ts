@@ -1,6 +1,10 @@
-import { ApiCallback, RenderingOptions } from "@moviemasher/lib-core"
-import { RenderingResult } from "../Encode"
-export interface RenderingProcessInput {
+import type { RenderingOptions, StringDataOrError } from "@moviemasher/lib-core"
+
+
+export interface RenderingProcessArgs extends RenderingOptions {
+  id?: string
+  temporaryDirectory: string
+  
   cacheDirectory: string
   /** directory to place output file(s) within */
   outputDirectory: string
@@ -12,24 +16,6 @@ export interface RenderingProcessInput {
   validDirectories: string[]
 }
 
-export interface RenderingCallback {
-  callback?: ApiCallback
-  id?: string
-}
-
-export interface RunResult {
-  results: RenderingResult[]
-}
-
-export interface RenderingProcessOptions extends RenderingProcessInput, Partial<RenderingOptions>, RenderingCallback {}
-
-export interface RenderingArgs extends Required<RenderingOptions> {}
-
-export interface RenderingProcessArgs extends RenderingProcessInput, RenderingArgs {
-  id?: string
-  temporaryDirectory: string
-}
-
 export interface RenderingProcess {
-  runPromise: ()=> Promise<RunResult>
+  runPromise: ()=> Promise<StringDataOrError>
 }

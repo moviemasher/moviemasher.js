@@ -1,3 +1,3 @@
-export * from "./RunningCommand"
-export * from "./RunningCommandClass"
-export * from "./RunningCommandFactory"
+export * from "./RunningCommand.js"
+export * from "./RunningCommandClass.js"
+export * from "./RunningCommandFactory.js"

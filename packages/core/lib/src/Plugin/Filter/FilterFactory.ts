@@ -6,8 +6,9 @@ import { CropFilter } from './Definitions/CropFilter.js'
 import { OverlayFilter } from './Definitions/OverlayFilter.js'
 import { ScaleFilter } from './Definitions/ScaleFilter.js'
 
-import { FilterDefinition, Filter, FilterDefinitionObject, Filters, FilterObject } from './Filter.js'
-import { assertPopulatedString } from '../../Utility/Is.js'
+import { FilterDefinition, Filter, FilterDefinitionObject, FilterObject } from './Filter.js'
+import { Filters } from "./Filters.js"
+import { assertPopulatedString } from '../../Shared/SharedGuards.js'
 import { FilterDefinitionClass } from './FilterDefinitionClass.js'
 import { OpacityFilter } from './Definitions/OpacityFilter.js'
 import { SetsarFilter } from './Definitions/SetsarFilter.js'

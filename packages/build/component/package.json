@@ -47,7 +47,7 @@
   },
   "version": "5.1.2",
   "dependencies": {
-    "lit": "^2.0.2",
+    "lit": "^2.7.4",
     "@lit-labs/observers": "2.0.0"
   }
 }

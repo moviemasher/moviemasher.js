@@ -14,6 +14,5 @@ services:
       - ./package.json:${MOVIEMASHER_DIR_ROOT}/packages/build/component/package.json
 
       - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
-      - ../../../packages/core/client:${MOVIEMASHER_DIR_ROOT}/packages/core/client
-      - ../../../packages/core/lib:${MOVIEMASHER_DIR_ROOT}/packages/core/lib
-      - ../../../packages/client/component:${MOVIEMASHER_DIR_ROOT}/packages/client/component
+      - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
+   

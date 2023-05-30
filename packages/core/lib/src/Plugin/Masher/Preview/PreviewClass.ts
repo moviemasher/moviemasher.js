@@ -1,42 +1,40 @@
-import type {Clip, IntrinsicOptions} from '../../../Media/Mash/Track/Clip/Clip.js'
-import type {  PreloadArgs} from '../../../Base/Code.js'
+import type { IntrinsicOptions} from '../../../Shared/Mash/Clip/Clip.js'
+import type {  InstanceCacheArgs, PreloadArgs} from '../../../Base/Code.js'
 import type {Masher} from '../Masher.js'
-import type {MashMedia} from '../../../Media/Mash/Mash.js'
 import type {PreviewArgs, Preview} from './Preview.js'
 import type {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'
-import type {Size} from '../../../Utility/Size.js'
-import type {Time} from '../../../Helpers/Time/Time.js'
+import type {Size} from '@moviemasher/runtime-shared'
+import type {Time} from '@moviemasher/runtime-shared'
 import type {TrackPreviewArgs, TrackPreviews} from './TrackPreview/TrackPreview.js'
 
 import { ComponentTimeline,ComponentPlayer } from '../../../Base/Code.js'
-import {assertObject, isObject} from '../../../Utility/Is.js'
-import {AVTypeVideo} from '../../../Setup/Enums.js'
-import {EmptyFunction} from '../../../Setup/Constants.js'
-import {sortByTrack} from '../../../Utility/Sort.js'
+import {assertObject, isObject} from '../../../Shared/SharedGuards.js'
+import { AVTypeVideo } from "../../../Setup/AVTypeConstants.js"
+import { EmptyFunction } from "../../../Setup/EmptyFunction.js"
+import {sortByTrack} from '../../../Utility/SortFunctions.js'
 import {svgAddClass, svgSvgElement} from '../../../Helpers/Svg/SvgFunctions.js'
 import {timeRangeFromTime} from '../../../Helpers/Time/TimeUtilities.js'
 import {TrackPreviewClass} from './TrackPreview/TrackPreviewClass.js'
+import { ClientClip, ClientClips, MashClientAsset } from '../../../Client/Mash/MashClientTypes.js'
 
 /**
  * Preview of a single mash at a single frame
  */
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
-    const { selectedClip, editor, time, mash, clip, size } = args
+    const { selectedClip,  time, mash, clip, size } = args
     this.mash = mash
     this.size = size || mash.imageSize
     this.time = time
     this.selectedClip = selectedClip
     this.clip = clip
-
-    if (isObject(editor)) this.editor = editor
   }
 
   audible = false
 
-  clip?: Clip
+  clip?: ClientClip
 
-  private _clips?: Clip[]
+  private _clips?: ClientClips
   protected get clips() { return this._clips ||= this.clipsInitialize }
   private get clipsInitialize() {
     const { mash, time, clip } = this
@@ -45,33 +43,30 @@ export class PreviewClass implements Preview {
     return mash.clipsInTimeOfType(time, AVTypeVideo).sort(sortByTrack) 
   }
 
-
   combine = false
   
   get duration(): number { return this.time.lengthSeconds }
 
-  get editing() { return isObject(this.editor) }
-
-  editor?: Masher
+  get editor(): Masher { return this.mash.editor}
 
   get intrinsicSizePromise(): Promise<void> {
     const { clips, time, quantize } = this
     const options: IntrinsicOptions = { editing: true, size: true }
     const unknownClips = clips.filter(clip => !clip.intrinsicsKnown(options))
 
-    const args: PreloadArgs = {
+    const args: InstanceCacheArgs = {
       quantize,
-      editing: true, visible: true, time, clipTime: timeRangeFromTime(time)
+      visible: true, time, clipTime: timeRangeFromTime(time)
     }
     const promises = unknownClips.map(clip => {
-      args.clipTime = clip.timeRange(quantize)
-      return clip.loadPromise(args)
+      args.clipTime = clip.timeRange
+      return clip.clipCachePromise(args)
     })
 
     return Promise.all(promises).then(EmptyFunction)
   }
 
-  mash: MashMedia
+  mash: MashClientAsset
 
   get previewItemsPromise(): Promise<PreviewItems> { 
     if (this._svgItems) return Promise.resolve(this._svgItems)
@@ -85,8 +80,8 @@ export class PreviewClass implements Preview {
 
       clips.forEach(clip => {
         promise = promise.then(lastTuple => {
-          return clip.previewItemsPromise(size, time, component).then(svgItems => {
-            return [...lastTuple, ...svgItems] 
+          return clip.clipPreviewItemsPromise(size, time, component).then(svgItem => {
+            return [...lastTuple, svgItem] 
           })
         })
       })
@@ -102,7 +97,7 @@ export class PreviewClass implements Preview {
 
   size: Size
 
-  selectedClip?: Clip
+  selectedClip?: ClientClip
 
   streaming = false
 
@@ -122,7 +117,7 @@ export class PreviewClass implements Preview {
     const tweenTime = time.isRange ? undefined : time.scale(quantize)
   
     clips.forEach(clip => {
-      const clipTimeRange = clip!.timeRange(quantize)
+      const clipTimeRange = clip!.timeRange
       const range = clipTimeRange.scale(time.fps)
       const frame = Math.max(0, time.frame - range.frame)
       const timeRange = range.withFrame(frame)
@@ -135,15 +130,14 @@ export class PreviewClass implements Preview {
   }
 
   private tupleItems(svgItems: PreviewItems): PreviewItems {
-    const { size, editing, selectedClip, editor } = this
+    const { size, selectedClip, editor } = this
     const items = [...svgItems]
 
     const trackClasses = 'track'
     items.forEach(item => svgAddClass(item, trackClasses))
 
-    if (!(editing && svgItems.length)) return items
+    if (!svgItems.length) return items
 
-    assertObject(editor, 'editor')
 
     // TODO: get classes from theme
 

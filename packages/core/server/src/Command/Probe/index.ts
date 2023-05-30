@@ -1,2 +1,2 @@
 
-export * from './Probe'
+export * from './Probe.js'

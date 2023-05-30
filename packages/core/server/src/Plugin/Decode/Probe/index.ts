@@ -1,1 +1,1 @@
-export * from "./ProbeDecoder"
+export * from "./ProbeDecoder.js"

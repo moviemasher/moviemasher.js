@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@moviemasher/lib-core": "5.1.2",
-    "@moviemasher/client-core": "5.1.2",
     "lit-html": "^2.7.2",
     "lit-element": "3.3.1",
     "tslib": "^2.5.0",

@@ -1,4 +1,4 @@
-import type { Contents, Content, ImportEventDetail, MovieMasher } from '../declarations.js'
+import type { Contents, Content, ImportEventDetail, MovieMasherContext } from '../declarations.js'
 
 import { css } from 'lit'
 import { html } from 'lit'
@@ -13,7 +13,7 @@ import { Component } from '../Base/Component.js'
 @customElement('movie-masher-selector-input')
 export class SelectorInputElement extends IconString {
   @consume({ context: movieMasherContext, subscribe: true })
-  declare movieMasher: MovieMasher
+  movieMasherContext?: MovieMasherContext
 
   protected changeHander(event: DragEvent) {
     const { emit } = this
@@ -27,11 +27,18 @@ export class SelectorInputElement extends IconString {
   }
 
   protected override content(contents: Contents): Content {
+    const { movieMasherContext: movieMasherContext } = this
+    if (!movieMasherContext) {
+      console.log(this.tagName, 'no movieMasherContext')
+      return html`${contents}`
+    }
+
+    // console.log(this.tagName, 'movieMasher defined')
     const BrowserControlId = 'movie-masher-selector-input-id'
     return html`<label htmlFor='${BrowserControlId}'>
       <input type='file' multiple
         id='${BrowserControlId}'
-        accept='${this.movieMasher.accept}'
+        accept='${movieMasherContext.accept}'
         @change='${this.changeHander}'
       ></input>
       ${contents}

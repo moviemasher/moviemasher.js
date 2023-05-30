@@ -1,8 +1,9 @@
 import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
 import { colorRgbaKeys } from '../../../Helpers/Color/ColorConstants.js'
-import { DataType, DataTypeNumber } from '../../../Setup/Enums.js'
-import { propertyInstance } from '../../../Setup/Property.js'
-import { ScalarRecord, StringRecord } from '../../../Types/Core.js'
+import { DataType } from "@moviemasher/runtime-shared"
+import { DataTypeNumber } from "../../../Setup/DataTypeConstants.js"
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { ScalarRecord, StringRecord } from '@moviemasher/runtime-shared'
 import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
 import { svgFilter, svgFilterElement } from '../../../Helpers/Svg/SvgFunctions.js'
 import { FilterDefinitionObject } from '../Filter.js'

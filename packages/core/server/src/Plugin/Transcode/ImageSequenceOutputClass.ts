@@ -1,6 +1,6 @@
 
-import { RenderingOutputClass } from "../Encode"
-import { ImageSequenceOutput } from "./ImageSequenceOutputArgs"
+import { RenderingOutputClass } from "../Encode/RenderingOutputClass.js";
+import { ImageSequenceOutput } from "./ImageSequenceOutputArgs.js"
 
 export class ImageSequenceOutputClass extends RenderingOutputClass implements ImageSequenceOutput {
 

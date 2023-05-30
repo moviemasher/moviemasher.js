@@ -1,6 +1,6 @@
 import type { Masher } from '../Masher.js'
-import { ActionTypeChange } from '../../../Setup/Enums.js'
-import { assertDefined, isPositive } from '../../../Utility/Is.js'
+import { ActionTypeChange } from "../../../Setup/EnumConstantsAndFunctions.js"
+import { assertDefined, isPositive } from '../../../Shared/SharedGuards.js'
 import { EditorSelectionObject } from '../EditorSelection/EditorSelection.js'
 import { ActionOptions, ActionObject, Action } from './Action/Action.js'
 import { actionInstance } from './Action/ActionFactory.js'

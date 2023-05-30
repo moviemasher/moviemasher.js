@@ -1,11 +1,9 @@
-import type { Value, ValueRecord } from '../../Types/Core.js'
-import type { MashAndMediaObject } from '../../Media/Mash/Mash.js'
 import type { Output } from '../../Base/Code.js'
-import type { Size } from '../../Utility/Size.js'
 import type { EncodingType } from './Encoding/Encoding.js'
-import type { Plugin, EncodeType } from '../Plugin.js'
+import type { Plugin, EncodeType } from '@moviemasher/runtime-shared'
 import type { StringDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
-import type { OutputFormat } from '../../Setup/Enums.js'
+import type { OutputOptions } from '../../Helpers/Output/Output.js'
+import { MashAssetObject } from '../../Shared/Mash/MashTypes.js'
 
 /**
  * @category Plugin
@@ -20,49 +18,23 @@ export type EncodePluginsByType = Record<EncodingType | string, EncodePlugin>
 
 
 export interface EncodeOutput extends Output {
-  commandOutput: RenderingCommandOutput
+  type: EncodingType
+  options: OutputOptions
 }
 
-export interface RenderingCommandOutput extends VideoEncoderOptions {
-  outputType: EncodingType
-  basename?: string
-}
-export type RenderingCommandOutputs = RenderingCommandOutput[]
+
 
 export interface RenderingInput {
-  mash: MashAndMediaObject
+  mash: MashAssetObject
 }
 export interface RenderingOptions extends RenderingInput {
-  output: RenderingCommandOutput
+  outputOptions: OutputOptions
+  encodingType: EncodingType
+  basename?: string
 }
 
 export interface EncoderOptions extends Output {}
 
-export interface RawEncoderOptions extends EncoderOptions {
-  extension?: string
-  format?: OutputFormat
-  options?: ValueRecord
-}
+export type EncodeMethod = (localPath: string, options: OutputOptions) => Promise<StringDataOrError>
 
-export interface AudioEncoderOptions extends RawEncoderOptions {
-  audioBitrate?: Value
-  audioChannels?: number
-  audioCodec?: string
-  audioRate?: number
-}
-
-export interface ImageEncoderOptions extends Partial<Size>, RawEncoderOptions {
-  videoBitrate?: Value
-  videoCodec?: string
-  videoRate?: number
-}
-
-export interface VideoEncoderOptions extends ImageEncoderOptions, AudioEncoderOptions {}
-
-export type EncoderOptionsBy = {
-  [index in EncodingType]?: EncoderOptions
-}
-
-
-export type EncodeMethod = (localPath: string, options?: EncoderOptions) => Promise<StringDataOrError>
 

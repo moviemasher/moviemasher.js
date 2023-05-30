@@ -1,7 +1,8 @@
 
-import { CommandOptions } from "../Plugin/Encode/Encode"
-import { RunningCommand } from "./RunningCommand"
-import { RunningCommandClass } from './RunningCommandClass'
+import type { CommandOptions } from "../Plugin/Encode/Encode.js"
+import type { RunningCommand } from "./RunningCommand.js"
+
+import { RunningCommandClass } from './RunningCommandClass.js'
 
 const CommandFactoryInstances: Record<string, RunningCommand> = {}
 

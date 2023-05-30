@@ -1,13 +1,12 @@
 
 import { 
-  isUpdatableDurationDefinition, AVType, 
-  Clip, isPositive, IntrinsicOptions, Time, 
+  AVType, 
+  isPositive, IntrinsicOptions, Time, 
   GraphFiles, 
 
-  Clips, PreloadArgs, EmptyFunction, Size, 
+  ServerClips, EmptyFunction, Size, 
   EncodingType, timeFromArgs, timeRangeFromTimes,
-  
-  RenderingCommandOutput,
+  InstanceCacheArgs,
   TypeVideo,
   TypeAudio,
   TypeImage,
@@ -15,11 +14,16 @@ import {
   ErrorName,
   AVTypeAudio,
   AVTypeBoth,
-  AVTypeVideo
+  AVTypeVideo,
+  sizeCopy,
+  sizeAboveZero,
+  VideoOutputOptions,
+  isAboveZero,
+  assertPositive, isAudibleAsset
 } from "@moviemasher/lib-core"
-import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs, RenderingResult } from "./Encode"
-import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
-import { filterGraphsArgs, filterGraphsInstance } from "./FilterGraphs/FilterGraphsFactory"
+import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs } from "./Encode.js"
+import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs.js"
+import { filterGraphsArgs, filterGraphsInstance } from "./FilterGraphs/FilterGraphsFactory.js"
 
 export class RenderingOutputClass implements RenderingOutput {
   constructor(public args: RenderingOutputArgs) {}
@@ -29,8 +33,8 @@ export class RenderingOutputClass implements RenderingOutput {
     const { quantize } = args.mash
     durationClips.forEach(clip => {
       const { content } = clip
-      const { definition } = content
-      if (isUpdatableDurationDefinition(definition)) {
+      const { asset: definition } = content
+      if (isAudibleAsset(definition)) {
         const frames = definition.frames(quantize)
         // console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
         if (frames) clip.frames = frames
@@ -39,7 +43,7 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get avType() { 
-    switch (this.outputType) {
+    switch (this.encodingType) {
       case TypeAudio: return AVTypeAudio
       // case FontType:
       // case SequenceType: 
@@ -64,18 +68,16 @@ export class RenderingOutputClass implements RenderingOutput {
     return type
   }
 
-  protected get commandOutput(): RenderingCommandOutput { return this.args.commandOutput }
-
 
   get duration(): number { 
-    if (this.outputType === TypeImage) return 0
+    if (this.encodingType === TypeImage) return 0
     
     return this.timeRange.lengthSeconds 
   }
 
-  private _durationClips?: Clip[]
-  private get durationClips(): Clip[] { return this._durationClips ||= this.durationClipsInitialize }
-  private get durationClipsInitialize(): Clip[] {
+  private _durationClips?: ServerClips
+  private get durationClips(): ServerClips { return this._durationClips ||= this.durationClipsInitialize }
+  private get durationClipsInitialize(): ServerClips {
     const { mash } = this.args
     const { frames } = mash
     if (isPositive(frames)) return []
@@ -87,9 +89,12 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get endTime(): Time | undefined {
-    if (this.outputType === TypeImage) return 
+    if (this.encodingType === TypeImage) return 
 
-    return this.args.endTime || this.args.mash.endTime
+    const { args } = this
+    const { endTime, mash } = args
+    // console.log(this.constructor.name, "endTime", mash.tracks)
+    return endTime || mash.endTime
   }
 
   get durationGraphFiles(): GraphFiles {
@@ -120,35 +125,36 @@ export class RenderingOutputClass implements RenderingOutput {
     return this.loadClipsPromise(this.durationClips)
   }
 
-  private loadClipsPromise(clips: Clips): Promise<void> {
+  private loadClipsPromise(clips: ServerClips): Promise<void> {
     if (!clips.length) return Promise.resolve()
     
     const { quantize } = this.args.mash
     const shared = {
-      quantize, audible: true, visible: true, editing: false, streaming: false,
+      quantize, audible: true, visible: true, 
     }
     const promises = clips.map(clip => {
-      const time = clip.timeRange(quantize)
-      const args: PreloadArgs = { ...shared, time, clipTime: time }
-      return clip.loadPromise(args)
+      const time = clip.timeRange
+      const args: InstanceCacheArgs = { ...shared, time, clipTime: time }
+      return clip.clipCachePromise(args)
     })
     return Promise.all(promises).then(EmptyFunction)
   }
 
-  get outputSize(): Size {
-    const { width, height } = this.args.commandOutput
-    if (!(width && height)) {
-      if (this.avType === AVTypeAudio) return { width: 0, height: 0 }
+  protected get outputOptions() { return this.args.outputOptions }
 
-      // console.error(this.constructor.name, "outputSize", this.args.commandOutput)
-      return errorThrow(ErrorName.OutputDuration)
-    }
-    return { width, height }
+  get outputSize(): Size {
+    const { outputOptions } = this
+    if (sizeAboveZero(outputOptions)) return sizeCopy(outputOptions)
+
+    if (this.avType === AVTypeAudio) return { width: 0, height: 0 }
+
+    return errorThrow(ErrorName.OutputDimensions)
   }
 
-  get outputType(): EncodingType { return this.args.commandOutput.outputType }
 
-  renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription> {
+  get encodingType(): EncodingType { return this.args.encodingType }
+
+  renderingDescriptionPromise(): Promise<RenderingDescription> {
     // console.log(this.constructor.name, "renderingDescriptionPromise")
 
     let promise = this.mashDurationPromise
@@ -162,8 +168,10 @@ export class RenderingOutputClass implements RenderingOutput {
     return promise.then(() => {
       this.assureClipFrames()
 
-      const { commandOutput } = this
-      const renderingDescription: RenderingDescription = { commandOutput }
+      const { outputOptions, encodingType } = this
+      const renderingDescription: RenderingDescription = { 
+        outputOptions, encodingType
+       }
       const avType = this.avTypeNeededForClips
       const { filterGraphs } = this
       // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
@@ -195,12 +203,13 @@ export class RenderingOutputClass implements RenderingOutput {
   get startTime(): Time {
     const { mash, startTime } = this.args
     const { quantize, frame, frames } = mash
-    if (this.outputType === TypeImage) {
+    if (this.encodingType === TypeImage) {
       if (frames < 0) return timeFromArgs(0, quantize)
 
       return mash.timeRange.positionTime(0, 'ceil')
     }
     if (startTime) return startTime
+    assertPositive(frame, 'frame')
 
     return timeFromArgs(frame, quantize)
   }
@@ -208,28 +217,34 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get timeRange(): Time { 
     const { startTime } = this
-    if (this.outputType === TypeImage) return startTime
+    if (this.encodingType === TypeImage) return startTime
 
-    return timeRangeFromTimes(startTime, this.endTime) 
+    const { endTime } = this
+    // console.log(this.constructor.name, "timeRange", startTime, endTime)
+    return timeRangeFromTimes(startTime, endTime) 
   }
 
-  get videoRate(): number { return this.args.commandOutput.videoRate || 0 }
+  get videoRate(): number { 
+    const { outputOptions } = this
+    const { videoRate } = outputOptions as VideoOutputOptions
 
-  private get clipsLackingSize(): Clips {
-    const { timeRange, args } = this
-    const { mash } = args
-    const clips = mash.clipsInTimeOfType(timeRange, AVTypeVideo)
-    const options: IntrinsicOptions = { size: true }
-    return clips.filter(clip => !clip.intrinsicsKnown(options))
-  }
+    return isAboveZero(videoRate) ? videoRate : 0
+}
+
+  // private get clipsLackingSize(): ServerClips {
+  //   const { timeRange, args } = this
+  //   const { mash } = args
+  //   const clips = mash.clipsInTimeOfType(timeRange, AVTypeVideo)
+  //   const options: IntrinsicOptions = { size: true }
+  //   return clips.filter(clip => !clip.intrinsicsKnown(options))
+  // }
 
 
-  private get visibleGraphFiles(): GraphFiles {
-    const options: IntrinsicOptions = { size: true }
-    const files: GraphFiles = this.clipsLackingSize.flatMap(clip => 
-      clip.intrinsicGraphFiles(options)
-    )
-    return files
-  }
-
+  // private get visibleGraphFiles(): GraphFiles {
+  //   const options: IntrinsicOptions = { size: true }
+  //   const files: GraphFiles = this.clipsLackingSize.flatMap(clip => 
+  //     clip.intrinsicGraphFiles(options)
+  //   )
+  //   return files
+  // }
 }

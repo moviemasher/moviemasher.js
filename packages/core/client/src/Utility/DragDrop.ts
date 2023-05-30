@@ -1,6 +1,6 @@
 import type { RemoteClient } from '../Client/RemoteClient.js'
 import type { 
-  UnknownRecord, Clip, Point, Rect, MediaObject, MashAndMediaObject, Strings, 
+  UnknownRecord, Clip, Point, Rect, MediaObject, MashAssetObject, Strings, 
   Effect, MashIndex, MediaArray, Masher, 
 } from '@moviemasher/lib-core'
 import {
@@ -9,8 +9,8 @@ import {
   isUndefined, ClassDropping, ClassDroppingAfter, 
   ClassDroppingBefore, errorThrow, 
   arrayOfNumbers, 
-  isDefiniteError, isMashAndMediaObject, isEffect, isClip, 
-  isMediaObject, 
+  isDefiniteError, isMashAssetObject, isEffect, isClip, 
+  isAssetObject, 
 } from '@moviemasher/lib-core'
 
 export const PositionAfter: PositionAfter = 'after'
@@ -54,11 +54,11 @@ export function assertDragDefinitionObject(value: any): asserts value is DragDef
 
 export interface DragLayerObject extends UnknownRecord {
   offset: number
-  mashAndMedia?: MashAndMediaObject
+  mashAndMedia?: MashAssetObject
 }
 
 
-export type Draggable = MediaObject | MashAndMediaObject | Clip | FileList | Effect
+export type Draggable = MediaObject | MashAssetObject | Clip | FileList | Effect
 
 
 export const TransferTypeFiles = 'Files'
@@ -221,11 +221,11 @@ export const dropDraggable = (masher: Masher, client: RemoteClient, draggable: D
     return Promise.resolve([])
   }
   
-  if (isMashAndMediaObject(draggable)) {
-    console.log("dropDraggable MashAndMediaObject")
+  if (isMashAssetObject(draggable)) {
+    console.log("dropDraggable MashAssetObject")
     return Promise.resolve([])
   }
-  if (isMediaObject(draggable)) {
+  if (isAssetObject(draggable)) {
     console.log("dropDraggable MediaObject")
     return dropMediaObject(masher, draggable, editorIndex)
     
