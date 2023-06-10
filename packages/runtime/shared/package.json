@@ -35,10 +35,5 @@
     "script": "run-s",
     "build": "run-s package",
     "package": "rollup --config dev/rollup/package.config.mjs"
-  },
-  "typedoc": {
-    "entryPoint": "src/index.ts",
-    "readmeFile": "README.md",
-    "displayName": "runtime-shared"
   }
 }

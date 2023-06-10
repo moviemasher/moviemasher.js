@@ -1,37 +1,35 @@
 { 
-	"request": {
-		"response": {
-			"media": [],
-			"quantize": 10,
-			"label": "Ten Seconds of Green",
-			"backcolor": "red",
-			"tracks": [
+	"id": "ten-seconds-of-green",
+	"type": "video",
+	"source": "mash",
+	"quantize": 10,
+	"label": "Ten Seconds of Green",
+	"backcolor": "red",
+	"tracks": [
+		{
+			"type": "video",
+			"clips": [
+					{
+					"frame": 0,
+					"frames": 100,
+					"content": {
+						"color": "#FF0000"
+					}
+				}, 
 				{
-					"type": "video",
-					"clips": [
-							{
-							"frame": 0,
-							"frames": 100,
-							"content": {
-								"color": "#FF0000"
-							}
-						}, 
-						{
-							"frames": 100,
-							"content": {
-								"color": "#00FF00"
-							}
-						}, 
-						{
-							"frames": 100,
-							"content": {
-								"color": "#0000FF"
-							}
-						}
-					]
+					"frames": 100,
+					"content": {
+						"color": "#00FF00"
+					}
+				}, 
+				{
+					"frames": 100,
+					"content": {
+						"color": "#0000FF"
+					}
 				}
 			]
 		}
-	}
+	]
 }
 

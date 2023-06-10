@@ -1,0 +1,10 @@
+{
+  "name": "@moviemasher/build-docs",
+  "description": "Builds everything in packages/themes and packages/protocols",
+  "scripts": {
+    "start": "web-dev-server --node-resolve --open --watch"
+  },
+  "devDependencies": {
+    "typedoc": "dependencies"
+  }
+}

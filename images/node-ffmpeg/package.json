@@ -20,7 +20,7 @@
     "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build"  
   },
   "peerDependencies": {
-    "@moviemasher/server-core": "5.1.2"
+    "@moviemasher/lib-server": "5.1.2"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",

@@ -6,12 +6,12 @@ ARG DIR_ROOT
 # package JSON files from main and relevant projects
 COPY package.json ${DIR_ROOT}/package.json
 COPY images/node-ffmpeg/package.json ${DIR_ROOT}/images/node-ffmpeg/package.json
-COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
-COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json
+COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
+COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
 
-COPY packages/core/lib/dist ${DIR_ROOT}/packages/core/lib/dist
+COPY packages/lib/shared/dist ${DIR_ROOT}/packages/lib/shared/dist
 
-COPY packages/core/server/dist ${DIR_ROOT}/packages/core/server/dist
+COPY packages/lib/server/dist ${DIR_ROOT}/packages/lib/server/dist
 
 
 FROM amazonlinux:2022 

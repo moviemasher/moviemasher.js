@@ -10,7 +10,7 @@
     "checkJs": true,
     "lib": ["DOM", "ESNext", "ES2022", "ES2021", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5", "ES6"],
     "module": "ESNext",
-    "moduleResolution": "node16",
+    "moduleResolution": "Node16",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "resolveJsonModule": true,

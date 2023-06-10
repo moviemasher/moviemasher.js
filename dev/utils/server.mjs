@@ -16,8 +16,8 @@ const replaceUrls = (text) => {
 
 const app = express()
 const rootDir = process.env.MOVIEMASHER_DIR_ROOT
-const indexPath = process.env.MOVIEMASHER_EXAMPLE_INDEX || `${rootDir}/packages/client/component/example/src/index.html`
-const testPath = `${rootDir}/packages/client/component/example/src/test.html`
+const indexPath = process.env.MOVIEMASHER_EXAMPLE_INDEX || `${rootDir}/packages/lib/client/example/src/index.html`
+const testPath = `${rootDir}/packages/lib/client/example/src/test.html`
 
 const packageDirs = lib => {
   if (!lib.includes('-')) return ['core', 'lib']
@@ -58,10 +58,6 @@ app.get('/test', function (_, res) {
   res.send(index)
 })
 
-
-// app.use('/cdn/moviemasher.js', express.static('../../core/lib/esm'))
-// app.use('/cdn/core-client', express.static('../../core/client/esm'))
-// app.use('/cdn/core-server', express.static('../../core/server/esm'))
 
 
 app.use(express.json())

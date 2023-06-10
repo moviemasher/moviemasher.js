@@ -1,30 +1,28 @@
 {
   "name": "@moviemasher/test-server",
-  "version": "5.1.2",
-  "description": "Movie Masher Server Tests",
-  "type": "module",
-  "license": "MIT",
-  "author": {
-    "name": "Movie Masher",
-    "email": "support@moviemasher.com"
+  "description": "Runs all tests",
+  "scripts": {
+    "test": "node --experimental-global-customevent--loader tsx --test ../../packages/lib/server/src/**/**/*.test.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tsx": "^3.12.7"
+  },
+  "peerDependencies": {
+    "@moviemasher/lib-server": "5.1.2"
   },
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"
   },
+  "homepage": "https://moviemasher.com",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
-  "homepage": "https://moviemasher.com",
-  "scripts": {
-    "test": "node --loader tsx --test ../../packages/core/server/dev/test/*.ts"
-  },
-  "peerDependencies": {
-    "@moviemasher/server-core": "5.1.2"
-  },
-  "devDependencies": {
-    "tsx": "^3.12.7",
-    "npm-run-all": "^4.1.5",
-    "@types/fluent-ffmpeg": "^2.1.20"
-  }
+  "version": "5.1.2"
 }

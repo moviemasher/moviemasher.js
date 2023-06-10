@@ -1,5 +1,5 @@
 The [@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react)
-package builds upon the core [@moviemasher/lib-core](https://www.npmjs.com/package/@moviemasher/lib-core) package to provide a suite of [ReactJS](https://reactjs.org)
+package builds upon the core [@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared) package to provide a suite of [ReactJS](https://reactjs.org)
 components capable of displaying a video editing user interface, as well as managing file imports and metadata extraction. 
 
 The codebase mostly follows the [Compound Components](https://www.patterns.dev/posts/compound-pattern/) React pattern, relying heavily on context to share state within a hierarchy of nested components. It deviates from the pattern by allowing arbitrary sub component naming rather than forcing dot notation. For instance, a sub component might be referenced as `ComponentSub` rather than `Component.Sub`. The drawback of this approach is that each component must be included individually, but ultimately this makes the bundler's job much easier. 

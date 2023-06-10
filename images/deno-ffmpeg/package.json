@@ -12,8 +12,8 @@
 
   },
   "peerDependencies": {
-    "@moviemasher/lib-core": "5.1.2",
-    "@moviemasher/server-core": "5.1.2"
+    "@moviemasher/lib-shared": "5.1.2",
+    "@moviemasher/lib-server": "5.1.2"
   },
   "devDependencies": {
     "@types/node": "18.13.0"

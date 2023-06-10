@@ -10,10 +10,10 @@ FROM base as stage
 ARG DIR_ROOT
 COPY images/test-client/package.json ${DIR_ROOT}/images/test-client/package.json
 
-COPY packages/client/component/package.json ${DIR_ROOT}/packages/client/component/package.json
-COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
-COPY packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
-COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json
+COPY packages/lib/client/package.json ${DIR_ROOT}/packages/lib/client/package.json
+COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
+COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
+
 COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
 COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
 

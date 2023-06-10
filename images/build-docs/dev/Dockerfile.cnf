@@ -1,0 +1,27 @@
+ARG DIR_ROOT=/app
+
+FROM node:18 as base
+ARG DIR_ROOT
+WORKDIR ${DIR_ROOT}
+COPY package.json ${DIR_ROOT}/package.json
+RUN npm install 
+
+FROM base as stage
+ARG DIR_ROOT
+COPY images/build-docs/package.json ${DIR_ROOT}/images/build-docs/package.json
+
+COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
+COPY packages/lib/client/package.json ${DIR_ROOT}/packages/lib/client/package.json
+COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
+
+COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
+COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
+COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
+
+# COPY plugin/protocol/supabase/package.json ${DIR_ROOT}/plugin/protocol/supabase/package.json
+
+RUN npm install 
+
+ENTRYPOINT ["npm", "run"]
+CMD ["build-typedoc"]
+LABEL org.opencontainers.image.authors="support@moviemasher.com"

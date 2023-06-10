@@ -5,7 +5,7 @@ in GitHub as [moviemasher/moviemasher.js](https://github.com/moviemasher/moviema
 This repository contains and builds several packages which are made available
 in NPM:
 
-- [@moviemasher/lib-core](https://www.npmjs.com/package/@moviemasher/lib-core) - core
+- [@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared) - core
   NPM package that uses the [SVG API](https://developer.mozilla.org/en-US/docs/Web/API/Svg_API)
   and [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
   to composite and mix audiovisual content in a timed and controlled way.

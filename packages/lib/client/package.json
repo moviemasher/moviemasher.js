@@ -1,0 +1,52 @@
+{
+  "name": "@moviemasher/lib-client",
+  "description": "Movie Masher Web Component Client",
+  "license": "MIT",
+  "version": "5.1.2",
+  "files": [
+    "dist",
+    "json",
+    "custom-elements.json"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+
+
+  "scripts": {
+    "package": "rollup -c dev/rollup/package.config.mjs",
+    "client": "rollup -c dev/rollup/client.config.mjs",
+    "cem": "cem analyze --litelement",
+    "analyze": "npm run cem -- --exclude dist",
+    "build": "run-s client package analyze",
+    "serve": "node ../../../dev/utils/server.mjs",
+    "script": "run-s"
+  },
+  "dependencies": {
+    "@moviemasher/lib-shared": "5.1.2",
+    "lit-html": "^2.7.2",
+    "lit-element": "3.3.1",
+    "tslib": "^2.5.0",
+    "@lit-labs/context": "^0.3.0",
+    "@lit-labs/observers": "2.0.0",
+    "@lit/reactive-element": "1.6.1",
+    "lit": "^2.7.2"
+  },
+  "imports": {
+    "#@moviemasher/lib-shared/": "@moviemasher/lib-shared/dist/",
+    "#tslib": "tslib/tslib.es6.js",
+    "#@lit/reactive-element/decorators/": "@lit/reactive-element/decorators/",
+    "#lit-element": "lit-element/lit-element.js",
+    "#@lit-labs/context": "@lit-labs/context/index.js",
+    "#@lit-labs/observers/mutation_controller.js": "@lit-labs/observers/mutation_controller.js",
+    "#lit-html": "lit-html/lit-html.js",
+    "#@lit/reactive-element": "@lit/reactive-element/reactive-element.js"
+  },
+
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.7.0",
+    "@web/dev-server": "^0.1.36"
+  },
+  "customElements": "custom-elements.json"
+}

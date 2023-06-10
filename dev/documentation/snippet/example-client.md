@@ -15,9 +15,9 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://unpkg.com/react@18/umd/react.production.min.js' crossorigin></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/lib-core@5.1.2/umd/moviemasher.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/lib-shared@5.1.2/umd/moviemasher.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/theme-default@5.1.2/umd/theme-default.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/client-core@5.1.2/umd/client-core.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/lib-client@5.1.2/umd/lib-client.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-react@5.1.2/umd/client-react.js' crossorigin></script>
     <link href='https://unpkg.com/@moviemasher/theme-default@5.1.2/moviemasher.css' rel='stylesheet'>
     <style> /* fit root DIV to viewport */

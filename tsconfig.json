@@ -2,32 +2,22 @@
   "extends": "./dev/tsconfig/lit.json",
 
   "compilerOptions": {
-    
     "noImplicitReturns": false,
     "noImplicitOverride": false,
     "noUnusedParameters": false,
     "noUnusedLocals": false,
     "strict": false,
-    "rootDir": "./"
+    "composite": true,
+    "rootDir": "./",
+    "declaration": true,
+    "declarationMap": true
   },
-  "include": [
-    "./packages/core/lib/src/*", 
-    "./packages/core/lib/src/**/*", 
-    "./packages/core/client/src/*", 
-    "./packages/core/client/src/**/*", 
-    "./packages/client/component/src/*", 
-    "./packages/client/component/src/**/*", 
-    "./packages/runtime/client/src/*", 
-    "./packages/runtime/client/src/**/*", 
-    "./packages/runtime/server/src/*", 
-    "./packages/runtime/server/src/**/*", 
-    "./packages/runtime/shared/src/*", 
-    "./packages/runtime/shared/src/**/*", 
-    "./plugin/protocol/**/src/*"
-  ],
+
+  "include": ["**/*.ts"],
+  
   "exclude": [
-    "node_modules", 
+    "**/node_modules", 
     "**/*.test.ts", "**/*.test.e2e.ts", 
-    "**/umd/*", "**/esm/*", "**/dist/*",
+    "**/dist/*",
   ]
 }

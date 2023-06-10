@@ -1,9 +1,0 @@
-{
-  "name": "@moviemasher/example-core",
-  "version": "5.1.2",
-  "description": "Movie Masher Core Example",
-  "license": "MIT",
-  "scripts": {  
-    "build": "node ../../../dev/utils/replace-paths.mjs ./src/index.html ./public/index.html"
-  }
-}

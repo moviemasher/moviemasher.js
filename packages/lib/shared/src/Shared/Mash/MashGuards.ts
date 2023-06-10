@@ -1,0 +1,23 @@
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { MashAsset, MashInstance } from './MashTypes.js'
+import { isInstance } from '../Instance/InstanceGuards.js'
+import { isSourceAsset } from '../Asset/AssetGuards.js'
+import { SourceMash } from '@moviemasher/runtime-shared'
+import { isVideoAsset } from '../Video/VideoGuards.js'
+
+export const isMashAsset = (value: any): value is MashAsset => (
+  isVideoAsset(value) 
+  && isSourceAsset(value)
+  && value.source === SourceMash 
+  && 'trackInstance' in value
+)
+export function assertMashAsset(value: any, name?: string): asserts value is MashAsset {
+  if (!isMashAsset(value)) errorThrow(value, 'MashAsset', name)
+}
+
+export const isMashInstance = (value: any): value is MashInstance => {
+  return isInstance(value) && 'asset' in value && isMashAsset(value.asset) 
+}
+export function assertMashInstance(value: any, name?: string): asserts value is MashInstance {
+  if (!isMashInstance(value)) errorThrow(value, 'MashInstance', name)
+}

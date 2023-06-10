@@ -1,1 +1,0 @@
-export * as Text from './Text.lite'

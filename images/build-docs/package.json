@@ -1,0 +1,28 @@
+{
+  "name": "@moviemasher/build-docs",
+  "description": "Builds everything in packages/themes and packages/protocols",
+  "scripts": {
+    "start": "web-dev-server --node-resolve --open --watch"
+  },
+  "devDependencies": {
+    "typedoc": "^0.24.8",
+    "typedoc-plugin-merge-modules": "^5.0.1",
+    "typedoc-plugin-mdn-links": "^3.0.3",
+    "typedoc-plugin-extras": "^2.3.3",
+    "typedoc-plugin-coverage": "^2.1.0"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "homepage": "https://moviemasher.com",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "version": "5.1.2"
+}

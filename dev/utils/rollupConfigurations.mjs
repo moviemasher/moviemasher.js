@@ -1,11 +1,9 @@
 import path from 'path'
 import fs from 'fs'
-import commonjs from '@rollup/plugin-commonjs'
+
 import nodeResolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
-import terser from '@rollup/plugin-terser'
 import typescript from "rollup-plugin-typescript2"
-// import ts from "rollup-plugin-ts"
 
 
 import { monoDir } from './file.mjs'
@@ -97,10 +95,10 @@ export const rollupConfiguration = (args) => {
       'react': 'React',
       'react-dom/client': 'ReactDOM',
       '@moviemasher/client-react': 'MovieMasherClient',
-      '@moviemasher/client-core': 'MovieMasherClientCore',
+      '@moviemasher/lib-client': 'MovieMasherClientCore',
       '@moviemasher/protocol-supabase': 'MovieMasherProtocolSupabase',
       '@moviemasher/theme-default': 'MovieMasherTheme',
-      '@moviemasher/lib-core': 'MovieMasher',
+      '@moviemasher/lib-shared': 'MovieMasher',
       '@supabase/supabase-js': 'supabase',
     },
   }

@@ -1,0 +1,9 @@
+{
+  "options": {},
+  "format": "image2",
+  "width": 320,
+  "height": 240,
+  "videoRate": 10,
+  "extension": "jpg",
+  "outputType": "imagesequence"
+}

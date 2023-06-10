@@ -7,7 +7,7 @@ ARG MOVIEMASHER_VERSION
 WORKDIR ${DIR_ROOT}
 COPY package.json ${DIR_ROOT}/package.json
 COPY images/test-shared/package.json ${DIR_ROOT}/images/test-shared/package.json
-COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
+COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
 COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
 
 RUN npm install 

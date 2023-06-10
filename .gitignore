@@ -4,11 +4,6 @@ temporary*
 **/__image_snapshots__*
 **/screenshots*
 *.cache/*
-**/raw/*
-**/cjs/*
-**/umd/*
-**/iife/*
-**/esm/*
 **/dist/*
 **/*-deleted/*
 *.tsbuildinfo

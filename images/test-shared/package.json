@@ -17,13 +17,13 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "test-core-lib": "node --loader tsx --test ../../packages/core/lib/src/Shared/*.test.ts ../../packages/core/lib/src/Shared/**/*.test.ts ",
+    "test-core-lib": "node --loader tsx --test ../../packages/lib/shared/src/Shared/*.test.ts ../../packages/lib/shared/src/Shared/**/*.test.ts ",
     "test-core-shared": "node --loader tsx --test ../../packages/runtime/shared/src/**/**/*.test.ts ../../packages/runtime/shared/src/**/*.test.ts",
     "test": "run-s test-core-lib"
   },
   "dependencies": {
     "@moviemasher/runtime-shared": "5.1.2",
-    "@moviemasher/lib-core": "5.1.2"
+    "@moviemasher/lib-shared": "5.1.2"
   },
   "devDependencies": {
     "tsx": "^3.12.7",

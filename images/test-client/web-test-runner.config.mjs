@@ -7,7 +7,7 @@ export default {
     // {
     //   name: 'core',
     //   files: [
-    //     '../../../packages/core/client/tests/*.test.mjs',
+    //     '../../../packages/lib/client/tests/*.test.mjs',
     //   ],
     //   browsers: [    
     //     playwrightLauncher({ product: "firefox" }),   
@@ -16,7 +16,7 @@ export default {
     {
       name: 'client',
       files: [
-        '../../packages/client/component/src/*.e2e.ts',
+        '../../packages/lib/client/src/*.e2e.ts',
       ],
       browsers: [    
         playwrightLauncher({ product: "firefox", launchOptions: { firefoxUserPrefs: { 'layout.css.more_color_4.enabled': true } } }),    

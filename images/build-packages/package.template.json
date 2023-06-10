@@ -1,0 +1,19 @@
+{
+  "name": "@moviemasher/build-packages",
+  "description": "Builds Movie Masher core packages",
+  "scripts": {
+    "lib-client": "npm run build -w @moviemasher/lib-client",
+    "lib-server": "npm run build -w @moviemasher/lib-server",
+    "lib-shared": "npm run build -w @moviemasher/lib-shared",
+    "lib": "run-s lib-shared lib-client lib-server",
+    "runtime-client": "npm run build -w @moviemasher/runtime-client",
+    "runtime-server": "npm run build -w @moviemasher/runtime-server",
+    "runtime-shared": "npm run build -w @moviemasher/runtime-shared",
+    "runtime": "run-s runtime-shared runtime-client runtime-server",
+
+    "build": "run-s runtime lib"
+  },
+  "devDependencies": {
+    "rollup": "dependencies"
+  }
+}

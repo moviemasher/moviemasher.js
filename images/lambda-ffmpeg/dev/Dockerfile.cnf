@@ -8,11 +8,11 @@ COPY package.json ${DIR_ROOT}/package.json
 COPY images/lambda-ffmpeg/package.json ${DIR_ROOT}/images/lambda-ffmpeg/package.json
 COPY images/lambda-ffmpeg/esm ${DIR_ROOT}/images/lambda-ffmpeg/esm
 
-COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
-COPY packages/core/lib/esm ${DIR_ROOT}/packages/core/lib/esm
+COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
+COPY packages/lib/shared/esm ${DIR_ROOT}/packages/lib/shared/esm
 
-COPY packages/core/server/package.json ${DIR_ROOT}/packages/core/server/package.json
-COPY packages/core/server/esm ${DIR_ROOT}/packages/core/server/esm
+COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
+COPY packages/lib/server/esm ${DIR_ROOT}/packages/lib/server/esm
 
 
 FROM public.ecr.aws/lambda/nodejs:18
@@ -52,8 +52,8 @@ RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-lambda.sh \
 
 # # Assumes your function is named "app.js", and there is a package.json file in the app directory 
 # COPY packages/example/lambda/src/app.js packages/example/lambda/package.json ${DIR_ROOT}/
-# COPY packages/core/lib ${DIR_ROOT}/node_modules/@moviemasher/lib-core
-# COPY packages/core/server ${DIR_ROOT}/node_modules/@moviemasher/server-core
+# COPY packages/lib/shared ${DIR_ROOT}/node_modules/@moviemasher/lib-shared
+# COPY packages/lib/server ${DIR_ROOT}/node_modules/@moviemasher/lib-server
 
 # RUN npm install
 COPY esm/lambda-ffmpeg.js ${DIR_ROOT}/lambda-ffmpeg.mjs

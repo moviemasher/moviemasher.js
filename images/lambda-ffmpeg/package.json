@@ -19,7 +19,7 @@
     "fluent-ffmpeg": "2.1.2"
   },
   "peerDependencies": {
-    "@moviemasher/lib-core": "5.1.2"
+    "@moviemasher/lib-shared": "5.1.2"
   },
   "devDependencies": {
     "@types/express": "4.17.15",

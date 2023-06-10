@@ -1,5 +1,5 @@
 The [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express)
-package builds upon the core [@moviemasher/lib-core](https://www.npmjs.com/package/@moviemasher/lib-core) package to provide an [ExpressJS](https://expressjs.com) server API capable of video encoding and streaming, as well as managing media and its metadata. 
+package builds upon the core [@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared) package to provide an [ExpressJS](https://expressjs.com) server API capable of video encoding and streaming, as well as managing media and its metadata. 
 
 
 The server package is optimized to work with the [@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) package, but this is not a requirement. 
@@ -81,7 +81,7 @@ saving the former to the `dependencies` array in your **package.json** file.
 ```shell
 npm install @moviemasher/server-express --save
 ```
-Alternatively, if you're wanting to build your own server you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/lib-core) instead.
+Alternatively, if you're wanting to build your own server you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/lib-shared) instead.
 
 ### _Please note_ 
 This does not install a client implementation that interacts with this package. Learn more about how the codebase is structured in the

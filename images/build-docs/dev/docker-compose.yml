@@ -1,0 +1,25 @@
+version: "3"
+name: moviemasher-build-docs
+services:
+  service:
+    build:
+      dockerfile: images/build-docs/dev/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/build-docs:${MOVIEMASHER_VERSION}
+    container_name: moviemasher-build-docs
+    env_file:
+      - ../../../dev/local.env
+    
+    volumes:
+      # - ../../../:${MOVIEMASHER_DIR_ROOT}/
+
+      - ../../../docs/:${MOVIEMASHER_DIR_ROOT}/docs/
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
+      - ../../../typedoc.cjs:${MOVIEMASHER_DIR_ROOT}/typedoc.cjs
+      - ../../../README.md:${MOVIEMASHER_DIR_ROOT}/README.md
+
+      - ../../../images/build-docs/:${MOVIEMASHER_DIR_ROOT}/images/build-docs/
+      - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
+

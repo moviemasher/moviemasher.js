@@ -1,0 +1,20 @@
+{
+  "extends": "../../../dev/tsconfig/lit.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "plugins": [
+      {
+        "name": "ts-lit-plugin",
+        "strict": true,
+        "rules": {
+          "no-unknown-tag-name": "off",
+          "no-missing-import": "warning",
+          "no-unused-locals": "off"
+      
+        }
+      }
+    ]
+  },
+  "include": ["src/**/*", "src/*"],
+  "exclude": ["src/**/*.e2e.ts", "src/**/*.test.ts"]
+}

@@ -1,0 +1,18 @@
+version: "3"
+name: moviemasher-node-ffmpeg
+services:
+ service:
+    env_file:
+      - ../../../../../dev/local.env
+    build: 
+      context: ../../../../../
+      dockerfile: images/node-ffmpeg/dev/Dockerfile.cnf
+    image: moviemasher/node-ffmpeg:${MOVIEMASHER_VERSION}
+    command: node --loader tsx --test packages/lib/server/dev/test/
+    volumes:
+      - ../../../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../../../images/:${MOVIEMASHER_DIR_ROOT}/images/
+      - ../../../../../packages/lib/shared/:${MOVIEMASHER_DIR_ROOT}/packages/lib/shared/
+      - ../../../../../packages/lib/server/:${MOVIEMASHER_DIR_ROOT}/packages/lib/server/
+      - ../../../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../../../temporary:${MOVIEMASHER_DIR_ROOT}/temporary

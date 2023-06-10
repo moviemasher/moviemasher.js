@@ -1,4 +1,4 @@
-import { EventDispatcher } from '@moviemasher/runtime-shared'
-import { ClientEventDispatcher } from './ClientEventDispatcher.js'
 
-export const MovieMasher: EventDispatcher = new ClientEventDispatcher()
+export * from './declarations.js'
+export * from './ClientEventDispatcher.js'
+export * from './MovieMasher.js'

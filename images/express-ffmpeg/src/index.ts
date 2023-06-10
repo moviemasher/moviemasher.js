@@ -1,8 +1,9 @@
-import { jobExtract } from "@moviemasher/server-core"
-import { JsonRecord, errorObjectCaught, UnknownRecord, Runtime, ColonChar } from '@moviemasher/lib-core'
+import { jobExtract } from "@moviemasher/lib-server"
+import {  errorObjectCaught, Runtime, ColonChar, TypeNumber } from '@moviemasher/lib-shared'
 import express from 'express'
-import { EnvironmentKeyApiHost, EnvironmentKeyApiPort } from "@moviemasher/server-core"
-import { JobTypeDecoding, JobTypeEncoding } from "@moviemasher/server-core/src/Setup/Enums"
+import { EnvironmentKeyApiHost, EnvironmentKeyApiPort } from "@moviemasher/lib-server"
+import { JobTypeDecoding, JobTypeEncoding } from "@moviemasher/lib-server"
+import { JsonRecord, UnknownRecord } from "@moviemasher/runtime-shared"
 
 const app = express()
 app.use(express.json())
@@ -42,7 +43,7 @@ const postHandler: express.RequestHandler = (req, res) => {
 
 app.post('/', postHandler)
 
-const port = Runtime.environment.get(EnvironmentKeyApiPort, NumberType)
+const port = Runtime.environment.get(EnvironmentKeyApiPort, TypeNumber)
 const suppliedHost = Runtime.environment.get(EnvironmentKeyApiHost)
 const host = suppliedHost === 'localhost' ? '0.0.0.0' : suppliedHost
 app.listen(port, host, () => { console.log(`Listening on ${host}${ColonChar}${port}`) })

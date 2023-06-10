@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module" src="https://unpkg.com/@moviemasher/lib-client/dist/index.js"></script>
+  </head>
+  <body>
+    <moviemasher-main>
+      <moviemasher-article>
+        <moviemasher-protocol-supabase>
+          <data value='project_url'>http://example.com</data>
+          <data value='anon_key'>...key...</data>
+        </moviemasher-protocol-supabase>
+        
+        <movie-masher>
+          <div slot='preview-footer'>PREVIEW FOOTER</div>
+
+          <moviemasher-viewer-section>
+            <moviemasher-viewer-header>
+              <moviemasher-viewer-header-h1>
+                <moviemasher-icon icon='preview'></moviemasher-icon>
+                <moviemasher-span span='preview'></moviemasher-string>
+              </moviemasher-viewer-header-h1>
+            </moviemasher-viewer-header>
+            <moviemasher-output></moviemasher-output>
+            <moviemasher-viewer-footer>
+            </moviemasher-viewer-footer>
+          </moviemasher-viewer-section>
+
+          <moviemasher-select-section>
+
+          </moviemasher-select-section>
+
+          <moviemasher-composer-section>
+          </moviemasher-composer-section>
+
+          <moviemasher-inspector-section>
+            <moviemasher-inspector-div>
+              <moviemasher-inspector-fieldset set='timing'>
+
+              </moviemasher-inspector-fieldset>
+            </moviemasher-inspector-div>
+          </moviemasher-inspector-section>
+
+          <moviemasher-console-section>
+          </moviemasher-console-section>
+        </movie-masher>
+      </moviemasher-article>
+    </moviemasher-main>
+  </body>
+</html>
