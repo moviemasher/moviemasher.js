@@ -1,8 +1,8 @@
-import type { VisibleInstance } from '../Instance/Instance.js'
-import type { VisibleAsset } from '../Asset/AssetTypes.js'
+import type { VisibleInstance } from '@moviemasher/runtime-shared'
+import type { VisibleAsset } from '@moviemasher/runtime-shared'
 
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { isAsset } from '../Asset/AssetGuards.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { isAsset } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
 import { TypesVisible } from '@moviemasher/runtime-shared'
 

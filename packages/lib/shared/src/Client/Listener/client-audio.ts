@@ -2,12 +2,12 @@ import type { DataOrError } from '@moviemasher/runtime-shared'
 
 import { MovieMasher } from '@moviemasher/runtime-client'
 import type { ClientAudioEvent } from '../../Helpers/ClientMedia/ClientMediaEvents.js'
-import { errorCaught, errorPromise } from '../../Helpers/Error/ErrorFunctions.js'
+import { errorCaught, errorPromise } from '@moviemasher/runtime-shared'
 import { isDefiniteError } from '../../Shared/SharedGuards.js'
 import { ClientAudioDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 import { requestUrl } from '../request/request.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
+import { ErrorName } from '@moviemasher/runtime-shared'
 
 
 let _context: AudioContext | undefined = undefined

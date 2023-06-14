@@ -13,7 +13,7 @@ COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.js
 COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
 COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
 
-# remove once client is out of core
+# TODO: remove me once shared lib does not depend on client
 COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
 
 RUN npm install 

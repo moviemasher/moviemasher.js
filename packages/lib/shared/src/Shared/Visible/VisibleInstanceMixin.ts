@@ -1,5 +1,5 @@
-import type { ContentRectArgs } from '../../Helpers/Content/ContentRectArgs.js'
-import type {IntrinsicOptions} from '../Mash/Clip/Clip.js'
+import type { ContentRectArgs } from '@moviemasher/runtime-shared'
+import type {IntrinsicOptions} from '@moviemasher/runtime-shared'
 import type {Rect} from '@moviemasher/runtime-shared'
 import type {Time} from '@moviemasher/runtime-shared'
 
@@ -10,8 +10,8 @@ import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { PointZero } from '../../Utility/PointConstants.js'
 import { rectFromSize } from '../../Utility/RectFunctions.js'
 import { Constrained } from '@moviemasher/runtime-shared'
-import { VisibleAsset } from '../Asset/AssetTypes.js'
-import { Instance, VisibleInstance, VisibleInstanceObject } from '../Instance/Instance.js'
+import { VisibleAsset } from '@moviemasher/runtime-shared'
+import { Instance, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
 export function VisibleInstanceMixin
 <T extends Constrained<Instance>>(Base: T): 

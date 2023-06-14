@@ -1,6 +1,16 @@
-import { AudibleAssetMixin, ServerRawAssetClass, VisibleAssetMixin, ServerAudibleAssetMixin, ServerVisibleAssetMixin, VideoAssetMixin, PreloadArgs, GraphFiles, assertEndpoint, endpointUrl, assertPopulatedString, GraphFile, AudibleInstanceMixin, ServerInstanceClass, VisibleInstanceMixin, ServerAudibleInstanceMixin, ServerVisibleInstanceMixin, VideoInstanceMixin, ServerPromiseArgs } from "@moviemasher/lib-shared"
-import { ServerRawVideoAsset, ServerRawVideoInstance } from "@moviemasher/lib-shared/dist/Server/Raw/ServerRawTypes.js"
-import { TypeVideo, TypeAudio } from "@moviemasher/runtime-shared"
+import { 
+  AudibleAssetMixin, ServerRawAssetClass, VisibleAssetMixin, 
+  ServerAudibleAssetMixin, ServerVisibleAssetMixin, VideoAssetMixin, 
+ assertEndpoint, endpointUrl, assertPopulatedString, 
+
+  AudibleInstanceMixin, ServerInstanceClass, VisibleInstanceMixin, 
+  ServerAudibleInstanceMixin, ServerVisibleInstanceMixin, VideoInstanceMixin, 
+
+  ServerRawVideoAsset,
+  ServerRawVideoInstance
+} from '@moviemasher/lib-shared'
+import { GraphFiles, GraphFile, ServerPromiseArgs } from '@moviemasher/runtime-server'
+import { PreloadArgs, TypeVideo, TypeAudio } from '@moviemasher/runtime-shared'
 
 const WithAudibleAsset = AudibleAssetMixin(ServerRawAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)

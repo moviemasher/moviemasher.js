@@ -2,15 +2,16 @@ import {UnknownRecord} from '@moviemasher/runtime-shared'
 import { DurationNone, DurationUnknown, DurationUnlimited } from "../../../Setup/EnumConstantsAndFunctions.js"
 import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
 import {sortByFrame} from '../../../Utility/SortFunctions.js'
-import {Clip, Clips} from '../Clip/Clip.js'
+import {Clip, Clips} from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../../Base/PropertiedClass.js"
-import {Track, TrackArgs} from './Track.js'
-import {isAboveZero, isDefined, isPositive} from '../../SharedGuards.js'
+import {Track, TrackArgs} from '@moviemasher/runtime-shared'
+import {isAboveZero, isPositive} from '../../SharedGuards.js'
+import { isDefined } from "@moviemasher/runtime-shared"
 import {TimeRange} from '@moviemasher/runtime-shared'
 import {idGenerate} from '../../../Utility/IdFunctions.js'
 import {Default} from '../../../Setup/Default.js'
 import {arrayLast} from '../../../Utility/ArrayFunctions.js'
-import { MashAsset } from '../MashTypes.js'
+import { MashAsset } from '@moviemasher/runtime-shared'
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {

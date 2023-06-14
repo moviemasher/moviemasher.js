@@ -2,10 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import { MovieMasher} from '@moviemasher/runtime-server'
 import {
-  CommandInput, AVType, CommandInputs,
+  CommandInput, CommandInputs,
   CommandFilters,
-  ServerMashAsset, ServerAssetManager, 
-  EncodingType, VideoOutputOptions, OutputOptions, assertPopulatedString, outputOptions, StringDataOrError, isDefiniteError, StringData, sizeCopy, 
+  ServerMashAsset, 
+   VideoOutputOptions, OutputOptions, assertPopulatedString, outputOptions, StringDataOrError, isDefiniteError, StringData, sizeCopy, 
 } from '@moviemasher/lib-shared'
 import type { 
   CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, 
@@ -13,11 +13,13 @@ import type {
 } from '../Encode.js'
 import type  { RenderingProcess, RenderingProcessArgs } from './RenderingProcess.js'
 import type { CommandResult } from '../../../RunningCommand/RunningCommand.js'
-
+import type { 
+  AVType, EncodingType, Numbers, 
+} from '@moviemasher/runtime-shared'
 import {
   EmptyFunction, 
   assertTrue, assertSize, assertAboveZero, idGenerateString, 
-  errorThrow, NewlineChar, AVTypeBoth, AVTypeVideo, ErrorName, 
+NewlineChar, AVTypeBoth, AVTypeVideo, 
   
 } from '@moviemasher/lib-shared'
 import {
@@ -28,7 +30,9 @@ import { commandArgsString } from '../../../Utility/Command.js'
 import { Probe } from '../../../Command/Probe/Probe.js'
 import { runningCommandInstance } from '../../../RunningCommand/RunningCommandFactory.js'
 import { RenderingOutputClass } from '../RenderingOutputClass.js'
-import { Numbers, TypeImage, TypeVideo } from '@moviemasher/runtime-shared'
+import { 
+ ErrorName, TypeImage, TypeVideo, errorThrow 
+} from '@moviemasher/runtime-shared'
 
 export type RenderingProcessConcatFileDuration = [string, number]
 
@@ -224,11 +228,11 @@ export class RenderingProcessClass implements RenderingProcess {
     if (this._mashMedia) return this._mashMedia
 
     // const { args } = this // , outputOptions
-    const assetManager = MovieMasher.assetManager as ServerAssetManager
+    const assetManager = MovieMasher.assetManager
     const { mash } = this.args
     // const size = sizeAboveZero(outputOptions) ? outputOptions : SizeZero
-    
-    return this._mashMedia = assetManager.fromObject(mash) as ServerMashAsset
+    const array = assetManager.define(mash) as ServerMashAsset[]
+    return this._mashMedia = array[0]
   }
 
 

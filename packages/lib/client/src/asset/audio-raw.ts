@@ -1,20 +1,25 @@
-import { 
-  AssetCacheArgs,
-  AssetEventDetail, AudibleAssetMixin, AudibleClientAssetMixin, 
-  AudibleClientInstanceMixin, AudibleInstanceMixin, AudioAssetMixin, 
-  AudioInstance, 
-  AudioInstanceArgs, 
-  AudioInstanceMixin, AudioInstanceObject, ClientAudio, ClientInstanceClass, ClientRawAssetClass, ClientRawAudioAsset, ClientRawAudioAssetObject, ClientRawAudioInstance, clientMediaAudioPromise, errorThrow, isDefiniteError 
-} from '@moviemasher/lib-shared'
-import { 
-  isAssetObject 
+import type { 
+  AssetEventDetail, AssetCacheArgs, AudioInstance, AudioInstanceArgs, 
+  AudioInstanceObject
+} from '@moviemasher/runtime-shared'
+import type { 
+  ClientAudio, 
+  ClientRawAudioAsset, ClientRawAudioAssetObject, ClientRawAudioInstance, 
 } from '@moviemasher/lib-shared'
 
+import { 
+  errorThrow, isAssetObject, SourceRaw, TypeAudio 
+} from '@moviemasher/runtime-shared'
 import { MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, TypeAudio } from '@moviemasher/runtime-shared'
+import { 
+  AudibleAssetMixin, ClientAudibleAssetMixin, 
+  ClientAudibleInstanceMixin, AudibleInstanceMixin, AudioAssetMixin, 
+  AudioInstanceMixin, ClientInstanceClass, ClientRawAssetClass, 
+  clientMediaAudioPromise, isDefiniteError 
+} from '@moviemasher/lib-shared'
 
 const WithAsset = AudibleAssetMixin(ClientRawAssetClass)
-const WithClientAsset = AudibleClientAssetMixin(WithAsset)
+const WithClientAsset = ClientAudibleAssetMixin(WithAsset)
 const WithAudioAsset = AudioAssetMixin(WithClientAsset)
 
 export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRawAudioAsset {
@@ -60,7 +65,7 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
 }
 
 const WithInstance = AudibleInstanceMixin(ClientInstanceClass)
-const WithClientInstance = AudibleClientInstanceMixin(WithInstance)
+const WithClientInstance = ClientAudibleInstanceMixin(WithInstance)
 const WithAudioInstance = AudioInstanceMixin(WithClientInstance)
 
 export class ClientRawAudioInstanceClass extends WithAudioInstance implements ClientRawAudioInstance {

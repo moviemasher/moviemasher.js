@@ -1,4 +1,4 @@
-import { AssetTypes, AudioType, ImageType, VideoType } from './AssetType.js'
+import type { AssetTypes, AudioType, ImageType, VideoType } from './AssetType.js'
 
 export const TypeAudio: AudioType = 'audio'
 export const TypeImage: ImageType = 'image'

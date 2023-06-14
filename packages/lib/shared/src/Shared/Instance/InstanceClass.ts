@@ -1,33 +1,30 @@
 import type { Time, TimeRange, Point, PointTuple, Rect, RectTuple, Size, SizeTuple,  UnknownRecord, Scalar, Strings, Lock } from '@moviemasher/runtime-shared'
 import { TypeAudio, } from '@moviemasher/runtime-shared'
-import { Asset } from '../Asset/AssetTypes.js'
-import { CacheOptions, InstanceCacheArgs } from "../../Base/CacheTypes.js"
+import { Asset } from '@moviemasher/runtime-shared'
+import { CacheOptions, InstanceCacheArgs } from "@moviemasher/runtime-shared"
 import { PropertyTweenSuffix } from "../../Base/PropertiedConstants.js"
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
 import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
-import { Clip, IntrinsicOptions } from '../Mash/Clip/Clip.js'
-import { Filter } from '../../Plugin/Filter/Filter.js'
-import { filterFromId } from '../../Plugin/Filter/FilterFactory.js'
+import { Clip, IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { Default } from '../../Setup/Default.js'
 import { DataTypeBoolean, DataTypePercent, DataTypeString } from "../../Setup/DataTypeConstants.js"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
-import { assertNumber, assertPopulatedString, isArray, isNumber, isTimeRange, isUndefined } from '../SharedGuards.js'
+import { assertNumber, assertPopulatedString } from '../SharedGuards.js'
+import { isArray, isNumber, isUndefined } from "@moviemasher/runtime-shared"
+import { isTimeRange } from "../TimeGuards.js"
 import { rectFromSize, rectsEqual } from "../../Utility/RectFunctions.js"
 import { sizeAboveZero } from "../../Utility/SizeFunctions.js"
-import { Instance, InstanceArgs } from './Instance.js'
-import { Effects } from '../../Effect/Effect.js'
-import { ContentRectArgs } from '../../Helpers/Content/ContentRectArgs.js'
+import { Instance, InstanceArgs } from '@moviemasher/runtime-shared'
+import { ContentRectArgs } from '@moviemasher/runtime-shared'
 import { RectZero } from '../../Utility/RectConstants.js'
 import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
 import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 import { DataGroupOpacity, DataGroupPoint, DataGroupSize } from '../../Setup/DataGroupConstants.js'
-import { effectInstance } from '../../Effect/EffectFactory.js'
-import { ContainerRectArgs } from '../../Helpers/Container/Container.js'
+import { ContainerRectArgs } from '@moviemasher/runtime-shared'
 import { tweenColorStep, tweenCoverPoints, tweenCoverSizes, tweenNumberStep, tweenOverPoint, tweenOverRect, tweenOverSize, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from '../../Helpers/TweenFunctions.js'
 import { Directions, LockWidth, SideDirections } from "../../Setup/EnumConstantsAndFunctions.js"
-import { SideDirectionObject } from '../../Setup/Direction.js'
-
+import { SideDirectionObject } from '@moviemasher/runtime-shared'
 
 export class InstanceClass extends PropertiedClass implements Instance {
   instanceCachePromise(args: InstanceCacheArgs): Promise<void> {
@@ -43,10 +40,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
   get assetId(): string { return this.asset.id }
 
   get assetIds(): Strings {
-    return [
-      ...this.asset.assetIds,
-      ...this.effects.flatMap(effect => effect.assetIds),
-    ]
+    return [...this.asset.assetIds]
   }
 
   private _clip?: Clip
@@ -54,8 +48,6 @@ export class InstanceClass extends PropertiedClass implements Instance {
   set clip(value: Clip) { this._clip = value }
   get clipped(): boolean { return !!this._clip }
 
-  _colorFilter?: Filter
-  get colorFilter() { return this._colorFilter ||= filterFromId('color') }
 
   container = false
 
@@ -115,10 +107,6 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return [rect, rectEnd]
   }
   
-  private _cropFilter?: Filter 
-  get cropFilter() { return this._cropFilter ||= filterFromId('crop') }
-  
-  
   assetTime(mashTime : Time) : Time {
     const range = this.clip.timeRange
 
@@ -134,8 +122,6 @@ export class InstanceClass extends PropertiedClass implements Instance {
     ))
   }
   get directions() { return Directions }
-
-  effects: Effects = []
   
   frames(quantize: number): number {
     return timeFromArgs(Default.duration, quantize).frame
@@ -151,7 +137,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
   get id(): string { return this._id ||= idGenerateString() }
 
   initializeProperties(object: InstanceArgs): void {
-    const { asset, container, effects } = object
+    const { asset, container } = object
     this.asset = asset 
     if (container) {
       this.container = true
@@ -189,7 +175,6 @@ export class InstanceClass extends PropertiedClass implements Instance {
           name: 'lock', type: DataTypeString, defaultValue: LockWidth,
           group: DataGroupSize, 
         }))        
-        if (effects) this.effects.push(...effects.map(effectInstance))
       }   
     }
     this.properties.push(...this.asset.properties)
@@ -223,19 +208,9 @@ export class InstanceClass extends PropertiedClass implements Instance {
   declare offW: boolean
   declare opacity: number
 
-
-  private _opacityFilter?: Filter
-  get opacityFilter() { return this._opacityFilter ||= filterFromId('opacity')}
-  
-  private _overlayFilter?: Filter
-  get overlayFilter() { return this._overlayFilter ||= filterFromId('overlay')}
-
-  private _scaleFilter?: Filter
-  get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
-
   toJSON(): UnknownRecord {
-    const { effects, assetId, label } = this
-    return { ...super.toJSON(), effects, assetId, label }
+    const { assetId, label } = this
+    return { ...super.toJSON(), assetId, label }
   }
 
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar {

@@ -1,19 +1,19 @@
-import type { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from '../GraphFile.js'
-import type { ContentRectArgs } from "../../Helpers/Content/ContentRectArgs.js"
-import type { Filter } from '../../Plugin/Filter/Filter.js'
-import type { Tweening } from '../../Helpers/TweenFunctions.js'
+import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '../CommandFile.js'
+import type { ContentRectArgs, ValueRecord } from "@moviemasher/runtime-shared"
+import { Tweening, tweenOption, tweenPosition } from '../../Helpers/TweenFunctions.js'
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
-import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isTimeRange } from '../../Shared/SharedGuards.js'
+import { assertPopulatedArray, assertPopulatedString, isTrueValue } from '../../Shared/SharedGuards.js'
+import { assertTimeRange, isTimeRange } from "../../Shared/TimeGuards.js"
 import { colorBlackOpaque, colorTransparent } from '../../Helpers/Color/ColorConstants.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
-import { filterFromId } from '../../Plugin/Filter/FilterFactory.js'
-import { PropertyTweenSuffix } from "../../Base/PropertiedConstants.js"
 import { rectsEqual } from "../../Utility/RectFunctions.js"
 import { tweenMaxSize } from '../../Helpers/TweenFunctions.js'
 import { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
 import { Constrained } from '@moviemasher/runtime-shared'
-import { VisibleInstance } from '../../Shared/Instance/Instance.js'
-import { ServerVisibleAsset } from '../Asset/ServerAsset.js'
+import { VisibleInstance } from '@moviemasher/runtime-shared'
+import { ServerVisibleAsset } from '../Asset/ServerAssetTypes.js'
+import { idGenerate } from '../../Utility/IdFunctions.js'
+import { PointZero } from '../../Utility/PointConstants.js'
 
 
 export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance & VisibleInstance>>(Base: T):
@@ -69,15 +69,22 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
         filterInput = arrayLast(arrayLast(commandFilters).outputs)
       }
       // crop file input
-      const cropArgs: FilterCommandFilterArgs = { duration: 0, videoRate }
       assertPopulatedString(filterInput, 'crop input')
-      const { cropFilter } = this
-      cropFilter.setValue(maxSize.width, 'width')
-      cropFilter.setValue(maxSize.height, 'height')
-      cropFilter.setValue(0, 'x')
-      cropFilter.setValue(0, 'y')
-      commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }))
-      filterInput = arrayLast(arrayLast(commandFilters).outputs)
+
+      const options: ValueRecord = { exact: 1, ...PointZero }
+      const cropOutput = idGenerate('crop')
+      const { width, height } = maxSize
+      if (isTrueValue(width)) options.w = width
+      if (isTrueValue(height)) options.h = height
+      const commandFilter: CommandFilter = {
+        ffmpegFilter: 'crop', 
+        inputs: [filterInput], 
+        options, 
+        outputs: [cropOutput]
+      }
+      commandFilters.push(commandFilter)
+      filterInput = cropOutput
+
       if (!tweening.size) {
         // overlay scaled and cropped file input onto color box
         assertPopulatedString(filterInput, 'overlay input')
@@ -94,8 +101,6 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
-
-
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
       const commandFilters: CommandFilters = []
@@ -131,13 +136,10 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       }
       commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput))
 
-
-
       const scaleArgs: CommandFilterArgs = {
         ...args, filterInput, containerRects: contentRects
       }
       commandFilters.push(...this.scaleCommandFilters(scaleArgs))
-
 
       filterInput = arrayLast(arrayLast(commandFilters).outputs)
 
@@ -145,26 +147,35 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
         commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
         filterInput = arrayLast(arrayLast(commandFilters).outputs)
       }
-
-      const cropArgs: FilterCommandFilterArgs = {
-        duration, videoRate
+      const cropOutput = idGenerate('crop')
+      const options: ValueRecord = { exact: 1 }
+      const position = tweenPosition(videoRate, duration)
+      options.x = tweenOption(contentRect.x, contentRectEnd.x, position, true)
+      options.y = tweenOption(contentRect.y, contentRectEnd.y, position, true)
+  
+      const { width, height } = maxContainerSize
+      if (isTrueValue(width)) options.w = width
+      if (isTrueValue(height)) options.h = height
+  
+      const commandFilter: CommandFilter = {
+        ffmpegFilter: 'crop', 
+        inputs: [filterInput], 
+        options, 
+        outputs: [cropOutput]
       }
-      const { cropFilter } = this
-      cropFilter.setValue(maxContainerSize.width, 'width')
-      cropFilter.setValue(maxContainerSize.height, 'height')
-      cropFilter.setValue(contentRect.x, 'x')
-      cropFilter.setValue(contentRect.y, 'y')
-      cropFilter.setValue(contentRectEnd.x, `x${PropertyTweenSuffix}`)
-      cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
-      commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }))
-      filterInput = arrayLast(arrayLast(commandFilters).outputs)
 
-      const { setsarFilter } = this
-      setsarFilter.setValue('1/1', 'sar')
+      commandFilters.push(commandFilter)
+      filterInput = cropOutput
 
-      commandFilters.push(...setsarFilter.commandFilters({ ...cropArgs, filterInput }))
-      filterInput = arrayLast(arrayLast(commandFilters).outputs)
-
+      const setsarOutput = idGenerate('setsar')
+      const setsarCommandFilter: CommandFilter = {
+        ffmpegFilter: 'setsar',
+        options: { sar: '1/1', max: 100 },
+        inputs: [filterInput],
+        outputs: [setsarOutput]
+      }
+      commandFilters.push(setsarCommandFilter)
+      filterInput = setsarOutput
 
       if (!tweening.size) {
         commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, this.asset.alpha))
@@ -174,10 +185,5 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening))
       return commandFilters
     }
-
-
-    private _setsarFilter?: Filter
-    get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar') }
-
   }
 }

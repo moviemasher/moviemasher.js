@@ -1,6 +1,6 @@
 import { TypeVideo } from '@moviemasher/runtime-shared'
-import { AudibleAsset, VisibleAsset } from '../Asset/AssetTypes.js'
-import { VideoAsset } from "./VideoAsset.js"
+import { AudibleAsset, VisibleAsset } from '@moviemasher/runtime-shared'
+import { VideoAsset } from "@moviemasher/runtime-shared"
 import { Constrained } from '@moviemasher/runtime-shared'
 
 export function VideoAssetMixin

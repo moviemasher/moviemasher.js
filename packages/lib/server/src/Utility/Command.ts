@@ -1,8 +1,8 @@
 import path from 'path'
 import { 
-  isNumeric, isPopulatedString, SemicolonChar, NewlineChar
+   SemicolonChar, NewlineChar
 } from "@moviemasher/lib-shared"
-import { StringTuple } from '@moviemasher/runtime-shared'
+import { StringTuple, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
 
 
 const commandErrorRegex = [

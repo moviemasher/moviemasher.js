@@ -1,23 +1,20 @@
-import type { CommandFilter, CommandFilters, GraphFile, GraphFiles, VisibleCommandFilterArgs } from '../../Server/GraphFile.js'
-import type { PreloadArgs } from "../../Base/CacheTypes.js"
-import type { Filter } from '../../Plugin/Filter/Filter.js'
-import type { IntrinsicOptions } from '../Mash/Clip/Clip.js'
+import type { CommandFilter, CommandFilters, VisibleCommandFilterArgs } from '../../Server/CommandFile.js'
+import type { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import type { Numbers, Scalar, UnknownRecord, ValueRecord, Value } from '@moviemasher/runtime-shared'
 import type { Property } from '@moviemasher/runtime-shared'
 import type { Time } from '@moviemasher/runtime-shared'
 import type { Tweening } from '../../Helpers/TweenFunctions.js'
 import type { Constrained } from '@moviemasher/runtime-shared'
-import type { AudibleInstance, AudibleInstanceObject, Instance } from '../Instance/Instance.js'
+import type { AudibleInstance, AudibleInstanceObject, Instance } from '@moviemasher/runtime-shared'
 
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
-import { assertAboveZero, assertPopulatedString, isAboveZero, isPositive, isString } from '../SharedGuards.js'
+import { assertAboveZero, assertPopulatedString, isAboveZero, isPositive } from '../SharedGuards.js'
+import { isString } from "@moviemasher/runtime-shared"
 import { CommaChar } from '../../Setup/Constants.js'
 import { commandFilesInput } from '../../Server/Utility/CommandFilesFunctions.js'
-import { filterFromId } from '../../Plugin/Filter/FilterFactory.js'
 import { idGenerate } from '../../Utility/IdFunctions.js'
 import { timeFromArgs, timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
-import { TypeAudio } from "@moviemasher/runtime-shared"
-import { AudibleAsset } from '../Asset/AssetTypes.js'
+import { AudibleAsset } from '@moviemasher/runtime-shared'
 
 export const gainFromString = (gain: Value): number | Numbers[] => {
   if (isString(gain)) {
@@ -31,7 +28,6 @@ export const gainFromString = (gain: Value): number | Numbers[] => {
   } else if (isPositive(gain)) return gain
   return 1.0
 }
-
 
 export function AudibleInstanceMixin
 <T extends Constrained<Instance>>(Base: T): 
@@ -165,7 +161,7 @@ T & Constrained<AudibleInstance> {
     }
 
 
-    // instanceCachePromise(args: PreloadArgs): Promise<void> {
+    // instanceCachePromise(args: InstanceCacheArgs): Promise<void> {
     //   console.log(this.constructor.name, 'loadPromise', args)
     //   const promises: Promise<void>[] = []
     //   const { asset } = this
@@ -224,12 +220,5 @@ T & Constrained<AudibleInstance> {
 
     declare startTrim: number
     declare endTrim: number
-
-    private _trimFilter?: Filter
-    get trimFilter() { return this._trimFilter ||= filterFromId('trim')}
-    
   }
 }
-
-
-

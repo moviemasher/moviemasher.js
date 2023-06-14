@@ -1,20 +1,21 @@
 
-import type {SelectedItems} from '../../../Helpers/Select/SelectedProperty.js'
-import type {EditorSelection, EditorSelectionObject} from './EditorSelection.js'
-import type {Selectable, Selectables} from '../Selectable.js'
-import type {ClientEffect} from '../../../Effect/Effect.js'
+import type {SelectedProperties} from '@moviemasher/runtime-client'
+import type {EditorSelection} from './EditorSelection.js'
+import type { EditorSelectionObject } from "@moviemasher/runtime-client"
+import type {Selectable, Selectables} from '@moviemasher/runtime-client'
 import type { Selector } from '../../../Helpers/Select/Select.js'
 import type {Masher} from '../Masher.js'
-import type {SelectorType, } from '../../../Setup/Enums.js'
+import type { SelectorType } from "@moviemasher/runtime-client"
 import type { ClientClip, ClientTrack, ClientMashAsset } from '../../../Client/Mash/ClientMashTypes.js'
 import type { ClientInstance } from '../../../Client/ClientTypes.js'
 
 import {
-  TypeClip, TypeContainer, TypeContent, TypeEffect, TypeMash, TypeNone,
+  TypeClip, TypeContainer, TypeContent, TypeMash, TypeNone,
   TypesSelector, TypeTrack, EventTypeDuration, EventTypeLoaded,
   EventTypeSelection, EventTypeTrack
 } from "../../../Setup/EnumConstantsAndFunctions.js"
-import { assertTrue, isPopulatedString, isPositive } from '../../../Shared/SharedGuards.js'
+import { assertTrue, isPositive } from '../../../Shared/SharedGuards.js'
+import { isPopulatedString } from "@moviemasher/runtime-shared"
 import { isClientClip, isClientTrack, isClientMashAsset } from '../../../Client/Mash/ClientMashGuards.js'
 
 export class EditorSelectionClass implements EditorSelection {
@@ -48,10 +49,6 @@ export class EditorSelectionClass implements EditorSelection {
   get [TypeContent](): ClientInstance | undefined { 
     const { clip } = this
     if (clip) return clip.content
-  }
-  get [TypeEffect](): ClientEffect | undefined { 
-    const { effect } = this._object
-    if ((effect)) return effect as ClientEffect
   }
 
   private _editor?: Masher
@@ -161,7 +158,7 @@ export class EditorSelectionClass implements EditorSelection {
     return selectTypes
   }
 
-  selectedItems(types: SelectorType[] = TypesSelector): SelectedItems {
+  selectedItems(types: SelectorType[] = TypesSelector): SelectedProperties {
     const { selectTypes, object: selection } = this
     const filteredTypes = selectTypes.filter(type => types.includes(type))
     

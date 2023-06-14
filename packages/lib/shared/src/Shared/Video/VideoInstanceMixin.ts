@@ -1,8 +1,8 @@
 
-import { VideoAsset } from "./VideoAsset.js"
+import { VideoAsset } from "@moviemasher/runtime-shared"
 import { Constrained } from '@moviemasher/runtime-shared'
-import { AudibleInstance, VisibleInstance } from '../Instance/Instance.js'
-import { VideoInstance } from "./VideoInstance.js"
+import { AudibleInstance, VisibleInstance } from '@moviemasher/runtime-shared'
+import { VideoInstance } from "@moviemasher/runtime-shared"
 import { TypeVideo } from '@moviemasher/runtime-shared'
 
 export function VideoInstanceMixin

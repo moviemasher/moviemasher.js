@@ -1,6 +1,7 @@
 import type { Lock } from '@moviemasher/runtime-shared'
-import { isAboveZero, isNumber, isObject } from '../Shared/SharedGuards.js'
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { isAboveZero } from '../Shared/SharedGuards.js'
+import { isNumber, isObject } from "@moviemasher/runtime-shared"
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { EqualsChar, SemicolonChar } from '../Setup/Constants.js'
 import { LockHeight, LockWidth, LockNone } from '../Setup/EnumConstantsAndFunctions.js'
 import { Size } from '@moviemasher/runtime-shared'

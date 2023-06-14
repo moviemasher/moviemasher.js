@@ -1,4 +1,4 @@
-import { errorThrow } from '../Error/ErrorFunctions.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
 
 
 export type Method = GetMethod | PostMethod | PutMethod | ListMethod

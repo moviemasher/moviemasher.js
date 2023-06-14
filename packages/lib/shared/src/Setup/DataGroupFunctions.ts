@@ -1,4 +1,4 @@
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { DataGroup } from '@moviemasher/runtime-shared'
 import { DataGroups } from './DataGroupConstants.js'
 

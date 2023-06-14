@@ -1,6 +1,6 @@
 // import EventEmitter from 'events'
 
-import type { EncodePlugin, MashAssetObject, OutputOptions, StringDataOrError } from '@moviemasher/lib-shared'
+import type { EncodePlugin, OutputOptions, StringDataOrError } from '@moviemasher/lib-shared'
 import type { RenderingProcessArgs } from './RenderingProcess/RenderingProcess.js'
 
 import path from 'path'
@@ -14,7 +14,7 @@ import {
 } from '../../Environment/ServerEnvironment.js'
 import { assertFilePath } from '../../Utility/File.js'
 import { hashMd5 } from '../../Utility/Hash.js'
-import { AssetType, TypesAsset } from '@moviemasher/runtime-shared'
+import { AssetType, MashAssetObject, TypesAsset } from '@moviemasher/runtime-shared'
 
 class PluginEncode implements EncodePlugin {
   constructor(public encodingType: AssetType) {}

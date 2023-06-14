@@ -1,7 +1,7 @@
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { MashAsset, MashInstance } from './MashTypes.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { MashAsset, MashInstance } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
-import { isSourceAsset } from '../Asset/AssetGuards.js'
+import { isSourceAsset } from '@moviemasher/runtime-shared'
 import { SourceMash } from '@moviemasher/runtime-shared'
 import { isVideoAsset } from '../Video/VideoGuards.js'
 

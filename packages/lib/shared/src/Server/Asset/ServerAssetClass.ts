@@ -1,12 +1,12 @@
-import { GraphFiles, ServerPromiseArgs } from "../GraphFile.js";
-import { PreloadArgs } from "../../Base/CacheTypes.js";
-import { InstanceArgs, InstanceObject } from "../../Shared/Instance/Instance.js";
+import { GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server";
+import { PreloadArgs } from "@moviemasher/runtime-shared";
+import { InstanceArgs, InstanceObject } from "@moviemasher/runtime-shared";
 import { AssetClass } from "../../Shared/Asset/AssetClass.js";
-import { ServerAsset } from "./ServerAsset.js";
+import { ServerAsset } from "@moviemasher/runtime-server";
 import { requestPromise } from "../../Helpers/Request/RequestFunctions.js";
 import { isRequest } from "../../Helpers/Request/RequestGuards.js";
 import { isDefiniteError } from "../../Shared/SharedGuards.js";
-import { TypeString } from "../../Utility/ScalarFunctions.js";
+import { TypeString } from "@moviemasher/runtime-shared";
 
 export class ServerAssetClass extends AssetClass implements ServerAsset {
   graphFiles(args: PreloadArgs): GraphFiles {

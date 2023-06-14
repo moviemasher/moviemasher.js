@@ -1,33 +1,40 @@
-import type { Lock, Sizing, Timing } from '@moviemasher/runtime-shared'
-import type { ActionType } from './ActionType.js'
-import type { RedoClientAction, RemoveClientAction, RenderClientAction, SaveClientAction, UndoClientAction } from './ClientAction.js'
-import type { CornerDirection, DirectionsArray, SideDirection } from './Direction.js'
 import type { 
-  ClipType, ContainerType, ContainingType, ContentType, 
-  ContentingType, EffectType, FontType, JsonType, MashType, NoneType,
-   RecordType, RecordsType, SelectorType, SelectorTypes, SequenceType, 
-   SizingMediaType, TimingMediaType, TrackType, WaveformType 
-  } from './Enums.js'
+  Lock, Sizing, Timing, SequenceType, WaveformType,
+  CornerDirection, DirectionsArray, SideDirection 
+} from '@moviemasher/runtime-shared'
+import type { 
+  ClipType, ContainerType, ContentType, MashType, NoneType,
+  SelectorType, SelectorTypes, TrackType,
+  AddClipActionType, AddTrackActionType, ChangeActionType, 
+  ChangeFrameActionType, ChangeMultipleActionType, MoveClipActionType, 
+  RemoveClipActionType 
+} from '@moviemasher/runtime-client'
+
+import type { RedoClientAction, RemoveClientAction, RenderClientAction, 
+  SaveClientAction, UndoClientAction 
+} from './ClientAction.js'
+import type { 
+  ContainingType, 
+  ContentingType, JsonType, 
+  SizingMediaType, TimingMediaType, 
+} from './Enums.js'
 import type { EventType } from './EventType.js'
-import type { GraphFileType } from './GraphFileType.js'
 import type { OutputFormat } from './OutputFormat.js'
 
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
-import { TypeAudio, TypeImage, TypeVideo } from '@moviemasher/runtime-shared'
+import { errorThrow, TypeAudio, TypeImage, TypeFont, TypeVideo } from '@moviemasher/runtime-shared'
 
 export const TypeClip: ClipType = 'clip'
 export const TypeContainer: ContainerType = 'container'
 export const TypeContent: ContentType = 'content'
-export const TypeEffect: EffectType = 'effect'
-export const TypeFont: FontType = 'font'
+
 export const TypeJson: JsonType = 'json'
 export const TypeMash: MashType = 'mash'
 export const TypeNone: NoneType = 'none'
-export const TypeRecord: RecordType = 'record'
-export const TypeRecords: RecordsType = 'records'
-export const TypeSequence: SequenceType = 'sequence'
 export const TypeTrack: TrackType = 'track'
+
+export const TypeSequence: SequenceType = 'sequence'
 export const TypeWaveform: WaveformType = 'waveform'
+
 
 export const TypesSizingMedia: SizingMediaType[] = [TypeFont, TypeImage, TypeVideo]
 export const isSizingMediaType = (type?: any): type is SizingMediaType => {
@@ -84,7 +91,7 @@ export const SizingContainer: Sizing = 'container'
 export const Sizings = [SizingPreview, SizingContent, SizingContainer]
 
 
-export const TypesSelector: SelectorTypes = [TypeClip, TypeContainer, TypeContent, TypeMash, TypeNone, TypeTrack, TypeEffect]
+export const TypesSelector: SelectorTypes = [TypeClip, TypeContainer, TypeContent, TypeMash, TypeNone, TypeTrack]
 export const isSelectorType = (type?: any): type is SelectorType => {
   return TypesSelector.includes(type)
 }
@@ -93,14 +100,13 @@ export function assertSelectorType(value: any, name?: string): asserts value is 
     errorThrow(value, 'SelectorType', name)
 }
 
-export const ActionTypeAddClip: ActionType = 'add-clip'
-export const ActionTypeAddTrack: ActionType = 'add-track'
-export const ActionTypeChange: ActionType = 'change'
-export const ActionTypeChangeFrame: ActionType = 'change-frame'
-export const ActionTypeChangeMultiple: ActionType = 'change-multiple'
-export const ActionTypeMove: ActionType = 'move'
-export const ActionTypeMoveClip: ActionType = 'move-clip'
-export const ActionTypeRemoveClip: ActionType = 'remove-clip'
+export const ActionTypeAddClip: AddClipActionType = 'add-clip'
+export const ActionTypeAddTrack: AddTrackActionType = 'add-track'
+export const ActionTypeChange: ChangeActionType = 'change'
+export const ActionTypeChangeFrame: ChangeFrameActionType = 'change-frame'
+export const ActionTypeChangeMultiple: ChangeMultipleActionType = 'change-multiple'
+export const ActionTypeMoveClip: MoveClipActionType = 'move-clip'
+export const ActionTypeRemoveClip: RemoveClipActionType = 'remove-clip'
 
 export const EventTypeAction: EventType = 'action'
 export const EventTypeActive: EventType = 'active'
@@ -202,9 +208,5 @@ export const OutputFormatPng: OutputFormat = 'image2'
 export const OutputFormatRtmp: OutputFormat = 'rtmp'
 export const OutputFormatVideoConcat: OutputFormat = 'yuv4mpegpipe'
 export const OutputFormatAudioConcat: OutputFormat = 'wav'
-
-export const GraphFileTypeSvg: GraphFileType = 'svg'
-export const GraphFileTypeSvgSequence: GraphFileType = 'svgsequence'
-export const GraphFileTypeTxt: GraphFileType = 'txt'
 
 

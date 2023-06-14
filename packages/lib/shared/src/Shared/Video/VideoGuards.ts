@@ -1,9 +1,9 @@
-import type { VideoAsset } from "./VideoAsset.js"
-import type { VideoInstance } from "./VideoInstance.js"
+import type { VideoAsset } from "@moviemasher/runtime-shared"
+import type { VideoInstance } from "@moviemasher/runtime-shared"
 
 import { TypeVideo } from '@moviemasher/runtime-shared'
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { isAsset, isAssetObject } from '../Asset/AssetGuards.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { isAsset, isAssetObject } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
 
 export const isVideoAsset = (value: any): value is VideoAsset => {

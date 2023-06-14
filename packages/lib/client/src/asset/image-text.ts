@@ -1,8 +1,39 @@
-import { AssetCacheArgs, AssetEventDetail, ClientFont, ClientInstanceClass, ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, EmptyFunction, Panel, PointZero, SvgItem, TextAssetMixin, ClientTextAssetObject, TextInstance, TextInstanceMixin, TextInstanceObject, Transcoding, TypeFont, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, clientMediaFontPromise, colorCurrent, errorThrow, isClientFont, isDefiniteError, isPopulatedString, sizeCover, stringFamilySizeRect, svgSvgElement, svgText, svgTransform, ClientTextInstance, ClientTextAsset } from '@moviemasher/lib-shared'
+import type {
+  ClientFont,
+  ClientTextAsset,
+  ClientTextAssetObject, ClientTextInstance,
+  Panel, SvgItem
+} from '@moviemasher/lib-shared'
+import type {
+  AssetCacheArgs,
+  AssetEventDetail,
+  Property, Rect, Scalar, Size,
+  TextInstance, TextInstanceObject,
+  Time, Transcoding,
+} from '@moviemasher/runtime-shared'
 
-import { Property, Rect, Scalar, Size, SourceText, Time, TypeImage } from '@moviemasher/runtime-shared'
+import {
+  ClientInstanceClass,
+  ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin,
+  EmptyFunction,
+  PointZero,
+  TextAssetMixin,
+  TextHeight,
+  TextInstanceMixin, VisibleAssetMixin,
+  VisibleInstanceMixin, 
+  assertPopulatedString, assertRequest, centerPoint,
+  clientMediaFontPromise, colorCurrent, isClientFont,
+  isDefiniteError, sizeCover, stringFamilySizeRect,
+  svgSvgElement, svgText, svgTransform
+} from '@moviemasher/lib-shared'
 import { MovieMasher } from '@moviemasher/runtime-client'
-import { isAssetObject, TextHeight } from '@moviemasher/lib-shared'
+import {
+  SourceText,
+  TypeFont,
+  TypeImage,
+  errorThrow,
+  isAssetObject, isPopulatedString
+} from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)

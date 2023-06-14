@@ -1,5 +1,4 @@
 import type { ClientAudioNode } from '../../../Helpers/ClientMedia/ClientMedia.js'
-import { assertFunction } from '../../../Shared/SharedGuards.js'
 
 const AudibleSampleRate = 44100
 const AudibleChannels = 2
@@ -22,8 +21,6 @@ export class AudibleContext {
   private get context() : AudibleContextData {
     if (!this._context) {
       const Klass = AudioContext || window.webkitAudioContext
-      assertFunction(Klass)
-
       this._context = new Klass()
     }
     return this._context

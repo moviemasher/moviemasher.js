@@ -1,5 +1,5 @@
-import {isArray, isObject} from '../../../Shared/SharedGuards.js'
-import {errorThrow} from '../../../Helpers/Error/ErrorFunctions.js'
+import { isArray, isObject } from "@moviemasher/runtime-shared"
+import {errorThrow} from '@moviemasher/runtime-shared'
 import {isDecodeOutput} from '../DecodeFunctions.js'
 import {ProbeOptions, ProbeOutput} from './Probe.js'
 

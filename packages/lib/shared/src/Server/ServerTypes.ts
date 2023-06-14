@@ -1,7 +1,7 @@
-import type { ColorAsset, ColorInstance } from '../Shared/Color/ColorTypes.js'
-import type { ShapeAsset, ShapeInstance } from '../Shared/Shape/ShapeTypes.js'
-import type { TextAsset, TextInstance } from '../Shared/Text/TextTypes.js'
-import type { ServerVisibleAsset } from './Asset/ServerAsset.js'
+import type { ColorAsset, ColorInstance } from '@moviemasher/runtime-shared'
+import type { ShapeAsset, ShapeInstance } from '@moviemasher/runtime-shared'
+import type { TextAsset, TextInstance } from '@moviemasher/runtime-shared'
+import type { ServerVisibleAsset } from './Asset/ServerAssetTypes.js'
 import type { ServerVisibleInstance } from './ServerInstance.js'
 
 export interface ServerTextAsset extends TextAsset, ServerVisibleAsset {}

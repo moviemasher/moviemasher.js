@@ -1,7 +1,7 @@
 import { EndpointRequest } from '@moviemasher/runtime-shared';
 import { isEndpoint } from '../Endpoint/EndpointFunctions.js';
-import { isObject, isPopulatedString } from '../../Shared/SharedGuards.js';
-import { errorThrow } from '../Error/ErrorFunctions.js';
+import { isObject, isPopulatedString } from "@moviemasher/runtime-shared";
+import { errorThrow } from '@moviemasher/runtime-shared';
 
 
 export const isRequest = (value: any): value is EndpointRequest => {

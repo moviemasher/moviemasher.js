@@ -1,5 +1,5 @@
 import { Time } from '@moviemasher/runtime-shared'
-import { Clip } from '../../../../Shared/Mash/Clip/Clip.js'
+import { Clip } from '@moviemasher/runtime-shared'
 
 export interface AudioPreview {
   adjustClipGain(clip: Clip, quantize: number): void

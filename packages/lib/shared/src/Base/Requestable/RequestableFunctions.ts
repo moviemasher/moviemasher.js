@@ -1,6 +1,6 @@
-import type { Requestable, RequestableObject } from './Requestable.js'
+import type { Requestable, RequestableObject } from '@moviemasher/runtime-shared'
 
-import { isObject } from '../../Shared/SharedGuards.js'
+import { isObject } from "@moviemasher/runtime-shared"
 
 export const isRequestable = (value: any): value is Requestable => {
   return isObject(value) && 'request' in value 

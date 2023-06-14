@@ -3,9 +3,9 @@ import type {Size} from '@moviemasher/runtime-shared'
 import { sizeAboveZero } from "../../Utility/SizeFunctions.js"
 import {isAboveZero} from '../SharedGuards.js'
 import {isProbing} from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
-import {TypeProbe} from '../../Plugin/Decode/Decoding/Decoding.js'
+import {TypeProbe} from '@moviemasher/runtime-shared'
 import { Constrained } from '@moviemasher/runtime-shared'
-import { Asset, VisibleAsset } from '../Asset/AssetTypes.js'
+import { Asset, VisibleAsset } from '@moviemasher/runtime-shared'
 
 export function VisibleAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -46,7 +46,6 @@ T & Constrained<VisibleAsset> {
       }
       return undefined
     }
-    
 
     // toJSON() : UnknownRecord {
     //   const json = super.toJSON()

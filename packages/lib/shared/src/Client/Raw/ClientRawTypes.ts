@@ -1,12 +1,12 @@
 import type { Size, Time } from '@moviemasher/runtime-shared'
 import type { ClientImage } from '../../Helpers/ClientMedia/ClientMedia.js'
-import type { RawAsset } from '../../Shared/Raw/RawTypes.js'
-import type { ClientAsset, ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset } from '../ClientTypes.js'
-import type { ImageInstance, ImageInstanceObject } from '../../Shared/Image/ImageInstance.js'
-import type { Instance, InstanceArgs, InstanceObject } from '../../Shared/Instance/Instance.js'
-import type { VideoInstance, VideoInstanceObject } from '../../Shared/Video/VideoInstance.js'
-import type { AudioInstance, AudioInstanceObject } from '../../Shared/Audio/AudioInstance.js'
-import type { ClientEffects } from '../../Effect/Effect.js'
+import type { RawAsset } from '@moviemasher/runtime-shared'
+import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset } from '../ClientTypes.js'
+import type { ClientAsset } from "@moviemasher/runtime-client"
+import type { ImageInstance, ImageInstanceObject } from '@moviemasher/runtime-shared'
+import type { Instance, InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
+import type { VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AudioInstance, AudioInstanceObject } from '@moviemasher/runtime-shared'
 
 export interface ClientRawAsset extends RawAsset, ClientAsset {
   instanceFromObject(object?: InstanceObject): Instance
@@ -28,20 +28,16 @@ export interface ClientRawVideoAsset extends ClientRawAsset, ClientVideoAsset {
 
 export interface ClientRawInstance extends Instance, ClientInstance {
   asset: ClientRawAsset
-  effects: ClientEffects
 }
 
 export interface ClientRawAudioInstance extends AudioInstance, ClientInstance {
   asset: ClientRawAudioAsset
-  effects: ClientEffects
 }
 
 export interface ClientRawImageInstance extends ImageInstance, ClientInstance {
   asset: ClientRawImageAsset
-  effects: ClientEffects
 }
 
 export interface ClientRawVideoInstance extends VideoInstance, ClientInstance {
   asset: ClientRawVideoAsset
-  effects: ClientEffects
 }

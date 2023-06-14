@@ -1,9 +1,10 @@
 
 import path from 'path'
-import type { GraphFile, GraphFileType, LoadType } from '@moviemasher/lib-shared'
+import { ErrorName, LoadType, PopulatedString, errorThrow,  } from '@moviemasher/runtime-shared'
+import { GraphFile, GraphFileType, GraphFileTypeSvgSequence } from '@moviemasher/runtime-server'
 import { 
-  assertPopulatedString, NewlineChar, ErrorName, errorThrow, 
-  TypeFont, GraphFileTypeSvgSequence,  isLoadType, 
+  assertPopulatedString, NewlineChar, 
+   isLoadType, 
    Runtime 
 } from "@moviemasher/lib-shared"
 import { BasenameCache } from '../Setup/Constants.js'
@@ -12,7 +13,7 @@ import {
   EnvironmentKeyApiDirCache, EnvironmentKeyApiDirFilePrefix, 
   EnvironmentKeyApiDirValid 
 } from '../Environment/ServerEnvironment.js'
-import { PopulatedString, TypeAudio, TypeImage, TypeVideo } from '@moviemasher/runtime-shared'
+import { TypeFont,  TypeAudio, TypeImage, TypeVideo } from '@moviemasher/runtime-shared'
 
 const typeExtension = (type: LoadType): string => {
   switch(type){

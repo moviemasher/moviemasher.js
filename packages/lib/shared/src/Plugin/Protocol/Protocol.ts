@@ -1,9 +1,9 @@
 import type { 
   ClientImage, ClientAudio, ClientFont, ClientVideo} from '../../Helpers/ClientMedia/ClientMedia.js'
 import type { DataOrError, Data } from "@moviemasher/runtime-shared"
-import type {FontType, RecordsType, RecordType } from '../../Setup/Enums.js'
+import type { FontType, RecordsType, RecordType } from "@moviemasher/runtime-shared"
 import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
-import type {LoadType} from '../../Setup/LoadType.js'
+import type { LoadType } from "@moviemasher/runtime-shared"
 import type {EndpointRequest} from '@moviemasher/runtime-shared'
 import type {Plugin, ProtocolType} from '@moviemasher/runtime-shared'
 import type {JsonRecord, JsonRecords} from '@moviemasher/runtime-shared'

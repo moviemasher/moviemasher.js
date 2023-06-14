@@ -1,6 +1,6 @@
-import { isObject } from '../../SharedGuards.js'
-import { errorThrow } from '../../../Helpers/Error/ErrorFunctions.js'
-import { Track } from './Track.js'
+import { isObject } from "@moviemasher/runtime-shared"
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { Track } from '@moviemasher/runtime-shared'
 
 export const isTrack = (value?: any): value is Track => {
   return isObject(value) && 'frameForClipNearFrame' in value

@@ -1,6 +1,6 @@
 export * from './Asset/index.js'
 export * from './Audible/index.js'
-export * from './GraphFile.js'
+export * from './CommandFile.js'
 export * from './Mash/index.js'
 export * from './Raw/index.js'
 export * from './ServerEventTypes.js'

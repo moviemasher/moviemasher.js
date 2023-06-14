@@ -1,18 +1,13 @@
-import type {SelectorType} from '../../../Setup/Enums.js'
-import type {Track} from '../../../Shared/Mash/Track/Track.js'
-import type {Selectable} from '../Selectable.js'
-import type {SelectedItems} from '../../../Helpers/Select/SelectedProperty.js'
+import type { SelectorType } from "@moviemasher/runtime-client"
+import type {Selectable} from '@moviemasher/runtime-client'
+import type {SelectedProperties} from '@moviemasher/runtime-client'
 import type {Masher} from '../Masher.js'
-import type {ClientEffect} from '../../../Effect/Effect.js'
 import type {Selector} from '../../../Helpers/Select/Select.js'
 
-import { TypeClip, TypeContainer, TypeContent, TypeEffect, TypeMash, TypeNone, TypeTrack } from "../../../Setup/EnumConstantsAndFunctions.js"
+import { TypeClip, TypeContainer, TypeContent, TypeMash, TypeNone, TypeTrack } from "../../../Setup/EnumConstantsAndFunctions.js"
 import { ClientInstance } from '../../../Client/ClientTypes.js'
 import { ClientClip, ClientTrack, ClientMashAsset } from '../../../Client/Mash/ClientMashTypes.js'
-
-export type EditorSelectionObject = {
-  [index in SelectorType]?: Selectable
-} 
+import { EditorSelectionObject } from "@moviemasher/runtime-client"
 
 export interface EditorSelection extends EditorSelectionObject {
   clear(): void
@@ -20,7 +15,7 @@ export interface EditorSelection extends EditorSelectionObject {
   focus: SelectorType
   get(selectType: SelectorType): Selectable | undefined
   object: EditorSelectionObject
-  selectedItems(selectTypes?: SelectorType[]): SelectedItems
+  selectedItems(selectTypes?: SelectorType[]): SelectedProperties
   selectTypes: SelectorType[]
   selector: Selector
   set(selectable: Selectable): void
@@ -29,7 +24,6 @@ export interface EditorSelection extends EditorSelectionObject {
   readonly [TypeNone]: Selectable | undefined
   readonly [TypeClip]: ClientClip | undefined
   readonly [TypeMash]: ClientMashAsset | undefined
-  readonly [TypeEffect]: ClientEffect | undefined
   readonly [TypeTrack]: ClientTrack | undefined
   readonly [TypeContent]: ClientInstance | undefined
   readonly [TypeContainer]: ClientInstance | undefined

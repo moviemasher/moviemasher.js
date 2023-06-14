@@ -1,10 +1,11 @@
 import type { 
   Transcoding, TranscodingTypes, TranscodingType 
-} from './Transcoding.js'
+} from '@moviemasher/runtime-shared'
 
 import { isRequestable } from '../../../Base/Requestable/RequestableFunctions.js'
-import { errorThrow } from '../../../Helpers/Error/ErrorFunctions.js'
-import { TypeFont, TypeSequence, TypeWaveform } from "../../../Setup/EnumConstantsAndFunctions.js"
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { TypeSequence, TypeWaveform } from "../../../Setup/EnumConstantsAndFunctions.js"
+import { TypeFont } from "@moviemasher/runtime-shared"
 import { TypesAsset } from '@moviemasher/runtime-shared'
 
 

@@ -1,5 +1,5 @@
-import { error, errorCaught } from '../../Helpers/Error/ErrorFunctions.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
+import { error, errorCaught } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 import { ClientVideoDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
 import { requestUrl } from '../request/request.js'

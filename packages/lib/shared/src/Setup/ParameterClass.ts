@@ -1,9 +1,9 @@
 import { UnknownRecord, Value, ValueRecord } from '@moviemasher/runtime-shared';
-import { isNumeric, isUndefined } from '../Shared/SharedGuards.js';
+import { isNumeric, isUndefined } from "@moviemasher/runtime-shared";
 import { DataType } from "@moviemasher/runtime-shared";
 import { DataTypeNumber, DataTypeString, DataTypes } from "./DataTypeConstants.js";
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js';
-import { ErrorName } from '../Helpers/Error/ErrorName.js';
+import { errorThrow } from '@moviemasher/runtime-shared';
+import { ErrorName } from '@moviemasher/runtime-shared';
 import { ParameterObject } from '@moviemasher/runtime-shared';
 
 

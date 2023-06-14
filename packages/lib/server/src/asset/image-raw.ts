@@ -1,6 +1,13 @@
-import { CommandFile, CommandFiles, GraphFile, GraphFiles, ImageAssetMixin, ImageInstanceMixin, PreloadArgs, ServerInstanceClass, ServerRawAssetClass, ServerVisibleAssetMixin, ServerVisibleInstanceMixin, VisibleAssetMixin, VisibleCommandFileArgs, VisibleInstanceMixin, assertEndpoint, assertPopulatedString, endpointUrl, isTimeRange } from "@moviemasher/lib-shared"
+import { 
+  CommandFile, CommandFiles,  ImageAssetMixin, 
+  ImageInstanceMixin, ServerInstanceClass, ServerRawAssetClass, 
+  ServerVisibleAssetMixin, ServerVisibleInstanceMixin, VisibleAssetMixin, 
+  VisibleCommandFileArgs, VisibleInstanceMixin, assertEndpoint, 
+  assertPopulatedString, endpointUrl, isTimeRange 
+} from "@moviemasher/lib-shared"
 import { ServerRawImageAsset, ServerRawImageInstance } from "@moviemasher/lib-shared/dist/Server/Raw/ServerRawTypes.js"
-import { TypeImage, ValueRecord } from "@moviemasher/runtime-shared"
+import { GraphFiles, GraphFile } from "@moviemasher/runtime-server"
+import { PreloadArgs, TypeImage, ValueRecord } from "@moviemasher/runtime-shared"
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -54,12 +61,8 @@ export class ServerImageInstanceClass extends WithImageInstance implements Serve
     // console.log(this.constructor.name, 'commandFiles', id)
     commandFiles.push(commandFile)
 
-
-    commandFiles.push(...this.effectsCommandFiles(args))
     return commandFiles
   }
 
   declare asset: ServerRawImageAsset
 }
-
-

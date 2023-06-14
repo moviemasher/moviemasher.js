@@ -2,8 +2,8 @@ import type { ScalarType, StringType, BooleanType, NumberType } from "@moviemash
 import type {Scalar, Scalars, Strings} from '@moviemasher/runtime-shared'
 
 import { 
-  scalar, scalars, TypeString 
-} from '../../Utility/ScalarFunctions.js'
+  scalar, scalars} from '../../Utility/ScalarFunctions.js'
+import { TypeString } from "@moviemasher/runtime-shared"
 import { BooleanDataType, NumberDataType, StringDataType } from '@moviemasher/runtime-shared'
 
 export interface Environment {

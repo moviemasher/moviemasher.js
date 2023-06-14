@@ -1,12 +1,14 @@
 import type { 
   ChangeActionObject, ChangePropertiesActionObject, ChangePropertyActionObject, 
-  Action, ActionObject, ChangeAction, ChangePropertiesAction, 
+  ChangeAction, ChangePropertiesAction, 
   ChangePropertyAction 
-} from './Action.js';
+} from './ActionTypes.js';
+import type { Action, ActionObject } from "@moviemasher/runtime-client";
 
 import { 
-  isObject, isPopulatedString, isScalar, isScalarRecord 
+  isScalar, isScalarRecord 
 } from '../../../../Shared/SharedGuards.js'
+import { isObject, isPopulatedString } from "@moviemasher/runtime-shared";
 import { isPropertied } from "../../../../Base/PropertiedGuards.js";
 
 export const isAction = (value: any): value is Action => {

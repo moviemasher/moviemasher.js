@@ -1,16 +1,16 @@
 
 import { AssetType, Source } from "@moviemasher/runtime-shared"
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
-import { InstanceObject, Instance, InstanceArgs } from '../Instance/Instance.js'
-import { Transcoding, TranscodingType, TranscodingTypes, Transcodings } from '../../Plugin/Transcode/Transcoding/Transcoding.js'
-import { Asset, AssetObject } from './AssetTypes.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
+import { InstanceObject, Instance, InstanceArgs } from '@moviemasher/runtime-shared'
+import { Transcoding, TranscodingType, TranscodingTypes, Transcodings } from '@moviemasher/runtime-shared'
+import { Asset, AssetObject } from '@moviemasher/runtime-shared'
 import { Strings } from "@moviemasher/runtime-shared"
-import { Decodings } from "../../Plugin/Decode/Decoding/Decoding.js"
+import { Decodings } from "@moviemasher/runtime-shared"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { DataTypeBoolean } from "../../Setup/DataTypeConstants.js"
-import { AssetCacheArgs } from "../../Base/CacheTypes.js"
+import { AssetCacheArgs } from "@moviemasher/runtime-shared"
 
 
 export class AssetClass extends PropertiedClass implements Asset {

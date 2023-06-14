@@ -3,8 +3,8 @@ import { roundWithMethod } from '../../Utility/RoundFunctions.js'
 import { Time, TimeRange } from '@moviemasher/runtime-shared'
 import { TimeClass, timeEqualizeRates } from './TimeClass.js'
 import { TimeRangeClass } from './TimeRangeClass.js'
-import { errorThrow } from '../Error/ErrorFunctions.js'
-import { ErrorName } from '../Error/ErrorName.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
 
 export const timeRangeFromArgs = (frame = 0, fps = 1, frames = 1) : TimeRange => {
   return new TimeRangeClass(frame, fps, frames)

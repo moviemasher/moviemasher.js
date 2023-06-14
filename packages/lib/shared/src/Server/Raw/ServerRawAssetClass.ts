@@ -1,4 +1,4 @@
-import type { RawAsset, RawAssetObject } from '../../Shared/Raw/RawTypes.js'
+import type { RawAsset, RawAssetObject } from '@moviemasher/runtime-shared'
 import type { EndpointRequest } from '@moviemasher/runtime-shared'
 
 import { ServerAssetClass } from '../Asset/ServerAssetClass.js'

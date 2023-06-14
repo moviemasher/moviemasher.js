@@ -1,9 +1,9 @@
 import type { UnknownRecord } from '@moviemasher/runtime-shared'
-import type { Requestable, RequestableObject } from './Requestable.js'
+import type { Requestable, RequestableObject } from '@moviemasher/runtime-shared'
 import type { EndpointRequest } from '@moviemasher/runtime-shared'
-import type { LoadType } from '../../Setup/LoadType.js'
+import type { LoadType } from "@moviemasher/runtime-shared"
 import { assertLoadType } from '../../Setup/LoadType.js'
-import { isPopulatedString } from '../../Shared/SharedGuards.js'
+import { isPopulatedString } from "@moviemasher/runtime-shared"
 import { PropertiedClass } from "../PropertiedClass.js"
 import { TypeSequence } from "../../Setup/EnumConstantsAndFunctions.js"
 import { TypeImage } from "@moviemasher/runtime-shared"

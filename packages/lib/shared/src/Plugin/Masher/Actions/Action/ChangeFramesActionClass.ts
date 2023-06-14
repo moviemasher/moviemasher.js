@@ -1,5 +1,5 @@
 import { ChangePropertyActionClass } from './ChangePropertyActionClass.js'
-import { ChangePropertyActionObject } from "./Action.js"
+import { ChangePropertyActionObject } from "./ActionTypes.js"
 
 /**
  * @category Action

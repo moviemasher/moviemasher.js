@@ -1,8 +1,8 @@
-import { SelectorType } from '../../Setup/Enums.js'
+import { SelectorType } from "@moviemasher/runtime-client"
 import { DataGroup } from "@moviemasher/runtime-shared"
 import { ScalarRecord } from '@moviemasher/runtime-shared'
-import { isObject } from '../../Shared/SharedGuards.js'
-import {SelectedProperty, SelectedItems, SelectedPropertyObject, SelectedProperties} from './SelectedProperty.js'
+import { isObject } from "@moviemasher/runtime-shared"
+import {SelectedProperty, SelectedPropertyObject, SelectedProperties} from '@moviemasher/runtime-client'
 
 
 
@@ -13,7 +13,7 @@ export const isSelectedProperty = (value: any): value is SelectedProperty => {
 }
 
 
-export const selectedPropertyObject = (properties: SelectedItems, group: DataGroup, selectType: SelectorType): SelectedPropertyObject => {
+export const selectedPropertyObject = (properties: SelectedProperties, group: DataGroup, selectType: SelectorType): SelectedPropertyObject => {
   const filtered = properties.filter(prop => {
     if (!isSelectedProperty(prop))
       return false

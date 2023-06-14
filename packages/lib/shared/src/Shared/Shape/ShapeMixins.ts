@@ -1,14 +1,14 @@
 import { Rect, Size, TypeImage, UnknownRecord } from '@moviemasher/runtime-shared'
 import { Constrained } from '@moviemasher/runtime-shared'
-import { VisibleAsset } from '../Asset/AssetTypes.js'
-import { ShapeAsset, ShapeAssetObject, ShapeInstance } from './ShapeTypes.js'
+import { VisibleAsset } from '@moviemasher/runtime-shared'
+import { ShapeAsset, ShapeAssetObject, ShapeInstance } from '@moviemasher/runtime-shared'
 import {  isAboveZero } from '../SharedGuards.js'
 import { DataGroupSize } from '../../Setup/DataGroupConstants.js'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { svgDFromSize } from '../../Helpers/Svg/SvgFunctions.js'
-import type { VisibleInstance } from '../Instance/Instance.js'
-import { IntrinsicOptions } from '../Mash/Clip/Clip.js'
+import type { VisibleInstance } from '@moviemasher/runtime-shared'
+import { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { PointZero } from '../../Utility/PointConstants.js'
 
 export function ShapeAssetMixin

@@ -1,4 +1,4 @@
-import type { ColorInstance } from './ColorTypes.js'
+import type { ColorInstance } from '@moviemasher/runtime-shared'
 
 
 import {isContentInstance} from '../../Helpers/Content/ContentFunctions.js'

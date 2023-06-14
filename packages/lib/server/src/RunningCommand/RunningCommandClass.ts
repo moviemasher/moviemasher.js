@@ -3,7 +3,7 @@ import fs from 'fs'
 // import EventEmitter from "events"
 
 import {
-  assertPopulatedString, errorThrow, ErrorName
+  assertPopulatedString,
 } from "@moviemasher/lib-shared"
 
 import { commandArgsString } from "../Utility/Command.js"
@@ -11,6 +11,7 @@ import { Command } from "../Command/Command.js"
 import { commandInstance } from "../Command/CommandFactory.js"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand.js"
 import { CommandOptions } from "../Plugin/Encode/Encode.js"
+import { errorThrow, ErrorName } from "@moviemasher/runtime-shared"
 
 export class RunningCommandClass implements RunningCommand {
   constructor(public id: string, public commandOptions: CommandOptions) {

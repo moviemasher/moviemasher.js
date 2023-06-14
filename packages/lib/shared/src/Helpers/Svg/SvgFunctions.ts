@@ -7,13 +7,14 @@ import type { Lock } from "@moviemasher/runtime-shared"
 
 import { assertSizeAboveZero, isSize, sizeCopy, sizeAboveZero, sizeLockNegative } from "../../Utility/SizeFunctions.js"
 import { NamespaceSvg } from '../../Setup/Constants.js'
-import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from '../../Shared/SharedGuards.js'
+import { assertDefined, assertPopulatedString, assertTrue, isPositive } from '../../Shared/SharedGuards.js'
+import { isArray, isPopulatedString } from "@moviemasher/runtime-shared"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
 import { PointZero } from "../../Utility/PointConstants.js"
 import { assertPoint, isPoint, pointCopy, pointValueString } from "../../Utility/PointFunctions.js"
 import { Runtime } from '../../Runtime/Runtime.js'
 import { EnvironmentKeySupportsLoadSvg } from '../../Runtime/Environment/Environment.js'
-import { TypeBoolean } from '../../Utility/ScalarFunctions.js'
+import { TypeBoolean } from "@moviemasher/runtime-shared"
 import { colorCurrent } from '../Color/ColorConstants.js'
 import { LockNone } from "../../Setup/EnumConstantsAndFunctions.js"
 

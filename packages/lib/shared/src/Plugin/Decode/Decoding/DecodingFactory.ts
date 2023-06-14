@@ -1,4 +1,4 @@
-import {Decoding, DecodingObject} from './Decoding.js'
+import {Decoding, DecodingObject} from '@moviemasher/runtime-shared'
 import {DecodingClass} from './DecodingClass.js'
 
 export const decodingInstance = (object: DecodingObject): Decoding => {

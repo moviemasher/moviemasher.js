@@ -1,7 +1,7 @@
-import { ImageAsset } from "./ImageAsset.js";
+import { ImageAsset } from "@moviemasher/runtime-shared";
 import { Constrained } from "@moviemasher/runtime-shared";
-import { VisibleInstance } from "../Instance/Instance.js";
-import { ImageInstance } from "./ImageInstance.js";
+import { VisibleInstance } from "@moviemasher/runtime-shared";
+import { ImageInstance } from "@moviemasher/runtime-shared";
 
 export function ImageInstanceMixin
 <T extends Constrained<VisibleInstance>>(Base: T): 

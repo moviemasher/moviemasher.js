@@ -1,8 +1,8 @@
 import { 
-   ProtocolPromise, ProtocolFile, LoadType, errorPromise, assertEndpoint, 
-  ErrorName, assertPopulatedString, TypeProtocol, Runtime 
+   ProtocolPromise, ProtocolFile, assertEndpoint, 
+  assertPopulatedString, TypeProtocol, Runtime 
 } from "@moviemasher/lib-shared"
-import { EndpointRequest } from "@moviemasher/runtime-shared"
+import { errorPromise, LoadType, EndpointRequest, ErrorName } from "@moviemasher/runtime-shared"
 
 const promise: ProtocolPromise = (request: EndpointRequest, type?: LoadType) => {
   if (type) return errorPromise(ErrorName.Type)
@@ -13,7 +13,6 @@ const promise: ProtocolPromise = (request: EndpointRequest, type?: LoadType) => 
   assertPopulatedString(data)
 
   return Promise.resolve({ data })
-  
 }
 
 Runtime.plugins[TypeProtocol][ProtocolFile] ||= { 

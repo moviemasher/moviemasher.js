@@ -1,57 +1,82 @@
-import { AssetCacheArgs, CacheOptions, InstanceCacheArgs, PreloadOptions } from "../../Base/CacheTypes.js"
+import { MovieMasher } from '@moviemasher/runtime-client'
+import { AssetCacheArgs, CacheOptions, InstanceCacheArgs, Propertied, Property, Scalar, Size, Time, TimeRange, TypeAudio } from "@moviemasher/runtime-shared"
 import { Panel } from "../../Base/PanelTypes.js"
-import { Propertied, Property, Scalar, Size, Time, TimeRange, TypeAudio } from '@moviemasher/runtime-shared'
-import { MashAssetClass } from '../../Shared/Mash/MashClasses.js'
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isBoolean, isPositive } from '../../Shared/SharedGuards.js'
-import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from '../../Setup/AVTypeConstants.js'
-import { EmptyFunction } from '../../Setup/EmptyFunction.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ContainerRectArgs } from '@moviemasher/runtime-shared'
+import { assertContainerInstance } from '../../Helpers/Container/ContainerFunctions.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
+import { SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
+import { PreviewItem, PreviewItems, SvgItems, SvgOrImage } from '../../Helpers/Svg/Svg.js'
+import { svgAppend, svgSetDimensions, svgSvgElement } from '../../Helpers/Svg/SvgFunctions.js'
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities.js'
-import { ClientClip, ClientClips, ClientTrack, ClientTracks, ClientMashAsset } from './ClientMashTypes.js'
-import { AVType } from '../../Setup/AVType.js'
-import { Selectables } from '../../Plugin/Masher/Selectable.js'
-import { PreviewClass } from '../../Plugin/Masher/Preview/PreviewClass.js'
-import { Preview, PreviewArgs, PreviewOptions } from '../../Plugin/Masher/Preview/Preview.js'
-import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
-import { ActionTypeChange, ActionTypeChangeFrame, EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypeLoaded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTrack, TimingCustom, TypeClip, TypeMash } from '../../Setup/EnumConstantsAndFunctions.js'
-import { Interval, MashAssetObject } from '../../Shared/Mash/MashTypes.js'
+import { ChangePropertyActionObject } from '../../Plugin/Masher/Actions/Action/ActionTypes.js'
+import { Actions } from "@moviemasher/runtime-client"
+import { Masher } from '../../Plugin/Masher/Masher.js'
 import { AudioPreview, AudioPreviewArgs } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
 import { audioPreviewInstance } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreviewFactory.js'
-import { Masher } from '../../Plugin/Masher/Masher.js'
-import { Track, TrackArgs, TrackObject } from '../../Shared/Mash/Track/Track.js'
-import { assertTrack } from "../../Shared/Mash/Track/TrackGuards.js"
-import { SelectedItems, SelectedProperty } from '../../Helpers/Select/SelectedProperty.js'
-import { ChangePropertyActionObject } from '../../Plugin/Masher/Actions/Action/Action.js'
-import { Actions } from '../../Plugin/Masher/Actions/Actions.js'
-import { sortByIndex } from '../../Utility/SortFunctions.js'
-import { isTextInstance } from '../../Shared/Text/TextGuards.js'
-import { PreviewItem, PreviewItems, SvgItems, SvgOrImage } from '../../Helpers/Svg/Svg.js'
-import { Default } from '../../Setup/Default.js'
-import { NonePreview } from '../../Plugin/Masher/Preview/NonePreview.js'
+import { Preview, PreviewArgs, PreviewOptions } from '../../Plugin/Masher/Preview/Preview.js'
+import { PreviewClass } from '../../Plugin/Masher/Preview/PreviewClass.js'
+import { Selectables } from '@moviemasher/runtime-client'
+import { AVType } from '@moviemasher/runtime-shared'
+import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from '../../Setup/AVTypeConstants.js'
 import { DataTypeContainerId, DataTypeContentId } from '../../Setup/DataTypeConstants.js'
-import { ClientInstance, ClientVisibleInstance } from '../ClientTypes.js'
+import { Default } from '../../Setup/Default.js'
+import { EmptyFunction } from '../../Setup/EmptyFunction.js'
+import { ActionTypeChange, ActionTypeChangeFrame, EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypeLoaded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTrack, TimingCustom, TypeClip, TypeMash } from '../../Setup/EnumConstantsAndFunctions.js'
 import { ClipClass } from '../../Shared/Mash/Clip/ClipClass.js'
-import { ContainerRectArgs } from '../../Helpers/Container/Container.js'
-import { assertContainerInstance } from '../../Helpers/Container/ContainerFunctions.js'
-import { rectsEqual } from '../../Utility/RectFunctions.js'
-import { assertSizeAboveZero, sizeCover, sizeEven } from '../../Utility/SizeFunctions.js'
+import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
+import { ClipObject } from '@moviemasher/runtime-shared'
+import { MashAssetClass } from '../../Shared/Mash/MashClasses.js'
+import { Track, TrackArgs, TrackObject } from '@moviemasher/runtime-shared'
+import { assertTrack } from "../../Shared/Mash/Track/TrackGuards.js"
+import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isPositive } from '../../Shared/SharedGuards.js'
+import { isArray } from "@moviemasher/runtime-shared"
+import { assertTime } from "../../Shared/TimeGuards.js"
+import { isTextInstance } from '../../Shared/Text/TextGuards.js'
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
 import { PointZero } from '../../Utility/PointConstants.js'
-import { svgAppend, svgSetDimensions, svgSvgElement } from '../../Helpers/Svg/SvgFunctions.js'
-import { pixelToFrame } from '../PixelFunctions.js'
+import { rectsEqual } from '../../Utility/RectFunctions.js'
+import { assertSizeAboveZero, sizeCover, sizeEven } from '../../Utility/SizeFunctions.js'
+import { sortByIndex } from '../../Utility/SortFunctions.js'
+import { ClientAssetManager } from '@moviemasher/runtime-client'
 import { assertClientVisibleInstance } from '../ClientGuards.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
+import { ClientInstance, ClientVisibleInstance } from '../ClientTypes.js'
+import { pixelToFrame } from '../PixelFunctions.js'
+import { ClientClip, ClientClips, ClientMashAsset, ClientTrack, ClientTracks } from './ClientMashTypes.js'
 import { ClientTrackClass } from './ClientTrackClass.js'
-import { ClipObject } from '../../Shared/Mash/Clip/ClipObject.js'
-import { ClientAssetManager } from '../Asset/AssetManager/ClientAssetManager.js'
 
 export type TrackClips = [number, ClientClips]
+export type Interval = ReturnType<typeof setInterval>
 
 export class ClientMashAssetClass extends MashAssetClass implements ClientMashAsset {
+  assetCachePromise(options: CacheOptions): Promise<void> {
+    options.time ||= this.timeToBuffer
+    const preloadOptions = this.cacheOptions(options)
+    const { time, audible, visible } = options
+    const { quantize } = this
+    assertTime(time)
 
-  definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    throw new Error('Method not implemented.')
+    const scaled = time.scale(this.quantize)
+    const type = (audible && visible) ? AVTypeBoth : (audible ? AVTypeAudio : AVTypeVideo)
+    const clips = this.clipsInTimeOfType(scaled, type)
+
+    const promises = clips.map(clip => {
+      const clipTime = clip.timeRange
+      const preloadArgs: InstanceCacheArgs = { 
+        ...preloadOptions, clipTime, quantize, time 
+      }
+      return clip.clipCachePromise(preloadArgs)
+    })
+    const promise = Promise.all(promises).then(EmptyFunction)
+    const removedPromise = promise.then(() => {
+      const index = this.loadingPromises.indexOf(promise)
+      if (index < 0) return errorThrow(ErrorName.Internal) 
+
+      this.loadingPromises.splice(index, 1)
+    })
+    this.loadingPromises.push(promise)
+    
+    return removedPromise
   }
 
   addClipToTrack(clip: ClientClip | ClientClips, trackIndex = 0, insertIndex = 0, frame?: number): void {
@@ -77,8 +102,6 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     })
   }
   
-
-
   addTrack(options: TrackObject = {}): Track {
     const args: TrackArgs = { 
       index: this.tracks.length, mashAsset: this, ...options 
@@ -90,7 +113,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     return track
   }
   
-  private _buffer = Default.mash.buffer
+  protected _buffer = Default.mash.buffer
   get buffer(): number { return this._buffer }
   set buffer(value: number) {
     assertAboveZero(value, 'buffer')
@@ -183,12 +206,14 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     })
   }
 
+  definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
+    throw new Error('Method not implemented.')
+  }
 
   destroy(): void {
     this.paused = true
     this.clearDrawInterval()
   }
-
 
   draw(): void {
     const { time } = this
@@ -229,14 +254,14 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
 
   get frame(): number { return this.time.scale(this.quantize, 'floor').frame }
 
-  private graphFileOptions(options: PreloadOptions = {}): PreloadOptions {
+  private cacheOptions(options: CacheOptions = {}): CacheOptions {
     const { time, audible, visible } = options
     const definedTime = time || this.time
     const { isRange } = definedTime
     const definedVisible = visible || !isRange
     const definedAudible = isRange && audible
 
-    const args: PreloadOptions = {
+    const args: CacheOptions = {
       audible: definedAudible, visible: definedVisible,
       time: definedTime,
       quantize: this.quantize,
@@ -247,6 +272,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     assertTrue(okay, 'audible || visible')
     return args
   }
+
   private handleDrawInterval(): void {
     // console.log(this.constructor.name, 'handleDrawInterval', this._playing)
     // what time does the audio context think it is?
@@ -274,46 +300,6 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     }
   }
 
-  override initializeProperties(object: MashAssetObject): void {
-    const { loop, buffer } = object
-    if (isBoolean(loop)) this.loop = loop
-    if (isAboveZero(buffer)) this._buffer = buffer
-    this._preview = new NonePreview({ mash: this, time: timeFromArgs() })
-
-    this.media = MovieMasher.assetManager as ClientAssetManager
-    super.initializeProperties(object)
-  }
-
-
-  assetCachePromise(options: CacheOptions): Promise<void> {
-    options.time ||= this.timeToBuffer
-    const preloadOptions = this.graphFileOptions(options)
-    const { time, audible, visible } = preloadOptions
-    const { quantize } = this
-    assertTime(time)
-
-    const scaled = time.scale(this.quantize)
-    const type = (audible && visible) ? AVTypeBoth : (audible ? AVTypeAudio : AVTypeVideo)
-    const clips = this.clipsInTimeOfType(scaled, type)
-
-    const promises = clips.map(clip => {
-      const clipTime = clip.timeRange
-      const preloadArgs: InstanceCacheArgs = { 
-        ...preloadOptions, clipTime, quantize, time 
-      }
-      return clip.clipCachePromise(preloadArgs)
-    })
-    const promise = Promise.all(promises).then(EmptyFunction)
-    const removedPromise = promise.then(() => {
-      const index = this.loadingPromises.indexOf(promise)
-      if (index < 0) return errorThrow(ErrorName.Internal) 
-
-      this.loadingPromises.splice(index, 1)
-    })
-    this.loadingPromises.push(promise)
-    
-    return removedPromise
-  }
 
   get loading(): boolean { 
     // console.log(this.constructor.name, 'loading', this.loadingPromises.length)
@@ -408,7 +394,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   }
 
 
-  private _preview?: Preview
+  protected _preview?: Preview
   private preview(options: PreviewOptions, masher?: Masher) { 
     return this._preview ||= this.previewInitialize(options, masher) 
   }
@@ -483,9 +469,9 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
 
   selectables(): Selectables { return [this] }
     
-  selectedItems(actions: Actions): SelectedItems {
+  selectedItems(actions: Actions): SelectedProperties {
     const { properties } = this
-    const items: SelectedItems = properties.map(property => {
+    const items: SelectedProperties = properties.map(property => {
       const undoValue = this.value(property.name)
       const selectedProperty: SelectedProperty = {
         value: undoValue,
@@ -564,9 +550,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   }
   
   declare tracks: ClientTracks
-
 }
-
 
 export class ClientClipClass extends ClipClass implements ClientClip {
   clipIcon(size: Size, scale: number, buffer = 1): Promise<SvgOrImage> | undefined {
@@ -647,8 +631,8 @@ export class ClientClipClass extends ClipClass implements ClientClip {
 
   selectables(): Selectables { return [this, ...this.track.selectables()] }
 
-  selectedItems(actions: Actions): SelectedItems {
-    const selected: SelectedItems = []
+  selectedItems(actions: Actions): SelectedProperties {
+    const selected: SelectedProperties = []
     const { properties } = this
     const props = properties.filter(property => this.selectedProperty(property))
     props.forEach(property => {

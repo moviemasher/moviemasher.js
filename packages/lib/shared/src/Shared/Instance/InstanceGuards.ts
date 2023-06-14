@@ -1,11 +1,11 @@
-import type { Instance, InstanceObject } from './Instance.js'
+import type { Instance, InstanceObject } from '@moviemasher/runtime-shared'
 
 import { isAssetType } from '@moviemasher/runtime-shared'
 
-import { isObject } from '../SharedGuards.js'
-import { isIdentified } from '../../Base/IdentifiedGuards.js'
-import { isTyped } from '../../Base/TypedGuards.js'
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { isObject } from "@moviemasher/runtime-shared"
+import { isIdentified } from '@moviemasher/runtime-shared'
+import { isTyped } from '@moviemasher/runtime-shared'
+import { errorThrow } from '@moviemasher/runtime-shared'
 
 export const isInstance = (value?: any): value is Instance => {
   return isObject(value) && 'assetIds' in value

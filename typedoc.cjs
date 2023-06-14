@@ -25,7 +25,7 @@ module.exports = {
   // "excludeProtected": true,
   // "excludeExternals": true,
   // "excludeInternal": false,
-  // "githubPages": false,
+  "githubPages": false,
   // "categorizeByGroup": true,
   "readme": "README.md",
   "hideGenerator": true,

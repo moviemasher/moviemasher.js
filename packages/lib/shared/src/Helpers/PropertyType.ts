@@ -11,7 +11,7 @@ import {
 import { isMediaType } from '../Setup/MediaType.js'
 import { colorValid } from './Color/ColorFunctions.js'
 import { colorBlack } from './Color/ColorConstants.js'
-import { isBoolean, isNumber, isNumeric, isPopulatedString } from '../Shared/SharedGuards.js'
+import { isBoolean, isNumber, isNumeric, isPopulatedString } from "@moviemasher/runtime-shared"
 
 export const PropertyTypesNumeric = [
   DataTypeFrame,

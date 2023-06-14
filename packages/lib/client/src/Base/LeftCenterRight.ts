@@ -70,6 +70,7 @@ export class LeftCenterRight extends Slotted {
 
 
     header, footer {
+      --padding: 0;
       gap: var(--spacing);
       background-color: var(--back);
       color: var(--fore);
@@ -79,13 +80,13 @@ export class LeftCenterRight extends Slotted {
     }
     .right {
       text-align: right;
-      background-color: pink;
+      /* background-color: pink; */
     }
 
     header > .left,
     footer > .left,
     div > .left {
-      background-color: yellow;
+      /* background-color: yellow; */
       display: flex;
     }
  

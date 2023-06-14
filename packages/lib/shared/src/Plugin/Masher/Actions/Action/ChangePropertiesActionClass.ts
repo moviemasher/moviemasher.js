@@ -1,8 +1,8 @@
 import { Propertied } from '@moviemasher/runtime-shared'
 import { ScalarRecord } from '@moviemasher/runtime-shared'
-import { ChangePropertiesAction } from './Action.js'
+import { ChangePropertiesAction } from './ActionTypes.js'
 import { ActionClass } from "./ActionClass.js"
-import { ChangePropertiesActionObject } from './Action.js'
+import { ChangePropertiesActionObject } from './ActionTypes.js'
 
 /**
  * @category Action

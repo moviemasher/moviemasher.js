@@ -1,6 +1,6 @@
 import type { DataType } from '@moviemasher/runtime-shared'
 
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { DataTypes } from './DataTypeConstants.js'
 
 export const isDataType = (type?: any): type is DataType => {

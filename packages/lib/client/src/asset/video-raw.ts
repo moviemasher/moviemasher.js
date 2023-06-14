@@ -1,8 +1,31 @@
-import { AssetCacheArgs, AssetEventDetail, AudibleAssetMixin, AudibleClientAssetMixin, AudibleClientInstanceMixin, AudibleInstanceMixin, ClientImage, ClientInstance, ClientInstanceClass, ClientRawAssetClass, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientVideo, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, EmptyFunction, ErrorName, NamespaceSvg, Panel, PreviewItems, SemicolonChar, SvgItem, Transcoding, TranscodingTypes, TypeSequence, VideoAssetMixin, VideoInstance, VideoInstanceMixin, VideoInstanceObject, VisibleAssetMixin, VisibleInstanceMixin, assertClientAudio, assertClientImage, assertClientVideo, assertDefined, assertSizeAboveZero, assertTimeRange, assertTrue, centerPoint, clientMediaAudioPromise, clientMediaImagePromise, clientMediaVideoPromise, colorWhite, endpointFromUrl, errorThrow, idGenerateString, isBoolean, isClientAudio, isDefiniteError, pointCopy, sizeAboveZero, sizeCopy, sizeCover, sizeString, svgAppend, svgDefsElement, svgImagePromiseWithOptions, svgSet, svgSetChildren, svgSetDimensions, svgSvgElement, svgUrl, timeFromArgs, timeFromSeconds } from '@moviemasher/lib-shared'
-import { isAssetObject } from '@moviemasher/lib-shared'
+import {  
+  AudibleAssetMixin, ClientAudibleAssetMixin, ClientAudibleInstanceMixin, 
+  AudibleInstanceMixin, ClientImage, ClientInstance, ClientInstanceClass, 
+  ClientRawAssetClass, ClientRawVideoAsset, ClientRawVideoAssetObject, 
+  ClientRawVideoInstance, ClientVideo, ClientVisibleAssetMixin, 
+  ClientVisibleInstanceMixin, EmptyFunction, NamespaceSvg, Panel, 
+  PreviewItems, SemicolonChar, SvgItem,  TypeSequence, VideoAssetMixin, 
+  VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, 
+  assertClientAudio, assertClientImage, assertClientVideo, assertDefined, 
+  assertSizeAboveZero, assertTimeRange, assertTrue, centerPoint, 
+  clientMediaAudioPromise, clientMediaImagePromise, clientMediaVideoPromise, 
+  colorWhite, endpointFromUrl, idGenerateString,
+  isClientAudio, isDefiniteError, pointCopy, sizeAboveZero, sizeCopy, 
+  sizeCover, sizeString, svgAppend, svgDefsElement, svgImagePromiseWithOptions,
+  svgSet, svgSetChildren, svgSetDimensions, svgSvgElement, svgUrl, timeFromArgs, 
+  timeFromSeconds } from '@moviemasher/lib-shared'
 
 import { MovieMasher } from '@moviemasher/runtime-client'
-import { Rect, RectOptions, Size, SourceRaw, Time, Times, TypeAudio, TypeImage, TypeVideo } from '@moviemasher/runtime-shared'
+import { 
+  Transcoding, TranscodingTypes, AssetCacheArgs,Rect, RectOptions, Size, 
+  SourceRaw, Time, Times, TypeAudio, TypeImage, TypeVideo, VideoInstance, 
+  VideoInstanceObject,
+  AssetEventDetail,
+  ErrorName,
+  errorThrow,
+  isAssetObject,
+  isBoolean,
+} from '@moviemasher/runtime-shared'
 
 const canvasContext = (size: Size): [HTMLCanvasElement, CanvasRenderingContext2D] => {
   const { document } = globalThis
@@ -83,7 +106,7 @@ const imageFromVideoPromise = (video: ClientVideo, definitionTime: Time, outSize
 
 const WithAudibleAsset = AudibleAssetMixin(ClientRawAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
-const WithClientAudibleAsset = AudibleClientAssetMixin(WithVisibleAsset)
+const WithClientAudibleAsset = ClientAudibleAssetMixin(WithVisibleAsset)
 const WithClientVisibleAsset = ClientVisibleAssetMixin(WithClientAudibleAsset)
 const WithVideoAsset = VideoAssetMixin(WithClientVisibleAsset)
 
@@ -279,7 +302,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
 
 const WithAudibleInstance = AudibleInstanceMixin(ClientInstanceClass)
 const WithVisibleInstance = VisibleInstanceMixin(WithAudibleInstance)
-const WithClientAudibleInstance = AudibleClientInstanceMixin(WithVisibleInstance)
+const WithClientAudibleInstance = ClientAudibleInstanceMixin(WithVisibleInstance)
 const WithClientVisibleInstanceD = ClientVisibleInstanceMixin(WithClientAudibleInstance)
 const WithVideoInstance = VideoInstanceMixin(WithClientVisibleInstanceD)
 

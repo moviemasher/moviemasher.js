@@ -1,5 +1,5 @@
 import type { Numbers, Unknowns } from '@moviemasher/runtime-shared'
-import { isArray, isObject } from '../Shared/SharedGuards.js'
+import { isArray, isObject } from "@moviemasher/runtime-shared"
 
 
 export const arrayLast = (array: Unknowns): any => array[array.length - 1 ]

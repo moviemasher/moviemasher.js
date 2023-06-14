@@ -23,7 +23,10 @@ export default {
     preserveModulesRoot: rootDir,
     dir: 'dist'
   },
-  external: ['events'],
+  external: [
+    'events',
+    '@moviemasher/runtime-shared',
+  ],
   plugins: [ typescript(typescriptConfig) ],
 }
 

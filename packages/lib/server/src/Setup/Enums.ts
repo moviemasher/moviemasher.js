@@ -1,4 +1,4 @@
-import { errorThrow } from "@moviemasher/lib-shared"
+import { errorThrow } from "@moviemasher/runtime-shared"
 
 export type DecodingJobType = 'decoding'
 export type EncodingJobType = 'encoding'

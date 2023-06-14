@@ -4,7 +4,7 @@ import assert from 'assert'
 
 import { tweenPad, tweenScaleSizeToRect } from './TweenFunctions.js'
 import { Rect, Size } from '@moviemasher/runtime-shared'
-import { SideDirectionObject } from '../Setup/Direction.js'
+import { SideDirectionObject } from '@moviemasher/runtime-shared'
 
 describe('Tween', () => {
   describe('tweenPad', () => {

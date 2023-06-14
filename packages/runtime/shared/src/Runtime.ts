@@ -1,7 +1,8 @@
-import { EventDispatcher } from './EventDispatcher.js'
+import type { AssetManager } from './AssetManagerTypes.js'
+import type { EventDispatcher } from './EventDispatcher.js'
 
 export interface MovieMasherRuntime {
   eventDispatcher: EventDispatcher
-  assetManager: unknown
+  assetManager: AssetManager
   masher: unknown
 }

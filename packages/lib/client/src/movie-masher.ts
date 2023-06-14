@@ -1,35 +1,33 @@
-import { 
+import type { 
   AssetType,
   AudioType,
   ImageType,
-  SourceText,
   StringRecord, 
   VideoType, 
   EndpointRequest,
+  DecodingObject,
+  DecodingObjects,
+  FontType,
+  AssetPromiseEvent,
 } from '@moviemasher/runtime-shared'
 
 
 import type { 
-  AssetObject,
-  AssetObjects,
   ProbingData,
   ClientRawVideoAssetObject,
   ClientRawImageAssetObject,
   ClientRawAudioAssetObject,
   ClientRawAssetObject,
   ClientTextAssetObject,
-  AssetPromiseEvent,
-  DecodingObject,
-  DecodingObjects,
-  FontType,
   Masher,
-  } from '@moviemasher/lib-shared'
+} from '@moviemasher/lib-shared'
 
 
 import { 
+  AssetObject,
+  AssetObjects,
   TypeFont,
-  TypeProbe,
-} from '@moviemasher/lib-shared'
+} from '@moviemasher/runtime-shared'
 
 
 import type {
@@ -60,10 +58,13 @@ import {
   TypeImage, TypeVideo, TypesAudible,
   isAudibleAssetType,
   SourceRaw,
+  SourceText,
+  TypeProbe,
 } from '@moviemasher/runtime-shared'
 
 
-import { PropertyValues, css, html } from 'lit'
+import type { PropertyValues } from 'lit'
+import { css, html } from 'lit'
 import { provide } from '@lit-labs/context'
 import { customElement } from 'lit/decorators/custom-element.js'
 import { property } from 'lit/decorators/property.js'
@@ -77,13 +78,14 @@ import {
   requestAudioPromise, requestFontPromise, requestImagePromise, requestVideoPromise 
 } from '@moviemasher/lib-shared'
 import { state } from 'lit/decorators/state.js'
+import { MovieMasher } from '@moviemasher/runtime-client'
+
+import './asset/index.js'
 
 const FormSlotInspector: InspectorFormSlot = 'inspector'
 const FormSlotViewer: ViewerFormSlot = 'viewer'
 const FormSlotSelector: SelectorFormSlot = 'selector'
 const FormSlotComposer: ComposerFormSlot = 'composer'
-
-
 
 const SuffixMax: MaxSuffix = 'Max'
 const SuffixExtensions: ExtensionsSuffix = 'Extensions'
@@ -99,7 +101,6 @@ export type ImportType = AudioType | ImageType | VideoType | FontType
 type ImportTypes = ImportType[]
 
 const TypesImport: ImportTypes = [...TypesAudible, TypeImage, TypeFont]
-// const TypesMedia: MediaTypes = [...TypesImport, TypeMash, TypeEffect]
 const isImportType = (type: unknown): type is ImportType => {
   return TypesImport.includes(type as ImportType)
 }
@@ -152,65 +153,6 @@ export class MovieMasherElement extends Slotted {
   @property({ type: Number, attribute: 'audio-max' })
   audioMax = -1
 
-  // private clientAudioPromise(event: ClientAudioEvent): void {
-  //   const { detail } = event
-  //   const { request } = detail
-  //   console.log('clientAudioPromise', request)
-  //   detail.promise = requestAudioPromise(request)
-  //     .then(data =>  {
-  //       request.response = data
-  //       return { data}
-  //     })
-  //     .catch(error => ({ error }))
-  // }
-  // private clientImagePromise(event: ClientImageEvent): void {
-  //   const { detail } = event
-  //   const { request } = detail
-  //   console.log('clientImagePromise', request)
-  //   detail.promise = requestImagePromise(request)
-  //     .then(data =>  {
-  //       request.response = data
-  //       return { data}
-  //     })
-  //     .catch(error => ({ error }))
-  // }
-  // private clientVideoPromise(event: ClientVideoEvent): void {
-  //   const { detail } = event
-  //   const { request } = detail
-  //   console.log('clientVideoPromise', request)
-  //   detail.promise = requestVideoPromise(request)
-  //     .then(data =>  {
-  //       request.response = data
-  //       return { data}
-  //     })
-  //     .catch(error => ({ error }))
-  // }
-
-  // private clientFontPromise(event: ClientFontEvent): void {
-  //   const { detail } = event
-  //   const { request } = detail
-  //   console.log('clientFontPromise', request)
-  //   detail.promise = requestFontPromise(request)
-  //     .then(data =>  {
-  //       request.response = data
-  //       return { data}
-  //     })
-  //     .catch(error => ({ error }))
-  // }
-
-  // private clientMediaHandler(event: Event) {
-  //   if (event instanceof CustomEvent) {
-  //     const { type } = event
-  //     console.log(this.constructor.name, 'clientMediaHandler', type)
-
-  //     switch(type) {
-  //       case 'clientaudio': return this.clientAudioPromise(event)
-  //       case 'clientimage': return this.clientImagePromise(event)
-  //       case 'clientvideo': return this.clientVideoPromise(event)
-  //       case 'clientfont': return this.clientFontPromise(event)
-  //     }
-  //   } 
-  // }
 
   protected override content(contents: Contents): Content {
     return html`<div 
@@ -227,11 +169,11 @@ export class MovieMasherElement extends Slotted {
   }
 
   protected core?: CoreLib | undefined
-  private _corePromise?: Promise<void>
-  private get corePromise() {
-    return this._corePromise ||= this.corePromiseInitialize
+  private _sharedPromise?: Promise<void>
+  private get sharedPromise() {
+    return this._sharedPromise ||= this.sharedPromiseInitialize
   }
-  private get corePromiseInitialize(): Promise<void> {
+  private get sharedPromiseInitialize(): Promise<void> {
     return import('@moviemasher/lib-shared').then((lib: CoreLib) => {
       this.core = lib
     })
@@ -459,7 +401,7 @@ export class MovieMasherElement extends Slotted {
     return this._masherPromise ||= this.masherPromiseInitialize
   }
   private get masherPromiseInitialize(): Promise<void> {
-    return this.corePromise.then(() => {
+    return this.sharedPromise.then(() => {
       const masher = this.core!.masherInstance()
       this.masher = masher
       // TypesImport.forEach(type => {
@@ -473,7 +415,8 @@ export class MovieMasherElement extends Slotted {
     const { assetObject } = detail
     // console.log(this.constructor.name, 'mediaHandler', mediaObject.label)
     detail.assetPromise = this.masherPromise.then(() => {
-      return this.masher!.media.fromObject(assetObject)
+      const array  = MovieMasher.assetManager.define(assetObject)
+      return array[0]
     })
     event.stopImmediatePropagation()
   }
@@ -513,7 +456,8 @@ export class MovieMasherElement extends Slotted {
   protected assetObjectHandler(event: AssetObjectEvent) {
     const { detail } = event
     const { id } = detail
-    detail.mediaObject = this.masherContext.assetObjects.find(media => media.id === id)
+    console.log(this.tagName, 'assetObjectHandler', id)
+    detail.mediaObject = this.assetObjects.find(asset => asset.id === id)
     event.stopImmediatePropagation()
   }
 
@@ -652,10 +596,6 @@ export class MovieMasherElement extends Slotted {
     }
   }
 
-  
- 
-  
- 
   static override styles = [
     Component.cssHostFlex,
     css`

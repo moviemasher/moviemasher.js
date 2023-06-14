@@ -1,7 +1,7 @@
 import type { Constrained } from '@moviemasher/runtime-shared'
-import type { AudibleInstance } from '../../Shared/Instance/Instance.js'
+import type { AudibleInstance } from '@moviemasher/runtime-shared'
 import type { ServerAudibleInstance, ServerInstance } from '../ServerInstance.js'
-import type { ServerAudibleAsset } from '../Asset/ServerAsset.js'
+import type { ServerAudibleAsset } from '../Asset/ServerAssetTypes.js'
 
 export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance & AudibleInstance>>(Base: T):
   T & Constrained<ServerAudibleInstance> {

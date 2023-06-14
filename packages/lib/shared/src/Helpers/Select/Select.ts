@@ -1,4 +1,4 @@
-import type { SelectorType } from '../../Setup/Enums.js'
+import type { SelectorType } from "@moviemasher/runtime-client"
 
 export interface Selector {
   type: SelectorType

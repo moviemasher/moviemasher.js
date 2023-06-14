@@ -1,21 +1,20 @@
 import type { 
-  Action, ActionObject, ChangePropertyActionObject, ChangePropertiesActionObject, 
-  MoveActionObject, AddClipActionObject, AddTrackActionObject, MoveClipActionObject, 
+  ChangePropertyActionObject, ChangePropertiesActionObject, 
+  AddClipActionObject, AddTrackActionObject, MoveClipActionObject, 
   RemoveClipActionObject 
-} from './Action.js'
+} from './ActionTypes.js'
+import type { Action, ActionObject } from "@moviemasher/runtime-client"
 
 import {
   ActionTypeAddClip, ActionTypeAddTrack, ActionTypeChange, ActionTypeChangeFrame,
-  ActionTypeChangeMultiple, ActionTypeMove, ActionTypeMoveClip,
+  ActionTypeChangeMultiple, ActionTypeMoveClip,
   ActionTypeRemoveClip
 } from "../../../../Setup/EnumConstantsAndFunctions.js"
-import { ErrorName, errorThrow } from '../../../../Helpers/index.js'
 import { AddClipActionClass } from './AddClipActionClass.js'
 import { AddTrackActionClass } from './AddTrackActionClass.js'
 import { ChangeFramesActionClass } from './ChangeFramesActionClass.js'
 import { ChangePropertiesActionClass } from './ChangePropertiesActionClass.js'
 import { ChangePropertyActionClass } from './ChangePropertyActionClass.js'
-import { MoveActionClass } from './MoveActionClass.js'
 import { MoveClipActionClass } from './MoveClipActionClass.js'
 import { RemoveClipActionClass } from './RemoveClipActionClass.js'
 
@@ -29,8 +28,6 @@ export const actionInstance = (object: ActionObject): Action => {
     case ActionTypeChangeFrame: return new ChangeFramesActionClass(<ChangePropertyActionObject> object)
     case ActionTypeChangeMultiple: return new ChangePropertiesActionClass(<ChangePropertiesActionObject> object)
     case ActionTypeMoveClip: return new MoveClipActionClass(<MoveClipActionObject> object)
-    case ActionTypeMove: return new MoveActionClass(<MoveActionObject> object)
     case ActionTypeRemoveClip: return new RemoveClipActionClass(<RemoveClipActionObject>object)
   }
-  return errorThrow(ErrorName.Internal)
 }

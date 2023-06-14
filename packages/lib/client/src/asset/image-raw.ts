@@ -1,9 +1,23 @@
-import { AssetCacheArgs, AssetEventDetail, ClientImage, ClientInstanceClass, ClientRawAssetClass, ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, ImageAssetMixin, ImageInstance, ImageInstanceMixin, ImageInstanceObject, SvgItem, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, clientMediaImagePromise, errorThrow, isDefiniteError, sizeCover, svgImagePromiseWithOptions, svgSvgElement } from '@moviemasher/lib-shared'
-import { isAssetObject } from '@moviemasher/lib-shared'
+import type { 
+  AssetCacheArgs, ImageInstance, ImageInstanceObject, Rect, RectOptions, 
+  Size, AssetEventDetail, Time, 
+} from '@moviemasher/runtime-shared'
+import type { 
+  ClientImage, SvgItem, 
+  ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, 
+} from '@moviemasher/lib-shared'
+import { 
+  ImageInstanceMixin, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, ImageAssetMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, 
+  centerPoint, 
+  clientMediaImagePromise, isDefiniteError, sizeCover, 
+  svgImagePromiseWithOptions, svgSvgElement,
+  ClientInstanceClass, ClientRawAssetClass, 
+} from '@moviemasher/lib-shared'
 
 import { MovieMasher } from '@moviemasher/runtime-client'
-import { Rect, RectOptions, Size, SourceRaw, Time, TypeImage } from '@moviemasher/runtime-shared'
-
+import {
+  errorThrow, isAssetObject, SourceRaw, TypeImage
+} from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)

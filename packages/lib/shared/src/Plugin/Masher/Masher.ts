@@ -1,28 +1,24 @@
 import type { ClientAction } from "../../Setup/ClientAction.js"
 import type { AssetType, MasherType, Plugin} from '@moviemasher/runtime-shared'
-import type { Action } from "./Actions/Action/Action.js"
+import type { Action } from "@moviemasher/runtime-client"
 import type {EditorSelection} from './EditorSelection/EditorSelection.js'
-import type {ClientEffect} from '../../Effect/Effect.js'
-import type {IndexHandler} from '../../Helpers/Select/Select.js'
-import type { Movable } from "../../Setup/Movable.js"
 import type {PreviewItems} from '../../Helpers/Svg/Svg.js'
 import type {Rect} from '@moviemasher/runtime-shared'
 import type {Size} from '@moviemasher/runtime-shared'
 import type {StringRecord} from '@moviemasher/runtime-shared'
 import type {Time, TimeRange} from '@moviemasher/runtime-shared'
-import type {Track} from '../../Shared/Mash/Track/Track.js'
+import type {Track} from '@moviemasher/runtime-shared'
 
-import { Actions } from './Actions/Actions.js'
+import { Actions } from "@moviemasher/runtime-client"
 import { Emitter } from '../../Helpers/Emitter.js'
-import { MashAsset, MashAssetObject } from '../../Shared/Mash/MashTypes.js'
-import { ClientAsset, ClientAssets } from "../../Client/ClientTypes.js"
-import { AssetObject, AssetObjects } from '../../Shared/Asset/AssetTypes.js'
+import { MashAsset, MashAssetObject } from '@moviemasher/runtime-shared'
+import { ClientAsset, ClientAssets } from "@moviemasher/runtime-client"
+import { AssetObject, AssetObjects } from '@moviemasher/runtime-shared'
 import { ClientClip, ClientClips } from '../../Client/Mash/ClientMashTypes.js'
-import { ClientAssetManager } from '../../Client/Asset/AssetManager/ClientAssetManager.js'
+import { ClientAssetManager } from '@moviemasher/runtime-client'
 
 export interface Masher {
   actions: Actions
-  addEffect: IndexHandler<Movable>
   addMedia(media: ClientAsset | ClientAssets, editorIndex?: MashIndex): Promise<ClientAssets> 
   addMediaObjects(object: AssetObject | AssetObjects, editorIndex?: MashIndex): Promise<ClientAssets>
   addTrack(): void
@@ -45,9 +41,7 @@ export interface Masher {
   loop: boolean
   mashingType: AssetType
   media: ClientAssetManager
-  move(object: ClipOrEffect, editorIndex?: MashIndex): void
-  moveClip(clip: ClientClip, editorIndex?: MashIndex): void
-  moveEffect: IndexHandler<Movable>
+  move(clip: ClientClip, editorIndex?: MashIndex): void
   muted: boolean
   pause(): void
   paused: boolean
@@ -63,7 +57,6 @@ export interface Masher {
   redo(): void
   redraw(): void
   removeClip(clip: ClientClip): void
-  removeEffect: IndexHandler<Movable>
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringRecord): void
   time: Time
@@ -110,4 +103,3 @@ export interface MasherArgs {
 
 export interface MasherOptions extends Partial<MasherArgs> { }
 
-export type ClipOrEffect = ClientClip | ClientEffect

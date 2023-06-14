@@ -1,5 +1,5 @@
 import type { ClientClip } from '../../../../Client/Mash/ClientMashTypes.js'
-import type { MoveClipActionObject } from './Action.js'
+import type { MoveClipActionObject } from './ActionTypes.js'
 
 import { AddTrackActionClass } from './AddTrackActionClass.js'
 

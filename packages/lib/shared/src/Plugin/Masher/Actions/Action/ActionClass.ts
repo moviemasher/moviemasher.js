@@ -1,7 +1,7 @@
-import type { EditorSelectionObject } from '../../EditorSelection/EditorSelection.js'
-import { errorThrow } from '../../../../Helpers/Error/ErrorFunctions.js'
-import { ErrorName } from '../../../../Helpers/Error/ErrorName.js'
-import { Action, ActionObject } from './Action.js'
+import type { EditorSelectionObject } from "@moviemasher/runtime-client"
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
+import { Action, ActionObject } from "@moviemasher/runtime-client"
 import { ClientMashAsset } from '../../../../Client/Mash/ClientMashTypes.js'
 import { assertClientMashAsset, isClientMashAsset } from '../../../../Client/Mash/ClientMashGuards.js'
 

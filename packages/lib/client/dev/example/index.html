@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="importmap">
+      {
+        "imports": {
+          "@moviemasher/lib-shared": "./@moviemasher/lib-shared/dist/lib-shared.js",
+          "@moviemasher/runtime-shared": "./@moviemasher/runtime-shared/dist/index.js",
+          "@moviemasher/runtime-client": "./@moviemasher/runtime-client/dist/index.js",
+          "@moviemasher/lib-client": "./@moviemasher/lib-client/dist/lib-client.js",
+          "@moviemasher/lib-client/": "./@moviemasher/lib-client/dist/",
+          "tslib": "./tslib/tslib.es6.js",
+          "@lit-labs/context": "./@lit-labs/context/index.js",
+          "lit-html/": "./lit-html/",
+          "lit-html": "./lit-html/lit-html.js",
+          "@lit/reactive-element": "./@lit/reactive-element/reactive-element.js",
+          "@lit/": "./@lit/",
+          "lit/": "./lit/",
+          "lit": "./lit/index.js",
+          "lit-element/": "./lit-element/",
+          "lit-element": "./lit-element/lit-element.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import "@moviemasher/lib-client/movie-masher.js"
+    </script>
+    <style>
+      /* fit root DIV to viewport */
+
+      body {
+        height: 100vh;
+        height: 100svh;
+        display: flex;
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+
+      @media(prefers-color-scheme: dark) {
+        body { background-color: #000; color: #fff; }
+      }
+
+      movie-masher {
+        --gap: 20px;
+        padding: var(--gap);
+      }
+
+      movie-masher::part(selector) {
+        border: 1px solid red;
+        --control-fore: #fff;
+      }
+      movie-masher::part(selector-footer) {
+        border: 1px solid green;
+      }
+      movie-masher::part(selector-footer-left) {
+        border: 1px solid blue;
+      }
+     
+    </style>
+
+  </head>
+  <body>
+    <movie-masher>
+      <span slot='selector-div-right'><movie-masher-icon icon='effect'></movie-masher-icon></span>
+    </movie-masher>
+  </body>
+</html>

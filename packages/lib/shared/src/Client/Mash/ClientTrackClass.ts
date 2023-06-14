@@ -1,11 +1,11 @@
 import { Scalar } from '@moviemasher/runtime-shared';
 import { ActionTypeChange, TypeTrack } from "../../Setup/EnumConstantsAndFunctions.js";
 import { assertPopulatedString, assertTrue } from '../../Shared/SharedGuards.js';
-import { SelectedItems } from '../../Helpers/Select/SelectedProperty.js';
-import { Actions } from '../../Plugin/Masher/Actions/Actions.js';
-import { Selectables } from '../../Plugin/Masher/Selectable.js';
+import { SelectedProperties } from '@moviemasher/runtime-client';
+import { Actions } from "@moviemasher/runtime-client";
+import { Selectables } from '@moviemasher/runtime-client';
 import { arraySet } from '../../Utility/ArrayFunctions.js';
-import { ChangePropertyActionObject } from "../../Plugin/Masher/Actions/Action/Action.js";
+import { ChangePropertyActionObject } from "../../Plugin/Masher/Actions/Action/ActionTypes.js";
 import { ClientClips, ClientTrack, ClientMashAsset } from './ClientMashTypes.js';
 import { TrackClass } from '../../Shared/Mash/Track/TrackClass.js';
 
@@ -55,7 +55,7 @@ export class ClientTrackClass extends TrackClass implements ClientTrack {
 
   selectables(): Selectables { return [this, ...this.mash.selectables()]; }
 
-  selectedItems(actions: Actions): SelectedItems {
+  selectedItems(actions: Actions): SelectedProperties {
     return this.properties.map(property => {
       const undoValue = this.value(property.name);
       return {

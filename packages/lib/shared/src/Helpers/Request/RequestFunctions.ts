@@ -2,32 +2,28 @@ import type { ProtocolDataOrError, ProtocolPlugin } from '../../Plugin/Protocol/
 import type { DefiniteError } from '@moviemasher/runtime-shared'
 import type { JsonRecordDataOrError } from '../ClientMedia/ClientMedia.js'
 import type { Data } from "@moviemasher/runtime-shared"
-import type { LoadType } from '../../Setup/LoadType.js'
+import type { LoadType } from "@moviemasher/runtime-shared"
 import type { JsonRecord, JsonRecords } from '@moviemasher/runtime-shared'
 import type { 
   ClientAudio, ClientFont, 
-  ClientImage, ClientMedia, ClientMediaType, 
+  ClientImage, 
   ClientVideo} from '../ClientMedia/ClientMedia.js'
 import type { DataOrError } from "@moviemasher/runtime-shared"
-import type { FontType, RecordsType, RecordType } from '../../Setup/Enums.js'
+import type { FontType, RecordsType, RecordType } from "@moviemasher/runtime-shared"
 import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
 import type { StringType } from "@moviemasher/runtime-shared"
 
-import { TypeFont, TypeRecord } from "../../Setup/EnumConstantsAndFunctions.js"
-import { TypeAudio, TypeImage, TypeVideo } from "@moviemasher/runtime-shared"
+import { TypeRecord } from "@moviemasher/runtime-shared"
 import { ContentTypeHeader, JsonMimetype } from '../../Setup/Constants.js'
 
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 import { assertMethod, GetMethod, Method, PostMethod } from "./Method.js"
 import { assertEndpoint, endpointIsAbsolute, urlEndpoint, urlProtocol } from '../Endpoint/EndpointFunctions.js'
-import { assertPopulatedString, isDefiniteError, isJsonRecord, isPopulatedString, isUndefined } from '../../Shared/SharedGuards.js'
-import { errorThrow } from '../Error/ErrorFunctions.js'
+import { assertPopulatedString, isDefiniteError, isJsonRecord } from '../../Shared/SharedGuards.js'
+import { isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { pluginDataOrErrorPromise } from '../../Plugin/PluginFunctions.js'
 import { TypeProtocol } from '../../Plugin/PluginConstants.js'
-import { requestFontPromise } from "../../Client/Listener/client-font.js"
-import { requestVideoPromise } from "../../Client/Listener/client-video.js"
-import { requestImagePromise } from "../../Client/Listener/client-image.js"
-import { requestAudioPromise } from '../../Client/Listener/client-audio.js'
 
 
 

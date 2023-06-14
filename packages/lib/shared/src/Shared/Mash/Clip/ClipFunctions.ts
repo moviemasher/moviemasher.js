@@ -1,7 +1,7 @@
-import { errorThrow } from '../../../Helpers/Error/ErrorFunctions.js';
-import { isObject } from '../../SharedGuards.js';
-import { Clip } from './Clip.js';
-import { ClipObject } from "./ClipObject.js";
+import { errorThrow } from '@moviemasher/runtime-shared';
+import { isObject } from "@moviemasher/runtime-shared";
+import { Clip } from '@moviemasher/runtime-shared';
+import { ClipObject } from "@moviemasher/runtime-shared";
 
 
 

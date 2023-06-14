@@ -1,5 +1,5 @@
-import { error, errorPromise } from '../../Helpers/Error/ErrorFunctions.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
+import { error, errorPromise } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
 import { isDefiniteError } from '../../Shared/SharedGuards.js'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 import { ClientFontDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'

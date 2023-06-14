@@ -1,20 +1,36 @@
+import type {
+  AssetEventDetail,
+  ValueRecord, ShapeInstance, ShapeInstanceObject, 
+} from '@moviemasher/runtime-shared'
+import type {
+  CommandFile, CommandFileArgs, 
+  VisibleCommandFileArgs, CommandFiles, 
+  ServerShapeInstance, ServerShapeAsset,
+  CommandFilter, 
+  CommandFilterArgs, VisibleCommandFilterArgs, CommandFilters, Tweening, 
+} from '@moviemasher/lib-shared'
+import {
+   isAssetObject, isBoolean, isPopulatedString,
+  SourceShape, TypeImage 
+} from '@moviemasher/runtime-shared'
+import { 
+  GraphFileTypeSvg, MovieMasher 
+} from '@moviemasher/runtime-server'
+
 import { 
   ServerAssetClass, ServerInstanceClass, ServerVisibleAssetMixin, 
-  ServerVisibleInstanceMixin, ShapeAssetMixin, ShapeInstance, 
-  ShapeInstanceMixin, ShapeInstanceObject, VisibleAssetMixin, 
-  VisibleInstanceMixin, isPopulatedString, CommandFilterArgs, 
-  VisibleCommandFilterArgs, CommandFilters, Tweening, isPopulatedArray, 
+  ServerVisibleInstanceMixin, ShapeAssetMixin, 
+  ShapeInstanceMixin, VisibleAssetMixin, 
+  VisibleInstanceMixin,  
+  isPopulatedArray, 
   assertPopulatedString, commandFilesInput, tweenMaxSize, sizeEven, 
-  CommandFilter, idGenerate, sizesEqual, colorBlackOpaque, arrayLast, 
-  CommandFileArgs, FilterCommandFilterArgs, rectsEqual, isBoolean, 
-  VisibleCommandFileArgs, CommandFiles, svgTransform, NamespaceSvg, 
+  idGenerate, sizesEqual, colorBlackOpaque, arrayLast, 
+  rectsEqual, 
+  svgTransform, NamespaceSvg, 
   colorBlack, colorWhite, PointZero, isTimeRange, assertPopulatedArray, 
-  CommandFile, GraphFileTypeSvg, PropertyTweenSuffix, 
-  AssetEventDetail, DefaultContainerId, AssetManager, isAssetObject, 
-  ServerShapeInstance, ServerShapeAsset 
+  DefaultContainerId,
+  isTrueValue 
 } from '@moviemasher/lib-shared'
-import { MovieMasher } from '@moviemasher/runtime-server'
-import { SourceShape, TypeImage, ValueRecord } from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -48,25 +64,18 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     const commandFilters: CommandFilters = [] 
     // i am either default rect or a shape tweening color
 
-    const { colorFilter, isDefault } = this
+    const { isDefault } = this
     const { contentColors, containerRects, videoRate, duration } = args
     assertPopulatedArray(contentColors, 'contentColors')
 
     const [rect, rectEnd] = containerRects
     const [color, colorEnd] = contentColors
     const maxSize = isDefault ? rect : tweenMaxSize(...containerRects)
-    const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
-   
-    colorFilter.setValue(color || colorWhite, 'color')
-    colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
-    colorFilter.setValue(maxSize.width, 'width')
-    colorFilter.setValue(maxSize.height, 'height')
-    
-    const tweenSize = isDefault 
-    if (tweenSize) colorFilter.setValue(rectEnd.width , `width${PropertyTweenSuffix}`)
-    if (tweenSize) colorFilter.setValue(rectEnd.height, `height${PropertyTweenSuffix}`)
 
-    commandFilters.push(...colorFilter.commandFilters(colorArgs))
+    const endRect = isDefault ? rectEnd : maxSize
+
+  
+    commandFilters.push(...this.colorCommandFilters(duration, videoRate, maxSize, endRect, color || colorWhite, colorEnd))
     return commandFilters
   }
 
@@ -174,19 +183,22 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     
       commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
       filterInput = arrayLast(arrayLast(commandFilters).outputs)         
-  
-      const cropArgs: FilterCommandFilterArgs = { duration: 0, videoRate }
       assertPopulatedString(filterInput, 'crop input')
 
-      const { cropFilter } = this
-      cropFilter.setValue(maxSize.width, 'width')
-      cropFilter.setValue(maxSize.height, 'height')
-      cropFilter.setValue(0, 'x')
-      cropFilter.setValue(0, 'y')
-      commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }))
-      filterInput = arrayLast(arrayLast(commandFilters).outputs) 
-      assertPopulatedString(filterInput, 'format input')
-
+      const options: ValueRecord = { exact: 1, ...PointZero }
+      const cropOutput = idGenerate('crop')
+      const { width, height } = maxSize
+      if (isTrueValue(width)) options.w = width
+      if (isTrueValue(height)) options.h = height
+      const commandFilter: CommandFilter = {
+        ffmpegFilter: 'crop', 
+        inputs: [filterInput], 
+        options, 
+        outputs: [cropOutput]
+      }
+      commandFilters.push(commandFilter)
+      filterInput = cropOutput
+ 
       const formatFilter = 'format'
       const formatCommandFilter: CommandFilter = {
         inputs: [filterInput], ffmpegFilter: formatFilter, 
@@ -293,7 +305,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 }
 
 // predefine default image/shape asset
-(MovieMasher.assetManager as AssetManager).predefine(DefaultContainerId, new ServerShapeAssetClass({ 
+MovieMasher.assetManager.predefine(DefaultContainerId, new ServerShapeAssetClass({ 
   id: DefaultContainerId, type: TypeImage, source: SourceShape, label: 'Rectangle'
 }))
 

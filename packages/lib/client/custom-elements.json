@@ -1715,22 +1715,6 @@
           "name": "*",
           "declaration": {
             "name": "*",
-            "package": "./movie-masher.js"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "*",
-          "declaration": {
-            "name": "*",
-            "package": "./movie-masher-context.js"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "*",
-          "declaration": {
-            "name": "*",
             "package": "./icon.js"
           }
         },
@@ -1780,6 +1764,22 @@
           "declaration": {
             "name": "*",
             "package": "./viewer/index.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./movie-masher-context.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./movie-masher.js"
           }
         }
       ]
@@ -1898,7 +1898,7 @@
             },
             {
               "kind": "field",
-              "name": "_corePromise",
+              "name": "_sharedPromise",
               "type": {
                 "text": "Promise<void> | undefined"
               },
@@ -1906,12 +1906,12 @@
             },
             {
               "kind": "field",
-              "name": "corePromise",
+              "name": "sharedPromise",
               "privacy": "private"
             },
             {
               "kind": "field",
-              "name": "corePromiseInitialize",
+              "name": "sharedPromiseInitialize",
               "type": {
                 "text": "Promise<void>"
               },
@@ -4383,7 +4383,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `"
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `"
             },
             {
               "kind": "field",
@@ -5012,7 +5012,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -5622,7 +5622,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -6224,7 +6224,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -8766,14 +8766,6 @@
           "name": "*",
           "declaration": {
             "name": "*",
-            "package": "./manager.js"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "*",
-          "declaration": {
-            "name": "*",
             "package": "./video-mash.js"
           }
         },
@@ -8789,137 +8781,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/asset/manager.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ClientAssetManagerClass",
-          "members": [
-            {
-              "kind": "method",
-              "name": "asset",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "ClientAsset"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "object",
-                  "type": {
-                    "text": "AssetObject"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "byType",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "ClientAssets"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "type",
-                  "type": {
-                    "text": "AssetType"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "define",
-              "return": {
-                "type": {
-                  "text": "ClientAssets"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "media",
-                  "type": {
-                    "text": "AssetObject | AssetObjects"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "fromId",
-              "return": {
-                "type": {
-                  "text": "ClientAsset"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "id",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "fromObject",
-              "return": {
-                "type": {
-                  "text": "ClientAsset"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "object",
-                  "type": {
-                    "text": "AssetObject"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "install",
-              "return": {
-                "type": {
-                  "text": "ClientAssets"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "media",
-                  "type": {
-                    "text": "ClientAsset | ClientAssets"
-                  }
-                }
-              ]
-            }
-          ],
-          "superclass": {
-            "name": "AssetManagerClass",
-            "package": "@moviemasher/lib-shared"
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ClientAssetManagerClass",
-          "declaration": {
-            "name": "ClientAssetManagerClass",
-            "module": "src/asset/manager.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/asset/video-mash.ts",
       "declarations": [
         {
@@ -8929,8 +8790,27 @@
           "members": [
             {
               "kind": "field",
-              "name": "type",
-              "default": "TypeVideo"
+              "name": "media",
+              "type": {
+                "text": "ClientAssetManager"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "initializeProperties",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "object",
+                  "type": {
+                    "text": "MashAssetObject"
+                  }
+                }
+              ]
             }
           ],
           "superclass": {
@@ -9747,7 +9627,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -10375,7 +10255,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -11016,7 +10896,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -12175,6 +12055,630 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/interceptor/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./interceptor-supabase.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/interceptor/interceptor-supabase.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "InterceptorSupabaseElement",
+          "members": [
+            {
+              "kind": "field",
+              "name": "audio",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "attribute": "audio"
+            },
+            {
+              "kind": "method",
+              "name": "content",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Content"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "contents",
+                  "type": {
+                    "text": "Contents"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "effect",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "attribute": "effect"
+            },
+            {
+              "kind": "field",
+              "name": "font",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "attribute": "font"
+            },
+            {
+              "kind": "field",
+              "name": "image",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "attribute": "image"
+            },
+            {
+              "kind": "field",
+              "name": "mash",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "attribute": "mash"
+            },
+            {
+              "kind": "method",
+              "name": "mediaObjectsHandler",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "AssetObjectsEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "video",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "attribute": "video"
+            },
+            {
+              "kind": "method",
+              "name": "elementNames",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "elements",
+                  "optional": true,
+                  "type": {
+                    "text": "Elements"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "elements",
+                  "type": {
+                    "text": "Elements"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importTags",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "names",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "importFinished",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "static": true,
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importTag",
+              "privacy": "protected",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "names",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "promises",
+              "type": {
+                "text": "Map<string, Promise<string>>"
+              },
+              "privacy": "private",
+              "static": true,
+              "default": "new Map()",
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "contents",
+              "type": {
+                "text": "Contents"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "defaultContent",
+              "type": {
+                "text": "Content | void"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "error",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "msg",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "unslottedNodes",
+              "type": {
+                "text": "Nodes"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "cssDivFlex",
+              "static": true,
+              "default": "css`div { display: flex; flex-grow: 1; }`",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "cssHostFlex",
+              "static": true,
+              "default": "css`:host { display: flex; flex-grow: 1; }`",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "audio",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "fieldName": "audio"
+            },
+            {
+              "name": "effect",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "fieldName": "effect"
+            },
+            {
+              "name": "font",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "fieldName": "font"
+            },
+            {
+              "name": "image",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "fieldName": "image"
+            },
+            {
+              "name": "mash",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "fieldName": "mash"
+            },
+            {
+              "name": "video",
+              "type": {
+                "text": "string"
+              },
+              "default": "'database'",
+              "fieldName": "video"
+            }
+          ],
+          "superclass": {
+            "name": "Interceptor",
+            "module": "/src/interceptor/interceptor.js"
+          },
+          "tagName": "movie-masher-interceptor-supabase",
+          "customElement": true,
+          "events": [
+            {
+              "name": "error",
+              "type": {
+                "text": "ErrorEvent"
+              },
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "InterceptorSupabaseElement",
+          "declaration": {
+            "name": "InterceptorSupabaseElement",
+            "module": "src/interceptor/interceptor-supabase.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "movie-masher-interceptor-supabase",
+          "declaration": {
+            "name": "InterceptorSupabaseElement",
+            "module": "src/interceptor/interceptor-supabase.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/interceptor/interceptor.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Interceptor",
+          "members": [
+            {
+              "kind": "method",
+              "name": "content",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Content"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "contents",
+                  "type": {
+                    "text": "Contents"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "elementNames",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "elements",
+                  "optional": true,
+                  "type": {
+                    "text": "Elements"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "elements",
+                  "type": {
+                    "text": "Elements"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importTags",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "names",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "importFinished",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "static": true,
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importTag",
+              "privacy": "protected",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "names",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "promises",
+              "type": {
+                "text": "Map<string, Promise<string>>"
+              },
+              "privacy": "private",
+              "static": true,
+              "default": "new Map()",
+              "inheritedFrom": {
+                "name": "Importer",
+                "module": "src/Base/Importer.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "contents",
+              "type": {
+                "text": "Contents"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "defaultContent",
+              "type": {
+                "text": "Content | void"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "error",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "msg",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "unslottedNodes",
+              "type": {
+                "text": "Nodes"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "cssDivFlex",
+              "static": true,
+              "default": "css`div { display: flex; flex-grow: 1; }`",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "cssHostFlex",
+              "static": true,
+              "default": "css`:host { display: flex; flex-grow: 1; }`",
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "Importer",
+            "module": "/src/Base/Importer.js"
+          },
+          "events": [
+            {
+              "name": "error",
+              "type": {
+                "text": "ErrorEvent"
+              },
+              "inheritedFrom": {
+                "name": "Component",
+                "module": "src/Base/Component.ts"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Interceptor",
+          "declaration": {
+            "name": "Interceptor",
+            "module": "src/interceptor/interceptor.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/inspector/index.ts",
       "declarations": [],
       "exports": [
@@ -12374,7 +12878,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -13002,7 +13506,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -13643,7 +14147,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -14763,630 +15267,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/interceptor/index.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "*",
-          "declaration": {
-            "name": "*",
-            "package": "./interceptor-supabase.js"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/interceptor/interceptor-supabase.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "InterceptorSupabaseElement",
-          "members": [
-            {
-              "kind": "field",
-              "name": "audio",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "attribute": "audio"
-            },
-            {
-              "kind": "method",
-              "name": "content",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "Content"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "contents",
-                  "type": {
-                    "text": "Contents"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "effect",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "attribute": "effect"
-            },
-            {
-              "kind": "field",
-              "name": "font",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "attribute": "font"
-            },
-            {
-              "kind": "field",
-              "name": "image",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "attribute": "image"
-            },
-            {
-              "kind": "field",
-              "name": "mash",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "attribute": "mash"
-            },
-            {
-              "kind": "method",
-              "name": "mediaObjectsHandler",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "AssetObjectsEvent"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "field",
-              "name": "video",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "attribute": "video"
-            },
-            {
-              "kind": "method",
-              "name": "elementNames",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "string[]"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "optional": true,
-                  "type": {
-                    "text": "Elements"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importElements",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "type": {
-                    "text": "Elements"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importTags",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "names",
-                  "type": {
-                    "text": "string[]"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "importFinished",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importTag",
-              "privacy": "protected",
-              "static": true,
-              "parameters": [
-                {
-                  "name": "names",
-                  "type": {
-                    "text": "string[]"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "promises",
-              "type": {
-                "text": "Map<string, Promise<string>>"
-              },
-              "privacy": "private",
-              "static": true,
-              "default": "new Map()",
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "contents",
-              "type": {
-                "text": "Contents"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "defaultContent",
-              "type": {
-                "text": "Content | void"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "error",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "msg",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "unslottedNodes",
-              "type": {
-                "text": "Nodes"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "cssDivFlex",
-              "static": true,
-              "default": "css`div { display: flex; flex-grow: 1; }`",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "cssHostFlex",
-              "static": true,
-              "default": "css`:host { display: flex; flex-grow: 1; }`",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "audio",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "fieldName": "audio"
-            },
-            {
-              "name": "effect",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "fieldName": "effect"
-            },
-            {
-              "name": "font",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "fieldName": "font"
-            },
-            {
-              "name": "image",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "fieldName": "image"
-            },
-            {
-              "name": "mash",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "fieldName": "mash"
-            },
-            {
-              "name": "video",
-              "type": {
-                "text": "string"
-              },
-              "default": "'database'",
-              "fieldName": "video"
-            }
-          ],
-          "superclass": {
-            "name": "Interceptor",
-            "module": "/src/interceptor/interceptor.js"
-          },
-          "tagName": "movie-masher-interceptor-supabase",
-          "customElement": true,
-          "events": [
-            {
-              "name": "error",
-              "type": {
-                "text": "ErrorEvent"
-              },
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "InterceptorSupabaseElement",
-          "declaration": {
-            "name": "InterceptorSupabaseElement",
-            "module": "src/interceptor/interceptor-supabase.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "movie-masher-interceptor-supabase",
-          "declaration": {
-            "name": "InterceptorSupabaseElement",
-            "module": "src/interceptor/interceptor-supabase.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/interceptor/interceptor.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Interceptor",
-          "members": [
-            {
-              "kind": "method",
-              "name": "content",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "Content"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "contents",
-                  "type": {
-                    "text": "Contents"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "elementNames",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "string[]"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "optional": true,
-                  "type": {
-                    "text": "Elements"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importElements",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "type": {
-                    "text": "Elements"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importTags",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "names",
-                  "type": {
-                    "text": "string[]"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "importFinished",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "importTag",
-              "privacy": "protected",
-              "static": true,
-              "parameters": [
-                {
-                  "name": "names",
-                  "type": {
-                    "text": "string[]"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "promises",
-              "type": {
-                "text": "Map<string, Promise<string>>"
-              },
-              "privacy": "private",
-              "static": true,
-              "default": "new Map()",
-              "inheritedFrom": {
-                "name": "Importer",
-                "module": "src/Base/Importer.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "contents",
-              "type": {
-                "text": "Contents"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "defaultContent",
-              "type": {
-                "text": "Content | void"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "error",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "msg",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "unslottedNodes",
-              "type": {
-                "text": "Nodes"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "cssDivFlex",
-              "static": true,
-              "default": "css`div { display: flex; flex-grow: 1; }`",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "cssHostFlex",
-              "static": true,
-              "default": "css`:host { display: flex; flex-grow: 1; }`",
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "Importer",
-            "module": "/src/Base/Importer.js"
-          },
-          "events": [
-            {
-              "name": "error",
-              "type": {
-                "text": "ErrorEvent"
-              },
-              "inheritedFrom": {
-                "name": "Component",
-                "module": "src/Base/Component.ts"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Interceptor",
-          "declaration": {
-            "name": "Interceptor",
-            "module": "src/interceptor/interceptor.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/selector/index.ts",
       "declarations": [],
       "exports": [
@@ -15609,7 +15489,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -16244,7 +16124,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -16885,7 +16765,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -18995,38 +18875,84 @@
           "kind": "class",
           "description": "",
           "name": "ViewerDivElement",
-          "superclass": {
-            "name": "Div",
-            "module": "/src/Base/LeftCenterRight.js"
-          },
-          "tagName": "movie-masher-viewer-div",
-          "customElement": true,
-          "attributes": [
+          "members": [
             {
-              "name": "exportParts",
-              "type": {
-                "text": "string | undefined"
+              "kind": "method",
+              "name": "centerContent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "OptionalContent"
+                }
               },
-              "fieldName": "exportParts",
+              "parameters": [
+                {
+                  "name": "slots",
+                  "type": {
+                    "text": "Htmls"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "LeftCenterRight",
+                "module": "src/Base/LeftCenterRight.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "drawHandler",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getUpdateComplete",
+              "return": {
+                "type": {
+                  "text": "Promise<boolean>"
+                }
+              },
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
               }
             },
             {
-              "name": "slotted",
+              "kind": "field",
+              "name": "_previewItemsPromise",
               "type": {
-                "text": "string"
+                "text": "Promise<PreviewItems> | undefined"
               },
-              "default": "''",
-              "fieldName": "slotted",
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            }
-          ],
-          "members": [
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "previewItemsPromise",
+              "type": {
+                "text": "Promise<PreviewItems>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "previewItemsPromiseInitialize",
+              "type": {
+                "text": "Promise<PreviewItems>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "previewItems",
+              "type": {
+                "text": "PreviewItems"
+              },
+              "default": "[]"
+            },
             {
               "kind": "method",
               "name": "content",
@@ -19075,28 +19001,6 @@
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "centerContent",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "OptionalContent"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "htmls",
-                  "type": {
-                    "text": "Htmls"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "LeftCenterRight",
-                "module": "src/Base/LeftCenterRight.ts"
               }
             },
             {
@@ -19180,7 +19084,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -19315,19 +19219,6 @@
               },
               "attribute": "exportParts",
               "reflects": true,
-              "inheritedFrom": {
-                "name": "Slotted",
-                "module": "src/Base/Slotted.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "getUpdateComplete",
-              "return": {
-                "type": {
-                  "text": "Promise<boolean>"
-                }
-              },
               "inheritedFrom": {
                 "name": "Slotted",
                 "module": "src/Base/Slotted.ts"
@@ -19582,6 +19473,37 @@
               }
             }
           ],
+          "superclass": {
+            "name": "Div",
+            "module": "/src/Base/LeftCenterRight.js"
+          },
+          "tagName": "movie-masher-viewer-div",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "exportParts",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "exportParts",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            },
+            {
+              "name": "slotted",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "slotted",
+              "inheritedFrom": {
+                "name": "Slotted",
+                "module": "src/Base/Slotted.ts"
+              }
+            }
+          ],
           "events": [
             {
               "name": "error",
@@ -19777,7 +19699,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"
@@ -20418,7 +20340,7 @@
               "kind": "field",
               "name": "cssSection",
               "static": true,
-              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      background-color: pink;\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      background-color: yellow;\n      display: flex;\n    }\n \n  `",
+              "default": "css`\n    header, footer, div {\n      padding: 0;\n      flex-grow: 1;\n      display: grid;\n      grid-template-columns: min-content 1fr min-content;\n    }\n\n\n    header, footer {\n      --padding: 0;\n      gap: var(--spacing);\n      background-color: var(--back);\n      color: var(--fore);\n      line-height: var(--icon-size);\n      font-size: var(--icon-size);\n      /* border: 1px solid yellow; */\n    }\n    .right {\n      text-align: right;\n      /* background-color: pink; */\n    }\n\n    header > .left,\n    footer > .left,\n    div > .left {\n      /* background-color: yellow; */\n      display: flex;\n    }\n \n  `",
               "inheritedFrom": {
                 "name": "LeftCenterRight",
                 "module": "src/Base/LeftCenterRight.ts"

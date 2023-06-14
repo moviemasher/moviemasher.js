@@ -1,9 +1,10 @@
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
-import { isAsset } from '../Shared/Asset/AssetGuards.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { isAsset } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Shared/Instance/InstanceGuards.js'
 import { isVisibleAsset, isVisibleInstance } from '../Shared/Visible/VisibleGuards.js'
-import { ClientVisibleAsset } from './Asset/ClientAsset.js'
-import { ClientAsset, ClientInstance, ClientVisibleInstance } from './ClientTypes.js'
+import { ClientVisibleAsset } from './Asset/ClientAssetTypes.js'
+import { ClientInstance, ClientVisibleInstance } from './ClientTypes.js'
+import { ClientAsset } from "@moviemasher/runtime-client"
 
 
 export const isClientAsset = (value: any): value is ClientAsset => {

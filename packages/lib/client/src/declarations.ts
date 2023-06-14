@@ -1,7 +1,7 @@
 import type { TemplateResult } from 'lit'
 
-import { AssetType, DataOrError, Identified, Scalar, StringRecord, Strings } from '@moviemasher/runtime-shared'
-import { AssetObject, AssetObjects, TranslateArgs } from '@moviemasher/lib-shared'
+import type { AssetObject, AssetObjects, AssetType, DataOrError, Identified, Scalar, StringRecord, Strings } from '@moviemasher/runtime-shared'
+import type { PreviewItems, TranslateArgs } from '@moviemasher/lib-shared'
 
 
 export type CoreLib = typeof import('@moviemasher/lib-shared')
@@ -115,3 +115,9 @@ export interface ClientReadParams {
   order?: string | StringRecord
   terms?: string
 }
+
+export interface PreviewItemsEventDetail {
+  promise?: Promise<PreviewItems>
+}
+
+export type PreviewItemsEvent = CustomEvent<PreviewItemsEventDetail>

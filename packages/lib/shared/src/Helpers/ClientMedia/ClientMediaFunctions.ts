@@ -3,8 +3,9 @@ import type { EndpointRequest } from '@moviemasher/runtime-shared'
 import type { ClientAudioEventDetail, ClientFontEventDetail, ClientImageEvent, ClientImageEventDetail, ClientVideoEventDetail } from './ClientMediaEvents.js'
 
 import { ClientMediaTypes } from './ClientMediaConstants.js'
-import { errorThrow } from '../Error/ErrorFunctions.js'
-import { assertDefined, isJsonRecord, isObject } from '../../Shared/SharedGuards.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { assertDefined, isJsonRecord } from '../../Shared/SharedGuards.js'
+import { isObject } from "@moviemasher/runtime-shared"
 import { MovieMasher } from '@moviemasher/runtime-client'
 
 

@@ -5,11 +5,12 @@ import type { Size, SizeTuple } from '@moviemasher/runtime-shared'
 import type { Time, TimeRange } from '@moviemasher/runtime-shared'
 import type { Lock } from "@moviemasher/runtime-shared"
 
-import type { SideDirectionObject } from "../Setup/Direction.js"
-import type { Instance } from '../Shared/Instance/Instance.js'
+import type { SideDirectionObject } from "@moviemasher/runtime-shared"
+import type { Instance } from '@moviemasher/runtime-shared'
 
 import { arrayOfNumbers } from '../Utility/ArrayFunctions.js'
-import { assertDefined, assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from '../Shared/SharedGuards.js'
+import { assertDefined, assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue } from '../Shared/SharedGuards.js'
+import { isArray, isDefined, isNumber, isObject, isPopulatedString } from "@moviemasher/runtime-shared"
 import { assertRect, isRect } from "../Utility/RectFunctions.js"
 import { assertSize, sizeCeil, sizeScale, isSize, sizeCover, sizesEqual, sizeLock } from "../Utility/SizeFunctions.js"
 import { colorMixRbg, colorMixRbga } from './Color/ColorFunctions.js'
@@ -232,9 +233,6 @@ export const tweenScaleSizeRatioLock = (scale: Rect, outputSize: Size, inRatio: 
 export const tweeningPoints = (tweenable?: Instance): boolean => {
   assertDefined(tweenable)
   const { clip } = tweenable
-  const { track } = clip
-  const { mash } = track
-  const { quantize } = mash
   const timeRange = clip.timeRange
   const tweenPoints = tweenable.tweenPoints(timeRange, timeRange)
   return !pointsEqual(...tweenPoints)

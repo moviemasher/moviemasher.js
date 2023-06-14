@@ -1,31 +1,31 @@
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFiles, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../GraphFile.js'
-import { PreloadArgs } from "../../Base/CacheTypes.js"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../CommandFile.js'
+import { GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server"
+import { PreloadArgs } from "@moviemasher/runtime-shared"
 import { MashAssetClass } from '../../Shared/Mash/MashClasses.js'
 import { ServerMashAsset, ServerClip, ServerClips, ServerTrack } from './ServerMashTypes.js'
 import { Time, TimeRange, Times } from '@moviemasher/runtime-shared'
-import { AVType } from '../../Setup/AVType.js'
+import { AVType } from '@moviemasher/runtime-shared'
 import { AVTypeAudio } from '../../Setup/AVTypeConstants.js'
 import { timeRangeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
-import { assertPopulatedString, assertTrue, isPopulatedArray, isPopulatedString } from '../../Shared/SharedGuards.js'
+import { assertPopulatedString, assertTrue, isPopulatedArray } from '../../Shared/SharedGuards.js'
+import { isPopulatedString } from "@moviemasher/runtime-shared"
 import { assertSizeAboveZero, sizesEqual } from '../../Utility/SizeFunctions.js'
 import { assertContainerInstance } from '../../Helpers/Container/ContainerFunctions.js'
-import { ContainerRectArgs } from '../../Helpers/Container/Container.js'
-import { IntrinsicOptions } from '../../Shared/Mash/Clip/Clip.js'
+import { ContainerRectArgs } from '@moviemasher/runtime-shared'
+import { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
 import { ClipClass } from '../../Shared/Mash/Clip/ClipClass.js'
 import { EmptyFunction } from '../../Setup/EmptyFunction.js'
 import { Tweening } from '../../Helpers/TweenFunctions.js'
 import { pointsEqual } from '../../Utility/PointFunctions.js'
 import { TrackClass } from '../../Shared/Mash/Track/TrackClass.js'
-import { TrackArgs } from '../../Shared/Mash/Track/Track.js'
-import { ClipObject } from '../../Shared/Mash/Clip/ClipObject.js'
-import { ServerAssetManager } from '../Asset/AssetManager/ServerAssetManager.js'
-import { MovieMasher } from '@moviemasher/runtime-server'
+import { TrackArgs } from '@moviemasher/runtime-shared'
+import { ClipObject } from '@moviemasher/runtime-shared'
+import { ServerAssetManager } from '@moviemasher/runtime-server'
 import { isColorInstance } from '../../Shared/Color/ColorGuards.js'
 import { ColorTuple } from '../ServerTypes.js'
-import { Instance } from '../../Shared/Instance/Instance.js'
-import { MashAssetObject } from '../../Shared/Mash/MashTypes.js'
+import { Instance } from '@moviemasher/runtime-shared'
 
 
 const contentColors = (instance: Instance, time: Time, range: TimeRange): undefined | ColorTuple => {
@@ -38,7 +38,6 @@ const contentColors = (instance: Instance, time: Time, range: TimeRange): undefi
 }
 
 export class ServerMashAssetClass extends MashAssetClass implements ServerMashAsset {
-
   override get clips(): ServerClips { return super.clips as ServerClips }
 
   clipsInTimeOfType(time: Time, avType?: AVType): ServerClips {
@@ -51,10 +50,6 @@ export class ServerMashAssetClass extends MashAssetClass implements ServerMashAs
 
   graphFiles(args: PreloadArgs): GraphFiles {
     throw new Error('Method not implemented.')
-  }
-  override initializeProperties(object: MashAssetObject): void {
-    this.media = MovieMasher.assetManager as ServerAssetManager
-    super.initializeProperties(object)
   }
 
   declare media: ServerAssetManager
@@ -140,7 +135,6 @@ export class ServerClipClass extends ClipClass implements ServerClip {
 
   override get container(): ServerVisibleInstance { return super.container as ServerVisibleInstance}
 
-  
   commandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters:CommandFilters = []
     const { visible, quantize, outputSize, time } = args
@@ -215,7 +209,5 @@ export class ServerClipClass extends ClipClass implements ServerClip {
 
 export class ServerTrackClass extends TrackClass implements ServerTrack {
   declare clips: ServerClips
-
   declare mash: ServerMashAsset
-
 }

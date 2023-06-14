@@ -1,7 +1,8 @@
 
 import { describe, test } from 'node:test'
 import assert from 'assert'
-import { isInteger, isNumber, isNumberOrNaN, isPositive, isString } from './SharedGuards.js'
+import { isInteger, isPositive } from './SharedGuards.js'
+import { isNumber, isNumberOrNaN, isString } from "@moviemasher/runtime-shared"
 
 describe('SharedGuards', () => {
   describe('isInteger', () => {

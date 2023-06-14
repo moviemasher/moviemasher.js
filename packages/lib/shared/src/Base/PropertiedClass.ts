@@ -1,7 +1,8 @@
 import { Scalar, ScalarRecord, UnknownRecord } from '@moviemasher/runtime-shared'
 import { propertyTypeCoerce, propertyTypeValid } from '../Helpers/PropertyType.js'
 import { Property, Properties } from '@moviemasher/runtime-shared'
-import { assertObject, assertTrue, isUndefined } from '../Shared/SharedGuards.js'
+import { assertObject, assertTrue } from '../Shared/SharedGuards.js'
+import { isUndefined } from "@moviemasher/runtime-shared"
 import { Propertied } from '@moviemasher/runtime-shared'
 import { PropertyTweenSuffix } from './PropertiedConstants.js'
 

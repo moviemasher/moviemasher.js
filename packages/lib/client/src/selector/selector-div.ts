@@ -27,7 +27,7 @@ export class SelectorDivElement extends Div {
           const { id } = assetObject
           console.log(this.tagName, 'centerContent', id)
           return html`<movie-masher-selector-span 
-            media-id='${id}'
+            asset-id='${id}'
           ></movie-masher-selector-span>`
         }))
       }   

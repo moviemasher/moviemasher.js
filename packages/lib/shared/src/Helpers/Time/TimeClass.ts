@@ -1,8 +1,8 @@
 import { assertAboveZero, assertInteger, assertPositive } from '../../Shared/SharedGuards.js'
 import { roundWithMethod } from '../../Utility/RoundFunctions.js'
 import { Time, TimeRange } from '@moviemasher/runtime-shared'
-import { errorThrow } from '../Error/ErrorFunctions.js'
-import { ErrorName } from '../Error/ErrorName.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
 import { Numbers } from '@moviemasher/runtime-shared'
 

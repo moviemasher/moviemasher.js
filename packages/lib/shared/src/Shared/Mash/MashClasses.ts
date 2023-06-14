@@ -1,13 +1,13 @@
-import type { InstanceArgs, InstanceObject } from '../Instance/Instance.js'
-import type { MashAssetObject, MashAsset, MashInstance } from './MashTypes.js'
+import type { InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
+import type { MashAssetObject, MashAsset, MashInstance } from '@moviemasher/runtime-shared'
 
 import { AssetClass } from '../Asset/AssetClass.js'
 import { InstanceClass } from '../Instance/InstanceClass.js'
 import { SourceMash, Strings, UnknownRecord } from '@moviemasher/runtime-shared'
 import type { Time } from '@moviemasher/runtime-shared'
-import type { Clip, Clips } from './Clip/Clip.js'
-import type { Track, TrackArgs } from './Track/Track.js'
-import type { Encodings } from '../../Plugin/Encode/Encoding/Encoding.js'
+import type { Clip, Clips } from '@moviemasher/runtime-shared'
+import type { Track, TrackArgs } from '@moviemasher/runtime-shared'
+import type { Encodings } from '@moviemasher/runtime-shared'
 import type { Size } from '@moviemasher/runtime-shared'
 
 import {
@@ -18,32 +18,33 @@ import {
   timeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
 import { Default } from '../../Setup/Default.js'
 import { 
-  isAboveZero, isArray, 
+  isAboveZero, 
   isPositive 
 } from '../SharedGuards.js'
+import { isArray } from "@moviemasher/runtime-shared"
 import { sortByIndex } from '../../Utility/SortFunctions.js'
 import { isSize } from "../../Utility/SizeFunctions.js"
 import { SizeZero } from "../../Utility/SizeConstants.js"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
-import { AssetManager } from '../Asset/AssetManager/AssetManagerTypes.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
+import { AssetManager } from '@moviemasher/runtime-shared'
 
 import { encodingInstance } from '../../Plugin/Encode/Encoding/EncodingFactory.js'
-import { ClipObject } from './Clip/ClipObject.js'
+import { ClipObject } from '@moviemasher/runtime-shared'
 
 
 export class MashAssetClass extends AssetClass implements MashAsset {
+  get assetIds(): Strings {
+    const { clips } = this
+    const ids = clips.flatMap(clip => clip.assetIds)
+    const set = [...new Set(ids)]
 
-  instanceArgs(object?: InstanceObject): InstanceArgs {
-    return { ...super.instanceArgs(object), asset: this, assetId: this.id }
+    // console.log(this.constructor.name, 'assetIds', set.length)
+    return set
   }
 
-  declare color: string
-  
-  declare imageSize: Size 
-  
   private assureTrack(): void {
     if (!this.tracks.length) {
       const trackArgs: TrackArgs = { dense: true, mashAsset: this }
@@ -95,18 +96,13 @@ export class MashAssetClass extends AssetClass implements MashAsset {
   }
 
   
-  get assetIds(): Strings {
-    const { clips } = this
-    const ids = clips.flatMap(clip => clip.assetIds)
-    const set = [...new Set(ids)]
-
-    // console.log(this.constructor.name, 'assetIds', set.length)
-    return set
-  }
-
+  declare color: string
+  
+ 
 
   get duration(): number { return this.endTime.seconds }
 
+  declare encodings: Encodings 
 
   get endTime(): Time { return timeFromArgs(this.totalFrames, this.quantize) }
 
@@ -114,18 +110,6 @@ export class MashAssetClass extends AssetClass implements MashAsset {
   private filterIntersecting(clips: Clips, time: Time): Clip[] {
     const scaled = time.scale(this.quantize)
     return clips.filter(clip => this.clipIntersects(clip, scaled)) as Clip[]
-  }
-
-
-  get totalFrames(): number {
-    const { tracks } = this
-    if (tracks.length) {
-      const frames = this.tracks.map(track => track.frames)
-      if (isPositive(Math.min(...frames))) return Math.max(0, ...frames)
-      
-      return DurationUnknown
-    } 
-    return DurationNone
   }
 
   // private _gain = Default.mash.gain
@@ -140,7 +124,8 @@ export class MashAssetClass extends AssetClass implements MashAsset {
   //     if (this._composition) this.composition.setGain(value, this.quantize)
   //   }
   // }
-
+  declare imageSize: Size 
+  
   initializeProperties(object: MashAssetObject): void {
     this.tracks = []
     this.encodings = []
@@ -179,6 +164,10 @@ export class MashAssetClass extends AssetClass implements MashAsset {
   }
 
 
+  instanceArgs(object?: InstanceObject): InstanceArgs {
+    return { ...super.instanceArgs(object), asset: this, assetId: this.id }
+  }
+
   // declare loading: boolean
   
   loop = false
@@ -191,9 +180,9 @@ export class MashAssetClass extends AssetClass implements MashAsset {
 
   _rendering = ''
 
-  declare encodings: Encodings 
 
 
+  source = SourceMash
 
   toJSON(): UnknownRecord {
     const { encodings, tracks, quantize } = this
@@ -203,14 +192,23 @@ export class MashAssetClass extends AssetClass implements MashAsset {
     }
   }
 
-  source = SourceMash
 
-  declare tracks: Track[] 
+  get totalFrames(): number {
+    const { tracks } = this
+    if (tracks.length) {
+      const frames = this.tracks.map(track => track.frames)
+      if (isPositive(Math.min(...frames))) return Math.max(0, ...frames)
+      
+      return DurationUnknown
+    } 
+    return DurationNone
+  }
 
   trackInstance(trackArgs: TrackArgs): Track {
     return errorThrow(ErrorName.Unimplemented)
   }
 
+  declare tracks: Track[] 
 }
 
 

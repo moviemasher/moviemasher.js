@@ -1,10 +1,10 @@
-import type { RawAsset } from '../../Shared/Raw/RawTypes.js'
-import type { ImageInstance, ImageInstanceObject } from '../../Shared/Image/ImageInstance.js'
-import type { Instance, InstanceArgs, InstanceObject } from '../../Shared/Instance/Instance.js'
-import type { VideoInstance, VideoInstanceObject } from '../../Shared/Video/VideoInstance.js'
-import type { AudioInstance, AudioInstanceObject } from '../../Shared/Audio/AudioInstance.js'
-import type { ServerEffects } from '../../Effect/Effect.js'
-import type { ServerAsset, ServerAudioAsset, ServerImageAsset, ServerVideoAsset } from '../Asset/ServerAsset.js'
+import type { RawAsset } from '@moviemasher/runtime-shared'
+import type { ImageInstance, ImageInstanceObject } from '@moviemasher/runtime-shared'
+import type { Instance, InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
+import type { VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AudioInstance, AudioInstanceObject } from '@moviemasher/runtime-shared'
+import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset } from '../Asset/ServerAssetTypes.js'
+import type { ServerAsset } from "@moviemasher/runtime-server"
 import type { ServerInstance } from '../ServerInstance.js'
 
 export interface ServerRawAsset extends RawAsset, ServerAsset {
@@ -26,20 +26,16 @@ export interface ServerRawVideoAsset extends ServerRawAsset, ServerVideoAsset {
 
 export interface ServerRawInstance extends Instance, ServerInstance {
   asset: ServerRawAsset
-  effects: ServerEffects
 }
 
 export interface ServerRawAudioInstance extends AudioInstance, ServerInstance {
   asset: ServerRawAudioAsset
-  effects: ServerEffects
 }
 
 export interface ServerRawImageInstance extends ImageInstance, ServerInstance {
   asset: ServerRawImageAsset
-  effects: ServerEffects
 }
 
 export interface ServerRawVideoInstance extends VideoInstance, ServerInstance {
   asset: ServerRawVideoAsset
-  effects: ServerEffects
 }

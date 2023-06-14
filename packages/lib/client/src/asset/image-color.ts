@@ -1,8 +1,25 @@
-import { AssetEventDetail, AssetManager, ClientAsset, ClientAssetClass, ClientColorAsset, ClientColorInstance, ClientInstanceClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, ColorAsset, ColorAssetMixin, ColorInstance, ColorInstanceMixin, ColorInstanceObject, Panel, SvgItem, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, isAssetObject, sizeCover, svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '@moviemasher/lib-shared'
+import type { 
+  ClientColorAsset, ClientColorInstance, 
+  Panel, SvgItem, 
+} from '@moviemasher/lib-shared'
+import type { 
+  ColorInstance, ColorInstanceObject, AssetEventDetail, ColorAsset, Rect, Size, 
+  Time, Value 
+} from '@moviemasher/runtime-shared'
 
-import { DefaultContentId } from '@moviemasher/lib-shared'
-import { MovieMasher } from '@moviemasher/runtime-client'
-import { Rect, Size, SourceColor, Time, TypeImage } from '@moviemasher/runtime-shared'
+import  type {  
+  ClientAsset,  
+} from '@moviemasher/runtime-client'
+import { isAssetObject, SourceColor, TypeImage } from '@moviemasher/runtime-shared'
+import { MovieMasher, } from '@moviemasher/runtime-client'
+
+import { 
+  NamespaceSvg, ClientAssetClass, ColorInstanceMixin, ClientInstanceClass, 
+  ClientVisibleAssetMixin, ClientVisibleInstanceMixin, ColorAssetMixin, 
+  VisibleInstanceMixin, assertPopulatedString, centerPoint, 
+  sizeCover, svgPathElement, svgPolygonElement, 
+  svgSetTransformRects, svgSvgElement, VisibleAssetMixin, DefaultContentId 
+} from '@moviemasher/lib-shared'
 
 const ColorContentIcon = 'M136.5 77.7l37 67L32 285.7 216.4 464l152.4-148.6 54.4-11.4L166.4 48l-29.9 29.7zm184 208H114.9l102.8-102.3 102.8 102.3zM423.3 304s-56.7 61.5-56.7 92.1c0 30.7 25.4 55.5 56.7 55.5 31.3 0 56.7-24.9 56.7-55.5S423.3 304 423.3 304z'
 const ColorContentSize = 512
@@ -27,6 +44,14 @@ export class ClientColorAssetClass extends WithColorAsset implements ClientColor
   }
 }
 
+const pixelColor = (value : Value) : string => {
+  const string = String(value)
+  if (string.slice(0, 2) === '0x') return `#${string.slice(2)}`
+
+  return string
+}
+
+
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)
 const WithColorInstance = ColorInstanceMixin(WithClientInstance)
@@ -36,13 +61,15 @@ export class ClientColorInstanceClass extends WithColorInstance implements Clien
 
   override contentPreviewItemPromise(containerRect: Rect, time: Time, _component: Panel): Promise<SvgItem> {
     const range = this.clip.timeRange
-
     const rect = this.itemContentRect(containerRect, time)
-    const { colorFilter } = this
-    const [color] = this.tweenValues('color', time, range)
     const { x, y, width, height } = rect
-    colorFilter.setValues({ width, height, color })
-    const [svg] = colorFilter.filterSvgs()
+    const [color] = this.tweenValues('color', time, range)
+    assertPopulatedString(color)
+
+    const svg = globalThis.document.createElementNS(NamespaceSvg, 'rect')
+    svg.setAttribute('width', String(width))
+    svg.setAttribute('height', String(height))
+    svg.setAttribute('fill', pixelColor(color))
     svg.setAttribute('x', String(x))
     svg.setAttribute('y', String(y))
     return Promise.resolve(svg)
@@ -54,7 +81,7 @@ export class ClientColorInstanceClass extends WithColorInstance implements Clien
 }
 
 // predefine default image/color asset
-(MovieMasher.assetManager as AssetManager).predefine(DefaultContentId, new ClientColorAssetClass({ 
+MovieMasher.assetManager.predefine(DefaultContentId, new ClientColorAssetClass({ 
   id: DefaultContentId, type: TypeImage, source: SourceColor, label: 'Color',
 }))
 

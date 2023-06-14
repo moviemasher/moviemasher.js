@@ -1,7 +1,7 @@
 import type { AudioOutputOptions, FontOutputOptions, ImageOutputOptions, OutputOptions, SequenceOutputOptions, VideoOutputOptions, WaveformOutputOptions } from './Output.js'
-import type { FontType, SequenceType, WaveformType } from '../../Setup/Enums.js'
+import type { FontType } from "@moviemasher/runtime-shared"
 import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
-import type { TranscodingType } from '../../Plugin/Transcode/Transcoding/Transcoding.js'
+import type { SequenceType, TranscodingType, WaveformType } from '@moviemasher/runtime-shared'
 
 import { OutputAlphaDefaults, OutputEncodeDefaults } from './OutputDefaults.js'
 

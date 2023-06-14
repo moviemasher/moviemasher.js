@@ -4,15 +4,17 @@ import type {Time, TimeRange} from '@moviemasher/runtime-shared'
 
 import type { ClientAction } from "../../Setup/ClientAction.js"
 import type {
-  ClipOrEffect, Masher, MasherArgs, MashIndex,
+  Masher, MasherArgs, MashIndex,
 } from './Masher.js'
-import type { Movable } from "../../Setup/Movable.js"
-import type { Action, MoveActionObject, AddClipActionObject, AddTrackActionObject, RemoveClipActionObject} from './Actions/Action/Action.js'
-import type { Track} from '../../Shared/Mash/Track/Track.js'
+import type { AddClipActionObject, AddTrackActionObject, RemoveClipActionObject} from './Actions/Action/ActionTypes.js'
+import type { Action } from "@moviemasher/runtime-client"
+import type { Track} from '@moviemasher/runtime-shared'
 
-import type {EditorSelection, EditorSelectionObject} from './EditorSelection/EditorSelection.js'
-import type { AssetCacheArgs } from "../../Base/CacheTypes.js"
+import type {EditorSelection} from './EditorSelection/EditorSelection.js'
+import type { EditorSelectionObject } from "@moviemasher/runtime-client"
+import type { AssetCacheArgs } from "@moviemasher/runtime-shared"
 import type {Rect} from '@moviemasher/runtime-shared'
+import type { Actions } from "@moviemasher/runtime-client"
 
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero, isSize } from "../../Utility/SizeFunctions.js"
 import { SizeZero } from "../../Utility/SizeConstants.js"
@@ -20,11 +22,10 @@ import { assertMashAsset, isMashAsset } from "../../Shared/Mash/MashGuards.js"
 import {Emitter} from '../../Helpers/Emitter.js'
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
-import {assertEffect} from '../../Effect/Effect.js'
 import { assertTrack } from "../../Shared/Mash/Track/TrackGuards.js"
 import {Default} from '../../Setup/Default.js'
 import {
-  ActionTypeAddClip, ActionTypeAddTrack, ActionTypeMove, ActionTypeMoveClip,
+  ActionTypeAddClip, ActionTypeAddTrack, ActionTypeMoveClip,
   ActionTypeRemoveClip, ClientActionRedo, ClientActionRemove, ClientActionRender,
   ClientActionSave, ClientActionUndo, EventTypeAction,
   EventTypeAdded, EventTypeDraw, EventTypeFps, EventTypeResize, EventTypeVolume
@@ -33,14 +34,17 @@ import { TypeAudio, TypeVideo } from "@moviemasher/runtime-shared"
 
 import {isLoadType} from '../../Setup/LoadType.js'
 import {
-  assertAboveZero, assertObject, assertPopulatedObject, isPositive,
-  assertPositive, assertTrue, isAboveZero, isArray, 
-  isBoolean, isNumber} from '../../Shared/SharedGuards.js'
+  assertAboveZero, assertObject, isPositive,
+  assertPositive, assertTrue, isAboveZero
+  } from '../../Shared/SharedGuards.js'
+import {
+  isArray,
+  isBoolean, isNumber
+} from "@moviemasher/runtime-shared"
 
 import {editorSelectionInstance} from './EditorSelection/EditorSelectionFactory.js'
-import {Actions} from './Actions/Actions.js'
-import { assertClip, isClip } from "../../Shared/Mash/Clip/ClipFunctions.js"
-import {assertContentInstance} from '../../Helpers/Content/ContentFunctions.js'
+import { ActionsClass } from './Actions/ActionsClass.js'
+import { isClip } from "../../Shared/Mash/Clip/ClipFunctions.js"
 import {svgSvgElement, svgPolygonElement, svgPatch} from '../../Helpers/Svg/SvgFunctions.js'
 import {idIsTemporary, idTemporary} from '../../Utility/IdFunctions.js'
 import { rectsEqual } from "../../Utility/RectFunctions.js"
@@ -48,13 +52,13 @@ import { PointZero } from "../../Utility/PointConstants.js"
 import { isPoint, pointCopy } from "../../Utility/PointFunctions.js"
 import {CurrentIndex, LastIndex, NextIndex} from '../../Setup/Constants.js'
 import { isChangeAction } from './Actions/Action/ActionFunctions.js'
-import { ClientAsset, ClientAssets } from "../../Client/ClientTypes.js"
-import { AssetObject, AssetObjects } from '../../Shared/Asset/AssetTypes.js'
-import { MashAsset, MashAssetObject } from '../../Shared/Mash/MashTypes.js'
+import { ClientAsset, ClientAssets } from "@moviemasher/runtime-client"
+import { AssetObject, AssetObjects } from '@moviemasher/runtime-shared'
+import { MashAsset, MashAssetObject } from '@moviemasher/runtime-shared'
 import { ClientClip, ClientClips, ClientMashAsset } from '../../Client/Mash/ClientMashTypes.js'
-import { assertClientMashAsset, isClientClip, isClientMashAsset } from '../../Client/Mash/ClientMashGuards.js'
-import { ClipObject } from '../../Shared/Mash/Clip/ClipObject.js'
-import { ClientAssetManager } from '../../Client/Asset/AssetManager/ClientAssetManager.js'
+import { assertClientMashAsset, isClientMashAsset } from '../../Client/Mash/ClientMashGuards.js'
+import { ClipObject } from '@moviemasher/runtime-shared'
+import { ClientAssetManager } from '@moviemasher/runtime-client'
 
 type Timeout = ReturnType<typeof setTimeout>
 
@@ -91,37 +95,12 @@ export class MasherClass implements Masher {
     if (isNumber(volume)) this._volume = volume
     if (isNumber(buffer)) this._buffer = buffer
     
-    this.actions = new Actions(this)
+    this.actions = new ActionsClass(this)
    
     if (mash) this.load(mash)
   }
 
   actions: Actions
-
-  addEffect(effect: Movable, index?: number): void {
-    const { selection, actions } = this
-    const { clip, mash } = selection
-    assertMashAsset(mash)
-    assertClip(clip)
-    
-    const { content } = clip
-    assertContentInstance(content)
-
-    const objects = content.effects 
-    const insertIndex = isPositive(index) ? index : objects.length
-    const redoObjects = [...objects]
-    redoObjects.splice(insertIndex, 0, effect)
-    const options: MoveActionObject = {
-      objects,
-      undoObjects: [...objects],
-      redoObjects,
-      type: ActionTypeMove,
-      redoSelection: { ...this.selection.object },
-      undoSelection: { ...this.selection.object },
-    }
-    actions.create(options)
-    mash.draw()
-  }
 
   addMedia(asset: ClientAsset | ClientAssets, editorIndex?: MashIndex): Promise<ClientAssets> {
     const assets = isArray(asset) ? asset : [asset]
@@ -283,7 +262,7 @@ export class MasherClass implements Masher {
   private clearActions(): void {
     if (!this.actions.instances.length) return
 
-    this.actions = new Actions(this)
+    this.actions = new ActionsClass(this)
     this.eventTarget.emit(EventTypeAction)
   }
 
@@ -484,7 +463,8 @@ export class MasherClass implements Masher {
       buffer,loop, 
     }
     this.destroy()
-    const mash = this.media.fromObject(clientObject)
+    const array = this.media.define(clientObject)
+    const mash = array[0]
     assertClientMashAsset(mash)
     
     return this.mashMedia = mash
@@ -519,22 +499,7 @@ export class MasherClass implements Masher {
     return this.mashMedia!.media
   }
 
-  move(object: ClipOrEffect, editorIndex: MashIndex = {}): void {
-    assertPopulatedObject(object, 'clip')
-
-    if (isClientClip(object)) {
-      this.moveClip(object, editorIndex)
-      return
-    }
-    assertEffect(object)
-
-    const { clip: frameOrIndex = 0 } = editorIndex
-    this.moveEffect(object, frameOrIndex)
-  }
-
-  moveClip(clip: ClientClip, editorIndex: MashIndex = {}): void {
-    assertClip(clip)
-
+  move(clip: ClientClip, editorIndex: MashIndex = {}): void {
     const { clip: frameOrIndex = 0, track: track = 0} = editorIndex
     assertPositive(frameOrIndex)
 
@@ -576,32 +541,6 @@ export class MasherClass implements Masher {
     this.actions.create(options)
   }
 
-  moveEffect(effect: Movable, index?: number): void {
-    const { selection, actions } = this
-    const { clip, mash } = selection
-    assertClip(clip)
-    assertMashAsset(mash)
-
-    const { content } = clip
-    assertContentInstance(content)
-
-    const objects = content.effects 
-    const currentIndex = objects.indexOf(effect)
-    const posIndex = isPositive(index) ? index : objects.length
-    const spliceIndex = currentIndex < posIndex ? posIndex - 1 : posIndex
-    const redoObjects = objects.filter(e => e !== effect)
-    redoObjects.splice(spliceIndex, 0, effect)
-    const options: MoveActionObject = {
-      type: ActionTypeMove, 
-      objects, 
-      undoObjects: [...objects], 
-      redoObjects, 
-      redoSelection: { ...this.selection.object },
-      undoSelection: { ...this.selection.object },
-    }
-    actions.create(options)
-    mash.draw()
-  }
 
   moveTrack(): void {
     // TODO: create move track action...
@@ -703,27 +642,6 @@ export class MasherClass implements Masher {
       undoSelection: { ...actions.selection },
     }
     actions.create(options)
-  }
-
-  removeEffect(effect: Movable): void {
-    const { selection, actions } = this
-    const { clip, mash } = selection
-    assertClip(clip)
-    assertMashAsset(mash)
-
-    const { content } = clip
-    assertContentInstance(content)
-    const objects = content.effects 
-    const options: MoveActionObject = {
-      type: ActionTypeMove,
-      objects: objects,
-      undoObjects: [...objects],
-      redoObjects: objects.filter(other => other !== effect),
-      redoSelection: { ...actions.selection },
-      undoSelection: { ...actions.selection },
-    }
-    actions.create(options)
-    mash.draw()
   }
 
   removeTrack(track: Track): void {

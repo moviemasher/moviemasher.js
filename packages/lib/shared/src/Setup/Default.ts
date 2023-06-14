@@ -31,7 +31,6 @@ export const Default = {
   label: 'Unlabeled',
   editor: DefaultMasherArgs,
   video: DefaultMash,
-  effect: { label: 'Effect'},
   audio: { label: 'Audio'},
   image: { label: 'Image' },
   audiostream: { label: 'Audio Stream' },

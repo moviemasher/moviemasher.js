@@ -1,14 +1,14 @@
 import type { Sizing, Time, TimeRange, Timing } from '@moviemasher/runtime-shared'
 
 
-import type { SelectorType, } from '../../../Setup/Enums.js'
-import type {Clip, IntrinsicOptions} from './Clip.js'
-import type { ClipObject } from './ClipObject.js'
-import type { ContainerRectArgs} from '../../../Helpers/Container/Container.js'
+import type { SelectorType } from "@moviemasher/runtime-client"
+import type {Clip, IntrinsicOptions} from '@moviemasher/runtime-shared'
+import type { ClipObject } from '@moviemasher/runtime-shared'
+import type { ContainerRectArgs} from '@moviemasher/runtime-shared'
 
 import {Rect, RectTuple} from '@moviemasher/runtime-shared'
 import type {Scalar, Strings, UnknownRecord} from '@moviemasher/runtime-shared'
-import type {Track} from '../Track/Track.js'
+import type {Track} from '@moviemasher/runtime-shared'
 
 import type { Size } from '@moviemasher/runtime-shared'
 import { Property } from '@moviemasher/runtime-shared'
@@ -18,7 +18,8 @@ import {
   SizingContent, DurationUnknown, DurationNone, TypeClip, Sizings,
   Timings, SizingContainer, SizingPreview, TimingContainer, TimingCustom, TimingContent} from '../../../Setup/EnumConstantsAndFunctions.js'
 import { DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeOption, DataTypeString } from '../../../Setup/DataTypeConstants.js'
-import {assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedString, isUndefined} from '../../SharedGuards.js'
+import {assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero} from '../../SharedGuards.js'
+import { isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
 import {assertContainerInstance, isContainerInstance} from '../../../Helpers/Container/ContainerFunctions.js'
 import {assertContentInstance, isContentInstance} from '../../../Helpers/Content/ContentFunctions.js'
 import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
@@ -29,9 +30,11 @@ import {idGenerateString} from '../../../Utility/IdFunctions.js'
 import { PointZero } from '../../../Utility/PointConstants.js'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
 import {timeFromArgs, timeRangeFromArgs} from '../../../Helpers/Time/TimeUtilities.js'
-import { Instance, InstanceObject, VisibleInstance, VisibleInstanceObject } from '../../Instance/Instance.js'
-import { InstanceCacheArgs } from "../../../Base/CacheTypes.js"
+import { Instance, InstanceObject, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
+import { InstanceCacheArgs } from "@moviemasher/runtime-shared"
 import { EmptyFunction } from '../../../Setup/EmptyFunction.js'
+import { MovieMasher } from '@moviemasher/runtime-client'
+import { ClientAssetManager } from '@moviemasher/runtime-client'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {
@@ -139,12 +142,11 @@ export class ClipClass extends PropertiedClass implements Clip {
   private _container?: VisibleInstance
   get container(): VisibleInstance | undefined { return this._container || this.containerInitialize }
   protected get containerInitialize(): VisibleInstance | undefined {
-    const { containerId, track, _containerObject: containerObject } = this
-    const { media } = track.mash
+    const { containerId, _containerObject: containerObject } = this
     const assetId = containerId || containerObject.assetId
     if (!isPopulatedString(assetId)) return undefined
 
-    const definition = media.fromId(assetId)
+    const definition = (MovieMasher.assetManager as ClientAssetManager).fromId(assetId)
 
 
     const object: VisibleInstanceObject  = { ...containerObject, assetId, container: true }
@@ -170,12 +172,11 @@ export class ClipClass extends PropertiedClass implements Clip {
   private _content?: Instance
   
   protected get contentInitialize(): Instance {
-    const { contentId, track, _contentObject: contentObject } = this
-    const { media } = track.mash
+    const { contentId, _contentObject: contentObject } = this
     const assetId = contentId || contentObject.assetId
     assertPopulatedString(assetId)
 
-    const definition = media.fromId(assetId)
+    const definition = (MovieMasher.assetManager as ClientAssetManager).fromId(assetId)
 
     const object: InstanceObject = { ...contentObject, assetId }
     const instance = definition.instanceFromObject(object)
@@ -354,19 +355,18 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   get timeRange() : TimeRange {
     const { frame, frames, track } = this
-    const { mash } = track
-    const { quantize } = mash
+    const { quantize } = track.mash
     assertPositive(frame, 'timeRange frame')
     assertAboveZero(frames, 'timeRange frames')
 
     return timeRangeFromArgs(this.frame, quantize, this.frames)
   }
 
-  timeRangeRelative(timeRange : TimeRange, quantize : number) : TimeRange {
-    const range = this.timeRange.scale(timeRange.fps)
-    const frame = Math.max(0, timeRange.frame - range.frame)
-    return timeRange.withFrame(frame)
-  }
+  // timeRangeRelative(timeRange : TimeRange, _quantize : number) : TimeRange {
+  //   const range = this.timeRange.scale(timeRange.fps)
+  //   const frame = Math.max(0, timeRange.frame - range.frame)
+  //   return timeRange.withFrame(frame)
+  // }
 
   declare timing: Timing
 

@@ -5,9 +5,12 @@ import path from 'path'
 import { Environment, environment } from '@moviemasher/lib-server'
 
 import { 
-  mashMedia, AssetCollection, ProbeType,
+  mashMedia, AssetCollection, 
   assertVisibleAsset, urlBaseInitialize, 
 } from "@moviemasher/lib-shared"
+import { 
+  TypeImage, EncodeTypeVideo, TypeProbe, TypeVideo
+} from "@moviemasher/runtime-shared"
 
 import { RenderingOutputClass, outputDefaultPopulate } from '@moviemasher/lib-server'
 import { renderingProcessInput } from '../../../../images/tester/Utilities/Rendering.mjs'
@@ -18,14 +21,14 @@ describe("Job", () => {
 
   test("renderingDescriptionPromise", async () => {
     const id = 'video-from-multiple'
-    const output = outputDefaultPopulate({ outputType: EncodeType.Video })
+    const output = outputDefaultPopulate({ outputType: EncodeTypeVideo })
     const globeDefinitionObject = {
-      id: 'image-id-globe', type: ImageType, source: '../shared/image/globe.jpg',
-      decodings: [{ type: ProbeType, data: { width: 320, height: 320 } }]
+      id: 'image-id-globe', type: TypeImage, source: '../shared/image/globe.jpg',
+      decodings: [{ type: TypeProbe, data: { width: 320, height: 320 } }]
     }
     const cableDefinitionObject = {
-      id: 'image-id-cable', type: ImageType, source: '../shared/image/cable.jpg',
-      decodings: [{ type: ProbeType, data: { width: 320, height: 240 } }]
+      id: 'image-id-cable', type: TypeImage, source: '../shared/image/cable.jpg',
+      decodings: [{ type: TypeProbe, data: { width: 320, height: 240 } }]
     }
     const definitionObjects = [globeDefinitionObject, cableDefinitionObject]
     const mashObject = {

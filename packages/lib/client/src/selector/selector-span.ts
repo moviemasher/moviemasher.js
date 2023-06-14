@@ -1,5 +1,6 @@
-import type { ClientAsset, AssetObject, AssetPromiseEventDetail } from '@moviemasher/lib-shared'
+import type { AssetPromiseEventDetail } from '@moviemasher/runtime-shared'
 import type { PropertyValues } from 'lit'
+import type { ClientAsset } from '@moviemasher/runtime-client'
 
 import type { Htmls, AssetObjectEventDetail } from '../declarations.js'
 import { isClientAsset } from '@moviemasher/lib-shared'
@@ -11,6 +12,7 @@ import { property } from 'lit/decorators/property.js'
 
 
 import { Component } from '../Base/Component.js'
+import { AssetObject } from '@moviemasher/runtime-shared'
 
 @customElement('movie-masher-selector-span')
 export class SelectorSpanElement extends Component {
@@ -49,7 +51,7 @@ export class SelectorSpanElement extends Component {
     return this._clientAssetPromise ||= this.clientAssetPromiseInitialize
   }
   private get clientAssetPromiseInitialize(): Promise<ClientAsset | undefined> {
-    const { assetObject: assetObject } = this
+    const { assetObject } = this
     if (!assetObject) return Promise.resolve(undefined)
 
     const detail: AssetPromiseEventDetail = { assetObject }
@@ -78,7 +80,7 @@ export class SelectorSpanElement extends Component {
 
   override connectedCallback(): void {
     super.connectedCallback()
-    this.clientAssetPromise
+    // this.clientAssetPromise
   }
 
   private _assetObject?: AssetObject
@@ -86,6 +88,11 @@ export class SelectorSpanElement extends Component {
     return this._assetObject ||= this.assetObjectInitialize
   }
   private get assetObjectInitialize() {
+    if (!this.assetId) {
+      console.log(this.tagName, 'assetObjectInitialize NO ASSET ID')
+      return undefined
+    }
+
     const detail: AssetObjectEventDetail = { id: this.assetId }
     const init: CustomEventInit<AssetObjectEventDetail> = { 
       detail, composed: true, bubbles: true, cancelable: true
@@ -103,11 +110,16 @@ export class SelectorSpanElement extends Component {
   }
 
   override render() { 
-    const { clientAsset, assetObject: mediaObject, icon } = this
-    if (!(clientAsset && mediaObject)) return nothing
+    if (!this.assetId) {
+      console.log(this.tagName, 'render NO ASSET ID')
+      return nothing
+    }
+
+    const { clientAsset, assetObject, icon } = this
+    if (!(clientAsset && assetObject)) return nothing
 
     const htmls: Htmls = []
-    const { label } = mediaObject
+    const { label } = assetObject
     if (label) htmls.push(html`<label>${label}</label>`)
     if (icon) htmls.push(html`${icon}`)
 
@@ -118,12 +130,17 @@ export class SelectorSpanElement extends Component {
     if (changedProperties.has('assetId')) {
 
 
-      console.log(this.tagName, 'willUpdate assetId')
+      console.log(this.tagName, 'willUpdate assetId', this.assetId)
+
 
       delete this.clientAsset
       delete this.icon
-      this._assetObject = this.assetObjectInitialize
-      this._clientAssetPromise = this.clientAssetPromiseInitialize
+      delete this._assetObject
+      delete this._clientAssetPromise
+      
+      this.clientAssetPromise
+      // this._assetObject = this.assetObjectInitialize
+      // this._clientAssetPromise = this.clientAssetPromiseInitialize
 
     }
   }

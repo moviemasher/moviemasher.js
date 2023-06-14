@@ -1,8 +1,8 @@
 import type { JsonRecord, JsonRecords } from '@moviemasher/runtime-shared'
-import type { FontType } from '../../Setup/Enums.js'
+import type { FontType } from "@moviemasher/runtime-shared"
 import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'
 import type { DataOrError, Data } from '@moviemasher/runtime-shared'
-import type { Asset, Assets } from '../../Shared/Asset/AssetTypes.js'
+import type { Asset, Assets } from '@moviemasher/runtime-shared'
 
 
 export type ClientAudio = AudioBuffer 

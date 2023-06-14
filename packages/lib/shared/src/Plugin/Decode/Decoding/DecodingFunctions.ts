@@ -1,6 +1,6 @@
-import {errorThrow} from '../../../Helpers/Error/ErrorFunctions.js'
-import {isObject} from '../../../Shared/SharedGuards.js'
-import {Decoding, isDecodingType} from './Decoding.js'
+import {errorThrow} from '@moviemasher/runtime-shared'
+import { isObject } from "@moviemasher/runtime-shared"
+import {Decoding, isDecodingType} from '@moviemasher/runtime-shared'
 
 export const isDecoding = (value: any): value is Decoding => (
   isObject(value) && 'type' in value && isDecodingType(value.type)

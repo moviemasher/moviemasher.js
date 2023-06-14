@@ -1,11 +1,12 @@
 import { 
-  AssetObject} from "../Shared/Asset/AssetTypes.js"
-import { AudioAssetObject } from "../Shared/Audio/AudioAsset.js"
-import { ImageAssetObject } from "../Shared/Image/ImageAsset.js"
-import { VideoAssetObject } from "../Shared/Video/VideoAsset.js"
+  AssetObject} from "@moviemasher/runtime-shared"
+import { AudioAssetObject } from "@moviemasher/runtime-shared"
+import { ImageAssetObject } from "@moviemasher/runtime-shared"
+import { VideoAssetObject } from "@moviemasher/runtime-shared"
 import { 
-  ServerAsset, ServerAudioAsset, ServerImageAsset, ServerVideoAsset 
-} from "./Asset/ServerAsset.js"
+  ServerAudioAsset, ServerImageAsset, ServerVideoAsset 
+} from "./Asset/ServerAssetTypes.js"
+import { ServerAsset } from "@moviemasher/runtime-server"
 
 
 export interface ServerAssetEventDetail {

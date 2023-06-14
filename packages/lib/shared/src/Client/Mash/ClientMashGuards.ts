@@ -1,4 +1,4 @@
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { ClientClip, ClientTrack, ClientMashAsset, ClientMashInstance } from './ClientMashTypes.js'
 import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
 import { isTrack } from '../../Shared/Mash/Track/TrackGuards.js'

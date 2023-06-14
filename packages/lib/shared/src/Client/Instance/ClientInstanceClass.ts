@@ -1,44 +1,33 @@
 import type { Property, Scalar, ScalarRecord } from '@moviemasher/runtime-shared'
-import { ClientAsset } from "../ClientTypes.js"
-import { PropertyTweenSuffix } from '../../Base/PropertiedConstants.js'
-import { SelectedItems, SelectedMovable, SelectedProperties, SelectedProperty } from '../../Helpers/Select/SelectedProperty.js'
-import { ChangePropertiesActionObject, ChangePropertyActionObject } from '../../Plugin/Masher/Actions/Action/Action.js'
-import { Actions } from '../../Plugin/Masher/Actions/Actions.js'
-import { Selectables } from '../../Plugin/Masher/Selectable.js'
-import { SelectorType } from '../../Setup/Enums.js'
+import type { ClientAsset } from "@moviemasher/runtime-client"
+import type { SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
+import type { ChangePropertiesActionObject, ChangePropertyActionObject } from '../../Plugin/Masher/Actions/Action/ActionTypes.js'
+import type { Actions } from "@moviemasher/runtime-client"
+import type { Selectables } from '@moviemasher/runtime-client'
+import type { SelectorType } from "@moviemasher/runtime-client"
+import type { ClientInstance } from '../ClientTypes.js'
+import type { ClientClip } from '../Mash/ClientMashTypes.js'
+import type { ClientAssetManager } from '@moviemasher/runtime-client'
+
+import { MovieMasher } from '@moviemasher/runtime-client'
+import { InstanceClass } from '../../Shared/Instance/InstanceClass.js'
+import { ActionTypeChange, ActionTypeChangeFrame, ActionTypeChangeMultiple, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, TypeNone, isSizingMediaType, isTimingMediaType } from '../../Setup/EnumConstantsAndFunctions.js'
 import { DataTypeContainerId, DataTypeContentId, DataTypeFrame } from '../../Setup/DataTypeConstants.js'
+import { PropertyTweenSuffix } from '../../Base/PropertiedConstants.js'
 import { assertProperty } from '../../Setup/PropertyFunctions.js'
 import { assertPopulatedString } from '../../Shared/SharedGuards.js'
-import { ClientInstance } from '../ClientTypes.js'
-import { ActionTypeChange, ActionTypeChangeFrame, ActionTypeChangeMultiple, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, TypeNone, isSizingMediaType, isTimingMediaType } from '../../Setup/EnumConstantsAndFunctions.js'
-import { InstanceClass } from '../../Shared/Instance/InstanceClass.js'
-import { ClientEffect } from '../../Effect/Effect.js'
-import { ClientClip, ClientMashAsset } from '../Mash/ClientMashTypes.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
-import { ClientAssetManager } from '../Asset/AssetManager/ClientAssetManager.js'
-
 
 export class ClientInstanceClass extends InstanceClass implements ClientInstance {
   declare asset: ClientAsset
  
   get clip(): ClientClip { return super.clip as ClientClip }
 
-
-
-
-
-  declare effects: ClientEffect[]
-
-
-  // preloadUrls(args: PreloadArgs): string[] { return [] }
-
-
   selectables(): Selectables { return [this, ...this.clip.selectables()] }
 
   selectType: SelectorType = TypeNone
 
-  selectedItems(actions: Actions): SelectedItems {
-    const selectedItems: SelectedItems = []
+  selectedItems(actions: Actions): SelectedProperties {
+    const selectedItems: SelectedProperties = []
     const { container, clip, selectType, asset: definition } = this
 
     // add contentId or containerId from target, as if it were my property 
@@ -93,23 +82,6 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
       selectedItems.push(...this.selectedProperties(actions, property))
     })
 
-
-    if (this.isDefaultOrAudio || this.container)
-      return selectedItems
-
-    // add effects 
-    const { effects } = this
-    const { editor } = actions
-
-    const selectedEffects: SelectedMovable = {
-      name: 'effects',
-      selectType,
-      value: effects,
-      removeHandler: editor.removeEffect.bind(editor),
-      moveHandler: editor.moveEffect.bind(editor),
-      addHandler: editor.addEffect.bind(editor),
-    }
-    selectedItems.push(selectedEffects)
     return selectedItems
   }
 
@@ -126,8 +98,8 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
         assertPopulatedString(property)
         const actionObject: ChangePropertyActionObject = {
           type, property, target: this, redoValue, undoValue,
-          redoSelection: { ...actions.editor.selection.object },
-          undoSelection: { ...actions.editor.selection.object },
+          redoSelection: { ...actions.selection },
+          undoSelection: { ...actions.selection },
         }
         actions.create(actionObject)
       }
@@ -142,8 +114,8 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
         changeHandler: (property: string, redoValue: Scalar) => {
           const actionObject: ChangePropertyActionObject = {
             property, target: this, redoValue, undoValue,
-            redoSelection: { ...actions.editor.selection.object },
-            undoSelection: { ...actions.editor.selection.object },
+            redoSelection: { ...actions.selection },
+            undoSelection: { ...actions.selection },
             type: ActionTypeChange,
           }
           actions.create(actionObject)

@@ -1,0 +1,21 @@
+import type { Asset, AssetObject } from './AssetTypes.js'
+import type { AudioAssetObject } from './AudioAsset.js'
+import type { ImageAssetObject } from './ImageAsset.js'
+import type { EndpointRequest } from './Request.js'
+import type { VideoAssetObject } from './VideoAsset.js'
+
+export interface RawAsset extends Asset {
+  request: EndpointRequest
+}
+
+export type RawAssets = RawAsset[]
+
+export interface RawAssetObject extends AssetObject {
+  request: EndpointRequest
+}
+
+export interface RawAudioAssetObject extends RawAssetObject, AudioAssetObject {}
+
+export interface RawImageAssetObject extends RawAssetObject, ImageAssetObject {}
+
+export interface RawVideoAssetObject extends RawAssetObject, VideoAssetObject {}

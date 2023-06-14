@@ -1,4 +1,4 @@
-import type { AVType } from './AVType.js'
+import type { AVType } from '@moviemasher/runtime-shared'
 
 export const AVTypeAudio: AVType = 'audio'
 export const AVTypeBoth: AVType = 'both'

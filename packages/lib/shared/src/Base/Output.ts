@@ -1,6 +1,6 @@
 import type { EndpointRequest } from '@moviemasher/runtime-shared';
-import { isObject } from '../Shared/SharedGuards.js';
-import { isTyped } from "./TypedGuards.js";
+import { isObject } from "@moviemasher/runtime-shared";
+import { isTyped } from "@moviemasher/runtime-shared";
 
 
 

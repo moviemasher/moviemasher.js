@@ -1,5 +1,5 @@
 import type { UnknownRecord } from '@moviemasher/runtime-shared'
-import type { Decoding, ProbeType } from '../../Decoding/Decoding.js'
+import type { Decoding, ProbeType } from '@moviemasher/runtime-shared'
 
 
 export interface Probing extends Decoding {

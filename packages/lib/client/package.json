@@ -23,8 +23,11 @@
     "serve": "node ../../../dev/utils/server.mjs",
     "script": "run-s"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@moviemasher/lib-shared": "5.1.2",
+    "@moviemasher/runtime-client": "5.1.2"
+  },
+  "dependencies": {
     "lit-html": "^2.7.2",
     "lit-element": "3.3.1",
     "tslib": "^2.5.0",

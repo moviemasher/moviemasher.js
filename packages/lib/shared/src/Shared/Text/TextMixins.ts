@@ -1,22 +1,17 @@
-import { Property, Rect, Scalar, TypeImage, UnknownRecord } from '@moviemasher/runtime-shared'
+import { Rect, TypeImage, UnknownRecord } from '@moviemasher/runtime-shared'
 import { Constrained } from '@moviemasher/runtime-shared'
-import { Asset, VisibleAsset } from '../Asset/AssetTypes.js'
-import { TextAsset, TextAssetObject, TextInstance, TextInstanceObject } from './TextTypes.js'
-import { assertPopulatedString, isUndefined } from '../SharedGuards.js'
+import { Asset } from '@moviemasher/runtime-shared'
+import { TextAsset, TextAssetObject, TextInstance, TextInstanceObject } from '@moviemasher/runtime-shared'
+import { isUndefined } from "@moviemasher/runtime-shared"
 import { DataGroupSize } from '../../Setup/DataGroupConstants.js'
 import { DataTypePercent, DataTypeString } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
-import type { InstanceArgs, VisibleInstance } from '../Instance/Instance.js'
+import type { InstanceArgs, VisibleInstance } from '@moviemasher/runtime-shared'
 import { isRect } from '../../Utility/RectFunctions.js'
-import { IntrinsicOptions } from '../Mash/Clip/Clip.js'
-import { PointZero } from '../../Utility/PointConstants.js'
-import { stringFamilySizeRect } from '../../Utility/StringFunctions.js'
+import { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { Default } from '../../Setup/Default.js'
-import { TextHeight } from './TextConstants.js'
 import { LockHeight } from '../../Setup/EnumConstantsAndFunctions.js'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
-import { filterFromId } from '../../Plugin/Filter/FilterFactory.js'
-import { Filter } from '../../Plugin/Filter/Filter.js'
 
 
 export function TextAssetMixin
@@ -97,9 +92,7 @@ T & Constrained<TextInstance> {
 
     declare string: string
     
-    private _textFilter?: Filter
-    get textFilter() { return this._textFilter ||= filterFromId('text')}
-  
+
     toJSON(): UnknownRecord {
       const json = super.toJSON()
       json.intrinsic = this.intrinsicRect(true)

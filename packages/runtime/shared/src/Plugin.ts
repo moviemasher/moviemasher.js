@@ -10,16 +10,13 @@ export type Plugin<T = unknown> = T &{
 
 export interface PluginRecord extends Record<string, Plugin | undefined | false> {}
 
-
-export type ImporterType = 'importer'
 export type DecodeType = 'decode'
 export type EncodeType = 'encode'
-export type FilterType = 'filter'
 export type MasherType = 'masher'
 export type ProtocolType = 'protocol'
 export type TranscodeType = 'transcode'
 
-export type PluginType = DecodeType | EncodeType | FilterType | MasherType | ProtocolType | TranscodeType
+export type PluginType = DecodeType | EncodeType | MasherType | ProtocolType | TranscodeType
 
 export interface PluginData<T = Plugin> {
   data: T

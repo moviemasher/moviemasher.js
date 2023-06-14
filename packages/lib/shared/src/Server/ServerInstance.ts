@@ -1,9 +1,11 @@
-import type { ServerAsset, ServerAudibleAsset, ServerVisibleAsset } from "./Asset/ServerAsset.js";
-import type { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, GraphFiles, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from './GraphFile.js';
-import type { PreloadArgs } from "../Base/CacheTypes.js";
-import type { IntrinsicOptions } from '../Shared/Mash/Clip/Clip.js';
+import type { ServerAudibleAsset, ServerVisibleAsset } from "./Asset/ServerAssetTypes.js";
+import type { ServerAsset } from "@moviemasher/runtime-server";
+import type { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from './CommandFile.js';
+import type { GraphFile, GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server";
+import type { PreloadArgs, Size, Value } from "@moviemasher/runtime-shared";
+import type { IntrinsicOptions } from '@moviemasher/runtime-shared';
 import type { Tweening } from '../Helpers/TweenFunctions.js';
-import { AudibleInstance, Instance, VisibleInstance } from '../Shared/Instance/Instance.js';
+import { AudibleInstance, Instance, VisibleInstance } from '@moviemasher/runtime-shared';
 
 export interface ServerInstance extends Instance {
   alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters;
@@ -15,6 +17,7 @@ export interface ServerInstance extends Instance {
   canColor(args: CommandFilterArgs): boolean;
   canColorTween(args: CommandFilterArgs): boolean;
   colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters;
+  colorCommandFilters(duration: number, videoRate: number, size: Size, sizeEnd: Size, color: Value, colorEnd: Value): CommandFilters 
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
   commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters;
@@ -23,7 +26,6 @@ export interface ServerInstance extends Instance {
   containerFinalCommandFilters(args: VisibleCommandFilterArgs): CommandFilters;
   contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters;
   copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter;
-  effectsCommandFiles(args: VisibleCommandFileArgs): CommandFiles
   fileCommandFiles(graphFileArgs: PreloadArgs): CommandFiles;
   graphFiles(args: PreloadArgs): GraphFiles;
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters;

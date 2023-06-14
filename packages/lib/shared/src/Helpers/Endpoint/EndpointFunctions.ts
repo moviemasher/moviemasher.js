@@ -3,12 +3,13 @@ import type { Endpoint } from '@moviemasher/runtime-shared'
 
 import { Runtime } from '../../Runtime/Runtime.js'
 import { 
-  assertPopulatedString, isObject, isAboveZero, isNumeric, isPopulatedString 
-} from '../../Shared/SharedGuards.js'
+  assertPopulatedString, isAboveZero} from '../../Shared/SharedGuards.js'
+import { isObject, isNumeric, isPopulatedString } from "@moviemasher/runtime-shared"
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
-import { ColonChar, DotChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
+import { ColonChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
+import { DotChar } from "@moviemasher/runtime-shared"
 
-import { errorThrow } from '../Error/ErrorFunctions.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { ProtocolHttp } from '../../Plugin/Protocol/Protocol.js'
 import { EnvironmentKeyUrlBase } from '../../Runtime/Environment/Environment.js'
 

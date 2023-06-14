@@ -43,7 +43,7 @@ export default {
     },
   ],
   plugins: [
-    esbuildPlugin({ ts: true }),
+    esbuildPlugin({ ts: true, js: false }),
     takeScreenshotPlugin(),
   ],
   // concurrency: 1,

@@ -12,7 +12,6 @@ COPY images/test-client/package.json ${DIR_ROOT}/images/test-client/package.json
 
 COPY packages/lib/client/package.json ${DIR_ROOT}/packages/lib/client/package.json
 COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
-COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
 
 COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
 COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json

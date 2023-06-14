@@ -4,23 +4,18 @@ import { DataGroupTiming } from "../../Setup/DataGroupConstants.js"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { DurationUnknown } from "../../Setup/EnumConstantsAndFunctions.js"
 import { DataTypeFrame, DataTypePercent } from "../../Setup/DataTypeConstants.js"
-import {isAboveZero, isUndefined} from '../SharedGuards.js'
+import {isAboveZero} from '../SharedGuards.js'
+import { isUndefined } from "@moviemasher/runtime-shared"
 import {isProbing} from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
 import {timeFromSeconds} from '../../Helpers/Time/TimeUtilities.js'
-import {TypeProbe} from '../../Plugin/Decode/Decoding/Decoding.js'
+import {TypeProbe} from '@moviemasher/runtime-shared'
 import { Constrained } from '@moviemasher/runtime-shared'
-import { Asset, AudibleAsset, AudibleAssetObject } from '../Asset/AssetTypes.js'
+import { Asset, AudibleAsset, AudibleAssetObject } from '@moviemasher/runtime-shared'
 
 export function AudibleAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
 T & Constrained<AudibleAsset> {
   return class extends Base implements AudibleAsset {
-    constructor(...args: any[]) {
-      super(...args)
-      const [object] = args
-      
-    }
-
     private _audio?: boolean
     get audio(): boolean { 
       if (isUndefined(this._audio)) {

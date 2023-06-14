@@ -1,6 +1,7 @@
 import type { Rect } from '@moviemasher/runtime-shared'
 
-import { assertObject, isAboveZero, isPopulatedString } from '../Shared/SharedGuards.js'
+import { assertObject, isAboveZero } from '../Shared/SharedGuards.js'
+import { isPopulatedString } from "@moviemasher/runtime-shared"
 import { RectZero } from './RectConstants.js'
 
 export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : string => {

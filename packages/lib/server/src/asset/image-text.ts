@@ -1,22 +1,28 @@
-import type { 
-  CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, 
-  FilterCommandFilterArgs, GraphFile, GraphFiles, PreloadArgs, 
-  Tweening, VisibleCommandFileArgs, VisibleCommandFilterArgs 
+import { 
+  CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, 
+
+  PointZero, 
+  Tweening, VisibleCommandFileArgs, VisibleCommandFilterArgs, assertNumber, 
+  colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhiteTransparent,
+   idGenerate, isAboveZero, isTrueValue, sizesEqual, tweenOption, tweenPosition 
 } from '@moviemasher/lib-shared'
 import { 
-  ServerInstanceClass, ServerTextInstance, ServerVisibleInstanceMixin, VisibleInstanceMixin 
+  ServerInstanceClass, ServerTextInstance, ServerVisibleInstanceMixin, 
+  VisibleInstanceMixin 
 } from '@moviemasher/lib-shared'
 
 import { 
-  AssetEventDetail, GraphFileTypeTxt, LockNone, PropertyTweenSuffix, 
+  LockNone, PropertyTweenSuffix, 
   ServerRawAssetClass, ServerTextAsset, ServerVisibleAssetMixin, 
-  TextAssetMixin, TextHeight, TextInstance, TextInstanceMixin, 
-  TextInstanceObject, TypeFont, VisibleAssetMixin, arrayLast, assertEndpoint, 
+  TextAssetMixin, TextHeight, TextInstanceMixin, 
+  VisibleAssetMixin, arrayLast, assertEndpoint, 
   assertPopulatedString, assertTrue, colorBlack, colorBlackTransparent, 
-  colorWhite, endpointUrl, isAssetObject, tweenMaxSize 
+  colorWhite, endpointUrl, tweenMaxSize 
 } from '@moviemasher/lib-shared'
-import { MovieMasher } from '@moviemasher/runtime-server'
-import { ScalarRecord, SourceText, TypeImage } from '@moviemasher/runtime-shared'
+import { GraphFile, GraphFileTypeTxt, GraphFiles, MovieMasher } from '@moviemasher/runtime-server'
+import { 
+  PreloadArgs, TypeFont, ScalarRecord, SourceText, TypeImage, ValueRecord, Size, AssetEventDetail, TextInstance, TextInstanceObject, isAssetObject, isNumber, isPopulatedString 
+} from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -105,11 +111,13 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     const { resolved: fontfile } = fontFile
     assertPopulatedString(fontfile, 'fontfile')
 
-    const { textFilter, lock } = this
+    const {lock } = this
+
     const intrinsicRect = this.intrinsicRect()
     const x = intrinsicRect.x * (rect.width / intrinsicRect.width)
     const y = 0 // intrinsicRect.y * (height / intrinsicRect.height)
-    const [color = colorWhite, colorEnd] = colors
+    const [color = colorWhite, endColor] = colors
+    const colorEnd = duration ? endColor || color : undefined
     assertPopulatedString(color)
 
     const xEnd = intrinsicRect.x * (rectEnd.width / intrinsicRect.width)
@@ -124,19 +132,122 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       intrinsicHeight: intrinsicRect.height,
       intrinsicWidth: intrinsicRect.width,
     }
-    if (xEnd) options[`x${PropertyTweenSuffix}`] = xEnd
-    if (yEnd) options[`y${PropertyTweenSuffix}`] = yEnd
+    
     if (colorEnd) options[`color${PropertyTweenSuffix}`] = colorEnd
-    if (textSizeEnd) options[`height${PropertyTweenSuffix}`] = textSizeEnd
-    if (rectEnd.width) options[`width${PropertyTweenSuffix}`] = rectEnd.width
 
-    textFilter.setValues(options)
-    // console.log(this.constructor.name, 'initialCommandFilters', options)
+    const stretch = lock === LockNone
 
-    const textArgs: FilterCommandFilterArgs = {
-      dimensions: outputSize, videoRate, duration, filterInput
+    const {width: intrinsicWidth, height: intrinsicHeight } = intrinsicRect
+
+    assertPopulatedString(textfile)
+    assertPopulatedString(fontfile)
+    assertNumber(textSize)
+    assertNumber(width)
+    assertNumber(intrinsicWidth)
+    assertNumber(intrinsicHeight)
+    assertNumber(x)
+    assertNumber(y)
+    assertPopulatedString(color, 'color')
+
+   
+    const tweeningColor = isPopulatedString(colorEnd) && color !== colorEnd
+
+    const ffmpegFilter = 'text'
+    const drawtextId = idGenerate(ffmpegFilter)
+    
+    const foreColor = (tweeningColor || filterInput) ? colorWhite : color
+
+    let backColor = colorBlack
+    if (!filterInput) {
+      backColor = tweeningColor ? colorBlackTransparent : colorWhiteTransparent
     }
-    commandFilters.push(...textFilter.commandFilters(textArgs))
+ 
+    const size = { width, height: textSize }
+    const sizeEnd = { ...size }
+    if (duration) {
+      const heightEnd = textSizeEnd || 0
+      const widthEnd = rectEnd.width || 0
+      if (isAboveZero(widthEnd)) sizeEnd.width = widthEnd
+      if (isAboveZero(heightEnd)) sizeEnd.height = heightEnd
+    }
+    const ratio = intrinsicWidth / intrinsicHeight 
+
+    const maxTweenSize = tweenMaxSize(size, sizeEnd)
+    const calculatedWidth = Math.round(ratio * maxTweenSize.height)
+    //stretch ? { width: Math.round(intrinsicWidth / 100), height: Math.round(intrinsicHeight / 100) } : maxTweenSize
+
+    if (calculatedWidth > maxTweenSize.width) maxTweenSize.width = calculatedWidth
+
+    const scaling = stretch || !sizesEqual(size, sizeEnd)
+    const scaleOptions: ValueRecord = {}
+    const textOptions: ValueRecord = {
+      fontsize: maxTweenSize.height, fontfile, textfile, 
+      x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x),
+      y: Math.ceil(isNumber(yEnd) ? Math.max(y, yEnd) : y),
+      // fix_bounds: 1,
+    }
+    // console.log(this.constructor.name, 'commandFilters', colorSize, maxTweenSize, size, sizeEnd)
+    const position = tweenPosition(videoRate, duration)
+    if (tweeningColor) {
+      const alpha = color.length > 7
+      const fromColor = alpha ? colorToRgba(color) : colorToRgb(color)
+      const toColor = alpha ? colorToRgba(colorEnd) : colorToRgb(colorEnd)
+      const keys = alpha ? colorRgbaKeys : colorRgbKeys
+      const calcs = keys.map(key => {
+        const from = fromColor[key]
+        const to = toColor[key]
+        return from === to ? from : `${from}+(${to - from}*${position})`
+      })
+      const calls = calcs.map(calc => ['eif', calc, 'x', 2].join(':'))
+      const expressions = calls.map(call => `%{${call}}`)
+      textOptions.fontcolor_expr = `#${expressions.join('')}`
+    } else textOptions.fontcolor = foreColor
+
+    const colorCommand = this.colorCommandFilter(maxTweenSize, videoRate, duration, backColor)
+    commandFilters.push(colorCommand)
+    filterInput = arrayLast(colorCommand.outputs)
+    assertPopulatedString(filterInput, 'filterInput')
+    // console.log(this.constructor.name, 'commandFilters', scaling, stretch)
+    if (scaling) {
+      scaleOptions.width = stretch ? tweenOption(width, sizeEnd.width, position, true) : -1
+      scaleOptions.height = tweenOption(height, sizeEnd.height, position, true)
+    
+      if (!(isNumber(scaleOptions.width) && isNumber(scaleOptions.height))) {
+        scaleOptions.eval = 'frame'
+      }
+    } 
+    const drawtextFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter,
+      options: textOptions, outputs: [drawtextId]
+    }
+    commandFilters.push(drawtextFilter)
+    filterInput = drawtextId
+    
+    if (!filterInput) {   
+      const formatFilter = 'format'
+      const formatId = idGenerate(formatFilter)
+      const formatCommandFilter: CommandFilter = {
+        inputs: [filterInput], ffmpegFilter: formatFilter, 
+        options: { pix_fmts: 'yuva420p' }, outputs: [formatId]
+      }
+      commandFilters.push(formatCommandFilter)
+      filterInput = formatId
+    }
+    if (scaling) {
+      const scaleFilter = 'scale'
+      const scaleFilterId = idGenerate(scaleFilter)
+      const scaleCommandFilter: CommandFilter = {
+        inputs: [filterInput], ffmpegFilter: scaleFilter, 
+        options: scaleOptions,
+        outputs: [scaleFilterId]
+      }
+      commandFilters.push(scaleCommandFilter)
+      filterInput = scaleFilterId
+    }
+
+
+
+    // commandFilters.push(...textFilter.commandFilters(textArgs))
     
     if (merging) {
       filterInput = arrayLast(arrayLast(commandFilters).outputs)
@@ -146,18 +257,36 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       assertPopulatedString(filterInput, 'crop filterInput')
 
-      const cropArgs: FilterCommandFilterArgs = { 
-        duration: 0, videoRate, filterInput
+      const options: ValueRecord = { exact: 1, ...PointZero }
+      const cropOutput = idGenerate('crop')
+      const { width, height } = maxSize
+      if (isTrueValue(width)) options.w = width
+      if (isTrueValue(height)) options.h = height
+      const commandFilter: CommandFilter = {
+        ffmpegFilter: 'crop', 
+        inputs: [filterInput], 
+        options, 
+        outputs: [cropOutput]
       }
-      const { cropFilter } = this
-      cropFilter.setValue(maxSize.width, 'width')
-      cropFilter.setValue(maxSize.height, 'height')
-      cropFilter.setValue(0, 'x')
-      cropFilter.setValue(0, 'y')
-      commandFilters.push(...cropFilter.commandFilters(cropArgs))
+      commandFilters.push(commandFilter)
     } 
     return commandFilters
   }
+  private colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {
+    const { width, height } = dimensions
+    const transparentFilter = 'color'
+    const transparentId = idGenerate(transparentFilter)
+    const object: ValueRecord = { color, size: `${width}x${height}` }
+    if (videoRate) object.rate = videoRate
+    if (duration) object.duration = duration
+    const commandFilter: CommandFilter = {
+      inputs: [], ffmpegFilter: transparentFilter, 
+      options: object,
+      outputs: [transparentId]
+    }
+    return commandFilter
+  }
+
 
   visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const files = super.visibleCommandFiles(args)

@@ -1,5 +1,5 @@
-import {errorThrow} from '../../../../Helpers/Error/ErrorFunctions.js'
-import {TypeProbe} from '../../Decoding/Decoding.js'
+import {errorThrow} from '@moviemasher/runtime-shared'
+import {TypeProbe} from '@moviemasher/runtime-shared'
 import {isDecoding} from '../../Decoding/DecodingFunctions.js'
 import {Probing} from './Probing.js'
 

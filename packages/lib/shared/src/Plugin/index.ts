@@ -1,6 +1,5 @@
 export * from './Decode/index.js'
 export * from './Encode/index.js'
-export * from './Filter/index.js'
 export * from './Masher/index.js'
 export * from './PluginFunctions.js'
 export * from './Protocol/index.js'

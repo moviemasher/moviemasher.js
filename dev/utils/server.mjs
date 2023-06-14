@@ -16,8 +16,7 @@ const replaceUrls = (text) => {
 
 const app = express()
 const rootDir = process.env.MOVIEMASHER_DIR_ROOT
-const indexPath = process.env.MOVIEMASHER_EXAMPLE_INDEX || `${rootDir}/packages/lib/client/example/src/index.html`
-const testPath = `${rootDir}/packages/lib/client/example/src/test.html`
+const indexPath = process.env.MOVIEMASHER_EXAMPLE_INDEX || `${rootDir}/packages/lib/client/div/example/index.html`
 
 const packageDirs = lib => {
   if (!lib.includes('-')) return ['core', 'lib']
@@ -52,11 +51,6 @@ app.get('/', function (_, res) {
   res.send(index)
 })
 
-app.get('/test', function (_, res) {
-  const text = fs.readFileSync(testPath, 'utf8')
-  const index = replaceUrls(text)
-  res.send(index)
-})
 
 
 

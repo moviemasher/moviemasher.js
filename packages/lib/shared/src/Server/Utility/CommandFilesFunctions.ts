@@ -1,8 +1,7 @@
-import type { CommandFiles } from '../GraphFile.js'
+import type { CommandFiles } from '../CommandFile.js'
 import { assertPositive, isPositive } from '../../Shared/SharedGuards.js'
 
 const commandFilesInputIndex = (commandFiles: CommandFiles, id: string, visible: boolean) => {
-  
   const inputCommandFiles = commandFiles.filter(commandFile => commandFile.input)
   const inputIndex = inputCommandFiles.findIndex(commandFile => commandFile.inputId === id)
   if (!isPositive(inputIndex)) console.log('commandFilesInputIndex', id, inputCommandFiles)

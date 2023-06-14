@@ -1,4 +1,3 @@
-export * from './AssetManager/index.js'
 
-export * from './ServerAsset.js'
+export * from './ServerAssetTypes.js'
 export * from './ServerAssetClass.js'

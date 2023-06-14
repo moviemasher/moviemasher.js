@@ -1,6 +1,6 @@
 import type { Point, PointTuple } from '@moviemasher/runtime-shared';
 import type { Size, SizeTuple } from '@moviemasher/runtime-shared';
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js';
+import { errorThrow } from '@moviemasher/runtime-shared';
 import { PointZero } from "./PointConstants.js";
 import { isPoint, pointCopy, pointRound, pointsEqual, pointString } from "./PointFunctions.js";
 import { isSize, sizeCopy, sizeRound, sizesEqual, sizeString } from "./SizeFunctions.js";

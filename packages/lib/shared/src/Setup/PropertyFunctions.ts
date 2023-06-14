@@ -3,8 +3,8 @@ import type { DataType } from "@moviemasher/runtime-shared";
 import { DataTypeBoolean, DataTypeNumber, DataTypePercent, DataTypeString } from "./DataTypeConstants.js";
 import { isDataType, assertDataType } from "./DataTypeFunctions.js";
 import { propertyTypeDefault } from '../Helpers/PropertyType.js';
-import { isBoolean, isNumber, isObject, isPopulatedString, isUndefined } from '../Shared/SharedGuards.js';
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js';
+import { isBoolean, isNumber, isObject, isPopulatedString, isUndefined } from "@moviemasher/runtime-shared";
+import { errorThrow } from '@moviemasher/runtime-shared';
 import { Property, PropertyObject } from '@moviemasher/runtime-shared';
 
 

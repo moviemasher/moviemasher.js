@@ -1,5 +1,5 @@
-import type { IntrinsicOptions} from '../../../Shared/Mash/Clip/Clip.js'
-import type { InstanceCacheArgs } from "../../../Base/CacheTypes.js"
+import type { IntrinsicOptions} from '@moviemasher/runtime-shared'
+import type { InstanceCacheArgs } from "@moviemasher/runtime-shared"
 import type {Masher} from '../Masher.js'
 import type {PreviewArgs, Preview} from './Preview.js'
 import type {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'

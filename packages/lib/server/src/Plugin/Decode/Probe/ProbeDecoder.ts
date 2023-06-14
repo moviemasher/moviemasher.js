@@ -1,16 +1,19 @@
+
+import { Decoding, Numbers, errorCaught } from '@moviemasher/runtime-shared'
+
 import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs'
 import path from 'path'
-
 import { execSync } from "child_process"
 
+import { TypeProbe } from '@moviemasher/runtime-shared'
+
 import {
-  assertProbeOptions, ProbeAudible, DecodeMethod, TypeDecode, Decoding, 
-  ProbeDuration, errorCaught, idGenerateString, JsonExtension, NewlineChar, 
- StringDataOrError, TypeProbe, ProbingData, Runtime, ProbeSize
+  assertProbeOptions, ProbeAudible, DecodeMethod, TypeDecode,  
+  ProbeDuration, idGenerateString, JsonExtension, NewlineChar, 
+ StringDataOrError, ProbingData, Runtime, ProbeSize
 } from "@moviemasher/lib-shared"
 import { EnvironmentKeyApiDirTemporary } from '../../../Environment/ServerEnvironment.js'
-import { Numbers } from '@moviemasher/runtime-shared'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 

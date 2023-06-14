@@ -3,8 +3,8 @@ import type { ClientImageDataOrError } from '../../Helpers/ClientMedia/ClientMed
 
 import { MovieMasher } from '@moviemasher/runtime-client'
 
-import { errorCaught, errorPromise } from '../../Helpers/Error/ErrorFunctions.js'
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
+import { errorCaught, errorPromise } from '@moviemasher/runtime-shared'
+import { ErrorName } from '@moviemasher/runtime-shared'
 import { ProtocolBlob } from '../../Plugin/Protocol/Protocol.js'
 import { requestUrl } from '../request/request.js'
 import { ClientImageEvent } from '../../Helpers/ClientMedia/ClientMediaEvents.js'

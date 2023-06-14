@@ -1,15 +1,21 @@
+import type { 
+  ColorInstanceObject, ColorInstance, AssetEventDetail, AssetManager 
+} from '@moviemasher/runtime-shared'
+
 import { 
-  AssetEventDetail, AssetManager, ColorAssetMixin, ColorInstance, 
-  ColorInstanceMixin, ColorInstanceObject, ServerAssetClass, 
+  SourceColor, TypeImage, isAssetObject 
+} from '@moviemasher/runtime-shared'
+import { 
+  MovieMasher 
+} from '@moviemasher/runtime-server'
+
+import { 
+  ColorAssetMixin, 
+  ColorInstanceMixin, ServerAssetClass, 
   ServerColorAsset, ServerColorInstance, ServerInstanceClass, 
   ServerVisibleAssetMixin, ServerVisibleInstanceMixin, VisibleAssetMixin, 
-  VisibleInstanceMixin
+  VisibleInstanceMixin, DefaultContentId
 } from '@moviemasher/lib-shared'
-
-import { DefaultContentId, isAssetObject } from '@moviemasher/lib-shared'
-import { MovieMasher } from '@moviemasher/runtime-server'
-import { SourceColor, TypeImage } from '@moviemasher/runtime-shared'
-
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)

@@ -1,5 +1,8 @@
-import { AudibleAssetMixin, ServerRawAssetClass, ServerAudibleAssetMixin, AudioAssetMixin, AudibleInstanceMixin, ServerInstanceClass, ServerAudibleInstanceMixin, AudioInstanceMixin } from "@moviemasher/lib-shared"
-import { ServerRawAudioAsset, ServerRawAudioInstance } from "@moviemasher/lib-shared/dist/Server/Raw/ServerRawTypes.js"
+import { 
+  AudibleAssetMixin, ServerRawAssetClass, ServerAudibleAssetMixin, 
+  AudioAssetMixin, AudibleInstanceMixin, ServerInstanceClass, 
+  ServerAudibleInstanceMixin, AudioInstanceMixin, ServerRawAudioInstance, ServerRawAudioAsset 
+} from "@moviemasher/lib-shared"
 
 const WithAudibleAsset = AudibleAssetMixin(ServerRawAssetClass)
 const WithServerAudibleAsset = ServerAudibleAssetMixin(WithAudibleAsset)

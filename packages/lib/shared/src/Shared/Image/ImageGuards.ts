@@ -1,9 +1,9 @@
-import type { ImageAsset } from "./ImageAsset.js"
-import type { ImageInstance } from "./ImageInstance.js"
+import type { ImageAsset } from "@moviemasher/runtime-shared"
+import type { ImageInstance } from "@moviemasher/runtime-shared"
 
 import { TypeImage } from '@moviemasher/runtime-shared'
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { isAsset, isAssetObject } from '../Asset/AssetGuards.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { isAsset, isAssetObject } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
 
 export const isImageAsset = (value: any): value is ImageAsset => {

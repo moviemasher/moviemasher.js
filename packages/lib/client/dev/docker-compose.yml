@@ -14,9 +14,9 @@ services:
 
       - ../../../../packages/lib/shared/dist/:/usr/local/apache2/htdocs/@moviemasher/lib-shared/dist
       - ../../../../packages/lib/client/dist/:/usr/local/apache2/htdocs/@moviemasher/lib-client/dist
-      - ../../../../packages/client/component/dist/:/usr/local/apache2/htdocs/@moviemasher/lib-client/dist
-      - ../../../../packages/client/component/json/:/usr/local/apache2/htdocs/@moviemasher/lib-client/json
-      - ../../../../packages/client/component/example/src/index.html:/usr/local/apache2/htdocs/index.html
+      - ../../../../packages/lib/client/json/:/usr/local/apache2/htdocs/@moviemasher/lib-client/json
+      
+      - ../../../../packages/lib/client/dev/example/index.html:/usr/local/apache2/htdocs/index.html
       - ../../../../node_modules/tslib:/usr/local/apache2/htdocs/tslib/
       - ../../../../node_modules/@lit:/usr/local/apache2/htdocs/@lit/
       - ../../../../node_modules/lit:/usr/local/apache2/htdocs/lit/

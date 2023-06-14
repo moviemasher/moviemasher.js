@@ -1,2 +1,3 @@
 export * from './Action/index.js'
-export * from './Actions.js'
+
+export * from './ActionsClass.js'

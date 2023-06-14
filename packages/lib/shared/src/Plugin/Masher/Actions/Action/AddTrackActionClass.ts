@@ -1,4 +1,4 @@
-import type { AddTrackActionObject } from './Action.js'
+import type { AddTrackActionObject } from './ActionTypes.js'
 
 import { ActionClass } from './ActionClass.js'
 import { arrayOfNumbers } from '../../../../Utility/ArrayFunctions.js'

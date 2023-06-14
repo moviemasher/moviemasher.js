@@ -7,10 +7,10 @@ import type { CommandOptions } from '../Plugin/Encode/Encode.js'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 
 import {
-  isNumber, ColonRegex, CommaRegex, AVTypeAudio, AVTypeVideo, errorCaught,
+   ColonRegex, CommaRegex, AVTypeAudio, AVTypeVideo, 
 } from '@moviemasher/lib-shared'
 import { commandArgsString } from '../Utility/Command.js'
-import { ValueRecord } from '@moviemasher/runtime-shared'
+import { ValueRecord, errorCaught, isNumber } from '@moviemasher/runtime-shared'
   
 
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(

@@ -1,21 +1,21 @@
 import type { Panel } from "../../Base/PanelTypes.js"
 import type { Rect, Size } from '@moviemasher/runtime-shared'
-import type { PreviewItem, SvgFilters, SvgItem, SvgItems } from '../../Helpers/Svg/Svg.js'
+import type { PreviewItem, SvgItem, SvgItems } from '../../Helpers/Svg/Svg.js'
 import type { Constrained, Time, TimeRange } from '@moviemasher/runtime-shared'
 
 
 import { PanelPlayer } from "../../Base/PanelTypes.js"
-import { ErrorName } from '../../Helpers/Error/ErrorName.js'
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '@moviemasher/runtime-shared'
+import { errorThrow } from '@moviemasher/runtime-shared'
 import { svgAddClass, svgAppend, svgDefsElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgSvgElement, svgUseElement } from '../../Helpers/Svg/SvgFunctions.js'
 import { ClientInstance, ClientVisibleInstance } from '../ClientTypes.js'
-import { ClientVisibleAsset } from '../Asset/ClientAsset.js'
+import { ClientVisibleAsset } from '../Asset/ClientAssetTypes.js'
 import { idGenerateString } from '../../Utility/IdFunctions.js'
 import { colorWhite } from '../../Helpers/Color/ColorConstants.js'
 import { assertClientVisibleInstance } from '../ClientGuards.js'
-import { isBelowOne } from '../../Shared/SharedGuards.js'
-import { ClientEffect } from '../../index.js'
-import { VisibleInstance } from '../../Shared/Instance/Instance.js'
+import { assertNumber, isBelowOne } from '../../Shared/SharedGuards.js'
+import { VisibleInstance } from '@moviemasher/runtime-shared'
+import { NamespaceSvg } from "../../Setup/Constants.js"
 
 
 export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance & VisibleInstance>>(Base: T):
@@ -91,15 +91,18 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
 
     private containerSvgFilter(svgItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
       const [opacity] = this.tweenValues('opacity', time, clipTime)
-      // console.log(this.constructor.name, 'containerSvgFilters', opacity)
-      if (!isBelowOne(opacity))
-        return
-  
-      const { opacityFilter } = this
-      opacityFilter.setValue(opacity, 'opacity')
-      return svgFilterElement(opacityFilter.filterSvgFilter(), svgItem)
+      if (!isBelowOne(opacity)) return
+      
+      assertNumber(opacity)
+
+      const { document } = globalThis
+      const filterElement = document.createElementNS(NamespaceSvg, 'feColorMatrix')
+      filterElement.setAttribute('type', 'matrix')
+      const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`
+
+      svgSet(filterElement, values, 'values')
+      return svgFilterElement([filterElement], svgItem)
     } 
-    
     
     containerSvgItemPromise(rect: Rect, time: Time, component: Panel): Promise<SvgItem> {
       if (component !== PanelPlayer)
@@ -111,36 +114,34 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
       })
     }
 
-
-
     contentPreviewItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem> {
       const rect = this.itemContentRect(containerRect, time)
       return this.containerSvgItemPromise(rect, time, component)
     }
 
     contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time): SVGFilterElement | undefined {
-      const { effects, isDefaultOrAudio } = this
-      if (isDefaultOrAudio || !effects.length) return
+      return undefined
+      // const { isDefaultOrAudio } = this
+      // if (isDefaultOrAudio || !effects.length) return
   
-      const range = this.clip.timeRange
-      const filters: SvgFilters = this.effects.flatMap(effect => 
-        effect.svgFilters(outputSize, containerRect, time, range)
-      )
+      // const range = this.clip.timeRange
+      // const filters: SvgFilters = this.effects.flatMap(effect => 
+      //   effect.svgFilters(outputSize, containerRect, time, range)
+      // )
   
-      const filter = svgFilterElement(filters, contentItem)
-      svgSet(filter, '200%', 'width')
-      svgSet(filter, '200%', 'height')
+      // const filter = svgFilterElement(filters, contentItem)
+      // svgSet(filter, '200%', 'width')
+      // svgSet(filter, '200%', 'height')
   
-      return filter
+      // return filter
     }
-  
-    declare effects: ClientEffect[]
 
     pathElement(rect: Rect, forecolor = 'none'): SvgItem {
       return svgPolygonElement(rect, '', forecolor)
     }
   
     private _svgElement?: SVGSVGElement
+    
     private get svgElement() {
       return this._svgElement ||= svgSvgElement()
     }

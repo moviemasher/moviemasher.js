@@ -7,7 +7,7 @@ import {
   PluginType, PluginRecord, Source, Constructor 
 } from '@moviemasher/runtime-shared'
 import {
-  TypeDecode, TypeEncode, TypeFilter, TypeMasher,
+  TypeDecode, TypeEncode, TypeMasher,
   TypeProtocol, TypeTranscode
 } from "../Plugin/PluginConstants.js"
 import {PluginsByProtocol} from '../Plugin/Protocol/Protocol.js'
@@ -15,10 +15,10 @@ import { TypeAudio, TypeImage, TypeVideo } from "@moviemasher/runtime-shared"
 
 import {Environment, DefaultEnvironment} from './Environment/Environment.js'
 import { ClientAudioAsset, ClientImageAsset, ClientVideoAsset } from "../Client/ClientTypes.js"
-import { AudioAssetObject } from "../Shared/Audio/AudioAsset.js"
-import { ImageAssetObject } from "../Shared/Image/ImageAsset.js"
-import { VideoAssetObject } from "../Shared/Video/VideoAsset.js"
-import { ServerAudioAsset, ServerImageAsset, ServerVideoAsset } from '../Server/Asset/ServerAsset.js'
+import { AudioAssetObject } from "@moviemasher/runtime-shared"
+import { ImageAssetObject } from "@moviemasher/runtime-shared"
+import { VideoAssetObject } from "@moviemasher/runtime-shared"
+import { ServerAudioAsset, ServerImageAsset, ServerVideoAsset } from '../Server/Asset/ServerAssetTypes.js'
 
 export type ClientAudioBySource = Record<Source, Constructor<ClientAudioAsset, AudioAssetObject>>
 export type ImageClientBySource = Record<Source, Constructor<ClientImageAsset, ImageAssetObject>>
@@ -52,7 +52,6 @@ export const Runtime: RuntimeInterface = {
   plugins: {
     [TypeDecode]: {},
     [TypeEncode]: {},
-    [TypeFilter]: {},
     [TypeMasher]: {},
     [TypeProtocol]: {},
     [TypeTranscode]: {},
@@ -75,7 +74,6 @@ export const ServerRuntime: ServerRuntimeInterface = {
   plugins: {
     [TypeDecode]: {},
     [TypeEncode]: {},
-    [TypeFilter]: {},
     [TypeMasher]: {},
     [TypeProtocol]: {},
     [TypeTranscode]: {},

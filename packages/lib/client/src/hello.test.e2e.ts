@@ -1,5 +1,5 @@
 import { expect, html, fixture } from '@open-wc/testing';
-import { updateCompetedPromise } from '../../../../dev/utils/test.mjs';
+// import { updateCompetedPromise } from '../../../../dev/utils/test.mjs';
 
 import { makeScreenshot } from 'web-test-runner-screenshot';
 

@@ -1,15 +1,9 @@
 
 import { 
-  AVType, 
-  isPositive, IntrinsicOptions, 
-  GraphFiles, 
-
+  isPositive, 
   ServerClips, EmptyFunction,
-  EncodingType, timeFromArgs, timeRangeFromTimes,
-  InstanceCacheArgs,
+  timeFromArgs, timeRangeFromTimes,
 
-  errorThrow,
-  ErrorName,
   AVTypeAudio,
   AVTypeBoth,
   AVTypeVideo,
@@ -17,12 +11,13 @@ import {
   sizeAboveZero,
   VideoOutputOptions,
   isAboveZero,
-  assertPositive, isAudibleAsset, timeRangeFromArgs
-} from "@moviemasher/lib-shared"
-import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs } from "./Encode.js"
-import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs.js"
-import { filterGraphsArgs, filterGraphsInstance } from "./FilterGraphs/FilterGraphsFactory.js"
-import { Size, Time, TypeAudio, TypeImage, TypeVideo } from "@moviemasher/runtime-shared"
+  isAudibleAsset, timeRangeFromArgs
+} from '@moviemasher/lib-shared'
+import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs } from './Encode.js'
+import { FilterGraphsOptions } from './FilterGraphs/FilterGraphs.js'
+import { filterGraphsArgs, filterGraphsInstance } from './FilterGraphs/FilterGraphsFactory.js'
+import { AVType, EncodingType, ErrorName, InstanceCacheArgs, IntrinsicOptions, Size, Time, TypeAudio, TypeImage, TypeVideo, errorThrow } from '@moviemasher/runtime-shared'
+import { GraphFiles } from '@moviemasher/runtime-server'
 
 export class RenderingOutputClass implements RenderingOutput {
   constructor(public args: RenderingOutputArgs) {}
@@ -35,7 +30,7 @@ export class RenderingOutputClass implements RenderingOutput {
       const { asset: definition } = content
       if (isAudibleAsset(definition)) {
         const frames = definition.frames(quantize)
-        // console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
+        // console.log(this.constructor.name, 'assureClipFrames', clip.label, frames, definition.duration)
         if (frames) clip.frames = frames
       }
     })
@@ -61,7 +56,7 @@ export class RenderingOutputClass implements RenderingOutput {
       if (renderingClip.audible) types.add(AVTypeAudio)
       if (renderingClip.visible) types.add(AVTypeVideo)
     })
-    // console.log(this.constructor.name, "avTypeNeededForClips", types)
+    // console.log(this.constructor.name, 'avTypeNeededForClips', types)
     if (types.size === 2) return avType
     const [type] = types
     return type
@@ -92,7 +87,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
     const { args } = this
     const { endTime, mash } = args
-    // console.log(this.constructor.name, "endTime", mash.tracks)
+    // console.log(this.constructor.name, 'endTime', mash.tracks)
     return endTime || mash.endTime
   }
 
@@ -154,7 +149,7 @@ export class RenderingOutputClass implements RenderingOutput {
   get encodingType(): EncodingType { return this.args.encodingType }
 
   renderingDescriptionPromise(): Promise<RenderingDescription> {
-    // console.log(this.constructor.name, "renderingDescriptionPromise")
+    // console.log(this.constructor.name, 'renderingDescriptionPromise')
 
     let promise = this.mashDurationPromise
     promise = promise.then(() => { 
@@ -173,13 +168,13 @@ export class RenderingOutputClass implements RenderingOutput {
        }
       const avType = this.avTypeNeededForClips
       const { filterGraphs } = this
-      // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
+      // console.log(this.constructor.name, 'renderingDescriptionPromise avType', avType)
       if (avType !== AVTypeAudio) {
         const { filterGraphsVisible } = filterGraphs
         const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
           const { commandInputs: inputs, commandFilters, duration } = filterGraph
           const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVTypeVideo }
-        // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
+        // console.log(this.constructor.name, 'renderingDescriptionPromise inputs, commandFilters', inputs, commandFilters)
           return commandDescription
         })
         renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
@@ -218,7 +213,7 @@ export class RenderingOutputClass implements RenderingOutput {
     if (this.encodingType === TypeImage) return startTime
 
     const { endTime } = this
-    // console.log(this.constructor.name, "timeRange", startTime, endTime)
+    // console.log(this.constructor.name, 'timeRange', startTime, endTime)
     return timeRangeFromTimes(startTime, endTime) 
   }
 

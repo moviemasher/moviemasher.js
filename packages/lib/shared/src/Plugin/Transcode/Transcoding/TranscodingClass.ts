@@ -1,6 +1,6 @@
 import {UnknownRecord} from '@moviemasher/runtime-shared'
 import {RequestableClass} from '../../../Base/Requestable/RequestableClass.js'
-import {Transcoding, TranscodingObject, TranscodingType} from './Transcoding.js'
+import {Transcoding, TranscodingObject, TranscodingType} from '@moviemasher/runtime-shared'
 
 
 export class TranscodingClass extends RequestableClass implements Transcoding {

@@ -2,7 +2,7 @@ import type { FilterGraphsOptions } from "../Encode/FilterGraphs/FilterGraphs.js
 
 import { 
   assertProbing, 
-  TypeProbe,
+  
   assertDefined,
   outputAlphaOptions,
   OutputOptions,
@@ -10,7 +10,7 @@ import {
   ImageOutputOptions
 } from "@moviemasher/lib-shared"
 import { RenderingOutputClass } from "../Encode/RenderingOutputClass.js"
-import { Time, TypeImage } from "@moviemasher/runtime-shared"
+import { Time, TypeProbe, TypeImage } from "@moviemasher/runtime-shared"
 
 export class ImageOutputClass extends RenderingOutputClass {
 

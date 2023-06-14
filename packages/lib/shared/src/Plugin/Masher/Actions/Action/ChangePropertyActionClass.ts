@@ -1,6 +1,6 @@
 import type { Propertied } from '@moviemasher/runtime-shared'
 import type { Scalar } from '@moviemasher/runtime-shared'
-import type { ChangePropertyActionObject, ChangePropertyAction } from './Action.js'
+import type { ChangePropertyActionObject, ChangePropertyAction } from './ActionTypes.js'
 
 import { ActionClass } from "./ActionClass.js"
 

@@ -1,16 +1,16 @@
 import type {DecodePlugin} from './Decode/Decode.js'
 import type {EncodePlugin} from './Encode/Encode.js'
-import type {FilterPlugin} from './Filter/Filter.js'
 import type {MasherPlugin} from './Masher/Masher.js'
-import type {Plugin, PluginDataOrError, PluginType, DecodeType, EncodeType, FilterType, MasherType, ProtocolType, TranscodeType} from '@moviemasher/runtime-shared'
+import type {Plugin, PluginDataOrError, PluginType, DecodeType, EncodeType, MasherType, ProtocolType, TranscodeType} from '@moviemasher/runtime-shared'
 import type {ProtocolPlugin} from './Protocol/Protocol.js'
 import type {EndpointRequest} from '@moviemasher/runtime-shared'
 import type {TranscodePlugin} from './Transcode/Transcode.js'
 
 import {DefaultRequest} from '../Helpers/Request/RequestConstants.js'
-import {error, errorPromise, errorThrow} from '../Helpers/Error/ErrorFunctions.js'
-import {ErrorName} from '../Helpers/Error/ErrorName.js'
-import {isBoolean, isDefiniteError, isObject, isPopulatedString} from '../Shared/SharedGuards.js'
+import {error, errorPromise, errorThrow} from '@moviemasher/runtime-shared'
+import {ErrorName} from '@moviemasher/runtime-shared'
+import {isDefiniteError} from '../Shared/SharedGuards.js'
+import { isBoolean, isObject, isPopulatedString } from "@moviemasher/runtime-shared"
 import { Runtime } from '../Runtime/Runtime.js'
 
 export const isPlugin = (value: any): value is Plugin => {
@@ -29,7 +29,6 @@ export const pluginOrVoid = (pluginType: PluginType, id: string): Plugin | void 
 
 export function pluginDataOrErrorPromise(id: string, pluginType: DecodeType): Promise<PluginDataOrError<DecodePlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: EncodeType): Promise<PluginDataOrError<EncodePlugin>>
-export function pluginDataOrErrorPromise(id: string, pluginType: FilterType): Promise<PluginDataOrError<FilterPlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: MasherType): Promise<PluginDataOrError<MasherPlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: ProtocolType): Promise<PluginDataOrError<ProtocolPlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: TranscodeType): Promise<PluginDataOrError<TranscodePlugin>>
@@ -82,7 +81,6 @@ export function pluginPromise(id: string, pluginType: PluginType): Promise<Plugi
 
 export function pluginDataOrError(id: string, pluginType: DecodeType): PluginDataOrError<DecodePlugin>
 export function pluginDataOrError(id: string, pluginType: EncodeType): PluginDataOrError<EncodePlugin>
-export function pluginDataOrError(id: string, pluginType: FilterType): PluginDataOrError<FilterPlugin>
 export function pluginDataOrError(id: string, pluginType: MasherType): PluginDataOrError<MasherPlugin>
 export function pluginDataOrError(id: string, pluginType: ProtocolType): PluginDataOrError<ProtocolPlugin>
 export function pluginDataOrError(id: string, pluginType: TranscodeType): PluginDataOrError<TranscodePlugin>

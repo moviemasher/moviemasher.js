@@ -1,4 +1,4 @@
-import type { Direction } from "../../../../Setup/Direction.js"
+import type { Direction } from "@moviemasher/runtime-shared"
 import type {Masher} from '../../Masher.js'
 import type {Time, TimeRange} from '@moviemasher/runtime-shared'
 import type { Size} from '@moviemasher/runtime-shared'
@@ -6,8 +6,8 @@ import type {Point} from '@moviemasher/runtime-shared'
 import type {Rect} from '@moviemasher/runtime-shared'
 import type {TrackPreview, TrackPreviewArgs} from './TrackPreview.js'
 import type {ScalarRecord} from '@moviemasher/runtime-shared'
-import type { ChangePropertiesActionObject } from '../../Actions/Action/Action.js'
-import type {ContainerRectArgs} from '../../../../Helpers/Container/Container.js'
+import type { ChangePropertiesActionObject } from '../../Actions/Action/ActionTypes.js'
+import type {ContainerRectArgs} from '@moviemasher/runtime-shared'
 import type { EventFunction } from "../../../../Client/EventFunction.js"
 import type {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
 

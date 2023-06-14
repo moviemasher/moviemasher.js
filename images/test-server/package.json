@@ -2,7 +2,7 @@
   "name": "@moviemasher/test-server",
   "description": "Runs all tests",
   "scripts": {
-    "test": "node --experimental-global-customevent--loader tsx --test ../../packages/lib/server/src/**/**/*.test.ts"
+    "test": "node --experimental-global-customevent --loader tsx --test ../../packages/lib/server/src/**/**/*.test.ts"
   },
   "dependencies": {},
   "devDependencies": {

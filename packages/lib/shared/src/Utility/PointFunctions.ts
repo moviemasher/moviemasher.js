@@ -1,5 +1,5 @@
-import { isNumber, isObject } from '../Shared/SharedGuards.js';
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js';
+import { isNumber, isObject } from "@moviemasher/runtime-shared";
+import { errorThrow } from '@moviemasher/runtime-shared';
 import { CommaChar, EqualsChar, SemicolonChar } from '../Setup/Constants.js';
 import { Point } from '@moviemasher/runtime-shared';
 

@@ -2,7 +2,7 @@ import type { Output } from "../../Base/Output.js"
 import type { Plugin, EncodeType, AssetType } from '@moviemasher/runtime-shared'
 import type { StringDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
 import type { OutputOptions } from '../../Helpers/Output/Output.js'
-import { MashAssetObject } from '../../Shared/Mash/MashTypes.js'
+import { MashAssetObject } from '@moviemasher/runtime-shared'
 
 /**
  * @category Plugin

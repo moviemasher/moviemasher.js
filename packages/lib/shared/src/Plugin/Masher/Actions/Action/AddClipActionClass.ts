@@ -1,4 +1,4 @@
-import type { AddClipActionObject } from './Action.js'
+import type { AddClipActionObject } from './ActionTypes.js'
 import type { ClientClips, ClientTrack } from '../../../../Client/Mash/ClientMashTypes.js'
 
 import { AddTrackActionClass } from './AddTrackActionClass.js'

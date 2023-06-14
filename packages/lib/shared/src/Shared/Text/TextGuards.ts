@@ -1,5 +1,5 @@
-import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
-import { TextAsset, TextInstance } from './TextTypes.js'
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { TextAsset, TextInstance } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
 import { isImageAsset } from '../Image/ImageGuards.js'
 

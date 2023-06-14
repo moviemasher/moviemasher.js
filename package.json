@@ -18,6 +18,12 @@
   "scripts": {
     "build-image-packages": "npm run build-image --image=build-packages",
     "build-image-docs": "npm run build-image --image=build-docs",
+    "build-image-test-client": "npm run build-image --image=test-client",
+    "build-image-test-shared": "npm run build-image --image=test-shared",
+    "build-image-test-server": "npm run build-image --image=test-server",
+
+    "build-image-tests": "run-s build-image-test-shared build-image-test-client build-image-test-server",
+
     "build-builder-plugin": "npm run build-builder --builder=plugin",
     "build-builder-test": "npm run build-builder --builder=test",
     "build-builder": "npm run docker-build --dir=packages/build/${npm_config_builder:=core}",
@@ -44,11 +50,11 @@
     "logs": "npm run docker-logs --dir=${npm_config_dir:=packages/example} --space=${npm_config_space:=standalone}",
     "publish": "npm publish --access public --workspace @moviemasher/${npm_config_space}",
     "start-docs": "npm run start --dir=${npm_config_dir:=dev} --space=${npm_config_space:=docs}",
-    "start-example-client": "npm run start --dir=${npm_config_dir:=packages/client} --space=${npm_config_space:=client}",
-    "start": "npm run docker-up --dir=${npm_config_dir:=packages/example} --space=${npm_config_space:=standalone}",
+    "start-client": "npm run start --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
+    "start": "npm run docker-up --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
     "stop-docs": "npm run stop --dir=${npm_config_dir:=dev} --space=${npm_config_space:=docs}",
-    "stop-example-client": "npm run stop --dir=${npm_config_dir:=packages/client} --space=${npm_config_space:=client}",
-    "stop": "npm run docker-down --dir=${npm_config_dir:=packages/example} --space=${npm_config_space:=standalone}",
+    "stop-client": "npm run stop --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
+    "stop": "npm run docker-down --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
     "test-client": "npm run docker-run --dir=images/test-client/dev",
     "test-shared": "run-s docker-run --dir=images/test-shared/dev",
     "test-server": "npm run docker-run --dir=images/test-server/dev",

@@ -15,6 +15,14 @@
       }
     ]
   },
-  "include": ["src/**/*", "src/*"],
-  "exclude": ["src/**/*.e2e.ts", "src/**/*.test.ts"]
+  "include": [
+    "src/**/*", "src/*", 
+    
+  
+  ],
+  "exclude": [
+    "**/dist/*",
+    "src/**/*.e2e.ts", 
+    "src/**/*.test.ts"
+  ]
 }

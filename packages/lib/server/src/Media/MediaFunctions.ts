@@ -1,6 +1,6 @@
 import type { MediaRequest } from './Media.js'
 
-import { isIdentified, errorThrow, isObject} from '@moviemasher/lib-shared'
+import { isIdentified, errorThrow, isObject} from '@moviemasher/runtime-shared'
 
 
 export const isMediaRequest = (value: any): value is MediaRequest => {

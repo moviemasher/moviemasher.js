@@ -1,9 +1,10 @@
 
 import type { 
-  GraphFiles, AVType, ServerMashAsset, 
+  ServerMashAsset, 
 } from "@moviemasher/lib-shared"
 import type { FilterGraph } from "../FilterGraph/FilterGraph.js"
-import type { Size, Time, Times } from "@moviemasher/runtime-shared"
+import type { AVType, Size, Time, Times } from "@moviemasher/runtime-shared"
+import { GraphFiles } from "@moviemasher/runtime-server"
 
 
 export interface FilterGraphs {

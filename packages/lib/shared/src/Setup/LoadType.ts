@@ -1,14 +1,10 @@
-import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
-import { TypeString } from '../Utility/ScalarFunctions.js'
-import { StringType } from "@moviemasher/runtime-shared"
-import type {
-FontType, RecordsType, RecordType} from './Enums.js'
-import { AssetType, AudioType, ImageType, TypesAsset, VideoType } from '@moviemasher/runtime-shared'
-import { TypeFont, TypeRecord, TypeRecords } from "./EnumConstantsAndFunctions.js"
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { TypeString } from "@moviemasher/runtime-shared"
+import type { FontType } from "@moviemasher/runtime-shared"
+import { AssetType, TypesAsset } from '@moviemasher/runtime-shared'
+import { TypeFont, TypeRecord, TypeRecords } from "@moviemasher/runtime-shared"
+import { LoadTypes, LoadType } from '@moviemasher/runtime-shared'
 
-
-export type LoadType = AudioType | ImageType | VideoType | FontType | RecordType | RecordsType | StringType
-export type LoadTypes = LoadType[]
 export const TypesLoad: LoadTypes = [...TypesAsset, TypeFont, TypeRecord, TypeRecords, TypeString]
 export const isLoadType = (type?: any): type is LoadType => {
   return TypesLoad.includes(type)

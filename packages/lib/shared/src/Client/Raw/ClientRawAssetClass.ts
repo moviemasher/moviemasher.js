@@ -1,6 +1,6 @@
 import type { EndpointRequest } from '@moviemasher/runtime-shared'
 import type { Size } from '@moviemasher/runtime-shared'
-import type { RawAssetObject } from '../../Shared/Raw/RawTypes.js'
+import type { RawAssetObject } from '@moviemasher/runtime-shared'
 import type { ClientRawAsset } from './ClientRawTypes.js'
 
 import { ClientAssetClass } from '../Asset/ClientAssetClass.js'

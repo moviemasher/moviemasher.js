@@ -1,19 +1,36 @@
-import { 
-  AssetEventDetail, AssetManager, 
-  ClientShapeAsset, 
-  ClientShapeInstance, 
-  InstanceCacheArgs, Panel, ShapeInstance, ShapeInstanceObject, SvgItem, isAssetObject, 
+import type { 
+  Rect, InstanceCacheArgs, 
+  Size, AssetEventDetail, Time, ShapeInstance, ShapeInstanceObject, 
+} from '@moviemasher/runtime-shared'
+import type { 
+  SvgItem, 
 } from '@moviemasher/lib-shared'
 import { 
-  ClientAssetClass, ClientInstanceClass, ClientVisibleAssetMixin, 
-  ClientVisibleInstanceMixin,  ShapeAssetMixin, ShapeInstanceMixin, 
-  VisibleAssetMixin, VisibleInstanceMixin, centerPoint, isPopulatedString, 
-  sizeAboveZero, sizeCover, svgPathElement, svgPolygonElement, 
-  svgSetTransformRects, svgSvgElement, DefaultContainerId 
+  ClientVisibleAssetMixin, ClientVisibleInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, 
+  centerPoint, 
+  sizeCover, 
+  svgSvgElement,
+  ClientInstanceClass, 
 } from '@moviemasher/lib-shared'
 
 import { MovieMasher } from '@moviemasher/runtime-client'
-import { Rect, Size, SourceShape, Time, TypeImage } from '@moviemasher/runtime-shared'
+import {
+  isPopulatedString, isAssetObject, SourceShape, TypeImage
+} from '@moviemasher/runtime-shared'
+
+
+import { 
+  ClientShapeAsset, 
+  ClientShapeInstance, 
+  Panel, 
+} from '@moviemasher/lib-shared'
+import { 
+  ClientAssetClass, 
+  ShapeAssetMixin, ShapeInstanceMixin, 
+  sizeAboveZero, svgPathElement, svgPolygonElement, 
+  svgSetTransformRects, DefaultContainerId 
+} from '@moviemasher/lib-shared'
+
 
 const WithAsset = VisibleAssetMixin(ClientAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -71,7 +88,7 @@ export class ClientShapeInstanceClass extends WithShapeInstance implements Clien
 }
 
 // predefine default image/shape asset
-(MovieMasher.assetManager as AssetManager).predefine(DefaultContainerId, new ClientShapeAssetClass({ 
+MovieMasher.assetManager.predefine(DefaultContainerId, new ClientShapeAssetClass({ 
   id: DefaultContainerId, type: TypeImage, source: SourceShape, label: 'Rectangle'
 }))
 
