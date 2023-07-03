@@ -1,7 +1,7 @@
+import type { PluginsByMashing } from '../Plugin/MasherPlugin.js'
 
 import {DecodePluginsByType} from '../Plugin/Decode/Decode.js'
 import {EncodePluginsByType} from '../Plugin/Encode/Encode.js'
-import {PluginsByMashing} from '../Plugin/Masher/Masher.js'
 import { 
   
   PluginType, PluginRecord, Source, Constructor 
@@ -14,7 +14,7 @@ import {PluginsByProtocol} from '../Plugin/Protocol/Protocol.js'
 import { TypeAudio, TypeImage, TypeVideo } from "@moviemasher/runtime-shared"
 
 import {Environment, DefaultEnvironment} from './Environment/Environment.js'
-import { ClientAudioAsset, ClientImageAsset, ClientVideoAsset } from "../Client/ClientTypes.js"
+import { ClientAudioAsset, ClientImageAsset, ClientVideoAsset } from "@moviemasher/runtime-client"
 import { AudioAssetObject } from "@moviemasher/runtime-shared"
 import { ImageAssetObject } from "@moviemasher/runtime-shared"
 import { VideoAssetObject } from "@moviemasher/runtime-shared"

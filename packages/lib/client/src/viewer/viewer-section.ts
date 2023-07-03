@@ -1,12 +1,11 @@
+import type { CSSResultGroup } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { customElement } from 'lit/decorators/custom-element.js'
-import { css } from 'lit'
-import { html } from 'lit'
+import { css } from '@lit/reactive-element/css-tag.js'
+import { html } from 'lit-html/lit-html.js'
 
 import { Section } from '../Base/Section.js'
 
-@customElement('movie-masher-viewer-section')
 export class ViewerSectionElement extends Section {
   override divContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-viewer-div')
@@ -30,8 +29,8 @@ export class ViewerSectionElement extends Section {
     >${htmls}</movie-masher-viewer-header>`
   }
 
-  static override styles = [
-    ...Section.styles, 
+  static override styles: CSSResultGroup = [
+    Section.styles, 
     css`
       :host {
         grid-area: preview;
@@ -39,3 +38,6 @@ export class ViewerSectionElement extends Section {
     `
   ]
 }
+
+// register web component as custom element
+customElements.define('movie-masher-viewer-section', ViewerSectionElement)

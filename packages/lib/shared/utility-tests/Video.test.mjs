@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  MediaType, VideoClass, 
+  VideoClass, TypeVideo,
   idGenerateString, timeRangeFromArgs, videoInstance, videoDefinition
 } from "@moviemasher/lib-shared"
 
@@ -44,7 +44,7 @@ describe("Video", () => {
     const definitionObject = {
       id: idGenerateString(),
       url: "file.mp4",
-      type: VideoType,
+      type: TypeVideo,
       fps: 30, duration: 10
     }
     const definition = () => videoDefinition(definitionObject)

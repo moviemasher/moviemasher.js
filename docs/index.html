@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@moviemasher</title><meta name="description" content="JavaScript video editor and encoder"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><link rel="stylesheet" href="assets/custom.css"/><script defer src="assets/main.js"></script><script async src="assets/search.js" id="tsd-search-script"></script><link rel="icon" href="favicon.ico" />
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@moviemasher</title><meta name="description" content="JavaScript video editor and encoder"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/search.js" id="tsd-search-script"></script><link rel="icon" href="favicon.ico" />
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base=".">
@@ -13,23 +13,47 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <h2>@moviemasher</h2></div>
-<div class="tsd-panel tsd-typography"><!-- MAGIC:START (FILE:src=dev/documentation/snippet/head.md) -->
-<!-- The below content is automatically added from dev/documentation/snippet/head.md -->
-<p><a href="https://moviemasher.com"><img src="https://moviemasher.com/media/img/moviemasher.svg" alt="Image" title="Movie Masher"></a></p>
+<div class="tsd-panel tsd-typography"><p><a href="https://moviemasher.com"><img src="https://moviemasher.com/media/img/moviemasher.svg" alt="Image" title="Movie Masher"></a></p>
 <p><em>JavaScript video editor and encoder</em></p>
 <ul>
-<li><em>visual compositing</em> through <strong>SVG API</strong></li>
-<li><em>audio mixing</em> through <strong>WebAudio API</strong></li>
-<li><em>encode</em> and <em>transcode</em> through <strong>FFmpeg</strong></li>
-<li><em>client</em> implemented in <strong>ReactJS</strong></li>
-<li><em>server</em> implemented in <strong>ExpressJS</strong><!-- MAGIC:END --></li>
+<li>easy to customize</li>
+<li>simple to integrate</li>
+<li>flexible API</li>
+<li>modular architecture</li>
+<li>standards based<!-- MAGIC:END --></li>
 </ul>
-<a id="md:description" class="tsd-anchor"></a><h2><a href="#md:description">Description</a></h2><p>Movie Masher is a web-based video editor built entirely in TypeScript and available as a collection of modern ESM packages. It consists of a core library shared by both a React client and ExpressJS server. The client provides an optimized, low resoluition editing experience while the server renders out the result as a high quality video. </p>
+<a id="md:description" class="tsd-anchor"></a><h2><a href="#md:description">Description</a></h2><p>Movie Masher adds video editing and encoding capabilities to your web application. 
+The client interface is implemented as a collection of standard
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components">Web Components</a> 
+which are easily integrated with popular reactive libraries like
+<a href="https://svelte.dev">Svelte</a>, 
+<a href="https://vuejs.org">Vue</a>, and 
+<a href="https://react.dev">React</a>. 
+The server interface is based on
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promises</a>
+and built atop 
+<a href="https://ffmpeg.org">FFmpeg</a>, so simple to integrate with common 
+runtimes like 
+<a href="https://nodejs.org">Node.js</a>
+and
+<a href="https://deno.land">Deno</a> in any LINUX environment.</p>
+<p>The client and server are both strongly typed and utilize standard
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent">Custom Events</a> 
+to facilitate a modular architecture. 
+The provided examples demonstrate deploying on a variety of platforms like 
+<a href="https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6">AWS</a>, 
+<a href="https://supabase.com">Supabase</a>, and 
+<a href="https://expressjs.com">ExpressJS</a>. </p>
 <a id="md:new-in-version-511" class="tsd-anchor"></a><h3><a href="#md:new-in-version-511"><em>NEW in version 5.1.1</em></a></h3><ul>
 <li>container/content pattern</li>
 <li>vector-based masking</li>
 <li>transform/color tweening</li>
 <li>reorganized inspector</li>
+<li><em>visual compositing</em> through <strong>SVG API</strong></li>
+<li><em>audio mixing</em> through <strong>WebAudio API</strong></li>
+<li><em>encode</em> and <em>transcode</em> through <strong>FFmpeg</strong></li>
+<li><em>client</em> implemented in <strong>ReactJS</strong></li>
+<li><em>server</em> implemented in <strong>ExpressJS</strong></li>
 </ul>
 <!-- MAGIC:START (FILE:src=dev/documentation/snippet/documentation.md) -->
 <!-- The below content is automatically added from dev/documentation/snippet/documentation.md -->
@@ -132,10 +156,7 @@ and the web site is also needed. Please review the <a href="https://moviemasher.
 <div class="tsd-filter-visibility">
 <h4 class="uppercase">Member Visibility</h4><form>
 <ul id="tsd-filter-options">
-<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
-<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
-<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
-<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-alpha" name="alpha"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Alpha</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-beta" name="beta"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Beta</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
@@ -174,5 +195,6 @@ and the web site is also needed. Please review the <a href="https://moviemasher.
 <li><a href="modules/lib_shared.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>lib-<wbr/>shared</span></a></li>
 <li><a href="modules/runtime_client.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>runtime-<wbr/>client</span></a></li>
 <li><a href="modules/runtime_server.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>runtime-<wbr/>server</span></a></li>
-<li><a href="modules/runtime_shared.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>runtime-<wbr/>shared</span></a></li></ul></nav></div></div></div>
+<li><a href="modules/runtime_shared.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>runtime-<wbr/>shared</span></a></li>
+<li><a href="modules/asset_image_shape.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>asset-<wbr/>image-<wbr/>shape</span></a></li></ul></nav></div></div></div>
 <div class="overlay"></div></body></html>

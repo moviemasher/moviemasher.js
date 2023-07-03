@@ -1,5 +1,5 @@
 
-import type { EventDispatcher } from '@moviemasher/runtime-shared'
+import type { EventDispatcher, EventDispatcherListenerRecord } from '@moviemasher/runtime-shared'
 
 import { EventEmitter }  from 'events'
 
@@ -17,6 +17,18 @@ export class ServerEventDispatcher extends EventEmitter implements EventDispatch
     return this.emit(name, event)
   }
 
+  listenersAdd(record: EventDispatcherListenerRecord) {
+    Object.entries(record).forEach(([type, listener]) => {
+      this.addDispatchListener(type, listener)
+    })
+  }
+
+  listenersRemove(record: EventDispatcherListenerRecord) {
+    Object.entries(record).forEach(([type, listener]) => {
+      this.removeDispatchListener(type, listener)
+    })
+  }
+  
   removeDispatchListener<T>(type: string, listener: (event: CustomEvent<T>) => void): EventDispatcher {
     this.removeListener(type, listener as EventListener)
     return this

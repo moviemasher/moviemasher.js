@@ -1,21 +1,18 @@
-import type { Panel } from "../../Base/PanelTypes.js"
-import type { Rect, Size } from '@moviemasher/runtime-shared'
-import type { PreviewItem, SvgItem, SvgItems } from '../../Helpers/Svg/Svg.js'
-import type { Constrained, Time, TimeRange } from '@moviemasher/runtime-shared'
+import type { PreviewItem, SvgItem, SvgItems } from '@moviemasher/runtime-client'
+import type { Constrained, Rect, Size, Time, TimeRange } from '@moviemasher/runtime-shared'
+import type { Panel } from "@moviemasher/runtime-client"
 
 
-import { PanelPlayer } from "../../Base/PanelTypes.js"
-import { ErrorName } from '@moviemasher/runtime-shared'
-import { errorThrow } from '@moviemasher/runtime-shared'
-import { svgAddClass, svgAppend, svgDefsElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgSvgElement, svgUseElement } from '../../Helpers/Svg/SvgFunctions.js'
-import { ClientInstance, ClientVisibleInstance } from '../ClientTypes.js'
-import { ClientVisibleAsset } from '../Asset/ClientAssetTypes.js'
-import { idGenerateString } from '../../Utility/IdFunctions.js'
+import { ErrorName, errorThrow, VisibleInstance } from '@moviemasher/runtime-shared'
+import { PanelPlayer } from "../PanelConstants.js"
 import { colorWhite } from '../../Helpers/Color/ColorConstants.js'
-import { assertClientVisibleInstance } from '../ClientGuards.js'
-import { assertNumber, isBelowOne } from '../../Shared/SharedGuards.js'
-import { VisibleInstance } from '@moviemasher/runtime-shared'
 import { NamespaceSvg } from "../../Setup/Constants.js"
+import { assertNumber, isBelowOne } from '../../Shared/SharedGuards.js'
+import { idGenerateString } from '../../Utility/IdFunctions.js'
+import { ClientVisibleAsset } from '@moviemasher/runtime-client'
+import { assertClientVisibleInstance } from '../ClientGuards.js'
+import { ClientInstance, ClientVisibleInstance } from '@moviemasher/runtime-client'
+import { svgAddClass, svgAppend, svgClipPathElement, svgDefsElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgSvgElement, svgUseElement } from '../SvgFunctions.js'
 
 
 export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance & VisibleInstance>>(Base: T):
@@ -23,19 +20,27 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
   return class extends Base implements ClientVisibleInstance {
     declare asset: ClientVisibleAsset
     
+    private clipperElement(group: SVGGElement, luminance?: boolean): SVGClipPathElement | SVGMaskElement {
+      if (this.asset.isVector) {
+        return svgClipPathElement(undefined, group)
+        
+      }
+      return svgMaskElement(undefined, group, luminance)   
+    }
+
     containedPromise(contentItem: SvgItem, content: ClientInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<PreviewItem> {
       const range = this.clip.timeRange
       const containerPromise = this.containerSvgItemPromise(containerRect, time, component)
-      const updatableContainer = !this.asset.isVector
       return containerPromise.then(containerItem => {
         const defs: SvgItems = []
         // TODO: make luminance a property of container...
         const luminance = true
         const updatableContent = !content.asset.isVector
+        const { isVector } = this.asset
 
-        defs.push(containerItem)
+        // defs.push(containerItem)
         let containerId = idGenerateString()
-        if (updatableContainer && component === PanelPlayer) {
+        if (component === PanelPlayer && !isVector) {
           // container is image/video so we need to add a polygon for hover
           const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
           polygonElement.setAttribute('vector-effect', 'non-scaling-stroke')
@@ -45,36 +50,37 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
         containerItem.setAttribute('id', containerId)
 
         const group = svgGroupElement()
-        svgAppend(group, [svgPolygonElement(containerRect, '', 'transparent'), contentItem])
+        if (!isVector) svgAppend(group, svgPolygonElement(containerRect, '', 'transparent'))
+        svgAppend(group, contentItem)
+        
+        
         const items: SvgItems = [group]
 
         svgAddClass(group, 'contained')
-        const maskElement = svgMaskElement(undefined, group, luminance)
+
+
+        const maskElement = this.clipperElement(group, luminance)
         defs.push(maskElement)
 
         const useContainerInMask = svgUseElement(containerId)
-
-        maskElement.appendChild(svgPolygonElement(size, '', 'black'))
-        maskElement.appendChild(useContainerInMask)
-        if (!updatableContainer) {
+        console.log(this.constructor.name, 'containedPromise', content.assetId, containerId, useContainerInMask)
+        if (!isVector) maskElement.appendChild(svgPolygonElement(size, '', 'black'))
+        maskElement.appendChild(containerItem)
+        if (!isVector) {
           containerItem.setAttribute('vector-effect', 'non-scaling-stroke')
-          useContainerInMask.setAttribute('fill', colorWhite)
+          containerItem.setAttribute('fill', colorWhite)
         }
         const svgFilter = this.containerSvgFilter(containerItem, size, containerRect, time, range)
-        if (svgFilter)
-          defs.push(svgFilter)
-        else
-          containerItem.removeAttribute('filter')
+        if (svgFilter) defs.push(svgFilter)
+        else containerItem.removeAttribute('filter')
         
-          assertClientVisibleInstance(content)
+        assertClientVisibleInstance(content)
 
         const contentSvgFilter = content.contentSvgFilter(contentItem, size, containerRect, time)
-        if (contentSvgFilter)
-          defs.push(contentSvgFilter)
-        else
-          contentItem.removeAttribute('filter')
+        if (contentSvgFilter) defs.push(contentSvgFilter)
+        else contentItem.removeAttribute('filter')
 
-        const useSvg = (updatableContent || updatableContainer) && component === PanelPlayer
+        const useSvg = (updatableContent || !isVector) && component === PanelPlayer
         const svg = useSvg ? this.svgElement : svgSvgElement()
         svgSetChildren(svg, [svgDefsElement(defs), ...items])
         svgSetDimensions(svg, size)
@@ -84,6 +90,8 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
     }
   
     clippedPreviewItemPromise(content: ClientVisibleInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<PreviewItem> {
+      console.log(this.constructor.name, 'clippedPreviewItemPromise', containerRect, content.assetId)
+      
       return content.contentPreviewItemPromise(containerRect, time, component).then(contentSvgItem => (
         this.containedPromise(contentSvgItem, content, containerRect, size, time, component)
       ))
@@ -115,6 +123,8 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
     }
 
     contentPreviewItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem> {
+      console.log(this.constructor.name, 'contentPreviewItemPromise', containerRect)
+      
       const rect = this.itemContentRect(containerRect, time)
       return this.containerSvgItemPromise(rect, time, component)
     }

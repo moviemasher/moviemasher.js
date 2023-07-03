@@ -13,7 +13,10 @@
     "declarationMap": true
   },
 
-  "include": ["**/*.ts"],
+  "include": [
+    "**/src/*.ts",
+    "**/src/**/*.ts"
+, "packages/lib/client/src/asset/importer/client.ts", "packages-deleted/client-deleted/client/importer-input.ts", "packages-deleted/MediaType.ts", "packages-deleted/EditorSelection.ts", "packages-deleted/EditorSelectionClass.ts"  ],
   
   "exclude": [
     "**/node_modules", 

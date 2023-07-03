@@ -1,9 +1,9 @@
 import type { 
-  DefiniteError, PopulatedString, Unknowns, ValueRecord, 
+  PopulatedString, Unknowns, ValueRecord, 
   Value, JsonRecord, Integer, JsonRecords, Scalar, StringRecord, 
   NestedStringRecord, ScalarRecord 
 } from '@moviemasher/runtime-shared'
-import type { Rgb } from '../Helpers/Color/Color.js'
+import type { Rgb } from '../Helpers/Color/ColorTypes.js'
 
 import { errorThrow } from '@moviemasher/runtime-shared'
 import { isRgb } from './RgbGuards.js'
@@ -29,10 +29,6 @@ export const isScalar = (value: any): value is Scalar => (
 )
 
 
-
-export const isDefiniteError = (value: any): value is DefiniteError => {
-  return isObject(value) && 'error' in value && isObject(value.error)
-}
 
 export const isTrueValue = (value: any): value is Value => {
   if (!isValue(value)) return false

@@ -10,7 +10,7 @@ import type { InstanceArgs, VisibleInstance } from '@moviemasher/runtime-shared'
 import { isRect } from '../../Utility/RectFunctions.js'
 import { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { Default } from '../../Setup/Default.js'
-import { LockHeight } from '../../Setup/EnumConstantsAndFunctions.js'
+import { LockHeight } from '../../Setup/LockConstants.js'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 
 
@@ -49,9 +49,10 @@ T & Constrained<TextAsset> {
       }))
       super.initializeProperties(object)
     }
-
+    
+    canBeContent = false
+  
     declare string: string
-
 
     isVector = true
 

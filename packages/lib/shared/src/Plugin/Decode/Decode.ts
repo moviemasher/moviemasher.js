@@ -1,4 +1,4 @@
-import type {StringDataOrError} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type { StringDataOrError } from '../../Helpers/Request/RequestDataTypes.js'
 import type { Data } from "@moviemasher/runtime-shared"
 import type {Decoding, DecodingType} from '@moviemasher/runtime-shared'
 import type {DefiniteError} from '@moviemasher/runtime-shared'

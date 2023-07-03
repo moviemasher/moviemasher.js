@@ -2,25 +2,27 @@ import type { AssetType } from './AssetType.js'
 import type { Labeled } from './Base.js'
 import type { CacheOptions } from './CacheTypes.js'
 import type { Strings } from './Core.js'
-import type { Decodings } from './Decoding.js'
+import type { DecodingObjects, Decodings } from './Decoding.js'
 import type { Identified } from './Identified.js'
 import type { InstanceObject, InstanceArgs, Instance } from './Instance.js'
 import type { Propertied } from './Propertied.js'
 import type { Size } from './Size.js'
 import type { Source } from './SourceType.js'
-import type { Transcodings, TranscodingTypes, Transcoding } from './Transcoding.js'
+import type { Transcodings, TranscodingTypes, Transcoding, TranscodingObjects } from './Transcoding.js'
 import type { Typed } from './Typed.js'
 
 export interface Asset extends Identified, Propertied, Typed, Labeled {
   assetCachePromise(args: CacheOptions): Promise<void>
   assetIds: Strings
+  canBeContainer: boolean
+  canBeContent: boolean
+  
   container: boolean
   content: boolean
   decodings: Decodings
-
   transcodings: Transcodings
-  preferredAsset(...types: TranscodingTypes): Transcoding | undefined 
 
+  preferredTranscoding(...types: TranscodingTypes): Transcoding | undefined 
   instanceArgs(object?: InstanceObject): InstanceArgs
   instanceFromObject(object?: InstanceObject): Instance
   isVector: boolean
@@ -33,7 +35,8 @@ export type Assets = Asset[]
 export interface AssetObject extends Identified, Typed, Labeled {
   type: AssetType  
   source: Source
-  decodings?: Decodings
+  decodings?: DecodingObjects
+  transcodings?: TranscodingObjects
 }
 
 export type AssetObjects = AssetObject[]

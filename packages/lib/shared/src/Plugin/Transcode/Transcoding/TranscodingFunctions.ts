@@ -4,7 +4,7 @@ import type {
 
 import { isRequestable } from '../../../Base/Requestable/RequestableFunctions.js'
 import { errorThrow } from '@moviemasher/runtime-shared'
-import { TypeSequence, TypeWaveform } from "../../../Setup/EnumConstantsAndFunctions.js"
+import { TypeSequence, TypeWaveform } from '../../../Setup/TypeConstants.js'
 import { TypeFont } from "@moviemasher/runtime-shared"
 import { TypesAsset } from '@moviemasher/runtime-shared'
 

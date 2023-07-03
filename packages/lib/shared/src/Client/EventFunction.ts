@@ -1,2 +1,2 @@
 
-export type EventFunction = (event: Event) => void;
+export type EventFunction = (event: Event) => void

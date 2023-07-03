@@ -18,8 +18,6 @@ COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/pa
 COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
 COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
 
-# COPY plugin/protocol/supabase/package.json ${DIR_ROOT}/plugin/protocol/supabase/package.json
-
 RUN npm install 
 
 ENTRYPOINT ["npm", "run"]

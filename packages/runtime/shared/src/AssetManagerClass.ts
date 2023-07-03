@@ -9,6 +9,18 @@ import { DotChar } from './DotChar.js'
 import { isArray } from './TypeofGuards.js'
 
 export class AssetManagerClass implements AssetManager {
+  assetPromise(object: AssetObject): Promise<Asset> {
+
+    const asset = this.asset(object)
+    if (!asset) {
+      const { type, source } = object
+      return import(`@moviemasher/lib-${this.context}/asset/${source}/${type}.js`).then(() => 
+        this.asset(object)
+      )
+
+    }
+    return Promise.resolve(asset)
+  }
   protected asset(_: AssetObject): Asset { throw 'unimplemented' }
 
   private installedAssetsById = new Map<string, Asset>()
@@ -22,6 +34,8 @@ export class AssetManagerClass implements AssetManager {
   protected byType(type: AssetType): Assets {
     return this.assetArraysByType.get(type) || this.setByType(type) 
   }
+
+  declare protected context: string
 
   define(assetObject: AssetObject | AssetObjects): Assets {
     const assetObjects = isArray(assetObject) ? assetObject : [assetObject]

@@ -17,7 +17,8 @@ import { assertRect, rectsEqual } from "../Utility/RectFunctions.js"
 import { assertSize, sizeEven, sizesEqual } from "../Utility/SizeFunctions.js"
 import { ServerInstance } from "./ServerInstance.js"
 import { commandFilesInput } from './Utility/CommandFilesFunctions.js'
-import { Tweening, tweenMaxSize, tweenOption, tweenPosition } from '../Helpers/TweenFunctions.js'
+import { tweenMaxSize, tweenOption, tweenPosition } from '../Helpers/Tween/TweenFunctions.js'
+import { Tweening } from '../Helpers/Tween/Tweening.js'
 import { InstanceClass } from '../Shared/Instance/InstanceClass.js'
 import { colorToRgb, colorToRgba } from '../Helpers/Color/ColorFunctions.js'
 

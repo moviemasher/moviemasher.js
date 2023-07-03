@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "lit": "^2.7.4",
+    "lit": "^2.7.5",
     "@lit-labs/observers": "2.0.0"
   },
   "devDependencies": {

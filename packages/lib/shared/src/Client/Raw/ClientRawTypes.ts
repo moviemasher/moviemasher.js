@@ -1,7 +1,7 @@
 import type { Size, Time } from '@moviemasher/runtime-shared'
-import type { ClientImage } from '../../Helpers/ClientMedia/ClientMedia.js'
+import type { ClientImage } from '@moviemasher/runtime-client'
 import type { RawAsset } from '@moviemasher/runtime-shared'
-import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset } from '../ClientTypes.js'
+import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset } from '@moviemasher/runtime-client'
 import type { ClientAsset } from "@moviemasher/runtime-client"
 import type { ImageInstance, ImageInstanceObject } from '@moviemasher/runtime-shared'
 import type { Instance, InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'

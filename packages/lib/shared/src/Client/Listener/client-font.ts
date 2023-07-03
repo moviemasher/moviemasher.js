@@ -1,11 +1,11 @@
 import { error, errorPromise } from '@moviemasher/runtime-shared'
 import { ErrorName } from '@moviemasher/runtime-shared'
-import { isDefiniteError } from '../../Shared/SharedGuards.js'
+import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
-import { ClientFontDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
+import { ClientFontDataOrError } from '@moviemasher/runtime-client'
 import { requestUrl } from '../request/request.js'
-import { ClientFontEvent } from '../../Helpers/ClientMedia/ClientMediaEvents.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
+import { ClientFontEvent } from '@moviemasher/runtime-client'
+import { MovieMasher, EventTypeClientFont } from '@moviemasher/runtime-client'
 
 export const requestFontPromise = (request: EndpointRequest): Promise<ClientFontDataOrError> => {
   const url = requestUrl(request)
@@ -70,6 +70,6 @@ const FontListener = (event: ClientFontEvent) => {
   const { request } = detail
   detail.promise = requestFontPromise(request)
 }
-MovieMasher.eventDispatcher.addDispatchListener('clientfont', FontListener)
+MovieMasher.eventDispatcher.addDispatchListener(EventTypeClientFont, FontListener)
 
 

@@ -2,7 +2,7 @@ import type {UnknownRecord} from '@moviemasher/runtime-shared'
 
 import { DataGroupTiming } from "../../Setup/DataGroupConstants.js"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
-import { DurationUnknown } from "../../Setup/EnumConstantsAndFunctions.js"
+import { DurationUnknown } from '../../Setup/DurationConstants.js'
 import { DataTypeFrame, DataTypePercent } from "../../Setup/DataTypeConstants.js"
 import {isAboveZero} from '../SharedGuards.js'
 import { isUndefined } from "@moviemasher/runtime-shared"

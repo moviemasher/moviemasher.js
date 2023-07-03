@@ -10,10 +10,10 @@
     "runtime-server": "npm run build -w @moviemasher/runtime-server",
     "runtime-shared": "npm run build -w @moviemasher/runtime-shared",
     "runtime": "run-s runtime-shared runtime-client runtime-server",
-
     "build": "run-s runtime lib"
   },
   "devDependencies": {
-    "rollup": "dependencies"
+    "rollup": "dependencies",
+    "esbuild": "dependencies"
   }
 }

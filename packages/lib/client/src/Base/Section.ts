@@ -1,14 +1,14 @@
+import type { CSSResultGroup } from 'lit'
 import type { 
   Content, Contents, DivSectionSlot, FooterSectionSlot, HeaderSectionSlot, 
   Htmls, OptionalContent 
 } from '../declarations'
 
 
-import { css } from 'lit'
-import { html } from 'lit'
-import { property } from 'lit/decorators/property.js'
+import { css } from '@lit/reactive-element/css-tag.js'
+import { html } from 'lit-html/lit-html.js'
 
-import { Slotted } from './Slotted'
+import { Slotted } from './Slotted.js'
 
 export const HeaderSlot: HeaderSectionSlot = 'header'
 export const FooterSlot: FooterSectionSlot = 'footer'
@@ -30,14 +30,13 @@ export class Section extends Slotted {
 
   headerContent(_htmls: Htmls): OptionalContent { return '[HEADER]' }
   
-  @property() icon = 'app'
+  icon = 'app'
   
 
   protected override slots: string[] = [HeaderSlot, DivSlot, FooterSlot] 
 
   protected override content(contents: Contents): Content {
     return html`<section
-      @connection='${this.connectionHandler}'
       @slotted='${this.slottedHandler}'
     >${contents}</section>`
   }
@@ -58,13 +57,15 @@ export class Section extends Slotted {
       border: var(--border);
       border-color: var(--section-back);
       border-radius: var(--border-radius);
-      background-color: var(--div-back);
-  }
-  
-  
+    }
+  `
 
-`
-  static override styles = [
+  static override properties = {
+    ...Slotted.properties,
+    icon: { type: String }
+  }
+
+  static override styles: CSSResultGroup = [
     this.styleHost,
     this.styleSection,
   ]

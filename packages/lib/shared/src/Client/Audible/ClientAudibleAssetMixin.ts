@@ -1,8 +1,8 @@
-import type { ClientAudio, ClientAudioNode } from '../../Helpers/ClientMedia/ClientMedia.js'
+import type { ClientAudio, ClientAudioNode } from '@moviemasher/runtime-client'
 import { AudibleContextInstance } from '../Mash/Context/AudibleContext.js'
 import { Constrained } from '@moviemasher/runtime-shared'
 import { AudibleAsset } from '@moviemasher/runtime-shared'
-import { ClientAudibleAsset } from '../Asset/ClientAssetTypes.js'
+import { ClientAudibleAsset } from '@moviemasher/runtime-client'
 import { ClientAsset } from "@moviemasher/runtime-client"
 
 

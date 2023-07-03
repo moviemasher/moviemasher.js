@@ -1,10 +1,10 @@
 import { error, errorCaught } from '@moviemasher/runtime-shared'
 import { ErrorName } from '@moviemasher/runtime-shared'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
-import { ClientVideoDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
+import { ClientVideoDataOrError } from '@moviemasher/runtime-client'
 import { requestUrl } from '../request/request.js'
-import { ClientVideoEvent } from '../../Helpers/ClientMedia/ClientMediaEvents.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
+import { ClientVideoEvent } from '@moviemasher/runtime-client'
+import { MovieMasher, EventTypeClientVideo } from '@moviemasher/runtime-client'
 
 
 export const requestVideoPromise = (request: EndpointRequest): Promise<ClientVideoDataOrError> => {
@@ -45,5 +45,5 @@ const VideoListener = (event: ClientVideoEvent) => {
   detail.promise = requestVideoPromise(request)
 }
 
-MovieMasher.eventDispatcher.addDispatchListener('clientvideo', VideoListener)
+MovieMasher.eventDispatcher.addDispatchListener(EventTypeClientVideo, VideoListener)
 

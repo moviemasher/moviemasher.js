@@ -1,4 +1,4 @@
-import type { ClientAudioNode } from '../../../Helpers/ClientMedia/ClientMedia.js'
+import type { ClientAudioNode } from '@moviemasher/runtime-client'
 
 const AudibleSampleRate = 44100
 const AudibleChannels = 2

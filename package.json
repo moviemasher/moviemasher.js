@@ -69,8 +69,6 @@
   "workspaces": [
     "packages/lib/*",
     "packages/runtime/*",
-    "images/*",
-    "packages/client/*",
-    "packages/server/*"
+    "images/*"
   ]
 }

@@ -1,5 +1,4 @@
 import type { Numbers, Unknowns } from '@moviemasher/runtime-shared'
-import { isArray, isObject } from "@moviemasher/runtime-shared"
 
 
 export const arrayLast = (array: Unknowns): any => array[array.length - 1 ]
@@ -21,8 +20,3 @@ export const arrayOfNumbers = (count = 0, start = 0): Numbers => (
   [...Array(count)].map((_, index) => start + index)
 )
 
-export function arrayFromOneOrMore<T>(value?: T | T[]): T[] {
-  if (!isObject(value)) return []
-
-  return isArray<T>(value) ? value : [value]
-}

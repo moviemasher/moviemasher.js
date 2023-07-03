@@ -6,7 +6,7 @@ import type { MediaRequest } from "../Media/Media.js"
 
 import { 
   assertObject,requestPromise, 
-  Runtime,  assertRequest, isDefiniteError
+  Runtime,  assertRequest
 } from "@moviemasher/lib-shared"
 
 import { assertJobType, JobTypeEncoding, JobTypeDecoding, JobTypeTranscoding  } from "../Setup/Enums.js"
@@ -21,7 +21,7 @@ import {
 } from '../Plugin/Transcode/TranscodeFunctions.js'
 import { assertFilePath } from './File.js'
 import { assertMediaRequest } from '../Media/MediaFunctions.js'
-import { EndpointRequest, TypeString, EndpointRequests, Identified, JsonRecord, PotentialError, ErrorName, error, isArray } from '@moviemasher/runtime-shared'
+import { EndpointRequest, isDefiniteError, TypeString, EndpointRequests, Identified, JsonRecord, PotentialError, ErrorName, error, isArray } from '@moviemasher/runtime-shared'
 
 export type JobTuple = [JobType, MediaRequest]
 

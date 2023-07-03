@@ -1,42 +1,36 @@
-import {UnknownRecord} from '@moviemasher/runtime-shared'
-import { DurationNone, DurationUnknown, DurationUnlimited } from "../../../Setup/EnumConstantsAndFunctions.js"
-import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
-import {sortByFrame} from '../../../Utility/SortFunctions.js'
-import {Clip, Clips} from '@moviemasher/runtime-shared'
+import type { Clip, Clips, MashAsset, TimeRange, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
+import { isDefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../../Base/PropertiedClass.js"
-import {Track, TrackArgs} from '@moviemasher/runtime-shared'
-import {isAboveZero, isPositive} from '../../SharedGuards.js'
-import { isDefined } from "@moviemasher/runtime-shared"
-import {TimeRange} from '@moviemasher/runtime-shared'
-import {idGenerate} from '../../../Utility/IdFunctions.js'
-import {Default} from '../../../Setup/Default.js'
-import {arrayLast} from '../../../Utility/ArrayFunctions.js'
-import { MashAsset } from '@moviemasher/runtime-shared'
+import { Default } from '../../../Setup/Default.js'
+import { DurationNone, DurationUnknown, DurationUnlimited } from '../../../Setup/DurationConstants.js'
+import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { arrayLast } from '../../../Utility/ArrayFunctions.js'
+import { idGenerate } from '../../../Utility/IdFunctions.js'
+import { sortByFrame } from '../../../Utility/SortFunctions.js'
+import { isAboveZero, isPositive } from '../../SharedGuards.js'
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
     super(args)
 
-    const { clips, index: layer, dense, mashAsset: mashMedia } =  args
-    this.mash = mashMedia
+    const { clips, index, dense, mashAsset } =  args
+    this.mash = mashAsset
 
-    if (isPositive(layer)) this.index = layer
+    if (isPositive(index)) this.index = index
 
     this.dense = isDefined(dense) ? !!dense : !this.index  
-  
+
     this.properties.push(propertyInstance({ name: 'dense', defaultValue: false }))
     this.propertiesInitialize(args)
     
     if (clips) {
       this.clips.push(...clips.map(clip => {
-    
         const instance = this.mash.clipInstance(clip) 
         instance.track = this
         return instance
       }))
     }
   }
-
 
   private assureFrame(clips?: Clips): boolean {
     const clipsArray = clips || this.clips
@@ -131,5 +125,3 @@ export class TrackClass extends PropertiedClass implements Track {
     return json
   }
 }
- 
-

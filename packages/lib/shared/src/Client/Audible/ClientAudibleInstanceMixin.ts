@@ -1,9 +1,9 @@
-import type { StartOptions } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js';
+import type { StartOptions } from '@moviemasher/runtime-client';
 import type { TimeRange } from '@moviemasher/runtime-shared';
 import type { Constrained } from '@moviemasher/runtime-shared';
 import type { AudibleInstance } from '@moviemasher/runtime-shared';
-import type { ClientAudibleInstance, ClientInstance } from '../ClientTypes.js';
-import type { ClientAudibleAsset } from '../Asset/ClientAssetTypes.js';
+import type { ClientAudibleInstance, ClientInstance } from '@moviemasher/runtime-client';
+import type { ClientAudibleAsset } from '@moviemasher/runtime-client';
 
 
 

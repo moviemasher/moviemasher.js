@@ -14,14 +14,18 @@ import type { Size } from '@moviemasher/runtime-shared'
 import { Property } from '@moviemasher/runtime-shared'
 import { DataGroupTiming } from '../../../Setup/DataGroupConstants.js'
 
+import { TypeClip } from '../../../Setup/TypeConstants.js'
 import {
-  SizingContent, DurationUnknown, DurationNone, TypeClip, Sizings,
-  Timings, SizingContainer, SizingPreview, TimingContainer, TimingCustom, TimingContent} from '../../../Setup/EnumConstantsAndFunctions.js'
+  SizingContent, Sizings,
+  SizingContainer, SizingPreview
+} from '../../../Setup/SizingConstants.js'
+import { Timings, TimingContainer, TimingCustom, TimingContent } from '../../../Setup/TimingConstants.js'
+import { DurationUnknown, DurationNone } from '../../../Setup/DurationConstants.js'
 import { DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeOption, DataTypeString } from '../../../Setup/DataTypeConstants.js'
 import {assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero} from '../../SharedGuards.js'
 import { isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
-import {assertContainerInstance, isContainerInstance} from '../../../Helpers/Container/ContainerFunctions.js'
-import {assertContentInstance, isContentInstance} from '../../../Helpers/Content/ContentFunctions.js'
+import {assertContainerInstance, isContainerInstance} from '../../../Helpers/Container/ContainerGuards.js'
+import {assertContentInstance, isContentInstance} from '../../../Helpers/Content/ContentGuards.js'
 import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
 import {Default} from '../../../Setup/Default.js'
 import {DefaultContainerId} from '../../../Helpers/Container/ContainerConstants.js'
@@ -38,21 +42,22 @@ import { ClientAssetManager } from '@moviemasher/runtime-client'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {
-    const { containerId, contentId } = object
+    const { containerId, contentId, sizing, timing } = object
+    // console.log('ClipClass', object)
     const defaultContent = isUndefined(contentId) || contentId === DefaultContentId
     const defaultContainer = isUndefined(containerId) || containerId === DefaultContainerId
-    if (object.sizing === SizingContent && defaultContent) {
+    if (defaultContent && !sizing) {
       // console.log('instanceArgs setting sizing to container', object)
       object.sizing = SizingContainer
     }
-    if (object.sizing === SizingContainer && defaultContainer) {
+    if (defaultContainer && !sizing) {
       // console.log('instanceArgs setting sizing to preview', object)
       object.sizing = SizingPreview
     }
-    if (object.timing === TimingContent && defaultContent) {
+    if (defaultContent && !timing) {
       object.timing = TimingContainer
     }
-    if (object.timing === TimingContainer && defaultContainer) {
+    if (defaultContainer && !timing) {
       object.timing = TimingCustom
     }
 
@@ -111,13 +116,11 @@ export class ClipClass extends PropertiedClass implements Clip {
       if (timing === TimingContent && containerId) {
         this.timing = TimingContainer
       } else this.timing = TimingCustom
-      // console.log(this.constructor.name, 'assureTimingAndSizing setting timing', type, isTimingMediaType(type), myTiming, '->', this.timing)
     }
     if (!sizingOk) {
       if (sizing === SizingContent && containerId) {
         this.sizing = SizingContainer 
       } else this.sizing = SizingPreview
-      // console.log(this.constructor.name, 'assureTimingAndSizing setting sizing', type, isSizingMediaType(type), mySizing, '->', this.sizing)
     }
     return !(sizingOk && timingOk)
   }
@@ -140,13 +143,13 @@ export class ClipClass extends PropertiedClass implements Clip {
   private _containerObject: InstanceObject = {}
 
   private _container?: VisibleInstance
-  get container(): VisibleInstance | undefined { return this._container || this.containerInitialize }
+  get container(): VisibleInstance | undefined { return this._container ||= this.containerInitialize }
   protected get containerInitialize(): VisibleInstance | undefined {
     const { containerId, _containerObject: containerObject } = this
     const assetId = containerId || containerObject.assetId
     if (!isPopulatedString(assetId)) return undefined
 
-    const definition = (MovieMasher.assetManager as ClientAssetManager).fromId(assetId)
+    const definition = (MovieMasher.assetManager).fromId(assetId)
 
 
     const object: VisibleInstanceObject  = { ...containerObject, assetId, container: true }
@@ -167,7 +170,7 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   private _contentObject: InstanceObject = {}
   
-  get content() { return this._content || this.contentInitialize }
+  get content() { return this._content ||= this.contentInitialize }
   
   private _content?: Instance
   
@@ -176,7 +179,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     const assetId = contentId || contentObject.assetId
     assertPopulatedString(assetId)
 
-    const definition = (MovieMasher.assetManager as ClientAssetManager).fromId(assetId)
+    const definition = (MovieMasher.assetManager).fromId(assetId)
 
     const object: InstanceObject = { ...contentObject, assetId }
     const instance = definition.instanceFromObject(object)
@@ -272,6 +275,7 @@ export class ClipClass extends PropertiedClass implements Clip {
   rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
     const rect = { ...size, ...PointZero }
     const { sizing } = this
+    // console.log(this.constructor.name, 'rectIntrinsic', sizing, loading, editing) 
     if (sizing === SizingPreview) return rect
 
     const target = sizing === SizingContainer ? this.container : this.content
@@ -283,7 +287,7 @@ export class ClipClass extends PropertiedClass implements Clip {
 
 
     const targetRect = target.intrinsicRect(editing)
-    // console.log(this.constructor.name, 'rectIntrinsic KNOWN', targetRect, sizing, target.definition.label)
+    // console.log(this.constructor.name, 'rectIntrinsic KNOWN', targetRect, sizing, target.assetId)
     return targetRect
   }
 
@@ -295,8 +299,10 @@ export class ClipClass extends PropertiedClass implements Clip {
     // console.log(this.constructor.name, 'rects intrinsicRect', intrinsicRect, args)
     const { container } = this
     assertContainerInstance(container)
+    const tuple = container.containerRects(args, intrinsicRect)
+    // console.log(this.constructor.name, 'rects', tuple)
 
-    return container.containerRects(args, intrinsicRect)
+    return tuple
   }
 
   resetTiming(tweenable?: Instance, quantize?: number): void {

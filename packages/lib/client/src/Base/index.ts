@@ -1,6 +1,6 @@
 export * from './Component.js'
 export * from './IconString.js'
-export * from './Importer.js'
+export * from './ImporterComponent.js'
 export * from './LeftCenterRight.js'
 export * from './Section.js'
 export * from './Slotted.js'

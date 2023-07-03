@@ -1,9 +1,10 @@
-import { errorThrow } from '@moviemasher/runtime-shared'
-import { TypeString } from "@moviemasher/runtime-shared"
+import type { AssetType } from '@moviemasher/runtime-shared'
+import type { LoadTypes, LoadType } from '@moviemasher/runtime-shared'
 import type { FontType } from "@moviemasher/runtime-shared"
-import { AssetType, TypesAsset } from '@moviemasher/runtime-shared'
+
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { TypeString, TypesAsset } from "@moviemasher/runtime-shared"
 import { TypeFont, TypeRecord, TypeRecords } from "@moviemasher/runtime-shared"
-import { LoadTypes, LoadType } from '@moviemasher/runtime-shared'
 
 export const TypesLoad: LoadTypes = [...TypesAsset, TypeFont, TypeRecord, TypeRecords, TypeString]
 export const isLoadType = (type?: any): type is LoadType => {

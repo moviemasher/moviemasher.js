@@ -1,4 +1,4 @@
-import type { Rgb } from '../Helpers/Color/Color.js';
+import type { Rgb } from '../Helpers/Color/ColorTypes.js';
 import { isObject } from "@moviemasher/runtime-shared";
 
 

@@ -38,8 +38,3 @@ export const requestArgs = (request: EndpointRequest): RequestArgs => {
 export const requestArgsHash = (args: RequestArgs): string => (
   hashMd5(JSON.stringify(args))
 )
-
-// export const requestHash = (request: EndpointRequest): string => (
-//   requestArgsHash(requestArgs(request))
-// )
-

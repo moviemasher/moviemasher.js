@@ -22,18 +22,18 @@ import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
 import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 import { DataGroupOpacity, DataGroupPoint, DataGroupSize } from '../../Setup/DataGroupConstants.js'
 import { ContainerRectArgs } from '@moviemasher/runtime-shared'
-import { tweenColorStep, tweenCoverPoints, tweenCoverSizes, tweenNumberStep, tweenOverPoint, tweenOverRect, tweenOverSize, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from '../../Helpers/TweenFunctions.js'
-import { Directions, LockWidth, SideDirections } from "../../Setup/EnumConstantsAndFunctions.js"
+import { tweenColorStep, tweenCoverPoints, tweenCoverSizes, tweenNumberStep, tweenOverPoint, tweenOverRect, tweenOverSize, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from '../../Helpers/Tween/TweenFunctions.js'
+import { LockWidth } from '../../Setup/LockConstants.js'
+import { Directions, SideDirections } from '../../Setup/DirectionConstants.js'
 import { SideDirectionObject } from '@moviemasher/runtime-shared'
 
 export class InstanceClass extends PropertiedClass implements Instance {
-  instanceCachePromise(args: InstanceCacheArgs): Promise<void> {
-    const { time } = args
-    const assetTime = this.assetTime(time)
-    const options: CacheOptions = { ...args, time: assetTime }
-    return this.asset.assetCachePromise(options)
+  constructor(object: InstanceArgs) {
+    super(object)
+    const { asset, container } = object
+    this.asset = asset 
+    if (container) this.container = true
   }
-  opacityEnd?: number | undefined
 
   declare asset: Asset
   
@@ -42,27 +42,32 @@ export class InstanceClass extends PropertiedClass implements Instance {
   get assetIds(): Strings {
     return [...this.asset.assetIds]
   }
+  
+  assetTime(mashTime : Time) : Time {
+    const range = this.clip.timeRange
 
+    const { fps: quantize, startTime, endTime } = range
+    const scaledTime = mashTime.scaleToFps(quantize) // may have fps higher than quantize and time.fps
+    const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
+    return scaledTime.withFrame(frame - startTime.frame)
+  }
+  
   private _clip?: Clip
   get clip() { return this._clip! }
   set clip(value: Clip) { this._clip = value }
   get clipped(): boolean { return !!this._clip }
 
-
   container = false
 
-  /**
-   * 
-   * @param args 
-   * @param inRect 
-   * @returns 
-   */
   containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple {
     // console.log(this.constructor.name, 'containerRects', inRect, args)
     const { size, time, timeRange } = args
     const { lock } = this
     const tweenRects = this.tweenRects(time, timeRange)
+    
     const locked = tweenRectsLock(tweenRects, lock)
+
+    console.log(this.constructor.name, 'containerRects', tweenRects, lock, locked)
     
     const { width: inWidth, height: inHeight } = inRect
     
@@ -92,7 +97,9 @@ export class InstanceClass extends PropertiedClass implements Instance {
     const tuple = isArray(rects) ? rects : [rects, rects] as RectTuple
     
     const intrinsicRect = this.intrinsicRect(editing)
-    if (!sizeAboveZero(intrinsicRect)) return tuple
+    if (!sizeAboveZero(intrinsicRect)) {
+      return tuple
+    }
     
     const { lock } = this
     const tweenRects = this.tweenRects(time, timeRange)
@@ -103,19 +110,10 @@ export class InstanceClass extends PropertiedClass implements Instance {
     const [point, pointEnd] = coverPoints
     const rect = rectFromSize(size, point)
     const rectEnd = rectFromSize(sizeEnd, pointEnd)
-    // console.log(this.constructor.name, 'contentRects', lock, locked, isArray(rects) ? rects[0] : rects,  '->', rect)
+    console.log(this.constructor.name, 'contentRects', lock, locked, isArray(rects) ? rects[0] : rects,  '->', rect)
     return [rect, rectEnd]
   }
   
-  assetTime(mashTime : Time) : Time {
-    const range = this.clip.timeRange
-
-    const { fps: quantize, startTime, endTime } = range
-    const scaledTime = mashTime.scaleToFps(quantize) // may have fps higher than quantize and time.fps
-    const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
-    return scaledTime.withFrame(frame - startTime.frame)
-  }
-
   get directionObject(): SideDirectionObject {
     return Object.fromEntries(SideDirections.map(direction => 
       [direction, !!this.value(`off${direction.slice(0, 1).toUpperCase()}`)]
@@ -137,18 +135,9 @@ export class InstanceClass extends PropertiedClass implements Instance {
   get id(): string { return this._id ||= idGenerateString() }
 
   initializeProperties(object: InstanceArgs): void {
-    const { asset, container } = object
-    this.asset = asset 
+    const { container } = this
+  
     if (container) {
-      this.container = true
-      this.addProperties(object, propertyInstance({
-        name: 'x', type: DataTypePercent, defaultValue: 0.5,
-        group: DataGroupPoint, tweenable: true, 
-      }))
-      this.addProperties(object, propertyInstance({
-        name: 'y', type: DataTypePercent, defaultValue: 0.5,
-        group: DataGroupPoint, tweenable: true, 
-      }))
       // offN, offS, offE, offW
       SideDirections.forEach(direction => {
         this.addProperties(object, propertyInstance({
@@ -161,24 +150,30 @@ export class InstanceClass extends PropertiedClass implements Instance {
         type: DataTypePercent, defaultValue: 1.0,
         group: DataGroupOpacity,
       }))       
-    } else {
-      if (!this.isDefaultOrAudio) {
-        this.addProperties(object, propertyInstance({
-          name: 'x', type: DataTypePercent, defaultValue: 0.5,
-          group: DataGroupPoint, tweenable: true, 
-        }))
-        this.addProperties(object, propertyInstance({
-          name: 'y', type: DataTypePercent, defaultValue: 0.5,
-          group: DataGroupPoint, tweenable: true, 
-        }))
-        this.addProperties(object, propertyInstance({
-          name: 'lock', type: DataTypeString, defaultValue: LockWidth,
-          group: DataGroupSize, 
-        }))        
-      }   
+    } 
+    if (container || !this.isDefaultOrAudio) {
+      this.addProperties(object, propertyInstance({
+        name: 'x', type: DataTypePercent, defaultValue: 0.5,
+        group: DataGroupPoint, tweenable: true, 
+      }))
+      this.addProperties(object, propertyInstance({
+        name: 'y', type: DataTypePercent, defaultValue: 0.5,
+        group: DataGroupPoint, tweenable: true, 
+      }))
+      this.addProperties(object, propertyInstance({
+        name: 'lock', type: DataTypeString, defaultValue: LockWidth,
+        group: DataGroupSize, 
+      }))
     }
     this.properties.push(...this.asset.properties)
     super.initializeProperties(object)
+  }
+
+  instanceCachePromise(args: InstanceCacheArgs): Promise<void> {
+    const { time } = args
+    const assetTime = this.assetTime(time)
+    const options: CacheOptions = { ...args, time: assetTime }
+    return this.asset.assetCachePromise(options)
   }
 
   intrinsicRect(_ = false): Rect { return RectZero }
@@ -189,7 +184,8 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return [DefaultContentId, DefaultContainerId].includes(this.assetId) 
   }
 
-  get isDefaultOrAudio() { return this.isDefault || this.type === TypeAudio }
+  get isAudio() { return this.type === TypeAudio }
+  get isDefaultOrAudio() { return this.isDefault || this.isAudio }
   
   protected _label = ''
   get label(): string { return this._label  }
@@ -197,16 +193,17 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
 
   declare lock: Lock
+
   mutable() { return false }
   
   declare muted: boolean 
   
-
   declare offE: boolean
   declare offN: boolean
   declare offS: boolean
   declare offW: boolean
   declare opacity: number
+  opacityEnd?: number | undefined
 
   toJSON(): UnknownRecord {
     const { assetId, label } = this

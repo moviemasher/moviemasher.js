@@ -16,9 +16,9 @@
     ]
   },
   "include": [
-    "src/**/*", "src/*", 
+    "./src/**/*", "./src/*", "./src/utility/*.ts"
     
-  
+
   ],
   "exclude": [
     "**/dist/*",

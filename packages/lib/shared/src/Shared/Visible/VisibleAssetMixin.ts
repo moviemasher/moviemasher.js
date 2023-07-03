@@ -43,6 +43,8 @@ T & Constrained<VisibleAsset> {
         const { data } = probing
         const { width, height } = data
         if (isAboveZero(width) && isAboveZero(height)) return { width, height }
+      } else {
+        console.log(this.constructor.name, 'sourceSize no probing', probing, this.decodings.length)
       }
       return undefined
     }

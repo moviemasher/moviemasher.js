@@ -5,7 +5,7 @@ import type { LoadType } from "@moviemasher/runtime-shared"
 import { assertLoadType } from '../../Setup/LoadType.js'
 import { isPopulatedString } from "@moviemasher/runtime-shared"
 import { PropertiedClass } from "../PropertiedClass.js"
-import { TypeSequence } from "../../Setup/EnumConstantsAndFunctions.js"
+import { TypeSequence } from '../../Setup/TypeConstants.js'
 import { TypeImage } from "@moviemasher/runtime-shared"
 
 export class RequestableClass extends PropertiedClass implements Requestable {

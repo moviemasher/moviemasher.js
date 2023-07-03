@@ -1,6 +1,5 @@
 import type {DecodePlugin} from './Decode/Decode.js'
 import type {EncodePlugin} from './Encode/Encode.js'
-import type {MasherPlugin} from './Masher/Masher.js'
 import type {Plugin, PluginDataOrError, PluginType, DecodeType, EncodeType, MasherType, ProtocolType, TranscodeType} from '@moviemasher/runtime-shared'
 import type {ProtocolPlugin} from './Protocol/Protocol.js'
 import type {EndpointRequest} from '@moviemasher/runtime-shared'
@@ -9,9 +8,10 @@ import type {TranscodePlugin} from './Transcode/Transcode.js'
 import {DefaultRequest} from '../Helpers/Request/RequestConstants.js'
 import {error, errorPromise, errorThrow} from '@moviemasher/runtime-shared'
 import {ErrorName} from '@moviemasher/runtime-shared'
-import {isDefiniteError} from '../Shared/SharedGuards.js'
+import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { isBoolean, isObject, isPopulatedString } from "@moviemasher/runtime-shared"
 import { Runtime } from '../Runtime/Runtime.js'
+import { MasherPlugin } from './MasherPlugin.js'
 
 export const isPlugin = (value: any): value is Plugin => {
   return isObject(value) && 'type' in value && isPopulatedString(value.type)

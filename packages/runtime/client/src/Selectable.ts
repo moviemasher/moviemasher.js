@@ -10,8 +10,4 @@ export interface Selectable {
 
 export type Selectables = Selectable[]
 
-export type SelectableRecord = {
-  [index in SelectorType]?: Selectable
-}
-
 export interface SelectorTypesObject extends Record<string, SelectorType[]> {}

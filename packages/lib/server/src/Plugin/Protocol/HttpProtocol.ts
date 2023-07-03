@@ -4,25 +4,25 @@ import https from 'https'
 import path from 'path'
 
 import { 
-  ProtocolDataOrError,
-  ClientImage, ClientAudio, ClientFont, 
-  ClientVideo,  StringData, assertEndpoint,  
+  ProtocolDataOrError, StringData, assertEndpoint,  
 } from "@moviemasher/lib-shared"
 import {
   TypeProtocol, ProtocolHttp, ProtocolHttps, urlFilename, TextExtension, 
-  isDefiniteError, 
+  
   assertPopulatedString,
   Runtime,
 } from "@moviemasher/lib-shared"
 import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment.js'
 import { requestArgs, requestArgsHash } from '../../Utility/Request.js'
 import { 
-  LoadType, FontType, StringType, AudioType, DataOrError, EndpointRequest, ImageType, 
+  isDefiniteError, LoadType, FontType, StringType, AudioType, DataOrError, EndpointRequest, ImageType, 
   JsonRecord, JsonRecords, VideoType, RecordsType, RecordType, DotChar, ErrorName, error, errorCaught, isPopulatedString, 
 } from '@moviemasher/runtime-shared'
 
 import { 
-} from '@moviemasher/runtime-shared'
+  ClientImage, ClientAudio, ClientFont, 
+  ClientVideo, 
+} from '@moviemasher/runtime-client'
 
 
 interface FileAndMimetype { 
@@ -32,7 +32,6 @@ interface FileAndMimetype {
   extOk: boolean
 }
 
-
 const requestExtension = (request: EndpointRequest): string => {
   const { endpoint } = request
   assertEndpoint(endpoint)
@@ -41,8 +40,6 @@ const requestExtension = (request: EndpointRequest): string => {
   const last = pathname.split(DotChar).pop() || ''
   return last.trim()
 }
-
-
 
 const temporaryExtension = TextExtension
 const filePromise = (request: EndpointRequest, type: LoadType): Promise<DataOrError<FileAndMimetype>> => {

@@ -1,14 +1,10 @@
 import type { DataOrError } from '@moviemasher/runtime-shared'
+import type { ClientAudioEvent, ClientAudioDataOrError } from '@moviemasher/runtime-client'
 
-import { MovieMasher } from '@moviemasher/runtime-client'
-import type { ClientAudioEvent } from '../../Helpers/ClientMedia/ClientMediaEvents.js'
-import { errorCaught, errorPromise } from '@moviemasher/runtime-shared'
-import { isDefiniteError } from '../../Shared/SharedGuards.js'
-import { ClientAudioDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
-import { EndpointRequest } from '@moviemasher/runtime-shared'
+import { isDefiniteError, errorCaught, errorPromise, EndpointRequest, ErrorName } from '@moviemasher/runtime-shared'
+import { EventTypeClientAudio, MovieMasher } from '@moviemasher/runtime-client'
+
 import { requestUrl } from '../request/request.js'
-import { ErrorName } from '@moviemasher/runtime-shared'
-
 
 let _context: AudioContext | undefined = undefined
 
@@ -59,4 +55,4 @@ const AudioListener = (event: ClientAudioEvent) => {
   detail.promise = requestAudioPromise(request)
 }
 
-MovieMasher.eventDispatcher.addDispatchListener('clientaudio', AudioListener)
+MovieMasher.eventDispatcher.addDispatchListener(EventTypeClientAudio, AudioListener)

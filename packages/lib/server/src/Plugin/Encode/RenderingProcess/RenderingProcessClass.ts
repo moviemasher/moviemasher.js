@@ -5,7 +5,9 @@ import {
   CommandInput, CommandInputs,
   CommandFilters,
   ServerMashAsset, 
-   VideoOutputOptions, OutputOptions, assertPopulatedString, outputOptions, StringDataOrError, isDefiniteError, StringData, sizeCopy, 
+   VideoOutputOptions, OutputOptions, assertPopulatedString, outputOptions, StringDataOrError, 
+   
+   StringData, 
 } from '@moviemasher/lib-shared'
 import type { 
   CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, 
@@ -31,7 +33,7 @@ import { Probe } from '../../../Command/Probe/Probe.js'
 import { runningCommandInstance } from '../../../RunningCommand/RunningCommandFactory.js'
 import { RenderingOutputClass } from '../RenderingOutputClass.js'
 import { 
- ErrorName, TypeImage, TypeVideo, errorThrow 
+ isDefiniteError, ErrorName, TypeImage, TypeVideo, errorThrow 
 } from '@moviemasher/runtime-shared'
 
 export type RenderingProcessConcatFileDuration = [string, number]
@@ -222,17 +224,17 @@ export class RenderingProcessClass implements RenderingProcess {
     return this._id = this.args.id || idGenerateString()
   }
 
-  private _mashMedia?: ServerMashAsset
+  private _mashAsset?: ServerMashAsset
   
-  private get mashMedia(): ServerMashAsset {
-    if (this._mashMedia) return this._mashMedia
+  private get mashAsset(): ServerMashAsset {
+    if (this._mashAsset) return this._mashAsset
 
     // const { args } = this // , outputOptions
     const assetManager = MovieMasher.assetManager
     const { mash } = this.args
     // const size = sizeAboveZero(outputOptions) ? outputOptions : SizeZero
     const array = assetManager.define(mash) as ServerMashAsset[]
-    return this._mashMedia = array[0]
+    return this._mashAsset = array[0]
   }
 
 
@@ -287,7 +289,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const directoryPromise = this.directoryPromise()
     const renderingOutputPromise = directoryPromise.then(() => {
       const { cacheDirectory } = this.args
-      const { outputOptions, encodingType, mashMedia: mash } = this
+      const { outputOptions, encodingType, mashAsset: mash } = this
       const args: RenderingOutputArgs = { 
         encodingType, outputOptions, cacheDirectory, mash 
       }

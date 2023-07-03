@@ -1,6 +1,6 @@
 import { Constrained } from '@moviemasher/runtime-shared'
 import { VisibleAsset } from '@moviemasher/runtime-shared'
-import { ClientVisibleAsset } from '../Asset/ClientAssetTypes.js'
+import { ClientVisibleAsset } from '@moviemasher/runtime-client'
 import { ClientAsset } from "@moviemasher/runtime-client"
 
 export function ClientVisibleAssetMixin

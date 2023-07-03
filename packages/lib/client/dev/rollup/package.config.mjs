@@ -10,7 +10,6 @@ const typescriptConfig = {
   cacheRoot: `${projectDir}/node_modules/.cache/rollup-plugin-typescript2`,
   tsconfigOverride: { 
     compilerOptions: { rootDir, declaration, declarationMap: declaration },
-    include: [`${rootDir}/*.ts`],
   },
   tsconfig: `./tsconfig.json`,
 }
@@ -24,7 +23,7 @@ export default {
     dir: 'dist'
   },
   context: 'globalThis.window',
-  external: [/moviemasher/, /lit/, /tslib/],
+  external: [/@moviemasher/, /^@?lit/],
   plugins: [ 
     typescript(typescriptConfig),
   ],

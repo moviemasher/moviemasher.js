@@ -1,20 +1,27 @@
-import type { AssetEventDetail, AssetObject, AssetObjects, AssetType, MovieMasherRuntime } from '@moviemasher/runtime-shared'
+import type { AssetEventDetail, AssetObject, AssetObjects, MovieMasherRuntime } from '@moviemasher/runtime-shared'
+
 import type { ServerAsset, ServerAssets } from './ServerAsset.js'
 import type { ServerAssetManager } from './ServerAssetManager.js'
 
-import { AssetManagerClass } from '@moviemasher/runtime-shared'
+import { AssetManagerClass, EventTypeAsset } from '@moviemasher/runtime-shared'
+
 import { ServerEventDispatcher } from './ServerEventDispatcher.js'
-import { MovieMasherServerRuntime } from './declarations.js'
+
+export interface MovieMasherServerRuntime extends MovieMasherRuntime {
+  assetManager: ServerAssetManager
+}
 
 export class ServerAssetManagerClass extends AssetManagerClass implements ServerAssetManager {
   protected override asset(object: AssetObject): ServerAsset {
     const detail: AssetEventDetail = { assetObject: object }
-    const event = new CustomEvent('asset', { detail })
+    const event = new CustomEvent(EventTypeAsset, { detail })
     MovieMasher.eventDispatcher.dispatch(event)
     const { asset } = event.detail
     return asset as ServerAsset
   }
-
+  
+  protected context = 'server'
+  
   override define(media: AssetObject | AssetObjects): ServerAssets {
     return super.define(media) as ServerAssets
   }
@@ -28,9 +35,8 @@ export class ServerAssetManagerClass extends AssetManagerClass implements Server
   }
 }
 
-
 export const MovieMasher: MovieMasherServerRuntime = {
   eventDispatcher: new ServerEventDispatcher(),
   assetManager: new ServerAssetManagerClass(),
-  masher: {}
+  options: {},
 }

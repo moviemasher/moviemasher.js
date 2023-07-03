@@ -1,10 +1,10 @@
-import type { Lock } from '@moviemasher/runtime-shared'
+import type { Lock, Size, Rect } from '@moviemasher/runtime-shared'
+
+import { isNumber, isObject, errorThrow } from '@moviemasher/runtime-shared'
+
 import { isAboveZero } from '../Shared/SharedGuards.js'
-import { isNumber, isObject } from "@moviemasher/runtime-shared"
-import { errorThrow } from '@moviemasher/runtime-shared'
 import { EqualsChar, SemicolonChar } from '../Setup/Constants.js'
-import { LockHeight, LockWidth, LockNone } from '../Setup/EnumConstantsAndFunctions.js'
-import { Size } from '@moviemasher/runtime-shared'
+import { LockHeight, LockWidth, LockNone } from '../Setup/LockConstants.js'
 
 
 
@@ -136,3 +136,16 @@ export const sizeFromElement = (element: Element): Size => {
   assertSizeAboveZero(size, 'sizeFromElement')
   return size
 }
+
+export const sizeSvgD = (size: Size): string => {
+  const { width, height } = size
+  return rectSvgD({ x: 0, y: 0, width, height })
+}
+
+const rectSvgD = (rect: Rect): string => {
+  const { x, y, width, height } = rect
+  const x2 = x + width
+  const y2 = y + height
+  return `M${x},${y}L${x2},${y}L${x2},${y2}L${x},${y2}Z`
+}
+

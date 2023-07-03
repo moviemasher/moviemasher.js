@@ -4,7 +4,7 @@ import type { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, C
 import type { GraphFile, GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server";
 import type { PreloadArgs, Size, Value } from "@moviemasher/runtime-shared";
 import type { IntrinsicOptions } from '@moviemasher/runtime-shared';
-import type { Tweening } from '../Helpers/TweenFunctions.js';
+import type { Tweening } from '../Helpers/Tween/Tweening.js';
 import { AudibleInstance, Instance, VisibleInstance } from '@moviemasher/runtime-shared';
 
 export interface ServerInstance extends Instance {

@@ -1,5 +1,5 @@
 import { errorThrow } from '@moviemasher/runtime-shared'
-import { ClientClip, ClientTrack, ClientMashAsset, ClientMashInstance } from './ClientMashTypes.js'
+import { ClientClip, ClientTrack, ClientMashAsset, ClientMashInstance } from '@moviemasher/runtime-client'
 import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
 import { isTrack } from '../../Shared/Mash/Track/TrackGuards.js'
 import { isInstance } from '../../Shared/Instance/InstanceGuards.js'
@@ -23,6 +23,9 @@ export function assertClientMashInstance(value: any, name?: string): asserts val
 
 export const isClientClip = (value: any): value is ClientClip => {
   return isClip(value) && 'clipIcon' in value;
+}
+export function assertClientClip(value: any, name?: string): asserts value is ClientClip {
+  if (!isClientClip(value)) errorThrow(value, 'ClientClip', name)
 }
 
 export const isClientTrack = (value: any): value is ClientTrack => {

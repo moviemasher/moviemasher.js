@@ -1,5 +1,5 @@
 import type { 
-  ClientImage, ClientAudio, ClientFont, ClientVideo} from '../../Helpers/ClientMedia/ClientMedia.js'
+  ClientImage, ClientAudio, ClientFont, ClientVideo} from '@moviemasher/runtime-client'
 import type { DataOrError, Data } from "@moviemasher/runtime-shared"
 import type { FontType, RecordsType, RecordType } from "@moviemasher/runtime-shared"
 import type { AudioType, ImageType, VideoType } from '@moviemasher/runtime-shared'

@@ -1,3 +1,3 @@
 
 export * from './ContentConstants.js'
-export * from './ContentFunctions.js'
+export * from './ContentGuards.js'

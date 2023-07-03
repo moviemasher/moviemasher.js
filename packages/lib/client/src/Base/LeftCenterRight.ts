@@ -1,10 +1,10 @@
+import type { CSSResultGroup } from 'lit'
 import type { 
   Content, Contents, Htmls, OptionalContent, LeftSlot, RightSlot, CenterSlot
 } from '../declarations.js'
 
-import { css } from 'lit'
-import { html } from 'lit'
-import { property } from 'lit/decorators/property.js'
+import { css } from '@lit/reactive-element/css-tag.js'
+import { html } from 'lit-html/lit-html.js'
 
 import { Slotted } from './Slotted.js'
 import { Component } from './Component.js'
@@ -23,24 +23,28 @@ export class LeftCenterRight extends Slotted {
   }
 
   protected centerContent(htmls: Htmls): OptionalContent { 
-    this.importTags('movie-masher-span')
-    return html`<movie-masher-span 
+    this.importTags('movie-masher-component-span')
+    return html`<movie-masher-component-span 
       part='${CenterSlot}' slotted='${CenterSlot}' class='${CenterSlot}'
-    >${htmls}</movie-masher-span>` 
+    >${htmls}</movie-masher-component-span>` 
   }
 
   protected leftContent(htmls: Htmls): OptionalContent { 
-    this.importTags('movie-masher-span')
-    return html`<movie-masher-span
+    if (!htmls.length) return
+
+    this.importTags('movie-masher-component-span')
+    return html`<movie-masher-component-span
       part='${LeftSlot}' slotted='${LeftSlot}' class='${LeftSlot}'
-    >${htmls}</movie-masher-span>` 
+    >${htmls}</movie-masher-component-span>` 
   }
   
   protected rightContent(htmls: Htmls): OptionalContent { 
-    this.importTags('movie-masher-span')
-    return html`<movie-masher-span 
+    if (!htmls.length) return
+    
+     this.importTags('movie-masher-component-span')
+    return html`<movie-masher-component-span 
       part='${RightSlot}' slotted='${RightSlot}' class='${RightSlot}'
-    >${htmls}</movie-masher-span>` 
+    >${htmls}</movie-masher-component-span>` 
   }
   
   override slots = [LeftSlot, CenterSlot, RightSlot]
@@ -56,61 +60,123 @@ export class LeftCenterRight extends Slotted {
    :host {
       --padding: var(--section-padding);
       --spacing: var(--section-spacing);
-      --back: var(--section-back);
-      --fore: var(--section-fore);
+  
     }
   `
   static cssSection = css`
     header, footer, div {
       padding: 0;
       flex-grow: 1;
-      display: grid;
-      grid-template-columns: min-content 1fr min-content;
+      display: flex;
     }
 
 
     header, footer {
       --padding: 0;
       gap: var(--spacing);
-      background-color: var(--back);
-      color: var(--fore);
       line-height: var(--icon-size);
       font-size: var(--icon-size);
       /* border: 1px solid yellow; */
     }
-    .right {
-      text-align: right;
-      /* background-color: pink; */
-    }
+  
 
     header > .left,
     footer > .left,
     div > .left {
-      /* background-color: yellow; */
+      flex-grow: 0;
       display: flex;
     }
  
   `
-  static override styles = [
-    Component.cssHostFlex,
-    Component.cssDivFlex,
-    this.cssHostSection,
-    this.cssSection,
-  ]
+
+  static cssDiv = css`div { 
+    padding: 0;
+    display: flex; 
+    flex-grow: 1; 
+    background-color: var(--div-back);
+    color: var(--div-fore);
+  }`
+
+
+  static cssDivLeft = css`
+    .left {
+      flex-grow: 0;
+      display: flex;
+      border-right-width: var(--border-size);
+      border-right-color: var(--section-back);
+      border-right-style: solid;
+      align-items: flex-start;
+      --flex-direction: column;
+    }
+  `
+  static cssDivCenter = css`
+    .center {
+      flex-grow: 1;
+      padding: var(--content-padding);
+    }
+  `
+
+  static cssDivRight = css`
+    .right {
+      flex-grow: 0;
+      display: flex;
+      border-right-width: var(--border-size);
+      border-right-color: var(--section-back);
+      border-right-style: solid;
+    }
+  `
+  static cssHeader = css`header { 
+    padding: 0;
+    display: flex; 
+    flex-grow: 1; 
+    background-color: var(--section-back);
+    color: var(--section-fore);
+    gap: var(--spacing);
+    line-height: var(--icon-size);
+    font-size: var(--icon-size);
+  }`
+
+  static cssFooter = css`footer { 
+    padding: 0;
+    display: flex; 
+    flex-grow: 1; 
+    background-color: var(--section-back);
+    color: var(--section-fore);
+    gap: var(--spacing);
+    line-height: var(--icon-size);
+    font-size: var(--icon-size);
+  }`
+
+  static cssCenter = css`
+    .center {
+      flex-grow: 1;
+    }
+  `
+
+  static cssLeft = css`
+    .left {
+      flex-grow: 0;
+    }
+  `
+  static cssRight = css`
+    .right {
+      flex-grow: 0;
+    }
+  `
 }
 
 export class Header extends LeftCenterRight {
-  @property() icon = ''
+  icon = ''
   override leftContent(slots: Htmls): OptionalContent {
     const slotsCopy = [...slots]
     const { icon } = this
     if (icon) {
-      this.importTags('movie-masher-icon')
+      this.importTags('movie-masher-component-icon')
       slotsCopy.push(
-        html`<movie-masher-icon 
+        html`<movie-masher-component-icon 
           part='icon' slotted='icon'
           icon='${icon}'
-        ></movie-masher-icon>`
+        ></movie-masher-component-icon>`
       )
     }
     return super.leftContent(slotsCopy)
@@ -118,28 +184,52 @@ export class Header extends LeftCenterRight {
 
   protected override content(contents: Contents): Content {
     return html`<header 
-      @connection='${this.connectionHandler}'
       @slotted='${this.slottedHandler}'
     >${contents}</header>`
   }
+
+
+  static override properties = {
+    ...LeftCenterRight.properties,
+    icon: { type: String }
+  }
+
+  static override styles: CSSResultGroup = [
+    Component.cssHostFlex,
+    LeftCenterRight.cssHeader,
+    LeftCenterRight.cssLeft,
+    LeftCenterRight.cssRight,
+  ]
 }
 
 export class Footer extends LeftCenterRight {
   protected override content(contents: Contents): Content {
     return html`<footer 
-      @connection='${this.connectionHandler}'
       @slotted='${this.slottedHandler}'
     >${contents}</footer>`
   }
+
+  static override styles: CSSResultGroup = [
+    Component.cssHostFlex,
+    LeftCenterRight.cssFooter,
+    LeftCenterRight.cssLeft,
+    LeftCenterRight.cssRight,
+  ]
 }
 
 
 export class Div extends LeftCenterRight {
   protected override content(contents: Contents): Content {
     return html`<div 
-      @connection='${this.connectionHandler}'
       @slotted='${this.slottedHandler}'
     >${contents}</div>`
   }
+  static override styles: CSSResultGroup = [
+    Component.cssHostFlex,
+    LeftCenterRight.cssDiv,
+    LeftCenterRight.cssDivLeft,
+    LeftCenterRight.cssDivCenter,
+    LeftCenterRight.cssDivRight,
+  ]
 }
 

@@ -17,26 +17,28 @@ export function VisibleInstanceMixin
 <T extends Constrained<Instance>>(Base: T): 
 T & Constrained<VisibleInstance> {
   return class extends Base implements VisibleInstance {
-    constructor(...args: any[]) {
-      super(...args)
-      const [object] = args
-      const { container } = object as VisibleInstanceObject
-      const min = container ? 0.0 : 1.0
-      this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'width', type: DataTypePercent, 
-        group: DataGroupSize, defaultValue: 1.0, max: 2.0, min
-      }))
-      this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'height', type: DataTypePercent, 
-        group: DataGroupSize, defaultValue: 1.0, max: 2.0, min
-      }))
-    }
-    
     colorMaximize = true
 
     declare asset: VisibleAsset
 
     hasIntrinsicSizing = true
+
+    initializeProperties(object: VisibleInstanceObject): void {
+      const { container } = object 
+      const hasDimensions = container || !this.isDefault
+      if (hasDimensions) {
+        const min = container ? 0.0 : 1.0
+        this.addProperties(object, propertyInstance({
+          tweenable: true, name: 'width', type: DataTypePercent, 
+          group: DataGroupSize, defaultValue: 1.0, max: 2.0, min
+        }))
+        this.addProperties(object, propertyInstance({
+          tweenable: true, name: 'height', type: DataTypePercent, 
+          group: DataGroupSize, defaultValue: 1.0, max: 2.0, min
+        }))
+      }
+      super.initializeProperties(object)
+    }
 
     intrinsicRect(editing = false): Rect {
       const key = editing ? 'previewSize' : 'sourceSize'
@@ -57,6 +59,7 @@ T & Constrained<VisibleInstance> {
     }
 
     itemContentRect(containerRect: Rect, time: Time): Rect {
+      console.log(this.constructor.name, 'itemContentRect', containerRect)
       const timeRange = this.clip.timeRange
 
       const contentArgs: ContentRectArgs = {

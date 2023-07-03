@@ -1,4 +1,4 @@
-import type { InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
+import type { EventDispatcherListenerRecord, InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
 import type { MashAssetObject, MashAsset, MashInstance } from '@moviemasher/runtime-shared'
 
 import { AssetClass } from '../Asset/AssetClass.js'
@@ -10,8 +10,7 @@ import type { Track, TrackArgs } from '@moviemasher/runtime-shared'
 import type { Encodings } from '@moviemasher/runtime-shared'
 import type { Size } from '@moviemasher/runtime-shared'
 
-import {
-  DurationNone, DurationUnknown} from "../../Setup/EnumConstantsAndFunctions.js"
+import { DurationNone, DurationUnknown } from '../../Setup/DurationConstants.js'
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from "../../Setup/AVTypeConstants.js"
 import { DataTypeRgb } from "../../Setup/DataTypeConstants.js"
 import {
@@ -168,19 +167,13 @@ export class MashAssetClass extends AssetClass implements MashAsset {
     return { ...super.instanceArgs(object), asset: this, assetId: this.id }
   }
 
-  // declare loading: boolean
-  
+  protected listeners: EventDispatcherListenerRecord = {}
+
   loop = false
 
   declare media: AssetManager
   
-
   quantize = Default.mash.quantize
-
-
-  _rendering = ''
-
-
 
   source = SourceMash
 

@@ -9,9 +9,12 @@ import {
   timeFromArgs, timeRangeFromArgs, isClipObject, 
   TrackClass, AssetCollection, 
   fontDefault,
-  TextContainerId, ImageType, TypeFont, 
+  ImageType, TypeFont, 
 } from "@moviemasher/lib-shared"
 
+
+// TODO: create a text container asset
+const TextContainerId = 'text-container-id'
 
 describe("Mash Asset", () => {
   const media = new AssetCollection()

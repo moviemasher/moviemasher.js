@@ -1,13 +1,13 @@
 import type { EndpointRequest } from '@moviemasher/runtime-shared'
-import type { ClientImageDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
+import type { ClientImageDataOrError } from '@moviemasher/runtime-client'
 
-import { MovieMasher } from '@moviemasher/runtime-client'
+import { MovieMasher, EventTypeClientImage } from '@moviemasher/runtime-client'
 
 import { errorCaught, errorPromise } from '@moviemasher/runtime-shared'
 import { ErrorName } from '@moviemasher/runtime-shared'
 import { ProtocolBlob } from '../../Plugin/Protocol/Protocol.js'
 import { requestUrl } from '../request/request.js'
-import { ClientImageEvent } from '../../Helpers/ClientMedia/ClientMediaEvents.js'
+import { ClientImageEvent } from '@moviemasher/runtime-client'
 
 
 export const requestImagePromise = (request: EndpointRequest): Promise<ClientImageDataOrError> => {
@@ -48,4 +48,4 @@ const ImageListener = (event: ClientImageEvent) => {
   detail.promise = requestImagePromise(request)
 }
 
-MovieMasher.eventDispatcher.addDispatchListener('clientimage', ImageListener)
+MovieMasher.eventDispatcher.addDispatchListener(EventTypeClientImage, ImageListener)

@@ -1,15 +1,13 @@
 import type { 
-  Htmls, Content, Contents, ConnectionEvent, ConnectionEventDetail 
+  Htmls, Content, Contents, ConnectionEventDetail 
 } from '../declarations'
 
-import { html } from 'lit'
-import { queryAssignedElements } from 'lit/decorators/query-assigned-elements.js'
-import { eventOptions } from 'lit/decorators/event-options.js'
-import { ifDefined } from 'lit/directives/if-defined.js'
-import { property } from 'lit/decorators/property.js'
+import { html } from 'lit-html/lit-html.js'
+import { ifDefined } from 'lit-html/directives/if-defined.js'
 
-import { Importer } from './Importer'
+import { ImporterComponent } from './ImporterComponent'
 import { Component } from './Component'
+// import { Component } from './Component'
 
 export type SlottedEvent = CustomEvent<SlottedEventDetail>
 
@@ -18,84 +16,24 @@ export interface SlottedEventDetail {
   paths: Set<string>
 }
 
-export class Slotted extends Importer {
-  @queryAssignedElements()
-  protected assignedElements!: Array<HTMLElement>
-
-  private childAdded(child: Element) {
-    let slotted = child.getAttribute('slotted') || ''
-
-    if (!slotted) {
-      // console.log(this.tagName, 'childAdded', 'NO SLOTTED', child.tagName)
-      slotted = child.tagName.split('-').pop()!.toLowerCase()
-      child.setAttribute('slotted', slotted)
-    }
-
-    const { childrenBySlot } = this
-    if (childrenBySlot.has(slotted) && childrenBySlot.get(slotted) !== child) {
-      // console.log(this.tagName, 'childAdded', 'ALREADY EXISTS', slotted, child.tagName)
-      const count = Object.keys(this.childrenBySlot).filter(key => key.startsWith(slotted)).length
-      slotted = `${slotted}${count}`
-      child.setAttribute('slotted', slotted)
-    }
-
-
-    // console.log(this.tagName, 'childAdded', slotted, child.tagName)
-    if (!this.slots.includes(slotted)) {
-      // console.log(this.tagName, 'childAdded', 'ADDING TO SLOTS', slotted, this.slots)
-
-      this.slots.push(slotted)
-    }
-    this.childrenBySlot.set(slotted, child)
+export class Slotted extends ImporterComponent {
+  constructor() {
+    super()
+    this.slotted = ''
   }
-
-  private childRemoved(child: Element) { 
-    const { childrenBySlot } = this
-    const slotted = child.getAttribute('slotted')
-    
-    if (!(slotted && childrenBySlot.has(slotted))) return
-
-    // console.log(this.tagName, 'childRemoved', slotted, child.tagName)
-    this.childrenBySlot.delete(slotted)
-   
-  }
-
-  private get childElements(): Element[] {
-    return Array.from(this.childrenBySlot.values())
-  }
-
-  private get childSlotteds(): Slotted[] {
-    return this.childElements.filter<Slotted>((child): child is Slotted => 
-      child instanceof Slotted
-    )
-  }
-
-  private get childComponents(): Component[] {
-    return this.childElements.filter<Component>((child): child is Component => 
-      child instanceof Component
-    )
-  }
-
 
   protected childrenBySlot = new Map<string, Element>()
 
-  protected connectionHandler(event: ConnectionEvent) {
-    const { target } = event
-    // console.log(this.tagName, 'connectionHandler', (target! as Element).tagName)
-    if (target instanceof Element) {
-      const { detail } = event
-      const { connected, handled } = detail
-      if (!handled) {
-        if (connected) this.childAdded(target)
-        else this.childRemoved(target)
-        detail.handled = true
-        // event.stopPropagation()
-      }
-      this.requestUpdate('exportParts')
-    } else {
-      // console.log(this.tagName, 'connectionHandler NOT SLOTTED')
+  override connectedCallback() {
+    const { parentElement, slots } = this
+    if (parentElement && parentElement.isConnected && !parentElement.tagName.toLowerCase().startsWith('movie-masher')) {
+      // console.log(this.tagName, 'connectedCallback', this.slotted, this.slots, parentElement.tagName)
+      this.dispatchConnection(true)
     }
-  }
+    else console.debug(this.constructor.name, 'connectedCallback without slots', slots.length, parentElement?.tagName)
+    super.connectedCallback()
+  }  
+  
 
   protected override get defaultContent(): Content | void { 
     const rendereds: Contents = []
@@ -114,10 +52,11 @@ export class Slotted extends Importer {
         if (!passed) slots.length = 0
 
         slots.push(html`<slot 
+          @slotchange='${this.slotChangeHandler}'
           name='${name}' 
           slot='${ifDefined(passed)}' 
-          @slotchange='${this.slotChangeHandler}'
         ></slot>`)
+   
         return !passed
       })
       if (terminated && slots.length) rendereds.push(...slots)
@@ -133,52 +72,46 @@ export class Slotted extends Importer {
     return html`${slot}${slots}`
   }
 
-  @property({ reflect: true, type: String })
-  get exportParts(): string | undefined {
-    const { slotted: mySlot } = this
-    if (!mySlot) return undefined
-
-    const { childSlotteds } = this
-    if (!childSlotteds.length) return undefined
-
-    const childrenExports = childSlotteds.flatMap(child => {
-      const { exportParts, slotted: childSlot } = child 
-      const exported = [[childSlot, [mySlot, childSlot].join('-')].join(':')]
-      if (exportParts) {
-        const reexported = exportParts.split(',').map(exportPart => {
-          const [_childPart, childExportedPart] = exportPart.split(':')
-          const exportedAs = [mySlot, childExportedPart].join('-')
-          return [childExportedPart, exportedAs].join(':')
-        })
-        exported.push(...reexported)
-      }
-      return exported
-    })
-    return childrenExports.join(',') 
+  override disconnectedCallback() {
+    const { parentElement, slots } = this
+    if (slots.length, parentElement && parentElement.isConnected) {
+      this.dispatchConnection(false)
+    }
+    super.disconnectedCallback()
   }
 
-  override async getUpdateComplete(): Promise<boolean> {
-    // console.debug(this.tagName, 'getUpdateComplete')
-    return super.getUpdateComplete().then(complete => {
-// return true
-      if (!complete) return false
+  protected dispatchConnection(connected: boolean) {
+    const detail = { connected, handled: false }
+    const init: CustomEventInit<ConnectionEventDetail> = { 
+      detail, composed: true, bubbles: true, cancelable: true
+    }
+    const event = new CustomEvent<ConnectionEventDetail>('connection', init)
+    this.dispatchEvent(event)
+  }
 
-      const { childComponents } = this
 
-      if (!childComponents.length) {
-        // console.log(this.tagName, 'getUpdateComplete NO childrenBySlot')
-        return true
-      }
+  // override async getUpdateComplete(): Promise<boolean> {
+  //   // console.debug(this.tagName, 'getUpdateComplete')
+  //   return super.getUpdateComplete().then(complete => {
+  //     // return true
+  //     if (!complete) return false
+
+  //     const { childComponents } = this
+
+  //     if (!childComponents.length) {
+  //       // console.log(this.tagName, 'getUpdateComplete NO childrenBySlot')
+  //       return true
+  //     }
       
-      const promises = childComponents.map(child => child.updateComplete)
-      // console.debug(this.tagName, this.slotted, 'getUpdateComplete...', promises.length)
-      return Promise.all(promises).then(results => {
-        const completed = results.every(Boolean)
-        console.debug(this.tagName, 'getUpdateComplete!', completed, Importer.importFinished, results.length)
-        return completed && Importer.importFinished
-      })
-    })
-  }
+  //     const promises = childComponents.map(child => child.updateComplete)
+  //     // console.debug(this.tagName, this.slotted, 'getUpdateComplete...', promises.length)
+  //     return Promise.all(promises).then(results => {
+  //       const completed = results.every(Boolean)
+  //       console.debug(this.tagName, 'getUpdateComplete!', completed, ImporterComponent.importFinished, results.length)
+  //       return completed && ImporterComponent.importFinished
+  //     })
+  //   })
+  // }
 
   private get slotsAndPaths(): SlottedEventDetail {
     const detail: SlottedEventDetail = { 
@@ -192,10 +125,13 @@ export class Slotted extends Importer {
     this.slottedHandler(event)
     return detail
   }
-  @eventOptions({ capture: true })
-  private slotChangeHandler() { 
-    // console.debug(this.tagName, 'onSlotChanged')
-    this.importElements(this.assignedElements) 
+
+  private slotChangeHandler(event: Event) { 
+    const { target } = event
+    if (!(target instanceof HTMLSlotElement)) return
+    const { children } = target
+    console.debug(this.tagName, 'onSlotChanged', children.length)
+    this.importElements(Array.from(children))
   }
 
   protected slottedHandler(event: SlottedEvent) {
@@ -222,35 +158,12 @@ export class Slotted extends Importer {
     return valid
   }
 
-  @property()
-  slotted = ''
+  declare slotted?: string
 
   protected slots: string[] = []
 
-  override connectedCallback() {
-   const { parentElement, slots } = this
-    if (parentElement && parentElement.isConnected && !parentElement.tagName.toLowerCase().startsWith('movie-masher')) {
-      // console.log(this.tagName, 'connectedCallback', this.slotted, this.slots, parentElement.tagName)
-      this.dispatchConnection(true)
-    }
-    else console.debug(this.constructor.name, 'connectedCallback without slots', slots.length, parentElement?.tagName)
-    super.connectedCallback()
-  }  
-  
-  override disconnectedCallback() {
-    const { parentElement, slots } = this
-    if (slots.length, parentElement && parentElement.isConnected) {
-      this.dispatchConnection(false)
-    }
-    super.disconnectedCallback()
-  }
-
-  protected dispatchConnection(connected: boolean) {
-    const detail = { connected, handled: false }
-    const init: CustomEventInit<ConnectionEventDetail> = { 
-      detail, composed: true, bubbles: true, cancelable: true
-    }
-    const event = new CustomEvent<ConnectionEventDetail>('connection', init)
-    this.dispatchEvent(event)
+  static override properties = {
+    ...Component.properties,
+    slotted: { type: String },
   }
 }

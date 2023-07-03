@@ -1,10 +1,9 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { JestPreloader } from "../../../../images/tester/Utilities/JestPreloader.mjs"
 
 import { 
-  Default, EditorClass, Emitter, editorInstance, timeFromSeconds, assertMashMedia,
+  Default, EditorClass, editorInstance, timeFromSeconds, assertMashMedia,
   isClip, VideoType, idTemporary 
 } from "@moviemasher/lib-shared"
 
@@ -63,14 +62,6 @@ describe("Editor", () => {
       await editor.add(visibleDefaultJson, {})
       const [clip] = edited.tracks[0].clips
       assert(isClip(clip))
-    })
-  })
-
-  describe("eventTarget", () => {
-    test("returns Emitter instance", () => {
-      const editor = createEditor()
-      const { eventTarget } = editor
-      assert(eventTarget instanceof Emitter)
     })
   })
 

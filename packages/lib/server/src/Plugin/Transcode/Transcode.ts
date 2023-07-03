@@ -1,12 +1,10 @@
-import { 
-  MediaType, TranscodeOutput, 
-} from "@moviemasher/lib-shared"
+import { TranscodeOutput } from "@moviemasher/lib-shared"
 import { Input } from "../../Types/Core.js"
 import { MediaRequest } from "../../Media/Media.js"
-import { DefiniteError, Identified } from "@moviemasher/runtime-shared"
+import { DefiniteError, Identified, ImportType } from "@moviemasher/runtime-shared"
 
 export interface TranscodeInput extends Required<Input> {
-  type: MediaType
+  type: ImportType
 }
 
 

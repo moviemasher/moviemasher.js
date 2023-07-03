@@ -1,5 +1,4 @@
-import type { AssetType } from './AssetType.js'
-import type { FontType } from './LoadType.js'
+import type { ImportType } from './ImportType.js'
 import type { Requestable, RequestableObject } from './Requestable.js'
 
 export type SequenceType = 'sequence'
@@ -19,5 +18,5 @@ export interface Transcoding extends Requestable {
 
 export type Transcodings = Transcoding[]
 
-export type TranscodingType = AssetType | FontType | SequenceType | WaveformType
+export type TranscodingType = ImportType | SequenceType | WaveformType
 export type TranscodingTypes = TranscodingType[]

@@ -1,4 +1,4 @@
-import { MasherArgs } from '../Plugin/Masher/Masher.js'
+import { MasherArgs } from '@moviemasher/runtime-client'
 import { colorBlack } from '../Helpers/Color/ColorConstants.js'
 
 const DefaultMasherArgs: MasherArgs = {

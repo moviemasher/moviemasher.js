@@ -1,20 +1,18 @@
-import type { AssetPromiseEventDetail } from '@moviemasher/runtime-shared'
-import type { PropertyValues } from 'lit'
+import type { AssetObject } from '@moviemasher/runtime-shared'
 import type { ClientAsset } from '@moviemasher/runtime-client'
+import type { CSSResultGroup, PropertyValues } from 'lit'
 
-import type { Htmls, AssetObjectEventDetail } from '../declarations.js'
-import { isClientAsset } from '@moviemasher/lib-shared'
+import type { AssetObjectFromIdEventDetail, Htmls } from '../declarations.js'
 
-import { nothing } from 'lit'
-import { css, html } from 'lit'
-import { customElement } from 'lit/decorators/custom-element.js'
-import { property } from 'lit/decorators/property.js'
+import { css } from '@lit/reactive-element/css-tag.js'
 
+import { html } from 'lit-html/lit-html.js'
+import { nothing } from 'lit-html/lit-html.js'
+
+import { MovieMasher, EventTypeSelectAssetObject, isClientAsset, EventTypeAssetObjectFromId } from '@moviemasher/runtime-client'
 
 import { Component } from '../Base/Component.js'
-import { AssetObject } from '@moviemasher/runtime-shared'
 
-@customElement('movie-masher-selector-span')
 export class SelectorSpanElement extends Component {
   // override async getUpdateComplete(): Promise<boolean> {
   //   return super.getUpdateComplete().then(complete => {
@@ -37,11 +35,8 @@ export class SelectorSpanElement extends Component {
   //     // return clientAssetPromise.then(() => true)
   //   })
   // }
-  
-  @property({ attribute: 'asset-id' }) 
   assetId = ''
 
-  // @property({ attribute: false })
   icon?: SVGSVGElement | undefined
   
   private clientAsset?: ClientAsset | undefined
@@ -54,13 +49,7 @@ export class SelectorSpanElement extends Component {
     const { assetObject } = this
     if (!assetObject) return Promise.resolve(undefined)
 
-    const detail: AssetPromiseEventDetail = { assetObject }
-    const init: CustomEventInit<AssetPromiseEventDetail> = { 
-      detail, composed: true, bubbles: true, cancelable: true
-    }
-    this.dispatchEvent(new CustomEvent('asset-promise', init))
-    const { assetPromise } = detail
-    if (!assetPromise) return Promise.resolve(undefined)
+    const assetPromise = MovieMasher.assetManager.assetPromise(assetObject)
     
     return assetPromise.then(asset => { 
       if (!isClientAsset(asset)) return Promise.resolve(undefined)
@@ -93,20 +82,27 @@ export class SelectorSpanElement extends Component {
       return undefined
     }
 
-    const detail: AssetObjectEventDetail = { id: this.assetId }
-    const init: CustomEventInit<AssetObjectEventDetail> = { 
+    const detail: AssetObjectFromIdEventDetail = { id: this.assetId }
+    const init: CustomEventInit<AssetObjectFromIdEventDetail> = { 
       detail, composed: true, bubbles: true, cancelable: true
     }
-    this.dispatchEvent(new CustomEvent('asset-object', init))
-    const { mediaObject } = detail
-    if (mediaObject) {
-      console.log(this.tagName, 'mediaObjectInitialize MEDIA OBJECT', this.assetId)
+    const event = new CustomEvent(EventTypeAssetObjectFromId, init)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { assetObject } = detail
+    if (assetObject) {
+      // console.log(this.tagName, 'assetObjectInitialize OBJECT', this.assetId)
       // this.mediaRefresh(mediaObject)
     }
     else {
-      console.log(this.tagName, 'mediaObjectInitialize NO MEDIA OBJECT', this.assetId)
+      console.log(this.tagName, 'assetObjectInitialize NO OBJECT', this.assetId)
     }
-    return mediaObject
+    return assetObject
+  }
+
+  private handleClick() {
+    const detail = this.assetObject
+    const event = new CustomEvent(EventTypeSelectAssetObject, { detail })
+    MovieMasher.eventDispatcher.dispatch(event)
   }
 
   override render() { 
@@ -123,14 +119,14 @@ export class SelectorSpanElement extends Component {
     if (label) htmls.push(html`<label>${label}</label>`)
     if (icon) htmls.push(html`${icon}`)
 
-    return html`<div>${htmls}</div>`
+    return html`<div @click='${this.handleClick}'>${htmls}</div>`
   }
 
   override willUpdate(changedProperties: PropertyValues<this>) {
     if (changedProperties.has('assetId')) {
 
 
-      console.log(this.tagName, 'willUpdate assetId', this.assetId)
+      // console.log(this.tagName, 'willUpdate assetId', this.assetId)
 
 
       delete this.clientAsset
@@ -145,8 +141,12 @@ export class SelectorSpanElement extends Component {
     }
   }
 
+  static override properties = {
+    ...Component.properties,
+    assetId: { attribute: 'asset-id' }
+  }
 
-  static override styles = [css`
+  static override styles: CSSResultGroup = [css`
     :host {
       display: inline-block;
       position: relative;
@@ -172,3 +172,5 @@ export class SelectorSpanElement extends Component {
   `]
 }
 
+// register web component as custom element
+customElements.define('movie-masher-selector-span', SelectorSpanElement)

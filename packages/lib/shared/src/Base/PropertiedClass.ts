@@ -1,5 +1,5 @@
 import { Scalar, ScalarRecord, UnknownRecord } from '@moviemasher/runtime-shared'
-import { propertyTypeCoerce, propertyTypeValid } from '../Helpers/PropertyType.js'
+import { propertyTypeCoerce, propertyTypeValid } from './PropertyTypeFunctions.js'
 import { Property, Properties } from '@moviemasher/runtime-shared'
 import { assertObject, assertTrue } from '../Shared/SharedGuards.js'
 import { isUndefined } from "@moviemasher/runtime-shared"
@@ -11,10 +11,11 @@ export class PropertiedClass implements Propertied {
   [index: string]: unknown
 
   constructor(...args: any[]) { 
-    const [object] = args
-    assertObject(object, `${this.constructor.name}(object)`)
+    console.log(this.constructor.name, 'constructor', args)
+    // const [object] = args
+    // assertObject(object, `${this.constructor.name}(object)`)
 
-    this.initializeProperties(object)
+    // this.initializeProperties(object)
   }
 
   addProperties(object: any, ...properties: Properties) {

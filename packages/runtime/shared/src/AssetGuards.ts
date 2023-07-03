@@ -62,8 +62,8 @@ export function isAssetObject(value: any, type: undefined | AssetType = undefine
   return (
     isIdentified(value) 
     && isTyped(value) && isAssetType(value.type) 
+    && type === value.type
     && 'source' in value && isPopulatedString(value.source)
-    && (!type || type === value.type )
-    && (!source || source === value.source)
+    && source === value.source
   )
 }

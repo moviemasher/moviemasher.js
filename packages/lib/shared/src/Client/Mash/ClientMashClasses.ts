@@ -1,54 +1,58 @@
-import { MovieMasher } from '@moviemasher/runtime-client'
-import { AssetCacheArgs, CacheOptions, InstanceCacheArgs, Propertied, Property, Scalar, Size, Time, TimeRange, TypeAudio } from "@moviemasher/runtime-shared"
-import { Panel } from "../../Base/PanelTypes.js"
-import { ContainerRectArgs } from '@moviemasher/runtime-shared'
-import { assertContainerInstance } from '../../Helpers/Container/ContainerFunctions.js'
-import { errorThrow } from '@moviemasher/runtime-shared'
-import { ErrorName } from '@moviemasher/runtime-shared'
-import { SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
-import { PreviewItem, PreviewItems, SvgItems, SvgOrImage } from '../../Helpers/Svg/Svg.js'
-import { svgAppend, svgSetDimensions, svgSvgElement } from '../../Helpers/Svg/SvgFunctions.js'
+import type { Track, TrackArgs, TrackObject, ClipObject, ContainerRectArgs, AssetCacheArgs, CacheOptions, InstanceCacheArgs, Propertied, Property, Scalar, Size, Time, TimeRange, MashAssetObject } from '@moviemasher/runtime-shared'
+import type { ClientAssetManager, PreviewItem, PreviewItems, SvgItems, SvgOrImage, Selectables, TimeEvent, ClipOrFalseEvent } from '@moviemasher/runtime-client'
+import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack, ClientTracks } from '@moviemasher/runtime-client'
+
+import { errorThrow, ErrorName, TypeAudio, AVType, isArray } from '@moviemasher/runtime-shared'
+import { Actions, EventTypeSelectClip, MovieMasher, SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
+
+import { Panel } from '@moviemasher/runtime-client'
+
+import { assertContainerInstance } from '../../Helpers/Container/ContainerGuards.js'
+import { svgAppend, svgSetDimensions, svgSvgElement } from '../SvgFunctions.js'
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities.js'
-import { ChangePropertyActionObject } from '../../Plugin/Masher/Actions/Action/ActionTypes.js'
-import { Actions } from "@moviemasher/runtime-client"
-import { Masher } from '../../Plugin/Masher/Masher.js'
-import { AudioPreview, AudioPreviewArgs } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
-import { audioPreviewInstance } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreviewFactory.js'
-import { Preview, PreviewArgs, PreviewOptions } from '../../Plugin/Masher/Preview/Preview.js'
-import { PreviewClass } from '../../Plugin/Masher/Preview/PreviewClass.js'
-import { Selectables } from '@moviemasher/runtime-client'
-import { AVType } from '@moviemasher/runtime-shared'
+import { ChangePropertyActionObject } from '../Masher/Actions/Action/ActionTypes.js'
+import { Masher } from '@moviemasher/runtime-client'
+import { AudioPreview, AudioPreviewArgs } from '@moviemasher/runtime-client'
+import { audioPreviewInstance } from '../Masher/Preview/AudioPreview/AudioPreviewFactory.js'
+import { Preview, PreviewArgs, PreviewOptions } from '../Masher/Preview/Preview.js'
+import { PreviewClass } from '../Masher/Preview/PreviewClass.js'
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from '../../Setup/AVTypeConstants.js'
 import { DataTypeContainerId, DataTypeContentId } from '../../Setup/DataTypeConstants.js'
 import { Default } from '../../Setup/Default.js'
 import { EmptyFunction } from '../../Setup/EmptyFunction.js'
-import { ActionTypeChange, ActionTypeChangeFrame, EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypeLoaded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTrack, TimingCustom, TypeClip, TypeMash } from '../../Setup/EnumConstantsAndFunctions.js'
+import { TypeClip, TypeMash } from '../../Setup/TypeConstants.js'
+import { TimingCustom } from '../../Setup/TimingConstants.js'
+import { ActionTypeChange, ActionTypeChangeFrame } from '../../Setup/ActionTypeConstants.js'
+import { EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTrack } from '@moviemasher/runtime-client'
 import { ClipClass } from '../../Shared/Mash/Clip/ClipClass.js'
 import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
-import { ClipObject } from '@moviemasher/runtime-shared'
+
 import { MashAssetClass } from '../../Shared/Mash/MashClasses.js'
-import { Track, TrackArgs, TrackObject } from '@moviemasher/runtime-shared'
-import { assertTrack } from "../../Shared/Mash/Track/TrackGuards.js"
+
+import { assertTrack } from '../../Shared/Mash/Track/TrackGuards.js'
 import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isPositive } from '../../Shared/SharedGuards.js'
-import { isArray } from "@moviemasher/runtime-shared"
-import { assertTime } from "../../Shared/TimeGuards.js"
+import { assertTime } from '../../Shared/TimeGuards.js'
 import { isTextInstance } from '../../Shared/Text/TextGuards.js'
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
 import { PointZero } from '../../Utility/PointConstants.js'
 import { rectsEqual } from '../../Utility/RectFunctions.js'
 import { assertSizeAboveZero, sizeCover, sizeEven } from '../../Utility/SizeFunctions.js'
 import { sortByIndex } from '../../Utility/SortFunctions.js'
-import { ClientAssetManager } from '@moviemasher/runtime-client'
+
 import { assertClientVisibleInstance } from '../ClientGuards.js'
-import { ClientInstance, ClientVisibleInstance } from '../ClientTypes.js'
+import { ClientInstance, ClientVisibleInstance } from '@moviemasher/runtime-client'
 import { pixelToFrame } from '../PixelFunctions.js'
-import { ClientClip, ClientClips, ClientMashAsset, ClientTrack, ClientTracks } from './ClientMashTypes.js'
 import { ClientTrackClass } from './ClientTrackClass.js'
 
 export type TrackClips = [number, ClientClips]
 export type Interval = ReturnType<typeof setInterval>
 
 export class ClientMashAssetClass extends MashAssetClass implements ClientMashAsset {
+  constructor(object: MashAssetObject) {
+    super(object)
+    MovieMasher.eventDispatcher.listenersAdd(this.listeners)
+  }
+
   assetCachePromise(options: CacheOptions): Promise<void> {
     options.time ||= this.timeToBuffer
     const preloadOptions = this.cacheOptions(options)
@@ -212,7 +216,9 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
 
   destroy(): void {
     this.paused = true
+    MovieMasher.eventDispatcher.listenersRemove(this.listeners)
     this.clearDrawInterval()
+
   }
 
   draw(): void {
@@ -229,11 +235,12 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   }
 
   private drawTime(time: Time): void {
-    const timeChange = time !== this.time
+    // const timeChange = time !== this.time
     // console.log(this.constructor.name, 'drawTime', time, timeChange)
     this.drawnTime = time
     this.drawRequest()
-    MovieMasher.eventDispatcher.dispatch(timeChange ? EventTypeTime : EventTypeLoaded)
+    const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: time })
+    MovieMasher.eventDispatcher.dispatch(event)
   }
 
   private drawingTime?: Time
@@ -245,7 +252,8 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     method()
     const { totalFrames: frames } = this
     if (origFrames !== frames) {
-      MovieMasher.eventDispatcher.dispatch(EventTypeDuration)
+      const event = new CustomEvent(EventTypeDuration, { detail: frames })
+      MovieMasher.eventDispatcher.dispatch(event)
       if (this.frame > frames) this.seekToTime(timeFromArgs(frames, this.quantize))
     }
   }
@@ -299,6 +307,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       }
     }
   }
+
 
 
   get loading(): boolean { 
@@ -403,7 +412,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   }
 
   private previewArgs(options: PreviewOptions = {}, masher: Masher | undefined = undefined): PreviewArgs {
-    const clip = masher?.selection.clip
+    const clip = masher?.selection
     const selectedClip = isClip(clip) ? clip : undefined
     const { drawingTime, time, quantize } = this
     const svgTime = drawingTime || time
@@ -459,8 +468,10 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   seekToTime(time: Time): Promise<void> | undefined {
     if (this.seekTime !== time) {
       this.seekTime = time
+      
       MovieMasher.eventDispatcher.dispatch(EventTypeSeeking)
-      MovieMasher.eventDispatcher.dispatch(EventTypeTime)
+      const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: time })
+      MovieMasher.eventDispatcher.dispatch(event)
     }
     return this.stopLoadAndDraw(true)
   }
@@ -483,8 +494,8 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
           const options: ChangePropertyActionObject = { 
             type: ActionTypeChange,
             property, target: this, redoValue, undoValue,
-            redoSelection: { ...actions.selection },
-            undoSelection: { ...actions.selection },
+            redoSelection: actions.selection,
+            undoSelection: actions.selection,
           }
           actions.create(options)
         }
@@ -612,6 +623,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
   override get content(): ClientInstance { return super.content as ClientInstance }
 
   clipPreviewItemsPromise(size: Size, time: Time, component: Panel): Promise<PreviewItem> {
+    console.log(this.constructor.name, 'clipPreviewItemsPromise', size, component)
     assertSizeAboveZero(size)
 
     const { container, content } = this
@@ -648,8 +660,8 @@ export class ClientClipClass extends ClipClass implements ClientClip {
           const options: ChangePropertyActionObject = { 
             property, target: this, redoValue, undoValue,
             type: isFrames ? ActionTypeChangeFrame : ActionTypeChange,
-            redoSelection: { ...actions.selection },
-            undoSelection: { ...actions.selection },
+            redoSelection: actions.selection,
+            undoSelection: actions.selection,
           }
           actions.create(options)
         }

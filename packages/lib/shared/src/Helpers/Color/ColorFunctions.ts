@@ -1,4 +1,4 @@
-import { Rgb, Rgba, RgbaObject, RgbObject } from './Color.js'
+import type { Rgb, Rgba, RgbaObject, RgbObject } from './ColorTypes.js'
 import { isPositive } from '../../Shared/SharedGuards.js'
 import { colorRgbaKeys, colorRgbKeys } from './ColorConstants.js'
 
@@ -155,13 +155,12 @@ export const colorRgbDifference = (rgb: Rgb | Rgba): Rgb | Rgba => {
   }
 }
 
-
-export function colorMixRbga(fromRgba: Rgba, toRgba: Rgba, amountToMix = 1.0): Rgba {
+export const colorMixRbga = (fromRgba: Rgba, toRgba: Rgba, amountToMix = 1.0): Rgba => {
   return Object.fromEntries(colorRgbaKeys.map(key => {
     return [key, Math.round((fromRgba[key] * amountToMix) + (toRgba[key] * (1 - amountToMix)))]
   })) as Rgba
 }
-export function colorMixRbg(fromRgb: Rgb, toRgb: Rgb, amountToMix = 1.0): Rgb {
+export const colorMixRbg = (fromRgb: Rgb, toRgb: Rgb, amountToMix = 1.0): Rgb => {
   return Object.fromEntries(colorRgbKeys.map(key => {
     return [key, Math.round((fromRgb[key] * (1 - amountToMix)) + (toRgb[key] * amountToMix))]
   })) as Rgb

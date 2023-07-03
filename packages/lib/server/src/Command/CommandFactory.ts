@@ -127,7 +127,7 @@ export const commandPath = (path = 'ffmpeg') => { ffmpeg.setFfmpegPath(path) }
 from RenderingProcessClass
 
 if (upload) {
-  const [clip] = this.mashMedia.tracks[0].clips
+  const [clip] = this.mashAsset.tracks[0].clips
   const { contentId } = clip
   
   const definition = media.fromId(contentId)

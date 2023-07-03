@@ -1,15 +1,16 @@
-import { Rect, Size, TypeImage, UnknownRecord } from '@moviemasher/runtime-shared'
-import { Constrained } from '@moviemasher/runtime-shared'
-import { VisibleAsset } from '@moviemasher/runtime-shared'
-import { ShapeAsset, ShapeAssetObject, ShapeInstance } from '@moviemasher/runtime-shared'
-import {  isAboveZero } from '../SharedGuards.js'
+import type { VisibleInstance } from '@moviemasher/runtime-shared'
+import type { Rect, IntrinsicOptions, Size,  UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Constrained } from '@moviemasher/runtime-shared'
+import type { VisibleAsset } from '@moviemasher/runtime-shared'
+import type { ShapeAsset, ShapeAssetObject, ShapeInstance } from '@moviemasher/runtime-shared'
+
+import { TypeImage } from '@moviemasher/runtime-shared'
+import { PointZero } from '../../Utility/PointConstants.js'
+import { isAboveZero } from '../SharedGuards.js'
 import { DataGroupSize } from '../../Setup/DataGroupConstants.js'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
-import { svgDFromSize } from '../../Helpers/Svg/SvgFunctions.js'
-import type { VisibleInstance } from '@moviemasher/runtime-shared'
-import { IntrinsicOptions } from '@moviemasher/runtime-shared'
-import { PointZero } from '../../Utility/PointConstants.js'
+import { sizeSvgD } from '../../Utility/SizeFunctions.js'
 
 export function ShapeAssetMixin
 <T extends Constrained<VisibleAsset>>(Base: T): 
@@ -22,7 +23,7 @@ T & Constrained<ShapeAsset> {
      
       this.pathHeight = isAboveZero(pathHeight) ? pathHeight : 100
       
-      this.path = path || svgDFromSize(this.pathSize)
+      this.path = path || sizeSvgD(this.pathSize)
 
       // console.log(this.constructor.name, 'initializeProperties', object)
       this.properties.push(propertyInstance({
@@ -36,6 +37,8 @@ T & Constrained<ShapeAsset> {
       super.initializeProperties(object)
     }
     
+    canBeContent = false
+  
     content = false
     
     isVector = true
@@ -72,14 +75,13 @@ T & Constrained<ShapeInstance> {
 
     hasIntrinsicSizing = true
 
-    intrinsicRect(editing = false): Rect {
+    intrinsicRect(_editing = false): Rect {
       const { pathHeight: height, pathWidth: width} = this.asset
-      // console.log(this.constructor.name, 'intrinsicRect', this.definition)
+      console.log(this.constructor.name, 'intrinsicRect', this.assetId)
       return { width, height, ...PointZero }
     }
   
     intrinsicsKnown(options: IntrinsicOptions): boolean { return true }
-    
   }
 }
 

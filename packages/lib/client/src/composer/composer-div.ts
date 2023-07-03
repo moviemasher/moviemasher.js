@@ -1,12 +1,20 @@
+import type { CSSResultGroup } from 'lit'
 
-import { customElement } from 'lit/decorators/custom-element.js'
-import { css } from 'lit'
+import { html } from 'lit-html/lit-html.js'
+import { css } from '@lit/reactive-element/css-tag.js'
 import { Div } from '../Base/LeftCenterRight.js'
+import { Htmls, OptionalContent } from '../declarations.js'
 
 
-@customElement('movie-masher-composer-div')
 export class ComposerDivElement extends Div {
-  static override styles = [css`
+  protected override centerContent(slots: Htmls): OptionalContent {
+    const htmls = [...slots]
+
+    this.importTags('movie-masher-composer-center')
+    htmls.push(html`<movie-masher-composer-center></movie-masher-composer-center>`)
+    return super.centerContent(htmls)
+  }
+  static override styles: CSSResultGroup = [css`
     :host {
       display: block;
       
@@ -183,3 +191,7 @@ export class ComposerDivElement extends Div {
 `
 ]
 }
+
+
+// register web component as custom element
+customElements.define('movie-masher-composer-div', ComposerDivElement)

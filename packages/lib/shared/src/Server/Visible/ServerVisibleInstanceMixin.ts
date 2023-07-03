@@ -1,13 +1,14 @@
 import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '../CommandFile.js'
 import type { ContentRectArgs, ValueRecord } from "@moviemasher/runtime-shared"
-import { Tweening, tweenOption, tweenPosition } from '../../Helpers/TweenFunctions.js'
+import { tweenOption, tweenPosition } from '../../Helpers/Tween/TweenFunctions.js'
+import { Tweening } from '../../Helpers/Tween/Tweening.js'
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
 import { assertPopulatedArray, assertPopulatedString, isTrueValue } from '../../Shared/SharedGuards.js'
 import { assertTimeRange, isTimeRange } from "../../Shared/TimeGuards.js"
 import { colorBlackOpaque, colorTransparent } from '../../Helpers/Color/ColorConstants.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 import { rectsEqual } from "../../Utility/RectFunctions.js"
-import { tweenMaxSize } from '../../Helpers/TweenFunctions.js'
+import { tweenMaxSize } from '../../Helpers/Tween/TweenFunctions.js'
 import { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
 import { Constrained } from '@moviemasher/runtime-shared'
 import { VisibleInstance } from '@moviemasher/runtime-shared'

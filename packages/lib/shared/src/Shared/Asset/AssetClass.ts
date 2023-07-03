@@ -1,25 +1,39 @@
 
 import { AssetType, Source } from "@moviemasher/runtime-shared"
-import { PropertiedClass } from "../../Base/PropertiedClass.js"
 import { errorThrow } from '@moviemasher/runtime-shared'
 import { ErrorName } from '@moviemasher/runtime-shared'
 import { InstanceObject, Instance, InstanceArgs } from '@moviemasher/runtime-shared'
 import { Transcoding, TranscodingType, TranscodingTypes, Transcodings } from '@moviemasher/runtime-shared'
+import { AssetCacheArgs } from "@moviemasher/runtime-shared"
 import { Asset, AssetObject } from '@moviemasher/runtime-shared'
 import { Strings } from "@moviemasher/runtime-shared"
 import { Decodings } from "@moviemasher/runtime-shared"
+
+import { PropertiedClass } from "../../Base/PropertiedClass.js"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { DataTypeBoolean } from "../../Setup/DataTypeConstants.js"
-import { AssetCacheArgs } from "@moviemasher/runtime-shared"
-
+import { idGenerateString } from "../../Utility/IdFunctions.js"
+import { decodingInstance } from "../../Plugin/Decode/Decoding/DecodingFactory.js"
+import { transcodingInstance } from "../../Plugin/Transcode/Transcoding/TranscodingFactory.js"
 
 export class AssetClass extends PropertiedClass implements Asset {
+  constructor(object: AssetObject) {
+    super(object)
+    const { id, decodings, transcodings } = object
+    this.id = id || idGenerateString()
+    if (decodings) this.decodings.push(...decodings.map(decodingInstance))
+    if (transcodings) this.transcodings.push(...transcodings.map(transcodingInstance))
+
+  }
   assetCachePromise(args: AssetCacheArgs): Promise<void> {
     return Promise.resolve()
   }
 
   get assetIds(): Strings { return [this.id] }
 
+  canBeContainer = true
+  canBeContent = true
+  
   container = true
   
   content = true
@@ -34,9 +48,6 @@ export class AssetClass extends PropertiedClass implements Asset {
   }
   
   initializeProperties(object: AssetObject): void {
-    const { id } = object
-    this.id = id
-
     this.properties.push(propertyInstance({ 
       name: 'muted', type: DataTypeBoolean 
     }))
@@ -56,7 +67,7 @@ export class AssetClass extends PropertiedClass implements Asset {
 
   declare label: string
   
-  preferredAsset(...types: TranscodingTypes): Transcoding | undefined {
+  preferredTranscoding(...types: TranscodingTypes): Transcoding | undefined {
     for (const type of types) {
       const found = this.transcodings.find(object => object.type === type)
       if (found) return found

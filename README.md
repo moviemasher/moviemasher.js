@@ -1,24 +1,52 @@
-<!-- MAGIC:START (FILE:src=dev/documentation/snippet/head.md) -->
-<!-- The below content is automatically added from dev/documentation/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor and encoder_
-- _visual compositing_ through **SVG API**
-- _audio mixing_ through **WebAudio API**
-- _encode_ and _transcode_ through **FFmpeg**
-- _client_ implemented in **ReactJS**
-- _server_ implemented in **ExpressJS**
+- easy to customize
+- simple to integrate
+- flexible API
+- modular architecture
+- standards based
 <!-- MAGIC:END -->
 
 ## Description
-Movie Masher is a web-based video editor built entirely in TypeScript and available as a collection of modern ESM packages. It consists of a core library shared by both a React client and ExpressJS server. The client provides an optimized, low resoluition editing experience while the server renders out the result as a high quality video. 
+Movie Masher adds video editing and encoding capabilities to your web application. 
+The client interface is implemented as a collection of standard
+[Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
+which are easily integrated with popular reactive libraries like
+[Svelte](https://svelte.dev), 
+[Vue](https://vuejs.org), and 
+[React](https://react.dev). 
+The server interface is based on
+[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+and built atop 
+[FFmpeg](https://ffmpeg.org), so simple to integrate with common 
+runtimes like 
+[Node.js](https://nodejs.org)
+and
+[Deno](https://deno.land) in any LINUX environment.
+
+
+
+The client and server are both strongly typed and utilize standard
+[Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent) 
+to facilitate a modular architecture. 
+The provided examples demonstrate deploying on a variety of platforms like 
+[AWS](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6), 
+[Supabase](https://supabase.com), and 
+[ExpressJS](https://expressjs.com). 
+
+
 
 ### _NEW in version 5.1.1_
 - container/content pattern
 - vector-based masking
 - transform/color tweening
 - reorganized inspector
-
+- _visual compositing_ through **SVG API**
+- _audio mixing_ through **WebAudio API**
+- _encode_ and _transcode_ through **FFmpeg**
+- _client_ implemented in **ReactJS**
+- _server_ implemented in **ExpressJS**
 
 <!-- MAGIC:START (FILE:src=dev/documentation/snippet/documentation.md) -->
 <!-- The below content is automatically added from dev/documentation/snippet/documentation.md -->

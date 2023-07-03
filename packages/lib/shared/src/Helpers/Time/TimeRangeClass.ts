@@ -1,11 +1,10 @@
+import type { Time, TimeRange, TimeRanges, Times } from '@moviemasher/runtime-shared'
+
 import { assertInteger, assertPositive } from '../../Shared/SharedGuards.js'
 import { TimeClass, timeEqualizeRates } from './TimeClass.js'
 import { roundWithMethod } from '../../Utility/RoundFunctions.js'
-import { Time, TimeRange, TimeRanges, Times } from '@moviemasher/runtime-shared'
 
 export class TimeRangeClass extends TimeClass implements TimeRange {
-  frames : number
-
   constructor(frame = 0, fps = 1, frames = 1) {
     super(frame, fps)
     assertPositive(frames)
@@ -40,6 +39,8 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
     return Array.from({ length: frames }, (_, i) => new TimeClass(frame, fps))
   }
 
+  frames : number
+
   includes(frame: number): boolean {
     return frame >= this.frame && frame <= this.end
   }
@@ -73,6 +74,7 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
 
     return range1.end > range2.frame
   }
+
   isRange = true
 
   get last() : number { return this.frame + this.frames - 1 }
@@ -124,5 +126,4 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
     range.frames = frames
     return range
   }
-
 }

@@ -1,14 +1,16 @@
 import type { ActionType } from './ActionType.js'
-import type { EditorSelectionObject } from './EditorSelectionObject.js'
+import type { ClientClip } from './ClientMashTypes.js'
 
 export interface Action {
   redo(): void
   undo(): void
-  selection: EditorSelectionObject
+  selection: ClientClip | false
 }
 
 export interface ActionObject {
-  redoSelection: EditorSelectionObject
+  redoSelection?: ClientClip | false | undefined
   type: ActionType
-  undoSelection: EditorSelectionObject
+  undoSelection?: ClientClip | false | undefined
 }
+
+export interface ActionArgs extends Required<ActionObject> {}

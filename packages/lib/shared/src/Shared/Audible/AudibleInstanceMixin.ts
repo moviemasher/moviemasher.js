@@ -3,7 +3,7 @@ import type { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import type { Numbers, Scalar, UnknownRecord, ValueRecord, Value } from '@moviemasher/runtime-shared'
 import type { Property } from '@moviemasher/runtime-shared'
 import type { Time } from '@moviemasher/runtime-shared'
-import type { Tweening } from '../../Helpers/TweenFunctions.js'
+import type { Tweening } from '../../Helpers/Tween/Tweening.js'
 import type { Constrained } from '@moviemasher/runtime-shared'
 import type { AudibleInstance, AudibleInstanceObject, Instance } from '@moviemasher/runtime-shared'
 
@@ -160,37 +160,7 @@ T & Constrained<AudibleInstance> {
       return isAboveZero(this.asset.duration)
     }
 
-
-    // instanceCachePromise(args: InstanceCacheArgs): Promise<void> {
-    //   console.log(this.constructor.name, 'loadPromise', args)
-    //   const promises: Promise<void>[] = []
-    //   const { asset } = this
-    //   const { audio } = asset
-    //   const { visible, audible, time, clipTime } = args
-
-
-    //   const assetTime = this.definitionTime(time, clipTime)
-    //   const assetArgs: AssetCacheArgs = { ...args, assetTime }
-    //   return asset.assetCachePromise(assetArgs)
-    //   // if (audio && audible) {
-    //   //   promises.push(asset.preloadAudiblePromise(assetArgs))
-    //   // }
-      
-    //   // if (visible) {
-    //   //   promises.push(asset.preloadVisiblePromise(assetArgs))
-    //   // } 
-    //   // return Promise.all(promises).then(EmptyFunction)
-    // }
-
     mutable() { return this.asset.audio }
-  
-    // selectedProperty(property: Property): boolean {
-    //   const { name } = property
-    //   switch(name) {
-    //     case 'gain': return this.mutable() && !this.muted 
-    //   }
-    //   return super.selectedProperty(property)
-    // }
 
     setValue(value: Scalar, name: string, property?: Property | undefined): void {
       super.setValue(value, name, property)

@@ -17,11 +17,13 @@ T & Constrained<ColorAsset> {
   return class extends Base implements ColorAsset {
     color = colorGray
 
+    canBeContainer = false
+  
     container = false
     
     initializeProperties(object: ColorAssetObject): void {
-      const { color } = object 
-      if (isPopulatedString(color) && colorValidServer(color)) this.color = color
+      // const { color } = object 
+      // if (isPopulatedString(color) && colorValidServer(color)) this.color = color
       this.properties.push(propertyInstance({
         tweenable: true, name: 'color', type: DataTypeRgb, 
         defaultValue: this.color, group: DataGroupColor

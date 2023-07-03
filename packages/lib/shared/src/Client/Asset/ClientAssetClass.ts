@@ -1,12 +1,9 @@
-import { Size } from '@moviemasher/runtime-shared'
+import type { Actions, ClientAsset, Selectables, SelectedProperties, SelectorType } from '@moviemasher/runtime-client'
+import type { InstanceArgs, InstanceObject, Size } from '@moviemasher/runtime-shared'
 import { AssetClass } from '../../Shared/Asset/AssetClass.js'
-import { ClientAsset } from "@moviemasher/runtime-client"
-import { InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
-import { Selectables } from '@moviemasher/runtime-client'
-import { TypeNone } from '../../Setup/EnumConstantsAndFunctions.js'
-import { Actions } from "@moviemasher/runtime-client"
-import { SelectedProperties } from '@moviemasher/runtime-client'
-import { SelectorType } from "@moviemasher/runtime-client"
+
+
+import { TypeNone } from '../../Setup/TypeConstants.js'
 
 export class ClientAssetClass extends AssetClass implements ClientAsset {
   selectables(): Selectables { return [] }

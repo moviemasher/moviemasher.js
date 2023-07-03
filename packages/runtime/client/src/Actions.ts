@@ -1,5 +1,5 @@
 import type { ActionObject, Action } from './Action.js'
-import type { EditorSelectionObject } from './EditorSelectionObject.js'
+import type { ClientClip } from './ClientMashTypes.js'
 
 export interface Actions {
   canRedo: boolean
@@ -9,6 +9,6 @@ export interface Actions {
   instances: Action[]
   redo(): Action
   save(): void
-  selection: EditorSelectionObject
+  selection: ClientClip | false
   undo(): Action
 }

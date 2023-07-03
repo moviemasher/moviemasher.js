@@ -3,7 +3,8 @@ import path from 'path'
 import {
   SizePreview,
   assertPopulatedArray, assertPopulatedString, assertTrue, 
-  isPopulatedString, idGenerateString, DurationUnknown, RenderingOptions, OutputOptions, isDefiniteError, errorThrow
+  idGenerateString, DurationUnknown, RenderingOptions, OutputOptions, 
+  
 } from '@moviemasher/lib-shared'
 
 
@@ -23,7 +24,8 @@ import {
 
 
 import { TestRenderCache, TestRenderOutput, TestFilePrefix, TestTemporary } from "./TestRenderOutput"
-import { SourceMash, TypeVideo } from '@moviemasher/runtime-shared'
+import { isPopulatedString, 
+  isDefiniteError, errorThrow, SourceMash, TypeVideo } from '@moviemasher/runtime-shared'
 
 
 export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, output: OutputOptions): Promise<void> => {
@@ -141,7 +143,7 @@ export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
 export const renderingMashTestPromise = (mashTest: GenerateMashTest, outputOptions: OutputOptions): Promise<void> => {
   const [id, mashObject] = mashTest
   const { tracks } = mashObject
-  assertPopulatedArray(tracks)
+  // assertPopulatedArray(tracks)
   const { clips } = tracks[0]
   assertPopulatedArray(clips)
 

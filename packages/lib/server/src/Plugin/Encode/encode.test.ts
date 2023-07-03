@@ -2,8 +2,8 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 // import { isFilePath, encode } from '@moviemasher/lib-server'
-import { TypeVideo } from '@moviemasher/runtime-shared'
-import { EncodeOutput, OutputOptions, isDefiniteError } from '@moviemasher/lib-shared'
+import { TypeVideo, isDefiniteError } from '@moviemasher/runtime-shared'
+import { EncodeOutput, OutputOptions } from '@moviemasher/lib-shared'
 import { encode, isFilePath } from '../../index.js'
 
 

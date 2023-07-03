@@ -1,7 +1,9 @@
+import type { 
+  AssetObject, AssetObjects, AssetType, DataOrError, Identified, Importers, 
+  Scalar, StringRecord, Strings
+} from '@moviemasher/runtime-shared'
+import type { TranslateArgs } from '@moviemasher/runtime-client'
 import type { TemplateResult } from 'lit'
-
-import type { AssetObject, AssetObjects, AssetType, DataOrError, Identified, Scalar, StringRecord, Strings } from '@moviemasher/runtime-shared'
-import type { PreviewItems, TranslateArgs } from '@moviemasher/lib-shared'
 
 
 export type CoreLib = typeof import('@moviemasher/lib-shared')
@@ -17,19 +19,6 @@ export type OptionalContent = Content | void
 
 export type Nodes = Node[]
 export type Elements = Element[]
-
-export interface MovieMasherContext {
-  assetType: AssetType
-  assetObjects: AssetObjects
-  accept: string
-}
-
-
-export type InspectorFormSlot = 'inspector'
-export type ViewerFormSlot = 'viewer'
-export type SelectorFormSlot = 'selector'
-export type ComposerFormSlot = 'composer'
-export type FormSlot = InspectorFormSlot | ViewerFormSlot | SelectorFormSlot | ComposerFormSlot
 
 export type HeaderSectionSlot = 'header'
 export type FooterSectionSlot = 'footer'
@@ -55,22 +44,35 @@ export type ConnectionEvent = CustomEvent<ConnectionEventDetail>
 export type AssetTypeEvent = CustomEvent<AssetType>
 
 export interface AssetObjectsEventDetail extends AssetObjectsParams {
-  promise?: Promise<AssetObjects>
+  promise?: Promise<DataOrError<AssetObjects>>
 }
 
 export type AssetObjectsEvent = CustomEvent<AssetObjectsEventDetail>
 
-export interface AssetObjectEventDetail extends Identified {
-  mediaObject?: AssetObject
+export interface AssetObjectFromIdEventDetail extends Identified {
+  assetObject?: AssetObject
 }
 
-export type AssetObjectEvent = CustomEvent<AssetObjectEventDetail>
+export type AssetObjectFromIdEvent = CustomEvent<AssetObjectFromIdEventDetail>
+
+
+export interface AssetObjectPromiseEventDetail {
+  promise?: Promise<DataOrError<AssetObject>>
+}
+export type AssetObjectPromiseEvent = CustomEvent<AssetObjectPromiseEventDetail>
+
 
 export interface ImportEventDetail {
   fileList: FileList
+  promise?: Promise<AssetObjects>
 }
 
 export type ImportEvent = CustomEvent<ImportEventDetail>
+
+export interface ImportAssetObjectsEventDetail {
+  assetObjects: AssetObjects
+}
+export type ImportAssetObjectsEvent = CustomEvent<ImportAssetObjectsEventDetail>
 
 export interface AssetObjectsParams extends ClientReadParams {
   excludeImported?: boolean
@@ -80,7 +82,7 @@ export interface AssetObjectsParams extends ClientReadParams {
 
 
 export interface IconEventDetail extends TranslateArgs {
-  promise?: Promise<Icon>
+  promise?: Promise<DataOrError<Icon>>
 }
 
 export type IconEvent = CustomEvent<IconEventDetail>
@@ -116,8 +118,6 @@ export interface ClientReadParams {
   terms?: string
 }
 
-export interface PreviewItemsEventDetail {
-  promise?: Promise<PreviewItems>
+export interface ImportersEventDetail {
+  importers: Importers
 }
-
-export type PreviewItemsEvent = CustomEvent<PreviewItemsEventDetail>

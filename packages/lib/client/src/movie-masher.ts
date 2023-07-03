@@ -1,110 +1,41 @@
 import type { 
-  AssetType,
-  AudioType,
-  ImageType,
-  StringRecord, 
-  VideoType, 
-  EndpointRequest,
-  DecodingObject,
-  DecodingObjects,
-  FontType,
-  AssetPromiseEvent,
+  AssetObject, Rect,
 } from '@moviemasher/runtime-shared'
-
 
 import type { 
-  ProbingData,
-  ClientRawVideoAssetObject,
-  ClientRawImageAssetObject,
-  ClientRawAudioAssetObject,
-  ClientRawAssetObject,
-  ClientTextAssetObject,
-  Masher,
-} from '@moviemasher/lib-shared'
+  Masher, MasherOptions, RectEvent,
+} from '@moviemasher/runtime-client'
 
-
-import { 
-  AssetObject,
-  AssetObjects,
-  TypeFont,
-} from '@moviemasher/runtime-shared'
-
+import type { CSSResultGroup } from 'lit'
 
 import type {
-  ComposerFormSlot,
-  Content,
-  Contents,
   CoreLib,
   Htmls,
-  IconEvent,
-  ImportEvent,
-  InspectorFormSlot,
-  AssetObjectEvent,
-  AssetObjectsEventDetail,
-  AssetObjectsParams,
-  AssetTypeEvent,
-  MovieMasherContext,
-  SelectorFormSlot,
   OptionalContent,
-  TranslationEvent,
-  ViewerFormSlot,
-  Icon,
-  Translation,
+  AssetObjectPromiseEventDetail,
+  Contents,
+  Content,
 } from './declarations.js'
 
-
 import { 
-  TypeAudio,
-  TypeImage, TypeVideo, TypesAudible,
-  isAudibleAssetType,
   SourceRaw,
   SourceText,
-  TypeProbe,
+  DotChar,
+  isDefiniteError
 } from '@moviemasher/runtime-shared'
+import { MovieMasher, EventTypeAssetObject, EventTypeViewerContentResize } from '@moviemasher/runtime-client'
 
-
-import type { PropertyValues } from 'lit'
-import { css, html } from 'lit'
-import { provide } from '@lit-labs/context'
-import { customElement } from 'lit/decorators/custom-element.js'
-import { property } from 'lit/decorators/property.js'
+import { html } from 'lit-html/lit-html.js'
+import { css } from '@lit/reactive-element/css-tag.js'
 
 import { Component } from './Base/Component.js'
 import { Slotted } from './Base/Slotted.js'
-import { movieMasherContext } from './movie-masher-context.js'
+// import './icon/fetch.js'
 
-import { 
-  isDefiniteError,
-  requestAudioPromise, requestFontPromise, requestImagePromise, requestVideoPromise 
-} from '@moviemasher/lib-shared'
-import { state } from 'lit/decorators/state.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
-
-import './asset/index.js'
-
-const FormSlotInspector: InspectorFormSlot = 'inspector'
-const FormSlotViewer: ViewerFormSlot = 'viewer'
-const FormSlotSelector: SelectorFormSlot = 'selector'
-const FormSlotComposer: ComposerFormSlot = 'composer'
-
-const SuffixMax: MaxSuffix = 'Max'
-const SuffixExtensions: ExtensionsSuffix = 'Extensions'
-
-type MaxSuffix = 'Max'
-type ExtensionsSuffix = 'Extensions'
-type ImportSuffix = MaxSuffix | ExtensionsSuffix
-type ImportSuffixes = ImportSuffix[]
-const SuffixesInput: ImportSuffixes = [SuffixMax, SuffixExtensions]
-
-
-export type ImportType = AudioType | ImageType | VideoType | FontType
-type ImportTypes = ImportType[]
-
-const TypesImport: ImportTypes = [...TypesAudible, TypeImage, TypeFont]
-const isImportType = (type: unknown): type is ImportType => {
-  return TypesImport.includes(type as ImportType)
-}
-
+const FormSlotViewer = 'viewer'
+const FormSlotSelector = 'selector'
+const FormSlotComposer = 'composer'
+const FormSlotImporter = 'importer'
 
 /**
  * @prop (String) icon - id of icon to use for viewer section
@@ -112,60 +43,91 @@ const isImportType = (type: unknown): type is ImportType => {
  * 
  * @tag movie-masher
  */
-@customElement('movie-masher')
 export class MovieMasherElement extends Slotted {
   constructor() {
     super()
-    this.masherContext = { 
-      accept: this.accept,
-      assetType: this.mediaType, 
-      assetObjects: this.assetObjects,
+    this.imports = [
+      'icon/fetch.js',
+      'asset/color/image.js',
+      'asset/shape/image.js',
+      'asset/objects/fetch.js',
+      'asset/object/video.js',
+      ...[SourceRaw, SourceText].map(source => `asset/${source}/importer.js`),
+    ].map(suffix => `./${suffix}`).join(',')
+
+    this.listeners[EventTypeViewerContentResize] = this.handleResize.bind(this)
+  }
+  private _assetObject?: AssetObject 
+  private get assetObject() { return this._assetObject }
+  private set assetObject(assetObject: AssetObject | undefined) {
+    console.log(this.tagName, 'SET assetObject', assetObject)
+    const { _assetObject: original } = this
+    if (original === assetObject) return
+    this._assetObject = assetObject
+
+    if (assetObject) {
+      this.masherPromise.then(() => {
+        console.log(this.tagName, 'SET assetObject masherPromise', assetObject)
+
+        this.masher!.load(assetObject).then(() => {
+          console.log(this.tagName, 'masher DID load')
+        })
+      })
+    } else this.masher?.unload()
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback()
+    const { imports } = this
+    if (imports) {
+      const libs = imports.split(',').map(lib => lib.trim()).filter(Boolean)
+      if (libs.length) {
+        const hrefs = libs.map(lib => (
+          lib.startsWith(DotChar) ? (new URL(lib, import.meta.url)).href : lib
+        ))
+
+        const first = hrefs.shift()
+        let promise = import(first!)
+        hrefs.forEach(href => {
+          promise = promise.then(() => import(href))
+
+        })
+        promise.then(() => {
+          if (this.assetObject) return  
+          
+          const detail: AssetObjectPromiseEventDetail = {}
+          const event = new CustomEvent(EventTypeAssetObject, { detail })
+          MovieMasher.eventDispatcher.dispatch(event)
+          const { promise } = detail
+          if (!promise) {
+            console.log(this.tagName, 'NO promise')
+            return 
+          }
+          return promise.then(orError => {
+
+            if (!isDefiniteError(orError)) {
+              const { data: assetObject } = orError
+              console.log(this.tagName, 'YES promise', assetObject, orError)
+              this.assetObject = assetObject
+            }
+          })
+        
+        })
+      }
     }
   }
-  private _accept?: string
-  @property({ type: String })
-  get accept(): string {
-    return this._accept ??= this.acceptInitialize
+  
+  override disconnectedCallback(): void {
+    super.disconnectedCallback()
   }
-  private get acceptInitialize(): string {
-    const accept = TypesImport.flatMap(type => {
-      const max = this[`${type}Max`]
-      if (!max) return []
-
-      const extensions = this[`${type}Extensions`]
-      if (!extensions) return [`${type}/*`]
-      
-      return extensions.split(',').map(extension => 
-        `${extension.startsWith('.') ? '' : '.'}${extension}`
-      )
-    }).join(',')
-    return accept
-  }
-  private acceptRefresh() {
-    // console.log('acceptRefresh', this._accept, this.movieMasherContext)
-    delete this._accept 
-    this.updateContext({ accept: this.accept })
-  }
-
-  @property({ type: String, attribute: 'audio-extensions' })
-  audioExtensions = ''
-
-  @property({ type: Number, attribute: 'audio-max' })
-  audioMax = -1
-
-
+    
   protected override content(contents: Contents): Content {
-    return html`<div 
-      @asset-promise='${this.assetHandler}'
-      @asset-object='${this.assetObjectHandler}'
-      @mediatype='${this.mediaTypeHandler}'
-      @connection='${this.connectionHandler}'
-      @slotted='${this.slottedHandler}'
-      @toggle='${this.toggleHandler}'
-      @icon='${this.iconHandler}'
-      @string='${this.translationHandler}'
-      @import='${this.importHandler}'
-    >${contents}</div>`
+    return html`${contents}`
+  }
+
+  private rect?: Rect
+  private handleResize(event: RectEvent) {
+    this.rect = event.detail 
   }
 
   protected core?: CoreLib | undefined
@@ -178,30 +140,36 @@ export class MovieMasherElement extends Slotted {
       this.core = lib
     })
   }
+
   protected override defaultSlottedContent(name: string, htmls: Htmls): OptionalContent {
+    if (name === FormSlotImporter) {
+      this.importTags('movie-masher-component-dialog')
+      return html`<movie-masher-component-dialog 
+        @slotted='${this.slottedHandler}'
+        slotted='${FormSlotImporter}' section='${FormSlotImporter}'
+      ></movie-masher-component-dialog>`
+    }
+    
     this.importTags(`movie-masher-${name}-section`)
     
     switch(name) {
-      case FormSlotInspector: {
-        return html`<movie-masher-inspector-section
-          part='${name}' slotted='${name}'
-          icon='inspector'
-        >${htmls}</movie-masher-inspector-section>`
-      }
       case FormSlotViewer: {
         return html`<movie-masher-viewer-section 
+          @slotted='${this.slottedHandler}'
           part='${name}' slotted='${name}'
           icon='${this.icon}'
         >${htmls}</movie-masher-viewer-section>`
       }
       case FormSlotSelector: {
         return html`<movie-masher-selector-section
+          @slotted='${this.slottedHandler}'
           part='${name}' slotted='${name}'
           icon='browser'
         >${htmls}</movie-masher-selector-section>`
       }
       case FormSlotComposer: {
         return html`<movie-masher-composer-section
+          @slotted='${this.slottedHandler}'
           part='${name}' slotted='${name}'
           icon='timeline'
         >${htmls}</movie-masher-composer-section>`
@@ -209,191 +177,10 @@ export class MovieMasherElement extends Slotted {
     }
   }
 
-  private fileMedia(file: File): Promise<AssetObject | void> {
-    const { type: mimetype, size, name } = file
-    const sizeInMeg = Math.ceil(size * 10 / 1024 / 1024) / 10
-    const extension = name.split('.').pop()
-    const type = mimetype.split('/').shift()
-    if (!(extension && sizeInMeg && isImportType(type))) {
-      this.error(`file ${name} of type ${mimetype} not supported`)
-      return Promise.resolve()
-    }
 
-    const max = this[`${type}Max`]
-    if (!max) {
-      this.error(`file type ${type} is not supported`)
-      return Promise.resolve()
-    }
-    if (max > 0) {
-      if (sizeInMeg > max) {
-        this.error(`file size ${sizeInMeg}MB exceeds limit of ${max}MB`)
-        return Promise.resolve()
-      }
-    }
-    const extensions = this[`${type}Extensions`]
-    if (extensions) {
-      const fileExtensions = extensions.split(',').map(extension => 
-        extension.startsWith('.') ? extension.slice(1) : extension
-      )
-      if (!fileExtensions.includes(extension)) {
-        this.error(`file extension ${extension} not supported`)
-        return Promise.resolve()
-      }
-    }
-    return this.fileMediaObjectPromise(file, type)
-  }
-
-
-  private fileMediaObjectPromise(file: File, type: ImportType): Promise<AssetObject | void> {
-    const { name: label } = file
-    const request: EndpointRequest = { response: file }
-
-    // we can't reliably tell if there is an audio track so we assume there is 
-    // one, and catch problems if it's played before decoded
-    const info: ProbingData = {
-      audible: isAudibleAssetType(type)// TypesAudible.includes(type) 
-    }
-    const decoding: DecodingObject = { data: info, type: TypeProbe }
-    const decodings: DecodingObjects = [decoding]
-    const id = `temporary-${crypto.randomUUID()}`
-    const shared: ClientRawAssetObject = { 
-      type: TypeImage, label, request, decodings, id, source: SourceRaw 
-    }
-
-    switch (type) {
-      case TypeAudio: {
-        return requestAudioPromise(request).then(orError => {
-          if (isDefiniteError(orError)) return 
-
-          const { data: loadedAudio } = orError
-
-          const { duration } = loadedAudio
-          info.duration = duration
-          const object: ClientRawAudioAssetObject = { ...shared, type, loadedAudio }
-          return object
-        })
-      }
-      case TypeImage: {
-        console.debug('fileMediaObjectPromise', request)
-
-        return requestImagePromise(request).then(orError => {
-
-          if (isDefiniteError(orError)) return 
-
-          const { data: image } = orError
-
-
-          const { width, height } = image
-          info.width = width
-          info.height = height
-          const object: ClientRawImageAssetObject = { ...shared, type, loadedImage: image }
-          console.log('object', object)
-          return object
-        })
-      }
-      case TypeVideo: {
-        return requestVideoPromise(request).then(orError => {
-          if (isDefiniteError(orError)) return 
-
-          const { data: video } = orError
-
-          const { duration, videoWidth, clientWidth, videoHeight, clientHeight } = video
-          const width = videoWidth || clientWidth
-          const height = videoHeight || clientHeight
-          info.duration = duration
-          info.width = width
-          info.height = height
-          const object: ClientRawVideoAssetObject = { ...shared, type, loadedVideo: video }
-          return object
-        })
-      }
-      case TypeFont: {
-        return requestFontPromise(request).then(orError => {
-          if (isDefiniteError(orError)) return 
-
-          const { data: font } = orError
-          const object: ClientTextAssetObject = { 
-            ...shared, source: SourceText, loadedFont: font 
-          }
-          return object
-        })
-      }
-    } 
-  }
-  
-  @property({ type: String, attribute: 'font-extensions' })
-  fontExtensions = ''
-
-  @property({ type: Number, attribute: 'font-max' })
-  fontMax = -1
-
-
-  // override getUpdateComplete(): Promise<boolean> {
-  //   return this.mediaObjectsFetchedPromise.then(() => {
-  //     return super.getUpdateComplete().then(() => true)
-  //   })
-  // }
-  @property({ type: String }) 
   icon = 'app'
 
-  private iconHandler(event: IconEvent) {
-    // console.log(this.constructor.name, 'iconHandler', event)
-    const { detail } = event
-    const { id } = detail
-    if (id) detail.promise = this.iconRecordPromise.then(iconRecord => {
-      const icon: Icon = {}
-      const string = iconRecord[id] 
-      if (string) {
-        if (string[0] === '<') icon.svgString = string 
-        else icon.imgUrl = string 
-      }
-      return icon
-    })
-    event.stopPropagation()
-  }
-  private _iconRecordPromise?: Promise<StringRecord>
-  private get iconRecordPromise(): Promise<StringRecord> {
-    return this._iconRecordPromise ||= this.iconRecordInitialize
-  }
-  private get iconRecordInitialize(): Promise<StringRecord> {
-    const { iconSource: icon } = this
-    const url = icon || (new URL('../json/icons.json', import.meta.url)).href
-    return fetch(url).then(res => res.json())
-  }
-
-  @property({ type: String }) 
-  iconSource = ''
-
-  @property({ type: String, attribute: 'image-extensions' })
-  imageExtensions = ''
-
-  @property({ type: Number, attribute: 'image-max' })
-  imageMax = -1
-
-  private importHandler(event: ImportEvent) {
-    const { detail } = event
-    const { fileList } = detail
-    // console.log(this.constructor.name, 'importHandler', fileList)
-    const media: AssetObjects = []
-    const [file, ...rest] = Array.from(fileList)
-    let promise = this.fileMedia(file)
-    rest.forEach(file => {
-      promise = promise.then(mediaObject => {
-        if (mediaObject) media.push(mediaObject)
-        return this.fileMedia(file)
-      })
-    })
-    promise.then(mediaObject => {
-      if (mediaObject) media.push(mediaObject)
-      return media
-    }).then(mediaObjects => {
-      this.importedAssetObjects = [...this.importedAssetObjects, ...mediaObjects]
-    })
-    event.stopPropagation()
-  }
-
-  @property({ type: Array, attribute: false })
-  importedAssetObjects: AssetObjects = []
+  imports?: string | undefined
 
   protected masher?: Masher | undefined
   private _masherPromise?: Promise<void>
@@ -402,213 +189,48 @@ export class MovieMasherElement extends Slotted {
   }
   private get masherPromiseInitialize(): Promise<void> {
     return this.sharedPromise.then(() => {
-      const masher = this.core!.masherInstance()
-      this.masher = masher
-      // TypesImport.forEach(type => {
-      //   masher.eventTarget.addEventListener(`client${type}`, this.clientMediaHandler.bind(this))
-      // })
+      const options: MasherOptions = {
+        mash: this.assetObject, 
+        dimensions: this.rect,
+      }
+      const masher = this.core!.masherInstance(options)
+      MovieMasher.masher = this.masher = masher
+      console.log(this.tagName, 'masherPromiseInitialize SET masher')
     })
   }
 
-  protected assetHandler(event: AssetPromiseEvent) {
-    const { detail } = event
-    const { assetObject } = detail
-    // console.log(this.constructor.name, 'mediaHandler', mediaObject.label)
-    detail.assetPromise = this.masherPromise.then(() => {
-      const array  = MovieMasher.assetManager.define(assetObject)
-      return array[0]
-    })
-    event.stopImmediatePropagation()
-  }
-
-  @property({ type: Array, attribute: false })
-  assetObjectsFetched: AssetObjects = []
-
-  private _assetObjects?: AssetObjects 
-  @property({ type: Array, attribute: false })
-  get assetObjects() {
-    return this._assetObjects ||= this.assetObjectsInitialize
-  }
-  private get assetObjectsInitialize() {
-    const { mediaType } = this
-    // TODO: use exclude* properties...
-
-    const combined = [...this.importedAssetObjects, ...this.assetObjectsFetched]
-    const filtered = combined.filter(mediaObject => {
-      const { type } = mediaObject
-      return mediaType === type
-    })
-
-    return filtered
-  }
-
-  private assetObjectsRefresh() {
-    // console.log(this.constructor.name, 'mediaObjectsRefresh', this.movieMasherContext)
-    delete this._assetObjects
-    this.updateContext({ assetObjects: this.assetObjects })
-  }
-
-  assetObjectsParams: AssetObjectsParams = { type: TypeImage }
-
-  @property({ type: String }) 
-  mediaSource = ''
-
-  protected assetObjectHandler(event: AssetObjectEvent) {
-    const { detail } = event
-    const { id } = detail
-    console.log(this.tagName, 'assetObjectHandler', id)
-    detail.mediaObject = this.assetObjects.find(asset => asset.id === id)
-    event.stopImmediatePropagation()
-  }
-
-  private _mediaObjectsFetchedPromise?: Promise<AssetObjects>
-  private get mediaObjectsFetchedPromise(): Promise<AssetObjects> {
-    return this._mediaObjectsFetchedPromise ||= this.mediaObjectsFetchedPromiseInitialize
-  }
-  private get mediaObjectsFetchedPromiseInitialize(): Promise<AssetObjects> {
-    const { mediaSource } = this
-    const url = mediaSource || (new URL('../json/media.json', import.meta.url)).href
-    // console.log(this.tagName, 'mediaObjectsFetchedPromiseInitialize', url)
-    return fetch(url).then(res => {
-      return res.json().then(json => {
-        return this.assetObjectsFetched = json //as AssetObjects
-      })
-    })
-  }
-
-  private mediaObjectsFetchedRefresh() {
-    // console.log(this.constructor.name, 'mediaObjectsFetchedRefresh', this.movieMasherContext)
-
-    delete this._mediaObjectsFetchedPromise
-
-    const { assetObjectsParams: params } = this
-    const detail: AssetObjectsEventDetail = { ...params, type: this.mediaType }
-    const init: CustomEventInit<AssetObjectsEventDetail> = { 
-      detail, composed: true, bubbles: true, cancelable: true
-    }
-    this.dispatchEvent(new CustomEvent('mediaobjects', init))
-
-    const { promise } = detail
-    const mediaObjectsPromise = promise || this.mediaObjectsFetchedPromise
-    mediaObjectsPromise.then(mediaObjectsFetched => {
-      // console.log(this.constructor.name, 'mediaObjectsFetchedRefresh setting mediaObjectsFetched', mediaObjectsFetched)
-      this.assetObjectsFetched = mediaObjectsFetched
-    })  
-  }
-
-  @property({ type: String, attribute: 'media-type' })
-  mediaType: AssetType = TypeImage
-
-  private mediaTypeHandler(event: AssetTypeEvent) {
-    const { detail: mediaType } = event
-    // console.log(this.constructor.name, 'mediaTypeHandler', mediaType)
-    this.mediaType = mediaType
-    this.updateContext({ assetType: mediaType })
-  }
-
-  @provide({ context: movieMasherContext })
-  @state()
-  masherContext: MovieMasherContext 
-
-  @property({ type: Boolean }) 
   readonly = false
 
   override slots = [
     FormSlotViewer, 
-    FormSlotSelector, 
-    FormSlotInspector, 
+    FormSlotSelector,  
     FormSlotComposer, 
+    FormSlotImporter,
   ]
 
-  private toggleHandler(event: CustomEvent<string>) {
-    event.stopPropagation()
-
-    const { detail } = event
-    switch (detail) {
-      case 'paused': {
-        this.masherPromise.then(() => {
-          const { masher } = this
-          if (!masher) return
-          
-          masher.paused = !masher.paused 
-        })
-        break
-      }
-    }
+  static override properties = {
+    ...Slotted.properties,
+    imports: { type: String },
+    icon: { type: String },
   }
-
-  private translationHandler(event: TranslationEvent) {
-    const { detail } = event
-    const { id } = detail
-    if (id) detail.promise = this.translationRecordPromise.then(translationRecord => {
-      const string = translationRecord[id] || id
-      const translation: Translation = { string }
-      return translation
-    })
-    event.stopPropagation()
-  }
-
-  private _translationRecordPromise?: Promise<StringRecord>
-  private get translationRecordPromise(): Promise<StringRecord> {
-    return this._translationRecordPromise ||= this.translationRecordInitialize
-  }
-  private get translationRecordInitialize(): Promise<StringRecord> {
-    const { translationSource: translation } = this
-    const url = translation || (new URL('../json/translations.json', import.meta.url)).href
-    return fetch(url).then(res => res.json())
-  }
-
-  @property({ type: String }) 
-  translationSource = ''
-
-  private updateContext(options: Partial<MovieMasherContext>) {
-    const { masherContext } = this
-    if (!masherContext) {
-      console.warn(this.tagName, 'updateContext no movieMasherContext')
-      return 
-    }
-    // console.log(this.tagName, 'updateContext movieMasherContext')
-
-    this.masherContext = { ...masherContext, ...options }
-  }
-
-  @property({ type: String, attribute: 'video-extensions' })
-  videoExtensions = ''
-  
-  @property({ type: Number, attribute: 'video-max' })
-  videoMax = -1
-
-  protected override willUpdate(values: PropertyValues<this>): void {
-    if (values.has('mediaType')) {
-      // console.log('willUpdate mediaType', this.mediaType)
-      this.mediaObjectsFetchedRefresh()
-    }
-    if (values.has('assetObjectsFetched') || values.has('importedAssetObjects')) {
-      // console.log('willUpdate mediaObjects dependency', this.mediaObjectsFetched.length, this.importedMediaObjects.length)
-      this.assetObjectsRefresh()
-    }
-    const changedAccept = TypesImport.some(mediaType => (
-      SuffixesInput.some(suffix => values.has(`${mediaType}${suffix}`))
-    ))
-    if (changedAccept) {      
-      // console.log('willUpdate accept dependency')
-      this.acceptRefresh()
-    }
-  }
-
-  static override styles = [
+  static override styles: CSSResultGroup = [
     Component.cssHostFlex,
     css`
       :host {
+        --dialog-width: 50vw;
+        --dialog-height: 50vh;
         --icon-size: 24px;
         --button-size: 24px;
-      
+        --flex-direction: row;
 
+        
         --padding: 40px;
         --spacing: 20px;
         --header-height: 38px;
         --footer-height: 38px;
-        
+        --content-padding: 10px;
+        --content-spacing: 10px;
+
         --border-size: 1px;
         --border: var(--border-size) solid;
         --border-radius: 5px;
@@ -616,15 +238,14 @@ export class MovieMasherElement extends Slotted {
         --hue: 281;
         --gap: 20px;
         --areas:
-          "preview media inspect"
-          "compose compose inspect";
+          "preview media"
+          "compose compose";
         --columns:
           calc(
             var(--viewer-width)
             + (var(--border-size) * 2)
           )
-          1fr
-          var(--inspector-width);
+          1fr;
         --rows:
           calc(
             var(--viewer-height)
@@ -697,7 +318,7 @@ export class MovieMasherElement extends Slotted {
         --control-back-selected: var(--control-back);
 
         --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
-        --control-fore-disabled: oklch(var(--lightness-fore-secondary) var(--chroma-primary) var(--hue));
+        --control-fore-disabled: oklch(var(--lightness-fore-secondary) 0 0);
 
         --control-fore-hover: var(--control-hover-selected);
         --control-fore-selected:var(--control-hover-selected);
@@ -714,25 +335,15 @@ export class MovieMasherElement extends Slotted {
         --item-back-selected: var(--item-back-hover-selected);
         --item-back-hover:  var(--item-back-hover-selected);
 
-
         --color-drop: red;
 
-
-      /* --color-back-secondary: oklch(var(--lightness-back-secondary) var(--chroma-secondary) var(--hue)); */
-        /* --color-back-tertiary: oklch(var(--lightness-back-tertiary) var(--chroma-tertiary) var(--hue)); */
-
-        /* --color-fore-secondary: oklch(var(--lightness-fore-secondary) var(--chroma-secondary) var(--hue)); */
-        /* --color-fore-tertiary: oklch(var(--lightness-fore-tertiary) var(--chroma-tertiary) var(--hue)); */
-
       }
-    `,
-    css`
+    
       * {
         box-sizing: border-box;
       }
-    `,
-    css`
-      div {
+    
+      :host {
         flex-grow: 1;
         display: grid;
         gap: var(--gap);
@@ -740,9 +351,7 @@ export class MovieMasherElement extends Slotted {
         grid-template-columns: var(--columns);
         grid-template-rows: var(--rows);
       }
-    `,
-
-    css`
+ 
       /* 
       @media (max-width: 999px) {
         :host {
@@ -750,6 +359,7 @@ export class MovieMasherElement extends Slotted {
           grid-template-areas: "preview" "compose" "inspect" "media";
         }
       } */
+      
       @media(prefers-color-scheme: dark) {
         :host {
           --lightness-back-primary: var(--darkness-back-primary);
@@ -761,40 +371,43 @@ export class MovieMasherElement extends Slotted {
           --color-drop: yellow;
         } 
       }
-    `,
-    css`
-    :host {
-      .panel .content {
-        --padding: 20px;
-        --spacing: 10px;
-      }
+    
+      :host {
+        .panel .content {
+          --padding: 20px;
+          --spacing: 10px;
+        }
 
-      .panels {
-        grid-area: panels;
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing);
-      }
+        .panels {
+          grid-area: panels;
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing);
+        }
 
-      .panel .content .drop-box {
-        pointer-events: none;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        bottom: 0px;
-        right: 0px;
-      }
+        .panel .content .drop-box {
+          pointer-events: none;
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          bottom: 0px;
+          right: 0px;
+        }
 
-      .panel .content.dropping .drop-box {
-        box-shadow: var(--dropping-shadow);
+        .panel .content.dropping .drop-box {
+          box-shadow: var(--dropping-shadow);
+        }
+    
+        .panel select {
+          height: var(--button-size);
+        }
       }
+      
 
-
-      .panel select {
-        height: var(--button-size);
-      }
-    }
 
     `
   ]
 }
+
+// register web component as custom element
+customElements.define('movie-masher', MovieMasherElement)

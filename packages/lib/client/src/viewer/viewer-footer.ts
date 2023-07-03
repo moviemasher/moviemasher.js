@@ -1,32 +1,39 @@
+// import type { CSSResultGroup } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { Footer, LeftCenterRight } from '../Base/LeftCenterRight.js'
+import { html } from 'lit-html/lit-html.js'
+import { Footer } from '../Base/LeftCenterRight.js'
 
-import { customElement } from 'lit/decorators/custom-element.js'
-import { css } from 'lit'
-import { html } from 'lit'
-
-@customElement('movie-masher-viewer-footer')
 export class ViewerFooterElement extends Footer {
-
   override leftContent(slots: Htmls): OptionalContent {
-    const slotsCopy = [...slots]
-    this.importTags('movie-masher-icon')
-    slotsCopy.push(html`<movie-masher-icon
+    const htmls = [...slots]
+    this.importTags('movie-masher-component-a')
+    htmls.push(html`<movie-masher-component-a
       icon='play' emit='toggle' detail='play'
-    ></movie-masher-icon>`)
+    ></movie-masher-component-a>`)
 
-    return super.leftContent(slotsCopy)
+    return super.leftContent(htmls)
   }
 
-  static override styles = [
-    LeftCenterRight.cssSection,
-    css`
-      footer .time {
-        font-size: 0.75em;
-        text-align: right;
-        flex-grow: 1;
-      }
-    `
-  ]
+  protected override centerContent(slots: Htmls): OptionalContent {
+    const htmls = [...slots]
+    this.importTags('movie-masher-viewer-slider')
+    htmls.push(html`<movie-masher-viewer-slider></movie-masher-viewer-slider>`)
+
+    return super.centerContent(htmls)
+  }
+
+  // static override styles: CSSResultGroup = [
+  //   LeftCenterRight.cssSection,
+  //   css`
+  //     footer .time {
+  //       font-size: 0.75em;
+  //       text-align: right;
+  //       flex-grow: 1;
+  //     }
+  //   `
+  // ]
 }
+
+// register web component as custom element
+customElements.define('movie-masher-viewer-footer', ViewerFooterElement)

@@ -1,12 +1,11 @@
+import type { CSSResultGroup } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { css } from 'lit'
-import { html } from 'lit'
-import { customElement } from 'lit/decorators/custom-element.js'
+import { css } from '@lit/reactive-element/css-tag.js'
+import { html } from 'lit-html/lit-html.js'
 
 import { Section } from '../Base/Section.js'
 
-@customElement('movie-masher-selector-section')
 export class SelectorSectionElement extends Section {
   override divContent(slots: Htmls): OptionalContent {
     this.importTags('movie-masher-selector-div')
@@ -30,23 +29,25 @@ export class SelectorSectionElement extends Section {
     >${slots}</movie-masher-selector-header>`
   } 
 
-  // protected override slots: string[] = ['footer']
+  static override styles: CSSResultGroup = [
+    Section.styles, 
+    css`
+      /* media.css */
+      :host {
+        grid-area: media;
+      }
 
-  static override styles = [...Section.styles, css`
-  
-    /* media.css */
-    :host {
-      grid-area: media;
-    }
+      .panel.media footer label {
+        text-align: right;
+        flex-grow: 1;
+      }
+      .media label > svg:hover {
+        color: var(--control-fore-hover);
+      }
 
-    .panel.media footer label {
-      text-align: right;
-      flex-grow: 1;
-    }
-    .media label > svg:hover {
-      color: var(--control-fore-hover);
-    }
-
-  `]
-  
+    `
+  ]
 }
+
+// register web component as custom element
+customElements.define('movie-masher-selector-section', SelectorSectionElement)

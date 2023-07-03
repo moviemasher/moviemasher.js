@@ -1,6 +1,7 @@
-import { ValueRecord } from './Core.js'
-import { ErrorObject, DefiniteError } from './Error.js'
+import type { ValueRecord } from './Core.js'
+import type { ErrorObject, DefiniteError } from './Error.js'
 import { ErrorName, ErrorNames } from './ErrorName.js'
+import { isObject } from './TypeofGuards.js'
 
 export type ErrorContext = ValueRecord | string | undefined
 
@@ -68,3 +69,8 @@ export const errorThrow = (value: any, type?: string, property?: string): never 
 export const error = (code: ErrorName, context?: ErrorContext): DefiniteError => (
   { error: errorName(code, context)}
 )
+
+export const isDefiniteError = (value: any): value is DefiniteError => {
+  return isObject(value) && 'error' in value && isObject(value.error)
+}
+

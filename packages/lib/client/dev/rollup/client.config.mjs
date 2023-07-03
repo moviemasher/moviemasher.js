@@ -1,7 +1,5 @@
 import path from 'path'
 
-const framework = 'component'
-
 import terser from '@rollup/plugin-terser'
 import typescript from 'rollup-plugin-typescript2'
 
@@ -15,7 +13,6 @@ const typescriptConfig = {
   cacheRoot: `${projectDir}/node_modules/.cache/rollup-plugin-typescript2`,
   tsconfigOverride: { 
     compilerOptions: { rootDir, declaration, declarationMap: declaration },
-    include: [`${rootDir}/*.ts`],
   },
   tsconfig: `./tsconfig.json`,
 }
@@ -26,11 +23,10 @@ export default {
     format: 'esm',
     file: 'dist/lib-client.js'
   },
-  external: [/moviemasher/, /lit/, /tslib/],
+  external: [/@moviemasher/, /^@?lit/],
   context: 'globalThis.window',
   plugins: [
     typescript(typescriptConfig),
-    // expandImportsPlugin(),
     // terser(),
   ],
 }

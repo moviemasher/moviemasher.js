@@ -1,21 +1,21 @@
-import type { ScalarType, StringType, BooleanType, NumberType } from "@moviemasher/runtime-shared"
-import type {Scalar, Scalars, Strings} from '@moviemasher/runtime-shared'
+import type { 
+  BooleanDataType, NumberDataType, Scalar, ScalarType, Scalars, StringDataType, 
+  Strings 
+} from '@moviemasher/runtime-shared'
 
-import { 
-  scalar, scalars} from '../../Utility/ScalarFunctions.js'
 import { TypeString } from "@moviemasher/runtime-shared"
-import { BooleanDataType, NumberDataType, StringDataType } from '@moviemasher/runtime-shared'
+import { scalar, scalars } from '../../Utility/ScalarFunctions.js'
 
 export interface Environment {
   get: EnvironmentGetter
   getArray: EnvironmentArrayGetter
   set: EnvironmentSetter
 }
+
 export type EnvironmentKey = `MOVIEMASHER_${string}`
 
 export const EnvironmentKeyPrefix = 'MOVIEMASHER_'
 export const EnvironmentKeyUrlBase: EnvironmentKey = `${EnvironmentKeyPrefix}URL_BASE`
-export const EnvironmentKeySupportsLoadSvg: EnvironmentKey = `${EnvironmentKeyPrefix}SUPPORTS_SVG_LOAD`
 export const EnvironmentKeyLanguages: EnvironmentKey = `${EnvironmentKeyPrefix}LANGUAGES`
 
 export type EnvironmentRecord = Record<EnvironmentKey, Scalar>
@@ -46,4 +46,3 @@ export type EnvironmentArrayGetter = typeof EnvironmentGetArray
 export type EnvironmentGetter = typeof EnvironmentGet
 
 export type EnvironmentSetter = typeof EnvironmentSet
-
