@@ -1,5 +1,5 @@
 import type { 
-  Htmls, Content, Contents, ConnectionEventDetail 
+  Htmls, Content, Contents, ConnectionEventDetail, ConnectionEvent 
 } from '../declarations'
 
 import { html } from 'lit-html/lit-html.js'
@@ -7,7 +7,6 @@ import { ifDefined } from 'lit-html/directives/if-defined.js'
 
 import { ImporterComponent } from './ImporterComponent'
 import { Component } from './Component'
-// import { Component } from './Component'
 
 export type SlottedEvent = CustomEvent<SlottedEventDetail>
 
@@ -25,12 +24,12 @@ export class Slotted extends ImporterComponent {
   protected childrenBySlot = new Map<string, Element>()
 
   override connectedCallback() {
-    const { parentElement, slots } = this
+    const { parentElement } = this
     if (parentElement && parentElement.isConnected && !parentElement.tagName.toLowerCase().startsWith('movie-masher')) {
       // console.log(this.tagName, 'connectedCallback', this.slotted, this.slots, parentElement.tagName)
       this.dispatchConnection(true)
     }
-    else console.debug(this.constructor.name, 'connectedCallback without slots', slots.length, parentElement?.tagName)
+    // else console.debug(this.constructor.name, 'connectedCallback without slots', slots.length, parentElement?.tagName)
     super.connectedCallback()
   }  
   
@@ -52,6 +51,7 @@ export class Slotted extends ImporterComponent {
         if (!passed) slots.length = 0
 
         slots.push(html`<slot 
+          class='${mySlot}'
           @slotchange='${this.slotChangeHandler}'
           name='${name}' 
           slot='${ifDefined(passed)}' 
@@ -85,7 +85,7 @@ export class Slotted extends ImporterComponent {
     const init: CustomEventInit<ConnectionEventDetail> = { 
       detail, composed: true, bubbles: true, cancelable: true
     }
-    const event = new CustomEvent<ConnectionEventDetail>('connection', init)
+    const event: ConnectionEvent = new CustomEvent('connection', init)
     this.dispatchEvent(event)
   }
 
@@ -120,7 +120,7 @@ export class Slotted extends ImporterComponent {
     const init: CustomEventInit<SlottedEventDetail> = { 
       detail, composed: true, bubbles: false, cancelable: true
     }
-    const event = new CustomEvent<SlottedEventDetail>('slotted', init)
+    const event: SlottedEvent = new CustomEvent('slotted', init)
     this.dispatchEvent(event)
     this.slottedHandler(event)
     return detail
@@ -130,7 +130,7 @@ export class Slotted extends ImporterComponent {
     const { target } = event
     if (!(target instanceof HTMLSlotElement)) return
     const { children } = target
-    console.debug(this.tagName, 'onSlotChanged', children.length)
+    // console.log(this.tagName, 'onSlotChanged', children.length)
     this.importElements(Array.from(children))
   }
 

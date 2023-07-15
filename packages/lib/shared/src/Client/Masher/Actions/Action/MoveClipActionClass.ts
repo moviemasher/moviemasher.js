@@ -1,4 +1,4 @@
-import type { ClientClip, ClientMashAsset } from '@moviemasher/runtime-client'
+import type { ClientClip } from '@moviemasher/runtime-client'
 import type { MoveClipActionObject } from './ActionTypes.js'
 
 import { AddTrackActionClass } from './AddTrackActionClass.js'
@@ -7,7 +7,7 @@ import { AddTrackActionClass } from './AddTrackActionClass.js'
  * @category Action
  */
 export class MoveClipActionClass extends AddTrackActionClass {
-  constructor(object : MoveClipActionObject) {
+  constructor(object: MoveClipActionObject) {
     super(object)
     const {
       clip,
@@ -29,30 +29,28 @@ export class MoveClipActionClass extends AddTrackActionClass {
 
   clip: ClientClip
 
-  insertIndex : number
+  insertIndex?: number
 
-  trackIndex : number
+  trackIndex: number
 
-  undoTrackIndex : number
+  undoTrackIndex: number
 
-  undoInsertIndex : number
+  undoInsertIndex?: number
 
-  undoFrame? : number
+  undoFrame?: number
 
-  redoFrame? : number
+  redoFrame?: number
   
-  private get mash(): ClientMashAsset { return this.clip.track.mash }
-
-  addClip(trackIndex : number, insertIndex : number, frame?: number) : void {
-    this.mash.addClipToTrack(this.clip, trackIndex, insertIndex, frame)
+  addClip(trackIndex: number, insertIndex?: number, frame?: number): void {
+    this.mashAsset.addClipToTrack(this.clip, trackIndex, insertIndex, frame)
   }
 
-  redoAction() : void {
+  redoAction(): void {
     super.redoAction()
     this.addClip(this.trackIndex, this.insertIndex, this.redoFrame)
   }
 
-  undoAction() : void {
+  undoAction(): void {
     this.addClip(this.undoTrackIndex, this.undoInsertIndex, this.undoFrame)
     super.undoAction()
   }

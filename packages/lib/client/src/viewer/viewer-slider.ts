@@ -15,8 +15,18 @@ export class ViewerSliderElement extends Component {
     this.listeners[EventTypeDuration] = this.handleDuration.bind(this)
   }
 
-  
-  private handleChange(event: Event): void {
+  fps = 0
+
+  frame = 0
+
+  frames = 0
+
+  private handleDuration(event: NumberEvent): void {
+    this.frames = event.detail
+    // console.log(this.tagName, 'handleDuration', this.frames) 
+  }
+
+  private handleInput(event: Event): void {
     const { value } = event.target as HTMLInputElement
     const detail = parseInt(value)
     if (isNumber(detail)) {
@@ -25,39 +35,30 @@ export class ViewerSliderElement extends Component {
     }
   }
 
-  frame: number = 0
-  frames: number = 0
-  fps: number = 0
-
-  private handleDuration(event: NumberEvent): void {
-    const { detail: frames } = event
-    this.frames = frames
-  }
-
   private handleTime(event: TimeEvent): void {
     const { detail: time } = event
     this.frame = time.frame
     this.fps = time.fps
+    // console.log(this.tagName, 'handleTime', this.frame, this.fps) 
   }
 
   protected override render(): unknown {
     const disabled = this.frames ? undefined : true
 
     return html`<input 
-      @change=${this.handleChange}
+      @input=${this.handleInput}
+      type='range'
       disabled='${ifDefined(disabled)}'
       min='0'
       max='${this.frames}'
       step='1'
       value='${this.frame}'
-      class='frame slider'
-      type='range'
     ></input>`
   }
 
   static override properties = { 
     ...Component.properties,
-    frame: { type: Number },
+    // frame: { type: Number },
     frames: { type: Number },
     fps: { type: Number }
    }

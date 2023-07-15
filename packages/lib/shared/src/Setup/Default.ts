@@ -27,7 +27,7 @@ const DefaultCast = {
 }
 
 export const Default = {
-  duration: 3,
+  duration: 10,
   label: 'Unlabeled',
   editor: DefaultMasherArgs,
   video: DefaultMash,

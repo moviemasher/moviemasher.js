@@ -35,6 +35,7 @@ export class ImporterComponent extends Component {
   protected static get importFinished(): boolean {
     return !this.promises.size
   }
+  
   protected static importTag(...names: string[]) {
     
     const uniqueNames = Array.from(new Set(names))

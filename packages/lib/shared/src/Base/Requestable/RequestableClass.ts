@@ -29,7 +29,7 @@ export class RequestableClass extends PropertiedClass implements Requestable {
 
   get loadType(): LoadType { 
     const { type } = this
-    console.log(this.constructor.name, 'loadType', type)
+    // console.log(this.constructor.name, 'loadType', type)
     if (type === TypeSequence) return TypeImage
 
     assertLoadType(type)

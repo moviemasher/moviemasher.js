@@ -2,8 +2,7 @@ import type { CSSResultGroup } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
-import { Div, LeftCenterRight } from '../Base/LeftCenterRight.js'
-import { Component } from '../Base/Component.js'
+import { Div } from '../Base/LeftCenterRight.js'
 
 export class ViewerDivElement extends Div {
   override centerContent(slots: Htmls): OptionalContent {
@@ -62,10 +61,7 @@ export class ViewerDivElement extends Div {
   
 
   static override styles: CSSResultGroup = [
-    Component.cssHostFlex,
-    LeftCenterRight.cssDiv,
-    LeftCenterRight.cssDivLeft,
-    LeftCenterRight.cssDivRight,
+    Div.styles,
   ]
 
   static override properties = {

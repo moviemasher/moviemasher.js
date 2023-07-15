@@ -1,13 +1,14 @@
 import type { AssetObject, StringEvent, Time } from '@moviemasher/runtime-shared'
 import type { Htmls, OptionalContent } from '../declarations.js'
-import type { MashAddAssetsEventDetail, MashIndex, TimeEvent, ClipOrFalseEvent, ClientClip } from '@moviemasher/runtime-client'
+import type { MashAddAssetsEventDetail, MashIndex, TimeEvent, ClientClip, ClipFromIdEventDetail, MashAssetEvent } from '@moviemasher/runtime-client'
 
 import { html } from 'lit-html/lit-html.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 
-import { Footer } from '../Base/LeftCenterRight.js'
-import { MovieMasher, EventTypeSelectAssetObject, EventTypeAddMashTrack, EventTypeMashAddAssets, EventTypeTime, EventTypeSelectClip } from '@moviemasher/runtime-client'
+import { MovieMasher, EventTypeSelectAssetObject, EventTypeMashAddTrack, EventTypeMashAddAssets, EventTypeTime, EventTypeSelectClip, EventTypeClipFromId, EventTypeMashAsset } from '@moviemasher/runtime-client'
 import { isClip, isMashAsset, isTrack } from '@moviemasher/lib-shared'
+
+import { Footer } from '../Base/LeftCenterRight.js'
 
 const EventTypeComposerAdd = 'composer-add'
 export class ComposerFooterElement extends Footer {
@@ -17,9 +18,13 @@ export class ComposerFooterElement extends Footer {
     this.listeners[EventTypeComposerAdd] = this.handleAdd.bind(this)
     this.listeners[EventTypeTime] = this.handleTime.bind(this)
     this.listeners[EventTypeSelectClip] = this.handleSelectClip.bind(this)
+    this.listeners[EventTypeMashAsset] = this.handleMashAsset.bind(this)
+
   }
 
   protected assetObject?: AssetObject
+
+  protected disabled = true
 
   private handleAdd(event: StringEvent): void {
     event.stopImmediatePropagation()
@@ -28,7 +33,8 @@ export class ComposerFooterElement extends Footer {
     if (!assetObject) return
 
     const mashIndex: MashIndex = {
-      clip: 0, track: -1
+      // clip: 0, track: -1
+      clip: -1, track: 0
     }
     if (selectedClip) {
       const { track } = selectedClip
@@ -47,18 +53,10 @@ export class ComposerFooterElement extends Footer {
     }
     MovieMasher.eventDispatcher.dispatch(new CustomEvent(EventTypeMashAddAssets, { detail }))
   }
-
-  private selectedClip: ClientClip | false = false
-
-  private handleSelectClip(event: ClipOrFalseEvent): void {
-    this.selectedClip = event.detail
+  private handleMashAsset(event: MashAssetEvent): void {
+    this.disabled = !!event.detail
   }
-  private time?: Time 
-
-  private handleTime(event: TimeEvent): void {
-    this.time = event.detail
-  }
-
+  
   private handleSelectAssetObject(event: CustomEvent<AssetObject>): void {
     const { detail: assetObject } = event
     this.assetObject = assetObject
@@ -66,33 +64,61 @@ export class ComposerFooterElement extends Footer {
     event.stopImmediatePropagation()
   }
 
+  private handleSelectClip(event: StringEvent): void {
+    this.selectedClipId = event.detail
+    delete this._selectedClip
+  }
+
+  private handleTime(event: TimeEvent): void {
+    this.time = event.detail
+  }
+
   override leftContent(slots: Htmls): OptionalContent {
-    
     const htmls = [...slots]
-
+    const { disabled, assetObject } = this
     this.importTags('movie-masher-component-button')
-
     htmls.push(html`<movie-masher-component-button         
-        disabled='${ifDefined(this.assetObject ? undefined : true)}'
+        disabled='${ifDefined(assetObject && disabled? undefined : true)}'
         icon='add' emit='${EventTypeComposerAdd}' 
-      ></movie-masher-component-button>`)
+      ></movie-masher-component-button>
+    `)
 
     htmls.push(html`<movie-masher-component-button 
-        disabled='${ifDefined(this.assetObject ? undefined : true)}'
-        icon='trackDense' emit='${EventTypeAddMashTrack}'  
+        disabled='${ifDefined(disabled ? undefined : true)}'
+        icon='track' emit='${EventTypeMashAddTrack}'  
       ></movie-masher-component-button>`)
     return super.leftContent(htmls)
   }
 
   override rightContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
+    this.importTags('movie-masher-composer-zoom')
+    htmls.push(html`<movie-masher-composer-zoom></movie-masher-composer-zoom>`)
 
     return super.rightContent(htmls)
   }
 
+  private selectedClipId = ''
+
+  private _selectedClip?: ClientClip | undefined
+
+  private get selectedClip(): ClientClip | undefined {
+    if (this._selectedClip) return this._selectedClip
+    
+    const { selectedClipId: clipId } = this
+    const detail: ClipFromIdEventDetail = { clipId }
+    const event = new CustomEvent(EventTypeClipFromId, { detail })
+    MovieMasher.eventDispatcher.dispatch(event)
+
+    return this._selectedClip = detail.clip 
+  }
+
+  private time?: Time 
+
   static override properties = {
     ...Footer.properties,
-    assetObject: { type: Object, attribute: false }
+    assetObject: { type: Object, attribute: false },
+    disabled: { type: Boolean, attribute: false },
   }
 }
 

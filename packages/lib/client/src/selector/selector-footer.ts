@@ -49,14 +49,15 @@ export class SelectorFooterElement extends Footer {
   }
 
   override rightContent(slots: Htmls): OptionalContent {
-    this.importTags('movie-masher-component-a')
-    return super.rightContent([
-      ...slots, 
-      html`<movie-masher-component-a
+    const htmls = [...slots]
+    htmls.push(html`
+      <movie-masher-component-a
         slotted='input'
         icon='add' emit='${EventTypeDialog}' detail='importer'
-      ></movie-masher-component-a>`,
-    ])
+      ></movie-masher-component-a>
+    `)
+    this.importTags('movie-masher-component-a')
+    return super.rightContent(htmls)
   }
 
   static override properties = {

@@ -34,7 +34,7 @@ export interface Masher {
   position: number
   positionStep: number
   precision: number
-  // mashAsset?: MashAsset
+  mashAsset?: MashAsset
   selection: ClientClip | false
   readOnly: boolean
   rect: Rect

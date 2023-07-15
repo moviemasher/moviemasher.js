@@ -11,7 +11,7 @@ export class PropertiedClass implements Propertied {
   [index: string]: unknown
 
   constructor(...args: any[]) { 
-    console.log(this.constructor.name, 'constructor', args)
+    // console.log(this.constructor.name, 'constructor', args)
     // const [object] = args
     // assertObject(object, `${this.constructor.name}(object)`)
 

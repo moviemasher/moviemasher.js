@@ -7,23 +7,11 @@ import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { Footer } from '../Base/LeftCenterRight.js'
 import { MovieMasher, EventTypeImportAssetObjects, EventTypeDialog, EventTypeImporterChange, EventTypeImporterComplete } from '@moviemasher/runtime-client'
 
-export class InspectorFooterElement extends Footer {
+export class ImporterFooterElement extends Footer {
   constructor() {
     super()
-    this.handleImporterChange = this.handleImporterChange.bind(this)
-    this.handleImporterComplete = this.handleImporterComplete.bind(this)
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback()
-    MovieMasher.eventDispatcher.addDispatchListener(EventTypeImporterChange, this.handleImporterChange)
-    MovieMasher.eventDispatcher.addDispatchListener(EventTypeImporterComplete, this.handleImporterComplete)
-  }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback()
-    MovieMasher.eventDispatcher.removeDispatchListener(EventTypeImporterChange, this.handleImporterChange)
-    MovieMasher.eventDispatcher.removeDispatchListener(EventTypeImporterComplete, this.handleImporterComplete)
+    this.listeners[EventTypeImporterChange] = this.handleImporterChange.bind(this)
+    this.listeners[EventTypeImporterComplete] = this.handleImporterComplete.bind(this)
   }
 
   assetObjects: AssetObjects = []
@@ -38,7 +26,6 @@ export class InspectorFooterElement extends Footer {
   }
 
   protected handleImporterChange(event:ImportAssetObjectsEvent): void {
-
     const { detail: { assetObjects } } = event
     console.log(this.tagName, 'handleImporterChange', assetObjects)
     this.assetObjects = assetObjects
@@ -76,6 +63,5 @@ export class InspectorFooterElement extends Footer {
   
 }
 
-
 // register web component as custom element
-customElements.define('movie-masher-importer-footer', InspectorFooterElement)
+customElements.define('movie-masher-importer-footer', ImporterFooterElement)

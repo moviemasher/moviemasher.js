@@ -1,6 +1,7 @@
 import type { PropertyValues, CSSResultGroup } from 'lit'
 import type { Icon } from '@moviemasher/runtime-client'
-import type { IconEventDetail, OptionalContent } from '../declarations.js'
+import type { OptionalContent } from '../declarations.js'
+import type { IconEventDetail } from '@moviemasher/runtime-client'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 
@@ -54,13 +55,8 @@ export class IconElement extends Component {
   private get iconPromiseInitialize(): Promise<Icon | void> {
     const promise = this.iconEventPromise
     if (!promise) {
-      console.log(this.tagName, 'iconPromiseInitialize NO PROMISE')
-
       const promise = new Promise<Icon | void>(resolve => {
-        setTimeout(() => {
-          console.log(this.tagName, 'iconPromiseInitialize TIMEOUT')
-          resolve(this.iconPromiseInitialize)
-        }, IconElementTimeout)
+        setTimeout(() => { resolve(this.iconPromiseInitialize) }, IconElementTimeout)
       })
       return promise
     }

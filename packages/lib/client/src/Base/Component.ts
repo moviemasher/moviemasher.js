@@ -1,5 +1,5 @@
 import type { Content, Contents, Nodes } from '../declarations.js'
-import type { EventDispatcherListenerRecord } from '@moviemasher/runtime-shared'
+import type { EventDispatcherListenerRecord, Strings } from '@moviemasher/runtime-shared'
 
 import { LitElement } from 'lit-element/lit-element.js'
 import { html } from 'lit-html/lit-html.js'
@@ -52,6 +52,10 @@ export class Component extends LitElement {
     super.disconnectedCallback()
   }
 
+  protected element(selector = 'div.root') {
+    return this.shadowRoot!.querySelector(selector)!
+  }
+
   protected error(msg: string) {
     this.dispatchEvent(new ErrorEvent('error', { error: new Error(msg) }))
   }
@@ -86,6 +90,13 @@ export class Component extends LitElement {
 
   protected listeners: EventDispatcherListenerRecord = {}
 
+  private logs: Strings = []
+  protected logOnce(msg: string) {
+    if (!this.logs.includes(msg)) {
+      this.logs.push(msg)
+      console.log(this.tagName, msg)
+    }
+  }
 
   protected override render(): unknown {
     const { contents } = this
@@ -100,8 +111,29 @@ export class Component extends LitElement {
     })
   }
 
-  static cssHostFlex = css`:host { display: flex; flex-grow: 1; }`
+  protected variable(name: string) {
+    const style = getComputedStyle(this)
+    const value = style.getPropertyValue(`--${name}`) || '0'
+    const withOutPx = value.replace('px', '')
+    return Number(withOutPx)
+  }
+  
+  static cssBorderBoxSizing = css`
+    * {
+      box-sizing: border-box;
+    }
+  `
 
+  static cssHostDropping = css`
+    :host(.dropping) {
+      box-shadow: var()
+        0 var(--drop-size) 0 0 var(--color-drop),
+        0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
+      ;
+    }
+  `
+  
+  static cssHostFlex = css`:host { display: flex; flex-grow: 1; }`
 
   static override properties = {
     exportParts: { reflect: true, type: String, noAccessor: true }

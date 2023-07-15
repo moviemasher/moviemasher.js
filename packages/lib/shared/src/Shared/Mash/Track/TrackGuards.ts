@@ -3,7 +3,7 @@ import { errorThrow } from '@moviemasher/runtime-shared'
 import { Track } from '@moviemasher/runtime-shared'
 
 export const isTrack = (value?: any): value is Track => {
-  return isObject(value) && 'frameForClipNearFrame' in value
+  return isObject(value) && 'assureFrames' in value
 }
 export function assertTrack(value: any, name?: string): asserts value is Track {
   if (!isTrack(value))

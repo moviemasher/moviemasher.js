@@ -32,7 +32,6 @@ export interface Clip extends Propertied {
   resetTiming(tweenable?: Instance, quantize?: number): void
   sizing: Sizing
   timeRange: TimeRange
-  // timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
   timing: Timing
   track: Track
   trackNumber: number

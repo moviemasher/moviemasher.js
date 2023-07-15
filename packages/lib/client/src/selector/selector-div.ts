@@ -1,10 +1,10 @@
 import type { CSSResultGroup } from 'lit'
-import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 
-import { Div, LeftCenterRight } from '../Base/LeftCenterRight.js'
-import { Component } from '../Base/Component.js'
+import { Div } from '../Base/LeftCenterRight.js'
+// import { Component } from '../Base/Component.js'
 
 export class SelectorDivElement extends Div {
   override centerContent(slots: Htmls): OptionalContent {
@@ -14,15 +14,15 @@ export class SelectorDivElement extends Div {
     return html`${htmls}`
   }
 
-  protected override content(contents: Contents): Content { 
-    return html`<div>${contents}</div>` 
-  }
+  // protected override content(contents: Contents): Content { 
+  //   return html`<div>${contents}</div>` 
+  // }
  
   static override styles: CSSResultGroup = [
-    Component.cssHostFlex,
-    LeftCenterRight.cssDiv,
-    LeftCenterRight.cssDivLeft,
-    LeftCenterRight.cssDivRight,
+    Div.styles,
+    // LeftCenterRight.cssDiv,
+    // LeftCenterRight.cssDivLeft,
+    // LeftCenterRight.cssDivRight,
   ]
 }
 

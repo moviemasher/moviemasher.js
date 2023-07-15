@@ -1,4 +1,4 @@
-import type { Action, ActionArgs, ActionObject, ClientClip, ClientClips, ClientMashAsset, ClientTrack } from '@moviemasher/runtime-client'
+import type { Action, ActionArgs, ClientClip, ClientClips, ClientMashAsset, ClientTrack } from '@moviemasher/runtime-client'
 import type { Propertied, Scalar, ScalarRecord } from '@moviemasher/runtime-shared'
 
 export interface ChangeAction extends Action {
@@ -48,11 +48,11 @@ export interface AddTrackActionObject extends ActionArgs {
 
 export interface MoveClipActionObject extends AddTrackActionObject {
   clip: ClientClip
-  insertIndex: number
+  insertIndex?: number
   redoFrame?: number
   trackIndex: number
   undoFrame?: number
-  undoInsertIndex: number
+  undoInsertIndex?: number
   undoTrackIndex: number
 }
 
@@ -67,5 +67,3 @@ export interface MoveActionObject extends ActionArgs {
   redoObjects: any[]
   undoObjects: any[]
 }
-
-

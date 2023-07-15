@@ -1,5 +1,4 @@
-import type { Icon } from '@moviemasher/runtime-client'
-import type { IconEvent } from '../declarations'
+import type { Icon, IconEvent } from '@moviemasher/runtime-client'
 import type { DataOrError, StringRecord } from '@moviemasher/runtime-shared'
 
 import { EventTypeIconFromId, MovieMasher } from '@moviemasher/runtime-client'
@@ -22,7 +21,7 @@ class Handler {
     request.endpoint ||= (new URL('../../json/icons.json', import.meta.url)).href
 
     const populated = requestPopulate(request)
-    console.log('Handler.jsonPromise', populated)
+    // console.log('Handler.jsonPromise', populated)
     return this._jsonPromise = requestJsonRecordPromise(populated).then(orError => {
       if (isDefiniteError(orError)) return orError 
 

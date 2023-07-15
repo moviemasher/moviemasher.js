@@ -59,7 +59,7 @@ T & Constrained<VisibleInstance> {
     }
 
     itemContentRect(containerRect: Rect, time: Time): Rect {
-      console.log(this.constructor.name, 'itemContentRect', containerRect)
+      // console.log(this.constructor.name, 'itemContentRect', containerRect)
       const timeRange = this.clip.timeRange
 
       const contentArgs: ContentRectArgs = {

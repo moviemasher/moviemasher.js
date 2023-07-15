@@ -7,10 +7,9 @@ import { LitElement } from 'lit-element/lit-element.js'
 import { html } from 'lit-html/lit-html.js'
 
 import { EventTypeImporters, isDefiniteError, SourceRaw, SourceText, TypeAudio, TypeFont, TypeImage, TypeProbe, TypeVideo, TypesImport, isAudibleAssetType, isImportType } from '@moviemasher/runtime-shared'
-import { MovieMasher, EventTypeClientVideo, EventTypeClientImage, EventTypeClientFont, EventTypeClientAudio, EventTypeImporterChange } from '@moviemasher/runtime-client'
+import { MovieMasher, EventTypeClientVideo, EventTypeClientImage, EventTypeClientFont, EventTypeClientAudio, EventTypeImporterChange, EventTypeImportRaw } from '@moviemasher/runtime-client'
 
 const ClientRawElementName = 'movie-masher-client-raw'
-const EventTypeImportRaw = 'import-raw'
 
 export class ClientRawElement extends LitElement {
   protected handleChange(changeEvent: DragEvent) {

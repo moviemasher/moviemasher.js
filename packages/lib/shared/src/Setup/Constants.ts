@@ -48,6 +48,8 @@ export const ClassButton = 'button'
 export const ClassCollapsed = 'collapsed'
 export const ClassSelected = 'selected'
 export const ClassDropping = 'dropping'
+
+// TODO: used?
 export const ClassDroppingBefore = 'dropping-before'
 export const ClassDroppingAfter = 'dropping-after'
 

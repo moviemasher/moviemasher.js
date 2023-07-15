@@ -18,11 +18,11 @@ const audioContext = () => {
 export const requestAudioPromise = (request: EndpointRequest): Promise<ClientAudioDataOrError> => {
   const url = requestUrl(request)
   if (!url) return errorPromise(ErrorName.Url) 
-  
+
   const { init } = request
   const blobPromise = fetch(url, init).then(response => response.blob())
-  const bufferPromise = blobPromise.then(blob => (
-    new Promise<DataOrError<ArrayBuffer>>(resolve => {
+  const bufferPromise = blobPromise.then(blob => {
+    return new Promise<DataOrError<ArrayBuffer>>(resolve => {
       const reader = new FileReader()
       reader.onload = (event: ProgressEvent<FileReader>) => { 
         const { loaded, total } = event
@@ -34,7 +34,7 @@ export const requestAudioPromise = (request: EndpointRequest): Promise<ClientAud
       reader.onerror = error => { resolve(errorCaught(error)) }
       reader.readAsArrayBuffer(blob)
     }) 
-  ))
+  })
   return bufferPromise.then(orError => {
     if (isDefiniteError(orError)) return orError
     

@@ -60,17 +60,17 @@ export class MovieMasherElement extends Slotted {
   private _assetObject?: AssetObject 
   private get assetObject() { return this._assetObject }
   private set assetObject(assetObject: AssetObject | undefined) {
-    console.log(this.tagName, 'SET assetObject', assetObject)
+    // console.log(this.tagName, 'SET assetObject', assetObject)
     const { _assetObject: original } = this
     if (original === assetObject) return
     this._assetObject = assetObject
 
     if (assetObject) {
       this.masherPromise.then(() => {
-        console.log(this.tagName, 'SET assetObject masherPromise', assetObject)
+        // console.log(this.tagName, 'SET assetObject masherPromise', assetObject)
 
         this.masher!.load(assetObject).then(() => {
-          console.log(this.tagName, 'masher DID load')
+          // console.log(this.tagName, 'masher DID load')
         })
       })
     } else this.masher?.unload()
@@ -107,7 +107,7 @@ export class MovieMasherElement extends Slotted {
 
             if (!isDefiniteError(orError)) {
               const { data: assetObject } = orError
-              console.log(this.tagName, 'YES promise', assetObject, orError)
+              // console.log(this.tagName, 'YES promise', assetObject, orError)
               this.assetObject = assetObject
             }
           })
@@ -190,12 +190,12 @@ export class MovieMasherElement extends Slotted {
   private get masherPromiseInitialize(): Promise<void> {
     return this.sharedPromise.then(() => {
       const options: MasherOptions = {
-        mash: this.assetObject, 
+        // mash: this.assetObject, 
         dimensions: this.rect,
       }
       const masher = this.core!.masherInstance(options)
       MovieMasher.masher = this.masher = masher
-      console.log(this.tagName, 'masherPromiseInitialize SET masher')
+      // console.log(this.tagName, 'masherPromiseInitialize SET masher')
     })
   }
 
@@ -214,7 +214,7 @@ export class MovieMasherElement extends Slotted {
     icon: { type: String },
   }
   static override styles: CSSResultGroup = [
-    Component.cssHostFlex,
+    Component.cssBorderBoxSizing,
     css`
       :host {
         --dialog-width: 50vw;
@@ -326,10 +326,10 @@ export class MovieMasherElement extends Slotted {
         --control-padding: 5px;
         --control-spacing: 5px;
 
-        --item-fore: yellow;
-        --item-fore-selected: yellow;
-        --item-fore-hover: yellow;
-        --item-back: blue;
+        --item-fore: var(--control-fore);
+        --item-fore-selected: var(--control-fore-selected);
+        --item-fore-hover: var(--control-fore-hover);
+        --item-back: var(--control-back);
         --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
 
         --item-back-selected: var(--item-back-hover-selected);
@@ -337,13 +337,7 @@ export class MovieMasherElement extends Slotted {
 
         --color-drop: red;
 
-      }
-    
-      * {
-        box-sizing: border-box;
-      }
-    
-      :host {
+
         flex-grow: 1;
         display: grid;
         gap: var(--gap);
@@ -368,7 +362,7 @@ export class MovieMasherElement extends Slotted {
           --lightness-fore-primary: var(--darkness-fore-primary);
           --lightness-fore-secondary: var(--darkness-fore-secondary);
           --lightness-fore-tertiary: var(--darkness-fore-tertiary);
-          --color-drop: yellow;
+          /* --color-drop: yellow; */
         } 
       }
     
@@ -376,13 +370,6 @@ export class MovieMasherElement extends Slotted {
         .panel .content {
           --padding: 20px;
           --spacing: 10px;
-        }
-
-        .panels {
-          grid-area: panels;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing);
         }
 
         .panel .content .drop-box {

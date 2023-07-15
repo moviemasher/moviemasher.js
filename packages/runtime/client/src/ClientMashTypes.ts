@@ -6,7 +6,8 @@ import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAss
 import type { Masher } from './Masher.js'
 import type { Panel } from './PanelTypes.js'
 import type { Selectable } from './Selectable.js'
-import type { PreviewItem, PreviewItems, SvgOrImage } from './Svg.js'
+import type { PreviewItem, PreviewItems } from './Svg.js'
+import type { SvgOrImageDataOrError } from './ClientEvents.js'
 
 export interface ClientMashAsset extends ClientAsset, MashAsset {
   addClipToTrack(clip : ClientClip | ClientClips, trackIndex? : number, insertIndex? : number, frame? : number) : void
@@ -69,7 +70,7 @@ export interface ClientMashVideoInstance extends VideoInstance, ClientInstance {
 }
 
 export interface ClientClip extends Selectable, Clip {
-  clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
+  clipIcon(frameSize: Size, size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImageDataOrError>
   clipPreviewItemsPromise(size: Size, time: Time, component: Panel): Promise<PreviewItem>
   container?: ClientVisibleInstance
   content: ClientInstance

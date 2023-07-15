@@ -63,7 +63,7 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
         defs.push(maskElement)
 
         const useContainerInMask = svgUseElement(containerId)
-        console.log(this.constructor.name, 'containedPromise', content.assetId, containerId, useContainerInMask)
+        // console.log(this.constructor.name, 'containedPromise', content.assetId, containerId, useContainerInMask)
         if (!isVector) maskElement.appendChild(svgPolygonElement(size, '', 'black'))
         maskElement.appendChild(containerItem)
         if (!isVector) {
@@ -90,7 +90,7 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
     }
   
     clippedPreviewItemPromise(content: ClientVisibleInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<PreviewItem> {
-      console.log(this.constructor.name, 'clippedPreviewItemPromise', containerRect, content.assetId)
+      // console.log(this.constructor.name, 'clippedPreviewItemPromise', containerRect, content.assetId)
       
       return content.contentPreviewItemPromise(containerRect, time, component).then(contentSvgItem => (
         this.containedPromise(contentSvgItem, content, containerRect, size, time, component)
@@ -123,7 +123,7 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
     }
 
     contentPreviewItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem> {
-      console.log(this.constructor.name, 'contentPreviewItemPromise', containerRect)
+      // console.log(this.constructor.name, 'contentPreviewItemPromise', containerRect)
       
       const rect = this.itemContentRect(containerRect, time)
       return this.containerSvgItemPromise(rect, time, component)

@@ -38,7 +38,6 @@ import { Instance, InstanceObject, VisibleInstance, VisibleInstanceObject } from
 import { InstanceCacheArgs } from "@moviemasher/runtime-shared"
 import { EmptyFunction } from '../../../Setup/EmptyFunction.js'
 import { MovieMasher } from '@moviemasher/runtime-client'
-import { ClientAssetManager } from '@moviemasher/runtime-client'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {

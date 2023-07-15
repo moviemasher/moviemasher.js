@@ -19,7 +19,7 @@ import { TrackPreviewClass } from './TrackPreview/TrackPreviewClass.js'
  */
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
-    const { selectedClip,  time, mash, clip, size } = args
+    const { selectedClip, time, mash, clip, size } = args
     this.mash = mash
     this.size = size || mash.imageSize
     this.time = time
@@ -44,7 +44,7 @@ export class PreviewClass implements Preview {
   
   get duration(): number { return this.time.lengthSeconds }
 
-  get editor(): Masher { return MovieMasher.masher! as Masher}
+  get editor(): Masher { return MovieMasher.masher! }
 
   get intrinsicSizePromise(): Promise<void> {
     const { clips, time, quantize } = this
@@ -86,7 +86,9 @@ export class PreviewClass implements Preview {
     })
   
     return itemsPromise.then(svgItems => {
-      return this._svgItems = svgItems.length ? this.tupleItems(svgItems) : []
+      const { clip } = this
+      const items = (!clip && svgItems.length) ? this.tupleItems(svgItems) : svgItems
+      return this._svgItems = items
     })
   }
 
@@ -128,6 +130,7 @@ export class PreviewClass implements Preview {
 
   private tupleItems(svgItems: PreviewItems): PreviewItems {
     const { size, selectedClip, editor } = this
+    // console.log(this.constructor.name, 'tupleItems', !!selectedClip)
     const items = [...svgItems]
 
     const trackClasses = 'track'

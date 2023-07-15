@@ -15,12 +15,12 @@ export class ViewerFooterElement extends Footer {
     return super.leftContent(htmls)
   }
 
-  protected override centerContent(slots: Htmls): OptionalContent {
+  protected override rightContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     this.importTags('movie-masher-viewer-slider')
     htmls.push(html`<movie-masher-viewer-slider></movie-masher-viewer-slider>`)
 
-    return super.centerContent(htmls)
+    return super.rightContent(htmls)
   }
 
   // static override styles: CSSResultGroup = [

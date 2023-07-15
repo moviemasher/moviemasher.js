@@ -8,8 +8,9 @@ import { isAssetType, isDefiniteError } from '@moviemasher/runtime-shared'
 
 import { MovieMasher, EventTypeSourceType, EventTypeAssetType, EventTypeAssetObjectFromId, EventTypeImportAssetObjects, EventTypeAssetObjects } from '@moviemasher/runtime-client'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { Scroller } from '../Base/Scroller.js'
 
-export class SelectorContentElement extends ImporterComponent {
+export class SelectorContentElement extends Scroller {
   constructor() {
     super()
     this.listeners[EventTypeAssetType] = this.handleAssetType.bind(this)
@@ -66,13 +67,13 @@ export class SelectorContentElement extends ImporterComponent {
     const htmls: Htmls= []
     const filtered = this.assetObjectsCombined
     if (filtered.length) {
-      this.importTags('movie-masher-selector-span')
+      this.importTags('movie-masher-selector-asset')
       htmls.push(...filtered.map(assetObject => {
         const { id } = assetObject
         // console.log(this.tagName, 'centerContent', id)
-        return html`<movie-masher-selector-span 
+        return html`<movie-masher-selector-asset 
           asset-id='${id}'
-        ></movie-masher-selector-span>`
+        ></movie-masher-selector-asset>`
       }))
     }   
     return html`${htmls}`
@@ -120,9 +121,10 @@ export class SelectorContentElement extends ImporterComponent {
   }
 
   static override styles: CSSResultGroup = [
+    Scroller.styles,
     css`
-      :host {
-        flex-grow: 1;
+      div.root {
+        
         display: grid;
         overflow-y: auto;
 
@@ -133,18 +135,18 @@ export class SelectorContentElement extends ImporterComponent {
         grid-auto-rows: calc(var(--viewer-height) * var(--icon-ratio));
       }
   
-      :host.dropping {
+      .dropping {
         box-shadow: var(--dropping-shadow);
       }
 
-      movie-masher-selector-span:hover,
-      movie-masher-selector-span.selected {
+      movie-masher-selector-asset:hover,
+      movie-masher-selector-asset.selected {
         border-color: var(--item-fore-selected);
         color: var(--item-fore-selected);
         background-color: var(--item-back-selected);
       }
 
-      movie-masher-selector-span.selected:hover {
+      movie-masher-selector-asset.selected:hover {
         border-color: var(--item-fore-hover);
         color: var(--item-fore-hover);
         background-color: var(--item-back-hover);

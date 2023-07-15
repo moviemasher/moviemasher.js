@@ -77,7 +77,7 @@ T & Constrained<ShapeInstance> {
 
     intrinsicRect(_editing = false): Rect {
       const { pathHeight: height, pathWidth: width} = this.asset
-      console.log(this.constructor.name, 'intrinsicRect', this.assetId)
+      // console.log(this.constructor.name, 'intrinsicRect', this.assetId)
       return { width, height, ...PointZero }
     }
   

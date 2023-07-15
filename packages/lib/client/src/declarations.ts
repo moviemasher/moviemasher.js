@@ -1,10 +1,9 @@
+import type { TemplateResult } from 'lit'
 import type { 
   AssetObject, AssetObjects, AssetType, DataOrError, Identified, Importers, 
   Scalar, StringRecord, Strings
 } from '@moviemasher/runtime-shared'
-import type { TranslateArgs } from '@moviemasher/runtime-client'
-import type { TemplateResult } from 'lit'
-
+import type { MashIndex } from '@moviemasher/runtime-client'
 
 export type CoreLib = typeof import('@moviemasher/lib-shared')
 
@@ -80,37 +79,6 @@ export interface AssetObjectsParams extends ClientReadParams {
   excludeSource?: boolean
 }
 
-
-export interface IconEventDetail extends TranslateArgs {
-  promise?: Promise<DataOrError<Icon>>
-}
-
-export type IconEvent = CustomEvent<IconEventDetail>
-
-export interface TranslationEventDetail extends TranslateArgs {
-  promise?: Promise<Translation>
-}
-
-export type TranslationEvent = CustomEvent<TranslationEventDetail>
-
-
-export interface Icon {
-  imageElement?: HTMLImageElement
-  imgUrl?: string
-  string?: string
-  svgElement?: SVGSVGElement
-  svgString?: string
-}
-
-export type IconDataOrError = DataOrError<Icon>
-
-export interface Translation {
-  text?: Text
-  string?: string
-}
-
-export type TranslationDataOrError = DataOrError<Translation>
-
 export interface ClientReadParams {
   type: AssetType 
   kind?: string | Strings
@@ -120,4 +88,19 @@ export interface ClientReadParams {
 
 export interface ImportersEventDetail {
   importers: Importers
+}
+
+export interface DropTarget {
+
+  acceptsClip: boolean
+  handleDragged(): void
+  mashIndex(event: DragEvent): MashIndex
+  ondragenter(event: DragEvent): void 
+  ondragleave(event: DragEvent): void 
+  ondragover(event: DragEvent): void 
+  ondrop(event: DragEvent): void
+  over: boolean
+
+
+
 }

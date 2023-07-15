@@ -33,6 +33,10 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
     if (!transcoding) return Promise.resolve()
 
     const { request } = transcoding
+    const { response } = request
+    if (response) return Promise.resolve()
+    
+
     const detail: ClientAudioEventDetail = { request }
     const event: ClientAudioEvent = new CustomEvent(EventTypeClientAudio, { detail })
     MovieMasher.eventDispatcher.dispatch(event)

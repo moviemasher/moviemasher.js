@@ -1,4 +1,4 @@
-import type { ContainerRectArgs, Direction, Point, Rect, ScalarRecord, Size, Time, TimeRange } from '@moviemasher/runtime-shared'
+import type { ContainerRectArgs, Direction, Point, Rect, ScalarRecord, Size, StringEvent, Time, TimeRange } from '@moviemasher/runtime-shared'
 import { EventTypeSelectClip, type ClipOrFalseEvent, type SvgItem, type SvgItems, MovieMasher } from '@moviemasher/runtime-client'
 
 import type { ClientVisibleInstance } from "@moviemasher/runtime-client"
@@ -231,7 +231,7 @@ export class TrackPreviewClass implements TrackPreview {
         eventStop(pointerEvent)
         // console.log('pointerdown', direction)
 
-        const event: ClipOrFalseEvent = new CustomEvent(EventTypeSelectClip, { detail: this.clip })
+        const event: StringEvent = new CustomEvent(EventTypeSelectClip, { detail: this.clip.id })
         MovieMasher.eventDispatcher.dispatch(event)
       }
       element.addEventListener('pointerdown', pointerDown)

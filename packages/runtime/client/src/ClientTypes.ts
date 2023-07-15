@@ -1,4 +1,4 @@
-import type { Instance, Property, AudibleInstance, TimeRange, VisibleInstance, Rect, Size, Time, AudioAsset, AudioInstanceObject, AudioInstance, InstanceArgs, ImageAsset, ImageInstanceObject, ImageInstance, VideoAsset, VideoInstanceObject, VideoInstance, Transcoding, ColorAsset, ColorInstance, ShapeAsset, ShapeInstance, TextAsset, TextInstance, TextAssetObject, Identified, ValueRecord } from '@moviemasher/runtime-shared'
+import type { Instance, Property, AudibleInstance, TimeRange, VisibleInstance, Rect, Size, Time, AudioAsset, AudioInstanceObject, AudioInstance, InstanceArgs, ImageAsset, ImageInstanceObject, ImageInstance, VideoAsset, VideoInstanceObject, VideoInstance, Transcoding, ColorAsset, ColorInstance, ShapeAsset, ShapeInstance, TextAsset, TextInstance, TextAssetObject } from '@moviemasher/runtime-shared'
 import type { Actions } from './Actions.js'
 import type { StartOptions } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
@@ -10,6 +10,7 @@ import type { SelectedProperties } from './SelectedProperty.js'
 import type { PreviewItem, SvgItem } from './Svg.js'
 
 export type Timeout = ReturnType<typeof setTimeout>
+export type AnimationFrame = ReturnType<typeof requestAnimationFrame>
 
 export interface ClientInstance extends Instance, Selectable {
   asset: ClientAsset
@@ -73,19 +74,4 @@ export interface ClientTextInstance extends TextInstance, ClientInstance {
 export interface ClientTextAssetObject extends TextAssetObject {
   loadedFont?: ClientFont
 }
-
-
-
-export interface TranslateArgs extends Identified {
-  values?: ValueRecord
-}
-
-export interface Icon {
-  imageElement?: HTMLImageElement
-  imgUrl?: string
-  string?: string
-  svgElement?: SVGSVGElement
-  svgString?: string
-}
-
 

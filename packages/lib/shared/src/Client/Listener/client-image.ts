@@ -5,21 +5,18 @@ import { MovieMasher, EventTypeClientImage } from '@moviemasher/runtime-client'
 
 import { errorCaught, errorPromise } from '@moviemasher/runtime-shared'
 import { ErrorName } from '@moviemasher/runtime-shared'
-import { ProtocolBlob } from '../../Plugin/Protocol/Protocol.js'
 import { requestUrl } from '../request/request.js'
 import { ClientImageEvent } from '@moviemasher/runtime-client'
 
 
 export const requestImagePromise = (request: EndpointRequest): Promise<ClientImageDataOrError> => {
   const url = requestUrl(request)
-  if (!url)
-    return errorPromise(ErrorName.Url)
-
+  if (!url) return errorPromise(ErrorName.Url)
 
   const { init } = request
-  const promise = url.startsWith(ProtocolBlob) ? Promise.resolve(url) : fetchBlobUrl(url, init)
+  const promise = init ? Promise.resolve(url) : fetchBlobUrl(url, init)
 
-  return promise.then(url => {
+  const loadPromise = promise.then(url => {
     console.debug('requestImagePromise', url)
 
     return new Promise<ClientImageDataOrError>(resolve => {
@@ -35,7 +32,10 @@ export const requestImagePromise = (request: EndpointRequest): Promise<ClientIma
       }
     })
   })
+  return loadPromise
 }
+
+
 const fetchBlobUrl = (url: string, init?: RequestInit) => (
   fetch(url, init)
     .then(response => response.blob())

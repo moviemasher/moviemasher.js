@@ -60,7 +60,6 @@ export class LeftCenterRight extends Slotted {
    :host {
       --padding: var(--section-padding);
       --spacing: var(--section-spacing);
-  
     }
   `
   static cssSection = css`
@@ -92,7 +91,6 @@ export class LeftCenterRight extends Slotted {
   static cssDiv = css`div { 
     padding: 0;
     display: flex; 
-    flex-grow: 1; 
     background-color: var(--div-back);
     color: var(--div-fore);
   }`
@@ -120,9 +118,9 @@ export class LeftCenterRight extends Slotted {
     .right {
       flex-grow: 0;
       display: flex;
-      border-right-width: var(--border-size);
-      border-right-color: var(--section-back);
-      border-right-style: solid;
+      border-left-width: var(--border-size);
+      border-left-color: var(--section-back);
+      border-left-style: solid;
     }
   `
   static cssHeader = css`header { 
@@ -219,17 +217,25 @@ export class Footer extends LeftCenterRight {
 
 
 export class Div extends LeftCenterRight {
-  protected override content(contents: Contents): Content {
-    return html`<div 
-      @slotted='${this.slottedHandler}'
-    >${contents}</div>`
-  }
+  // protected override content(contents: Contents): Content {
+  //   return html`<div 
+  //     @slotted='${this.slottedHandler}'
+  //   >${contents}</div>`
+  // }
+  static cssDivHostBackground = css`
+    :host {
+      background-color: var(--div-back);
+      color: var(--div-fore);
+    }
+  `
   static override styles: CSSResultGroup = [
     Component.cssHostFlex,
-    LeftCenterRight.cssDiv,
+    Component.cssBorderBoxSizing,
+    // LeftCenterRight.cssDiv,
     LeftCenterRight.cssDivLeft,
     LeftCenterRight.cssDivCenter,
     LeftCenterRight.cssDivRight,
+    Div.cssDivHostBackground,
   ]
 }
 

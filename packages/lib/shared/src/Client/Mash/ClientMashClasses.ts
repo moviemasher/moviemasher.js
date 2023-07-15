@@ -1,14 +1,14 @@
-import type { Track, TrackArgs, TrackObject, ClipObject, ContainerRectArgs, AssetCacheArgs, CacheOptions, InstanceCacheArgs, Propertied, Property, Scalar, Size, Time, TimeRange, MashAssetObject } from '@moviemasher/runtime-shared'
-import type { ClientAssetManager, PreviewItem, PreviewItems, SvgItems, SvgOrImage, Selectables, TimeEvent, ClipOrFalseEvent } from '@moviemasher/runtime-client'
+import type { Track, TrackArgs, TrackObject, ClipObject, ContainerRectArgs, AssetCacheArgs, CacheOptions, InstanceCacheArgs, Propertied, Property, Scalar, Size, Time, TimeRange, MashAssetObject, NumberEvent } from '@moviemasher/runtime-shared'
+import type { ClientAssetManager, PreviewItem, PreviewItems, SvgItems, Selectables, TimeEvent, SvgOrImageDataOrError } from '@moviemasher/runtime-client'
 import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack, ClientTracks } from '@moviemasher/runtime-client'
 
-import { errorThrow, ErrorName, TypeAudio, AVType, isArray } from '@moviemasher/runtime-shared'
-import { Actions, EventTypeSelectClip, MovieMasher, SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
+import { errorThrow, ErrorName, TypeAudio, AVType, isArray, arrayFromOneOrMore } from '@moviemasher/runtime-shared'
+import { Actions, MovieMasher, SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
 
 import { Panel } from '@moviemasher/runtime-client'
 
 import { assertContainerInstance } from '../../Helpers/Container/ContainerGuards.js'
-import { svgAppend, svgSetDimensions, svgSvgElement } from '../SvgFunctions.js'
+import { svgAppend, svgDefsElement, svgPatternElement, svgPolygonElement, svgSetDimensions, svgSvgElement, svgUrl } from '../SvgFunctions.js'
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities.js'
 import { ChangePropertyActionObject } from '../Masher/Actions/Action/ActionTypes.js'
 import { Masher } from '@moviemasher/runtime-client'
@@ -23,7 +23,7 @@ import { EmptyFunction } from '../../Setup/EmptyFunction.js'
 import { TypeClip, TypeMash } from '../../Setup/TypeConstants.js'
 import { TimingCustom } from '../../Setup/TimingConstants.js'
 import { ActionTypeChange, ActionTypeChangeFrame } from '../../Setup/ActionTypeConstants.js'
-import { EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTrack } from '@moviemasher/runtime-client'
+import { EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTracks } from '@moviemasher/runtime-client'
 import { ClipClass } from '../../Shared/Mash/Clip/ClipClass.js'
 import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
 
@@ -43,8 +43,10 @@ import { assertClientVisibleInstance } from '../ClientGuards.js'
 import { ClientInstance, ClientVisibleInstance } from '@moviemasher/runtime-client'
 import { pixelToFrame } from '../PixelFunctions.js'
 import { ClientTrackClass } from './ClientTrackClass.js'
+import { colorFromRgb, colorRgbDifference, colorToRgb } from '../../Helpers/Color/ColorFunctions.js'
+import { idGenerate } from '../../Utility/IdFunctions.js'
 
-export type TrackClips = [number, ClientClips]
+export type TrackClips = [ClientTrack, ClientClips]
 export type Interval = ReturnType<typeof setInterval>
 
 export class ClientMashAssetClass extends MashAssetClass implements ClientMashAsset {
@@ -84,24 +86,29 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   }
 
   addClipToTrack(clip: ClientClip | ClientClips, trackIndex = 0, insertIndex = 0, frame?: number): void {
-    const clipsArray = isArray(clip) ? clip : [clip]
-    const trackClips = this.trackClips(clipsArray, trackIndex)    
+    const clips = arrayFromOneOrMore(clip) 
+    const clipsByTrack: TrackClips[] = []
+    const oneTrack = isPositive(trackIndex)
+    if (oneTrack) clipsByTrack.push([this.tracks[trackIndex], clips]) 
+    else {
+      let index = this.tracks.length - clips.length
+      clips.forEach(clip => clipsByTrack.push([this.tracks[index++], [clip]]))
+    }
     this.emitIfFramesChange(() => {
-      trackClips.forEach(entry => {
-        const [index, clips] = entry
-        const newTrack = this.tracks[index]
-        assertTrack(newTrack, 'track')
-    
-        clips.forEach(clip => {
-          const oldTrackNumber = clip.trackNumber
-          if (isPositive(oldTrackNumber) && oldTrackNumber !== index) {
-            clip.track.removeClips([clip])
+      clipsByTrack.forEach(entry => {
+        const [insertTrack, insertClips] = entry
+        const { index } = insertTrack
+        insertClips.forEach(insertClip => {
+          const { trackNumber: track } = insertClip
+          if (isPositive(track) && track !== index) {
+            console.log(this.constructor.name, 'addClipToTrack', 'removing clip from track', track)
+            insertClip.track.removeClips([insertClip])
           }  
-          if (isPositive(frame)) clip.frame = frame
-          clip.track = newTrack
+          if (isPositive(frame)) insertClip.frame = frame
+          insertClip.track = insertTrack
         })
-        newTrack.assureFrames(this.quantize, clips)
-        newTrack.addClips(clips, insertIndex)
+        insertTrack.assureFrames(this.quantize, insertClips)
+        insertTrack.addClips(insertClips, insertIndex)
       })
     })
   }
@@ -111,9 +118,13 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       index: this.tracks.length, mashAsset: this, ...options 
     }
     const track = this.trackInstance(args) as ClientTrack
-    this.tracks.push(track)
-    this.tracks.sort(sortByIndex)
-    MovieMasher.eventDispatcher.dispatch(EventTypeTrack)
+    const { tracks } = this
+    tracks.push(track)
+    tracks.sort(sortByIndex)
+    const { length: detail } = tracks
+
+    const event: NumberEvent = new CustomEvent(EventTypeTracks, { detail })
+    MovieMasher.eventDispatcher.dispatch(event)
     return track
   }
   
@@ -198,18 +209,6 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     MovieMasher.eventDispatcher.dispatch(EventTypeDraw)
   }
   
-  private compositeVisibleRequest(time: Time): void {
-    // console.log(this.constructor.name, 'compositeVisibleRequest', time)
-    if (typeof requestAnimationFrame !== 'function') return 
-    
-    requestAnimationFrame(() => {
-      // if (this.counter) console.timeEnd(`anim-frame-${this.counter}`)
-      // this.counter++
-      // console.time(`anim-frame-${this.counter}`)
-      this.compositeVisible(time)
-    })
-  }
-
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     throw new Error('Method not implemented.')
   }
@@ -231,16 +230,26 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   private drawRequest(): void {
     // console.log(this.constructor.name, 'drawRequest')
     const { time } = this
-    this.compositeVisibleRequest(time)
+    if (typeof requestAnimationFrame !== 'function') return 
+    
+    requestAnimationFrame(() => {
+      // if (this.counter) console.timeEnd(`anim-frame-${this.counter}`)
+      // this.counter++
+      // console.time(`anim-frame-${this.counter}`)
+      this.compositeVisible(time)
+    })
   }
 
   private drawTime(time: Time): void {
-    // const timeChange = time !== this.time
+    const timeChange = time !== this.time
     // console.log(this.constructor.name, 'drawTime', time, timeChange)
     this.drawnTime = time
     this.drawRequest()
-    const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: time })
-    MovieMasher.eventDispatcher.dispatch(event)
+
+    if (timeChange) {
+      const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: timeFromSeconds(time.seconds, this.quantize) })
+      MovieMasher.eventDispatcher.dispatch(event)
+    }
   }
 
   private drawingTime?: Time
@@ -422,6 +431,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       mash: this,
       ...options,
     }
+    // console.log(this.constructor.name, 'previewArgs', args)
     return args
   }
 
@@ -446,11 +456,12 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   removeTrack(index?: number): void {
     const trackIndex = isPositive(index) ? index : this.tracks.length - 1
     assertPositive(trackIndex)
- 
-    this.emitIfFramesChange(() => { this.tracks.splice(trackIndex, 1) })
-    MovieMasher.eventDispatcher.dispatch(EventTypeTrack)
+    const { tracks } = this
+    this.emitIfFramesChange(() => { tracks.splice(trackIndex, 1) })
+    const { length: detail } = tracks
+    const event: NumberEvent = new CustomEvent(EventTypeTracks, { detail })
+    MovieMasher.eventDispatcher.dispatch(event)
   }
-
 
   private restartAfterStop(time: Time, paused: boolean, seeking?: boolean): void {
     if (time.equalsTime(this.time)) { // otherwise we must have gotten a seek call
@@ -470,7 +481,8 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       this.seekTime = time
       
       MovieMasher.eventDispatcher.dispatch(EventTypeSeeking)
-      const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: time })
+      
+      const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: timeFromSeconds(time.seconds, this.quantize) })
       MovieMasher.eventDispatcher.dispatch(event)
     }
     return this.stopLoadAndDraw(true)
@@ -547,15 +559,6 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     return timeRangeFromTimes(time, timeFromSeconds(buffer + time.seconds, time.fps))
   }
 
-  private trackClips(clips: ClientClips, trackIndex: number): TrackClips[]  {
-    const oneTrack = isPositive(trackIndex)
-    if (oneTrack) return [[trackIndex, clips]] 
-
-    let index = this.tracks.length - clips.length
-    return clips.map(clip => [index++, [clip]])
-  }
-
-
   override trackInstance(args: TrackArgs): ClientTrack {
     return new ClientTrackClass(args)
   }
@@ -564,37 +567,53 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
 }
 
 export class ClientClipClass extends ClipClass implements ClientClip {
-  clipIcon(size: Size, scale: number, buffer = 1): Promise<SvgOrImage> | undefined {
+  backgroundNode = (size: Size, patternedSize: Size, spacing = 0) => {
+    const { width, height } = size
+    const { color: fill } = this.track.mash
+    const rgb = colorToRgb(fill)
+    const differenceRgb = colorRgbDifference(rgb)
+    const forecolor = colorFromRgb(differenceRgb)
+    const framePolygon = svgPolygonElement(size, '', fill)
+    const spaceRect = { 
+      x: width, y: 0,
+      width: spacing, height, 
+    }
+    const spacePolygon = svgPolygonElement(spaceRect, '', forecolor)
+
+    const patternSize = { width: width + spacing, height }
+    const patternId = idGenerate('pattern')
+    const patternItems = [framePolygon, spacePolygon]
+    const pattern = svgPatternElement(patternSize, patternId, patternItems)
+    const defsElement = svgDefsElement([pattern])
+    const patternedPolygon = svgPolygonElement(patternedSize, '', svgUrl(patternId))
+    return svgSvgElement(patternedSize, [defsElement, patternedPolygon])
+  }
+
+
+  clipIcon(frameSize: Size, size: Size, scale: number, gap = 1): Promise<SvgOrImageDataOrError> {
     const { container } = this
-
-    if (!container) return 
-
-    const { track } = this
-
-
-    const { imageSize } = track.mash
-    assertSizeAboveZero(imageSize, 'track.mash.imageSize')
-
-    const frameSize = sizeEven(sizeCover(imageSize, size, true))
-    assertSizeAboveZero(frameSize, `${this.constructor.name}.clipIcon containedSize`)
-
-    const widthAndBuffer = frameSize.width + buffer
+    assertContainerInstance(container, 'clipIcon')
+   
+    const { mash } = this.track
+ 
+    const widthAndBuffer = frameSize.width + gap
     const cellCount = Math.ceil(size.width / widthAndBuffer)
     const clipTime = this.timeRange
     const { startTime } = clipTime
+    const numbers = arrayOfNumbers(cellCount)
+    // console.log(this.constructor.name, 'clipIcon', cellCount, numbers)
 
-    const previews: Preview[] = []
-    const { mash } = track
     let pixel = 0
-    arrayOfNumbers(cellCount).forEach(() => {
+    const previews = numbers.map(() => {
       const { copy: time } = startTime
       const previewArgs: PreviewArgs = { 
         mash, time, clip: this, size: frameSize
       }
       const preview = new PreviewClass(previewArgs)
-      previews.push(preview)
+      
       pixel += widthAndBuffer
       startTime.frame = clipTime.frame + pixelToFrame(pixel, scale, 'floor')
+      return preview
     })
     
     let svgItemsPromise = Promise.resolve([] as SvgItems)
@@ -607,14 +626,16 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     })
  
     return svgItemsPromise.then(svgItems => {
+      // console.log(this.constructor.name, 'clipIcon svgItems', svgItems.length)
       const point = { ...PointZero }
       const containerSvg = svgSvgElement(size)
+      
       svgItems.forEach(groupItem => {
         svgSetDimensions(groupItem, point)
         svgAppend(containerSvg, groupItem)
         point.x += widthAndBuffer
       })
-      return containerSvg
+      return { data: containerSvg }
     })
   }
 
@@ -623,7 +644,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
   override get content(): ClientInstance { return super.content as ClientInstance }
 
   clipPreviewItemsPromise(size: Size, time: Time, component: Panel): Promise<PreviewItem> {
-    console.log(this.constructor.name, 'clipPreviewItemsPromise', size, component)
+    // console.log(this.constructor.name, 'clipPreviewItemsPromise', size, component)
     assertSizeAboveZero(size)
 
     const { container, content } = this

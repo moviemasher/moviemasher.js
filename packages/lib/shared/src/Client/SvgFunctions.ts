@@ -397,8 +397,6 @@ export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Pr
     if (context) {
       context.fillRect(0, 0, 1, 1)
       svgImagePromise(canvas.toDataURL(), true).then(() => {
-        const { environment } = Runtime
-        console.log('svgImagePromise: load event supported')
         SupportsSvgLoad = true
       })
     }

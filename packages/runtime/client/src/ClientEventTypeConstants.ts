@@ -17,8 +17,14 @@ export const EventTypeSeeked = 'seeked'
 export const EventTypeSeeking = 'seeking'
 export const EventTypeTime = 'timeupdate'
 export const EventTypeTrack = 'track'
+export const EventTypeTracks = 'tracks'
 export const EventTypeVolume = 'volumechange'
 export const EventTypeWaiting = 'waiting'
+
+export const EventTypeZoom = 'zoom'
+export const EventTypeScale = 'scale'
+export const EventTypeScrollRoot = 'scroll-root'
+
 
 export const EventTypeImporterChange = 'importer-change'
 export const EventTypeImporterComplete = 'importer-complete'
@@ -39,18 +45,26 @@ export const EventTypeSelectAssetObject = 'select-asset-object'
 
 export const EventTypeAssetType = 'asset-type'
 export const EventTypeSourceType = 'source-type'
-export const EventTypeAddMashTrack = 'add-mash-track'
+
 export const EventTypeIconFromId = 'icon-from-id'
+export const EventTypeIconFromFrame = 'icon-from-frame'
 
 export const EventTypePreviewItems = 'preview-items'
 
 
+export const EventTypeMashAsset = 'mash-asset'
 export const EventTypeMashAddAssets = 'mash-add-assets'
 export const EventTypeMashAddTrack = 'mash-add-track'
 export const EventTypeMashRemoveTrack = 'mash-remove-track'
 export const EventTypeMashMoveClip = 'mash-move-clip'
 export const EventTypeMashRemoveClip = 'mash-remove-clip'
 
+export const EventTypeTrackClips = 'track-clips'
+export const EventTypeClipFromId = 'clip-from-id'
+
 export const EventTypeViewerContentResize = 'viewer-content-resize'
 
 export const EventTypeSelectClip = 'select-clip'
+export const EventTypeImportRaw = 'import-raw'
+export const EventTypeDragHandled = 'drag-handled'
+

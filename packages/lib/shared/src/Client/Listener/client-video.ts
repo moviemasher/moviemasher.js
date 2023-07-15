@@ -1,18 +1,16 @@
-import { error, errorCaught } from '@moviemasher/runtime-shared'
+import { error, errorCaught, errorPromise } from '@moviemasher/runtime-shared'
 import { ErrorName } from '@moviemasher/runtime-shared'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 import { ClientVideoDataOrError } from '@moviemasher/runtime-client'
-import { requestUrl } from '../request/request.js'
+import { requestUrl, urlIsBlob } from '../request/request.js'
 import { ClientVideoEvent } from '@moviemasher/runtime-client'
 import { MovieMasher, EventTypeClientVideo } from '@moviemasher/runtime-client'
 
 
 export const requestVideoPromise = (request: EndpointRequest): Promise<ClientVideoDataOrError> => {
   const url = requestUrl(request)
-  if (!url)
-    return Promise.reject(new Error('url'))
-
-  console.debug('requestVideoPromise', url)
+  console.debug('requestVideoPromise', url, request)
+  if (!url) return errorPromise(ErrorName.Url) 
 
   return new Promise<ClientVideoDataOrError>(resolve => {
     const video = globalThis.document.createElement('video')

@@ -71,7 +71,7 @@ export const requestJsonRecordsPromise = (request: EndpointRequest): Promise<Jso
 
   const url = isString(endpoint) ? endpoint : urlForEndpoint(endpoint)
   return fetch(url, init).then(response => response.json()).then(data => {
-    console.log('requestJsonRecordsPromise', url, data)
+    // console.log('requestJsonRecordsPromise', url, data)
     return { data }
   })
 }

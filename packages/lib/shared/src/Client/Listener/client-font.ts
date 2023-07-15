@@ -9,13 +9,12 @@ import { MovieMasher, EventTypeClientFont } from '@moviemasher/runtime-client'
 
 export const requestFontPromise = (request: EndpointRequest): Promise<ClientFontDataOrError> => {
   const url = requestUrl(request)
-  if (!url)
-    return errorPromise(ErrorName.Url)
+  if (!url) return errorPromise(ErrorName.Url)
 
   const { init } = request
   const family = url.replace(/[^a-z0-9]/gi, '_')
 
-  console.debug('requestFontPromise', url)
+  // console.debug('requestFontPromise', url)
   const bufferPromise: Promise<ClientFontDataOrError> = fetch(url, init).then(response => {
     const mimetype = response.headers.get('content-type') || ''
     // console.log('fontPromise.fetch', type)

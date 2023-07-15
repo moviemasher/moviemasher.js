@@ -42,7 +42,7 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
   frames : number
 
   includes(frame: number): boolean {
-    return frame >= this.frame && frame <= this.end
+    return frame >= this.frame && frame < this.end
   }
 
   includesTime(time : Time) : boolean {

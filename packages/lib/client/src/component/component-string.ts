@@ -1,6 +1,5 @@
 import type { CSSResultGroup, PropertyValues } from 'lit'
-import type { TranslationEventDetail } from '../declarations.js'
-
+import type { TranslationEventDetail } from '@moviemasher/runtime-client'
 import { css } from '@lit/reactive-element/css-tag.js'
 
 import { Component } from '../Base/Component.js'

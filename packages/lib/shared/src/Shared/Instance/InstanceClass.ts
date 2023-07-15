@@ -67,7 +67,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     
     const locked = tweenRectsLock(tweenRects, lock)
 
-    console.log(this.constructor.name, 'containerRects', tweenRects, lock, locked)
+    // console.log(this.constructor.name, 'containerRects', tweenRects, lock, locked)
     
     const { width: inWidth, height: inHeight } = inRect
     
@@ -110,7 +110,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     const [point, pointEnd] = coverPoints
     const rect = rectFromSize(size, point)
     const rectEnd = rectFromSize(sizeEnd, pointEnd)
-    console.log(this.constructor.name, 'contentRects', lock, locked, isArray(rects) ? rects[0] : rects,  '->', rect)
+    // console.log(this.constructor.name, 'contentRects', lock, locked, isArray(rects) ? rects[0] : rects,  '->', rect)
     return [rect, rectEnd]
   }
   

@@ -1,14 +1,14 @@
 
-import type { Action, Actions, ClientAsset, ClientAssetManager, ClientAssets, MashAddAssetsEvent, MashMoveClipEvent, ClipEvent, MashRemoveTrackEvent, PreviewItems, PreviewItemsEvent, RectEvent, ClipOrFalseEvent } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, AssetObject, AssetObjects, AssetType, ClipObject, EventDispatcherListenerRecord, MashAsset, MashAssetObject, NumberEvent, Rect, StringRecord, Time, TimeRange, Track } from '@moviemasher/runtime-shared'
+import type { Action, Actions, ClientAsset, ClientAssetManager, ClientAssets, MashAddAssetsEvent, MashMoveClipEvent, MashRemoveTrackEvent, PreviewItems, PreviewItemsEvent, RectEvent, MashAssetEvent, TrackClipsEvent, ClipFromIdEvent, IconFromFrameEvent } from '@moviemasher/runtime-client'
+import type { AssetCacheArgs, AssetObject, AssetObjects, AssetType, ClipObject, EventDispatcherListenerRecord, MashAssetObject, NumberEvent, Rect, Size, StringEvent, StringRecord, Time, TimeRange, Track } from '@moviemasher/runtime-shared'
 
 import type { ClientAction } from '@moviemasher/runtime-client'
-import type { AddClipActionObject, AddTrackActionObject, RemoveClipActionObject } from './Actions/Action/ActionTypes.js'
+import type { AddClipActionObject, AddTrackActionObject, MoveClipActionObject, RemoveClipActionObject } from './Actions/Action/ActionTypes.js'
 import type { MashIndex, Masher, MasherArgs } from '@moviemasher/runtime-client'
 
 import type { ClientClip, ClientClips, ClientMashAsset } from '@moviemasher/runtime-client'
 
-import { EventTypeFrame, EventTypeMashAddAssets, EventTypeMashAddTrack, EventTypeMashMoveClip, EventTypeMashRemoveClip, EventTypeMashRemoveTrack, EventTypePreviewItems, EventTypeSelectClip, MovieMasher, isClientAsset } from '@moviemasher/runtime-client'
+import { EventTypeClipFromId, EventTypeFrame, EventTypeIconFromFrame, EventTypeMashAddAssets, EventTypeMashAddTrack, EventTypeMashAsset, EventTypeMashMoveClip, EventTypeMashRemoveClip, EventTypeMashRemoveTrack, EventTypePreviewItems, EventTypeSelectClip, EventTypeTrackClips, MovieMasher, isClientAsset } from '@moviemasher/runtime-client'
 import {
   SourceMash, TypeAudio, TypeVideo,
   arrayFromOneOrMore,
@@ -37,25 +37,26 @@ import {
 import { assertMashAsset, isMashAsset } from '../../Shared/Mash/MashGuards.js'
 import { assertTrack } from '../../Shared/Mash/Track/TrackGuards.js'
 import { SizeZero } from '../../Utility/SizeConstants.js'
-import { assertSizeAboveZero, isSize, sizeAboveZero, sizeCopy } from '../../Utility/SizeFunctions.js'
+import { assertSizeAboveZero, isSize, sizeAboveZero, sizeCeil, sizeCopy, sizeCover, sizeEven } from '../../Utility/SizeFunctions.js'
 
 import { isLoadType } from '../../Setup/LoadType.js'
 import {
-  assertAboveZero, assertObject,
+  assertAboveZero, 
   assertPositive, assertTrue, isAboveZero,
   isPositive
 } from '../../Shared/SharedGuards.js'
 
 import { assertClientMashAsset, isClientMashAsset } from '../Mash/ClientMashGuards.js'
-import { svgPatch, svgPolygonElement, svgSvgElement } from '../SvgFunctions.js'
+import { svgDefsElement, svgPatch, svgPatternElement, svgPolygonElement, svgSvgElement, svgUrl } from '../SvgFunctions.js'
 import { CurrentIndex, LastIndex, NextIndex } from '../../Setup/Constants.js'
-import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
-import { idGenerateString, idIsTemporary, idTemporary } from '../../Utility/IdFunctions.js'
+import { assertClip, isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
+import { idGenerate, idGenerateString, idIsTemporary, idTemporary } from '../../Utility/IdFunctions.js'
 import { PointZero } from '../../Utility/PointConstants.js'
 import { isPoint, pointCopy } from '../../Utility/PointFunctions.js'
 import { rectsEqual } from '../../Utility/RectFunctions.js'
 import { isChangeAction } from './Actions/Action/ActionFunctions.js'
 import { ActionsClass } from './Actions/ActionsClass.js'
+import { colorFromRgb, colorRgbDifference, colorToRgb } from '../../Helpers/Color/ColorFunctions.js'
 
 type Timeout = ReturnType<typeof setTimeout>
 
@@ -84,7 +85,6 @@ export class MasherClass implements Masher {
     this.actions = new ActionsClass(this)
    
     this.listeners[EventTypeSelectClip] = this.handleSelectClip.bind(this)
-
     this.listeners[EventTypePreviewItems] = this.handlePreviewItems.bind(this)
     this.listeners[EventTypeMashAddAssets] = this.handleAddAssets.bind(this)
     this.listeners[EventTypeMashAddTrack] = this.handleAddTrack.bind(this)
@@ -92,6 +92,11 @@ export class MasherClass implements Masher {
     this.listeners[EventTypeMashRemoveClip] = this.handleRemoveClip.bind(this)
     this.listeners[EventTypeMashRemoveTrack] = this.handleRemoveTrack.bind(this)
     this.listeners[EventTypeFrame] = this.handleFrame.bind(this)
+    this.listeners[EventTypeTrackClips] = this.handleTrackClips.bind(this)
+    this.listeners[EventTypeClipFromId] = this.handleClipFromId.bind(this)
+    this.listeners[EventTypeIconFromFrame] = this.handleIconFromFrame.bind(this)
+
+    
     MovieMasher.eventDispatcher.listenersAdd(this.listeners)
 
     if (mash) this.load(mash)
@@ -99,7 +104,7 @@ export class MasherClass implements Masher {
 
   actions: Actions
 
-  private addMedia(asset: ClientAsset | ClientAssets, editorIndex?: MashIndex): Promise<ClientAssets> {
+  private addAssets(asset: ClientAsset | ClientAssets, editorIndex?: MashIndex): Promise<ClientAssets> {
     const assets = isArray(asset) ? asset : [asset]
     if (!assets.length) {
       // console.log(this.constructor.name, 'addMedia NO ASSETS', assets.length, editorIndex)
@@ -151,14 +156,15 @@ export class MasherClass implements Masher {
       const options: AddClipActionObject = {
         clips, type: ActionTypeAddClip, trackIndex,
         undoSelection: this.selection,
-        redoSelection, createTracks, mashAsset: mashAsset,
+        redoSelection, createTracks, mashAsset,
       }
-      const clipIndex = this.clipIndex(frameOrIndex, trackClips, mashAsset, dense)
+      const clipIndex = this.clipIndex(frameOrIndex, trackClips, dense)
       if (dense) options.insertIndex = clipIndex
       else {
         if (createTracks) options.redoFrame = clipIndex
         else {
           assertTrack(track)
+          track.assureFrames(mashAsset.quantize, clips)
           options.redoFrame = track.frameForClipNearFrame(firstClip, clipIndex)
         }
       }
@@ -167,40 +173,7 @@ export class MasherClass implements Masher {
     }).then(() => installedAssets) 
   }
 
-  private clipIndex(frameOrIndex: number, clips: ClientClips, mash: MashAsset, dense?: boolean): number {
-    if (isPositive(frameOrIndex)) return frameOrIndex
-    
-    switch (frameOrIndex) {
-      case LastIndex: {
-        if (dense) return clips.length
-        
-        const lastClip = clips[clips.length - 1]
-        if (!lastClip) return 0
-
-        const { frame, frames } = lastClip
-        return frame + frames
-      }
-      case NextIndex:
-      case CurrentIndex: {
-        const { frame } = this.time.scale(mash.quantize)
-        if (!dense) return frame
-
-        const onIndex = clips.findIndex(clip => 
-          clip.frame <= frame && clip.frame + clip.frames > frame
-        )
-        if (!isPositive(onIndex)) return clips.length
-
-        const index = frameOrIndex === NextIndex ? onIndex + 1 : onIndex
-        const clip = clips[index]
-        if (!clip) return clips.length
-
-        return clip.frame
-      }
-      default: return 0
-    }
-  }
-
-  private addMediaObjects(objects: AssetObject | AssetObjects, editorIndex?: MashIndex): Promise<ClientAssets> {
+  private addAssetObjects(objects: AssetObject | AssetObjects, editorIndex?: MashIndex): Promise<ClientAssets> {
     // console.log(this.constructor.name, 'addMediaObjects')
     const array = arrayFromOneOrMore(objects) 
     if (!array.length) {
@@ -211,18 +184,20 @@ export class MasherClass implements Masher {
 
     return Promise.all(promises).then(assets => {
       const clientAssets = assets.filter<ClientAsset>(isClientAsset)
-      return this.addMedia(clientAssets, editorIndex)
+      return this.addAssets(clientAssets, editorIndex)
     })  
   }
   
+
   addTrack(): void {
     const { mashAsset } = this
     if (!mashAsset) return
 
     const object: AddTrackActionObject = { 
+      mashAsset,
       redoSelection: false, 
       type: ActionTypeAddTrack, createTracks: 1,
-      undoSelection: this.selection, mashAsset,
+      undoSelection: this.selection, 
     }
     this.actions.create(object)
   }
@@ -273,6 +248,54 @@ export class MasherClass implements Masher {
     MovieMasher.eventDispatcher.dispatch(new CustomEvent(EventTypeAction))
   }
 
+  private clipFromId(clipId: string): ClientClip | undefined {
+    const { mashAsset } = this
+    if (!(mashAsset && clipId)) return
+
+    const { tracks } = mashAsset
+    for (const track of tracks) {
+      const { clips } = track
+      const clip = clips.find(clip => clip.id === clipId)
+      if (clip) return clip
+    }
+  }
+
+  private clipIndex(frameOrIndex: number, clips: ClientClips, dense?: boolean): number {
+    if (isPositive(frameOrIndex)) return frameOrIndex
+    
+    const { mashAsset} = this
+    assertMashAsset(mashAsset)
+
+    switch (frameOrIndex) {
+      case LastIndex: {
+        if (dense) return clips.length
+        
+        const lastClip = clips[clips.length - 1]
+        if (!lastClip) return 0
+
+        const { frame, frames } = lastClip
+        return frame + frames
+      }
+      case NextIndex:
+      case CurrentIndex: {
+        const { frame } = this.time.scale(mashAsset.quantize)
+        if (!dense) return frame
+
+        const onIndex = clips.findIndex(clip => 
+          clip.frame <= frame && clip.frame + clip.frames > frame
+        )
+        if (!isPositive(onIndex)) return clips.length
+
+        const index = frameOrIndex === NextIndex ? onIndex + 1 : onIndex
+        const clip = clips[index]
+        if (!clip) return clips.length
+
+        return clip.frame
+      }
+      default: return 0
+    }
+  }
+
   get clips(): ClientClips { return this.mashAsset?.clips || [] }
 
   create() { 
@@ -311,11 +334,11 @@ export class MasherClass implements Masher {
   }
 
   private destroyMash() {  
-    const { mashAsset: mashMedia } = this
-    if (mashMedia) {
+    const { mashAsset } = this
+    if (mashAsset) {
       this.paused = true
-      mashMedia.destroy() 
-      delete this.mashAsset 
+      mashAsset.destroy() 
+      delete this._mashAsset 
       this.clearActions()
       this.selection = false
       this.media.undefineAll()
@@ -379,19 +402,17 @@ export class MasherClass implements Masher {
   }
 
   handleAction(action: Action): void {
-    const { mashAsset: mashMedia } = this
-    if (!mashMedia) return
+    const { mashAsset } = this
+    if (!mashAsset) return
     
-    const { mashAsset: mash } = this
-  
-    if (isClientMashAsset(mash)) {
-      mash.clearPreview()
+    if (isClientMashAsset(mashAsset)) {
+      mashAsset.clearPreview()
       if (isChangeAction(action)) {
         const { property, target } = action
         switch(property) {
           case 'gain': {
             if (isClip(target)) {
-              mashMedia.composition.adjustClipGain(target, mash.quantize)
+              mashAsset.composition.adjustClipGain(target, mashAsset.quantize)
             }    
             break
           }
@@ -403,7 +424,7 @@ export class MasherClass implements Masher {
 
     // console.log(this.constructor.name, 'handleAction', this.selection.selectTypes, selection)
 
-    const promise = mashMedia.reload() || Promise.resolve()
+    const promise = mashAsset.reload() || Promise.resolve()
     
     promise.then(() => {
       this.dispatchDrawLater()
@@ -413,21 +434,21 @@ export class MasherClass implements Masher {
   }
 
   private dispatchDrawLater(): void {
-    console.log(this.constructor.name, 'dispatchDrawLater')
+    // console.log(this.constructor.name, 'dispatchDrawLater')
     if (this.drawTimeout || !this.mashAsset?.loading) return
-
-      this.drawTimeout = setTimeout(() => {
-        MovieMasher.eventDispatcher.dispatch(new CustomEvent(EventTypeDraw))
-        delete this.drawTimeout
-      }, 10)
-    
+  
+    this.drawTimeout = setTimeout(() => {
+      MovieMasher.eventDispatcher.dispatch(new CustomEvent(EventTypeDraw))
+      delete this.drawTimeout
+    }, 10)
+  
   }
 
   handleAddAssets(event: MashAddAssetsEvent) {
     const { detail } = event
     const { mashIndex, assetObjects } = detail
-    // console.log(this.constructor.name, 'handleAddAssets...')
-    detail.promise = this.addMediaObjects(assetObjects, mashIndex)
+    console.log(this.constructor.name, 'handleAddAssets...')
+    detail.promise = this.addAssetObjects(assetObjects, mashIndex)
     // console.log(this.constructor.name, 'handleAddAssets!')
     event.stopImmediatePropagation()
   }
@@ -437,27 +458,104 @@ export class MasherClass implements Masher {
     event.stopImmediatePropagation()
   }
 
-  handleFrame(event: NumberEvent) {
-    this.frame = event.detail
+  private handleClipFromId(event: ClipFromIdEvent) {
+    const { mashAsset } = this
+    if (!mashAsset) return
+
+    const { detail } = event
+    const { clipId } = detail
+    const { tracks } = mashAsset
+    for (const track of tracks) {
+      const { clips } = track
+      const clip = clips.find(clip => clip.id === clipId)
+      if (clip) {
+        detail.clip = clip
+        event.stopImmediatePropagation()
+        return
+      }
+    }
   }
 
-  handleMoveClip(event: MashMoveClipEvent) {
+  private handleFrame(event: NumberEvent) {
+    this.goToTime(timeFromArgs(event.detail, this.mashAsset!.quantize)) 
+  }
+
+  private backgroundNode = (size: Size, patternedSize: Size, spacing = 0) => {
+    const { width, height } = size
+    const { color: fill } = this.mashAsset!
+    const rgb = colorToRgb(fill)
+    const differenceRgb = colorRgbDifference(rgb)
+    const forecolor = colorFromRgb(differenceRgb)
+    const framePolygon = svgPolygonElement(size, '', fill)
+    const spaceRect = { 
+      x: width, y: 0,
+      width: spacing, height, 
+    }
+    const spacePolygon = svgPolygonElement(spaceRect, '', forecolor)
+
+    const patternSize = { width: width + spacing, height }
+    const patternId = idGenerate('pattern')
+    const patternItems = [framePolygon, spacePolygon]
+    const pattern = svgPatternElement(patternSize, patternId, patternItems)
+    const defsElement = svgDefsElement([pattern])
+    const patternedPolygon = svgPolygonElement(patternedSize, '', svgUrl(patternId))
+    return svgSvgElement(patternedSize, [defsElement, patternedPolygon])
+  }
+
+
+  private clipSize = (clipSize: Size) => {
+    const frameWidth = this.frameWidth(clipSize.height)
+    
+    const { width: resizeWidth, height } = clipSize
+    
+    const width = Math.max(frameWidth, resizeWidth)
+    return  { width, height }
+  }
+
+  private frameWidth = (height: number) => {
+    const viewerSize: Size = this.rect
+    
+    assertSizeAboveZero(viewerSize, 'viewerSize')
+
+    const ratio = viewerSize.width / viewerSize.height
+    return height * ratio
+  }
+
+
+  private handleIconFromFrame(event: IconFromFrameEvent) {
     const { detail } = event
-    const { mashIndex, clip } = detail
+    const { clipId, gap, scale, clipSize } = detail
+
+    const size = this.clipSize(clipSize)
+
+    const clip = this.clipFromId(clipId)
+    if (!clip) return
+
+    const { imageSize } = this.mashAsset!
+    assertSizeAboveZero(imageSize, 'track.mash.imageSize')
+
+    const frameSize = sizeEven(sizeCover(imageSize, size, true))
+    detail.background = this.backgroundNode(frameSize, size, gap)
+    detail.promise = clip.clipIcon(frameSize, size, scale, gap)
+  }
+
+  private handleMoveClip(event: MashMoveClipEvent) {
+    const { selection: clip } = this
+    assertClip(clip)
+
+    const { detail: mashIndex } = event
     this.move(clip, mashIndex)
     event.stopImmediatePropagation()
   }
 
-  loadMashAssetObject(assetObject: AssetObject): Promise<MashAssetObject> {
+  private loadMashAssetObject(assetObject: AssetObject): Promise<MashAssetObject> {
     const { source } = assetObject
+    // simply return object promise if it is already a mash
     if (source === SourceMash) return Promise.resolve(assetObject)
     
-    // console.log(this.constructor.name, 'loadMashAssetObject', source)
+    // otherwise, load asset so we can create a clip with it
     return MovieMasher.assetManager.assetPromise(assetObject).then(asset => {
       const { id, type } = asset
-
-      // console.log(this.constructor.name, 'loadMashAssetObject assetPromise', id, type)
-
       const clipObject: ClipObject = {}
       if (asset.canBeContent) clipObject.contentId = id
       else clipObject.containerId = id
@@ -467,8 +565,6 @@ export class MasherClass implements Masher {
         source: SourceMash,
         tracks: [{ clips: [clipObject]}],
       }
-      // console.log(this.constructor.name, 'loadMashAssetObject assetPromise', id, type)
-
       return mash
     })
   }
@@ -482,10 +578,13 @@ export class MasherClass implements Masher {
     event.stopImmediatePropagation()
   }
 
-  handleRemoveClip(event: ClipEvent) {
-    const { detail: clip } = event
-    this.removeClip(clip)
-    event.stopImmediatePropagation()
+  handleRemoveClip(event: StringEvent) {
+    const { detail: clipId } = event
+    const clip = this.clipFromId(clipId)
+    if (clip) {
+      this.removeClip(clip)
+      event.stopImmediatePropagation()
+    }
   }
 
   handleRemoveTrack(event: MashRemoveTrackEvent) {
@@ -499,25 +598,35 @@ export class MasherClass implements Masher {
     this.rect = event.detail
   }
 
-  private handleSelectClip(event: ClipOrFalseEvent) {
-    this.selection = event.detail
+  private handleSelectClip(event: StringEvent) {
+    this.selection = this.clipFromId(event.detail) || false
     this.redraw()
   }
+
+  private handleTrackClips(event: TrackClipsEvent) {
+    const { detail } = event
+    const { trackIndex } = detail
+    const { mashAsset } = this
+    if (!mashAsset) return
+
+    const track = mashAsset.tracks[trackIndex]
+    if (!track) return
+
+    detail.clips = track.clips
+    detail.dense = track.dense
+    event.stopImmediatePropagation()
+  }
+  
 
   load(data: AssetObject): Promise<void> {
     data.id ||= idGenerateString()
     return this.loadMashAssetObject(data).then(mashMediaObject => {
-      this.mashMediaObject = mashMediaObject
-      // console.log(this.constructor.name, 'load', data)
-     
-      assertObject(mashMediaObject, 'mashMediaObject')
-      const { type: kind } = mashMediaObject
-
-      delete this.mashMediaObject
-      
       return this.mashAssetObjectLoadPromise(mashMediaObject).then(() => {
+        const { type } = mashMediaObject
         const { rect } = this
-        if (!(sizeAboveZero(rect) || kind === TypeAudio)) return Promise.resolve()
+        if (!(sizeAboveZero(rect) || type === TypeAudio)) {
+          return Promise.resolve()
+        }
         return this.goToTime().then(() => {
           const { mashAsset: mash } = this
           if (isMashAsset(mash)) mash.clearPreview()
@@ -540,46 +649,9 @@ export class MasherClass implements Masher {
     return mashMedia.assetCachePromise(args).then(() => { mashMedia.draw() })
   }
 
-  mashAsset: ClientMashAsset | undefined 
-
-  private mashAssetFromObject(object: MashAssetObject): Promise<ClientMashAsset> {
-    const { rect, buffer, loop } = this
-    const clientObject: MashAssetObject = {
-      ...object,
-      size: sizeCopy(rect),
-      buffer,loop, 
-    }
-    this.destroyMash()
-    return this.media.assetPromise(clientObject).then(asset => {
-      assertClientMashAsset(asset)
-      return this.mashAsset = asset
-    })
-  }
-
-  private mashMediaObject?: MashAssetObject
-
-  private mashAssetObjectLoadPromise(object: MashAssetObject): Promise<void> {
-    // console.log(this.constructor.name, 'mashMediaObjectLoadPromise', object)
-  
-    return this.mashAssetFromObject(object).then(mashAsset => {
-  
-      const { timeToBuffer } = mashAsset
-      const args: AssetCacheArgs = { 
-        time: timeToBuffer, assetTime: timeToBuffer,
-        visible: true, audible: false, 
-      }
-      // console.log(this.constructor.name, 'mashMediaObjectLoadPromise mashMediaFromObject', mashAsset)
-      return mashAsset.assetCachePromise(args).then(() => {
-        // console.log(this.constructor.name, 'mashMediaObjectLoadPromise assetCachePromise')
-        this.selection = false
-        this.dispatchDrawLater() 
-      })
-    })
-  }
 
   private listeners: EventDispatcherListenerRecord = {}
 
-  
   private _loop = Default.editor.loop
   get loop(): boolean { return this._loop }
   set loop(value: boolean) {
@@ -589,35 +661,76 @@ export class MasherClass implements Masher {
     if (mash) mash.loop = boolean
   }
 
+  _mashAsset: ClientMashAsset | undefined 
+  get mashAsset(): ClientMashAsset | undefined { return this._mashAsset }
+  set mashAsset(value: ClientMashAsset | undefined) {
+    if (this._mashAsset === value) return
+
+    this.destroyMash()
+    this._mashAsset = value
+
+    const event: MashAssetEvent = new CustomEvent(EventTypeMashAsset, { detail: value })
+    MovieMasher.eventDispatcher.dispatch(event)
+  }
+
+  private mashAssetObjectLoadPromise(object: MashAssetObject): Promise<void> {
+    // console.log(this.constructor.name, 'mashMediaObjectLoadPromise', object)
+  
+    const { rect, buffer, loop } = this
+    const assetObject: MashAssetObject = {
+      ...object, size: sizeCopy(rect), buffer, loop, 
+    }
+    return this.media.assetPromise(assetObject).then(asset => {
+      assertClientMashAsset(asset)
+
+      this.mashAsset = asset
+
+      const { timeToBuffer } = asset
+      const args: AssetCacheArgs = { 
+        time: timeToBuffer, assetTime: timeToBuffer,
+        visible: true, audible: false, 
+      }
+      // console.log(this.constructor.name, 'mashMediaObjectLoadPromise mashMediaFromObject', mashAsset)
+      return asset.assetCachePromise(args).then(() => {
+        // console.log(this.constructor.name, 'mashMediaObjectLoadPromise assetCachePromise')
+        this.selection = false
+        this.dispatchDrawLater() 
+      })
+    })
+  }
   get media(): ClientAssetManager {
     return MovieMasher.assetManager
   }
 
   move(clip: ClientClip, editorIndex: MashIndex = {}): void {
-    const { clip: frameOrIndex = 0, track: track = 0} = editorIndex
-    assertPositive(frameOrIndex)
+    const { clip: frameOrIndex = 0, track: trackIndex = 0} = editorIndex
+    const { mashAsset } = this
+    assertMashAsset(mashAsset)
 
-    const { mashAsset: mash } = this
-    assertMashAsset(mash)
+    const { tracks } = mashAsset
 
-    const { tracks } = mash
+    const { trackNumber: undoTrackIndex } = clip
+    assertPositive(undoTrackIndex)
 
-    const { trackNumber: undoTrack } = clip
-    const options: any = {
-      clip,
-      trackIndex: track,
-      undoTrackIndex: undoTrack,
-      type: ActionTypeMoveClip
+
+    const options: MoveClipActionObject = {
+      redoSelection: clip, undoSelection: clip, 
+      createTracks: 0,
+      clip, mashAsset, trackIndex, undoTrackIndex, type: ActionTypeMoveClip
     }
-    const creating = !isPositive(track)
+    const creating = !isPositive(trackIndex)
+    const track = creating ? undefined : tracks[trackIndex]
     if (creating) options.createTracks = 1
 
-    const undoDense = isPositive(undoTrack) && tracks[undoTrack].dense 
-    const redoDense = isPositive(track) && tracks[track].dense
-   
-    const currentIndex = creating ? -1 : tracks[track].clips.indexOf(clip)
+    const undoDense = tracks[undoTrackIndex].dense 
+    const redoDense = track?.dense
+    const currentIndex = track?.clips.indexOf(clip) ?? -1
 
-    if (redoDense) options.insertIndex = frameOrIndex
+    if (redoDense) {
+      if (isPositive(frameOrIndex)) options.insertIndex = frameOrIndex
+      else if (creating) options.insertIndex = 0
+      else options.insertIndex = track.clips.length
+    }
     if (undoDense) {
       options.undoInsertIndex = currentIndex
       if (frameOrIndex < currentIndex) options.undoInsertIndex += 1
@@ -625,16 +738,11 @@ export class MasherClass implements Masher {
 
     if (!(redoDense && undoDense)) {
       const { frame } = clip
-      const insertFrame = creating ? 0 : tracks[track].frameForClipNearFrame(clip, frameOrIndex)
-      const offset = insertFrame - frame
-      if (!offset && track === undoTrack) return // no change
-
       options.undoFrame = frame
-      options.redoFrame = frame + offset
+      options.redoFrame = track?.frameForClipNearFrame(clip, frameOrIndex) ?? 0
     }
     this.actions.create(options)
   }
-
 
   moveTrack(): void {
     // TODO: create move track action...

@@ -121,7 +121,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
   }
   
   private loadFontPromise(transcoding?: Transcoding): Promise<ClientFont> {
-    console.log(this.constructor.name, 'loadFontPromise', transcoding)
+    // console.log(this.constructor.name, 'loadFontPromise', transcoding)
     if (this.loadedFont) return Promise.resolve(this.loadedFont)
     
     const { request } = transcoding || this

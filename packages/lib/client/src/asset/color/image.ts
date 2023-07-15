@@ -68,7 +68,7 @@ export class ClientColorInstanceClass extends WithColorInstance implements Clien
   declare asset: ColorAsset & ClientAsset
 
   override contentPreviewItemPromise(rect: Rect, time: Time, _component: Panel): Promise<SvgItem> {
-    console.log(this.constructor.name, 'contentPreviewItemPromise', rect, _component)
+    // console.log(this.constructor.name, 'contentPreviewItemPromise', rect, _component)
     
     const range = this.clip.timeRange
     // const rect = this.itemContentRect(rect, time)

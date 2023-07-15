@@ -32,22 +32,21 @@ export class TrackClass extends PropertiedClass implements Track {
     }
   }
 
-  private assureFrame(clips?: Clips): boolean {
+  private assureFrame(clips?: Clips) {
     const clipsArray = clips || this.clips
-    let changed = false
     let endFrame = 0
     const ranges: TimeRange[] = []
     const { dense } = this
     clipsArray.forEach(clip => {
       const { frame } = clip
       if (dense ? frame !== endFrame : ranges.some(range => range.includes(frame))) {
-        changed = true
         clip.frame = endFrame
       }
       endFrame = clip.frame + clip.frames
+      const { timeRange } = clip
+      
       if (!dense) ranges.push(clip.timeRange)
     })
-    return changed
   }
 
   assureFrames(quantize: number, clips?: Clips): void {
@@ -69,26 +68,7 @@ export class TrackClass extends PropertiedClass implements Track {
 
   dense = false
 
-  frameForClipNearFrame(clip : Clip, frame = 0) : number {
-    if (this.dense) return frame
-
-    const others = this.clips.filter(other => clip !== other && other.endFrame > frame)
-    if (!others.length) return frame
-
-    const startFrame = clip.frame
-    const endFrame = clip.endFrame
-    const frames = endFrame - startFrame
-
-    let lastFrame = frame
-    others.find(clip => {
-      if (clip.frame >= lastFrame + frames) return true
-
-      lastFrame = clip.endFrame
-    })
-    return lastFrame
-  }
-
-  get frames() : number {
+  get frames(): number {
     const { clips } = this
     const { length } = clips
     if (!length) return DurationNone
@@ -112,11 +92,10 @@ export class TrackClass extends PropertiedClass implements Track {
 
   mash: MashAsset 
   
-  sortClips(clips?: Clips): boolean {
+  sortClips(clips?: Clips): void {
     const sortClips = clips || this.clips
-    const changed = this.assureFrame(sortClips)
+    this.assureFrame(sortClips)
     sortClips.sort(sortByFrame)
-    return changed
   }
 
   toJSON(): UnknownRecord {

@@ -10,7 +10,7 @@ MovieMasher.eventDispatcher.addDispatchListener(EventTypeAssetObject, (event: As
 
   const data: MashAssetObject = {
      id,
-      color: '#FFFF00',
+      color: '#FFFFFF',
       type: 'video',
       source: 'mash',
   }

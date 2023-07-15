@@ -1,13 +1,22 @@
-import { Strings } from '@moviemasher/runtime-shared'
+import { Strings, isPopulatedString } from '@moviemasher/runtime-shared'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
 import { ColonChar, SlashChar } from '../../Setup/Constants.js'
 import { ProtocolBlob } from '../../Plugin/Protocol/Protocol.js'
+import { isEndpoint } from '../../Helpers/Endpoint/EndpointFunctions.js'
+
+export const urlIsBlob = (url: string): boolean => url.startsWith(ProtocolBlob)
 
 export const requestUrl = (request: EndpointRequest): string => {
   const { endpoint = '', response } = request
-  if (response) return URL.createObjectURL(response)
-    
-  if (typeof endpoint === 'string') return endpoint
+
+  if (response) {
+    if (isPopulatedString(endpoint) && urlIsBlob(endpoint)) return endpoint
+
+    console.trace('requestUrl CONVERTING RESPONSE TO URL', endpoint)
+    return URL.createObjectURL(response)
+  }
+
+  if (!isEndpoint(endpoint)) return endpoint
 
   const { protocol, hostname, port, pathname, search } = endpoint
   const pathBits: Strings = []
@@ -16,7 +25,7 @@ export const requestUrl = (request: EndpointRequest): string => {
   if (!(protocol && hostname)) return pathBits.join('')
 
   const bits = [protocol]
-  if (!protocol.startsWith(ProtocolBlob)) bits.push(SlashChar, SlashChar)
+  if (!urlIsBlob(protocol)) bits.push(SlashChar, SlashChar)
   bits.push(hostname)
   if (port) bits.push(`${ColonChar}${port}`)
   bits.push(...pathBits)
