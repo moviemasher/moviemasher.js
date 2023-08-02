@@ -1,5 +1,5 @@
 import type {
-  ClientClips, MashAddAssetsEventDetail,
+  ClientClips, 
   MashIndex,
   MashMoveClipEvent,
   TrackClipsEventDetail,
@@ -19,17 +19,18 @@ import {
 import {
   DragSuffix,
   EventTypeImportAssetObjects, EventTypeImportRaw,
-  EventTypeMashAddAssets,
+  EventAddAssets,
   EventTypeMashMoveClip,
   EventTypeTrackClips,
   MovieMasher,
+  EventManagedAsset,
 } from '@moviemasher/runtime-client'
 import {
   isAssetObject, isAssetType,
   isObject, isString} from '@moviemasher/runtime-shared'
 import {
   ImportAssetObjectsEventDetail, ImportEventDetail
-} from '../declarations'
+} from '../declarations.js'
 
 
 export type DragFunction = (event: DragEvent) => void
@@ -139,15 +140,16 @@ export const dropFiles = (fileList: FileList, mashIndex?: MashIndex) => {
 
 export const dropAssetObjects = (assetObjects: AssetObjects, mashIndex?: MashIndex) => {
   if (mashIndex) {
-    // console.log('dropAssetObjects', assetObjects, mashIndex)
-    const detail: MashAddAssetsEventDetail = { assetObjects, mashIndex }
-    const addEvent = new CustomEvent(EventTypeMashAddAssets, { detail })
-    MovieMasher.eventDispatcher.dispatch(addEvent) 
-    const { promise } = detail
-    if (!promise) return
-    return promise.then((assets) => {
-      console.log('dropAssetObjects PROMISED', assets)
+    const assets = assetObjects.flatMap(assetObject => {
+      const event = new EventManagedAsset(assetObject)
+      MovieMasher.eventDispatcher.dispatch(event)
+      const { asset } = event.detail
+      return asset ? [asset] : []
     })
+    if (assets.length) {
+      MovieMasher.eventDispatcher.dispatch(new EventAddAssets(assets, mashIndex)) 
+    }
+    
   }
   // console.log('dropAssetObjects', assetObjects.length)
 
@@ -219,11 +221,11 @@ export const dropped = (event: DragEvent, mashIndex?: MashIndex) => {
     dropFiles(dataTransfer.files, mashIndex)
   } else if (data.offset) {
     if (isDragDefinitionObject(data)) {
-      console.log('dropped ADD ASSET OBJECT', data)
+      // console.log('dropped ADD ASSET OBJECT', data)
       const { mediaObject } = data
       dropAssetObjects([mediaObject], mashIndex)
     } else if (mashIndex) {
-            console.log('dropped MOVE CLIP', data)
+            // console.log('dropped MOVE CLIP', data)
 
       const moveEvent: MashMoveClipEvent = new CustomEvent(EventTypeMashMoveClip, { detail: mashIndex })
       MovieMasher.eventDispatcher.dispatch(moveEvent)

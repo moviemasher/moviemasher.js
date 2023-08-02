@@ -1,90 +1,101 @@
-import type { StringEvent } from '@moviemasher/runtime-shared'
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit'
-import type { Contents, Content } from '../declarations.js'
+import type { Contents, Content, OptionalContent, Htmls } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
+import { EventDialog } from '@moviemasher/runtime-client'
 
-import { MovieMasher, EventTypeDialog } from '@moviemasher/runtime-client'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { Slotted } from '../Base/Slotted.js'
+import { PipeChar } from '@moviemasher/lib-shared'
 
-
-
-export class DialogElement extends ImporterComponent {
+const PartImporter = 'importer'
+export class DialogElement extends Slotted {
   constructor() {
     super()
-    this.handleClose = this.handleClose.bind(this)
-    this.handleDialogImport = this.handleDialogImport.bind(this)
-  }
-
-  protected get dialog(): HTMLDialogElement | undefined | null {
-    return this.shadowRoot?.querySelector('dialog')
-  }
-
-  protected handleClose(): void {
-    this.dialogIsOpen = false
-  }
-  protected handleDialogImport(event: StringEvent): void {
-    const { detail } = event
-    const { section, dialogIsOpen } = this
-    console.log(this.tagName, 'handleDialogImport', detail, section, dialogIsOpen)
-    if (detail === section) this.openDialogElement()
-    else if (dialogIsOpen && detail === 'close') this.dialog?.close()
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback()
-    MovieMasher.eventDispatcher.addDispatchListener(EventTypeDialog, this.handleDialogImport)
-  }
-
-  override disconnectedCallback(): void {
-    MovieMasher.eventDispatcher.removeDispatchListener(EventTypeDialog, this.handleDialogImport)
-    this.dialog?.removeEventListener('close', this.handleClose)
-    
-    super.disconnectedCallback()
-  }
-
-  protected dialogIsOpen = false
-
-  protected override get defaultContent(): Content | void { 
-    const { section, dialogIsOpen } = this
-    if (!(section && dialogIsOpen)) return 
-
-    this.importTags(`movie-masher-${section}-section`)
-
-    switch(section) {
-      case 'importer': {
-        return html`<movie-masher-importer-section></movie-masher-importer-section>`
-      } 
-    } 
-  }
-
-  openDialogElement():void {
-    console.log(this.tagName, 'openDialogElement', this.dialogIsOpen)
-    if (this.dialogIsOpen) return
-
-    const { dialog } = this
-    if (dialog) {
-      dialog.addEventListener('close', this.handleClose, { once: true })
-      this.dialogIsOpen = true
-      dialog.showModal()
-    }
+    this.listeners[EventDialog.Type] = this.handleDialog.bind(this)
+    // this.handleClose = this.handleClose.bind(this)
+    // this.handleDialog = this.handleDialog.bind(this)
   }
 
   protected override content(contents: Contents): Content {
-    return html`<dialog>${contents}</dialog>`
+    return html`
+      <dialog 
+        @export-parts='${this.handleExportParts}'
+        @close='${this.handleClose}'
+      >${contents}</dialog>
+    `
   }
 
-  protected override render(): unknown {
-    return this.content(this.contents) 
+  private get dialog(): HTMLDialogElement {
+    return this.element('dialog') as HTMLDialogElement
+  }
+
+  protected dialogClose(): void {
+    this.dialog.close()
+  }
+
+  protected dialogOpen(): void {
+    this.dialogOpened = true
+    this.dialog.showModal()
+  }
+
+  private dialogOpened = false
+
+  private dialogOpening = false
+
+  protected override get exportElements(): Element[] {
+    return this.section ? super.exportElements : []
+  }
+
+  protected handleClose(): void {
+    console.log(this.tagName, 'handleClose', this.dialogOpened)
+    if (!this.dialogOpened) return
+
+    this.dialogOpened = false
+    this.handleDialog(new EventDialog())//'close'
+  }
+
+  protected handleDialog(event: EventDialog): void {
+    
+    const { detail: newSection = '' } = event
+    const { section } = this
+    console.log(this.tagName, 'handleDialog', section, '->', newSection)
+    if (newSection === section) return
+
+    const { dialogOpened } = this
+    if (dialogOpened) this.dialogClose()
+    if (newSection) this.dialogOpening = true
+    this.section = newSection
+    this.handleExportParts()
+    this.dispatchExportParts()
+  }
+
+  protected override partContent(part: string, slots: Htmls): OptionalContent {
+    const { dialogOpening } = this
+    if (dialogOpening) {
+      this.dialogOpening = false
+      this.importTags(`movie-masher-${part}-section`)
+      this.dialogOpen()
+    }
+    switch (part) {
+      case PartImporter: {
+        return html`
+          <movie-masher-importer-section 
+            part='${PartImporter}' 
+          >${slots}</movie-masher-importer-section>`
+      } 
+    }
+    return super.partContent(part, slots)
   }
 
   section = ''
 
-  static override properties = {
-    ...ImporterComponent.properties,
+  override parts = [PartImporter].join(PipeChar)
+
+  static override properties: PropertyDeclarations = {
+    ...Slotted.properties,
     section: { type: String },
-    dialogIsOpen: { type: Boolean, attribute: false },
   }
 
   static override styles: CSSResultGroup = [

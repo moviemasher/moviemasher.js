@@ -79,8 +79,8 @@ export function assertBoolean(value: any, name?: string): asserts value is boole
   if (!isBoolean(value)) errorThrow(value, 'Boolean', name)
 }
 
-export function assertDefined(value: any, name?: string): asserts value is true {
-  if (!isDefined(value)) errorThrow(value, 'Defined', name)
+export function assertDefined<T=true>(value: any, name?: string): asserts value is T {
+  if (!isDefined<T>(value)) errorThrow(value, 'Defined', name)
 }
 
 export function assertInteger(value: any, name?: string): asserts value is Integer {

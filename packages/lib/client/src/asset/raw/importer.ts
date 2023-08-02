@@ -1,4 +1,4 @@
-import type { ImportAssetObjectsEventDetail, ImportEvent, ImportEventDetail, ImportersEventDetail } from '../../declarations'
+import type { ImportAssetObjectsEventDetail, ImportEvent, ImportEventDetail, ImportersEventDetail } from '../../declarations.js'
 import type { ClientAudioEvent, ClientAudioEventDetail, ClientFontEvent, ClientFontEventDetail, ClientImageEvent, ClientImageEventDetail, ClientImporter, ClientRawAssetObject, ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject, ClientTextAssetObject, ClientVideoEvent, ClientVideoEventDetail } from '@moviemasher/runtime-client'
 import type { AssetObject, AssetObjects, DecodingObject, DecodingObjects, EndpointRequest, ImportType } from '@moviemasher/runtime-shared'
 import type { ProbingData } from '@moviemasher/lib-shared'

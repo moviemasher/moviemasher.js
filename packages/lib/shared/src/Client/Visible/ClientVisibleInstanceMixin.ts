@@ -1,9 +1,9 @@
-import type { PreviewItem, SvgItem, SvgItems } from '@moviemasher/runtime-client'
-import type { Constrained, Rect, Size, Time, TimeRange } from '@moviemasher/runtime-shared'
+import type { Preview, SvgItem, SvgItems } from '@moviemasher/runtime-client'
+import type { Constrained, ContainerInstance, PropertySize, Rect, Size, Time, TimeRange, VisibleInstance } from '@moviemasher/runtime-shared'
 import type { Panel } from "@moviemasher/runtime-client"
 
 
-import { ErrorName, errorThrow, VisibleInstance } from '@moviemasher/runtime-shared'
+import { ErrorName, errorThrow } from '@moviemasher/runtime-shared'
 import { PanelPlayer } from "../PanelConstants.js"
 import { colorWhite } from '../../Helpers/Color/ColorConstants.js'
 import { NamespaceSvg } from "../../Setup/Constants.js"
@@ -28,7 +28,7 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
       return svgMaskElement(undefined, group, luminance)   
     }
 
-    containedPromise(contentItem: SvgItem, content: ClientInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<PreviewItem> {
+    containedPreviewPromise(contentItem: SvgItem, content: ClientInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<Preview> {
       const range = this.clip.timeRange
       const containerPromise = this.containerSvgItemPromise(containerRect, time, component)
       return containerPromise.then(containerItem => {
@@ -53,17 +53,13 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
         if (!isVector) svgAppend(group, svgPolygonElement(containerRect, '', 'transparent'))
         svgAppend(group, contentItem)
         
-        
         const items: SvgItems = [group]
-
         svgAddClass(group, 'contained')
-
-
         const maskElement = this.clipperElement(group, luminance)
         defs.push(maskElement)
 
-        const useContainerInMask = svgUseElement(containerId)
-        // console.log(this.constructor.name, 'containedPromise', content.assetId, containerId, useContainerInMask)
+        // const useContainerInMask = svgUseElement(containerId)
+        // console.log(this.constructor.name, 'containedPreviewPromise', content.assetId, containerId, useContainerInMask)
         if (!isVector) maskElement.appendChild(svgPolygonElement(size, '', 'black'))
         maskElement.appendChild(containerItem)
         if (!isVector) {
@@ -76,7 +72,7 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
         
         assertClientVisibleInstance(content)
 
-        const contentSvgFilter = content.contentSvgFilter(contentItem, size, containerRect, time)
+        const contentSvgFilter = content.contentSvgFilter(this, contentItem, size, containerRect, time, range)
         if (contentSvgFilter) defs.push(contentSvgFilter)
         else contentItem.removeAttribute('filter')
 
@@ -89,27 +85,16 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
       })
     }
   
-    clippedPreviewItemPromise(content: ClientVisibleInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<PreviewItem> {
-      // console.log(this.constructor.name, 'clippedPreviewItemPromise', containerRect, content.assetId)
-      
-      return content.contentPreviewItemPromise(containerRect, time, component).then(contentSvgItem => (
-        this.containedPromise(contentSvgItem, content, containerRect, size, time, component)
+    clippedPreviewPromise(content: ClientVisibleInstance, containerRect: Rect, previewSize: Size, time: Time, component: Panel): Promise<Preview> {
+      const shortest = previewSize.width < previewSize.height ? 'width' : 'height'
+      return content.contentPreviewItemPromise(containerRect, shortest, time, component).then(contentSvgItem => (
+        this.containedPreviewPromise(contentSvgItem, content, containerRect, previewSize, time, component)
       ))
     }
 
     private containerSvgFilter(svgItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
-      const [opacity] = this.tweenValues('opacity', time, clipTime)
-      if (!isBelowOne(opacity)) return
       
-      assertNumber(opacity)
-
-      const { document } = globalThis
-      const filterElement = document.createElementNS(NamespaceSvg, 'feColorMatrix')
-      filterElement.setAttribute('type', 'matrix')
-      const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`
-
-      svgSet(filterElement, values, 'values')
-      return svgFilterElement([filterElement], svgItem)
+      return undefined
     } 
     
     containerSvgItemPromise(rect: Rect, time: Time, component: Panel): Promise<SvgItem> {
@@ -122,15 +107,27 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
       })
     }
 
-    contentPreviewItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem> {
+    contentPreviewItemPromise(containerRect: Rect, shortest: PropertySize, time: Time, component: Panel): Promise<SvgItem> {
       // console.log(this.constructor.name, 'contentPreviewItemPromise', containerRect)
       
-      const rect = this.itemContentRect(containerRect, time)
+      const rect = this.itemContentRect(containerRect, shortest, time)
       return this.containerSvgItemPromise(rect, time, component)
     }
 
-    contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time): SVGFilterElement | undefined {
-      return undefined
+    contentSvgFilter(container: ContainerInstance, svgItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
+      
+      const [opacity] = container.tweenValues('opacity', time, clipTime)
+      if (!isBelowOne(opacity)) return
+      
+      assertNumber(opacity)
+
+      const { document } = globalThis
+      const filterElement = document.createElementNS(NamespaceSvg, 'feColorMatrix')
+      filterElement.setAttribute('type', 'matrix')
+      const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`
+
+      svgSet(filterElement, values, 'values')
+      return svgFilterElement([filterElement], svgItem)
       // const { isDefaultOrAudio } = this
       // if (isDefaultOrAudio || !effects.length) return
   

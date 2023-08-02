@@ -1,16 +1,14 @@
-import type { AssetObject, Time, MashAssetObject, AssetType, MashAsset, Rect, StringRecord, TimeRange, Size } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetType, MashAsset, MashAssetObject, StringRecord, Time, TimeRange } from '@moviemasher/runtime-shared'
 import type { Action } from './Action.js'
 import type { Actions } from './Actions.js'
-import type { ClientAction } from './ClientAction.js'
 import type { ClientAssets } from './ClientAsset.js'
-import type { ClientAssetManager } from './ClientAssetManager.js'
 import type { ClientClip, ClientClips } from './ClientMashTypes.js'
 
 export interface Masher {
   actions: Actions
   autoplay: boolean
   buffer: number
-  can(action: ClientAction): boolean
+  // can(action: ClientAction): boolean
   clips: ClientClips
   create(): Promise<void>
   currentTime: number
@@ -22,28 +20,27 @@ export interface Masher {
   editing: boolean
   fps: number
   goToTime(value: Time): Promise<void>
-  handleAction(action: Action): void
+  dispatchChanged(action: Action): void
   load(data: AssetObject): Promise<void>
   loop: boolean
   mashingType: AssetType
-  media: ClientAssetManager
   muted: boolean
-  pause(): void
+  // pause(): void
   paused: boolean
-  play(): void
+  // play(): void
   position: number
   positionStep: number
   precision: number
   mashAsset?: MashAsset
   selection: ClientClip | false
-  readOnly: boolean
-  rect: Rect
-  redo(): void
+  // readOnly: boolean
+  // rect: Rect
+  // redo(): void
   redraw(): void
   saved(temporaryIdLookup?: StringRecord): void
   time: Time
   timeRange: TimeRange
-  undo(): void
+  // undo(): void
   unload(): void
   volume: number
 }
@@ -57,7 +54,6 @@ export interface MashIndex {
 export interface MasherArgs {
   autoplay: boolean
   buffer: number
-  dimensions?: Rect | Size | undefined
   fps: number
   loop: boolean
   mash?: MashAssetObject

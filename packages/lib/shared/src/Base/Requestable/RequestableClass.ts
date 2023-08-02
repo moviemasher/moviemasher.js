@@ -1,12 +1,9 @@
-import type { UnknownRecord } from '@moviemasher/runtime-shared'
-import type { Requestable, RequestableObject } from '@moviemasher/runtime-shared'
-import type { EndpointRequest } from '@moviemasher/runtime-shared'
-import type { LoadType } from "@moviemasher/runtime-shared"
+import type { EndpointRequest, LoadType, Requestable, RequestableObject, UnknownRecord } from '@moviemasher/runtime-shared'
+
+import { TypeSequence } from '@moviemasher/runtime-client'
+import { TypeImage, isPopulatedString } from '@moviemasher/runtime-shared'
 import { assertLoadType } from '../../Setup/LoadType.js'
-import { isPopulatedString } from "@moviemasher/runtime-shared"
-import { PropertiedClass } from "../PropertiedClass.js"
-import { TypeSequence } from '../../Setup/TypeConstants.js'
-import { TypeImage } from "@moviemasher/runtime-shared"
+import { PropertiedClass } from '../PropertiedClass.js'
 
 export class RequestableClass extends PropertiedClass implements Requestable {
   constructor(object: RequestableObject) {

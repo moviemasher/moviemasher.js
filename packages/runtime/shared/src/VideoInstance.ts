@@ -1,4 +1,4 @@
-import { Instance, InstanceObject, InstanceArgs } from './Instance.js'
+import { Instance, InstanceObject, InstanceArgs } from './InstanceTypes.js'
 import { VideoAsset } from './VideoAsset.js'
 
 export interface VideoInstance extends Instance {

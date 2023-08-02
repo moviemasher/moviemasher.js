@@ -1,22 +1,18 @@
-import { isNumber, type NumberEvent } from '@moviemasher/runtime-shared'
-import type { MashAssetEvent } from '@moviemasher/runtime-client'
-import { Component } from '../Base/Component'
+import type { PropertyDeclarations } from 'lit'
+import type { NumberEvent } from '@moviemasher/runtime-client'
+
+import { isNumber } from '@moviemasher/runtime-shared'
+import { Component } from '../Base/Component.js'
 
 import { html } from 'lit-html/lit-html.js'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
 
-import { EventTypeZoom, MovieMasher, EventTypeMashAsset } from '@moviemasher/runtime-client'
+import { EventTypeZoom, MovieMasher } from '@moviemasher/runtime-client'
+import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
 
+const WithDisablable = DisablableMixin(Component)
+export class ComposerZoomElement extends WithDisablable {
 
-export class ComposerZoomElement extends Component {
-  constructor() {
-    super()
-    this.listeners[EventTypeMashAsset] = this.handleMashAsset.bind(this)
-  }
-
-  protected zoom = 0.0
-
-  protected disabled?: true | undefined
+  protected zoom = 1.0
 
   private handleInput(event: Event): void {
     const { value } = event.target as HTMLInputElement
@@ -27,27 +23,22 @@ export class ComposerZoomElement extends Component {
     }
   }
 
-  private handleMashAsset(event: MashAssetEvent): void {
-    const { detail } = event
-    this.disabled = detail ? undefined : true
-  }
-
   protected override render(): unknown {
     return html`<input 
       @input=${this.handleInput}
       type='range'
-      disabled='${ifDefined(this.disabled)}'
+      ?disabled='${this.disabled}'
       min='0'
       max='1'
       step='0.001'
       value='${this.zoom}'
-    ></input>`
+    ></input>
+    `
   }
 
-  static override properties = { 
-    ...Component.properties,
+  static override properties: PropertyDeclarations = { 
+    ...DisablableProperties,
     zoom: { type: Number, attribute: false },
-    disabled: { type: Boolean, attribute: false },
    }
 }
 

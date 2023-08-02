@@ -1,28 +1,34 @@
-import type { CSSResultGroup, PropertyValues } from 'lit'
-import type { Size, StringEvent } from '@moviemasher/runtime-shared'
-import type { IconFromFrameEventDetail, MashIndex, ScrollRootEventDetail, SvgOrImageDataOrError, Timeout } from '@moviemasher/runtime-client'
-import type { Content, Contents, DropTarget } from '../declarations.js'
+import type { IconFromFrameEventDetail, MashIndex, ScrollRootEventDetail, StringEvent, SvgOrImageDataOrError, Timeout } from '@moviemasher/runtime-client'
+import type { Size } from '@moviemasher/runtime-shared'
+import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
+import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { css } from '@lit/reactive-element/css-tag.js'
 import { IntersectionController } from '@lit-labs/observers/intersection-controller.js'
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
+import { css } from '@lit/reactive-element/css-tag.js'
+import { html } from 'lit-html/lit-html.js'
 
+import { DragSuffix, EventChangeClipId, EventChanged, EventTypeIconFromFrame, EventTypeMashRemoveClip, EventTypeScrollRoot, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
-import { DragSuffix, EventTypeIconFromFrame, EventTypeMashRemoveClip, EventTypeScrollRoot, EventTypeSelectClip, MovieMasher } from '@moviemasher/runtime-client'
 
-import { SizeZero, assertDefined, eventStop, sizeCopy } from '@moviemasher/lib-shared'
+import { SIZE_ZERO, assertDefined, eventStop, isChangePropertyAction, sizeCopy } from '@moviemasher/lib-shared'
 
 import { Component } from '../Base/Component.js'
+import { DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 import { droppedMashIndex } from '../utility/draganddrop.js'
-import { DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
 
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
+const WithSizeReactiveMixin = SizeReactiveMixin(WithDropTargetMixin)
 
-export class ComposerClipElement extends WithDropTargetMixin implements DropTarget {
+export class ComposerClipElement extends WithSizeReactiveMixin implements DropTarget {
+  constructor() {
+    super()
+    this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
+  }
+  
   clipId = ''
-
 
   override connectedCallback(): void {
     super.connectedCallback()
@@ -45,7 +51,7 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
   
   }
 
-  protected override get defaultContent(): Content | void { 
+  protected override get defaultContent(): OptionalContent { 
     const contents: Contents = []
     // const { size } = this
     // const { width, height } = size
@@ -71,14 +77,14 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
   protected override firstUpdated(changedProperties: PropertyValues<this>): void {
     super.firstUpdated(changedProperties)
     
-    console.log(this.tagName, 'firstUpdated calling drawBackground', this.hasChanged)
-    this.drawBackground()
+    // console.log(this.tagName, 'firstUpdated calling drawBackground', this.hasChanged)
+    this.drawBackgroundAndUpdate()
   }
 
-  private drawBackground() {
+  private drawBackgroundAndUpdate() {
     this.hasChanged = false 
-    console.log(this.tagName, 'drawBackground')
-    const { clipId, scale, size: clipSize, gap } = this
+    // console.log(this.tagName, 'drawBackground')
+    const { clipId, scale, clipSize: clipSize, gap } = this
     this.sizeWhenUpdated = sizeCopy(clipSize)
     const detail: IconFromFrameEventDetail = { clipSize, clipId, gap, scale }
     const event = new CustomEvent(EventTypeIconFromFrame, { detail })
@@ -98,13 +104,25 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
 
   private handleChange = () => { 
     if (!this.intersecting) {
-      console.log(this.tagName, 'handleChange !intersecting')
+      // console.log(this.tagName, 'handleChange !intersecting')
       this.hasChanged = true 
       return
     }
 
-    console.log(this.tagName, 'handleChange calling drawBackground')
-    this.drawBackground()
+    // console.log(this.tagName, 'handleChange calling drawBackground')
+    this.drawBackgroundAndUpdate()
+  }
+
+
+  private handleChanged(event: EventChanged): void {
+    const { detail: action } = event
+    if (isChangePropertyAction(action)) {
+      const { selection } = action
+      if (selection && selection.id === this.clipId) {
+        this.requestUpdate()
+      }
+    }
+    this.requestUpdate()
   }
 
   private handleIntersection(entries: IntersectionObserverEntry[]): boolean {
@@ -112,7 +130,7 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
     // console.log(this.tagName, 'handleIntersection', some)
     this.intersecting = some
     if (some && this.hasChanged) {
-      console.log(this.tagName, 'handleIntersection calling handleChange')
+      // console.log(this.tagName, 'handleIntersection calling handleChange')
       this.handleChange()
     }
    
@@ -124,21 +142,21 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
 
     for (const entry of entries) {
       const size = sizeCopy(entry.contentRect)
-      this.size = size
+      this.clipSize = size
       if (size.height !== drawnSize.height || size.width > drawnSize.width) {
-        console.log(this.tagName, 'handleResize calling handleChange because size !== sizeWhenUpdated')
+        // console.log(this.tagName, 'handleResize calling handleChange because size !== sizeWhenUpdated')
         this.handleChange()
       }
       return size
     }
-    return SizeZero
+    return SIZE_ZERO
   }
 
   private handleTimeout = () => {
     delete this.timeout 
     const { hasChanged } = this
     if (hasChanged) { 
-      console.log(this.tagName, 'handleTimeout calling handleChange because hasChanged')
+      // console.log(this.tagName, 'handleTimeout calling handleChange because hasChanged')
       return this.handleChange()
     }
     const { waitingPromise: promise } = this
@@ -146,7 +164,7 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
   
     const iconPromise = promise.then(orError => {
       if (iconPromise !== this.iconFromFramePromise) {
-        console.warn(this.tagName, 'handleTimeout', 'iconPromise !== this.iconFromFramePromise')
+        // console.warn(this.tagName, 'handleTimeout', 'iconPromise !== this.iconFromFramePromise')
         return
       }
       delete this.iconFromFramePromise
@@ -174,7 +192,7 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
   override onclick = (event: Event) => { event.stopPropagation() }
   
   override ondragend = (event: DragEvent) => {
-    console.log(this.tagName, 'ondragend')
+    // console.log(this.tagName, 'ondragend')
     eventStop(event)
     const { dataTransfer } = event
     if (!dataTransfer) return
@@ -188,7 +206,7 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
   }
 
   override ondragstart = (event: DragEvent) => {
-    console.log(this.tagName, 'ondragstart', event)
+    // console.log(this.tagName, 'ondragstart', event)
     this.onpointerdown(event)
 
     const { dataTransfer, clientX } = event
@@ -217,8 +235,8 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
 
   override onpointerdown = (event: Event) => {
     event.stopPropagation()
-    const { clipId: detail } = this
-    const clipEvent: StringEvent = new CustomEvent(EventTypeSelectClip, { detail })
+    const { clipId } = this
+    const clipEvent: StringEvent = new EventChangeClipId(clipId)
     MovieMasher.eventDispatcher.dispatch(clipEvent)
   }
 
@@ -228,9 +246,9 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
 
   private scrollRoot?: Element
 
-  private size = { ...SizeZero } 
+  private clipSize = { ...SIZE_ZERO } 
 
-  private sizeWhenUpdated = { ...SizeZero }
+  private sizeWhenUpdated = { ...SIZE_ZERO }
 
   trackIndex = -1
 
@@ -256,16 +274,17 @@ export class ComposerClipElement extends WithDropTargetMixin implements DropTarg
       || changedProperties.has('trackWidth')
       || changedProperties.has('maxWidth')
       || changedProperties.has('label')
+      || changedProperties.has('size')
     ) {
-      console.log(this.tagName, 'willUpdate calling handleChange')
+      // console.log(this.tagName, 'willUpdate calling handleChange')
       this.handleChange()
     }
   }
 
   x = 0
 
-  static override properties = { 
-    ...Component.properties,
+  static override properties: PropertyDeclarations = { 
+    ...SizeReactiveProperties,
     clipId: { type: String, attribute: 'clip-id' }, 
     label: { type: String, attribute: true },  
     scale: { type: Number, attribute: true },

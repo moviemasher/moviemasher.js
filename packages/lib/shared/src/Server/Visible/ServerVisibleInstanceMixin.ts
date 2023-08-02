@@ -1,20 +1,20 @@
 import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '../CommandFile.js'
 import type { ContentRectArgs, ValueRecord } from "@moviemasher/runtime-shared"
-import { tweenOption, tweenPosition } from '../../Helpers/Tween/TweenFunctions.js'
-import { Tweening } from '../../Helpers/Tween/Tweening.js'
+import { tweenOption, tweenPosition } from '../../Shared/Utility/Tween/TweenFunctions.js'
+import { Tweening } from '../../Shared/Utility/Tween/Tweening.js'
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
 import { assertPopulatedArray, assertPopulatedString, isTrueValue } from '../../Shared/SharedGuards.js'
 import { assertTimeRange, isTimeRange } from "../../Shared/TimeGuards.js"
 import { colorBlackOpaque, colorTransparent } from '../../Helpers/Color/ColorConstants.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 import { rectsEqual } from "../../Utility/RectFunctions.js"
-import { tweenMaxSize } from '../../Helpers/Tween/TweenFunctions.js'
+import { tweenMaxSize } from '../../Shared/Utility/Tween/TweenFunctions.js'
 import { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
 import { Constrained } from '@moviemasher/runtime-shared'
 import { VisibleInstance } from '@moviemasher/runtime-shared'
 import { ServerVisibleAsset } from '../Asset/ServerAssetTypes.js'
 import { idGenerate } from '../../Utility/IdFunctions.js'
-import { PointZero } from '../../Utility/PointConstants.js'
+import { POINT_ZERO } from '../../Utility/PointConstants.js'
 
 
 export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance & VisibleInstance>>(Base: T):
@@ -43,8 +43,8 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
         commandFiles, containerRects, filterInput: input, videoRate, track
       } = args
       let filterInput = input
-
-      const maxSize = tweening.size ? tweenMaxSize(...containerRects) : containerRects[0]
+      const [containerRect, containerRectEnd] = containerRects
+      const maxSize = tweening.size ? tweenMaxSize(containerRect, containerRectEnd) : containerRect
 
       // add color box first
       const colorArgs: VisibleCommandFilterArgs = {
@@ -72,7 +72,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       // crop file input
       assertPopulatedString(filterInput, 'crop input')
 
-      const options: ValueRecord = { exact: 1, ...PointZero }
+      const options: ValueRecord = { exact: 1, ...POINT_ZERO }
       const cropOutput = idGenerate('crop')
       const { width, height } = maxSize
       if (isTrueValue(width)) options.w = width
@@ -107,7 +107,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       const commandFilters: CommandFilters = []
       const {
         containerRects, visible, time, videoRate, clipTime, commandFiles, 
-        filterInput: input, track
+        filterInput: input, track, outputSize
       } = args
       if (!visible)
         return commandFilters
@@ -118,16 +118,17 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       const { id } = this
       let filterInput = input || commandFilesInput(commandFiles, id, visible)
 
+      const shortest = outputSize.width < outputSize.height ? 'width' : 'height'
       const contentArgs: ContentRectArgs = {
-        containerRects: containerRects, time, timeRange: clipTime
+        containerRects, time, timeRange: clipTime, shortest,
       }
       const contentRects = this.contentRects(contentArgs)
 
-      const tweeningContainer = !rectsEqual(...containerRects)
+      const [containerRect, containerRectEnd] = containerRects
 
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
-      const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0]
+      const maxContainerSize = tweenMaxSize(containerRect, containerRectEnd) 
 
       const colorInput = `content-${track}-back`
 

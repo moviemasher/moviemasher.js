@@ -1,23 +1,10 @@
-import type { 
-  AssetCacheArgs, ImageInstance, ImageInstanceObject, Rect, RectOptions, 
-  Size, AssetEventDetail, Time, InstanceArgs, 
-} from '@moviemasher/runtime-shared'
-import type { ClientRawImageAssetObject, ClientImage, ClientImageEvent, ClientImageEventDetail, SvgItem } from '@moviemasher/runtime-client'
-import type { 
-  ClientRawImageAsset,  ClientRawImageInstance, 
-} from '@moviemasher/lib-shared'
-import { 
-  ImageInstanceMixin, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, 
-  ImageAssetMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, 
-  centerPoint, sizeCover, 
-  svgImagePromiseWithOptions, svgSvgElement,
-  ClientInstanceClass, ClientRawAssetClass, 
-} from '@moviemasher/lib-shared'
+import type { ClientRawImageAsset, ClientRawImageInstance, } from '@moviemasher/lib-shared'
+import type { ClientImage, ClientImageEvent, ClientImageEventDetail, ClientRawImageAssetObject, SvgItem } from '@moviemasher/runtime-client'
+import type { AssetCacheArgs, ImageInstance, ImageInstanceObject, InstanceArgs, Rect, RectOptions, Size, Time, } from '@moviemasher/runtime-shared'
 
-import { MovieMasher, EventTypeClientImage } from '@moviemasher/runtime-client'
-import {
-  isDefiniteError, errorThrow, isAssetObject, SourceRaw, TypeImage
-} from '@moviemasher/runtime-shared'
+import { ClientInstanceClass, ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeContain, svgImagePromiseWithOptions, svgSvgElement, } from '@moviemasher/lib-shared'
+import { EventAsset, EventTypeClientImage, MovieMasher } from '@moviemasher/runtime-client'
+import { SourceRaw, TypeImage, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -56,7 +43,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
   }
 
   override definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    console.log(this.constructor.name, 'definitionIcon', size)
+    // console.debug(this.constructor.name, 'definitionIcon', { size })
     const transcoding = this.preferredTranscoding(TypeImage) || this
     if (!transcoding) return undefined
     const { request } = transcoding
@@ -64,22 +51,21 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     const event: ClientImageEvent = new CustomEvent(EventTypeClientImage, { detail })
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = detail
-    
     return promise!.then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
       const { data: clientImage } = orError
-      console.debug(this.constructor.name, 'definitionIcon', clientImage)
       assertSizeAboveZero(clientImage)
 
       const { width, height, src } = clientImage
+      // console.debug(this.constructor.name, 'definitionIcon', { width, height })
+
       const inSize = { width, height }
-      const coverSize = sizeCover(inSize, size, true)
+      const coverSize = sizeContain(inSize, size)
       const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
-      const options: RectOptions = { ...outRect }
+      const options: RectOptions = { ...outRect } // , lock: LockShortest, shortest: size.width > size.height ? 'height' : 'width' }
+      // console.debug(this.constructor.name, 'definitionIcon calling svgImagePromiseWithOptions', { options })
       return svgImagePromiseWithOptions(src, options).then(svgImage => {
-        console.debug(this.constructor.name, 'definitionIcon svgImagePromiseWithOptions', svgImage)
-        
         return svgSvgElement(size, svgImage)
       })
     })
@@ -96,7 +82,21 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
   }
 
   loadedImage?: ClientImage 
+
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject, asset } = detail
+    if (!asset && isAssetObject(assetObject, TypeImage, SourceRaw)) {
+      detail.asset = new ClientRawImageAssetClass(assetObject)
+      event.stopImmediatePropagation()
+    }
+  }
 }
+
+// listen for image/raw asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ClientRawImageAssetClass.handleAsset
+)
 
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)
@@ -134,15 +134,3 @@ export class ClientRawImageInstanceClass extends WithImageInstance implements Cl
   }
   declare asset: ClientRawImageAsset
 }
-
-// listen for image/raw asset event
-MovieMasher.eventDispatcher.addDispatchListener<AssetEventDetail>('asset', event => {
-  const { detail } = event
-  const { assetObject, asset } = detail
-  if (!asset && isAssetObject(assetObject, TypeImage, SourceRaw)) {
-    detail.asset = new ClientRawImageAssetClass(assetObject)
-    event.stopImmediatePropagation()
-  }
-})
-
-

@@ -7,8 +7,8 @@ export class AElement extends IconString {
   
   protected override content(contents: Contents): Content {
     return html`<a 
-      @click='${this.clickHandler}'
-      @slotted='${this.slottedHandler}'
+      @click='${this.handleClick}'
+      @export-parts='${this.handleExportParts}'
     >${contents}</a>`
   }
 }

@@ -1,22 +1,17 @@
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit'
-
-import type { Content, Contents, DropTarget } from '../declarations.js'
-
+import type { MashIndex } from '@moviemasher/runtime-client'
+import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
-import { Component } from '../Base/Component.js'
-import { MashIndex } from '@moviemasher/runtime-client'
 
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
-
 export class ComposerIconElement extends WithDropTargetMixin implements DropTarget {
-
-
-  protected override get defaultContent(): Content | void { 
+  protected override get defaultContent(): OptionalContent { 
     const { dense } = this
  
     const contents: Contents = []
@@ -39,8 +34,8 @@ export class ComposerIconElement extends WithDropTargetMixin implements DropTarg
 
   trackIndex = -1
 
-  static override properties = { 
-    ...Component.properties,
+  static override properties: PropertyDeclarations = { 
+    // ...Component.properties,
     dense: { type: Boolean },
     trackIndex: { type: Number, attribute: 'track-index' },
   }
@@ -75,5 +70,3 @@ export class ComposerIconElement extends WithDropTargetMixin implements DropTarg
 
 // register web component as custom element
 customElements.define('movie-masher-composer-icon', ComposerIconElement)
-
-

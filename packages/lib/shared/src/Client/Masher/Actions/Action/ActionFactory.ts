@@ -30,5 +30,6 @@ export const actionInstance = (object: ActionArgs): Action => {
     case ActionTypeChangeMultiple: return new ChangePropertiesActionClass(<ChangePropertiesActionObject> object)
     case ActionTypeMoveClip: return new MoveClipActionClass(<MoveClipActionObject> object)
     case ActionTypeRemoveClip: return new RemoveClipActionClass(<RemoveClipActionObject>object)
+    default: throw('unknown action type')
   }
 }

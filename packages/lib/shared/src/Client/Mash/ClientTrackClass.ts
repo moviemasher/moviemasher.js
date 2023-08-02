@@ -1,20 +1,15 @@
 
 
-import type { Actions, ClientClip, ClientClips, ClientMashAsset, ClientTrack, Selectables, SelectedProperties } from '@moviemasher/runtime-client'
-import type { Scalar } from '@moviemasher/runtime-shared'
-import type { ChangePropertyActionObject } from '../Masher/Actions/Action/ActionTypes.js'
+import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack } from '@moviemasher/runtime-client'
 
-
-import { ActionTypeChange } from '../../Setup/ActionTypeConstants.js'
-import { TypeTrack } from '../../Setup/TypeConstants.js'
 import { TrackClass } from '../../Shared/Mash/Track/TrackClass.js'
-import { assertPopulatedString, assertTrue, isPositive } from '../../Shared/SharedGuards.js'
+import { assertTrue, isPositive } from '../../Shared/SharedGuards.js'
 import { arraySet } from '../../Utility/ArrayFunctions.js'
 
 export class ClientTrackClass extends TrackClass implements ClientTrack {
 
   addClips(clips: ClientClips, insertIndex = 0): void {
-    console.log(this.constructor.name, 'addClips', insertIndex)
+    // console.log(this.constructor.name, 'addClips', insertIndex)
     let clipIndex = insertIndex || 0
     if (!this.dense) clipIndex = 0 // ordered by clip.frame values
 
@@ -43,7 +38,6 @@ export class ClientTrackClass extends TrackClass implements ClientTrack {
     }
     const { frame, endFrame } = clip
     const durationFrames = endFrame - frame
-    console.log(this.constructor.name, 'frameForClipNearFrame', insertFrame, { frame, endFrame, durationFrames })
 
     const { clips } = this
     const avoidClips = clips.filter(other => 
@@ -53,15 +47,10 @@ export class ClientTrackClass extends TrackClass implements ClientTrack {
 
     let lastFrame = insertFrame
     for (const avoidClip of avoidClips) {
-      if (avoidClip.frame >= lastFrame + durationFrames) {
-        console.log(this.constructor.name, 'frameForClipNearFrame returning', lastFrame, 'because', avoidClip.frame, '>= lastFrame (', lastFrame, ') +', durationFrames)
-        return lastFrame
-      }
-      console.log(this.constructor.name, 'frameForClipNearFrame setting lastFrame to', avoidClip.endFrame, 'because', avoidClip.frame, '< lastFrame (', lastFrame, ') +', durationFrames)
-       
+      if (avoidClip.frame >= lastFrame + durationFrames) break
+  
       lastFrame = avoidClip.endFrame
     }
-    console.log(this.constructor.name, 'frameForClipNearFrame returning', lastFrame)
     return lastFrame
   }
 
@@ -74,29 +63,5 @@ export class ClientTrackClass extends TrackClass implements ClientTrack {
     clips.forEach(clip => clip.trackNumber = -1)
     this.sortClips(newClips)
     arraySet(this.clips, newClips)
-  }
-  selectType = TypeTrack
-
-  selectables(): Selectables { return [this, ...this.mash.selectables()] }
-
-  selectedItems(actions: Actions): SelectedProperties {
-    return this.properties.map(property => {
-      const undoValue = this.value(property.name)
-      return {
-        value: undoValue,
-        property, selectType: TypeTrack,
-        changeHandler: (property: string, redoValue: Scalar) => {
-          assertPopulatedString(property)
-
-          const options: ChangePropertyActionObject = {
-            type: ActionTypeChange,
-            target: this, property, redoValue, undoValue,
-            redoSelection: actions.selection,
-            undoSelection: actions.selection,
-          }
-          actions.create(options)
-        }
-      }
-    })
   }
 }

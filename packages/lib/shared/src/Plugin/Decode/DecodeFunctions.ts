@@ -1,9 +1,8 @@
-import {DecodeOutput} from './Decode.js'
+import type { DecodeOutput } from './Decode.js'
 
-import { isOutput } from "../../Base/Output.js"
-import {errorThrow} from '@moviemasher/runtime-shared'
-import {isDecodingType} from '@moviemasher/runtime-shared'
-
+import { errorThrow } from '@moviemasher/runtime-shared'
+import { isOutput } from '../../Base/Output.js'
+import { isDecodingType } from './Decoding/DecodingFunctions.js'
 
 export const isDecodeOutput = (value: any): value is DecodeOutput => {
   return isOutput(value) && 'type' in value && isDecodingType(value.type)

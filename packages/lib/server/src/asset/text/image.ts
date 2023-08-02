@@ -1,50 +1,10 @@
-import type {
-  CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters,
-  ServerTextAsset,
-  Tweening, VisibleCommandFileArgs, VisibleCommandFilterArgs,
-} from '@moviemasher/lib-shared'
-import type {
-  GraphFile, GraphFiles,
-} from '@moviemasher/runtime-server'
-import type {
-  AssetEventDetail,
-  PreloadArgs, ScalarRecord,
-  Size,
-  TextInstance, TextInstanceObject,
-  ValueRecord,
-} from '@moviemasher/runtime-shared'
+import type { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, ServerTextAsset, Tweening, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/lib-shared'
+import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
+import type { PreloadArgs, ScalarRecord, Size, TextInstance, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
 
-import {
-  LockNone,
-  PointZero,
-  PropertyTweenSuffix,
-  ServerInstanceClass,
-  ServerRawAssetClass,
-  ServerTextInstance,
-  ServerVisibleAssetMixin,
-  ServerVisibleInstanceMixin,
-  TextAssetMixin, TextHeight, TextInstanceMixin,
-  VisibleAssetMixin,
-  VisibleInstanceMixin,
-  arrayLast, assertEndpoint,
-  assertNumber,
-  assertPopulatedString, assertTrue, colorBlack, colorBlackTransparent,
-  colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba,
-  colorWhite,
-  colorWhiteTransparent,
-  endpointUrl,
-  idGenerate, isAboveZero, isTrueValue, sizesEqual,
-  tweenMaxSize,
-  tweenOption, tweenPosition
-} from '@moviemasher/lib-shared'
-import {
-  GraphFileTypeTxt, MovieMasher
-} from '@moviemasher/runtime-server'
-import {
-  SourceText,
-  TypeFont,
-  TypeImage, isAssetObject, isNumber, isPopulatedString
-} from '@moviemasher/runtime-shared'
+import { LockNone, POINT_ZERO, End, ServerInstanceClass, ServerRawAssetClass, ServerTextInstance, ServerVisibleAssetMixin, ServerVisibleInstanceMixin, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertEndpoint, assertNumber, assertPopulatedString, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, endpointUrl, idGenerate, isAboveZero, isTrueValue, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { EventAsset, GraphFileTypeTxt, MovieMasher } from '@moviemasher/runtime-server'
+import { SourceText, TypeFont, TypeImage, isAssetObject, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -76,7 +36,20 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     const args = this.instanceArgs(object)
     return new ServerTextInstanceClass(args)
   }
+
+  static handleAsset(event:EventAsset) {
+    const { detail } = event
+    const { assetObject } = detail
+    if (isAssetObject(assetObject, TypeImage, SourceText)) {
+      detail.asset = new ServerTextAssetClass(assetObject)
+      event.stopImmediatePropagation()
+    }
+  }
 }
+// listen for image/text asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ServerTextAssetClass.handleAsset
+)
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
 const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)
@@ -155,7 +128,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       intrinsicWidth: intrinsicRect.width,
     }
     
-    if (colorEnd) options[`color${PropertyTweenSuffix}`] = colorEnd
+    if (colorEnd) options[`color${End}`] = colorEnd
 
     const stretch = lock === LockNone
 
@@ -279,7 +252,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       assertPopulatedString(filterInput, 'crop filterInput')
 
-      const options: ValueRecord = { exact: 1, ...PointZero }
+      const options: ValueRecord = { exact: 1, ...POINT_ZERO }
       const cropOutput = idGenerate('crop')
       const { width, height } = maxSize
       if (isTrueValue(width)) options.w = width
@@ -323,12 +296,3 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
   }
 }
 
-// listen for image/text asset event
-MovieMasher.eventDispatcher.addDispatchListener<AssetEventDetail>('asset', event => {
-  const { detail } = event
-  const { assetObject, asset } = detail
-  if (!asset && isAssetObject(assetObject, TypeImage, SourceText)) {
-    detail.asset = new ServerTextAssetClass(assetObject)
-    event.stopImmediatePropagation()
-  }
-})

@@ -1,22 +1,16 @@
 import type { SvgFilter, SvgFilters, SvgItem, SvgItems } from '@moviemasher/runtime-client'
-import type { Rect, RectOptions } from '@moviemasher/runtime-shared'
-import type { Size } from '@moviemasher/runtime-shared'
-import type { Point } from '@moviemasher/runtime-shared'
-import type { StringRecord } from '@moviemasher/runtime-shared'
-import type { Lock } from "@moviemasher/runtime-shared"
+import type { NumberRecord, Point, Rect, RectOptions, Size, StringRecord } from '@moviemasher/runtime-shared'
 
 import { isArray, isPopulatedString } from "@moviemasher/runtime-shared"
 
-import { assertSizeAboveZero, isSize, sizeCopy, sizeAboveZero, sizeLockNegative } from "../Utility/SizeFunctions.js"
 import { NamespaceSvg } from '../Setup/Constants.js'
 import { assertDefined, assertPopulatedString, assertTrue, isPositive } from '../Shared/SharedGuards.js'
 import { idGenerateString } from '../Utility/IdFunctions.js'
-import { PointZero } from "../Utility/PointConstants.js"
+import { POINT_ZERO } from "../Utility/PointConstants.js"
 import { assertPoint, isPoint, pointCopy, pointValueString } from "../Utility/PointFunctions.js"
-import { Runtime } from '../Runtime/Runtime.js'
-
+import { assertSizeAboveZero, isSize, sizeAboveZero, sizeCopy } from "../Utility/SizeFunctions.js"
 import { colorCurrent } from '../Helpers/Color/ColorConstants.js'
-import { LockNone } from '../Setup/LockConstants.js'
+import { LockHeight, LockLongest, LockNone, LockWidth } from '../Setup/LockConstants.js'
 
 let PatchSvgElement: SVGSVGElement
 let SupportsSvgLoad = false
@@ -125,16 +119,6 @@ export const svgSvgElement = (size?: Size, svgItems?: SvgItem | SvgItems): SVGSV
   return element
 }
 
-const svgSetDimensionsLock = (element: SvgItem, dimensions: any, lock: Lock) => {
-  assertSizeAboveZero(dimensions)
-  if (lock === LockNone) svgSet(element, 'none', 'preserveAspectRatio')
-
-  const rect = { 
-    ...sizeLockNegative(dimensions, lock), 
-    ...pointCopy(dimensions) 
-  }
-  svgSetDimensions(element, rect)
-}
 
 export const svgImageElement = () => {
   const element = globalThis.document.createElementNS(NamespaceSvg, 'image')
@@ -264,7 +248,7 @@ export const svgDifferenceDefs = (overlayId: string, filtered: SvgItem | SvgItem
   svgSet(differenceFilter, 'SourceGraphic', 'in2')
 
   const image = svgFeImageElement(overlayId, resultId)
-  const filter = svgFilterElement([image, differenceFilter], filtered, PointZero)
+  const filter = svgFilterElement([image, differenceFilter], filtered, POINT_ZERO)
 
   svgSet(filter, '100%', 'width')
   svgSet(filter, '100%', 'height')
@@ -340,7 +324,6 @@ export const svgSetChildren = (element: Element, svgItems: SvgItems) => {
 }
 
 export const svgImagePromise = (url: string, dontPatch?: boolean): Promise<SVGImageElement> => {
-  const { environment } = Runtime
   const patch = !(dontPatch || SupportsSvgLoad)
   return new Promise<SVGImageElement>((resolve, reject) => {
     const element = svgImageElement()
@@ -379,13 +362,35 @@ export const svgText = (string: string, family: string, size: number, transform:
 }
 
 export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Promise<SVGImageElement> => {
-  return svgImagePromise(url).then(item => {
-    const { lock = LockNone, ...rest } = options
-    svgSetDimensionsLock(item, rest, lock)
-    return item
+  return svgImagePromise(url).then(element => {
+    const { shortest, lock = LockNone, ...rect } = options
+    assertSizeAboveZero(rect)
+    const svgRect: NumberRecord = { ...rect }
+
+    switch (lock) {
+      case LockHeight: {
+        svgRect.height = -1 
+        break
+      }
+      case LockWidth: {
+        svgRect.width = -1
+        break
+      }
+      case LockNone: {
+        svgSet(element, 'none', 'preserveAspectRatio')
+        break
+      }
+      default: {
+        assertPopulatedString(shortest, 'shortest')
+        svgRect[shortest] = -1
+        break
+      }
+    }
+    // console.debug('svgImagePromiseWithOptions', { url, options, svgRect })
+    svgSetDimensions(element, svgRect)
+    return element
   })
 }
-
 
 // test for support for load events from svg images
 (() => {
@@ -402,3 +407,5 @@ export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Pr
     }
   }
 })()
+
+

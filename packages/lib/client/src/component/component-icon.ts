@@ -1,3 +1,4 @@
+import type { PropertyDeclarations } from 'lit'
 import type { PropertyValues, CSSResultGroup } from 'lit'
 import type { Icon } from '@moviemasher/runtime-client'
 import type { OptionalContent } from '../declarations.js'
@@ -162,12 +163,13 @@ export class IconElement extends Component {
       delete this._iconPromise
     }
   }
-  static override properties = {
-    ...Component.properties,
+  static override properties: PropertyDeclarations = {
+    // ...Component.properties,
     icon: { type: String }
   }
 
   static override styles: CSSResultGroup = [
+    
     css`
       :host {
         --color: inherit;

@@ -3,7 +3,7 @@ export type EventDispatcherListenerRecord = Record<string, EventDispatcherListen
 
 export interface EventDispatcher {
   addDispatchListener: <T=any>(type: string, listener: EventDispatcherListener<T>, options?: unknown) => EventDispatcher
-  dispatch: <T>(typeOrEvent: string | CustomEvent<T>) => boolean
+  dispatch: <T>(typeOrEvent: string | CustomEvent<T> | Event) => boolean
   listenersAdd(record: EventDispatcherListenerRecord): void
   listenersRemove(record: EventDispatcherListenerRecord): void
   removeDispatchListener: <T=any>(type: string, listener: EventDispatcherListener<T>, options?: unknown) => EventDispatcher

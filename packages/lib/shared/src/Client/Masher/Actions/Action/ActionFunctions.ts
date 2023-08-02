@@ -12,7 +12,7 @@ import { isObject, isPopulatedString } from "@moviemasher/runtime-shared";
 import { isPropertied } from "../../../../Base/PropertiedGuards.js";
 
 export const isAction = (value: any): value is Action => {
-  return isObject(value) && 'selection' in value && isObject(value.selection)
+  return isObject(value) && 'redo' in value && 'undo' in value
 }
 
 export const isActionObject = (value: any): value is ActionObject => {
@@ -37,11 +37,11 @@ export const isChangeActionObject = (value: any): value is ChangeActionObject =>
 }
 
 export const isChangePropertyAction = (value: any): value is ChangePropertyAction => (
-  isChangeAction(value) && 'redoValue' in value && isScalar(value.redoValue)
+  isChangeAction(value) && 'updateAction' in value 
 )
 
 export const isChangePropertiesAction = (value: any): value is ChangePropertiesAction => (
-  isChangeAction(value) && 'redoValues' in value && isScalarRecord(value.redoValues)
+  isChangePropertyAction(value) && 'redoValues' in value && isScalarRecord(value.redoValues)
 )
 
 export const isChangePropertyActionObject = (value: any): value is ChangePropertyActionObject => (

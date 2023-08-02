@@ -3,7 +3,7 @@ import type { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import type { Numbers, Scalar, UnknownRecord, ValueRecord, Value } from '@moviemasher/runtime-shared'
 import type { Property } from '@moviemasher/runtime-shared'
 import type { Time } from '@moviemasher/runtime-shared'
-import type { Tweening } from '../../Helpers/Tween/Tweening.js'
+import type { Tweening } from '../Utility/Tween/Tweening.js'
 import type { Constrained } from '@moviemasher/runtime-shared'
 import type { AudibleInstance, AudibleInstanceObject, Instance } from '@moviemasher/runtime-shared'
 
@@ -15,6 +15,9 @@ import { commandFilesInput } from '../../Server/Utility/CommandFilesFunctions.js
 import { idGenerate } from '../../Utility/IdFunctions.js'
 import { timeFromArgs, timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
 import { AudibleAsset } from '@moviemasher/runtime-shared'
+import { propertyInstance } from '../../Setup/PropertyFunctions.js'
+import { DataTypeBoolean, DataTypeFrame, DataTypeNumber, DataTypePercent } from '../../Setup/DataTypeConstants.js'
+import { TypeContent } from '@moviemasher/runtime-client'
 
 export const gainFromString = (gain: Value): number | Numbers[] => {
   if (isString(gain)) {
@@ -62,13 +65,15 @@ T & Constrained<AudibleInstance> {
       return superTime.withFrame(offset + startTrim).divide(this.speed) 
     }
 
+    declare endTrim: number
+
     frames(quantize: number): number {
       const { asset: definition, startTrim, endTrim } = this
       const frames = definition.frames(quantize)
       return frames - (startTrim + endTrim)
     }
 
-    gain = 1.0
+    declare gain: number
 
     gainPairs: Numbers[] = []
 
@@ -100,7 +105,7 @@ T & Constrained<AudibleInstance> {
 
     hasIntrinsicTiming = true
     
-    initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
+    initialCommandFilters(args: VisibleCommandFilterArgs, _tweening: Tweening, _container = false): CommandFilters {
       const commandFilters: CommandFilters = []
       const { 
         time, quantize, commandFiles, clipTime, videoRate, duration 
@@ -150,6 +155,38 @@ T & Constrained<AudibleInstance> {
       return commandFilters
     }
 
+    override initializeProperties(object: unknown): void {
+      const { asset } = this
+      if (asset.audio) {
+        this.properties.push(propertyInstance({ 
+          targetId: TypeContent, name: 'muted', type: DataTypeBoolean, 
+        }))
+        if (asset.loop) {
+          this.properties.push(propertyInstance({ 
+            targetId: TypeContent, name: 'loops', type: DataTypeNumber, 
+            defaultValue: 1, 
+          }))
+        }
+        this.properties.push(propertyInstance({ 
+          targetId: TypeContent, name: 'gain', type: DataTypePercent, 
+          defaultValue: 1.0, min: 0, max: 2.0, step: 0.01 
+        }))
+      }
+      this.properties.push(propertyInstance({ 
+        targetId: TypeContent, name: 'speed', type: DataTypePercent, 
+        defaultValue: 1.0, min: 0.1, max: 2.0, step: 0.1, 
+      }))
+      this.properties.push(propertyInstance({ 
+        targetId: TypeContent, name: 'startTrim', type: DataTypeFrame,
+        defaultValue: 0, step: 1, min: 0, 
+      }))
+      this.properties.push(propertyInstance({ 
+        targetId: TypeContent, name: 'endTrim', type: DataTypeFrame,
+        defaultValue: 0, step: 1, min: 0, 
+      }))
+      super.initializeProperties(object)
+    }
+
     intrinsicsKnown(options: IntrinsicOptions): boolean {
       const superKnown = super.intrinsicsKnown(options)
       if (!superKnown) return false
@@ -162,8 +199,8 @@ T & Constrained<AudibleInstance> {
 
     mutable() { return this.asset.audio }
 
-    setValue(value: Scalar, name: string, property?: Property | undefined): void {
-      super.setValue(value, name, property)
+    override setValue(name: string, value?: Scalar, property?: Property | undefined): void {
+      super.setValue(name, value, property)
       if (property) return
 
       switch (name) {
@@ -180,6 +217,8 @@ T & Constrained<AudibleInstance> {
 
     declare speed: number
 
+    declare startTrim: number
+
     toJSON(): UnknownRecord {
       const json = super.toJSON()
       const { speed, gain } = this
@@ -187,8 +226,5 @@ T & Constrained<AudibleInstance> {
       if (gain !== 1.0) json.gain = gain
       return json
     }
-
-    declare startTrim: number
-    declare endTrim: number
   }
 }

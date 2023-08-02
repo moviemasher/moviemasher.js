@@ -15,6 +15,7 @@ export interface UnknownRecord extends Record<string, unknown> {}
 export interface ScalarRecord extends Record<string, Scalar> {}
 export interface StringRecord extends Record<string, string> {}
 export interface StringsRecord extends Record<string, Strings> {}
+export interface BooleanRecord extends Record<string, boolean> {}
 
 export type StringTuple = [string, string]
 export interface NestedStringRecord extends Record<string, string | StringRecord | NestedStringRecord> {}

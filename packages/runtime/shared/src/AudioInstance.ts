@@ -1,5 +1,5 @@
 import type { AudioAsset } from './AudioAsset.js'
-import type { Instance, InstanceObject, InstanceArgs } from './Instance.js'
+import type { Instance, InstanceObject, InstanceArgs } from './InstanceTypes.js'
 
 export interface AudioInstance extends Instance {
   asset: AudioAsset

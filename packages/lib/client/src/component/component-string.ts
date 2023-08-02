@@ -1,3 +1,4 @@
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup, PropertyValues } from 'lit'
 import type { TranslationEventDetail } from '@moviemasher/runtime-client'
 import { css } from '@lit/reactive-element/css-tag.js'
@@ -37,8 +38,8 @@ export class StringElement extends Component {
     if (changedProperties.has('string')) delete this.contentOrVoid
   }
 
-  static override properties = {
-    ...Component.properties,
+  static override properties: PropertyDeclarations = {
+    // ...Component.properties,
     string: { type: String }
   }
 

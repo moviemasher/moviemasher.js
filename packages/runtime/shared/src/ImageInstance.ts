@@ -1,5 +1,5 @@
 import { ImageAsset } from './ImageAsset.js'
-import { Instance, InstanceObject, InstanceArgs } from './Instance.js'
+import { Instance, InstanceObject, InstanceArgs } from './InstanceTypes.js'
 
 export interface ImageInstance extends Instance {
   asset: ImageAsset

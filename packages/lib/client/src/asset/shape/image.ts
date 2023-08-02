@@ -1,29 +1,10 @@
 
-import type {
-  AssetEventDetail, InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject,
-  Size, Time,
-} from '@moviemasher/runtime-shared'
+import type { ClientShapeAsset, ClientShapeInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
+import type { InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
 
-import type {
-  ClientShapeAsset, ClientShapeInstance, Panel, SvgItem
-} from '@moviemasher/runtime-client'
-
-import {
-  ClientInstanceClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, 
-  VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeCover, svgSvgElement,
-} from '@moviemasher/lib-shared'
-
-import { MovieMasher } from '@moviemasher/runtime-client'
-
-import {
-  SourceShape, TypeImage, isAssetObject, isPopulatedString
-} from '@moviemasher/runtime-shared'
-
-import {
-  ClientAssetClass, DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin,
-  sizeAboveZero, svgPathElement, svgPolygonElement, svgSetTransformRects
-} from '@moviemasher/lib-shared'
-
+import { ClientAssetClass, ClientInstanceClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeCover, svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '@moviemasher/lib-shared'
+import { EventAsset, MovieMasher } from '@moviemasher/runtime-client'
+import { SourceShape, TypeImage, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ClientAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -54,7 +35,30 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const args = this.instanceArgs(object)
     return new ClientShapeInstanceClass(args)
   }
+
+  private static _defaultAsset?: ClientShapeAsset
+  private static get defaultAsset(): ClientShapeAsset {
+  return this._defaultAsset ||= new ClientShapeAssetClass({ 
+      id: DefaultContainerId, type: TypeImage, 
+      source: SourceShape, label: 'Rectangle'
+    })
+  }
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject, assetId } = detail
+    
+    const isDefault = assetId === DefaultContainerId
+    if (!(isDefault || isAssetObject(assetObject, TypeImage, SourceShape))) return
+      
+    event.stopImmediatePropagation()
+    if (isDefault) detail.asset = ClientShapeAssetClass.defaultAsset
+    else detail.asset = new ClientShapeAssetClass(assetObject as ShapeAssetObject) 
+  }
 }
+// listen for image/shape asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ClientShapeAssetClass.handleAsset
+)
 
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)
@@ -90,17 +94,3 @@ export class ClientShapeInstanceClass extends WithShapeInstance implements Clien
   }
 }
 
-// listen for image/shape asset event
-MovieMasher.eventDispatcher.addDispatchListener<AssetEventDetail>('asset', event => {
-  const { detail } = event
-  const { assetObject, asset } = detail
-  if (!asset && isAssetObject(assetObject, TypeImage, SourceShape)) {
-    detail.asset = new ClientShapeAssetClass(assetObject)
-    event.stopImmediatePropagation()
-  }
-})
-
-// predefine default image/shape asset
-MovieMasher.assetManager.predefine(DefaultContainerId, new ClientShapeAssetClass({ 
-  id: DefaultContainerId, type: TypeImage, source: SourceShape, label: 'Rectangle'
-}))

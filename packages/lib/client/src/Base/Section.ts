@@ -1,27 +1,31 @@
+import type { PropertyDeclarations } from 'lit'
+
 import type { CSSResultGroup } from 'lit'
 import type { 
   Content, Contents, DivSectionSlot, FooterSectionSlot, HeaderSectionSlot, 
   Htmls, OptionalContent 
-} from '../declarations'
+} from '../declarations.js'
 
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
 
 import { Slotted } from './Slotted.js'
+import { PipeChar } from '@moviemasher/lib-shared'
+import { Component } from './Component.js'
 
 export const HeaderSlot: HeaderSectionSlot = 'header'
 export const FooterSlot: FooterSectionSlot = 'footer'
 export const DivSlot: DivSectionSlot = 'div'
 
 export class Section extends Slotted {
-
-  protected override defaultSlottedContent(key: string, htmls: Htmls): OptionalContent { 
-    switch (key) {
-      case DivSlot: return this.divContent(htmls)
-      case FooterSlot: return this.footerContent(htmls)
-      case HeaderSlot: return this.headerContent(htmls)
+  protected override partContent(part: string, slots: Htmls): OptionalContent { 
+    switch (part) {
+      case DivSlot: return this.divContent(slots)
+      case FooterSlot: return this.footerContent(slots)
+      case HeaderSlot: return this.headerContent(slots)
     }
+    return super.partContent(part, slots)
   }
   
   divContent(_htmls: Htmls): OptionalContent { return '[DIV]' }
@@ -32,12 +36,11 @@ export class Section extends Slotted {
   
   icon = 'app'
   
-
-  protected override slots: string[] = [HeaderSlot, DivSlot, FooterSlot] 
+  override parts = [HeaderSlot, DivSlot, FooterSlot].join(PipeChar)
 
   protected override content(contents: Contents): Content {
     return html`<section
-      @slotted='${this.slottedHandler}'
+      @export-parts='${this.handleExportParts}'
     >${contents}</section>`
   }
 
@@ -47,6 +50,7 @@ export class Section extends Slotted {
       display: flex;
     }
   `
+  
   static styleSection = css`
     section {
       flex-grow: 1;
@@ -60,12 +64,13 @@ export class Section extends Slotted {
     }
   `
 
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...Slotted.properties,
     icon: { type: String }
   }
 
   static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
     this.styleHost,
     this.styleSection,
   ]

@@ -1,54 +1,59 @@
-import type { StringEvent } from '@moviemasher/runtime-shared'
+import type { PropertyDeclarations } from 'lit'
+import type { StringEvent } from '@moviemasher/runtime-client'
+
 import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent, StringSlot, IconSlot } from '../declarations'
+import type { Htmls, OptionalContent, StringSlot, IconSlot } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MovieMasher } from '@moviemasher/runtime-client'
 
 import { Slotted } from './Slotted.js'
+import { Component } from './Component'
+import { PipeChar } from '@moviemasher/lib-shared'
 
 const StringSlot: StringSlot = 'string'
 const IconSlot: IconSlot = 'icon'
 
 export class IconString extends Slotted {
   detail = ''
-  emit = ''
-  string = ''
-  icon = ''
 
-  protected clickHandler(pointerEvent: PointerEvent): void {
+  emit = ''
+
+  protected handleClick(event: PointerEvent): void {
     const { emit } = this
     if (emit) {
-      pointerEvent.stopPropagation()
+      event.stopPropagation()
       const { detail } = this
-      // console.debug(this.constructor.name, 'dispatching', emit, detail)
-      const init: CustomEventInit<string> = { cancelable: true, bubbles: true, composed: true, detail }
-      const event: StringEvent = new CustomEvent(emit, init)
-      MovieMasher.eventDispatcher.dispatch(event)
+      const init: CustomEventInit<string> = { detail, bubbles: true, composed: true }
+      const stringEvent: StringEvent = new CustomEvent(emit, init)
+      MovieMasher.eventDispatcher.dispatch(stringEvent)
     }
   }
 
-  protected override defaultSlottedContent(key: string, htmls: Htmls): OptionalContent { 
-    switch (key) {
-      case StringSlot: return this.stringContent(htmls)
-      case IconSlot: return this.iconContent(htmls)
-    }
-  }
+  icon = ''
 
   private iconContent(_htmls: Htmls): OptionalContent { 
-    const { [IconSlot]: icon } = this
+    const { icon } = this
     if (!icon) return 
 
     this.importTags('movie-masher-component-icon')
     return html`<movie-masher-component-icon 
-      part='icon' slotted='icon'
-      icon='${icon}'
+      part='${IconSlot}' icon='${icon}'
     ></movie-masher-component-icon>` 
   }
 
-  
-  override slots = [IconSlot, StringSlot] 
+  protected override partContent(part: string, slots: Htmls): OptionalContent { 
+    switch (part) {
+      case StringSlot: return this.stringContent(slots)
+      case IconSlot: return this.iconContent(slots)
+    }
+    return super.partContent(part, slots)
+  }
+
+  override parts = [IconSlot, StringSlot].join(PipeChar)
+
+  string = ''
 
   private stringContent(_htmls: Htmls): OptionalContent { 
     const { string } = this
@@ -56,8 +61,7 @@ export class IconString extends Slotted {
 
     this.importTags('movie-masher-component-string')
     return html`<movie-masher-component-string 
-      part='string' slotted='string'
-      string='${string}'
+      part='${StringSlot}' string='${string}'
     ></movie-masher-component-string>` 
   }
 
@@ -78,6 +82,11 @@ export class IconString extends Slotted {
       --back: var(--back-selected);
       --fore: var(--fore-selected);
     }
+
+    :host(.selected):hover {
+      --fore: var(--back-selected);
+      --back: var(--fore-selected);
+    }
   `
 
   static cssControls = css`
@@ -96,7 +105,7 @@ export class IconString extends Slotted {
     }
 
     button {
-      --pad-height: calc(var(--size) - 2 * var(--padding));
+      --pad-height: calc(var(--size) - (4 * var(--padding)));
       align-items: center;
       appearance: none;
       background-color: var(--back);
@@ -124,20 +133,21 @@ export class IconString extends Slotted {
       --fore-hover: var(--control-fore-hover);
       --fore-selected: var(--control-fore-selected);
       --fore: var(--control-fore);
-      --padding: var(--control-padding);
-      --size: var(--button-size);
+      --padding: 2px;
+      --size: var(--control-size);
       --spacing: var(--control-spacing);
       display: inline-block;
     }
   `
   
   static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
     IconString.cssHost,
     IconString.cssControl,
     IconString.cssControls,
   ]
 
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...Slotted.properties,
     detail: { type: String },
     emit: { type: String },

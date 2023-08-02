@@ -2,7 +2,7 @@ import type { Constrained } from '@moviemasher/runtime-shared'
 import type { MashIndex } from '@moviemasher/runtime-client'
 import type { DropTarget } from '../declarations.js'
 
-import { CurrentIndex, eventStop } from '@moviemasher/lib-shared'
+import { ClassDropping, CurrentIndex, eventStop } from '@moviemasher/lib-shared'
 import { EventTypeDragHandled } from '@moviemasher/runtime-client'
 import { dragTypeValid, dropped } from '../utility/draganddrop.js'
 import { Component } from './Component.js'
@@ -47,19 +47,18 @@ T & Constrained<DropTarget> {
       this.ondragleave(event)
       const { dataTransfer } = event
       if (!dragTypeValid(dataTransfer, true)) return 
-      const mashIndex = this.mashIndex(event)
-      console.log(this.tagName, 'ondrop', mashIndex)
-      dropped(event, mashIndex)
+
+      dropped(event, this.mashIndex(event))
     }
 
     
     private _over = false
-    get over(): boolean { return this._over }
-    set over(value: boolean) {
+    private get over(): boolean { return this._over }
+    private set over(value: boolean) {
       if (this._over === value) return
     
       this._over = value
-      this.classList.toggle('dropping', value)
+      this.classList.toggle(ClassDropping, value)
     }
   }
 }

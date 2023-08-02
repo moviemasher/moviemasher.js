@@ -4,7 +4,6 @@ import { ActionTypeChange } from '../../../Setup/ActionTypeConstants.js'
 import { assertDefined, isPositive } from '../../../Shared/SharedGuards.js'
 import { actionInstance } from './Action/ActionFactory.js'
 import { isChangePropertiesAction, isChangePropertiesActionObject, isChangePropertyAction, isChangePropertyActionObject } from "./Action/ActionFunctions.js"
-import { isUndefined } from '@moviemasher/runtime-shared'
 
 
 export class ActionsClass implements Actions {
@@ -40,7 +39,7 @@ export class ActionsClass implements Actions {
           const { target, property } = object
           if (currentAction.target === target && currentAction.property === property) {
             currentAction.updateAction(object)
-            editor.handleAction(currentAction)
+            editor.dispatchChanged(currentAction)
             return
           }
         }
@@ -49,7 +48,7 @@ export class ActionsClass implements Actions {
           const { target, property } = object
           if (currentAction.target === target && currentAction.property === property) {
             currentAction.updateAction(object)
-            editor.handleAction(currentAction)
+            editor.dispatchChanged(currentAction)
             return
           }
         }
@@ -58,7 +57,7 @@ export class ActionsClass implements Actions {
    
     const action = actionInstance(clone)
     this.add(action)
-    editor.handleAction(this.redo())
+    editor.dispatchChanged(this.redo())
   }
 
   get currentAction(): Action | undefined { return this.instances[this.index] }

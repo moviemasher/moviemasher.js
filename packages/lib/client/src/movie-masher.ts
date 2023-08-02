@@ -1,41 +1,28 @@
-import type { 
-  AssetObject, Rect,
-} from '@moviemasher/runtime-shared'
-
-import type { 
-  Masher, MasherOptions, RectEvent,
-} from '@moviemasher/runtime-client'
-
+import type { PropertyDeclarations } from 'lit'
+import type { AssetObject } from '@moviemasher/runtime-shared'
+import type { Masher, MasherOptions } from '@moviemasher/runtime-client'
 import type { CSSResultGroup } from 'lit'
+import type { AssetObjectPromiseEventDetail, CoreLib, Htmls, OptionalContent } from './declarations.js'
 
-import type {
-  CoreLib,
-  Htmls,
-  OptionalContent,
-  AssetObjectPromiseEventDetail,
-  Contents,
-  Content,
-} from './declarations.js'
-
-import { 
-  SourceRaw,
-  SourceText,
-  DotChar,
-  isDefiniteError
-} from '@moviemasher/runtime-shared'
-import { MovieMasher, EventTypeAssetObject, EventTypeViewerContentResize } from '@moviemasher/runtime-client'
-
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
+import { html } from 'lit-html/lit-html.js'
+
+import { DotChar, SourceRaw, SourceText, isDefiniteError } from '@moviemasher/runtime-shared'
+import { EventTypeAssetObject, MovieMasher } from '@moviemasher/runtime-client'
+
+import { PipeChar } from '@moviemasher/lib-shared'
+
+import './utility/ClientAssetManagerClass.js'
 
 import { Component } from './Base/Component.js'
 import { Slotted } from './Base/Slotted.js'
-// import './icon/fetch.js'
+import { masherInstance } from './asset/mash/MasherFactory.js'
 
 const FormSlotViewer = 'viewer'
 const FormSlotSelector = 'selector'
 const FormSlotComposer = 'composer'
-const FormSlotImporter = 'importer'
+const FormSlotInspector = 'inspector'
+const FormSlotDialog = 'dialog'
 
 /**
  * @prop (String) icon - id of icon to use for viewer section
@@ -46,16 +33,31 @@ const FormSlotImporter = 'importer'
 export class MovieMasherElement extends Slotted {
   constructor() {
     super()
+
     this.imports = [
-      'icon/fetch.js',
       'asset/color/image.js',
-      'asset/shape/image.js',
-      'asset/objects/fetch.js',
+      'asset/mash/video.js',
       'asset/object/video.js',
+      'asset/objects/fetch.js',
+      'asset/raw/audio.js',
+      'asset/raw/image.js',
+      'asset/raw/video.js',
+      'asset/shape/image.js',
+      'asset/text/image.js',
+      'control/asset.js',
+      'control/boolean.js',
+      'control/group/aspect.js',
+      'control/group/dimensions.js',
+      'control/group/fill.js',
+      'control/group/location.js',
+      'control/group/time.js',
+      'control/numeric.js',
+      'control/rgb.js',
+      'control/string.js',
+      'icon/fetch.js',
+      'selector/selector-asset.js',
       ...[SourceRaw, SourceText].map(source => `asset/${source}/importer.js`),
     ].map(suffix => `./${suffix}`).join(',')
-
-    this.listeners[EventTypeViewerContentResize] = this.handleResize.bind(this)
   }
   private _assetObject?: AssetObject 
   private get assetObject() { return this._assetObject }
@@ -111,72 +113,10 @@ export class MovieMasherElement extends Slotted {
               this.assetObject = assetObject
             }
           })
-        
         })
       }
     }
   }
-  
-  override disconnectedCallback(): void {
-    super.disconnectedCallback()
-  }
-    
-  protected override content(contents: Contents): Content {
-    return html`${contents}`
-  }
-
-  private rect?: Rect
-  private handleResize(event: RectEvent) {
-    this.rect = event.detail 
-  }
-
-  protected core?: CoreLib | undefined
-  private _sharedPromise?: Promise<void>
-  private get sharedPromise() {
-    return this._sharedPromise ||= this.sharedPromiseInitialize
-  }
-  private get sharedPromiseInitialize(): Promise<void> {
-    return import('@moviemasher/lib-shared').then((lib: CoreLib) => {
-      this.core = lib
-    })
-  }
-
-  protected override defaultSlottedContent(name: string, htmls: Htmls): OptionalContent {
-    if (name === FormSlotImporter) {
-      this.importTags('movie-masher-component-dialog')
-      return html`<movie-masher-component-dialog 
-        @slotted='${this.slottedHandler}'
-        slotted='${FormSlotImporter}' section='${FormSlotImporter}'
-      ></movie-masher-component-dialog>`
-    }
-    
-    this.importTags(`movie-masher-${name}-section`)
-    
-    switch(name) {
-      case FormSlotViewer: {
-        return html`<movie-masher-viewer-section 
-          @slotted='${this.slottedHandler}'
-          part='${name}' slotted='${name}'
-          icon='${this.icon}'
-        >${htmls}</movie-masher-viewer-section>`
-      }
-      case FormSlotSelector: {
-        return html`<movie-masher-selector-section
-          @slotted='${this.slottedHandler}'
-          part='${name}' slotted='${name}'
-          icon='browser'
-        >${htmls}</movie-masher-selector-section>`
-      }
-      case FormSlotComposer: {
-        return html`<movie-masher-composer-section
-          @slotted='${this.slottedHandler}'
-          part='${name}' slotted='${name}'
-          icon='timeline'
-        >${htmls}</movie-masher-composer-section>`
-      }
-    }
-  }
-
 
   icon = 'app'
 
@@ -189,163 +129,251 @@ export class MovieMasherElement extends Slotted {
   }
   private get masherPromiseInitialize(): Promise<void> {
     return this.sharedPromise.then(() => {
-      const options: MasherOptions = {
-        // mash: this.assetObject, 
-        dimensions: this.rect,
-      }
-      const masher = this.core!.masherInstance(options)
+      // console.log(this.tagName, 'masherPromiseInitialize', rect)
+      const options: MasherOptions = {}
+      const masher = masherInstance(options)
       MovieMasher.masher = this.masher = masher
       // console.log(this.tagName, 'masherPromiseInitialize SET masher')
     })
   }
 
+  protected override partContent(part: string, slots: Htmls): OptionalContent {
+    switch(part) {
+      case FormSlotDialog: {
+        this.importTags(`movie-masher-component-dialog`)
+        break
+      }
+      case FormSlotViewer:
+      case FormSlotSelector:
+      case FormSlotComposer:
+      case FormSlotInspector: {
+        this.importTags(`movie-masher-${part}-section`)
+        break
+      }
+    }
+    switch(part) {
+      case FormSlotDialog: return html`
+        <movie-masher-component-dialog 
+          @export-parts='${this.handleExportParts}'
+          part='${part}'
+        >${slots}</movie-masher-component-dialog>
+      `
+      case FormSlotViewer: return html`
+        <movie-masher-viewer-section 
+          @export-parts='${this.handleExportParts}'
+          part='${part}'
+          icon='${this.icon}'
+        >${slots}</movie-masher-viewer-section>
+      `
+      case FormSlotSelector: return html`
+        <movie-masher-selector-section
+          @export-parts='${this.handleExportParts}'
+          part='${part}'
+          icon='browser'
+        >${slots}</movie-masher-selector-section>
+      `
+      case FormSlotComposer: return html`
+        <movie-masher-composer-section
+          @export-parts='${this.handleExportParts}'
+          part='${part}'
+          icon='timeline'
+        >${slots}</movie-masher-composer-section>
+      `
+      case FormSlotInspector: return html`
+        <movie-masher-inspector-section
+          @export-parts='${this.handleExportParts}'
+          part='${part}'
+          icon='inspector'
+        >${slots}</movie-masher-inspector-section>
+      `
+    }
+    return super.partContent(part, slots)
+  }
+
   readonly = false
 
-  override slots = [
+  protected core?: CoreLib | undefined
+  private _sharedPromise?: Promise<void>
+  private get sharedPromise() {
+    return this._sharedPromise ||= this.sharedPromiseInitialize
+  }
+  private get sharedPromiseInitialize(): Promise<void> {
+    return import('@moviemasher/lib-shared').then((lib: CoreLib) => {
+      this.core = lib
+    })
+  }
+
+  override parts = [
     FormSlotViewer, 
     FormSlotSelector,  
     FormSlotComposer, 
-    FormSlotImporter,
-  ]
+    FormSlotInspector, 
+    FormSlotDialog,
+  ].join(PipeChar)
 
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...Slotted.properties,
     imports: { type: String },
     icon: { type: String },
   }
-  static override styles: CSSResultGroup = [
-    Component.cssBorderBoxSizing,
-    css`
-      :host {
-        --dialog-width: 50vw;
-        --dialog-height: 50vh;
-        --icon-size: 24px;
-        --button-size: 24px;
-        --flex-direction: row;
 
-        
-        --padding: 40px;
-        --spacing: 20px;
-        --header-height: 38px;
-        --footer-height: 38px;
-        --content-padding: 10px;
-        --content-spacing: 10px;
+  static cssVariablesLayout = css`
+    :host {
+      --max-dimension: 480px;
+      --ratio-preview: 0.25;
+      --control-size: 24px;
+      --control-padding: 10px;
+      --control-spacing: 5px;
 
-        --border-size: 1px;
-        --border: var(--border-size) solid;
-        --border-radius: 5px;
+      --label-size: var(--control-size);
 
-        --hue: 281;
-        --gap: 20px;
-        --areas:
-          "preview media"
-          "compose compose";
-        --columns:
-          calc(
-            var(--viewer-width)
-            + (var(--border-size) * 2)
-          )
-          1fr;
-        --rows:
-          calc(
-            var(--viewer-height)
-            + var(--header-height)
-            + var(--footer-height)
-          )
-          1fr;
+      --content-padding: 10px;
+      --content-spacing: 10px;
 
-        --button-transition:
-            background-color 0.25s ease-out,
-            border-color 0.25s ease-out,
-            color 0.25s ease-out;
-        --chroma-primary: 0.085;
-        /* --chroma-secondary: 0.1; */
-        /* --chroma-tertiary: 0.125; */
 
-        --lightness-back-primary: 95%;
-        --lightness-back-secondary: 75%;
-        --lightness-back-tertiary: 55%;
-
-        --lightness-fore-primary: 45%;
-        --lightness-fore-secondary: 35%;
-        --lightness-fore-tertiary: 25%;
+      --viewer-width: 270px;
+      --viewer-height: 480px;
+      --scrubber-height: 16px;
+      --scrubber-width: 16px;
+      --inspector-width: 240px;
+      --track-width: 34px;
+      --track-height: 60px;
+      --footer-height: 38px;
+      --gap: 20px;
+      --header-height: 38px;
+      --flex-direction: row;
+      --dialog-height: 50vh;
+      --dialog-width: 50vw;
+      --padding: 40px;
+      --spacing: 20px;
+      --icon-size: 24px;
       
+      --inspector-spacing: 5px;
+      --inspector-padding: 10px;
+    }
+  `
 
-        --darkness-back-primary: 5%;
-        --darkness-back-secondary: 25%;
-        --darkness-back-tertiary: 30%;
+  static cssVariables = css`
+    :host {
+    
+      --border-radius: 5px;
+      --border-size: 1px;
+      --border: var(--border-size) solid;
+      --button-size: 24px;
 
-        --darkness-fore-primary: 45%;
-        --darkness-fore-secondary: 60%;
-        --darkness-fore-tertiary: 75%;
 
+      --button-transition:
+          background-color 0.25s ease-out,
+          border-color 0.25s ease-out,
+          color 0.25s ease-out;
 
+      --hue: 281;
+      
+      --chroma-primary: 0.085;
+      /* --chroma-secondary: 0.1; */
+      /* --chroma-tertiary: 0.125; */
 
-        --viewer-aspect-ratio: 16 / 9;
-        --icon-ratio: 0.25;
-        --viewer-width: 480px;
-        --viewer-height: 270px;
-        --scrubber-height: 16px;
-        --scrubber-width: 16px;
-        --inspector-width: 240px;
-        --track-width: 34px;
-        --track-height: 60px;
+      --lightness-back-primary: 95%;
+      --lightness-back-secondary: 75%;
+      --lightness-back-tertiary: 55%;
+
+      --lightness-fore-primary: 45%;
+      --lightness-fore-secondary: 35%;
+      --lightness-fore-tertiary: 25%;
+    
+      --darkness-back-primary: 5%;
+      --darkness-back-secondary: 25%;
+      --darkness-back-tertiary: 30%;
+
+      --darkness-fore-primary: 45%;
+      --darkness-fore-secondary: 60%;
+      --darkness-fore-tertiary: 75%;
+
+      
+      
+      --drop-size: 2px;
+      
+      --dropping-shadow: 
+        var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
+        calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
+      ;
+
+      --div-pad: 20px;
+      --div-space: 20px;
+      --div-back: oklch(var(--lightness-back-primary) 0 0);
+      --div-fore: oklch(var(--lightness-fore-primary) 0 0);
+
+      --section-padding: 5px;
+      --section-spacing: 5px;
+      --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
+      --section-back: oklch(var(--lightness-back-tertiary) 0 0);
         
-        --drop-size: 2px;
-        --progress-width: calc(2 * var(--icon-size));
-        --dropping-shadow: 
-          var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
-          calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
-        ;
+      --label-fore: red;
+      --label-back: black;
 
+      --control-back: oklch(var(--lightness-back-secondary) 0 0);
+      --control-back-disabled: var(--control-back);
+      --control-back-hover: var(--control-back);
+      --control-back-selected: var(--control-back);
 
-        --div-pad: 20px;
-        --div-space: 20px;
-        --div-back: oklch(var(--lightness-back-primary) 0 0);
-        --div-fore: oklch(var(--lightness-fore-primary) 0 0);
+      --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
+      --control-fore-disabled: oklch(var(--lightness-fore-secondary) 0 0);
 
-        --section-padding: 5px;
-        --section-spacing: 5px;
-        --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
-        --section-back: oklch(var(--lightness-back-tertiary) 0 0);
-          
-        --label-fore: red;
-        --label-back: black;
+      --control-fore-hover: var(--control-hover-selected);
+      --control-fore-selected:var(--control-hover-selected);
+      --control-fore: var(--fore-secondary);
+      --control-padding: 5px;
+      --control-spacing: 5px;
 
-        --control-back: oklch(var(--lightness-back-secondary) 0 0);
-        --control-back-disabled: var(--control-back);
-        --control-back-hover: var(--control-back);
-        --control-back-selected: var(--control-back);
+      --item-fore: var(--control-fore);
+      --item-fore-selected: var(--control-fore-selected);
+      --item-fore-hover: var(--control-fore-hover);
+      --item-back: var(--control-back);
+      --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
 
-        --control-hover-selected: oklch(var(--lightness-fore-primary) var(--chroma-primary) var(--hue));
-        --control-fore-disabled: oklch(var(--lightness-fore-secondary) 0 0);
+      --item-back-selected: var(--item-back-hover-selected);
+      --item-back-hover:  var(--item-back-hover-selected);
 
-        --control-fore-hover: var(--control-hover-selected);
-        --control-fore-selected:var(--control-hover-selected);
-        --control-fore: var(--fore-secondary);
-        --control-padding: 5px;
-        --control-spacing: 5px;
+      --color-drop: red;
+    }
+  `
 
-        --item-fore: var(--control-fore);
-        --item-fore-selected: var(--control-fore-selected);
-        --item-fore-hover: var(--control-fore-hover);
-        --item-back: var(--control-back);
-        --item-back-hover-selected: oklch(var(--lightness-back-primary) var(--chroma-primary) var(--hue));
+  static cssDarkMediaQuery = css`
+    @media(prefers-color-scheme: dark) {
+      :host {
+        --lightness-back-primary: var(--darkness-back-primary);
+        --lightness-back-secondary: var(--darkness-back-secondary);
+        --lightness-back-tertiary: var(--darkness-back-tertiary);
+        --lightness-fore-primary: var(--darkness-fore-primary);
+        --lightness-fore-secondary: var(--darkness-fore-secondary);
+        --lightness-fore-tertiary: var(--darkness-fore-tertiary);
+      } 
+    }
+  `
 
-        --item-back-selected: var(--item-back-hover-selected);
-        --item-back-hover:  var(--item-back-hover-selected);
+  static cssGrid = css`
+    :host {
+      --areas:
+        "preview media media"
+        "compose compose inspect"
+      ;
+      --columns:
+        min-content
+        1fr
+      ;
+      --rows:
+        min-content
+        1fr
+      ;
 
-        --color-drop: red;
-
-
-        flex-grow: 1;
-        display: grid;
-        gap: var(--gap);
-        grid-template-areas: var(--areas);
-        grid-template-columns: var(--columns);
-        grid-template-rows: var(--rows);
-      }
- 
+      flex-grow: 1;
+      display: grid;
+      gap: var(--gap);
+      grid-template-areas: var(--areas);
+      grid-template-columns: var(--columns);
+      grid-template-rows: var(--rows);
+    }
+    
       /* 
       @media (max-width: 999px) {
         :host {
@@ -354,45 +382,39 @@ export class MovieMasherElement extends Slotted {
         }
       } */
       
-      @media(prefers-color-scheme: dark) {
-        :host {
-          --lightness-back-primary: var(--darkness-back-primary);
-          --lightness-back-secondary: var(--darkness-back-secondary);
-          --lightness-back-tertiary: var(--darkness-back-tertiary);
-          --lightness-fore-primary: var(--darkness-fore-primary);
-          --lightness-fore-secondary: var(--darkness-fore-secondary);
-          --lightness-fore-tertiary: var(--darkness-fore-tertiary);
-          /* --color-drop: yellow; */
-        } 
-      }
+  `
+
+  static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
+    MovieMasherElement.cssVariables,
+    MovieMasherElement.cssVariablesLayout,
+    MovieMasherElement.cssDarkMediaQuery,
+    MovieMasherElement.cssGrid,
+    // css`
+    //   :host {
+    //     .panel .content {
+    //       --padding: 20px;
+    //       --spacing: 10px;
+    //     }
+
+    //     .panel .content .drop-box {
+    //       pointer-events: none;
+    //       position: absolute;
+    //       top: 0px;
+    //       left: 0px;
+    //       bottom: 0px;
+    //       right: 0px;
+    //     }
+
+    //     .panel .content.dropping .drop-box {
+    //       box-shadow: var(--dropping-shadow);
+    //     }
     
-      :host {
-        .panel .content {
-          --padding: 20px;
-          --spacing: 10px;
-        }
-
-        .panel .content .drop-box {
-          pointer-events: none;
-          position: absolute;
-          top: 0px;
-          left: 0px;
-          bottom: 0px;
-          right: 0px;
-        }
-
-        .panel .content.dropping .drop-box {
-          box-shadow: var(--dropping-shadow);
-        }
-    
-        .panel select {
-          height: var(--button-size);
-        }
-      }
-      
-
-
-    `
+    //     .panel select {
+    //       height: var(--button-size);
+    //     }
+    //   }
+    // `
   ]
 }
 

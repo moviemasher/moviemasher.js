@@ -149,7 +149,7 @@ const cherryPick = async () => {
     switch (arg) {
       case GenerateArg.Container:
       case GenerateArg.Content:
-      case GenerateArg.Constrain: return false
+      case GenerateArg.Crop: return false
     }
     return true
   })

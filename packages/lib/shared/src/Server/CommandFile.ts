@@ -1,10 +1,5 @@
-import type { Propertied, RectTuple, Size, Time, TimeRange, ValueRecord } from '@moviemasher/runtime-shared'
-
-import type { AVType } from "@moviemasher/runtime-shared"
-
-import type { ColorTuple } from './ServerTypes.js'
-
-import { GraphFile } from '@moviemasher/runtime-server'
+import type { GraphFile } from '@moviemasher/runtime-server'
+import type { AVType, Propertied, Rects, Size, Strings, Time, TimeRange, ValueRecord } from '@moviemasher/runtime-shared'
 
 
 export interface FilterArgs {
@@ -42,8 +37,8 @@ export interface CommandFileOptions {
   time: Time
   quantize: number
   outputSize?: Size
-  containerRects?: RectTuple
-  contentColors?: ColorTuple
+  containerRects?: Rects
+  contentColors?: Strings
   videoRate: number
   clipTime?: TimeRange
 }
@@ -53,7 +48,7 @@ export interface CommandFileArgs extends CommandFileOptions {
 }
 export interface VisibleCommandFileArgs extends CommandFileArgs {
   outputSize: Size
-  containerRects: RectTuple
+  containerRects: Rects
 }
 export interface CommandFilterArgs extends CommandFileArgs {
   track: number
@@ -63,7 +58,7 @@ export interface CommandFilterArgs extends CommandFileArgs {
 }
 export interface VisibleCommandFilterArgs extends CommandFilterArgs {
   outputSize: Size
-  containerRects: RectTuple
+  containerRects: Rects
   duration: number
 }
 
@@ -79,13 +74,13 @@ export interface FilterCommandFilterArgs extends FilterArgs {
 
 export interface FilterCommandFileArgs extends FilterArgs {
   outputSize: Size
-  containerRects: RectTuple
+  containerRects: Rects
   clipTime: TimeRange
   streaming?: boolean
   visible?: boolean
   time: Time
   quantize: number
-  contentColors?: ColorTuple
+  contentColors?: Strings
   videoRate: number
   duration: number
 }

@@ -3,4 +3,8 @@ export interface Point {
   y: number
 }
 
+export type Points = Point[]
+
 export type PointTuple = [Point, Point]
+
+export type PropertyPoint = 'x' | 'y'

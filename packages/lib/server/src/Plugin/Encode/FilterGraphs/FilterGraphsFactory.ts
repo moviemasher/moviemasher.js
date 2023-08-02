@@ -11,7 +11,7 @@ export const filterGraphsArgs = (mash: ServerMashAsset, options: FilterGraphsOpt
     ...rest,
     times: mash.timeRanges(definedAVType, definedTime),
     avType: definedAVType,
-    size: size || mash.imageSize,
+    size: size || mash.size,
     videoRate: videoRate || definedTime.fps,
     mash,
     background: background || mash.color,

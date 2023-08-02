@@ -1,5 +1,6 @@
-import { PointZero } from "./PointConstants.js";
-import { SizeZero } from "./SizeConstants.js";
+import { POINT_KEYS, POINT_ZERO } from './PointConstants.js'
+import { SIZE_KEYS, SIZE_ZERO } from './SizeConstants.js'
 
+export const RECT_ZERO = { ...POINT_ZERO, ...SIZE_ZERO } as const
 
-export const RectZero = { ...PointZero, ...SizeZero };
+export const RECT_KEYS = [...POINT_KEYS, ...SIZE_KEYS] as const

@@ -9,8 +9,8 @@ import {
   ServerRawVideoAsset,
   ServerRawVideoInstance
 } from '@moviemasher/lib-shared'
-import { GraphFiles, GraphFile, ServerPromiseArgs } from '@moviemasher/runtime-server'
-import { PreloadArgs, TypeVideo, TypeAudio } from '@moviemasher/runtime-shared'
+import { GraphFiles, GraphFile, ServerPromiseArgs, EventAsset, MovieMasher } from '@moviemasher/runtime-server'
+import { PreloadArgs, TypeVideo, TypeAudio, isAssetObject, SourceRaw } from '@moviemasher/runtime-shared'
 
 const WithAudibleAsset = AudibleAssetMixin(ServerRawAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
@@ -51,9 +51,21 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
   }
 
   type = TypeVideo
+
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject } = detail
+    if (isAssetObject(assetObject, TypeVideo, SourceRaw)) {
+      detail.asset = new ServerRawVideoAssetClass(assetObject)
+      event.stopImmediatePropagation()
+    }
+  }
 }
 
-
+// listen for video/raw asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ServerRawVideoAssetClass.handleAsset
+)
 
 const WithAudibleInstance = AudibleInstanceMixin(ServerInstanceClass)
 const WithVisibleInstance = VisibleInstanceMixin(WithAudibleInstance)

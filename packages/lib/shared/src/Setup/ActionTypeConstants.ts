@@ -1,14 +1,7 @@
-import type {
-  AddClipActionType, AddTrackActionType, ChangeActionType,
-  ChangeFrameActionType, ChangeMultipleActionType, MoveClipActionType,
-  RemoveClipActionType
-} from '@moviemasher/runtime-client';
-
-
-export const ActionTypeAddClip: AddClipActionType = 'add-clip';
-export const ActionTypeAddTrack: AddTrackActionType = 'add-track';
-export const ActionTypeChange: ChangeActionType = 'change';
-export const ActionTypeChangeFrame: ChangeFrameActionType = 'change-frame';
-export const ActionTypeChangeMultiple: ChangeMultipleActionType = 'change-multiple';
-export const ActionTypeMoveClip: MoveClipActionType = 'move-clip';
-export const ActionTypeRemoveClip: RemoveClipActionType = 'remove-clip';
+export const ActionTypeAddClip = 'add-clip'
+export const ActionTypeAddTrack = 'add-track'
+export const ActionTypeChange = 'change'
+export const ActionTypeChangeFrame = 'change-frame'
+export const ActionTypeChangeMultiple = 'change-multiple'
+export const ActionTypeMoveClip = 'move-clip'
+export const ActionTypeRemoveClip = 'remove-clip'

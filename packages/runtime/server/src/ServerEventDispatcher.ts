@@ -10,7 +10,7 @@ export class ServerEventDispatcher extends EventEmitter implements EventDispatch
     return this
   }
 
-  dispatch<T>(typeOrEvent: string | CustomEvent<T>): boolean {
+  dispatch<T>(typeOrEvent: string | CustomEvent<T> | Event): boolean {
     const isString = typeof typeOrEvent === 'string'
     const name = isString ? typeOrEvent : typeOrEvent.type
     const event = isString ? new CustomEvent<T>(typeOrEvent) : typeOrEvent

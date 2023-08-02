@@ -1,21 +1,19 @@
-import { isNumber, type NumberEvent } from '@moviemasher/runtime-shared'
-import type { TimeEvent } from '@moviemasher/runtime-client'
-import { Component } from '../Base/Component'
+import type { NumberEvent } from '@moviemasher/runtime-client'
+import type { PropertyDeclarations } from 'lit'
 
 import { html } from 'lit-html/lit-html.js'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
 
-import { EventTypeDuration, EventTypeFrame, EventTypeTime, MovieMasher } from '@moviemasher/runtime-client'
+import { isNumber } from '@moviemasher/runtime-shared'
+import { EventChangeFrame, EventChangedFrame, EventTypeDuration, MovieMasher } from '@moviemasher/runtime-client'
+import { Component } from '../Base/Component'
 
 
 export class ViewerSliderElement extends Component {
   constructor() {
     super()
-    this.listeners[EventTypeTime] = this.handleTime.bind(this)
+    this.listeners[EventChangedFrame.Type] = this.handleFrame.bind(this)
     this.listeners[EventTypeDuration] = this.handleDuration.bind(this)
   }
-
-  fps = 0
 
   frame = 0
 
@@ -30,25 +28,23 @@ export class ViewerSliderElement extends Component {
     const { value } = event.target as HTMLInputElement
     const detail = parseInt(value)
     if (isNumber(detail)) {
-      const event: NumberEvent = new CustomEvent(EventTypeFrame, { detail })
-      MovieMasher.eventDispatcher.dispatch(event)
+      MovieMasher.eventDispatcher.dispatch(new EventChangeFrame(detail))
     }
   }
 
-  private handleTime(event: TimeEvent): void {
-    const { detail: time } = event
-    this.frame = time.frame
-    this.fps = time.fps
-    // console.log(this.tagName, 'handleTime', this.frame, this.fps) 
+  private handleFrame(event: EventChangedFrame): void {
+    const { detail: frame } = event
+    this.frame = frame
   }
 
   protected override render(): unknown {
-    const disabled = this.frames ? undefined : true
+    const input = this.shadowRoot?.querySelector('input')
+    if (input) input.value = String(this.frame)
 
     return html`<input 
       @input=${this.handleInput}
       type='range'
-      disabled='${ifDefined(disabled)}'
+      ?disabled='${!this.frames}'
       min='0'
       max='${this.frames}'
       step='1'
@@ -56,11 +52,10 @@ export class ViewerSliderElement extends Component {
     ></input>`
   }
 
-  static override properties = { 
-    ...Component.properties,
-    // frame: { type: Number },
+  static override properties: PropertyDeclarations = { 
+    // ...Component.properties,
+    frame: { type: Number },
     frames: { type: Number },
-    fps: { type: Number }
    }
 }
 

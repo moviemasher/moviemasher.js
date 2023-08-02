@@ -4,9 +4,6 @@ import { isNumber, isObject, errorThrow } from '@moviemasher/runtime-shared'
 
 import { isAboveZero } from '../Shared/SharedGuards.js'
 import { EqualsChar, SemicolonChar } from '../Setup/Constants.js'
-import { LockHeight, LockWidth, LockNone } from '../Setup/LockConstants.js'
-
-
 
 export const isSize = (value: any): value is Size => {
   return isObject(value) &&
@@ -79,6 +76,11 @@ export const sizeCover = (inSize: Size, outSize: Size, contain = false): Size =>
   return sizeCeil({ ...outSize, width: inWidth * scaleHeight })
 }
 
+export const sizeContain = (inSize: Size, outSize: Size | number): Size => {
+  const size = isSize(outSize) ? outSize : { width: outSize, height: outSize }
+  return sizeCover(inSize, size, true)
+}
+
 export const sizeAboveZero = (size: any): size is Size => {
   if (!isSize(size))
     return false
@@ -96,18 +98,7 @@ export const sizeCopy = (size: any) => {
   return { width, height }
 }
 
-export const sizeLock = (lockSize: Size, lock?: Lock): Size => {
-  const copy = sizeCopy(lockSize)
-  switch (lock) {
-    case LockWidth:
-      copy.width = copy.height
-      break
-    case LockHeight:
-      copy.height = copy.width
-      break
-  }
-  return copy
-}
+
 
 export const sizeString = (size: Size) => {
   const { width, height } = size
@@ -116,17 +107,6 @@ export const sizeString = (size: Size) => {
   ].join(SemicolonChar)
 }
 
-export const sizeLockNegative = (size: Size, lock: Lock): Size => {
-  assertSizeAboveZero(size, 'sizeLockNegative')
-  const locked = sizeCopy(size)
-  if (lock !== LockNone) {
-    if (lock === LockHeight)
-      locked.height = -1
-    else
-      locked.width = -1
-  }
-  return locked
-}
 
 export const sizeFromElement = (element: Element): Size => {
   const size = {
@@ -149,3 +129,19 @@ const rectSvgD = (rect: Rect): string => {
   return `M${x},${y}L${x2},${y}L${x2},${y2}L${x},${y2}Z`
 }
 
+export const sizeAspect = (aspectWidth: number, aspectHeight: number, shortest: number): Size => {
+  const shortestKey = aspectHeight > aspectWidth ? 'width' : 'height'
+  const longestKey = shortestKey === 'width' ? 'height' : 'width'
+  const max = Math.max(aspectWidth, aspectHeight)
+  const min = Math.min(aspectWidth, aspectHeight)
+  const ratio = max / min
+  const size: Size = { width: 0, height: 0 }
+  size[shortestKey] = shortest
+  size[longestKey] = shortest * ratio
+  return size
+}
+
+export const sizeFlip = (size: Size): Size => {
+  const { width, height } = size
+  return { width: height, height: width }
+}

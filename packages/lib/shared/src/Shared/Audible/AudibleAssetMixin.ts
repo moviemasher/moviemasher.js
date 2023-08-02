@@ -1,9 +1,8 @@
 import type {UnknownRecord} from '@moviemasher/runtime-shared'
 
-import { DataGroupTiming } from "../../Setup/DataGroupConstants.js"
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { DurationUnknown } from '../../Setup/DurationConstants.js'
-import { DataTypeFrame, DataTypePercent } from "../../Setup/DataTypeConstants.js"
+import { DataTypeBoolean, DataTypePercent } from "../../Setup/DataTypeConstants.js"
 import {isAboveZero} from '../SharedGuards.js'
 import { isUndefined } from "@moviemasher/runtime-shared"
 import {isProbing} from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
@@ -11,6 +10,7 @@ import {timeFromSeconds} from '../../Helpers/Time/TimeUtilities.js'
 import {TypeProbe} from '@moviemasher/runtime-shared'
 import { Constrained } from '@moviemasher/runtime-shared'
 import { Asset, AudibleAsset, AudibleAssetObject } from '@moviemasher/runtime-shared'
+import { TypeAsset } from '@moviemasher/runtime-client'
 
 export function AudibleAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -50,40 +50,21 @@ T & Constrained<AudibleAsset> {
       return timeFromSeconds(this.duration, quantize, 'floor').frame
     }
 
-    initializeProperties(object: AudibleAssetObject): void {
-      const { loop } = object  
-     
-      // if (audio || audioUrl ) {//|| loadedAudio
-      //   this.audio = true
-      //   if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
-      //   if (waveform) this.waveform = waveform
-      // }
-      // // console.log(this.constructor.name, 'audio', audio, this.audio, this.audioUrl)
-      // if (isAboveZero(duration)) this.duration = duration
-      // console.log(this.constructor.name, 'duration', duration, this.duration)
-      if (loop) {
-        this.loop = loop
-        this.properties.push(propertyInstance({ name: 'loops', defaultValue: 1 }))
+    override initializeProperties(object: AudibleAssetObject): void {
+      const { audio } = this
+      if (audio) { 
+        this.properties.push(propertyInstance({ 
+          targetId: TypeAsset,
+          name: 'loop', type: DataTypeBoolean,
+        }))
+        this.properties.push(propertyInstance({ 
+          targetId: TypeAsset, name: 'muted', type: DataTypeBoolean, 
+        }))
+        this.properties.push(propertyInstance({ 
+          targetId: TypeAsset, name: 'gain', type: DataTypePercent,
+          defaultValue: 1.0, min: 0, max: 2.0, step: 0.01 
+        }))
       }
-      this.properties.push(propertyInstance({ 
-        name: 'gain', defaultValue: 1.0, type: DataTypePercent, 
-        min: 0, max: 2.0, step: 0.01 
-      }))
-      this.properties.push(propertyInstance({ 
-        name: 'speed', defaultValue: 1.0, type: DataTypePercent, 
-        min: 0.1, max: 2.0, step: 0.1,
-        group: DataGroupTiming,
-      }))
-      this.properties.push(propertyInstance({ 
-        name: 'startTrim', defaultValue: 0, type: DataTypeFrame,
-        step: 1, min: 0,
-        group: DataGroupTiming,
-      }))
-      this.properties.push(propertyInstance({ 
-        name: 'endTrim', defaultValue: 0, type: DataTypeFrame,
-        step: 1, min: 0,
-        group: DataGroupTiming,
-      }))
       super.initializeProperties(object)
     }
     

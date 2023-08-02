@@ -1,32 +1,32 @@
 import type { AssetType } from './AssetType.js'
 import type { Labeled } from './Base.js'
 import type { CacheOptions } from './CacheTypes.js'
+import { ClipObject } from './ClipObject.js'
 import type { Strings } from './Core.js'
 import type { DecodingObjects, Decodings } from './Decoding.js'
 import type { Identified } from './Identified.js'
-import type { InstanceObject, InstanceArgs, Instance } from './Instance.js'
+import type { InstanceObject, InstanceArgs, Instance } from './InstanceTypes.js'
 import type { Propertied } from './Propertied.js'
 import type { Size } from './Size.js'
 import type { Source } from './SourceType.js'
 import type { Transcodings, TranscodingTypes, Transcoding, TranscodingObjects } from './Transcoding.js'
 import type { Typed } from './Typed.js'
 
-export interface Asset extends Identified, Propertied, Typed, Labeled {
+export interface Asset extends Propertied, Identified, Typed, Labeled {
   assetCachePromise(args: CacheOptions): Promise<void>
   assetIds: Strings
   canBeContainer: boolean
   canBeContent: boolean
-  
   container: boolean
   content: boolean
   decodings: Decodings
-  transcodings: Transcodings
-
-  preferredTranscoding(...types: TranscodingTypes): Transcoding | undefined 
   instanceArgs(object?: InstanceObject): InstanceArgs
   instanceFromObject(object?: InstanceObject): Instance
+  clipObject(object?: InstanceObject): ClipObject
   isVector: boolean
+  preferredTranscoding(...types: TranscodingTypes): Transcoding | undefined 
   source: Source
+  transcodings: Transcodings
   type: AssetType  
 }
 

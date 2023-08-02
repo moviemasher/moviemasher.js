@@ -17,8 +17,8 @@ import { assertRect, rectsEqual } from "../Utility/RectFunctions.js"
 import { assertSize, sizeEven, sizesEqual } from "../Utility/SizeFunctions.js"
 import { ServerInstance } from "./ServerInstance.js"
 import { commandFilesInput } from './Utility/CommandFilesFunctions.js'
-import { tweenMaxSize, tweenOption, tweenPosition } from '../Helpers/Tween/TweenFunctions.js'
-import { Tweening } from '../Helpers/Tween/Tweening.js'
+import { tweenMaxSize, tweenOption, tweenPosition } from '../Shared/Utility/Tween/TweenFunctions.js'
+import { Tweening } from '../Shared/Utility/Tween/Tweening.js'
 import { InstanceClass } from '../Shared/Instance/InstanceClass.js'
 import { colorToRgb, colorToRgba } from '../Helpers/Color/ColorFunctions.js'
 
@@ -308,8 +308,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
 
     assertPopulatedArray(contentColors)
 
-    const tweeningSize = !rectsEqual(...containerRects)
-    const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
+    const maxSize = tweenMaxSize(rect, rectEnd) 
     const filterArgs: VisibleCommandFilterArgs = {
       ...args, outputSize: maxSize
     }

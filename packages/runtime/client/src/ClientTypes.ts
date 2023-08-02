@@ -1,21 +1,18 @@
-import type { Instance, Property, AudibleInstance, TimeRange, VisibleInstance, Rect, Size, Time, AudioAsset, AudioInstanceObject, AudioInstance, InstanceArgs, ImageAsset, ImageInstanceObject, ImageInstance, VideoAsset, VideoInstanceObject, VideoInstance, Transcoding, ColorAsset, ColorInstance, ShapeAsset, ShapeInstance, TextAsset, TextInstance, TextAssetObject } from '@moviemasher/runtime-shared'
-import type { Actions } from './Actions.js'
+import type { Instance, AudibleInstance, TimeRange, VisibleInstance, Rect, Size, Time, AudioAsset, AudioInstanceObject, AudioInstance, InstanceArgs, ImageAsset, ImageInstanceObject, ImageInstance, VideoAsset, VideoInstanceObject, VideoInstance, Transcoding, ColorAsset, ColorInstance, ShapeAsset, ShapeInstance, TextAsset, TextInstance, TextAssetObject, MovieMasherRuntime, RequestObject, ContainerInstance, PropertySize } from '@moviemasher/runtime-shared'
 import type { StartOptions } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
 import type { ClientAudibleAsset, ClientVisibleAsset } from './ClientAssetTypes.js'
 import type { ClientFont } from './ClientMedia.js'
 import type { Panel } from './PanelTypes.js'
 import type { Selectable } from './Selectable.js'
-import type { SelectedProperties } from './SelectedProperty.js'
-import type { PreviewItem, SvgItem } from './Svg.js'
+import type { Preview, SvgItem } from './Svg.js'
+import { Masher } from './Masher.js'
 
 export type Timeout = ReturnType<typeof setTimeout>
 export type AnimationFrame = ReturnType<typeof requestAnimationFrame>
 
 export interface ClientInstance extends Instance, Selectable {
   asset: ClientAsset
-  selectedProperties(actions: Actions, property: Property): SelectedProperties
-  selectedProperty(property: Property): boolean
   unload(): void
 }
 
@@ -25,10 +22,11 @@ export interface ClientAudibleInstance extends ClientInstance, AudibleInstance {
 }
 export interface ClientVisibleInstance extends ClientInstance, VisibleInstance {
   asset: ClientVisibleAsset
-  clippedPreviewItemPromise(content: ClientVisibleInstance, containerRect: Rect, previewSize: Size, time: Time, component: Panel): Promise<PreviewItem>
+  containedPreviewPromise(contentItem: SvgItem, content: ClientInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<Preview> 
+  clippedPreviewPromise(content: ClientVisibleInstance, containerRect: Rect, previewSize: Size, time: Time, component: Panel): Promise<Preview>
   containerSvgItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem>
-  contentPreviewItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem>
-  contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time): SVGFilterElement | undefined
+  contentPreviewItemPromise(containerRect: Rect, shortest: PropertySize, time: Time, component: Panel): Promise<SvgItem>
+  contentSvgFilter(container: ContainerInstance, contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined
   pathElement(rect: Rect): SvgItem 
   svgItemForPlayerPromise(rect: Rect, time: Time): Promise<SvgItem> 
   svgItemForTimelinePromise(rect: Rect, time: Time): Promise<SvgItem> 
@@ -73,5 +71,15 @@ export interface ClientTextInstance extends TextInstance, ClientInstance {
 
 export interface ClientTextAssetObject extends TextAssetObject {
   loadedFont?: ClientFont
+}
+
+
+export interface MovieMasherClientRuntime extends MovieMasherRuntime {
+  masher?: Masher
+  options: {
+    assetObjectOptions?: RequestObject
+    assetObjectsOptions?: RequestObject
+    iconOptions?: RequestObject
+  }
 }
 

@@ -6,8 +6,8 @@ import {
   assertPopulatedString, endpointUrl, isTimeRange 
 } from "@moviemasher/lib-shared"
 import { ServerRawImageAsset, ServerRawImageInstance } from "@moviemasher/lib-shared/dist/Server/Raw/ServerRawTypes.js"
-import { GraphFiles, GraphFile } from "@moviemasher/runtime-server"
-import { PreloadArgs, TypeImage, ValueRecord } from "@moviemasher/runtime-shared"
+import { GraphFiles, GraphFile, EventAsset, MovieMasher } from "@moviemasher/runtime-server"
+import { PreloadArgs, SourceRaw, TypeImage, ValueRecord, isAssetObject } from "@moviemasher/runtime-shared"
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -37,7 +37,21 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
   }
 
   type = TypeImage
+
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject } = detail
+    if (isAssetObject(assetObject, TypeImage, SourceRaw)) {
+      detail.asset = new ServerRawImageAssetClass(assetObject)
+      event.stopImmediatePropagation()
+    }
+  }
 }
+
+// listen for image/raw asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ServerRawImageAssetClass.handleAsset
+)
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
 const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)

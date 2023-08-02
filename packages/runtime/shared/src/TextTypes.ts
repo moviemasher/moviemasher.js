@@ -1,4 +1,4 @@
-import type { Instance, InstanceObject } from './Instance.js'
+import type { Instance, InstanceObject } from './InstanceTypes.js'
 import type { RawAsset, RawAssetObject } from './RawTypes.js'
 import type { Rect } from './Rect.js'
 

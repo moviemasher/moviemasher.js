@@ -2,7 +2,7 @@ import type { Rect } from '@moviemasher/runtime-shared'
 
 import { assertObject, isAboveZero } from '../Shared/SharedGuards.js'
 import { isPopulatedString } from "@moviemasher/runtime-shared"
-import { RectZero } from './RectConstants.js'
+import { RECT_ZERO } from './RectConstants.js'
 
 export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : string => {
   const bits: string[] = []
@@ -82,7 +82,7 @@ export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : st
 }
 
 export const stringFamilySizeRect = (string: string, family: string, size: number): Rect => {
-  if (!(isPopulatedString(string) && isAboveZero(size))) return RectZero
+  if (!(isPopulatedString(string) && isAboveZero(size))) return RECT_ZERO
 
   const { document } = globalThis
   
@@ -100,12 +100,14 @@ export const stringFamilySizeRect = (string: string, family: string, size: numbe
     actualBoundingBoxLeft, 
     actualBoundingBoxRight, 
   } = metrics
-  // console.log('stringFamilySizeRect', 'actualBoundingBoxAscent', actualBoundingBoxAscent, 'actualBoundingBoxDescent', actualBoundingBoxDescent)
-  return {
+
+  const rect = {
     x: actualBoundingBoxLeft, y: actualBoundingBoxAscent,
     width: actualBoundingBoxLeft + actualBoundingBoxRight,
     height: actualBoundingBoxAscent + actualBoundingBoxDescent,
   } 
+  console.log('stringFamilySizeRect', rect)
+  return rect
 }
 
 export const stringPluralize = (count: number, value: string, suffix = 's'): string => {

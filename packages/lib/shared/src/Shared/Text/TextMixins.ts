@@ -3,15 +3,16 @@ import { Constrained } from '@moviemasher/runtime-shared'
 import { Asset } from '@moviemasher/runtime-shared'
 import { TextAsset, TextAssetObject, TextInstance, TextInstanceObject } from '@moviemasher/runtime-shared'
 import { isUndefined } from "@moviemasher/runtime-shared"
-import { DataGroupSize } from '../../Setup/DataGroupConstants.js'
 import { DataTypePercent, DataTypeString } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import type { InstanceArgs, VisibleInstance } from '@moviemasher/runtime-shared'
 import { isRect } from '../../Utility/RectFunctions.js'
 import { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { Default } from '../../Setup/Default.js'
-import { LockHeight } from '../../Setup/LockConstants.js'
+import { LockLongest } from '../../Setup/LockConstants.js'
 import { EndpointRequest } from '@moviemasher/runtime-shared'
+import { End } from '../../Base/PropertiedConstants.js'
+import { TypeContainer } from '@moviemasher/runtime-client'
 
 
 export function TextAssetMixin
@@ -22,7 +23,7 @@ T & Constrained<TextAsset> {
 
     instanceArgs(object?: TextInstanceObject): TextInstanceObject & InstanceArgs {
       const textObject = object || {}
-      if (isUndefined(textObject.lock)) textObject.lock = LockHeight
+      if (isUndefined(textObject.lock)) textObject.lock = LockLongest
       return super.instanceArgs(textObject)
     }
 
@@ -30,23 +31,11 @@ T & Constrained<TextAsset> {
     get family(): string { return this._family }
     set family(value: string) { this._family = value }
 
-    initializeProperties(object: TextAssetObject): void {
+    override initializeProperties(object: TextAssetObject): void {
       const { string, label } = object
      
       this.string = string || label || Default.font.string
   
-      this.properties.push(propertyInstance({
-        name: 'string', custom: true, type: DataTypeString, defaultValue: this.string
-      }))
-      this.properties.push(propertyInstance({
-        name: 'height', tweenable: true, custom: true, type: DataTypePercent, 
-        defaultValue: 0.3, max: 2.0, group: DataGroupSize
-      }))
-  
-      this.properties.push(propertyInstance({
-        name: 'width', tweenable: true, custom: true, type: DataTypePercent, 
-        defaultValue: 0.8, max: 2.0, group: DataGroupSize
-      }))
       super.initializeProperties(object)
     }
     
@@ -77,6 +66,34 @@ T & Constrained<TextInstance> {
     declare asset: TextAsset
 
     hasIntrinsicSizing = true
+
+    override initializeProperties(object: TextInstanceObject): void {
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: 'string', type: DataTypeString, 
+        defaultValue: this.asset.string, 
+      }))
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: 'height', type: DataTypePercent, 
+        min: 0.0, max: 2.0, step: 0.01, defaultValue: 0.3, tweens: true,
+      }))
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: `height${End}`, 
+        type: DataTypePercent, undefinedAllowed: true, tweens: true,
+      }))
+  
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: 'width', type: DataTypePercent, 
+        min: 0.0, max: 2.0, step: 0.01, tweens: true,
+        defaultValue: 0.8, 
+      }))
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: `width${End}`, 
+        min: 0.0, max: 1.0, step: 0.01,
+        type: DataTypePercent, undefinedAllowed: true, tweens: true,
+      }))
+      super.initializeProperties(object)
+
+    }
 
     intrinsic?: Rect
 

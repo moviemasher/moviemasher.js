@@ -10,22 +10,21 @@ export class ViewerSectionElement extends Section {
   override divContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-viewer-div')
     return html`<movie-masher-viewer-div
-      part='div' slotted='div'
+      part='div' 
     >${htmls}</movie-masher-viewer-div>`
   }
 
   override footerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-viewer-footer')
     return html`<movie-masher-viewer-footer
-      part='footer' slotted='footer'
+      part='footer' 
     >${htmls}</movie-masher-viewer-footer>`
   }
 
   override headerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-viewer-header')
     return html`<movie-masher-viewer-header 
-      part='header' slotted='header'
-      icon='${this.icon}' 
+      part='header' 
     >${htmls}</movie-masher-viewer-header>`
   }
 
@@ -34,6 +33,9 @@ export class ViewerSectionElement extends Section {
     css`
       :host {
         grid-area: preview;
+      }
+      section {
+        grid-template-rows: var(--header-height) min-content var(--footer-height);
       }
     `
   ]

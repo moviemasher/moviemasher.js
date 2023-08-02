@@ -1,11 +1,11 @@
-import type {
-  RedoClientAction, RemoveClientAction, RenderClientAction,
-  SaveClientAction, UndoClientAction
-} from '@moviemasher/runtime-client';
+import type { ClientAction } from '@moviemasher/runtime-client'
 
-
-export const ClientActionRedo: RedoClientAction = 'redo';
-export const ClientActionRemove: RemoveClientAction = 'remove';
-export const ClientActionRender: RenderClientAction = 'render';
-export const ClientActionSave: SaveClientAction = 'save';
-export const ClientActionUndo: UndoClientAction = 'undo';
+export const ClientActionRedo: ClientAction = 'redo'
+export const ClientActionRemove: ClientAction = 'remove'
+export const ClientActionRender: ClientAction = 'render'
+export const ClientActionSave: ClientAction = 'save'
+export const ClientActionUndo: ClientAction = 'undo'
+export const ClientActionAdd: ClientAction = 'add'
+export const ClientActionAddTrack: ClientAction = 'add-track'
+export const ClientActionFlip: ClientAction = 'flip'
+export const ClientActionTogglePaused: ClientAction = 'toggle-paused'

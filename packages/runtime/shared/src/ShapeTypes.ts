@@ -1,5 +1,5 @@
 import type { Asset, AssetObject } from './AssetTypes.js'
-import type { Instance, InstanceObject } from './Instance.js'
+import type { Instance, InstanceObject } from './InstanceTypes.js'
 
 export interface ShapeAsset extends Asset {
   path: string

@@ -1,7 +1,6 @@
 
 import type {
-  AssetEventDetail,
-  ValueRecord, ShapeInstance, ShapeInstanceObject, 
+  ValueRecord, ShapeInstance, ShapeInstanceObject, ShapeAssetObject, 
 } from '@moviemasher/runtime-shared'
 import type {
   CommandFile, CommandFileArgs, 
@@ -14,6 +13,7 @@ import {
    isAssetObject, isBoolean, isPopulatedString, SourceShape, TypeImage 
 } from '@moviemasher/runtime-shared'
 import { 
+  EventAsset,
   GraphFileTypeSvg, MovieMasher 
 } from '@moviemasher/runtime-server'
 
@@ -27,7 +27,7 @@ import {
   idGenerate, sizesEqual, colorBlackOpaque, arrayLast, 
   rectsEqual, 
   svgTransform, NamespaceSvg, 
-  colorBlack, colorWhite, PointZero, isTimeRange, assertPopulatedArray, 
+  colorBlack, colorWhite, POINT_ZERO, isTimeRange, assertPopulatedArray, 
   DefaultContainerId,
   isTrueValue 
 } from '@moviemasher/lib-shared'
@@ -41,7 +41,30 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
     const args = this.instanceArgs(object)
     return new ServerShapeInstanceClass(args)
   }
+  private static _defaultAsset?: ServerShapeAsset
+  private static get defaultAsset(): ServerShapeAsset {
+    return this._defaultAsset ||= new ServerShapeAssetClass({ 
+      id: DefaultContainerId, type: TypeImage, 
+      source: SourceShape, label: 'Rectangle'
+    })
+  }
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject, assetId } = detail
+    
+    const isDefault = assetId === DefaultContainerId
+    if (!(isDefault || isAssetObject(assetObject, TypeImage, SourceShape))) return
+      
+    event.stopImmediatePropagation()
+    if (isDefault) detail.asset = ServerShapeAssetClass.defaultAsset
+    else detail.asset = new ServerShapeAssetClass(assetObject as ShapeAssetObject) 
+  }
 }
+
+// listen for image/shape asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ServerShapeAssetClass.handleAsset
+)
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
 const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)
@@ -184,7 +207,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       filterInput = arrayLast(arrayLast(commandFilters).outputs)         
       assertPopulatedString(filterInput, 'crop input')
 
-      const options: ValueRecord = { exact: 1, ...PointZero }
+      const options: ValueRecord = { exact: 1, ...POINT_ZERO }
       const cropOutput = idGenerate('crop')
       const { width, height } = maxSize
       if (isTrueValue(width)) options.w = width
@@ -261,7 +284,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
     const [rect, rectEnd] = containerRects
-    const maxSize = { ...PointZero, ...tweenMaxSize(rect, rectEnd)}
+    const maxSize = { ...POINT_ZERO, ...tweenMaxSize(rect, rectEnd)}
     const { width: maxWidth, height: maxHeight} = maxSize
 
     let [forecolor] = colors
@@ -300,19 +323,6 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
   
     return [commandFile]
   }
+
 }
 
-// predefine default image/shape asset
-MovieMasher.assetManager.predefine(DefaultContainerId, new ServerShapeAssetClass({ 
-  id: DefaultContainerId, type: TypeImage, source: SourceShape, label: 'Rectangle'
-}))
-
-// listen for image/shape asset event
-MovieMasher.eventDispatcher.addDispatchListener<AssetEventDetail>('asset', event => {
-  const { detail } = event
-  const { assetObject, asset } = detail
-  if (!asset && isAssetObject(assetObject, TypeImage, SourceShape)) {
-    detail.asset = new ServerShapeAssetClass(assetObject)
-    event.stopImmediatePropagation()
-  }
-})

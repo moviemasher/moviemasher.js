@@ -1,13 +1,14 @@
 import fs from 'fs'
 import path from 'path'
-import { MovieMasher} from '@moviemasher/runtime-server'
+import { EventAsset, MovieMasher, isServerAsset} from '@moviemasher/runtime-server'
 import {
   CommandInput, CommandInputs,
   CommandFilters,
   ServerMashAsset, 
    VideoOutputOptions, OutputOptions, assertPopulatedString, outputOptions, StringDataOrError, 
    
-   StringData, 
+   StringData,
+   isMashAsset, 
 } from '@moviemasher/lib-shared'
 import type { 
   CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, 
@@ -229,12 +230,16 @@ export class RenderingProcessClass implements RenderingProcess {
   private get mashAsset(): ServerMashAsset {
     if (this._mashAsset) return this._mashAsset
 
-    // const { args } = this // , outputOptions
-    const assetManager = MovieMasher.assetManager
     const { mash } = this.args
-    // const size = sizeAboveZero(outputOptions) ? outputOptions : SizeZero
-    const array = assetManager.define(mash) as ServerMashAsset[]
-    return this._mashAsset = array[0]
+    // const size = sizeAboveZero(outputOptions) ? outputOptions : SIZE_ZERO
+    const event = new EventAsset(mash)
+    MovieMasher.eventDispatcher.dispatch(event)
+
+    const { asset } = event.detail
+    if (isMashAsset(asset) && isServerAsset(asset)) {
+      return this._mashAsset = asset as ServerMashAsset
+    }
+    throw new Error(`mashAsset ${mash} not found`)
   }
 
 

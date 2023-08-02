@@ -1,4 +1,4 @@
-import type { AssetObjectsEvent } from '../../declarations'
+import type { AssetObjectsEvent } from '../../declarations.js'
 import type { AssetObject } from '@moviemasher/runtime-shared'
 
 import { ErrorName, error, isArray, isAssetObject, isAssetType, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'

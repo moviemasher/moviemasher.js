@@ -8,6 +8,8 @@ import { arrayLast } from '../../../Utility/ArrayFunctions.js'
 import { idGenerate } from '../../../Utility/IdFunctions.js'
 import { sortByFrame } from '../../../Utility/SortFunctions.js'
 import { isAboveZero, isPositive } from '../../SharedGuards.js'
+import { DataTypeBoolean } from '../../../Setup/DataTypeConstants.js'
+import { TypeMash } from '@moviemasher/runtime-client'
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -20,7 +22,9 @@ export class TrackClass extends PropertiedClass implements Track {
 
     this.dense = isDefined(dense) ? !!dense : !this.index  
 
-    this.properties.push(propertyInstance({ name: 'dense', defaultValue: false }))
+    this.properties.push(propertyInstance({ 
+      targetId: TypeMash, name: 'dense', type: DataTypeBoolean, 
+    }))
     this.propertiesInitialize(args)
     
     if (clips) {

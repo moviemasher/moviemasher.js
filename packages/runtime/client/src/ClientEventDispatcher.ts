@@ -6,7 +6,7 @@ export class ClientEventDispatcher extends EventTarget implements EventDispatche
     return this
   }
 
-  dispatch<T>(typeOrEvent: string | CustomEvent<T>): boolean {
+  dispatch<T>(typeOrEvent: string | CustomEvent<T> | Event): boolean {
     const event = typeof typeOrEvent === 'string' ? new CustomEvent<T>(typeOrEvent) : typeOrEvent
     return this.dispatchEvent(event)
   }

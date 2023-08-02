@@ -1,20 +1,16 @@
+import type { Asset, AssetCacheArgs, AssetObject, AssetType, ClipObject, Decodings, Instance, InstanceArgs, InstanceObject, Source, Strings, Transcoding, TranscodingType, TranscodingTypes, Transcodings } from '@moviemasher/runtime-shared'
 
-import { AssetType, Source } from "@moviemasher/runtime-shared"
-import { errorThrow } from '@moviemasher/runtime-shared'
-import { ErrorName } from '@moviemasher/runtime-shared'
-import { InstanceObject, Instance, InstanceArgs } from '@moviemasher/runtime-shared'
-import { Transcoding, TranscodingType, TranscodingTypes, Transcodings } from '@moviemasher/runtime-shared'
-import { AssetCacheArgs } from "@moviemasher/runtime-shared"
-import { Asset, AssetObject } from '@moviemasher/runtime-shared'
-import { Strings } from "@moviemasher/runtime-shared"
-import { Decodings } from "@moviemasher/runtime-shared"
+import { ErrorName, TypeAudio, errorThrow } from '@moviemasher/runtime-shared'
 
-import { PropertiedClass } from "../../Base/PropertiedClass.js"
-import { propertyInstance } from "../../Setup/PropertyFunctions.js"
-import { DataTypeBoolean } from "../../Setup/DataTypeConstants.js"
-import { idGenerateString } from "../../Utility/IdFunctions.js"
-import { decodingInstance } from "../../Plugin/Decode/Decoding/DecodingFactory.js"
-import { transcodingInstance } from "../../Plugin/Transcode/Transcoding/TranscodingFactory.js"
+import { PropertiedClass } from '../../Base/PropertiedClass.js'
+import { decodingInstance } from '../../Plugin/Decode/Decoding/DecodingFactory.js'
+import { transcodingInstance } from '../../Plugin/Transcode/Transcoding/TranscodingFactory.js'
+import { DataTypeString } from '../../Setup/DataTypeConstants.js'
+import { Default } from '../../Setup/Default.js'
+import { propertyInstance } from '../../Setup/PropertyFunctions.js'
+import { idGenerateString } from '../../Utility/IdFunctions.js'
+import { TypeAsset } from '@moviemasher/runtime-client'
+import { SizingContainer, SizingContent } from '../../Setup/SizingConstants.js'
 
 export class AssetClass extends PropertiedClass implements Asset {
   constructor(object: AssetObject) {
@@ -25,7 +21,7 @@ export class AssetClass extends PropertiedClass implements Asset {
     if (transcodings) this.transcodings.push(...transcodings.map(transcodingInstance))
 
   }
-  assetCachePromise(args: AssetCacheArgs): Promise<void> {
+  assetCachePromise(_args: AssetCacheArgs): Promise<void> {
     return Promise.resolve()
   }
 
@@ -34,6 +30,24 @@ export class AssetClass extends PropertiedClass implements Asset {
   canBeContainer = true
   canBeContent = true
   
+  clipObject(object: InstanceObject = {}): ClipObject {
+    const clipObject: ClipObject = {}
+    const { id, type, isVector } = this
+    if (isVector) { 
+      clipObject.sizing = SizingContainer
+      clipObject.containerId = id
+      clipObject.container = object
+    }
+    else {
+      clipObject.sizing = SizingContent
+      clipObject.contentId = id
+      clipObject.content = object
+    }
+
+    if (type === TypeAudio) clipObject.containerId = ''
+    return clipObject
+  }
+
   container = true
   
   content = true
@@ -46,13 +60,15 @@ export class AssetClass extends PropertiedClass implements Asset {
       return true
     })
   }
-  
-  initializeProperties(object: AssetObject): void {
-    this.properties.push(propertyInstance({ 
-      name: 'muted', type: DataTypeBoolean 
+
+  override initializeProperties(object: AssetObject): void {
+    this.properties.push(propertyInstance({
+      targetId: TypeAsset, name: `label`, type: DataTypeString, 
+      defaultValue: Default.mash.label
     }))
     super.initializeProperties(object)
   }
+
   instanceFromObject(object: InstanceObject = {}): Instance {
     return errorThrow(ErrorName.Unimplemented)
   }

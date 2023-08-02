@@ -12,7 +12,7 @@ export const requestUrl = (request: EndpointRequest): string => {
   if (response) {
     if (isPopulatedString(endpoint) && urlIsBlob(endpoint)) return endpoint
 
-    console.trace('requestUrl CONVERTING RESPONSE TO URL', endpoint)
+    // TODO: make sure this is released
     return URL.createObjectURL(response)
   }
 

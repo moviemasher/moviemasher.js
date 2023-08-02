@@ -1,6 +1,5 @@
-import type { Action, ActionArgs, ClientClip, ClientMashAsset } from "@moviemasher/runtime-client"
-import { ErrorName, errorThrow } from '@moviemasher/runtime-shared'
-import { assertClientMashAsset, isClientMashAsset } from '../../../Mash/ClientMashGuards.js'
+import type { Action, ActionArgs, ClientClip } from "@moviemasher/runtime-client"
+import { ErrorName, PropertyIds, errorThrow } from '@moviemasher/runtime-shared'
 
 
 export class ActionClass implements Action {
@@ -10,6 +9,8 @@ export class ActionClass implements Action {
     this.type = type
     this.undoSelection = undoSelection
   }
+
+  get affects(): PropertyIds { return [] }
 
   done = false
 

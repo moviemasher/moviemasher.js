@@ -1,9 +1,9 @@
 import type { InstanceCacheArgs } from './CacheTypes.js'
 import type { ContainerRectArgs } from './Container.js'
 import type { Strings } from './Core.js'
-import type { VisibleInstance, Instance } from './Instance.js'
+import type { VisibleInstance, Instance } from './InstanceTypes.js'
 import type { Propertied } from './Propertied.js'
-import type { RectTuple } from './Rect.js'
+import type { Rects } from './Rect.js'
 import type { Sizing } from './Sizing.js'
 import type { TimeRange } from './Time.js'
 import type { Timing } from './Timing.js'
@@ -28,8 +28,8 @@ export interface Clip extends Propertied {
   mutable: boolean
   muted: boolean
   notMuted: boolean
-  rects(args: ContainerRectArgs): RectTuple
-  resetTiming(tweenable?: Instance, quantize?: number): void
+  rects(args: ContainerRectArgs): Rects
+  resetTiming(instance?: Instance, quantize?: number): void
   sizing: Sizing
   timeRange: TimeRange
   timing: Timing

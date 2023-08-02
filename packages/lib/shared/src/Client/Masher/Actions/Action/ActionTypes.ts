@@ -1,32 +1,33 @@
-import type { Action, ActionArgs, ClientClip, ClientClips, ClientMashAsset, ClientTrack } from '@moviemasher/runtime-client'
-import type { Propertied, Scalar, ScalarRecord } from '@moviemasher/runtime-shared'
+import type { Action, ActionArgs, ClientAsset, ClientClip, ClientClips, ClientInstance, ClientMashAsset, ClientTrack } from '@moviemasher/runtime-client'
+import type { Scalar, ScalarRecord } from '@moviemasher/runtime-shared'
 
+export type ChangeTarget = ClientClip | ClientAsset | ClientInstance
 export interface ChangeAction extends Action {
   property: string
-  target: Propertied
+  target: ChangeTarget
   updateAction(object: ChangeActionObject): void
 }
 
 export interface ChangePropertyAction extends ChangeAction {
-  redoValue: Scalar
-  undoValue: Scalar
+  value?: Scalar
+  valueNumber?: number
   updateAction(object: ChangePropertyActionObject): void
 }
 
 export interface ChangePropertiesAction extends ChangeAction {
-  redoValues: ScalarRecord
-  undoValues: ScalarRecord
+  // redoValues: ScalarRecord
+  // undoValues: ScalarRecord
   updateAction(object: ChangePropertiesActionObject): void
 }
 
 export interface ChangeActionObject extends ActionArgs {
   property: string
-  target: Propertied
+  target: ChangeTarget
 }
 
 export interface ChangePropertyActionObject extends ChangeActionObject {
-  redoValue: Scalar
-  undoValue: Scalar
+  redoValue?: Scalar
+  undoValue?: Scalar
 }
 
 export interface ChangePropertiesActionObject extends ChangeActionObject {

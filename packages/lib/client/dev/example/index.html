@@ -28,7 +28,6 @@
     </script>
     <style>
       /* fit root DIV to viewport */
-
       body {
         height: 100vh;
         height: 100dvh;
@@ -54,15 +53,20 @@
       movie-masher::part(selector-footer) {
         border: 1px solid green;
       }
-      movie-masher::part(selector-footer-left) {
+      movie-masher::part(dialog-importer-footer-left) {
         border: 1px solid blue;
       }
-     
+      
+  
     </style>
 
   </head>
   <body>
-    <movie-masher><span slot='composer-div-right'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span></movie-masher>
+    <movie-masher>
+      <span slot='dialog-importer-div-right'><movie-masher-component-icon icon='app'></movie-masher-component-icon></span>
+      <span slot='selector-div-left'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span>
+      <span slot='selector-footer-center'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span>
+    </movie-masher>
   </body>
 </html>
  

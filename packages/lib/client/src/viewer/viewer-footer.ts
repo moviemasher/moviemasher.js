@@ -3,14 +3,18 @@ import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { Footer } from '../Base/LeftCenterRight.js'
+import { ClientActionTogglePaused } from '@moviemasher/lib-shared'
+import { EventAction } from '@moviemasher/runtime-client'
 
 export class ViewerFooterElement extends Footer {
-  override leftContent(slots: Htmls): OptionalContent {
+  protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-    this.importTags('movie-masher-component-a')
-    htmls.push(html`<movie-masher-component-a
-      icon='play' emit='toggle' detail='play'
-    ></movie-masher-component-a>`)
+
+    
+    this.importTags('movie-masher-component-action')
+    htmls.push(html`<movie-masher-component-action
+      icon='play' emit='${EventAction.Type}' detail='${ClientActionTogglePaused}'
+    ></movie-masher-component-action>`)
 
     return super.leftContent(htmls)
   }
@@ -22,17 +26,6 @@ export class ViewerFooterElement extends Footer {
 
     return super.rightContent(htmls)
   }
-
-  // static override styles: CSSResultGroup = [
-  //   LeftCenterRight.cssSection,
-  //   css`
-  //     footer .time {
-  //       font-size: 0.75em;
-  //       text-align: right;
-  //       flex-grow: 1;
-  //     }
-  //   `
-  // ]
 }
 
 // register web component as custom element

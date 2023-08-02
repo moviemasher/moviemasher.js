@@ -1,5 +1,5 @@
 import type { Labeled } from './Base.js'
-import type { InstanceObject } from './Instance.js'
+import type { InstanceObject } from './InstanceTypes.js'
 
 export interface ClipObject extends Labeled {
   containerId?: string

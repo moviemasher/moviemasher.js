@@ -1,14 +1,16 @@
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup, PropertyValueMap } from 'lit'
-import type { AssetObjects, AssetType, DataOrError, Source } from '@moviemasher/runtime-shared'
-import type { AssetObjectFromIdEvent, AssetObjectsEventDetail, Content, Htmls, ImportAssetObjectsEvent } from '../declarations.js'
+import type { AssetObjects, AssetType, DataOrError, Size, Source } from '@moviemasher/runtime-shared'
+import type { AssetObjectFromIdEvent, AssetObjectsEventDetail, Content, Contents, ImportAssetObjectsEvent, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { isAssetType, isDefiniteError } from '@moviemasher/runtime-shared'
 
-import { MovieMasher, EventTypeSourceType, EventTypeAssetType, EventTypeAssetObjectFromId, EventTypeImportAssetObjects, EventTypeAssetObjects } from '@moviemasher/runtime-client'
+import { MovieMasher, EventTypeSourceType, EventTypeAssetType, EventTypeAssetObjectFromId, EventTypeImportAssetObjects, EventTypeAssetObjects, EventAssetObjectNode, EventChangedSize, EventSize, EventManagedAsset } from '@moviemasher/runtime-client'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 import { Scroller } from '../Base/Scroller.js'
+import { SIZE_ZERO, sizeContain } from '@moviemasher/lib-shared'
 
 export class SelectorContentElement extends Scroller {
   constructor() {
@@ -17,6 +19,7 @@ export class SelectorContentElement extends Scroller {
     this.listeners[EventTypeSourceType] = this.handleSourceType.bind(this)
     this.listeners[EventTypeAssetObjectFromId] = this.handleAssetObjectFromId.bind(this)
     this.listeners[EventTypeImportAssetObjects] = this.handleImportAssetObjects.bind(this)
+    this.listeners[EventChangedSize.Type] = this.handleChangedSize.bind(this)
   }
 
   private assetObjectsFetched: AssetObjects = []
@@ -27,12 +30,17 @@ export class SelectorContentElement extends Scroller {
     const { assetObjectsFetched, assetObjectsImported, assetType } = this
     // TODO: use exclude* properties...
 
-    const combined = [...assetObjectsImported, ...assetObjectsFetched]
-    const filtered = combined.filter(mediaObject => {
+    const filtered = assetObjectsFetched.filter(assetObject => {
+      const found = assetObjectsImported.some(object => object.id === assetObject.id)
+      if (found) console.warn(this.tagName, 'assetObjectsCombined', 'found', assetObject)
+      return !found
+    })
+    const combined = [...assetObjectsImported, ...filtered]
+
+    return combined.filter(mediaObject => {
       const { type } = mediaObject
       return assetType === type
     })
-    return filtered
   }
 
   private assetObjectsPromise?: Promise<DataOrError<AssetObjects>>
@@ -63,20 +71,60 @@ export class SelectorContentElement extends Scroller {
 
   assetType?: AssetType 
 
-  protected override get defaultContent(): Content | void { 
-    const htmls: Htmls= []
+  override connectedCallback(): void {
+    super.connectedCallback()
+    const event = new EventSize()
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { size } = event.detail
+    if (size) this.size = size
+    else {
+      const max = this.variable('max-dimension')
+      this.size = size ? size : { width: max, height: max }
+    }
+  }
+
+  protected override content(contents: Contents): Content {
+    const { size: mySize = SIZE_ZERO } = this
+
+    const max = this.variable('max-dimension')
+    const size = sizeContain(mySize, max)
+    console.log(this.tagName, 'content', size)
+    return html`
+      <div 
+        class='root'
+        style='width:100%;height:${size.height}px;' 
+        @scroll-root='${this.handleScrollRoot}'
+      >${contents}</div>
+    `
+  }
+
+  protected override get defaultContent(): OptionalContent { 
+    const contents: Contents= []
     const filtered = this.assetObjectsCombined
     if (filtered.length) {
-      this.importTags('movie-masher-selector-asset')
-      htmls.push(...filtered.map(assetObject => {
-        const { id } = assetObject
-        // console.log(this.tagName, 'centerContent', id)
-        return html`<movie-masher-selector-asset 
-          asset-id='${id}'
-        ></movie-masher-selector-asset>`
-      }))
+      const { size } = this
+      if (!size) return
+
+      const max = this.variable('max-dimension')
+      const ratio = this.variable('ratio-preview-selector')
+      // const border = this.variable('border-size')
+
+      const shortest = max * ratio
+        console.log(this.tagName, 'defaultContent', { size, shortest })
+      const itemSize = sizeContain(size, shortest)
+  
+
+      filtered.forEach(assetObject => {
+        console.log(this.tagName, 'defaultContent', assetObject)
+        MovieMasher.eventDispatcher.dispatch(new EventManagedAsset(assetObject))
+        
+        const event = new EventAssetObjectNode(assetObject, itemSize, true, true)
+        MovieMasher.eventDispatcher.dispatch(event)
+        const { node } = event.detail
+        if (node) contents.push(node)
+      })
     }   
-    return html`${htmls}`
+    return html`<div class='content'>${contents}</div>`
   }
 
   private handleAssetObjectFromId(event: AssetObjectFromIdEvent) {
@@ -93,10 +141,22 @@ export class SelectorContentElement extends Scroller {
     this.assetType = assetType
   }
 
+  private handleChangedSize(event: EventChangedSize) {
+    this.size = event.detail
+  }
+
   private handleImportAssetObjects(event: ImportAssetObjectsEvent) {
     const { detail } = event
     const { assetObjects } = detail
-    this.assetObjectsImported = [...this.assetObjectsImported, ...assetObjects]
+    console.debug(this.tagName, 'handleImportAssetObjects', assetObjects)
+    const { assetObjectsImported } = this
+    const filtered = assetObjectsImported.filter(assetObject => {
+      const found = assetObjects.some(object => object.id === assetObject.id)
+      if (found) console.warn(this.tagName, 'handleImportAssetObjects REIMPORT', assetObject)
+      return !found
+    })
+    
+    this.assetObjectsImported = [...filtered, ...assetObjects]
   }
   
   private handleSourceType(event: CustomEvent<Source>): void {
@@ -104,6 +164,8 @@ export class SelectorContentElement extends Scroller {
     // console.log(this.tagName, 'handleSourceType', sourceType)
     this.sourceType = sourceType
   }
+
+  size?: Size
 
   sourceType?: Source 
 
@@ -113,45 +175,37 @@ export class SelectorContentElement extends Scroller {
     }
   }
 
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...ImporterComponent.properties,
     assetType: { type: String },
     sourceType: { type: String },
     assetObjectsImported: { type: Array, attribute: false },
+    size: { type: Object, attribute: false },
   }
 
   static override styles: CSSResultGroup = [
     Scroller.styles,
     css`
-      div.root {
-        
-        display: grid;
-        overflow-y: auto;
-
-        padding: var(--content-padding);
-        gap: var(--content-spacing);
-
-        grid-template-columns: repeat(auto-fit, calc(var(--viewer-width) * var(--icon-ratio)));
-        grid-auto-rows: calc(var(--viewer-height) * var(--icon-ratio));
+      :host {
+        --ratio-preview-selector: var(--ratio-preview, 0.25);
       }
-  
+      div.root {
+        display: block;
+        overflow-y: auto;
+      }
+      div.content {
+        padding: var(--content-padding);
+        font-size: 0;
+      }
+
+      div.content > * {
+        margin-right: var(--content-spacing); 
+        margin-bottom: var(--content-spacing);
+      }
+
       .dropping {
         box-shadow: var(--dropping-shadow);
       }
-
-      movie-masher-selector-asset:hover,
-      movie-masher-selector-asset.selected {
-        border-color: var(--item-fore-selected);
-        color: var(--item-fore-selected);
-        background-color: var(--item-back-selected);
-      }
-
-      movie-masher-selector-asset.selected:hover {
-        border-color: var(--item-fore-hover);
-        color: var(--item-fore-hover);
-        background-color: var(--item-back-hover);
-      }  
-
     `
   ]
 }

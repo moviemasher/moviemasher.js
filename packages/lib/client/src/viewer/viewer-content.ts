@@ -1,30 +1,32 @@
+import type { PropertyDeclarations, PropertyValues } from 'lit'
 import type { CSSResultGroup } from 'lit'
-import type { Rect } from '@moviemasher/runtime-shared'
-import type { PreviewItemsEvent, PreviewItemsEventDetail, RectEvent, Timeout } from '@moviemasher/runtime-client'
-import type { Content, Contents, DropTarget } from '../declarations.js'
+import type { Timeout } from '@moviemasher/runtime-client'
+import type { Content, Contents, OptionalContent } from '../declarations.js'
+import type { Point } from '@moviemasher/runtime-shared'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 
-import { RectZero, isRect, rectCopy, sizeAboveZero } from '@moviemasher/lib-shared'
-import { EventTypeDraw, EventTypePreviewItems, EventTypeViewerContentResize, MovieMasher } from '@moviemasher/runtime-client'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { EventChangedPreviews, EventPreviews, EventChangeClipId, MovieMasher, EventRect } from '@moviemasher/runtime-client'
 import { Scroller } from '../Base/Scroller.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
+import { RectObserverMixin } from '../Base/RectObserverMixin.js'
+import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
+import { assertSizeAboveZero, pointCopy, sizeContain } from '@moviemasher/lib-shared'
+import { Component } from '../Base/Component.js'
 
 const ViewerRefreshTics = 10
 
 const WithDropTargetMixin = DropTargetMixin(Scroller)
-
-export class ViewerContentElement extends WithDropTargetMixin implements DropTarget {
-
+const WithDisablableMixin = DisablableMixin(WithDropTargetMixin)
+const WithRectObserver = RectObserverMixin(WithDisablableMixin)
+const WithSizeReactive = SizeReactiveMixin(WithRectObserver)
+export class ViewerContentElement extends WithSizeReactive {
   constructor() {
     super()
-    this.listeners[EventTypeDraw] = this.handleDraw.bind(this)
-    this.resizeController = new ResizeController<Rect>(
-      this, { callback: this.handleResize.bind(this) }
-    )
+    this.listeners[EventChangedPreviews.Type] = this.handleChangedPreviewItems.bind(this)
+    this.listeners[EventRect.Type] = this.handleRect.bind(this)
   }
 
   override acceptsClip = false
@@ -33,87 +35,110 @@ export class ViewerContentElement extends WithDropTargetMixin implements DropTar
     return html`${contents}`
   }
 
-  protected override get defaultContent(): void | Content {
+  protected override get defaultContent(): OptionalContent {
+    const { size: mySize } = this
+    assertSizeAboveZero(mySize)
+    const max = this.variable('max-dimension')
+    const size = sizeContain(mySize, max)
+    // console.log(this.tagName, 'defaultContent', size, mySize, max)
     return html`
-      <div class='root'></div>
+      <div 
+        @pointerdown='${this.handlePointerDown}'
+        style='width:${size.width}px;height:${size.height}px;' 
+        class='root' 
+      ></div>
       <div class='drop-box'></div>
     `
   }
 
-  private disabled = false
-
-  override disconnectedCallback(): void {
-    delete this.resizeController
-    super.disconnectedCallback()
-  }
-
-  private handleDraw(): void { 
+  private handleChangedPreviewItems(): void { 
     if (this.watchingTimeout) {
-      if (!this.watchingRedraw) {
-        // console.log(this.tagName, 'handleDraw SET watchingRedraw')
-        this.watchingRedraw = true
-      } else {
-        // console.log(this.tagName, 'handleDraw IGNORED')
-      }
+      this.watchingRedraw = true
       return
     }
     // console.log(this.tagName, 'handleDraw SET watchingTimeout')
     this.watchingTimeout = setTimeout(this.requestItemsPromise.bind(this), ViewerRefreshTics)
   }
+  
 
-  private handleResize(entries: ResizeObserverEntry[]): Rect {
-    for (const entry of entries) {
-      const { contentRect } = entry
-      // console.log(this.tagName, 'handleResize', contentRect)
-      if (sizeAboveZero(contentRect) && isRect(contentRect)) {
-        const rect = rectCopy(contentRect)
-        const event: RectEvent = new CustomEvent(EventTypeViewerContentResize, { detail: rect })
-        MovieMasher.eventDispatcher.dispatch(event)
-        return rect
-      }
-    }
-    return RectZero
+  protected handlePointerDown(event: Event) {
+    event.stopPropagation()
+    MovieMasher.eventDispatcher.dispatch(new EventChangeClipId())
   }
 
+  private handleRect(event: EventRect) {
+    event.detail.rect = this.rect
+    event.stopImmediatePropagation()
+  }
+
+  override handleResize() { 
+    super.handleResize()
+    const { rect } = this
+    if (!rect) return
+
+    this.point = pointCopy(rect)
+  }
+
+  point?: Point
+
   private requestItemsPromise(): Promise<void> {
-    // console.log(this.tagName, 'requestItemsPromise')
-    const { disabled } = this
     this.watchingRedraw = false
     delete this.watchingTimeout
 
-    const detail: PreviewItemsEventDetail = { disabled }
-    const event: PreviewItemsEvent = new CustomEvent(EventTypePreviewItems, { detail })
+    // TODO: we should send disabled argument to EventPreviews when dragging
+    const event = new EventPreviews(this.variable('max-dimension'))
     MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = detail
+    const { promise } = event.detail
     if (!promise) {
       console.warn(this.tagName, 'requestItemsPromise NO PROMISE')
       return Promise.resolve()
     }
 
     return promise.then(svgs => {
-      const root = this.element()
-      root.replaceChildren(...svgs)
-      if (this.watchingRedraw) this.handleDraw()
+      this.element().replaceChildren(...svgs)
+      if (this.watchingRedraw) this.handleChangedPreviewItems()
     })
   }
-
-  private resizeController?: ResizeController<Rect>
 
   private watchingRedraw = false
 
   private watchingTimeout?: Timeout 
 
-  static override properties = {
-    ...ImporterComponent.properties,
+  protected override willUpdate(changedProperties: PropertyValues<this>): void {
+    super.willUpdate(changedProperties)
+    if (changedProperties.has('size') || changedProperties.has('disabled')) {
+      this.handleChangedPreviewItems()
+    }
+  }
+
+  static override properties: PropertyDeclarations = {
+    ...DisablableProperties,
+    ...SizeReactiveProperties,
+    point: { type: Object, attribute: false },
   }
   
   static override styles: CSSResultGroup = [
-    Scroller.styles,
+    Component.cssBorderBoxSizing,
+    Component.cssHostFlex,
+    css`
+      :host {
+        position: relative;
+      }
+      div.root {
+        padding: 0px;
+        flex-grow: 1;
+        /* position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0; */
+      }
+    `,
     Scroller.cssDivDropping,
     css`
       div.root {
         display: block;
-        overflow: hidden;
+        /* overflow: hidden; */
         /* border: var(--border);
         border-radius: var(--border-radius);
         border-color: var(--fore-secondary);
@@ -121,14 +146,12 @@ export class ViewerContentElement extends WithDropTargetMixin implements DropTar
         background-color: var(--control-back); */   
     
         /* pointer-events: none; */
-        width: var(--viewer-width);
-        height: var(--viewer-height);
+        /* width: var(--viewer-width);
+        height: var(--viewer-height); */
         margin-inline: auto;
         color: var(--div-fore);
       }
     
-
-
       div.root > .svgs {
         position: relative;
       }

@@ -1,5 +1,5 @@
 import type { MashAssetObject } from '@moviemasher/runtime-shared'
-import type { AssetObjectPromiseEvent } from '../../declarations'
+import type { AssetObjectPromiseEvent } from '../../declarations.js'
 
 import { MovieMasher, EventTypeAssetObject } from '@moviemasher/runtime-client'
 

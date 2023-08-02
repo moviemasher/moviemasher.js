@@ -22,10 +22,10 @@ export class ChangeFramesActionClass extends ChangePropertyActionClass {
   private get mash(): ClientMashAsset { return this.clip.track.mash }
 
   redoAction() : void {
-    this.mash.changeTiming(this.target, this.property, this.redoValueNumeric)
+    this.mash.changeTiming(this.target, this.property, this.redoValueNumber)
   }
 
   undoAction() : void {
-    this.mash.changeTiming(this.target, this.property, this.undoValueNumeric)
+    this.mash.changeTiming(this.target, this.property, this.undoValueNumber)
   }
 }

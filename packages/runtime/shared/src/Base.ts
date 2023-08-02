@@ -13,3 +13,6 @@ export interface Tracked {
 export interface Labeled {
   label?: string 
 }
+export interface Ordered {
+  order?: number
+}

@@ -1,7 +1,7 @@
 import type { Point, PointTuple } from '@moviemasher/runtime-shared'
 import type { Size, SizeTuple } from '@moviemasher/runtime-shared'
 import { errorThrow } from '@moviemasher/runtime-shared'
-import { PointZero } from './PointConstants.js'
+import { POINT_ZERO } from './PointConstants.js'
 import { isPoint, pointCopy, pointRound, pointsEqual, pointString } from './PointFunctions.js'
 import { isSize, sizeCopy, sizeRound, sizesEqual, sizeString } from './SizeFunctions.js'
 import { SemicolonChar } from '../Setup/Constants.js'
@@ -24,7 +24,7 @@ export const rectsEqual = (rect: Rect, rectEnd: any): boolean => {
 }
 
 export const rectFromSize = (size: Size, point?: Point): Rect => {
-  const definedPoint = point || PointZero
+  const definedPoint = point || POINT_ZERO
   const { width, height } = size
   return {
     x: definedPoint.x, y: definedPoint.y, width, height,
@@ -32,7 +32,7 @@ export const rectFromSize = (size: Size, point?: Point): Rect => {
 }
 
 export const rectsFromSizes = (sizes: SizeTuple, points?: PointTuple): RectTuple => {
-  const definedPoints = points || [PointZero, PointZero]
+  const definedPoints = points || [POINT_ZERO, POINT_ZERO]
   const [size, sizeEnd] = sizes
   const [point, pointEnd] = definedPoints
   return [rectFromSize(size, point), rectFromSize(sizeEnd, pointEnd)]

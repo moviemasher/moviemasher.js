@@ -1,11 +1,12 @@
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit'
-import type { Content, Contents, DropTarget } from '../declarations.js'
+import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 
-import { EventTypeAction, EventTypeScrollRoot, EventTypeTrackClips, MovieMasher, ScrollRootEventDetail, TrackClipsEventDetail } from '@moviemasher/runtime-client'
+import { EventChanged, EventTypeScrollRoot, EventTypeTrackClips, MovieMasher, ScrollRootEventDetail, TrackClipsEventDetail } from '@moviemasher/runtime-client'
 import { isPositive } from '@moviemasher/lib-shared'
 import { pixelFromFrame } from '../utility/pixel.js'
 import { droppedMashIndex } from '../utility/draganddrop.js'
@@ -15,11 +16,11 @@ import { DropTargetMixin } from '../Base/DropTargetMixin.js'
 
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
 
-export class ComposerTrackElement extends WithDropTargetMixin implements DropTarget {
 
+export class ComposerTrackElement extends WithDropTargetMixin implements DropTarget {
   constructor() {
     super()
-    this.listeners[EventTypeAction] = this.handleAction.bind(this)
+    this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
   }
 
   override connectedCallback(): void {
@@ -29,7 +30,7 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
     )
   }
 
-  protected override get defaultContent(): Content | void { 
+  protected override get defaultContent(): OptionalContent { 
     const { trackIndex, scale, width } = this
     if (!(isPositive(trackIndex) || isPositive(scale))) return 
 
@@ -69,8 +70,7 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
     delete this.resizeController
   }
 
-  private handleAction(_event: Event): void {
-    // console.log(this.tagName, 'handleAction', _event.type)
+  private handleChanged(_event: EventChanged): void {
     this.requestUpdate()
   }
   
@@ -117,8 +117,7 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
   x = 0
 
 
-  static override properties = { 
-    ...Component.properties,
+  static override properties: PropertyDeclarations = { 
     trackIndex: { type: Number, attribute: 'track-index' },
     height: { type: Number, attribute: false },
     scale: { type: Number },

@@ -1,29 +1,16 @@
-import type { Time, Times } from '@moviemasher/runtime-shared'
-import type { MashAsset, MashInstance } from '@moviemasher/runtime-shared'
-import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset, ServerVisibleAsset } from '../Asset/ServerAssetTypes.js'
-import type { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
-import type { AVType } from '@moviemasher/runtime-shared'
-import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from '../CommandFile.js'
 import type { GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server"
-import type { Clip, IntrinsicOptions } from '@moviemasher/runtime-shared'
-import type { Track } from '@moviemasher/runtime-shared'
-import type { ServerAssetManager } from '@moviemasher/runtime-server'
-import type { Instance, InstanceArgs, InstanceObject } from '@moviemasher/runtime-shared'
-import type { AudioInstance, AudioInstanceObject } from '@moviemasher/runtime-shared'
-import type { ImageInstance } from '@moviemasher/runtime-shared'
-import type { VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AVType, AudioInstance, AudioInstanceObject, Clip, ImageInstance, Instance, InstanceArgs, InstanceObject, IntrinsicOptions, MashAsset, MashInstance, Time, Times, Track, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+
+import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset, ServerVisibleAsset } from '../Asset/ServerAssetTypes.js'
+import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from '../CommandFile.js'
+import type { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
 
 export interface ServerMashAsset extends MashAsset, ServerVisibleAsset {
-
-
-  instanceFromObject(object?: InstanceObject): Instance
-  instanceArgs(object?: InstanceObject): InstanceObject & InstanceArgs
-  
-  
-  timeRanges(avType: AVType, startTime: Time): Times
   clips: ServerClips
   clipsInTimeOfType(time: Time, avType?: AVType): ServerClips
-  media: ServerAssetManager
+  instanceArgs(object?: InstanceObject): InstanceObject & InstanceArgs
+  instanceFromObject(object?: InstanceObject): Instance
+  timeRanges(avType: AVType, startTime: Time): Times
 }
 
 export interface ServerMashAudioAsset extends ServerMashAsset, ServerAudioAsset {

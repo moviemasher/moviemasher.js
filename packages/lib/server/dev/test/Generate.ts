@@ -9,7 +9,7 @@ import {
   AssetObjects,
   assertPoint, isPoint, 
   errorThrow,
-  Directions,
+  DIRECTIONS,
   ClipObject, MashAssetObject, TrackObject, DefaultContentId, DefaultContainerId, 
   DurationUnknown,
   ColorInstanceObject,
@@ -70,7 +70,7 @@ export enum GenerateArg {
   ContainerSize = 'containerSize',
   ContainerPoint = 'containerPoint',
   Opacity = 'opacity',
-  Constrain = 'constrain',
+  Crop = 'constrain',
 }
 export const GenerateArgs = Object.values(GenerateArg)
 
@@ -108,7 +108,7 @@ interface GenerateTestObject {
   [GenerateArg.Container]: GenerateContainerTest
   [GenerateArg.ContainerPoint]: PointTest
   [GenerateArg.ContainerSize]: SizeTest
-  [GenerateArg.Constrain]: BooleanTest
+  [GenerateArg.Crop]: BooleanTest
   [GenerateArg.Opacity]: NumberTest
 }
 
@@ -328,9 +328,9 @@ export const GenerateTestsDefault: GenerateTests = {
     opacityTest(GenerateOpacity.F, GenerateOpacity.Z),
     opacityTest(GenerateOpacity.H),
   ],
-  [GenerateArg.Constrain]: [
+  [GenerateArg.Crop]: [
     [GenerateConstrain.C, {}], 
-    [GenerateConstrain.U, Object.fromEntries(Directions.map(direction => [`off${direction}`, true]))]
+    [GenerateConstrain.U, Object.fromEntries(DIRECTIONS.map(direction => [`${direction}Crop`, true]))]
   ],
 }
 
@@ -418,7 +418,7 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
               limitedContainerPoints.forEach(([containerPointName]) => {
                 const containerCentered = containerPointName === GeneratePoint.M
                 const constrain = containerCentered ? GenerateConstrain.U : undefined
-                const limitedConstrains = limitedOptions(GenerateArg.Constrain, constrain) as BooleanTest[]
+                const limitedConstrains = limitedOptions(GenerateArg.Crop, constrain) as BooleanTest[]
                 limitedConstrains.forEach(([constrainedLabel]) => {
                   const names = [contentLabel]
                   if (!isColor) names.push(contentPointName, contentDimensionName)

@@ -3,7 +3,7 @@ import fs from 'fs'
 import Ffmpeg from 'fluent-ffmpeg'
 import {  ProbingData,  NewlineChar } from '@moviemasher/lib-shared'
  
-import { isPositive, SizeZero, } from '@moviemasher/lib-shared'
+import { isPositive, SIZE_ZERO, } from '@moviemasher/lib-shared'
 
 import { ffmpegCommand } from '../CommandFactory.js'
 import { commandArgsString } from '../../Utility/Command.js'
@@ -53,7 +53,7 @@ export class Probe {
       fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
         process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
           const info: ProbingData = { 
-            audible: false, ...SizeZero, info: data, 
+            audible: false, ...SIZE_ZERO, info: data, 
             extension: path.extname(src).slice(1)
           }
           if (error) {

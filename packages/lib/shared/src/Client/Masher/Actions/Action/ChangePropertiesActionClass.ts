@@ -1,8 +1,8 @@
-import { Propertied } from '@moviemasher/runtime-shared'
-import { ScalarRecord } from '@moviemasher/runtime-shared'
-import { ChangePropertiesAction } from './ActionTypes.js'
+import { DotChar, PropertyIds, ScalarRecord } from '@moviemasher/runtime-shared'
+import { ChangePropertiesAction, ChangeTarget } from './ActionTypes.js'
 import { ActionClass } from "./ActionClass.js"
 import { ChangePropertiesActionObject } from './ActionTypes.js'
+import { isPropertyId } from '@moviemasher/runtime-client'
 
 /**
  * @category Action
@@ -17,25 +17,35 @@ export class ChangePropertiesActionClass extends ActionClass implements ChangePr
     this.target = target
   }
 
+  get affects(): PropertyIds { 
+    const { target } = this
+    const { targetId } = target  
+    const values = this.done ? this.redoValues : this.undoValues
+    const properties = Object.keys(values)
+    const propertyIds = properties.map(property => [targetId, property].join(DotChar))
+    return propertyIds.filter(isPropertyId)
+  }
+  
   property: string
 
   redoAction() : void {
     const { target, redoValues } = this
     Object.entries(redoValues).forEach(([property, value]) => {
-      target.setValue(value, property)
+      target.setValue(property, value)
     })
   }
 
   redoValues: ScalarRecord
 
-  target: Propertied
+  target: ChangeTarget
 
   undoAction() : void {
     const { target, undoValues } = this
     Object.entries(undoValues).forEach(([property, value]) => {
-      target.setValue(value, property)
+      target.setValue(property, value)
     })
-  }  
+  } 
+   
   updateAction(object: ChangePropertiesActionObject) : void {
     const { redoValues } = object
     this.redoValues = redoValues

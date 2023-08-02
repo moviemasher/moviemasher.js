@@ -18,14 +18,6 @@ const DefaultMash = {
   buffer: 10,
 }
 
-const DefaultCast = {
-  label: 'Cast',
-  quantize: 10,
-  color: colorBlack,
-  gain: 0.75,
-  buffer: 10,
-}
-
 export const Default = {
   duration: 10,
   label: 'Unlabeled',
@@ -35,7 +27,6 @@ export const Default = {
   image: { label: 'Image' },
   audiostream: { label: 'Audio Stream' },
   sequence: { label: 'Sequence' },
-  videostream: DefaultCast,
   mash: DefaultMash,
   font: { label: 'Text', string: 'Example Text' },
   definition: {

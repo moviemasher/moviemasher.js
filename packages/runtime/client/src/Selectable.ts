@@ -1,11 +1,12 @@
 import type { Actions } from './Actions.js'
 import type { SelectedProperties } from './SelectedProperty.js'
-import type { SelectorType } from './SelectorType.js'
+import type { Propertied, PropertyIds, SelectorType, Strings, TargetId, TargetIds } from '@moviemasher/runtime-shared'
 
-export interface Selectable { 
+export interface Selectable extends Propertied { 
+  targetId: TargetId
   selectables(): Selectables
-  selectedItems(actions: Actions): SelectedProperties 
-  selectType: SelectorType
+  selectedProperties(actions: Actions, propertyNames: Strings): SelectedProperties
+  
 }
 
 export type Selectables = Selectable[]

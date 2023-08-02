@@ -20,3 +20,6 @@ export const arrayOfNumbers = (count = 0, start = 0): Numbers => (
   [...Array(count)].map((_, index) => start + index)
 )
 
+export const arraysEqual = <T=unknown>(a: T[], b: T[]): a is T[] => (
+  a.length === b.length && a.every((value, index) => value === b[index])
+)

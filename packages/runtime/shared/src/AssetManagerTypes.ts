@@ -1,12 +1,13 @@
-import type { AssetObject, AssetObjects, Assets, Asset } from './AssetTypes.js'
+import type { AssetObject, Assets, Asset } from './AssetTypes.js'
 
 export interface AssetManager {
-  assetPromise(object: AssetObject): Promise<Asset>
-  define(object: AssetObject | AssetObjects): Assets
+  define(object: string | AssetObject, manageType?: ManageType): Asset
   fromId(id: string): Asset
   install(asset: Asset | Assets): Assets
   installed(id: string): boolean
-  undefineAll(): void
+  undefine(manageType?: ManageType): void
   updateDefinitionId(oldId: string, newId: string): void
   predefine(id: string, asset: Asset): void
 }
+
+export type ManageType = string

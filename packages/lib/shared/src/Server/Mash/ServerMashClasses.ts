@@ -1,7 +1,7 @@
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../CommandFile.js'
 import { GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server"
-import { PreloadArgs } from "@moviemasher/runtime-shared"
-import { MashAssetClass } from '../../Shared/Mash/MashClasses.js'
+import { PreloadArgs, Strings } from "@moviemasher/runtime-shared"
+import { MashAssetClass } from '../../Shared/Mash/MashAssetClass.js'
 import { ServerMashAsset, ServerClip, ServerClips, ServerTrack } from './ServerMashTypes.js'
 import { Time, TimeRange, Times } from '@moviemasher/runtime-shared'
 import { AVType } from '@moviemasher/runtime-shared'
@@ -17,24 +17,23 @@ import { IntrinsicOptions } from '@moviemasher/runtime-shared'
 import { ServerInstance, ServerVisibleInstance } from '../ServerInstance.js'
 import { ClipClass } from '../../Shared/Mash/Clip/ClipClass.js'
 import { EmptyFunction } from '../../Setup/EmptyFunction.js'
-import { Tweening } from '../../Helpers/Tween/Tweening.js'
+import { Tweening } from '../../Shared/Utility/Tween/Tweening.js'
 import { pointsEqual } from '../../Utility/PointFunctions.js'
 import { TrackClass } from '../../Shared/Mash/Track/TrackClass.js'
 import { TrackArgs } from '@moviemasher/runtime-shared'
 import { ClipObject } from '@moviemasher/runtime-shared'
-import { ServerAssetManager } from '@moviemasher/runtime-server'
 import { isColorInstance } from '../../Shared/Color/ColorGuards.js'
-import { ColorTuple } from '../ServerTypes.js'
 import { Instance } from '@moviemasher/runtime-shared'
 
 
-const contentColors = (instance: Instance, time: Time, range: TimeRange): undefined | ColorTuple => {
+const contentColors = (instance: Instance, time: Time, range: TimeRange): Strings | undefined => {
   if (!isColorInstance(instance)) return 
   
   const [color, colorEndOrNot] = instance.tweenValues('color', time, range)
   assertPopulatedString(color)
-  const colorEnd = isPopulatedString(colorEndOrNot) ? colorEndOrNot : color
-  return [color, colorEnd]
+  const colors: Strings = [color]
+  if (isPopulatedString(colorEndOrNot)) colors.push(colorEndOrNot)
+  return colors
 }
 
 export class ServerMashAssetClass extends MashAssetClass implements ServerMashAsset {
@@ -52,8 +51,6 @@ export class ServerMashAssetClass extends MashAssetClass implements ServerMashAs
     throw new Error('Method not implemented.')
   }
 
-  declare media: ServerAssetManager
-  
   serverPromise(args: ServerPromiseArgs): Promise<void> {
     throw new Error('Method not implemented.')
   }
@@ -137,7 +134,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
 
   commandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters:CommandFilters = []
-    const { visible, quantize, outputSize, time } = args
+    const { visible, outputSize, time } = args
     const clipTime = this.timeRange
     const contentArgs: CommandFilterArgs = { ...args, clipTime }
     const { content, container } = this
@@ -151,11 +148,11 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     }
     const containerRects = this.rects(containerRectArgs)
     contentArgs.containerRects = containerRects
-    const tweening: Tweening = { 
-      point: !pointsEqual(...containerRects),
-      size: !sizesEqual(...containerRects),
+    const tweening: Tweening = { point: false, size: false }
+    if (containerRects.length > 1) {
+      tweening.point = !pointsEqual(containerRects[0], containerRects[1])
+      tweening.size = !sizesEqual(containerRects[0], containerRects[1])
     }
-
 
     const colors = contentColors(content, time, clipTime) 
 

@@ -1,46 +1,24 @@
 import type { Scalar } from '@moviemasher/runtime-shared'
 import type { DataType } from "@moviemasher/runtime-shared"
-import { DataTypeBoolean, DataTypeNumber, DataTypePercent, DataTypeString } from "./DataTypeConstants.js"
-import { isDataType, assertDataType } from "./DataTypeFunctions.js"
+import { DataTypePercent } from "./DataTypeConstants.js"
 import { propertyTypeDefault } from '../Base/PropertyTypeFunctions.js'
-import { isBoolean, isNumber, isObject, isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
-import { errorThrow } from '@moviemasher/runtime-shared'
-import { Property, PropertyObject } from '@moviemasher/runtime-shared'
+import { isDefined, isUndefined } from "@moviemasher/runtime-shared"
+import { Property } from '@moviemasher/runtime-shared'
 
 
-export const isProperty = (value: any): value is Property => {
-  return isObject(value) && 'type' in value && isDataType(value.type)
-}
-export function assertProperty(value: any, name?: string): asserts value is Property {
-  if (!isProperty(value))
-    errorThrow(value, 'Property', name)
+const propertyValue = (type: DataType, value?: Scalar, undefinedAllowed?: boolean): Scalar | undefined => {
+  if (isDefined(value)) return value 
+  if (undefinedAllowed) return undefined
+
+  return propertyTypeDefault(type) 
 }
 
-const propertyType = (type?: DataType | string, value?: Scalar): DataType => {
-  if (isUndefined(type)) {
-    if (isBoolean(value))
-      return DataTypeBoolean
-    if (isNumber(value))
-      return DataTypeNumber
-    return DataTypeString
-  }
-  assertDataType(type)
-
-  return type
-}
-
-const propertyValue = (type: DataType, value?: Scalar): Scalar => (
-  typeof value === 'undefined' ? propertyTypeDefault(type) : value
-)
-
-export const propertyInstance = (object: PropertyObject): Property => {
-  const { type, name, defaultValue, ...rest } = object
-  const dataType = propertyType(type, defaultValue)
-  const dataValue = propertyValue(dataType, defaultValue)
-  const dataName = isPopulatedString(name) ? name : dataType
-  const property: Property = {
-    type: dataType, defaultValue: dataValue, name: dataName, ...rest
-  }
+export const propertyInstance = (object: Property): Property => {
+  const { defaultValue, ...rest } = object
+  const { type, undefinedAllowed } = rest
+  
+  const dataValue = propertyValue(type, defaultValue, undefinedAllowed)
+  const property: Property = { defaultValue: dataValue, ...rest }
   switch (type) {
     case DataTypePercent: {
       if (isUndefined(property.max)) property.max = 1.0

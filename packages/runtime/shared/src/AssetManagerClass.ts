@@ -1,27 +1,16 @@
-import type { AssetObject, Asset, Assets, AssetObjects } from './AssetTypes.js'
-import type { AssetManager } from './AssetManagerTypes.js'
+import type { AssetObject, Asset, Assets } from './AssetTypes.js'
+import type { AssetManager, ManageType } from './AssetManagerTypes.js'
 import type { AssetType } from './AssetType.js'
 
-import { assertAsset } from './AssetGuards.js'
+import { assertAsset, isAssetObject } from './AssetGuards.js'
 import { assertAssetType } from './AssetTypeAsserts.js'
 import { isAssetType } from './AssetTypeGuards.js'
 import { DotChar } from './DotChar.js'
 import { isArray } from './TypeofGuards.js'
 
 export class AssetManagerClass implements AssetManager {
-  assetPromise(object: AssetObject): Promise<Asset> {
 
-    const asset = this.asset(object)
-    if (!asset) {
-      const { type, source } = object
-      return import(`@moviemasher/lib-${this.context}/asset/${source}/${type}.js`).then(() => 
-        this.asset(object)
-      )
-
-    }
-    return Promise.resolve(asset)
-  }
-  protected asset(_: AssetObject): Asset { throw 'unimplemented' }
+  protected asset(_: string | AssetObject): Asset { throw 'unimplemented' }
 
   private installedAssetsById = new Map<string, Asset>()
 
@@ -37,14 +26,11 @@ export class AssetManagerClass implements AssetManager {
 
   declare protected context: string
 
-  define(assetObject: AssetObject | AssetObjects): Assets {
-    const assetObjects = isArray(assetObject) ? assetObject : [assetObject]
-    return assetObjects.map(object => {
-      const { id } = object
-      if (this.installed(id) || this.predefined(id)) return this.fromId(id)
+  define(assetIdOrObject: string | AssetObject, manageType?: ManageType): Asset {
+    const id = isAssetObject(assetIdOrObject) ? assetIdOrObject.id : assetIdOrObject
+    if (this.installed(id)) return this.fromId(id)
 
-      return this.asset(object)
-    })
+    return this.asset(assetIdOrObject)
   }
 
   fromId(id: string): Asset {
@@ -66,7 +52,6 @@ export class AssetManagerClass implements AssetManager {
     const mediaArray = isArray(media) ? media : [media]
     return mediaArray.map(media => {
       const { type, id } = media
-      // console.log(this.constructor.name, 'install', media.label)
       if (this.installed(id) || this.predefined(id)) return this.fromId(id)
 
       this.installedAssetsById.set(media.id, media)
@@ -94,8 +79,7 @@ export class AssetManagerClass implements AssetManager {
     return this.predefinedAssetsById.has(id)
   }
 
-  undefineAll() {
-    // console.log(this.constructor.name, 'undefineAll')
+  undefine(manageType?: ManageType) {
     // TODO: be more graceful - tell definitions they are being destroyed...
     this.installedAssetsById = new Map<string, Asset>()
     this.assetArraysByType = new Map<AssetType, Assets>()
@@ -112,3 +96,5 @@ export class AssetManagerClass implements AssetManager {
 
   private predefinedAssetsById: Map<string, Asset> = new Map()
 }
+
+export const ManageTypeBrowse: ManageType = 'browse'

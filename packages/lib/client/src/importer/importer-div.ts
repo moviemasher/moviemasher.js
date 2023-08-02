@@ -1,4 +1,5 @@
-import type { StringEvent } from '@moviemasher/runtime-shared'
+import type { PropertyDeclarations } from 'lit'
+import type { StringEvent } from '@moviemasher/runtime-client'
 import type { ClientImporters, ClientImporter } from '@moviemasher/runtime-client'
 import type { PropertyValueMap } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
@@ -9,32 +10,28 @@ import { html } from 'lit-html/lit-html.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 
 import { Div } from '../Base/LeftCenterRight.js'
+import { ClassSelected } from '@moviemasher/lib-shared'
 
-
-export class InspectorDivElement extends Div {
+const EventTypeImporter = 'importer'
+export class ImporterDivElement extends Div {
   constructor() {
     super()
-    this.handleImporter = this.handleImporter.bind(this)
+    this.listeners[EventTypeImporter] = this.handleImporter.bind(this)
   }
 
   protected override centerContent(slots: Htmls): OptionalContent {
     const { importer } = this
     if (importer) {
       const { ui } = importer
-      return html`<span class='center'>${ui}</span>`
+      return html`<span 
+        @export-parts='${this.handleExportParts}' 
+        class='center'
+        part='center'
+      >${ui}</span>`
     }
     return super.centerContent(slots)
   }
 
-  override connectedCallback(): void {
-    super.connectedCallback()
-    MovieMasher.eventDispatcher.addDispatchListener('importer', this.handleImporter)
-  }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback()
-    MovieMasher.eventDispatcher.removeDispatchListener('importer', this.handleImporter)
-  }
    protected handleImporter(event: StringEvent): void {
     const { detail: source } = event
     this.importerId = source
@@ -75,13 +72,13 @@ export class InspectorDivElement extends Div {
     return importers.map(importer => { 
       const { icon, id } = importer
       return html`<movie-masher-component-a 
-        class='${ifDefined(importerId === id ? 'selected' : undefined)}' 
-        emit='importer' detail='${id}'
+        class='${ifDefined(importerId === id ? ClassSelected : undefined)}' 
+        emit='${EventTypeImporter}' detail='${id}'
       >${icon}</movie-masher-component-a>`
       
     })
   }
-  override leftContent(slots: Htmls): OptionalContent {
+  protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     const { importerElements } = this
     if (importerElements.length) htmls.push(html`${importerElements}`)
@@ -96,7 +93,7 @@ export class InspectorDivElement extends Div {
   }
 
 
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...Div.properties,
     importerId: { type: String, attribute: 'importer-id' }
   }
@@ -106,4 +103,4 @@ export class InspectorDivElement extends Div {
 
 
 // register web component as custom element
-customElements.define('movie-masher-importer-div', InspectorDivElement)
+customElements.define('movie-masher-importer-div', ImporterDivElement)

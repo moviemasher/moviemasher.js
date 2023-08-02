@@ -1,11 +1,9 @@
 import type { Asset } from './AssetTypes.js'
 import type { ImageAssetObject } from './ImageAsset.js'
 import type { ImageInstanceObject } from './ImageInstance.js'
-import type { Instance } from './Instance.js'
+import type { Instance } from './InstanceTypes.js'
 
-export interface ColorAsset extends Asset {
-  color: string
-}
+export interface ColorAsset extends Asset {}
 
 export interface ColorInstance extends Instance {
   color: string
@@ -16,6 +14,4 @@ export interface ColorInstanceObject extends ImageInstanceObject {
   color?: string
 }
 
-export interface ColorAssetObject extends ImageAssetObject {
-  color?: string
-}
+export interface ColorAssetObject extends ImageAssetObject {}

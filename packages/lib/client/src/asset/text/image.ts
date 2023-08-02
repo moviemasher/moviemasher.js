@@ -1,44 +1,9 @@
-import type { 
-  ClientTextAsset,
-  ClientTextAssetObject, ClientTextInstance,
-  Panel,
-  ClientFont,
-  ClientFontEvent, ClientFontEventDetail, SvgItem
-} from '@moviemasher/runtime-client'
+import type { ClientFont, ClientFontEvent, ClientFontEventDetail, ClientTextAsset, ClientTextAssetObject, ClientTextInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
+import type { AssetCacheArgs, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
 
-import type {
-  AssetCacheArgs,
-  AssetEventDetail,
-  InstanceArgs,
-  Property, Rect, Scalar, Size,
-  TextInstance, TextInstanceObject,
-  Time, Transcoding,
-} from '@moviemasher/runtime-shared'
-
-import {
-  ClientInstanceClass,
-  ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin,
-  EmptyFunction,
-  PointZero,
-  TextAssetMixin,
-  TextHeight,
-  TextInstanceMixin, VisibleAssetMixin,
-  VisibleInstanceMixin, 
-  assertPopulatedString, assertRequest, centerPoint,
-  colorCurrent, 
-  sizeCover, stringFamilySizeRect,
-  svgSvgElement, svgText, svgTransform
-} from '@moviemasher/lib-shared'
-import { 
- MovieMasher, EventTypeClientFont
-} from '@moviemasher/runtime-client'
-import {
-  isDefiniteError, SourceText,
-  TypeFont,
-  TypeImage,
-  errorThrow,
-  isAssetObject, isPopulatedString
-} from '@moviemasher/runtime-shared'
+import { ClientInstanceClass, ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, EmptyFunction, POINT_ZERO, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, sizeCover, stringFamilySizeRect, svgSvgElement, svgText, svgTransform } from '@moviemasher/lib-shared'
+import { EventAsset, EventTypeClientFont, MovieMasher } from '@moviemasher/runtime-client'
+import { SourceText, TypeFont, TypeImage, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -94,7 +59,6 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
   override initializeProperties(object: ClientTextAssetObject): void {
     const { loadedFont } = object
     if (loadedFont) this.loadedFont = loadedFont
-    
     super.initializeProperties(object)
   }
   
@@ -111,8 +75,9 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
 
   private intrinsicRectInitialize(): Rect {
     const height = TextHeight
-    const dimensions = { width: 0, height, ...PointZero }
+    const dimensions = { width: 0, height, ...POINT_ZERO }
     const { family, string } = this
+    console.log(this.constructor.name, 'intrinsicRectInitialize', family, string)
 
     if (!(isPopulatedString(family) && isPopulatedString(string))) return dimensions
 
@@ -143,7 +108,21 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
   } 
 
    private loadedFont?: ClientFont
+
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject } = detail
+    if (isAssetObject(assetObject, TypeImage, SourceText)) {
+      detail.asset = new ClientTextAssetClass(assetObject)
+      event.stopImmediatePropagation()
+    }
+  }
 }
+
+// listen for image/text asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ClientTextAssetClass.handleAsset
+)
 
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)
@@ -171,7 +150,7 @@ export class ClientTextInstanceClass extends WithTextInstance implements ClientT
 
     const clipString = this.string
     const height = TextHeight
-    const dimensions: Rect = { width: 0, height, ...PointZero }
+    const dimensions: Rect = { width: 0, height, ...POINT_ZERO }
     if (!clipString) return dimensions
 
     const rect = stringFamilySizeRect(clipString, family, height)
@@ -186,24 +165,16 @@ export class ClientTextInstanceClass extends WithTextInstance implements ClientT
   }
   
 
-  override setValue(value: Scalar, name: string, property?: Property): void {
-    super.setValue(value, name, property)
+  override setValue(name: string, value?: Scalar, property?: Property): void {
+    super.setValue(name, value, property)
     if (property) return
 
     switch (name) {
-      case 'string':
+      case 'string': {
+        console.log(this.constructor.name, 'setValue', name, value)
         delete this._intrinsicRect
-        break
+        break 
+      }
     }
   }
 }
-
-// listen for image/text asset event
-MovieMasher.eventDispatcher.addDispatchListener<AssetEventDetail>('asset', event => {
-  const { detail } = event
-  const { assetObject, asset } = detail
-  if (!asset && isAssetObject(assetObject, TypeImage, SourceText)) {
-    detail.asset = new ClientTextAssetClass(assetObject)
-    event.stopImmediatePropagation()
-  }
-})

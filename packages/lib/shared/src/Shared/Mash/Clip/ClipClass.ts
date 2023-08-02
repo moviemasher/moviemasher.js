@@ -1,115 +1,47 @@
-import type { Sizing, Time, TimeRange, Timing } from '@moviemasher/runtime-shared'
+import type { Clip, ClipObject, ContainerRectArgs, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, RectTuple, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
+import { EventManagedAsset, MovieMasher, TypeClip, TypeContainer, TypeContent } from '@moviemasher/runtime-client'
+import { assertAsset, isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
 
-import type { SelectorType } from "@moviemasher/runtime-client"
-import type {Clip, IntrinsicOptions} from '@moviemasher/runtime-shared'
-import type { ClipObject } from '@moviemasher/runtime-shared'
-import type { ContainerRectArgs} from '@moviemasher/runtime-shared'
-
-import {Rect, RectTuple} from '@moviemasher/runtime-shared'
-import type {Scalar, Strings, UnknownRecord} from '@moviemasher/runtime-shared'
-import type {Track} from '@moviemasher/runtime-shared'
-
-import type { Size } from '@moviemasher/runtime-shared'
-import { Property } from '@moviemasher/runtime-shared'
-import { DataGroupTiming } from '../../../Setup/DataGroupConstants.js'
-
-import { TypeClip } from '../../../Setup/TypeConstants.js'
-import {
-  SizingContent, Sizings,
-  SizingContainer, SizingPreview
-} from '../../../Setup/SizingConstants.js'
-import { Timings, TimingContainer, TimingCustom, TimingContent } from '../../../Setup/TimingConstants.js'
-import { DurationUnknown, DurationNone } from '../../../Setup/DurationConstants.js'
-import { DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeOption, DataTypeString } from '../../../Setup/DataTypeConstants.js'
-import {assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero} from '../../SharedGuards.js'
-import { isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
-import {assertContainerInstance, isContainerInstance} from '../../../Helpers/Container/ContainerGuards.js'
-import {assertContentInstance, isContentInstance} from '../../../Helpers/Content/ContentGuards.js'
-import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
-import {Default} from '../../../Setup/Default.js'
-import {DefaultContainerId} from '../../../Helpers/Container/ContainerConstants.js'
-import {DefaultContentId} from '../../../Helpers/Content/ContentConstants.js'
-import {idGenerateString} from '../../../Utility/IdFunctions.js'
-import { PointZero } from '../../../Utility/PointConstants.js'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
-import {timeFromArgs, timeRangeFromArgs} from '../../../Helpers/Time/TimeUtilities.js'
-import { Instance, InstanceObject, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
-import { InstanceCacheArgs } from "@moviemasher/runtime-shared"
+import { DefaultContainerId } from '../../../Helpers/Container/ContainerConstants.js'
+import { assertContainerInstance, isContainerInstance } from '../../../Helpers/Container/ContainerGuards.js'
+import { DefaultContentId } from '../../../Helpers/Content/ContentConstants.js'
+import { assertContentInstance, isContentInstance } from '../../../Helpers/Content/ContentGuards.js'
+import { timeFromArgs, timeRangeFromArgs } from '../../../Helpers/Time/TimeUtilities.js'
+import { DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeString } from '../../../Setup/DataTypeConstants.js'
+import { Default } from '../../../Setup/Default.js'
+import { DurationNone, DurationUnknown } from '../../../Setup/DurationConstants.js'
 import { EmptyFunction } from '../../../Setup/EmptyFunction.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
+import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
+import { SizingContainer, SizingContent, SizingPreview, Sizings } from '../../../Setup/SizingConstants.js'
+import { TimingContainer, TimingContent, TimingCustom, Timings } from '../../../Setup/TimingConstants.js'
+import { idGenerateString } from '../../../Utility/IdFunctions.js'
+import { POINT_ZERO } from '../../../Utility/PointConstants.js'
+import { assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero } from '../../SharedGuards.js'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {
     const { containerId, contentId, sizing, timing } = object
-    // console.log('ClipClass', object)
     const defaultContent = isUndefined(contentId) || contentId === DefaultContentId
     const defaultContainer = isUndefined(containerId) || containerId === DefaultContainerId
-    if (defaultContent && !sizing) {
-      // console.log('instanceArgs setting sizing to container', object)
-      object.sizing = SizingContainer
-    }
-    if (defaultContainer && !sizing) {
-      // console.log('instanceArgs setting sizing to preview', object)
-      object.sizing = SizingPreview
-    }
-    if (defaultContent && !timing) {
-      object.timing = TimingContainer
-    }
-    if (defaultContainer && !timing) {
-      object.timing = TimingCustom
-    }
 
-    super(object)
-
-    this.properties.push(propertyInstance({
-      name: 'containerId', type: DataTypeContainerId,
-      defaultValue: DefaultContainerId
-    }))
-    this.properties.push(propertyInstance({
-      name: 'contentId', type: DataTypeContentId,
-      defaultValue: DefaultContentId
-    }))
-    this.properties.push(propertyInstance({ 
-      name: 'label', type: DataTypeString 
-    }))
-    this.properties.push(propertyInstance({ 
-      name: 'sizing', type: DataTypeOption, defaultValue: SizingContent,
-      options: Sizings,
-    }))
-    this.properties.push(propertyInstance({ 
-      name: 'timing', type: DataTypeOption, defaultValue: TimingContent,
-      group: DataGroupTiming, options: Timings
-    }))
-    this.properties.push(propertyInstance({ 
-      name: 'frame',
-      type: DataTypeFrame, 
-      group: DataGroupTiming, 
-      defaultValue: DurationNone, min: 0, step: 1
-    }))
-    this.properties.push(propertyInstance({ 
-      name: 'frames', type: DataTypeFrame, defaultValue: DurationUnknown,
-      min: 1, step: 1,
-      group: DataGroupTiming,
-    }))
+    if (defaultContent && !sizing) object.sizing = SizingContainer
+    if (defaultContainer && !sizing) object.sizing = SizingPreview
+    if (defaultContent && !timing) object.timing = TimingContainer
+    if (defaultContainer && !timing) object.timing = TimingCustom
     
-    this.propertiesInitialize(object)
-   
-    const { container, content } = object as ClipObject
-    if (container) this._containerObject = container
-    if (content) this._contentObject = content
+    super(object)
+    this.initializeProperties(object)
   }
 
-  private assureTimingAndSizing(timing: Timing, sizing: Sizing, tweenable: Instance) {
+  private assureTimingAndSizing(timing: Timing, sizing: Sizing, instance: Instance) {
     const { timing: myTiming, sizing: mySizing, containerId } = this
     let timingOk = myTiming !== timing
     let sizingOk = mySizing !== sizing
 
-    timingOk ||= tweenable.hasIntrinsicTiming
-    sizingOk ||= tweenable.hasIntrinsicSizing
-
-    // timingOk ||= timing === TimingContainer ? containerOk : contentOk
-    // sizingOk ||= sizing === SizingContainer ? containerOk : contentOk
+    timingOk ||= instance.hasIntrinsicTiming
+    sizingOk ||= instance.hasIntrinsicSizing
 
     if (!timingOk) {
       if (timing === TimingContent && containerId) {
@@ -124,9 +56,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     return !(sizingOk && timingOk)
   }
 
-  get audible(): boolean {
-    return this.mutable
-  }
+  get audible(): boolean { return this.mutable }
 
   clipCachePromise(args: InstanceCacheArgs): Promise<void> {
     const { content, container, frames } = this
@@ -148,20 +78,18 @@ export class ClipClass extends PropertiedClass implements Clip {
     const assetId = containerId || containerObject.assetId
     if (!isPopulatedString(assetId)) return undefined
 
-    const definition = (MovieMasher.assetManager).fromId(assetId)
-
+    const event = new EventManagedAsset(assetId)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const definition = event.detail.asset
+    assertAsset(definition, assetId)
 
     const object: VisibleInstanceObject  = { ...containerObject, assetId, container: true }
     const instance = definition.instanceFromObject(object)
     assertContainerInstance(instance)
 
-
     this.assureTimingAndSizing(TimingContainer, SizingContainer, instance)
-
     instance.clip = this
-
     if (this.timing === TimingContainer && this._track) this.resetTiming(instance)
-    
     return instance
   }
 
@@ -178,7 +106,10 @@ export class ClipClass extends PropertiedClass implements Clip {
     const assetId = contentId || contentObject.assetId
     assertPopulatedString(assetId)
 
-    const definition = (MovieMasher.assetManager).fromId(assetId)
+    const event = new EventManagedAsset(assetId)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const definition = event.detail.asset
+    assertAsset(definition, assetId)
 
     const object: InstanceObject = { ...contentObject, assetId }
     const instance = definition.instanceFromObject(object)
@@ -215,6 +146,41 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   declare frames: number
   
+  override initializeProperties(object: ClipObject): void {
+    this.properties.push(propertyInstance({
+      targetId: TypeContainer, name: 'containerId', type: DataTypeContainerId,
+      defaultValue: DefaultContainerId
+    }))
+    this.properties.push(propertyInstance({
+      targetId: TypeContent, name: 'contentId', type: DataTypeContentId,
+      defaultValue: DefaultContentId
+    }))
+    this.properties.push(propertyInstance({ 
+      targetId: TypeClip, name: 'label', type: DataTypeString, 
+    }))
+    this.properties.push(propertyInstance({ 
+      targetId: TypeClip, name: 'sizing', type: DataTypeString, 
+      defaultValue: SizingContent, options: Sizings
+    }))
+    this.properties.push(propertyInstance({ 
+      targetId: TypeClip, name: 'timing', type: DataTypeString, 
+      defaultValue: TimingContent, options: Timings, 
+    }))
+    this.properties.push(propertyInstance({ 
+      targetId: TypeClip, name: 'frame', type: DataTypeFrame, 
+      defaultValue: DurationNone, min: 0, step: 1, 
+    }))
+    this.properties.push(propertyInstance({ 
+      targetId: TypeClip, name: 'frames', type: DataTypeFrame, 
+      defaultValue: DurationUnknown, min: 1, step: 1, 
+    }))
+    super.initializeProperties(object)
+   
+    const { container, content } = object as ClipObject
+    if (container) this._containerObject = container
+    if (content) this._contentObject = content
+  }
+
   intrinsicsKnown(options: IntrinsicOptions): boolean {
     const { content, container } = this
     let known = content.intrinsicsKnown(options)
@@ -229,27 +195,12 @@ export class ClipClass extends PropertiedClass implements Clip {
   get label(): string { return this._label  }
   set label(value: string) { this._label = value }
 
-  // intrinsicUrls(options: IntrinsicOptions): string[] {
-  //   const { content, container } = this
-  //   const urls: string[] = []
-  //   if (!content.intrinsicsKnown(options)) {
-  //     urls.push(...content.intrinsicUrls(options))
-  //   }
-  //   if (container && !container.intrinsicsKnown(options)) {
-  //     urls.push(...container.intrinsicUrls(options))
-  //   }
-  //   return urls
-  // }
-
-
   maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
   get mutable(): boolean {
     const { content } = this
     const contentMutable = content.mutable()
-    if (contentMutable) {
-      return true
-    }
+    if (contentMutable) return true
 
     const { container } = this
     if (!container) return false
@@ -272,7 +223,7 @@ export class ClipClass extends PropertiedClass implements Clip {
   }
     
   rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
-    const rect = { ...size, ...PointZero }
+    const rect = { ...size, ...POINT_ZERO }
     const { sizing } = this
     // console.log(this.constructor.name, 'rectIntrinsic', sizing, loading, editing) 
     if (sizing === SizingPreview) return rect
@@ -284,13 +235,10 @@ export class ClipClass extends PropertiedClass implements Clip {
 
     assertTrue(known, `${target.constructor.name}.intrinsicsKnown`);
 
-
-    const targetRect = target.intrinsicRect(editing)
-    // console.log(this.constructor.name, 'rectIntrinsic KNOWN', targetRect, sizing, target.assetId)
-    return targetRect
+    return target.intrinsicRect(editing)
   }
 
-  rects(args: ContainerRectArgs): RectTuple {
+  rects(args: ContainerRectArgs): Rects {
     const { size, loading, editing } = args
     // console.log(this.constructor.name, 'rects rectIntrinsic', loading, editing)
 
@@ -298,13 +246,11 @@ export class ClipClass extends PropertiedClass implements Clip {
     // console.log(this.constructor.name, 'rects intrinsicRect', intrinsicRect, args)
     const { container } = this
     assertContainerInstance(container)
-    const tuple = container.containerRects(args, intrinsicRect)
-    // console.log(this.constructor.name, 'rects', tuple)
-
-    return tuple
+    
+    return container.containerRects(args, intrinsicRect)
   }
 
-  resetTiming(tweenable?: Instance, quantize?: number): void {
+  resetTiming(instance?: Instance, quantize?: number): void {
     const { timing } = this
     // console.log('resetTiming', timing)
     const track = this.track
@@ -318,14 +264,14 @@ export class ClipClass extends PropertiedClass implements Clip {
         break
       }
       case TimingContainer: {
-        const container = isContainerInstance(tweenable) ? tweenable : this.container
+        const container = isContainerInstance(instance) ? instance : this.container
         if (!container) break
 
         this.frames = container.frames(quantize || track!.mash.quantize)
         break
       }
       case TimingContent: {
-        const content = isContentInstance(tweenable) ? tweenable : this.content
+        const content = isContentInstance(instance) ? instance : this.content
         if (!content) break
 
         this.frames = content.frames(quantize || track!.mash.quantize)
@@ -334,11 +280,8 @@ export class ClipClass extends PropertiedClass implements Clip {
     }
   }
 
-  selectType: SelectorType = TypeClip
-
-
-  setValue(value: Scalar, name: string, property?: Property): void {
-    super.setValue(value, name, property)
+  setValue(name: string, value?: Scalar, property?: Property): void {
+    super.setValue(name, value, property)
     switch (name) {
       case 'containerId': {
         // console.log(this.constructor.name, 'setValue', name, value, !!property)
@@ -357,7 +300,6 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   declare sizing: Sizing
 
-
   get timeRange() : TimeRange {
     const { frame, frames, track } = this
     const { quantize } = track.mash
@@ -366,12 +308,6 @@ export class ClipClass extends PropertiedClass implements Clip {
 
     return timeRangeFromArgs(this.frame, quantize, this.frames)
   }
-
-  // timeRangeRelative(timeRange : TimeRange, _quantize : number) : TimeRange {
-  //   const range = this.timeRange.scale(timeRange.fps)
-  //   const frame = Math.max(0, timeRange.frame - range.frame)
-  //   return timeRange.withFrame(frame)
-  // }
 
   declare timing: Timing
 
@@ -387,22 +323,14 @@ export class ClipClass extends PropertiedClass implements Clip {
     return json
   }
 
-  toString(): string {
-    return `[Clip ${this.label}]`
-  }
+  toString(): string { return `[Clip ${this.label}]` }
 
   track!: Track 
-  // get track() { return this._track! }
-  // set track(value) { this._track = value }
-  
-  get trackNumber(): number { 
-    const { track } = this
-    return track ? track.index : -1 
-  }
+
+  get trackNumber(): number { return this.track ? this.track.index : -1 }
+
   set trackNumber(value: number) { if (value < 0) delete this._track }
 
-  get visible(): boolean {
-    return !!this.containerId
-  }
+  get visible(): boolean { return !!this.containerId }
 }
 

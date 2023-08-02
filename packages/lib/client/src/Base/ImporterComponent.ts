@@ -1,4 +1,4 @@
-import type { Elements } from '../declarations'
+import type { Elements } from '../declarations.js'
 
 import { Component } from './Component'
 

@@ -1,31 +1,28 @@
-import type { Time, TimeRange, Point, PointTuple, Rect, RectTuple, Size, SizeTuple,  UnknownRecord, Scalar, Strings, Lock } from '@moviemasher/runtime-shared'
-import { TypeAudio, } from '@moviemasher/runtime-shared'
-import { Asset } from '@moviemasher/runtime-shared'
-import { CacheOptions, InstanceCacheArgs } from "@moviemasher/runtime-shared"
-import { PropertyTweenSuffix } from "../../Base/PropertiedConstants.js"
+import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, Instance, InstanceArgs, InstanceCacheArgs, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
+
+import { TypeContainer, TypeContent } from '@moviemasher/runtime-client'
+import { TypeAudio, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
+
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
+import { Aspect, Crop, End } from "../../Base/PropertiedConstants.js"
+import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
+import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
 import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
-import { Clip, IntrinsicOptions } from '@moviemasher/runtime-shared'
-import { Default } from '../../Setup/Default.js'
+import { tweenColorStep, numberRecord, tweenNumberStep, tweenRectsContainer, tweenRectsContent } from '../Utility/Tween/TweenFunctions.js'
 import { DataTypeBoolean, DataTypePercent, DataTypeString } from "../../Setup/DataTypeConstants.js"
+import { Default } from '../../Setup/Default.js'
+import { DIRECTIONS, DIRECTIONS_SIDE } from '../../Setup/DirectionConstants.js'
+import { AspectFlip, Aspects, LockShortest, Locks } from '../../Setup/LockConstants.js'
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
-import { assertNumber, assertPopulatedString } from '../SharedGuards.js'
-import { isArray, isNumber, isUndefined } from "@moviemasher/runtime-shared"
-import { isTimeRange } from "../TimeGuards.js"
-import { rectFromSize, rectsEqual } from "../../Utility/RectFunctions.js"
+import { RECT_ZERO } from '../../Utility/RectConstants.js'
 import { sizeAboveZero } from "../../Utility/SizeFunctions.js"
-import { Instance, InstanceArgs } from '@moviemasher/runtime-shared'
-import { ContentRectArgs } from '@moviemasher/runtime-shared'
-import { RectZero } from '../../Utility/RectConstants.js'
-import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
-import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
-import { DataGroupOpacity, DataGroupPoint, DataGroupSize } from '../../Setup/DataGroupConstants.js'
-import { ContainerRectArgs } from '@moviemasher/runtime-shared'
-import { tweenColorStep, tweenCoverPoints, tweenCoverSizes, tweenNumberStep, tweenOverPoint, tweenOverRect, tweenOverSize, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from '../../Helpers/Tween/TweenFunctions.js'
-import { LockWidth } from '../../Setup/LockConstants.js'
-import { Directions, SideDirections } from '../../Setup/DirectionConstants.js'
-import { SideDirectionObject } from '@moviemasher/runtime-shared'
+import { assertDefined, assertNumber, assertPopulatedString } from '../SharedGuards.js'
+import { isTimeRange } from "../TimeGuards.js"
+
+
+
+
 
 export class InstanceClass extends PropertiedClass implements Instance {
   constructor(object: InstanceArgs) {
@@ -59,67 +56,41 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
   container = false
 
-  containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple {
-    // console.log(this.constructor.name, 'containerRects', inRect, args)
-    const { size, time, timeRange } = args
-    const { lock } = this
-    const tweenRects = this.tweenRects(time, timeRange)
-    
-    const locked = tweenRectsLock(tweenRects, lock)
+  containerRects(args: ContainerRectArgs, intrinsicRect: Rect): Rects {
+    const { size: previewSize, time, timeRange } = args
+    const { width: intrinsicWidth, height: intrinsicHeight } = intrinsicRect
 
-    // console.log(this.constructor.name, 'containerRects', tweenRects, lock, locked)
-    
-    const { width: inWidth, height: inHeight } = inRect
-    
-    const ratio = ((inWidth || size.width)) / ((inHeight || size.height))
-    
-    const [scale, scaleEnd] = locked 
-    const forcedScale = tweenScaleSizeRatioLock(scale, size, ratio, lock)
-    // console.log(this.constructor.name, 'containerRects forcedScale', forcedScale, '= tweenScaleSizeRatioLock(', scale, size, ratio, lock, ')')
-    const { directionObject } = this
-    const transformedRect = tweenScaleSizeToRect(size, forcedScale, directionObject)
-
-    const tweening = !rectsEqual(scale, scaleEnd)
-    if (!tweening) {
-      // console.log(this.constructor.name, 'containerRects !tweening', transformedRect, locked)
-      return [transformedRect, transformedRect]
+    const intrinsicSize = {
+      ...intrinsicRect,
+      width: intrinsicWidth || previewSize.width, 
+      height: intrinsicHeight || previewSize.height
     }
 
-    const forcedScaleEnd = tweenScaleSizeRatioLock(scaleEnd, size, ratio, lock)
-    const tweenRect = tweenOverRect(forcedScale, forcedScaleEnd)
-    const tweened = tweenScaleSizeToRect(size, tweenRect, directionObject)
-    const tuple: RectTuple = [transformedRect, tweened]
-    return tuple
+    const tweenRects = this.tweenRects(time, timeRange)
+    const { lock, pointAspect, sizeAspect } = this
+    const { sideDirectionRecord } = this
+
+    return tweenRectsContainer(tweenRects, intrinsicSize, lock, previewSize, sideDirectionRecord, pointAspect, sizeAspect)
   }
   
-  contentRects(args: ContentRectArgs): RectTuple {
-    const {containerRects: rects, time, timeRange, loading, editing } = args
-    const tuple = isArray(rects) ? rects : [rects, rects] as RectTuple
-    
+  contentRects(args: ContentRectArgs): Rects {
+    const { containerRects, time, timeRange, editing, shortest } = args    
     const intrinsicRect = this.intrinsicRect(editing)
-    if (!sizeAboveZero(intrinsicRect)) {
-      return tuple
-    }
+    // if I have no intrinsic size (like color source), use the container rects
+    if (!sizeAboveZero(intrinsicRect)) return containerRects
     
     const { lock } = this
     const tweenRects = this.tweenRects(time, timeRange)
-    const locked = tweenRectsLock(tweenRects, lock) 
-    const coverSizes = tweenCoverSizes(intrinsicRect, rects, locked)
-    const [size, sizeEnd] = coverSizes 
-    const coverPoints = tweenCoverPoints(coverSizes, rects, locked)
-    const [point, pointEnd] = coverPoints
-    const rect = rectFromSize(size, point)
-    const rectEnd = rectFromSize(sizeEnd, pointEnd)
-    // console.log(this.constructor.name, 'contentRects', lock, locked, isArray(rects) ? rects[0] : rects,  '->', rect)
-    return [rect, rectEnd]
+    return tweenRectsContent(tweenRects, intrinsicRect, containerRects, lock, shortest)
   }
   
-  get directionObject(): SideDirectionObject {
-    return Object.fromEntries(SideDirections.map(direction => 
-      [direction, !!this.value(`off${direction.slice(0, 1).toUpperCase()}`)]
+  get sideDirectionRecord(): SideDirectionRecord {
+    return Object.fromEntries(DIRECTIONS_SIDE.map(direction => 
+      [direction, Boolean(this.value(`${direction}Crop`))]
     ))
   }
-  get directions() { return Directions }
+
+  get directions() { return DIRECTIONS }
   
   frames(quantize: number): number {
     return timeFromArgs(Default.duration, quantize).frame
@@ -134,38 +105,60 @@ export class InstanceClass extends PropertiedClass implements Instance {
   protected _id?: string
   get id(): string { return this._id ||= idGenerateString() }
 
-  initializeProperties(object: InstanceArgs): void {
+  override initializeProperties(object: InstanceArgs): void {
     const { container } = this
   
     if (container) {
-      // offN, offS, offE, offW
-      SideDirections.forEach(direction => {
-        this.addProperties(object, propertyInstance({
-          name: `off${direction}`, type: DataTypeBoolean, 
-          group: DataGroupPoint,
+      DIRECTIONS_SIDE.forEach(direction => {
+        this.properties.push(propertyInstance({
+          targetId: TypeContainer, name: `${direction}${Crop}`, 
+          type: DataTypeBoolean, defaultValue: false, 
         }))
       })
-      this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'opacity', 
-        type: DataTypePercent, defaultValue: 1.0,
-        group: DataGroupOpacity,
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: 'opacity', type: DataTypePercent, 
+        defaultValue: 1.0, min: 0.0, max: 1.0, step: 0.01, tweens: true,
+      }))       
+      this.properties.push(propertyInstance({
+        targetId: TypeContainer, name: `opacity${End}`, 
+        type: DataTypePercent, undefinedAllowed: true, tweens: true,
+        min: 0.0, max: 1.0, step: 0.01,
       }))       
     } 
     if (container || !this.isDefaultOrAudio) {
-      this.addProperties(object, propertyInstance({
-        name: 'x', type: DataTypePercent, defaultValue: 0.5,
-        group: DataGroupPoint, tweenable: true, 
+      const targetId = container ? TypeContainer : TypeContent
+
+      this.properties.push(propertyInstance({
+        targetId, name: 'x', type: DataTypePercent, defaultValue: 0.5,
+        min: 0.0, max: 1.0, step: 0.01, tweens: true,
       }))
-      this.addProperties(object, propertyInstance({
-        name: 'y', type: DataTypePercent, defaultValue: 0.5,
-        group: DataGroupPoint, tweenable: true, 
+      this.properties.push(propertyInstance({
+        targetId, name: `x${End}`, 
+        type: DataTypePercent, undefinedAllowed: true, tweens: true,
+        min: 0.0, max: 1.0, step: 0.01,
       }))
-      this.addProperties(object, propertyInstance({
-        name: 'lock', type: DataTypeString, defaultValue: LockWidth,
-        group: DataGroupSize, 
+      this.properties.push(propertyInstance({
+        targetId, name: 'y', type: DataTypePercent, defaultValue: 0.5,
+        min: 0.0, max: 1.0, step: 0.01, tweens: true,
+      }))
+      this.properties.push(propertyInstance({
+        targetId, name: `y${End}`, 
+        type: DataTypePercent, undefinedAllowed: true, tweens: true,
+        min: 0.0, max: 1.0, step: 0.01,
+      }))
+      this.properties.push(propertyInstance({
+        targetId, name: 'lock', type: DataTypeString, 
+        defaultValue: LockShortest, options: Locks, 
+      }))
+      this.properties.push(propertyInstance({
+        targetId, name: `point${Aspect}`, type: DataTypeString, 
+        defaultValue: AspectFlip, options: Aspects, 
+      }))
+      this.properties.push(propertyInstance({
+        targetId, name: `size${Aspect}`, type: DataTypeString, 
+        defaultValue: AspectFlip, options: Aspects, 
       }))
     }
-    this.properties.push(...this.asset.properties)
     super.initializeProperties(object)
   }
 
@@ -176,7 +169,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return this.asset.assetCachePromise(options)
   }
 
-  intrinsicRect(_ = false): Rect { return RectZero }
+  intrinsicRect(_ = false): Rect { return RECT_ZERO }
 
   intrinsicsKnown(options: IntrinsicOptions): boolean { return true }
 
@@ -197,22 +190,28 @@ export class InstanceClass extends PropertiedClass implements Instance {
   mutable() { return false }
   
   declare muted: boolean 
-  
-  declare offE: boolean
-  declare offN: boolean
-  declare offS: boolean
-  declare offW: boolean
+
+  declare leftConstrain: boolean
+  declare rightConstrain: boolean
+  declare topConstrain: boolean
+  declare bottomConstrain: boolean
+
   declare opacity: number
-  opacityEnd?: number | undefined
+  opacityEnd?: number 
+
+  declare pointAspect: string
+  declare sizeAspect: string
 
   toJSON(): UnknownRecord {
     const { assetId, label } = this
     return { ...super.toJSON(), assetId, label }
   }
 
-  tween(keyPrefix: string, time: Time, range: TimeRange): Scalar {
+  private tween(keyPrefix: string, time: Time, range: TimeRange): Scalar {
     const value = this.value(keyPrefix)
-    const valueEnd = this.value(`${keyPrefix}${PropertyTweenSuffix}`)
+    assertDefined<Scalar>(value)
+
+    const valueEnd = this.value(`${keyPrefix}${End}`)
     if (isUndefined(valueEnd)) return value
 
     const { frame: rangeFrame, frames } = range
@@ -227,30 +226,41 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return tweenColorStep(value, valueEnd, frame, frames)
   }
 
-  tweenPoints(time: Time, range: TimeRange): PointTuple {
+  private tweenPoints(time: Time, range: TimeRange): Points {
     const [x, xEndOrNot] = this.tweenValues('x', time, range)
     const [y, yEndOrNot] = this.tweenValues('y', time, range)
     assertNumber(x)
     assertNumber(y)
     const point: Point = { x, y } 
-    const tweenPoint = { x: xEndOrNot, y: yEndOrNot }
-    return [point, tweenOverPoint(point, tweenPoint)]
+    const points: Points = [point]
+    if (isDefined(xEndOrNot) || isDefined(yEndOrNot)) {
+      points.push({ ...point, ...numberRecord({ x: xEndOrNot, y: yEndOrNot }) })
+    }
+    return points
   }
 
-  tweenRects(time: Time, range: TimeRange): RectTuple {
+  private tweenRects(time: Time, range: TimeRange): Rects {
     const [size, sizeEnd] = this.tweenSizes(time, range)
     const [point, pointEnd] = this.tweenPoints(time, range)
-    return [ { ...point , ...size }, { ...pointEnd , ...sizeEnd } ]
+    const rects: Rects = [ { ...point , ...size } ]
+    if (isDefined(sizeEnd) || isDefined(pointEnd)) {
+      rects.push({ ...(pointEnd || point) , ...(sizeEnd || size) })  
+    }
+    return rects
   }
 
-  tweenSizes(time: Time, range: TimeRange): SizeTuple {
+  private tweenSizes(time: Time, range: TimeRange): Sizes {
     const [width, widthEndOrNot] = this.tweenValues('width', time, range)
     const [height, heightEndOrNot] = this.tweenValues('height', time, range)
     assertNumber(width)
     assertNumber(height)
     const size: Size = { width, height } 
-    const tweenSize = { width: widthEndOrNot, height: heightEndOrNot }
-    return [size, tweenOverSize(size, tweenSize)]
+    const sizes: Sizes = [size]
+    if (isDefined(widthEndOrNot) || isDefined(heightEndOrNot)) {
+      const tweenSize = { width: widthEndOrNot, height: heightEndOrNot }
+      sizes.push({ ...size, ...numberRecord(tweenSize) })
+    }
+    return sizes
   }
 
   tweenValues(key: string, time: Time, range: TimeRange): Scalar[] {

@@ -1,5 +1,5 @@
 import type { ClientImporter } from '@moviemasher/runtime-client'
-import type { ImportersEventDetail } from '../../declarations'
+import type { ImportersEventDetail } from '../../declarations.js'
 
 import { EventTypeImporters } from '@moviemasher/runtime-shared'
 import { MovieMasher } from '@moviemasher/runtime-client'

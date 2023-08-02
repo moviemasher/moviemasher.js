@@ -1,3 +1,4 @@
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit'
 import type { 
   Content, Contents, Htmls, OptionalContent, LeftSlot, RightSlot, CenterSlot
@@ -8,172 +9,94 @@ import { html } from 'lit-html/lit-html.js'
 
 import { Slotted } from './Slotted.js'
 import { Component } from './Component.js'
+import { PipeChar } from '@moviemasher/lib-shared'
 
 const LeftSlot: LeftSlot = 'left'
 const RightSlot: RightSlot = 'right'
 const CenterSlot: CenterSlot = 'center'
 
 export class LeftCenterRight extends Slotted {
-  protected override defaultSlottedContent(key: string, htmls: Htmls): OptionalContent { 
-    switch (key) {
-      case LeftSlot: return this.leftContent(htmls)
-      case RightSlot: return this.rightContent(htmls)
-      case CenterSlot: return this.centerContent(htmls)
+  protected override partContent(part: string, slots: Htmls): OptionalContent { 
+    switch (part) {
+      case LeftSlot: return this.leftContent(slots)
+      case RightSlot: return this.rightContent(slots)
+      case CenterSlot: return this.centerContent(slots)
     }
+    return super.partContent(part, slots)
   }
 
   protected centerContent(htmls: Htmls): OptionalContent { 
-    this.importTags('movie-masher-component-span')
-    return html`<movie-masher-component-span 
-      part='${CenterSlot}' slotted='${CenterSlot}' class='${CenterSlot}'
-    >${htmls}</movie-masher-component-span>` 
+    return html`<span part='${CenterSlot}' class='${CenterSlot}'>${htmls}</span>` 
   }
 
   protected leftContent(htmls: Htmls): OptionalContent { 
     if (!htmls.length) return
 
-    this.importTags('movie-masher-component-span')
-    return html`<movie-masher-component-span
-      part='${LeftSlot}' slotted='${LeftSlot}' class='${LeftSlot}'
-    >${htmls}</movie-masher-component-span>` 
+    return html`<span part='${LeftSlot}' class='${LeftSlot}'>${htmls}</span>` 
   }
   
   protected rightContent(htmls: Htmls): OptionalContent { 
     if (!htmls.length) return
     
-     this.importTags('movie-masher-component-span')
-    return html`<movie-masher-component-span 
-      part='${RightSlot}' slotted='${RightSlot}' class='${RightSlot}'
-    >${htmls}</movie-masher-component-span>` 
+    return html`<span part='${RightSlot}' class='${RightSlot}'>${htmls}</span>` 
   }
   
-  override slots = [LeftSlot, CenterSlot, RightSlot]
+  override parts = [LeftSlot, CenterSlot, RightSlot].join(PipeChar)
 
-  static cssHostOverflowY = css`
-  :host {
-    display: flex;
-    overflow-y: auto;
-  }
-`
-
-  static cssHostSection = css`
-   :host {
-      --padding: var(--section-padding);
-      --spacing: var(--section-spacing);
-    }
-  `
-  static cssSection = css`
-    header, footer, div {
-      padding: 0;
-      flex-grow: 1;
-      display: flex;
-    }
-
-
+  static cssHeaderFooter = css`
     header, footer {
-      --padding: 0;
+      padding: 0;
+      display: flex; 
+      flex-grow: 1; 
+      background-color: var(--section-back);
+      color: var(--section-fore);
       gap: var(--spacing);
       line-height: var(--icon-size);
       font-size: var(--icon-size);
-      /* border: 1px solid yellow; */
+    }
+    .center, .left, .right {
+      white-space: nowrap;
+      gap: var(--section-spacing);
+      padding: var(--section-padding);
+    }
+    .center > *, .left > *, .right > * {
+      margin: auto;
     }
   
-
-    header > .left,
-    footer > .left,
-    div > .left {
-      flex-grow: 0;
-      display: flex;
-    }
- 
   `
-
-  static cssDiv = css`div { 
-    padding: 0;
-    display: flex; 
-    background-color: var(--div-back);
-    color: var(--div-fore);
-  }`
-
-
-  static cssDivLeft = css`
-    .left {
-      flex-grow: 0;
-      display: flex;
-      border-right-width: var(--border-size);
-      border-right-color: var(--section-back);
-      border-right-style: solid;
-      align-items: flex-start;
+  static cssShared = css`
+    :host {
       --flex-direction: column;
     }
-  `
-  static cssDivCenter = css`
-    .center {
-      flex-grow: 1;
-      padding: var(--content-padding);
-    }
-  `
-
-  static cssDivRight = css`
-    .right {
-      flex-grow: 0;
+    .center, .left, .right {
       display: flex;
-      border-left-width: var(--border-size);
-      border-left-color: var(--section-back);
-      border-left-style: solid;
     }
-  `
-  static cssHeader = css`header { 
-    padding: 0;
-    display: flex; 
-    flex-grow: 1; 
-    background-color: var(--section-back);
-    color: var(--section-fore);
-    gap: var(--spacing);
-    line-height: var(--icon-size);
-    font-size: var(--icon-size);
-  }`
-
-  static cssFooter = css`footer { 
-    padding: 0;
-    display: flex; 
-    flex-grow: 1; 
-    background-color: var(--section-back);
-    color: var(--section-fore);
-    gap: var(--spacing);
-    line-height: var(--icon-size);
-    font-size: var(--icon-size);
-  }`
-
-  static cssCenter = css`
     .center {
       flex-grow: 1;
     }
+    .left, .right {
+      flex-grow: 0;
+    }
   `
 
-  static cssLeft = css`
-    .left {
-      flex-grow: 0;
-    }
-  `
-  static cssRight = css`
-    .right {
-      flex-grow: 0;
-    }
-  `
+  static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
+    Component.cssHostFlex,
+    LeftCenterRight.cssShared,
+    LeftCenterRight.cssHeaderFooter,
+  ]
 }
 
 export class Header extends LeftCenterRight {
   icon = ''
-  override leftContent(slots: Htmls): OptionalContent {
+  protected override leftContent(slots: Htmls): OptionalContent {
     const slotsCopy = [...slots]
     const { icon } = this
     if (icon) {
       this.importTags('movie-masher-component-icon')
       slotsCopy.push(
         html`<movie-masher-component-icon 
-          part='icon' slotted='icon'
-          icon='${icon}'
+          part='icon' icon='${icon}'
         ></movie-masher-component-icon>`
       )
     }
@@ -182,46 +105,26 @@ export class Header extends LeftCenterRight {
 
   protected override content(contents: Contents): Content {
     return html`<header 
-      @slotted='${this.slottedHandler}'
+      @export-parts='${this.handleExportParts}'
     >${contents}</header>`
   }
 
-
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...LeftCenterRight.properties,
     icon: { type: String }
   }
-
-  static override styles: CSSResultGroup = [
-    Component.cssHostFlex,
-    LeftCenterRight.cssHeader,
-    LeftCenterRight.cssLeft,
-    LeftCenterRight.cssRight,
-  ]
 }
 
 export class Footer extends LeftCenterRight {
   protected override content(contents: Contents): Content {
     return html`<footer 
-      @slotted='${this.slottedHandler}'
+      @export-parts='${this.handleExportParts}'
     >${contents}</footer>`
   }
-
-  static override styles: CSSResultGroup = [
-    Component.cssHostFlex,
-    LeftCenterRight.cssFooter,
-    LeftCenterRight.cssLeft,
-    LeftCenterRight.cssRight,
-  ]
 }
 
 
 export class Div extends LeftCenterRight {
-  // protected override content(contents: Contents): Content {
-  //   return html`<div 
-  //     @slotted='${this.slottedHandler}'
-  //   >${contents}</div>`
-  // }
   static cssDivHostBackground = css`
     :host {
       background-color: var(--div-back);
@@ -229,13 +132,24 @@ export class Div extends LeftCenterRight {
     }
   `
   static override styles: CSSResultGroup = [
-    Component.cssHostFlex,
     Component.cssBorderBoxSizing,
-    // LeftCenterRight.cssDiv,
-    LeftCenterRight.cssDivLeft,
-    LeftCenterRight.cssDivCenter,
-    LeftCenterRight.cssDivRight,
     Div.cssDivHostBackground,
+    Component.cssHostFlex,
+    LeftCenterRight.cssShared,
+    css`
+      .left {
+        border-right-width: var(--border-size);
+        border-right-color: var(--section-back);
+        border-right-style: solid;
+        align-items: flex-start;
+        flex-direction: var(--flex-direction);
+      }
+    
+      .right {
+        border-left-width: var(--border-size);
+        border-left-color: var(--section-back);
+        border-left-style: solid;
+      }
+    ` 
   ]
 }
-

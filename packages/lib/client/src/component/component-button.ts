@@ -1,3 +1,4 @@
+import type { PropertyDeclarations } from 'lit'
 import type { Contents, Content } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
@@ -9,14 +10,14 @@ export class ButtonElement extends IconString {
   protected override content(contents: Contents): Content {
     return html`<button 
       disabled='${ifDefined(this.disabled ? 'true' : undefined)}' 
-      @slotted='${this.slottedHandler}'
-      @click='${this.clickHandler}'
+      @export-parts='${this.handleExportParts}'
+      @click='${this.handleClick}'
     >${contents}</button>`
   }
 
   disabled = false
 
-  static override properties = {
+  static override properties: PropertyDeclarations = {
     ...IconString.properties,
     disabled: { type: Boolean }
   }

@@ -1,33 +1,35 @@
+import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup, PropertyValues } from 'lit'
-import type { MashAsset, NumberEvent, StringEvent } from '@moviemasher/runtime-shared'
-import type { MashAssetEvent, TimeEvent } from '@moviemasher/runtime-client'
-import type { Content, Contents, DropTarget } from '../declarations.js'
+import type { MashAsset } from '@moviemasher/runtime-shared'
+import type { NumberEvent } from '@moviemasher/runtime-client'
+import type { Content, Contents, DropTarget, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 
 
-import { EventTypeDuration, EventTypeFrame, EventTypeMashAsset, EventTypeSelectClip, EventTypeTime, EventTypeTracks, EventTypeZoom, EventTypeScale, MovieMasher } from '@moviemasher/runtime-client'
-import { Component } from '../Base/Component.js'
+import { EventTypeDuration, EventChangedMashAsset, EventChangeClipId, EventTypeTracks, EventTypeZoom, EventTypeScale, MovieMasher, EventChangedFrame, EventChangeFrame } from '@moviemasher/runtime-client'
 import { arrayOfNumbers, arrayReversed, assertMashAsset, eventStop, isPositive, pixelToFrame } from '@moviemasher/lib-shared'
 import { pixelFromFrame, pixelPerFrame } from '../utility/pixel.js'
 import { Scroller } from '../Base/Scroller.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { DisablableMixin } from '../Base/DisablableMixin.js'
 
-const WithDropTargetMixin = DropTargetMixin(Scroller)
+const WithDisablable = DisablableMixin(Scroller)
+const WithDropTargetMixin = DropTargetMixin(WithDisablable)
+
 export class ComposerContentElement extends WithDropTargetMixin implements DropTarget {
   constructor() {
     super()
-    
-    this.listeners[EventTypeTime] = this.handleTime.bind(this)
-    this.listeners[EventTypeDuration] = this.handleDuration.bind(this)
-    this.listeners[EventTypeTracks] = this.handleTracks.bind(this)
-    this.listeners[EventTypeMashAsset] = this.handleMashAsset.bind(this)
-    this.listeners[EventTypeZoom] = this.handleZoom.bind(this)
 
     this.handleScrubberPointerUp = this.handleScrubberPointerUp.bind(this)
     this.handleScrubberPointerMove = this.handleScrubberPointerMove.bind(this)
+    
+    this.listeners[EventChangedFrame.Type] = this.handleChangedFrame.bind(this)
+    this.listeners[EventTypeDuration] = this.handleDuration.bind(this)
+    this.listeners[EventTypeTracks] = this.handleTracks.bind(this)
+    this.listeners[EventTypeZoom] = this.handleZoom.bind(this)
   }
   
   private clientXRef = -1
@@ -41,8 +43,7 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     `
   }
 
-
-  protected override get defaultContent(): Content | void { 
+  protected override get defaultContent(): OptionalContent { 
     const { framesWidth } = this
     const width = framesWidth > this.width ? `${framesWidth}px` : '100%'
     
@@ -100,6 +101,7 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
   }
 
   override disconnectedCallback(): void {
+    this.resizeObserver?.disconnect()
     delete this.resizeObserver
     super.disconnectedCallback()
   }
@@ -113,9 +115,9 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     }
   }
 
-  protected frame = 0
+  frame = 0
 
-  protected frames = 0
+  frames = 0
 
   private framesWidth = 0
 
@@ -124,7 +126,7 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     this.frames = event.detail
   }
 
-  private handleMashAsset(event: MashAssetEvent): void {
+  override handleChangedMashAsset(event: EventChangedMashAsset): void {
     const { detail: mash } = event
     this.mashAsset = mash
     this.tracksLength = mash?.tracks.length || 0
@@ -165,10 +167,8 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     const x = rect.x + trackWidth
 
     const pixel = Math.max(0, Math.min(max, clientX - x))
-    const detail = pixelToFrame(pixel, this.scale, 'floor')
-
-    const frameEvent: NumberEvent = new CustomEvent(EventTypeFrame, { detail })
-    MovieMasher.eventDispatcher.dispatch(frameEvent)
+    const frame = pixelToFrame(pixel, this.scale, 'floor')
+    MovieMasher.eventDispatcher.dispatch(new EventChangeFrame(frame))
   }
 
   private handleScrubberPointerUp(event: MouseEvent) {
@@ -178,9 +178,9 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     window.removeEventListener('pointerup', this.handleScrubberPointerUp)
   }   
 
-  private handleTime(event: TimeEvent): void {
-    const { detail: time } = event
-    this.frame = time.frame
+  private handleChangedFrame(event: EventChangedFrame): void {
+    const { detail: frame } = event
+    this.frame = frame
   }
 
   private handleTracks(event: NumberEvent): void {
@@ -196,8 +196,7 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
   private mashAsset?: MashAsset
   
   override onclick = (): void => {
-    const event: StringEvent = new CustomEvent(EventTypeSelectClip, { detail: '' })
-    MovieMasher.eventDispatcher.dispatch(event)
+    MovieMasher.eventDispatcher.dispatch(new EventChangeClipId())
   }
 
   private recalculateLeft() {
@@ -225,9 +224,9 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
 
   protected tracksLength = 0
 
-  protected width = 0
+  width = 0
 
-  protected override willUpdate(changedProperties: PropertyValues<typeof ComposerContentElement.properties>): void {
+  protected override willUpdate(changedProperties: PropertyValues<this>): void {
     if (
       changedProperties.has('zoom') 
       || changedProperties.has('width')
@@ -238,10 +237,9 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
 
   protected x = 0
 
-  protected zoom = 0.0
+  zoom = 1.0
 
-  static override properties = { 
-    ...Component.properties,
+  static override properties: PropertyDeclarations = { 
     frame: { type: Number, attribute: false },
     left: { type: Number, attribute: false },
     frames: { type: Number, attribute: false },
@@ -293,7 +291,6 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
         --spacing: 4px;
         background-color: var(--section-back);
         grid-column-end: span 2;
-        /* grid-column: 1 / 3; */
       }
 
       div.scrubber-bar {
@@ -367,5 +364,3 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
 
 // register web component as custom element
 customElements.define('movie-masher-composer-content', ComposerContentElement)
-
-

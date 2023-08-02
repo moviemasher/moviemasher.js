@@ -1,60 +1,32 @@
-import type { Track, TrackArgs, TrackObject, ClipObject, ContainerRectArgs, AssetCacheArgs, CacheOptions, InstanceCacheArgs, Propertied, Property, Scalar, Size, Time, TimeRange, MashAssetObject, NumberEvent } from '@moviemasher/runtime-shared'
-import type { ClientAssetManager, PreviewItem, PreviewItems, SvgItems, Selectables, TimeEvent, SvgOrImageDataOrError } from '@moviemasher/runtime-client'
-import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack, ClientTracks } from '@moviemasher/runtime-client'
+import type { Actions, NumberEvent, AudioPreview, AudioPreviewArgs, ClientClip, ClientClips, ClientMashAsset, ClientTrack, ClientTracks, Masher, Previews, Selectables, SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
+import type { AssetCacheArgs, CacheOptions, ClipObject, InstanceCacheArgs, MashAssetObject, Propertied, Property, PropertyId, Scalar, Size, Strings, TargetId, Time, TimeRange, Track, TrackArgs, TrackObject } from '@moviemasher/runtime-shared'
+import type { ChangePropertyActionObject } from '../Masher/Actions/Action/ActionTypes.js'
+import type { MashPreview, MashPreviewArgs, MashPreviewOptions } from '../Masher/MashPreview/MashPreview.js'
 
-import { errorThrow, ErrorName, TypeAudio, AVType, isArray, arrayFromOneOrMore } from '@moviemasher/runtime-shared'
-import { Actions, MovieMasher, SelectedProperties, SelectedProperty } from '@moviemasher/runtime-client'
+import { AVType, DotChar, ErrorName, arrayFromOneOrMore, errorThrow, isArray } from '@moviemasher/runtime-shared'
+import { EventChangeFrame, EventChangedFrame, EventChangedPreviews, EventChangedSize, EventSize, EventTypeDuration, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTracks, MovieMasher, TypeMash } from '@moviemasher/runtime-client'
 
-import { Panel } from '@moviemasher/runtime-client'
-
-import { assertContainerInstance } from '../../Helpers/Container/ContainerGuards.js'
-import { svgAppend, svgDefsElement, svgPatternElement, svgPolygonElement, svgSetDimensions, svgSvgElement, svgUrl } from '../SvgFunctions.js'
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities.js'
-import { ChangePropertyActionObject } from '../Masher/Actions/Action/ActionTypes.js'
-import { Masher } from '@moviemasher/runtime-client'
-import { AudioPreview, AudioPreviewArgs } from '@moviemasher/runtime-client'
-import { audioPreviewInstance } from '../Masher/Preview/AudioPreview/AudioPreviewFactory.js'
-import { Preview, PreviewArgs, PreviewOptions } from '../Masher/Preview/Preview.js'
-import { PreviewClass } from '../Masher/Preview/PreviewClass.js'
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from '../../Setup/AVTypeConstants.js'
-import { DataTypeContainerId, DataTypeContentId } from '../../Setup/DataTypeConstants.js'
+import { ActionTypeChange } from '../../Setup/ActionTypeConstants.js'
 import { Default } from '../../Setup/Default.js'
 import { EmptyFunction } from '../../Setup/EmptyFunction.js'
-import { TypeClip, TypeMash } from '../../Setup/TypeConstants.js'
-import { TimingCustom } from '../../Setup/TimingConstants.js'
-import { ActionTypeChange, ActionTypeChangeFrame } from '../../Setup/ActionTypeConstants.js'
-import { EventTypeDraw, EventTypeDuration, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTime, EventTypeTracks } from '@moviemasher/runtime-client'
-import { ClipClass } from '../../Shared/Mash/Clip/ClipClass.js'
 import { isClip } from '../../Shared/Mash/Clip/ClipFunctions.js'
-
-import { MashAssetClass } from '../../Shared/Mash/MashClasses.js'
-
-import { assertTrack } from '../../Shared/Mash/Track/TrackGuards.js'
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isPositive } from '../../Shared/SharedGuards.js'
-import { assertTime } from '../../Shared/TimeGuards.js'
+import { MashAssetClass } from '../../Shared/Mash/MashAssetClass.js'
+import { assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPositive } from '../../Shared/SharedGuards.js'
 import { isTextInstance } from '../../Shared/Text/TextGuards.js'
-import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
-import { PointZero } from '../../Utility/PointConstants.js'
-import { rectsEqual } from '../../Utility/RectFunctions.js'
-import { assertSizeAboveZero, sizeCover, sizeEven } from '../../Utility/SizeFunctions.js'
+import { assertTime } from '../../Shared/TimeGuards.js'
+import { sizeAboveZero } from '../../Utility/SizeFunctions.js'
 import { sortByIndex } from '../../Utility/SortFunctions.js'
-
-import { assertClientVisibleInstance } from '../ClientGuards.js'
-import { ClientInstance, ClientVisibleInstance } from '@moviemasher/runtime-client'
-import { pixelToFrame } from '../PixelFunctions.js'
+import { audioPreviewInstance } from '../Masher/MashPreview/AudioPreview/AudioPreviewFactory.js'
+import { MashPreviewClass } from '../Masher/MashPreview/MashPreviewClass.js'
 import { ClientTrackClass } from './ClientTrackClass.js'
-import { colorFromRgb, colorRgbDifference, colorToRgb } from '../../Helpers/Color/ColorFunctions.js'
-import { idGenerate } from '../../Utility/IdFunctions.js'
+import { ClientClipClass } from './ClientClipClass.js'
 
 export type TrackClips = [ClientTrack, ClientClips]
 export type Interval = ReturnType<typeof setInterval>
 
 export class ClientMashAssetClass extends MashAssetClass implements ClientMashAsset {
-  constructor(object: MashAssetObject) {
-    super(object)
-    MovieMasher.eventDispatcher.listenersAdd(this.listeners)
-  }
-
   assetCachePromise(options: CacheOptions): Promise<void> {
     options.time ||= this.timeToBuffer
     const preloadOptions = this.cacheOptions(options)
@@ -101,7 +73,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
         insertClips.forEach(insertClip => {
           const { trackNumber: track } = insertClip
           if (isPositive(track) && track !== index) {
-            console.log(this.constructor.name, 'addClipToTrack', 'removing clip from track', track)
+            // console.log(this.constructor.name, 'addClipToTrack', 'removing clip from track', track)
             insertClip.track.removeClips([insertClip])
           }  
           if (isPositive(frame)) insertClip.frame = frame
@@ -127,17 +99,8 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     MovieMasher.eventDispatcher.dispatch(event)
     return track
   }
-  
-  protected _buffer = Default.mash.buffer
-  get buffer(): number { return this._buffer }
-  set buffer(value: number) {
-    assertAboveZero(value, 'buffer')
-  
-    if (this._buffer !== value) {
-      this._buffer = value
-      if (this._composition) this.composition.buffer = value
-    }
-  }
+
+  buffer = Default.mash.buffer
 
   private bufferStart() {
     if (this._bufferTimer) return
@@ -163,7 +126,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
 
   changeTiming(propertied: Propertied, property: string, value: number): void {
     this.emitIfFramesChange(() => {
-      propertied.setValue(value, property) 
+      propertied.setValue(property, value) 
     })
   }
 
@@ -206,7 +169,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   private compositeVisible(time: Time): void {
     this.drawingTime = time
     this.clearPreview()
-    MovieMasher.eventDispatcher.dispatch(EventTypeDraw)
+    MovieMasher.eventDispatcher.dispatch(new EventChangedPreviews())
   }
   
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
@@ -247,7 +210,8 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     this.drawRequest()
 
     if (timeChange) {
-      const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: timeFromSeconds(time.seconds, this.quantize) })
+      const { frame } = timeFromSeconds(time.seconds, this.quantize)
+      const event = new EventChangedFrame(frame)
       MovieMasher.eventDispatcher.dispatch(event)
     }
   }
@@ -317,7 +281,17 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     }
   }
 
+  override initializeProperties(object: MashAssetObject): void {
+    const { buffer } = object
+    if (isAboveZero(buffer)) this.buffer = buffer
 
+    super.initializeProperties(object)  
+
+    this.listeners[EventSize.Type] = event => event.detail.size = this.size
+    MovieMasher.eventDispatcher.listenersAdd(this.listeners)
+
+    MovieMasher.eventDispatcher.dispatch(new EventChangedSize(this.size))
+  }
 
   get loading(): boolean { 
     // console.log(this.constructor.name, 'loading', this.loadingPromises.length)
@@ -326,12 +300,7 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
 
   private loadingPromises: Promise<void>[] = []
 
-
-  declare media: ClientAssetManager
-  
   putPromise(): Promise<void> { 
-    const { quantize } = this
-    
     // make sure we've loaded fonts in order to calculate intrinsic rect
     const promises = this.clips.flatMap(clip => {
       const { container } = clip
@@ -412,20 +381,22 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   }
 
 
-  protected _preview?: Preview
-  private preview(options: PreviewOptions, masher?: Masher) { 
+  protected _preview?: MashPreview
+  private preview(options: MashPreviewOptions, masher?: Masher) { 
     return this._preview ||= this.previewInitialize(options, masher) 
   }
-  private previewInitialize(options: PreviewOptions, masher?: Masher): Preview {
-    return new PreviewClass(this.previewArgs(options, masher))
+
+
+  private previewInitialize(options: MashPreviewOptions, masher?: Masher): MashPreview {
+    return new MashPreviewClass(this.previewArgs(options, masher))
   }
 
-  private previewArgs(options: PreviewOptions = {}, masher: Masher | undefined = undefined): PreviewArgs {
+  private previewArgs(options: MashPreviewOptions = {}, masher: Masher | undefined = undefined): MashPreviewArgs {
     const clip = masher?.selection
     const selectedClip = isClip(clip) ? clip : undefined
     const { drawingTime, time, quantize } = this
     const svgTime = drawingTime || time
-    const args: PreviewArgs = {
+    const args: MashPreviewArgs = {
       selectedClip,
       time: svgTime.scale(quantize),
       mash: this,
@@ -435,9 +406,10 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     return args
   }
 
-  mashPreviewItemsPromise(masher?: Masher): Promise<PreviewItems> {
-    const options: PreviewOptions = {}
-    return this.preview(options, masher).previewItemsPromise 
+  mashPreviewsPromise(size?: Size, masher?: Masher): Promise<Previews> {
+    const options: MashPreviewOptions = { size }
+    const preview = this.preview(options, masher)
+    return preview.previewsPromise 
   }
   
 
@@ -482,25 +454,32 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       
       MovieMasher.eventDispatcher.dispatch(EventTypeSeeking)
       
-      const event: TimeEvent = new CustomEvent(EventTypeTime, { detail: timeFromSeconds(time.seconds, this.quantize) })
+      const { frame } = timeFromSeconds(time.seconds, this.quantize)
+      const event = new EventChangedFrame(frame)
       MovieMasher.eventDispatcher.dispatch(event)
     }
     return this.stopLoadAndDraw(true)
   }
 
-  selectType = TypeMash
-
   selectables(): Selectables { return [this] }
     
-  selectedItems(actions: Actions): SelectedProperties {
-    const { properties } = this
-    const items: SelectedProperties = properties.map(property => {
+  selectedProperties(actions: Actions, propertyNames: Strings): SelectedProperties {
+
+    const names = this.selectorTypesPropertyNames(propertyNames, this.targetId)
+    // console.log(this.constructor.name, 'selectedProperties', names, propertyNames)
+    return names.map(name => {
+      const property = this.propertyFind(name)
+      assertDefined(property)
+      
+      const { targetId } = property
+      const propertyId = [targetId, name].join(DotChar) as PropertyId
+
       const undoValue = this.value(property.name)
       const selectedProperty: SelectedProperty = {
         value: undoValue,
-        selectType: TypeMash, 
+        propertyId, 
         property, 
-        changeHandler: (property: string, redoValue: Scalar) => {
+        changeHandler: (property: string, redoValue?: Scalar) => {
           assertPopulatedString(property)
 
           const options: ChangePropertyActionObject = { 
@@ -514,7 +493,6 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       }
       return selectedProperty
     })
-    return items
   }
 
   private setDrawInterval(): void {
@@ -524,6 +502,35 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
     this.clearDrawInterval()
     this.drawInterval = setInterval(() => { this.handleDrawInterval() }, 500 / this.time.fps)
   }
+
+  override setValue(name: string, value?: Scalar, property?: Property): void {
+    super.setValue(name, value, property)
+    if (property) return 
+
+    switch(name) {
+      case 'buffer': {
+        if (this._composition) this.composition.buffer = Number(value)
+        break
+      }
+      case 'gain': {
+        if (this._composition) this.composition.setGain(Number(value), this.quantize) 
+        break
+      }
+      case 'aspectHeight':
+      case 'aspectWidth':
+      case 'aspectShortest': {
+        const { size } = this
+        if (sizeAboveZero(size)) {
+          MovieMasher.eventDispatcher.dispatch(new EventChangedSize(this.size))
+        } else {
+          console.trace(this.constructor.name, 'setValue', name, value, property)
+        }
+        break
+      }
+    }
+  }
+
+
 
   private stopLoadAndDraw(seeking?: boolean): Promise<void> | undefined {
     const { time, paused, playing } = this
@@ -538,6 +545,8 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
       this.restartAfterStop(time, paused, seeking)
     })
   }
+
+  targetId: TargetId = TypeMash
 
   get time() : Time {
     return this.seekTime || this.drawnTime || timeFromArgs(this._frame, this.quantize)
@@ -566,150 +575,4 @@ export class ClientMashAssetClass extends MashAssetClass implements ClientMashAs
   declare tracks: ClientTracks
 }
 
-export class ClientClipClass extends ClipClass implements ClientClip {
-  backgroundNode = (size: Size, patternedSize: Size, spacing = 0) => {
-    const { width, height } = size
-    const { color: fill } = this.track.mash
-    const rgb = colorToRgb(fill)
-    const differenceRgb = colorRgbDifference(rgb)
-    const forecolor = colorFromRgb(differenceRgb)
-    const framePolygon = svgPolygonElement(size, '', fill)
-    const spaceRect = { 
-      x: width, y: 0,
-      width: spacing, height, 
-    }
-    const spacePolygon = svgPolygonElement(spaceRect, '', forecolor)
-
-    const patternSize = { width: width + spacing, height }
-    const patternId = idGenerate('pattern')
-    const patternItems = [framePolygon, spacePolygon]
-    const pattern = svgPatternElement(patternSize, patternId, patternItems)
-    const defsElement = svgDefsElement([pattern])
-    const patternedPolygon = svgPolygonElement(patternedSize, '', svgUrl(patternId))
-    return svgSvgElement(patternedSize, [defsElement, patternedPolygon])
-  }
-
-
-  clipIcon(frameSize: Size, size: Size, scale: number, gap = 1): Promise<SvgOrImageDataOrError> {
-    const { container } = this
-    assertContainerInstance(container, 'clipIcon')
-   
-    const { mash } = this.track
- 
-    const widthAndBuffer = frameSize.width + gap
-    const cellCount = Math.ceil(size.width / widthAndBuffer)
-    const clipTime = this.timeRange
-    const { startTime } = clipTime
-    const numbers = arrayOfNumbers(cellCount)
-    // console.log(this.constructor.name, 'clipIcon', cellCount, numbers)
-
-    let pixel = 0
-    const previews = numbers.map(() => {
-      const { copy: time } = startTime
-      const previewArgs: PreviewArgs = { 
-        mash, time, clip: this, size: frameSize
-      }
-      const preview = new PreviewClass(previewArgs)
-      
-      pixel += widthAndBuffer
-      startTime.frame = clipTime.frame + pixelToFrame(pixel, scale, 'floor')
-      return preview
-    })
-    
-    let svgItemsPromise = Promise.resolve([] as SvgItems)
-    previews.forEach(preview => {
-      svgItemsPromise = svgItemsPromise.then(items => {
-        return preview.svgItemsPromise.then(svgItems => {
-          return [...items, ...svgItems]
-        })
-      })
-    })
- 
-    return svgItemsPromise.then(svgItems => {
-      // console.log(this.constructor.name, 'clipIcon svgItems', svgItems.length)
-      const point = { ...PointZero }
-      const containerSvg = svgSvgElement(size)
-      
-      svgItems.forEach(groupItem => {
-        svgSetDimensions(groupItem, point)
-        svgAppend(containerSvg, groupItem)
-        point.x += widthAndBuffer
-      })
-      return { data: containerSvg }
-    })
-  }
-
-  override get container(): ClientVisibleInstance { return super.container as ClientVisibleInstance}
-
-  override get content(): ClientInstance { return super.content as ClientInstance }
-
-  clipPreviewItemsPromise(size: Size, time: Time, component: Panel): Promise<PreviewItem> {
-    // console.log(this.constructor.name, 'clipPreviewItemsPromise', size, component)
-    assertSizeAboveZero(size)
-
-    const { container, content } = this
-    assertContainerInstance(container)
-  
-    const containerRectArgs: ContainerRectArgs = {
-      size, time, timeRange: this.timeRange, editing: true, //loading: true,
-    }
-    // console.log(this.constructor.name, 'previewItemsPromise rects', containerRectArgs)
-    const containerRects = this.rects(containerRectArgs)
-    assertTrue(rectsEqual(...containerRects))
-
-    const [containerRect] = containerRects
-    assertClientVisibleInstance(content)
-    return container.clippedPreviewItemPromise(content, containerRect, size, time, component)
-  }
-
-  selectables(): Selectables { return [this, ...this.track.selectables()] }
-
-  selectedItems(actions: Actions): SelectedProperties {
-    const selected: SelectedProperties = []
-    const { properties } = this
-    const props = properties.filter(property => this.selectedProperty(property))
-    props.forEach(property => {
-      const { name } = property
-      const isFrames = name === 'frames' || name === 'frame'
-      const undoValue = this.value(name)
-      selected.push({
-        value: undoValue,
-        selectType: TypeClip, property, 
-        changeHandler: (property: string, redoValue: Scalar) => {
-          assertPopulatedString(property)
-
-          const options: ChangePropertyActionObject = { 
-            property, target: this, redoValue, undoValue,
-            type: isFrames ? ActionTypeChangeFrame : ActionTypeChange,
-            redoSelection: actions.selection,
-            undoSelection: actions.selection,
-          }
-          actions.create(options)
-        }
-      })
-    })
-    return selected
-  }
-
-  private selectedProperty(property: Property): boolean {
-    const { name, type } = property
-    switch(type) {
-      case DataTypeContainerId:
-      case DataTypeContentId: return false
-    }
-    switch(name) {
-      case 'sizing': return this.content.asset.type !== TypeAudio
-      case 'timing': {
-        if (this.content.hasIntrinsicTiming) break
-        return !!this.container?.hasIntrinsicSizing
-      }
-      case 'frame': return !this.track.dense
-      case 'frames': return this.timing === TimingCustom
-    }
-    return true
-  }  
-  
-  declare track: ClientTrack
-
-}
 

@@ -1,57 +1,13 @@
-import type {
-  ClientRawVideoAsset,
-  ClientRawVideoInstance,
-} from '@moviemasher/lib-shared'
-import type {
-  ClientAudio,
-  ClientAudioEvent, ClientAudioEventDetail, ClientImage, ClientImageEvent,
-  ClientImageEventDetail,
-  ClientInstance,
-  ClientRawVideoAssetObject,
-  ClientVideo, ClientVideoEvent, ClientVideoEventDetail,
-  Panel,
-  PreviewItems, SvgItem,
-} from '@moviemasher/runtime-client'
+import type { ClientRawVideoAsset, ClientRawVideoInstance, } from '@moviemasher/lib-shared'
+import type { ClientAudio, ClientAudioEvent, ClientAudioEventDetail, ClientImage, ClientImageEvent, ClientImageEventDetail, ClientInstance, ClientRawVideoAssetObject, ClientVideo, ClientVideoEvent, ClientVideoEventDetail, Panel, Preview, SvgItem } from '@moviemasher/runtime-client'
 
-import type {
-  AssetCacheArgs,
-  AssetEventDetail,
-  Rect, RectOptions, Size,
-  Time, Times,
-  Transcoding, TranscodingTypes,
-  VideoInstance,
-  VideoInstanceObject,
-} from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, Rect, RectOptions, Size, Time, Times, Transcoding, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 
 
-import {
-  AudibleAssetMixin,
-  AudibleInstanceMixin,
-  ClientAudibleAssetMixin, ClientAudibleInstanceMixin,
-  ClientInstanceClass,
-  ClientRawAssetClass, ClientVisibleAssetMixin,
-  ClientVisibleInstanceMixin, EmptyFunction, NamespaceSvg,
-  SemicolonChar, TypeSequence, VideoAssetMixin,
-  VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin,
-  assertDefined,
-  assertSizeAboveZero, assertTimeRange, assertTrue, centerPoint,
-  colorWhite, endpointFromUrl, idGenerateString,
- pointCopy, sizeAboveZero, sizeCopy,
-  sizeCover, sizeString, svgAppend, svgDefsElement, svgImagePromiseWithOptions,
-  svgSet, svgSetChildren, svgSetDimensions, svgSvgElement, svgUrl, timeFromArgs,
-  timeFromSeconds,
-} from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, AudibleInstanceMixin, ClientAudibleAssetMixin, ClientAudibleInstanceMixin, ClientInstanceClass, ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, EmptyFunction, NamespaceSvg, SemicolonChar, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTimeRange, assertTrue, centerPoint, endpointFromUrl, pointCopy, sizeAboveZero, sizeCopy, sizeCover, sizeString, svgImagePromiseWithOptions, svgSetChildren, svgSetDimensions, svgSvgElement, timeFromArgs, timeFromSeconds, } from '@moviemasher/lib-shared'
 
-import { MovieMasher, EventTypeClientVideo, EventTypeClientImage, EventTypeClientAudio } from '@moviemasher/runtime-client'
-import {
-   isDefiniteError, ErrorName,
-  SourceRaw, TypeAudio, TypeImage, TypeVideo,
-  errorThrow,
-  isAssetObject,
-  isBoolean,
-  isObject,
-} from '@moviemasher/runtime-shared'
-
+import { EventAsset, EventTypeClientAudio, EventTypeClientImage, EventTypeClientVideo, MovieMasher, TypeSequence } from '@moviemasher/runtime-client'
+import { ErrorName, SourceRaw, TypeAudio, TypeImage, TypeVideo, errorThrow, isAssetObject, isBoolean, isDefiniteError, isObject, } from '@moviemasher/runtime-shared'
 
 const isClientAudio = (value: any): value is ClientAudio => {
   return isObject(value) && value instanceof AudioBuffer
@@ -235,7 +191,6 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   override initializeProperties(object: ClientRawVideoAssetObject): void {
     const { loadedVideo } = object
     if (loadedVideo) this.loadedVideo = loadedVideo
-
     super.initializeProperties(object)
   }
 
@@ -362,7 +317,21 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     })
     return Promise.all(promises).then(EmptyFunction)
   }
+
+  static handleAsset(event: EventAsset) {
+    const { detail } = event
+    const { assetObject, asset } = detail
+    if (!asset && isAssetObject(assetObject, TypeVideo, SourceRaw)) {
+      detail.asset = new ClientRawVideoAssetClass(assetObject)
+      event.stopImmediatePropagation()
+    }
+  }
 }
+
+// listen for video/raw asset event
+MovieMasher.eventDispatcher.addDispatchListener(
+  EventAsset.Type, ClientRawVideoAssetClass.handleAsset
+)
 
 const WithAudibleInstance = AudibleInstanceMixin(ClientInstanceClass)
 const WithVisibleInstance = VisibleInstanceMixin(WithAudibleInstance)
@@ -374,7 +343,7 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
 
   declare asset: ClientRawVideoAsset
 
-  containedPromise(video: ClientVideo, _content: ClientInstance, containerRect: Rect, size: Size, time: Time, _component: Panel): Promise<PreviewItems> {
+  override containedPreviewPromise(video: ClientVideo, _content: ClientInstance, containerRect: Rect, _size: Size, time: Time, _component: Panel): Promise<Preview> {
     const x = Math.round(Number(video.getAttribute('x')))
     const y = Math.round(Number(video.getAttribute('y')))
     const containerPoint = pointCopy(containerRect)
@@ -382,34 +351,31 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
     containerPoint.y -= y
 
     const zeroRect = { ...containerPoint, ...sizeCopy(containerRect) }
-    const updatableContainer = !this.asset.isVector
-    const promise: Promise<string[]> = updatableContainer ? this.stylesPromise(zeroRect, this.assetTime(time)) : Promise.resolve([])
+    const promise: Promise<string[]> = this.stylesPromise(zeroRect, this.assetTime(time))
 
     return promise.then(styles => {
-      const items: PreviewItems = []
       const { div } = this
 
       styles.push(`left: ${x}px`)
       styles.push(`top: ${y}px`)
-      if (!updatableContainer) {
-        const containerItem = this.pathElement(zeroRect)
-        containerItem.setAttribute('fill', colorWhite)
-        const clipId = idGenerateString()
-        const clipElement = globalThis.document.createElementNS(NamespaceSvg, 'clipPath')
-        svgSet(clipElement, clipId)
-        svgAppend(clipElement, containerItem)
+      // if (!updatableContainer) {
+      //   const containerItem = this.pathElement(zeroRect)
+      //   containerItem.setAttribute('fill', colorWhite)
+      //   const clipId = idGenerateString()
+      //   const clipElement = globalThis.document.createElementNS(NamespaceSvg, 'clipPath')
+      //   svgSet(clipElement, clipId)
+      //   svgAppend(clipElement, containerItem)
 
-        const svg = svgSvgElement(size)
-        svgSetChildren(svg, [svgDefsElement([clipElement])])
+      //   const svg = svgSvgElement(size)
+      //   svgSetChildren(svg, [svgDefsElement([clipElement])])
 
-        styles.push(`clip-path:${svgUrl(clipId)}`)
-        items.push(svg)
-      }
+      //   styles.push(`clip-path:${svgUrl(clipId)}`)
+      //   items.push(svg)
+      // }
       div.setAttribute('style', styles.join(SemicolonChar) + SemicolonChar)
       svgSetChildren(div, [video])
 
-      items.push(div)
-      return items
+      return div
     })
   }
   
@@ -582,13 +548,3 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
     return this._clientCanMaskVideo = !safari
   }
 }
-
-// listen for video/raw asset event
-MovieMasher.eventDispatcher.addDispatchListener<AssetEventDetail>('asset', event => {
-  const { detail } = event
-  const { assetObject, asset } = detail
-  if (!asset && isAssetObject(assetObject, TypeVideo, SourceRaw)) {
-    detail.asset = new ClientRawVideoAssetClass(assetObject)
-    event.stopImmediatePropagation()
-  }
-})

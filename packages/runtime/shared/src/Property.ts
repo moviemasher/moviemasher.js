@@ -1,25 +1,20 @@
+import { Ordered } from './Base.js'
 import type { Scalar, Scalars } from './Core.js'
-import type { DataType } from './DataType.js'
-import type { DataGroup } from './DataGroup.js'
+import type { TargetId } from './Select.js'
+import type { Typed } from './Typed.js'
 
-export interface PropertyBase {
-  custom?: boolean
-  defaultValue: Scalar
-  group?: DataGroup
+export interface Property extends Typed, Ordered {
+  name: string
+  targetId: TargetId
+  defaultValue?: Scalar
   max?: number
   min?: number
-  name: string
-  step?: number
-  tweenable?: boolean
   options?: Scalars
-}
-
-export interface Property extends PropertyBase {
-  type: DataType
+  step?: number
+  undefinedAllowed?: boolean
+  tweens?: boolean
 }
 
 export type Properties = Property[]
 
-export interface PropertyObject extends Partial<PropertyBase> {
-  type? : DataType | string
-}
+export type PropertyRecord = Record<string, Property>
