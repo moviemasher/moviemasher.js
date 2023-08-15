@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="importmap">
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Movie Masher</title>
+    <script type='importmap'>
       {
         "imports": {
           "@moviemasher/lib-shared": "./@moviemasher/lib-shared/dist/lib-shared.js",
@@ -22,9 +25,9 @@
       }
     </script>
     <script type="module">
-      import { MovieMasher } from "@moviemasher/runtime-client";
+      import { MovieMasher } from '@moviemasher/runtime-client';
       MovieMasher.options.assetObjects = '@moviemasher/lib-client/json/font.json';
-      import "@moviemasher/lib-client/movie-masher.js";
+      import '@moviemasher/lib-client/movie-masher.js';
     </script>
     <style>
       /* fit root DIV to viewport */

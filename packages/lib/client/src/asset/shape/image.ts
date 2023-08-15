@@ -2,9 +2,14 @@
 import type { ClientShapeAsset, ClientShapeInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
 import type { InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
 
-import { ClientAssetClass, ClientInstanceClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeCover, svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '@moviemasher/lib-shared'
+import { DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeCover, } from '@moviemasher/lib-shared'
 import { EventAsset, MovieMasher } from '@moviemasher/runtime-client'
 import { SourceShape, TypeImage, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
+import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../Client/SvgFunctions.js'
+import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
+import { ClientAssetClass } from '../ClientAssetClass.js'
 
 const WithAsset = VisibleAssetMixin(ClientAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)

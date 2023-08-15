@@ -1,9 +1,8 @@
-import path from 'path'
-import { 
-   SemicolonChar, NewlineChar
-} from "@moviemasher/lib-shared"
-import { StringTuple, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
+import type { StringTuple, } from '@moviemasher/runtime-shared'
 
+import { NewlineChar, SemicolonChar } from '@moviemasher/lib-shared'
+import { isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
+import path from 'path'
 
 const commandErrorRegex = [
   /Input frame sizes do not match \([0-9]*x[0-9]* vs [0-9]*x[0-9]*\)/,

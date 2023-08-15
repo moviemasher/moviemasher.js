@@ -6,9 +6,10 @@ import { createClip, createClipWithAudio, createClipWithImage } from "../../../.
 
 import { 
   ShapeContainerClass, ColorContentClass, FilterGraphInputAudible, 
-  FilterGraphInputVisible, timeFromArgs, SizeOutput, ImageClass, AudioClass, 
+  FilterGraphInputVisible, timeFromArgs, ImageClass, AudioClass, 
   GraphFileType, DefaultContentId, DefaultContainerId, AssetCollection
 } from "@moviemasher/lib-shared"
+import {SIZE_OUTPUT, TypeAudio, TypeImage, } from '@moviemasher/runtime-shared'
 
 describe("Clip", () => {
   const media = new AssetCollection()
@@ -21,7 +22,7 @@ describe("Clip", () => {
   const commandFileArgs = (clip) => {
     return { 
       time, quantize, visible: true, videoRate,
-      outputSize: SizeOutput, clipTime: clip.timeRange
+      outputSize: SIZE_OUTPUT, clipTime: clip.timeRange
     }
   } 
   const commandFilterArgs = (clip) => {
@@ -112,7 +113,7 @@ describe("Clip", () => {
       expectArrayLength(commandFiles, 2, Object)
       assert.equal(commandFiles.every(file => file.input), true)
       const [imageFile, svgFile] = commandFiles
-      assert.equal(imageFile.type, ImageType)
+      assert.equal(imageFile.type, TypeImage)
       assert.equal(svgFile.type, GraphFileType.Svg)
     })
     test("commandFilters() returns expected CommandFilters", () => {
@@ -157,7 +158,7 @@ describe("Clip", () => {
       expectArrayLength(commandFiles, 1, Object)
       const [audioFile] = commandFiles
       const { type, input } = audioFile
-      assert.equal(type, AudioType)
+      assert.equal(type, TypeAudio)
       assert.equal(input, true)
     })
     test("commandFilters() returns expected CommandFilters", () => {

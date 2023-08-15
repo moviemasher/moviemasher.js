@@ -10,7 +10,3 @@ export const TypesTarget: TargetIds = [
   TypeMash, TypeClip, TypeContent, TypeContainer, TypeAsset
 ]
 
-export const TypeJson = 'json'
-export const TypeNone = 'none'
-export const TypeSequence = 'sequence'
-export const TypeWaveform = 'waveform'

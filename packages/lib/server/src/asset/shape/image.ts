@@ -10,7 +10,7 @@ import type {
   CommandFilterArgs, VisibleCommandFilterArgs, CommandFilters, Tweening, 
 } from '@moviemasher/lib-shared'
 import {
-   isAssetObject, isBoolean, isPopulatedString, SourceShape, TypeImage 
+   POINT_ZERO, isAssetObject, isBoolean, isPopulatedString, SourceShape, TypeImage 
 } from '@moviemasher/runtime-shared'
 import { 
   EventAsset,
@@ -26,11 +26,14 @@ import {
   assertPopulatedString, commandFilesInput, tweenMaxSize, sizeEven, 
   idGenerate, sizesEqual, colorBlackOpaque, arrayLast, 
   rectsEqual, 
-  svgTransform, NamespaceSvg, 
-  colorBlack, colorWhite, POINT_ZERO, isTimeRange, assertPopulatedArray, 
+  NamespaceSvg, 
+  colorBlack, colorWhite, isTimeRange, assertPopulatedArray, 
   DefaultContainerId,
-  isTrueValue 
+  isTrueValue, 
+  rectTransformAttribute
 } from '@moviemasher/lib-shared'
+
+
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -93,7 +96,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
     const [rect, rectEnd] = containerRects
     const [color, colorEnd] = contentColors
-    const maxSize = isDefault ? rect : tweenMaxSize(...containerRects)
+    const maxSize = isDefault ? rect : tweenMaxSize(rect, rectEnd)
 
     const endRect = isDefault ? rectEnd : maxSize
 
@@ -145,8 +148,8 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     let filterInput = input 
     const alpha = this.requiresAlpha(args, !!tweening.size)
     const { isDefault } = this
-    const tweeningSize = tweening.size // !(isDefault ? rectsEqual(...containerRects) : sizesEqual(...containerRects))
-    const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
+    const tweeningSize = tweening.size 
+    const maxSize = tweeningSize ? tweenMaxSize(containerRects[0], containerRects[1]) : containerRects[0]
     const evenSize = sizeEven(maxSize)
     const contentInput = `content-${track}`
     const containerInput = `container-${track}`
@@ -234,24 +237,23 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
   private isTweeningColor(args: CommandFileArgs): boolean {
     const { contentColors } = args
-    if (!isPopulatedArray(contentColors)) return false
+    assertPopulatedArray(contentColors, 'contentColors')
+    // if (!isPopulatedArray(contentColors)) return false
 
     const [forecolor, forecolorEnd] = contentColors
-    return forecolor !== forecolorEnd
+    return contentColors.length === 2 && forecolor !== forecolorEnd
   }
 
   private isTweeningSize(args: CommandFileArgs): boolean {
     const { containerRects } = args
-    if (!isPopulatedArray(containerRects)) {
-      // console.log(this.constructor.name, 'isTweeningSize FALSE BECAUSE containerRects NOT ARRAY', args)
-      return false
-    }
-
-    const equal = rectsEqual(...containerRects)
-    // if (equal) {
-    //   // console.log(this.constructor.name, 'isTweeningSize FALSE BECAUSE containerRects EQUAL', args)
+    assertPopulatedArray(containerRects, 'containerRects')
+    // if (!isPopulatedArray(containerRects)) {
+    //   // console.log(this.constructor.name, 'isTweeningSize FALSE BECAUSE containerRects NOT ARRAY', args)
+    //   return false
     // }
-    return !equal
+    const [containerRect, containerRectEnd] = containerRects
+    return containerRects.length === 2 && !rectsEqual(containerRect, containerRectEnd)
+    
   }
 
   private requiresAlpha(args: CommandFileArgs, tweeningSize?: boolean): boolean {
@@ -299,7 +301,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width='${inWidth}' height='${inHeight}'`
 
-    const transformAttribute = svgTransform(intrinsicRect, maxSize)
+    const transformAttribute = rectTransformAttribute(intrinsicRect, maxSize)
     const tags: string[] = []
     tags.push(`<svg viewBox='0 0 ${maxWidth} ${maxHeight}' xmlns='${NamespaceSvg}'>`)
     tags.push(`<g ${dimensionsString} transform='${transformAttribute}' >`)

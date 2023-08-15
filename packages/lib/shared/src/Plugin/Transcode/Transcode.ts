@@ -2,7 +2,7 @@ import type { Output } from "../../Base/Output.js"
 import type { Plugin, TranscodeType } from '@moviemasher/runtime-shared'
 import type { OutputOptions } from "../../Helpers/Output/Output.js"
 import type { TranscodingType } from '@moviemasher/runtime-shared'
-import type { StringDataOrError } from '../../Helpers/Request/RequestDataTypes.js'
+import type { StringDataOrError } from '@moviemasher/runtime-shared'
 
 
 export interface TranscodeOutput extends Output {

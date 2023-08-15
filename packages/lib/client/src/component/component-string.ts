@@ -1,10 +1,9 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup, PropertyValues } from 'lit'
 import type { TranslationEventDetail } from '@moviemasher/runtime-client'
-import { css } from '@lit/reactive-element/css-tag.js'
+import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 
-import { Component } from '../Base/Component.js'
+import { css } from '@lit/reactive-element/css-tag.js'
 import { MovieMasher } from '@moviemasher/runtime-client'
+import { Component } from '../Base/Component.js'
 
 export class StringElement extends Component {
   private contentOrVoid?: Text | string | void 

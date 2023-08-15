@@ -19,10 +19,9 @@ const WithControlProperty = ControlPropertyMixin(Component)
 const WithControl = ControlMixin(WithControlProperty)
 export class NumericControlElement extends WithControl {
   protected override get defaultContent(): OptionalContent {
-    const { selectedProperty } = this
-    if (!selectedProperty) return
+    const { property, scalar: value } = this
+    if (!property) return
 
-    const { value, property } = selectedProperty
     const { max, min, name, step, type, options } = property
     this.setInputValue(value)
     if (options?.length) return this.inputSelectContent
@@ -41,10 +40,9 @@ export class NumericControlElement extends WithControl {
   }
 
   override get inputValue(): Scalar | undefined {
-    const { selectedProperty, input } = this
-    if (!(selectedProperty && input)) return
+    const { property, input } = this
+    if (!(property && input)) return
 
-    const { property } = selectedProperty
     const { step } = property
 
     const { value: stringValue } = input

@@ -1,19 +1,14 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup } from 'lit'
-import type { 
-  Content, Contents, Htmls, OptionalContent, LeftSlot, RightSlot, CenterSlot
-} from '../declarations.js'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
-
-import { Slotted } from './Slotted.js'
 import { Component } from './Component.js'
-import { PipeChar } from '@moviemasher/lib-shared'
+import { Slotted } from './Slotted.js'
 
-const LeftSlot: LeftSlot = 'left'
-const RightSlot: RightSlot = 'right'
-const CenterSlot: CenterSlot = 'center'
+const LeftSlot = 'left'
+const RightSlot = 'right'
+const CenterSlot = 'center'
 
 export class LeftCenterRight extends Slotted {
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
@@ -41,7 +36,7 @@ export class LeftCenterRight extends Slotted {
     return html`<span part='${RightSlot}' class='${RightSlot}'>${htmls}</span>` 
   }
   
-  override parts = [LeftSlot, CenterSlot, RightSlot].join(PipeChar)
+  override parts = [LeftSlot, CenterSlot, RightSlot].join(Slotted.partSeparator)
 
   static cssHeaderFooter = css`
     header, footer {

@@ -2,9 +2,9 @@ import type { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, Comma
 import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
 import type { PreloadArgs, ScalarRecord, Size, TextInstance, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
 
-import { LockNone, POINT_ZERO, End, ServerInstanceClass, ServerRawAssetClass, ServerTextInstance, ServerVisibleAssetMixin, ServerVisibleInstanceMixin, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertEndpoint, assertNumber, assertPopulatedString, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, endpointUrl, idGenerate, isAboveZero, isTrueValue, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { LockNone, ServerInstanceClass, ServerRawAssetClass, ServerTextInstance, ServerVisibleAssetMixin, ServerVisibleInstanceMixin, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertEndpoint, assertNumber, assertPopulatedString, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, endpointUrl, idGenerate, isAboveZero, isTrueValue, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
 import { EventAsset, GraphFileTypeTxt, MovieMasher } from '@moviemasher/runtime-server'
-import { SourceText, TypeFont, TypeImage, isAssetObject, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { SourceText, POINT_ZERO, End, TypeFont, TypeImage, isAssetObject, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -76,7 +76,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     const { height, width } = rect
  
     // console.log(this.constructor.name, 'initialCommandFilters', merging, ...containerRects)
-    const maxSize = tweenMaxSize(...containerRects) 
+    const maxSize = tweenMaxSize(rect, rectEnd) 
 
     let colorInput = ''
     const merging = !!filterInput || tweening.size

@@ -1,10 +1,14 @@
-import type { ClientRawImageAsset, ClientRawImageInstance, } from '@moviemasher/lib-shared'
-import type { ClientImage, ClientImageEvent, ClientImageEventDetail, ClientRawImageAssetObject, SvgItem } from '@moviemasher/runtime-client'
+import type { ClientImage, ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, SvgItem } from '@moviemasher/runtime-client'
 import type { AssetCacheArgs, ImageInstance, ImageInstanceObject, InstanceArgs, Rect, RectOptions, Size, Time, } from '@moviemasher/runtime-shared'
 
-import { ClientInstanceClass, ClientRawAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeContain, svgImagePromiseWithOptions, svgSvgElement, } from '@moviemasher/lib-shared'
-import { EventAsset, EventTypeClientImage, MovieMasher } from '@moviemasher/runtime-client'
+import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeContain, } from '@moviemasher/lib-shared'
+import { EventAsset, EventClientImagePromise, MovieMasher } from '@moviemasher/runtime-client'
 import { SourceRaw, TypeImage, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
+import { svgImagePromiseWithOptions, svgSvgElement } from '../../Client/SvgFunctions.js'
+import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
+import { ClientRawAssetClass } from './ClientRawAssetClass.js'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -27,11 +31,9 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     if (!transcoding) return Promise.resolve()
     
     const { request } = transcoding
-    const detail: ClientImageEventDetail = { request }
-    const event: ClientImageEvent = new CustomEvent(EventTypeClientImage, { detail })
+    const event = new EventClientImagePromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = detail
-  
+    const { promise } = event.detail
     return promise!.then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
@@ -47,10 +49,9 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     const transcoding = this.preferredTranscoding(TypeImage) || this
     if (!transcoding) return undefined
     const { request } = transcoding
-    const detail: ClientImageEventDetail = { request }
-    const event: ClientImageEvent = new CustomEvent(EventTypeClientImage, { detail })
+    const event = new EventClientImagePromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = detail
+    const { promise } = event.detail
     return promise!.then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
 
@@ -58,7 +59,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
       assertSizeAboveZero(clientImage)
 
       const { width, height, src } = clientImage
-      // console.debug(this.constructor.name, 'definitionIcon', { width, height })
+      console.debug(this.constructor.name, 'definitionIcon', { src })
 
       const inSize = { width, height }
       const coverSize = sizeContain(inSize, size)
@@ -118,10 +119,9 @@ export class ClientRawImageInstanceClass extends WithImageInstance implements Cl
     
     const { request } = requestable
 
-    const detail: ClientImageEventDetail = { request }
-    const event: ClientImageEvent = new CustomEvent(EventTypeClientImage, { detail })
+    const event = new EventClientImagePromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = detail
+    const { promise } = event.detail
 
     return promise!.then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)

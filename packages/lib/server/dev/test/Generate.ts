@@ -1,24 +1,25 @@
 
 import { 
   colorBlack, colorBlue, colorRed,
-  assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString,
-   isString,
-  assertSize, SizePreview, isSize,  TextInstanceObject,
-  InstanceObject,
+  assertPopulatedArray, assertPopulatedString, isPopulatedArray, 
+
+  assertSize, isSize, 
+
   assertInstanceObject, isInstanceObject,
-  AssetObjects,
+
   assertPoint, isPoint, 
-  errorThrow,
+
   DIRECTIONS,
-  ClipObject, MashAssetObject, TrackObject, DefaultContentId, DefaultContainerId, 
+   DefaultContentId, DefaultContainerId, 
   DurationUnknown,
-  ColorInstanceObject,
-  ImageAssetObject,
-  VideoAssetObject,
-  TypeFont,
-  TextAssetObject
+
+  sizeScale,
+  
 } from '@moviemasher/lib-shared'
-import { Point, PopulatedString, Size, SourceMash, TypeImage, TypeVideo } from '@moviemasher/runtime-shared'
+import { SIZE_OUTPUT, AssetObjects, ClipObject, ColorInstanceObject, ImageAssetObject, InstanceObject, MashAssetObject, Point, PopulatedString, Size, SourceMash, TextAssetObject, TextInstanceObject, TrackObject, TypeFont, TypeImage, TypeVideo, VideoAssetObject, errorThrow, isPopulatedString, isString } from '@moviemasher/runtime-shared'
+
+const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
+
 
 enum GeneratePoint {
   TL = 'TL',
@@ -349,24 +350,28 @@ export const generateArgsStatic = (renderTestOption: GenerateArg): string[] => {
 export const GenerateAssetObjects: AssetObjects = [
   {
     id: "puppy",
+    source: 'raw',
     type: "image",
     request: { endpoint: { pathname: "../shared/image/puppy/image.jpg" } },
     decodings: [{ type: TypeImage, data: { width: 3024, height: 4032 } }]
   } as ImageAssetObject,
   {
     id: "rgb",
+    source: 'raw',
     type: "video",
     request: { endpoint: { pathname: "../shared/video/rgb.mp4" } },
     decodings: [{ type: TypeVideo, data: {width: 512, height: 288, audible: true }}]
   } as VideoAssetObject,
   {
     id: "kitten",
+    source: 'raw',
     type: "image",
     request: { endpoint: { pathname: "../shared/image/kitten/image.jpg" } },
     decodings: [{ type: TypeImage, data: {width: 4592, height: 3056}}]
   } as ImageAssetObject,
   {
     id: "font.valken",
+    source: 'text',
     type: TypeImage,
     label: "Valken",
     request: { endpoint: { pathname: "../shared/font/valken/valken.ttf" } },
@@ -376,6 +381,7 @@ export const GenerateAssetObjects: AssetObjects = [
   } as TextAssetObject,
   {
     type: "video",
+    source: 'raw',
     label: "Video", 
     id: "video",
     request: { endpoint: { pathname: "../shared/video/dance.mp4" } },

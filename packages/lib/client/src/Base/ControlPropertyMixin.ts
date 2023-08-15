@@ -2,23 +2,21 @@ import type { Constrained, PropertyId, TargetId } from '@moviemasher/runtime-sha
 import type { PropertyDeclarations } from 'lit'
 import type { ControlProperty } from '../declarations.js'
 
-import { EventAssetObject, EventChangedAssetObject, EventChangedClipId, EventChangedMashAsset, EventClipId, EventMashAsset, MovieMasher, TypeAsset, TypeMash, isTargetId } from '@moviemasher/runtime-client'
+import { EventAssetId, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventMashAsset, MovieMasher, TypeAsset, TypeMash, isTargetId } from '@moviemasher/runtime-client'
 import { DotChar } from '@moviemasher/runtime-shared'
 import { Component } from './Component.js'
-import { assertDefined } from '@moviemasher/lib-shared'
 
 export function ControlPropertyMixin
 <T extends Constrained<Component>>(Base: T): 
 T & Constrained<ControlProperty> {
   return class extends Base implements ControlProperty {
-
     override connectedCallback(): void {
       const { targetId } = this
       if (isTargetId(targetId)) {
         // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
         switch (targetId) {
           case TypeAsset: {
-            this.listeners[EventChangedAssetObject.Type] = this.handleChangedAssetObject.bind(this)
+            this.listeners[EventChangedAssetId.Type] = this.handleChangedAssetId.bind(this)
             break
           }
           case TypeMash: {
@@ -34,23 +32,20 @@ T & Constrained<ControlProperty> {
       super.connectedCallback()
     }
 
-    protected handleChangedAssetObject(event: EventChangedAssetObject): void {
-      const { detail: assetObject } = event
-      const id = assetObject?.id
-      console.log(this.tagName, 'handleChangedAssetObject', id) 
-      this.selectedId = id
+    protected handleChangedAssetId(event: EventChangedAssetId): void {
+      this.selectedId = event.detail
     }
 
     protected handleChangedClipId(event: EventChangedClipId): void {
       const { detail: id } = event
-      console.log(this.tagName, 'handleChangedClipId', id)
+      // console.log(this.tagName, 'handleChangedClipId', id)
       this.selectedId = id
     }
 
     protected handleChangedMashAsset(event: EventChangedMashAsset): void {
       const { detail: mashAsset } = event
       const id = mashAsset?.id  
-      console.log(this.tagName, 'handleChangedMashAsset', id)
+      // console.log(this.tagName, 'handleChangedMashAsset', id)
       this.selectedId = id
     }
 
@@ -63,7 +58,7 @@ T & Constrained<ControlProperty> {
       if (selectedId) return selectedId
 
       const { targetId } = this
-      assertDefined<TargetId>(targetId, 'propertyIdTargetId')
+      if (!targetId) return
 
       switch (targetId) {
         case TypeMash: {
@@ -74,9 +69,9 @@ T & Constrained<ControlProperty> {
           return id
         }
         case TypeAsset: {
-          const event = new EventAssetObject() 
+          const event = new EventAssetId() 
           MovieMasher.eventDispatcher.dispatch(event)
-          const id = event.detail.assetObject?.id
+          const id = event.detail.assetId
           if (!id) console.log(this.tagName, 'selectedIdDefined', targetId, id, event.detail)
           return id
         }

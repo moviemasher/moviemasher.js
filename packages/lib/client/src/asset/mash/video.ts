@@ -1,9 +1,16 @@
-import type { ClientMashVideoAsset, ClientMashVideoInstance,  } from '@moviemasher/runtime-client'
-import type { MashAssetObject, } from '@moviemasher/runtime-shared'
+import type { ClientMashVideoAsset, ClientMashVideoInstance, } from '@moviemasher/runtime-client'
+import type { InstanceArgs, MashAssetObject, MashInstanceObject, } from '@moviemasher/runtime-shared'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, ClientAudibleAssetMixin, ClientAudibleInstanceMixin, ClientInstanceClass, ClientMashAssetClass, ClientVisibleAssetMixin, ClientVisibleInstanceMixin, NonePreview, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, timeFromArgs, } from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, timeFromArgs, } from '@moviemasher/lib-shared'
 import { EventAsset, MovieMasher } from '@moviemasher/runtime-client'
 import { SourceMash, TypeVideo, isAssetObject } from '@moviemasher/runtime-shared'
+import { NonePreview } from '../../Client/Masher/MashPreview/NonePreview.js'
+import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
+import { ClientAudibleAssetMixin } from '../Audible/ClientAudibleAssetMixin.js'
+import { ClientAudibleInstanceMixin } from '../Audible/ClientAudibleInstanceMixin.js'
+import { ClientMashAssetClass } from './ClientMashAssetClass.js'
 
 const WithAudibleAsset = AudibleAssetMixin(ClientMashAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
@@ -44,5 +51,10 @@ const WithClientVisibleInstance = ClientVisibleInstanceMixin(WithClientAudibleIn
 const WithVideoInstance = VideoInstanceMixin(WithClientVisibleInstance)
 
 export class ClientMashVideoInstanceClass extends WithVideoInstance implements ClientMashVideoInstance {
+  constructor(args: MashInstanceObject & InstanceArgs) {
+    super(args)
+    this.initializeProperties(args)
+  }
+
   declare asset: ClientMashVideoAsset
 }

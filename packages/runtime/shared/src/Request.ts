@@ -2,7 +2,6 @@ import type { StringRecord } from './Core.js'
 import type { Endpoint } from './Endpoint.js'
 
 export interface EndpointRequest {
-  response?: any | undefined
   endpoint?: Endpoint | string
   init?: RequestInit
 }
@@ -13,3 +12,4 @@ export interface RequestInit {
   headers?: StringRecord
   method?: string
 }
+

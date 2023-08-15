@@ -3,13 +3,12 @@ import type { Constrained, Property, Scalar } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations, PropertyValues } from 'lit'
 import type { Control, ControlInput, ControlProperty, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { EventChangeFrame, EventChanged, EventSelectedProperties, EventValue, MovieMasher, isPropertyId } from '@moviemasher/runtime-client'
+import { End } from '@moviemasher/runtime-shared'
+import { EventChangeFrame, EventChangeScalar, EventChanged, EventScalar, EventSelectedProperties, EventTimeRange, MovieMasher, isPropertyId } from '@moviemasher/runtime-client'
 import { isDefined } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from './Component.js'
 import { ControlPropertyProperties } from './ControlPropertyMixin.js'
-
-import { End, assertDefined, isAction, isChangeAction, isChangePropertyAction, isPositive } from '@moviemasher/lib-shared'
 
 export function ControlMixin
 <T extends Constrained<Component & ControlProperty>>(Base: T): 
@@ -24,63 +23,42 @@ T & Constrained<Control> {
       const { propertyId } = this
       if (!propertyId) return false
   
-      const event = new EventValue(propertyId)
+      const event = new EventScalar(`${propertyId}${End}`)
       MovieMasher.eventDispatcher.dispatch(event)
       return isDefined(event.detail.value)
     }
     
     private handleChanged(event: EventChanged): void {
       const { propertyId } = this
-      assertDefined(propertyId)
+      if (!propertyId) return
 
       const { detail: action } = event
-      if (!action?.affects.includes(propertyId)) {
-        console.debug(this.tagName, propertyId, 'handleChanged NOT AFFECTS?', propertyId, action?.affects)
-        return
-      }
-      if (isChangePropertyAction(action)) {
-        const { selectedPropertyOrLoad } = this
-        if (!(selectedPropertyOrLoad)) return
-
-        const { value } = action
-        // console.log(this.tagName, 'handleChanged', propertyId, selectedPropertyOrLoad.value, '->', value)
-        if (value === selectedPropertyOrLoad.value) {
-          console.log(this.tagName, propertyId, 'handleChanged NO CHANGE', value)
-
-          return
-        }
-
-        this.handleChangedValue(value)
-      } else {
-        console.log(this.tagName, propertyId, 'handleChanged NOT isChangePropertyAction', isAction(action), isChangeAction(action))
-        this.selectedProperty = this.selectedPropertyInitialize  
-      }
+      if (!action?.affects.includes(propertyId)) return
+      
+      this.setInputValue(this.scalar)
     }
 
-    private handleChangedValue(value?: Scalar) {
-      const { selectedPropertyOrLoad } = this
-      if (!selectedPropertyOrLoad) return
-
-      this.setInputValue(value)
-      console.log(this.tagName, 'handleChangedValue', selectedPropertyOrLoad.value, '->', value)
-      selectedPropertyOrLoad.value = value
-    }
-    
     handleInput(): void {
-      const { selectedProperty, input } = this
-      if (!(selectedProperty && input)) return
+      const { selectedProperty, input, propertyId } = this
+      if (!(selectedProperty && input && propertyId)) return
   
-      const { changeHandler, property, frame } = selectedProperty
-      const { name } = property
       const { inputValue } = this
-      if (isPositive(frame)) {
-        if (name.endsWith(End) || this.endValueDefined) {
-          console.debug(this.tagName, 'handleInput going to frame', frame, name, inputValue, this.endValueDefined)
+      const isEnd = propertyId.endsWith(End)
+      if (isEnd || this.endValueDefined) {
+        // console.debug(this.tagName, propertyId, 'handleInput END DEFINED')
+        const event = new EventTimeRange()
+        MovieMasher.eventDispatcher.dispatch(event)
+        const { detail: { timeRange } } = event
+        if (timeRange) {
+          const frame = isEnd ? timeRange.last : timeRange.frame
+          // console.debug(this.tagName, propertyId, 'handleInput GOING', frame)
           MovieMasher.eventDispatcher.dispatch(new EventChangeFrame(frame))
         }
       }
-      this.selectedProperty!.value = inputValue
-      changeHandler(name, inputValue)
+      // console.debug(this.tagName, this.propertyId, 'handleInput', inputValue)
+      selectedProperty.value = inputValue
+
+      MovieMasher.eventDispatcher.dispatch(new EventChangeScalar(propertyId, inputValue))
     }
 
     get input(): ControlInput | undefined {
@@ -95,19 +73,16 @@ T & Constrained<Control> {
     }
 
     get inputSelectContent(): OptionalContent {
-      const { selectedProperty } = this
-      if (!selectedProperty) return
-  
-      const { property, value } = selectedProperty
+      const { property } = this
+      if (!property) return
+    
       const { name, options = [] } = property
+      const value = this.scalar
       const htmls = options.map(id => html`
         <option ?selected='${value === id}' value='${id}'>${id}</option>
       `)
       return html`
-        <select 
-          @input='${this.handleInput}'
-          name='${name}' 
-        >${htmls}</select>
+        <select @input='${this.handleInput}' name='${name}'>${htmls}</select>
       `
     }
 
@@ -118,6 +93,15 @@ T & Constrained<Control> {
 
     get property(): Property | undefined {
       return this.selectedPropertyOrLoad?.property
+    }
+
+    get scalar(): Scalar | undefined {
+      const { propertyId } = this
+      if (!propertyId) return
+
+      const event = new EventScalar(propertyId)
+      MovieMasher.eventDispatcher.dispatch(event)
+      return event.detail.value
     }
 
     selectedProperty?: SelectedProperty
@@ -138,7 +122,7 @@ T & Constrained<Control> {
       const { length } = selectedProperties
       switch (length) {
         case 0: {
-          console.warn(this.tagName, 'selectedPropertyInitialize', 'no selectedProperties')
+          // console.warn(this.tagName, 'selectedPropertyInitialize', 'no selectedProperties')
           return
         }
         case 1: break
@@ -150,22 +134,22 @@ T & Constrained<Control> {
       return property
     }
 
-    
-    setInputValue(value?: Scalar): void {
+    setInputValue(value?: Scalar): boolean {
       const { input } = this
-      if (!(input && isDefined(value))) return
+      if (!(input && isDefined(value))) return false
       
+      if (value === this.inputValue) return false
+
       if (input instanceof HTMLInputElement && input.type === 'checkbox') {
         input.checked = Boolean(value)
-        return
-      }
-      input.value = String(value)
+      } else input.value = String(value)        
+      return true
     }
 
     protected override willUpdate(changedProperties: PropertyValues<this>): void {
       super.willUpdate(changedProperties)
       if (changedProperties.has('selectedId')) {
-        console.debug(this.tagName, 'willUpdate selectedId', this.selectedId)
+        // console.debug(this.tagName, 'willUpdate selectedId', this.selectedId)
         this.selectedProperty = this.selectedPropertyInitialize
       }
     }

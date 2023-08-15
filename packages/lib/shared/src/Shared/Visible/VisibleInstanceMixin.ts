@@ -6,12 +6,12 @@ import type {Time} from '@moviemasher/runtime-shared'
 import { assertSizeAboveZero, sizeAboveZero } from '../../Utility/SizeFunctions.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
-import { POINT_ZERO } from '../../Utility/PointConstants.js'
+import { POINT_ZERO } from '@moviemasher/runtime-shared'
 import { rectFromSize } from '../../Utility/RectFunctions.js'
 import { Constrained } from '@moviemasher/runtime-shared'
 import { VisibleAsset } from '@moviemasher/runtime-shared'
 import { Instance, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
-import { End } from '../../Base/PropertiedConstants.js'
+import { End } from '@moviemasher/runtime-shared'
 import { TypeContainer, TypeContent } from '@moviemasher/runtime-client'
 
 export function VisibleInstanceMixin
@@ -58,22 +58,17 @@ T & Constrained<VisibleInstance> {
       super.initializeProperties(object)
     }
 
-    intrinsicRect(editing = false): Rect {
-      const key = editing ? 'previewSize' : 'sourceSize'
-      const { [key]: size } = this.asset
-      assertSizeAboveZero(size, key)
+    intrinsicRect(_editing?: boolean): Rect {
+      const { sourceSize: size } = this.asset
+      assertSizeAboveZero(size)
+
       const rect = { ...POINT_ZERO, ...size } 
       // console.log(this.constructor.name, 'intrinsicRect', editing, rect)
       return rect
     }
     
     intrinsicsKnown(options: IntrinsicOptions): boolean {
-      const { editing, size } = options
-      if (!size) return true
-      
-      const key = editing ? 'previewSize' : 'sourceSize'
-      const { [key]: definitionSize} = this.asset
-      return sizeAboveZero(definitionSize)
+      return options.size ? sizeAboveZero(this.asset.sourceSize) : true
     }
 
     itemContentRect(containerRect: Rect, shortest: PropertySize, time: Time): Rect {

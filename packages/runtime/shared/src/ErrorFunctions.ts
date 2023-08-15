@@ -5,16 +5,13 @@ import { isObject } from './TypeofGuards.js'
 
 export type ErrorContext = ValueRecord | string | undefined
 
-
 export const isErrorName = (value: any): value is ErrorName => (
   (typeof value === 'string') && ErrorNames.includes(value as ErrorName)
 )
 
-export const errorMessage = (name: ErrorName, context?: ErrorContext): string => {
-  if (typeof context === 'string') return context
-
-  return name
-}
+export const errorMessage = (name: ErrorName, context?: ErrorContext): string => (
+  typeof context === 'string' ? context : name
+)
 
 export const errorObject = (message: string, name: string = ErrorName.Internal, cause?: unknown): ErrorObject => {
   const error = new Error(message)
@@ -39,7 +36,6 @@ export const errorName = (name: ErrorName, context?: ErrorContext): ErrorObject 
 export const errorCaught = (error: any): DefiniteError => (
   { error: errorObjectCaught(error) }
 )
-
 
 export const errorPromise = (name: ErrorName, context?: ErrorContext): Promise<DefiniteError & any> => (
   Promise.resolve(error(name, context))
@@ -73,4 +69,3 @@ export const error = (code: ErrorName, context?: ErrorContext): DefiniteError =>
 export const isDefiniteError = (value: any): value is DefiniteError => {
   return isObject(value) && 'error' in value && isObject(value.error)
 }
-

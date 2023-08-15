@@ -1,13 +1,14 @@
-import type { ImportAssetObjectsEventDetail, ImportEvent, ImportEventDetail, ImportersEventDetail } from '../../declarations.js'
-import type { ClientAudioEvent, ClientAudioEventDetail, ClientFontEvent, ClientFontEventDetail, ClientImageEvent, ClientImageEventDetail, ClientImporter, ClientRawAssetObject, ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject, ClientTextAssetObject, ClientVideoEvent, ClientVideoEventDetail } from '@moviemasher/runtime-client'
-import type { AssetObject, AssetObjects, DecodingObject, DecodingObjects, EndpointRequest, ImportType } from '@moviemasher/runtime-shared'
 import type { ProbingData } from '@moviemasher/lib-shared'
+import type { ClientImporter, ClientRawAssetObject, ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject, ClientTextAssetObject, MediaRequest } from '@moviemasher/runtime-client'
+import type { AssetObject, AssetObjects, DecodingObject, DecodingObjects, ImportType } from '@moviemasher/runtime-shared'
+import type { ImportersEventDetail } from '../../declarations.js'
 
+import { IdTemporaryPrefix } from '@moviemasher/lib-shared'
+
+import { EventClientAudioPromise, EventClientFontPromise, EventClientImagePromise, EventClientVideoPromise, EventImport, EventImporterChange, MovieMasher } from '@moviemasher/runtime-client'
+import { EventTypeImporters, SourceRaw, SourceText, TypeAudio, TypeFont, TypeImage, TypeProbe, TypeVideo, TypesImport, isAudibleAssetType, isDefiniteError, isImportType } from '@moviemasher/runtime-shared'
 import { LitElement } from 'lit-element/lit-element.js'
 import { html } from 'lit-html/lit-html.js'
-
-import { EventTypeImporters, isDefiniteError, SourceRaw, SourceText, TypeAudio, TypeFont, TypeImage, TypeProbe, TypeVideo, TypesImport, isAudibleAssetType, isImportType } from '@moviemasher/runtime-shared'
-import { MovieMasher, EventTypeClientVideo, EventTypeClientImage, EventTypeClientFont, EventTypeClientAudio, EventTypeImporterChange, EventTypeImportRaw } from '@moviemasher/runtime-client'
 
 const ClientRawElementName = 'movie-masher-client-raw'
 
@@ -17,16 +18,13 @@ export class ClientRawElement extends LitElement {
     console.log(this.tagName, 'handleChange', fileList)
     if (!fileList?.length) return
     
-    const detail: ImportEventDetail = { fileList }
-    const event = new CustomEvent(EventTypeImportRaw, { detail })
+    const event = new EventImport(fileList)
     MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = detail
+    const { promise } = event.detail
     if (!promise) return
 
-    promise.then((assetObjects: AssetObjects) => {
-      const detail: ImportAssetObjectsEventDetail = { assetObjects }
-      const event = new CustomEvent(EventTypeImporterChange, { detail })
-      MovieMasher.eventDispatcher.dispatch(event)
+    promise.then((assetObjects) => {
+      MovieMasher.eventDispatcher.dispatch(new EventImporterChange(assetObjects))
     })
   }
 
@@ -103,31 +101,29 @@ const accept = (): string => {
 
 const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObject | void> => {
   const { name: label } = file
-  const request: EndpointRequest = { response: file }
+  const request: MediaRequest = { file, objectUrl: URL.createObjectURL(file) }
 
   // we can't reliably tell if there is an audio track so we assume there is 
   // one, and catch problems if it's played before decoded
-  const info: ProbingData = {
-    audible: isAudibleAssetType(type)// TypesAudible.includes(type) 
-  }
+  const info: ProbingData = { audible: isAudibleAssetType(type) }
   const decoding: DecodingObject = { data: info, type: TypeProbe }
   const decodings: DecodingObjects = [decoding]
-  const id = `temporary-${crypto.randomUUID()}`
+  const id = `${IdTemporaryPrefix}-${crypto.randomUUID()}`
   const shared: ClientRawAssetObject = { 
-    type: TypeImage, label, request, decodings, id, source: SourceRaw 
+    type: TypeImage, label, request, decodings, id, source: SourceRaw,
   }
-
+ 
   switch (type) {
     case TypeAudio: {
-      const detail: ClientAudioEventDetail = { request }
-      const event: ClientAudioEvent = new CustomEvent(EventTypeClientAudio, { detail })
+      
+      const event = new EventClientAudioPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
-      const { promise } = detail
+      const { promise } = event.detail
       return promise!.then(orError => {
         if (isDefiniteError(orError)) return 
 
         const { data: loadedAudio } = orError
-
+        request.response = loadedAudio
         const { duration } = loadedAudio
         info.duration = duration
         const object: ClientRawAudioAssetObject = { ...shared, type, loadedAudio }
@@ -135,17 +131,14 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
       })
     }
     case TypeImage: {
-      const detail: ClientImageEventDetail = { request }
-      const event: ClientImageEvent = new CustomEvent(EventTypeClientImage, { detail })
+      const event = new EventClientImagePromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
-      const { promise } = detail
+      const { promise } = event.detail
       return promise!.then(orError => {
-
         if (isDefiniteError(orError)) return 
 
         const { data: image } = orError
-
-
+        request.response = image
         const { width, height } = image
         info.width = width
         info.height = height
@@ -155,15 +148,14 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
       })
     }
     case TypeVideo: {
-      const detail: ClientVideoEventDetail = { request }
-      const event: ClientVideoEvent = new CustomEvent(EventTypeClientVideo, { detail })
+      const event = new EventClientVideoPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
-      const { promise } = detail
+      const { promise } = event.detail
       return promise!.then(orError => {
         if (isDefiniteError(orError)) return 
 
         const { data: video } = orError
-
+        request.response = video
         const { duration, videoWidth, clientWidth, videoHeight, clientHeight } = video
         const width = videoWidth || clientWidth
         const height = videoHeight || clientHeight
@@ -175,14 +167,14 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
       })
     }
     case TypeFont: {
-      const detail: ClientFontEventDetail = { request }
-      const event: ClientFontEvent = new CustomEvent(EventTypeClientFont, { detail })
+      const event = new EventClientFontPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
-      const { promise } = detail
+      const { promise } = event.detail
       return promise!.then(orError => {
         if (isDefiniteError(orError)) return 
 
         const { data: font } = orError
+        request.response = font
         const object: ClientTextAssetObject = { 
           ...shared, source: SourceText, loadedFont: font 
         }
@@ -226,7 +218,7 @@ const fileMedia = (file: File): Promise<AssetObject | void> => {
   return fileAssetObjectPromise(file, type)
 }
 
-const handleImport = (event: ImportEvent) => {
+const handleImport = (event: EventImport) => {
   const { detail } = event
   const { fileList } = detail
   const media: AssetObjects = []
@@ -240,10 +232,15 @@ const handleImport = (event: ImportEvent) => {
   })
   detail.promise = promise.then(mediaObject => {
     if (mediaObject) media.push(mediaObject)
-    return media
+
+
+    return media//.map(mediaObject => {
+    //   MovieMasher.eventDispatcher.dispatch(new EventManagedAsset(mediaObject, ManageTypeImport))
+    //   return mediaObject.id
+    // })
   })
   event.stopPropagation()
 }
 
 // listen for import event
-MovieMasher.eventDispatcher.addDispatchListener(EventTypeImportRaw, handleImport)
+MovieMasher.eventDispatcher.addDispatchListener(EventImport.Type, handleImport)

@@ -22,7 +22,6 @@ export const decode = (localPath: string, output: DecodeOutput) => {
     if (isDefiniteError(orError)) return orError
 
     const { data: plugin } = orError
-    const { decode } = plugin //as DecodePlugin
-    return decode(localPath, options)
+    return plugin.decode(localPath, options)
   })
 }

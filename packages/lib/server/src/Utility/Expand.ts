@@ -1,9 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-import { execSync } from 'child_process'
+import type { JsonRecord } from '@moviemasher/runtime-shared'
 
 import { JsonExtension, TextExtension } from '@moviemasher/lib-shared'
-import { JsonRecord } from '@moviemasher/runtime-shared'
+import { execSync } from 'child_process'
+import fs from 'fs'
+import path from 'path'
 
 
 export const expandCommand = (command: string): string => { 

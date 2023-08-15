@@ -1,10 +1,19 @@
-import type { MovieMasherRuntime, RequestObject } from '@moviemasher/runtime-shared'
-import type { Masher } from './Masher.js'
+import type { MovieMasherClientRuntime } from './ClientTypes.js'
 
 import { ClientEventDispatcher } from './ClientEventDispatcher.js'
-import { MovieMasherClientRuntime } from './ClientTypes.js'
+import { RequestObject } from './Requestable.js'
 
-export const MovieMasher: MovieMasherClientRuntime = {
-  eventDispatcher: new ClientEventDispatcher(),
-  options: {},
+export class MovieMasherClient implements MovieMasherClientRuntime {
+  constructor() {
+    this.options = {
+      assetObjectOptions: { request: {} },
+      assetObjectsOptions: { request: {} },
+      iconOptions: { request: {} },
+    }
+  }
+  options: { assetObjectOptions?: RequestObject | undefined; assetObjectsOptions?: RequestObject | undefined; iconOptions?: RequestObject | undefined }
+  eventDispatcher = new ClientEventDispatcher()
+
 }
+
+export const MovieMasher = new MovieMasherClient()

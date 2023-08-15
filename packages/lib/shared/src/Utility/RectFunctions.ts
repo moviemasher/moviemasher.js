@@ -1,9 +1,9 @@
 import type { Point, PointTuple } from '@moviemasher/runtime-shared'
 import type { Size, SizeTuple } from '@moviemasher/runtime-shared'
 import { errorThrow } from '@moviemasher/runtime-shared'
-import { POINT_ZERO } from './PointConstants.js'
+import { POINT_ZERO } from '@moviemasher/runtime-shared'
 import { isPoint, pointCopy, pointRound, pointsEqual, pointString } from './PointFunctions.js'
-import { isSize, sizeCopy, sizeRound, sizesEqual, sizeString } from './SizeFunctions.js'
+import { assertSizeAboveZero, isSize, sizeCopy, sizeRound, sizesEqual, sizeString } from './SizeFunctions.js'
 import { SemicolonChar } from '../Setup/Constants.js'
 import { Rect, RectTuple } from '@moviemasher/runtime-shared'
 
@@ -61,3 +61,26 @@ export const rectString = (dimensions: any): string => {
     bits.push(pointString(dimensions))
   return bits.join(SemicolonChar)
 }
+
+
+export const rectTransformAttribute = (dimensions: Rect | Size, rect: Rect): string => {
+  assertSizeAboveZero(dimensions, 'svgTransform.dimensions')
+  assertSizeAboveZero(rect, 'svgTransform.rect')
+
+  const { width: inWidth, height: inHeight } = dimensions
+  const { width: outWidth, height: outHeight, x: outX, y: outY } = rect
+  const scaleWidth = outWidth / inWidth 
+  const scaleHeight = outHeight / inHeight 
+  const words: string[] = []
+  if (!(outX === 0 && outY === 0)) words.push(`translate(${outX},${outY})`)
+
+  if (!(scaleWidth === 1 && scaleHeight === 1)) {
+    words.push(`scale(${scaleWidth},${scaleHeight})`)
+  }
+  if (isPoint(dimensions)) {
+    const { x: inX, y: inY } = (dimensions)
+    if (!(inX === 0 && inY === 0)) words.push(`translate(${inX},${inY})`)
+  }
+  return words.join(' ')
+}
+

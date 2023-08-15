@@ -1,28 +1,20 @@
-import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, Instance, InstanceArgs, InstanceCacheArgs, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { TypeContainer, TypeContent } from '@moviemasher/runtime-client'
-import { TypeAudio, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
-
+import { Aspect, Crop, End, RECT_ZERO, TypeAudio, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
-import { Aspect, Crop, End } from "../../Base/PropertiedConstants.js"
 import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
 import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
-import { tweenColorStep, numberRecord, tweenNumberStep, tweenRectsContainer, tweenRectsContent } from '../Utility/Tween/TweenFunctions.js'
 import { DataTypeBoolean, DataTypePercent, DataTypeString } from "../../Setup/DataTypeConstants.js"
 import { Default } from '../../Setup/Default.js'
 import { DIRECTIONS, DIRECTIONS_SIDE } from '../../Setup/DirectionConstants.js'
 import { AspectFlip, Aspects, LockShortest, Locks } from '../../Setup/LockConstants.js'
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
-import { RECT_ZERO } from '../../Utility/RectConstants.js'
 import { sizeAboveZero } from "../../Utility/SizeFunctions.js"
 import { assertDefined, assertNumber, assertPopulatedString } from '../SharedGuards.js'
 import { isTimeRange } from "../TimeGuards.js"
-
-
-
-
+import { numberRecord, tweenColorStep, tweenNumberStep, tweenRectsContainer, tweenRectsContent } from '../Utility/Tween/TweenFunctions.js'
 
 export class InstanceClass extends PropertiedClass implements Instance {
   constructor(object: InstanceArgs) {
@@ -41,7 +33,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
   }
   
   assetTime(mashTime : Time) : Time {
-    const range = this.clip.timeRange
+    const { timeRange:range } = this.clip
 
     const { fps: quantize, startTime, endTime } = range
     const scaledTime = mashTime.scaleToFps(quantize) // may have fps higher than quantize and time.fps
@@ -84,12 +76,6 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return tweenRectsContent(tweenRects, intrinsicRect, containerRects, lock, shortest)
   }
   
-  get sideDirectionRecord(): SideDirectionRecord {
-    return Object.fromEntries(DIRECTIONS_SIDE.map(direction => 
-      [direction, Boolean(this.value(`${direction}Crop`))]
-    ))
-  }
-
   get directions() { return DIRECTIONS }
   
   frames(quantize: number): number {
@@ -106,27 +92,26 @@ export class InstanceClass extends PropertiedClass implements Instance {
   get id(): string { return this._id ||= idGenerateString() }
 
   override initializeProperties(object: InstanceArgs): void {
-    const { container } = this
+    const { container, targetId } = this
   
     if (container) {
       DIRECTIONS_SIDE.forEach(direction => {
         this.properties.push(propertyInstance({
-          targetId: TypeContainer, name: `${direction}${Crop}`, 
+          targetId, name: `${direction}${Crop}`, 
           type: DataTypeBoolean, defaultValue: false, 
         }))
       })
       this.properties.push(propertyInstance({
-        targetId: TypeContainer, name: 'opacity', type: DataTypePercent, 
+        targetId, name: 'opacity', type: DataTypePercent, 
         defaultValue: 1.0, min: 0.0, max: 1.0, step: 0.01, tweens: true,
       }))       
       this.properties.push(propertyInstance({
-        targetId: TypeContainer, name: `opacity${End}`, 
+        targetId, name: `opacity${End}`, 
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
         min: 0.0, max: 1.0, step: 0.01,
       }))       
     } 
     if (container || !this.isDefaultOrAudio) {
-      const targetId = container ? TypeContainer : TypeContent
 
       this.properties.push(propertyInstance({
         targetId, name: 'x', type: DataTypePercent, defaultValue: 0.5,
@@ -169,6 +154,10 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return this.asset.assetCachePromise(options)
   }
 
+  get instanceObject(): InstanceObject {
+    return this.scalarRecord
+  }
+
   intrinsicRect(_ = false): Rect { return RECT_ZERO }
 
   intrinsicsKnown(options: IntrinsicOptions): boolean { return true }
@@ -200,6 +189,13 @@ export class InstanceClass extends PropertiedClass implements Instance {
   opacityEnd?: number 
 
   declare pointAspect: string
+
+  get sideDirectionRecord(): SideDirectionRecord {
+    return Object.fromEntries(DIRECTIONS_SIDE.map(direction => 
+      [direction, Boolean(this.value(`${direction}Crop`))]
+    ))
+  }
+
   declare sizeAspect: string
 
   toJSON(): UnknownRecord {
@@ -209,7 +205,10 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
   private tween(keyPrefix: string, time: Time, range: TimeRange): Scalar {
     const value = this.value(keyPrefix)
-    assertDefined<Scalar>(value)
+    if (isUndefined(value)) {
+      console.error(this.constructor.name, 'tween', keyPrefix, 'value undefined', this.properties.map(property => property.name))
+    }
+    assertDefined<Scalar>(value, keyPrefix)
 
     const valueEnd = this.value(`${keyPrefix}${End}`)
     if (isUndefined(valueEnd)) return value

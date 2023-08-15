@@ -1,5 +1,6 @@
-import {Transcoding, TranscodingObject} from '@moviemasher/runtime-shared'
-import {TranscodingClass} from './TranscodingClass.js'
+import type { Transcoding, TranscodingObject } from '@moviemasher/runtime-client'
+
+import { TranscodingClass } from './TranscodingClass.js'
 
 export const transcodingInstance = (object: TranscodingObject): Transcoding => {
   // console.log('transcodingInstance', object)

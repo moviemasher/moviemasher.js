@@ -1,4 +1,4 @@
-import type { Lock, Size, Rect } from '@moviemasher/runtime-shared'
+import type { Size, Rect } from '@moviemasher/runtime-shared'
 
 import { isNumber, isObject, errorThrow } from '@moviemasher/runtime-shared'
 
@@ -145,3 +145,14 @@ export const sizeFlip = (size: Size): Size => {
   const { width, height } = size
   return { width: height, height: width }
 }
+
+export const sizeTranslate = (size: Size, translate: Size, negate = false): Size => {
+  const { width, height } = size
+  const negator = negate ? -1 : 1
+  return { 
+    width: width + translate.width * negator, 
+    height: height + translate.height * negator 
+  }
+}
+
+

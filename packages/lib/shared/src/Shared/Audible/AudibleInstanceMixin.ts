@@ -9,7 +9,7 @@ import type { AudibleInstance, AudibleInstanceObject, Instance } from '@moviemas
 
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
 import { assertAboveZero, assertPopulatedString, isAboveZero, isPositive } from '../SharedGuards.js'
-import { isString } from "@moviemasher/runtime-shared"
+import { DotChar, isString } from "@moviemasher/runtime-shared"
 import { CommaChar } from '../../Setup/Constants.js'
 import { commandFilesInput } from '../../Server/Utility/CommandFilesFunctions.js'
 import { idGenerate } from '../../Utility/IdFunctions.js'
@@ -17,7 +17,7 @@ import { timeFromArgs, timeFromSeconds } from '../../Helpers/Time/TimeUtilities.
 import { AudibleAsset } from '@moviemasher/runtime-shared'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { DataTypeBoolean, DataTypeFrame, DataTypeNumber, DataTypePercent } from '../../Setup/DataTypeConstants.js'
-import { TypeContent } from '@moviemasher/runtime-client'
+import { TypeContent, isPropertyId } from '@moviemasher/runtime-client'
 
 export const gainFromString = (gain: Value): number | Numbers[] => {
   if (isString(gain)) {
@@ -55,14 +55,14 @@ T & Constrained<AudibleInstance> {
 
     assetTime(mashTime: Time): Time {
       const superTime = super.assetTime(mashTime)
-      const { startTrim, endTrim, asset:definition } = this
+      const { startTrim, endTrim, asset:definition, speed } = this
       const { duration } = definition
       assertAboveZero(duration)
 
       const durationTime = timeFromSeconds(duration, superTime.fps)
       const durationFrames = durationTime.frame - (startTrim + endTrim)
       const offset = superTime.frame % durationFrames
-      return superTime.withFrame(offset + startTrim).divide(this.speed) 
+      return superTime.withFrame(offset + startTrim).divide(speed) 
     }
 
     declare endTrim: number
@@ -199,9 +199,11 @@ T & Constrained<AudibleInstance> {
 
     mutable() { return this.asset.audio }
 
-    override setValue(name: string, value?: Scalar, property?: Property | undefined): void {
-      super.setValue(name, value, property)
+    override setValue(id: string, value?: Scalar, property?: Property | undefined): void {
+      super.setValue(id, value, property)
       if (property) return
+
+      const name = isPropertyId(id) ? id.split(DotChar).pop() : id
 
       switch (name) {
         case 'startTrim':

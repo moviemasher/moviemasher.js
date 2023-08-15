@@ -1,4 +1,3 @@
-export * from './composer-clip.js'
 export * from './composer-content.js'
 export * from './composer-div.js'
 export * from './composer-footer.js'

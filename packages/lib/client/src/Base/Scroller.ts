@@ -21,23 +21,6 @@ export class Scroller extends ImporterComponent {
     event.stopImmediatePropagation()
   }
 
-  static cssDivDropping = css`
-    div.drop-box {
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      color: transparent;
-      right: 0px;
-      bottom: 0px;
-      position: absolute;
-      display: block;
-    }
-
-    :host(.dropping) div.drop-box {
-      box-shadow: var(--dropping-shadow);
-    }
-  `
-
   static cssDivRoot = css`
     div.root {
       padding: 0px;

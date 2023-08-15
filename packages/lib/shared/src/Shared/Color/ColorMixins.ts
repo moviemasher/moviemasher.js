@@ -1,14 +1,10 @@
-import { IntrinsicOptions, Rect, TypeImage } from '@moviemasher/runtime-shared'
-import { Constrained } from '@moviemasher/runtime-shared'
-import { Asset } from '@moviemasher/runtime-shared'
-import { ColorAsset, ColorInstance } from '@moviemasher/runtime-shared'
-import type { ColorInstanceObject, Instance } from '@moviemasher/runtime-shared'
-import { propertyInstance } from '../../Setup/PropertyFunctions.js'
-import { DataTypeRgb } from '../../Setup/DataTypeConstants.js'
-import { colorGray } from '../../Helpers/Color/ColorConstants.js'
-import { RECT_ZERO } from '../../Utility/RectConstants.js'
-import { End } from '../../Base/PropertiedConstants.js'
+import type { Asset, ColorAsset, ColorInstance, ColorInstanceObject, Constrained, Instance, IntrinsicOptions, Rect } from '@moviemasher/runtime-shared'
+
 import { TypeContent } from '@moviemasher/runtime-client'
+import { End, RECT_ZERO, TypeImage } from '@moviemasher/runtime-shared'
+import { colorGray } from '../../Helpers/Color/ColorConstants.js'
+import { DataTypeRgb } from '../../Setup/DataTypeConstants.js'
+import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 
 export function ColorAssetMixin
 <T extends Constrained<Asset>>(Base: T): 

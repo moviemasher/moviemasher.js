@@ -1,27 +1,18 @@
+import type { PropertyIds, Strings } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { ControlGroup, OptionalContent } from '../../declarations.js'
 
+import { ClientActionFlip, EventControlGroup, MovieMasher } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
-
-import { EventChanged, EventControlGroup, MovieMasher } from '@moviemasher/runtime-client'
-import { PropertyIds, Strings } from '@moviemasher/runtime-shared'
-
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
-import { ClientActionFlip, isChangePropertyAction } from '@moviemasher/lib-shared'
-
 
 const AspectControlGroupElementName = 'movie-masher-control-group-aspect'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
 export class AspectControlGroupElement extends WithControlGroup implements ControlGroup {
-  constructor() {
-    super()
-    this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
-  }
-  
   protected override get defaultContent(): OptionalContent {
     const { propertyIds } = this
     if (!propertyIds?.length) return
@@ -56,25 +47,6 @@ export class AspectControlGroupElement extends WithControlGroup implements Contr
         </div>
       </fieldset>
     `
-  }
-
-  
-  private handleChanged(event: EventChanged) {
-    const { detail: action } = event
-    if (isChangePropertyAction(action)) {
-
-      switch (action.property) {
-        case 'rotate':
-        case 'aspectWidth':
-        case 'aspectHeight': {
-          console.debug(this.tagName, 'handleChanged', action)
-          this.requestUpdate()
-        }
-      }
-    } else {
-      console.debug(this.tagName, 'handleChanged NOT isChangePropertyAction', action)
-    
-    }
   }
   
   static handleControlGroup(event: EventControlGroup) {

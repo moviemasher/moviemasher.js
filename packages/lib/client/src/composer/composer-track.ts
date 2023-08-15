@@ -1,22 +1,19 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup } from 'lit'
-import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
+import type { TrackClipsEventDetail } from '@moviemasher/runtime-client'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Content, Contents, DropTarget, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { css } from '@lit/reactive-element/css-tag.js'
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
-
-import { EventChanged, EventTypeScrollRoot, EventTypeTrackClips, MovieMasher, ScrollRootEventDetail, TrackClipsEventDetail } from '@moviemasher/runtime-client'
+import { css } from '@lit/reactive-element/css-tag.js'
 import { isPositive } from '@moviemasher/lib-shared'
-import { pixelFromFrame } from '../utility/pixel.js'
-import { droppedMashIndex } from '../utility/draganddrop.js'
+import { EventChanged, EventClipElement, EventTypeScrollRoot, EventTypeTrackClips, MovieMasher, ScrollRootEventDetail } from '@moviemasher/runtime-client'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { droppedMashIndex } from '../utility/draganddrop.js'
+import { pixelFromFrame } from '../utility/pixel.js'
 
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
-
-
 export class ComposerTrackElement extends WithDropTargetMixin implements DropTarget {
   constructor() {
     super()
@@ -30,8 +27,14 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
     )
   }
 
+  protected override content(contents: Contents): Content {
+    return html`
+      <div @drag-handled='${this.handleDragged}'>${contents}</div>
+    `
+  }
+
   protected override get defaultContent(): OptionalContent { 
-    const { trackIndex, scale, width } = this
+    const { trackIndex, scale, width: trackWidth, maxWidth, elementsById: elememntsById } = this
     if (!(isPositive(trackIndex) || isPositive(scale))) return 
 
     const contents: Contents = []
@@ -39,31 +42,63 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
     const event = new CustomEvent(EventTypeTrackClips, { detail })
     MovieMasher.eventDispatcher.dispatch(event)
     const { clips } = detail
+    const labels = true
+    const icons = true
+    const byId: Record<string, Element> = {}
     if (clips?.length) {
-      this.importTags('movie-masher-composer-clip')
+      // this.importTags('movie-masher-composer-clip')
       clips.forEach(clip => { 
         const { frames, frame, label } = clip
 
-        const clipWidth = pixelFromFrame(frames, scale, 'floor')
+        const width = pixelFromFrame(frames, scale, 'floor')
         const x = pixelFromFrame(frame, scale, 'floor')
+
+        const existing = elememntsById[clip.id]
+        if (existing) {
+          byId[clip.id] = existing
+          existing.setAttribute('style', `left:${x}px;width:${width}px;`)
+          existing.setAttribute('scale', String(scale))
+          existing.setAttribute('track-width', String(trackWidth)) 
+          existing.setAttribute('track-index', String(trackIndex))
+          existing.setAttribute('max-width', String(maxWidth))
+          existing.setAttribute('x', String(x))
+          existing.setAttribute('label', label)
+          existing.setAttribute('labels', String(labels))
+          existing.setAttribute('icons', String(icons))
+          contents.push(existing)
+          return
+        } 
+        const event = new EventClipElement(clip.id, maxWidth, scale, trackIndex, trackWidth, width, x, label, labels, icons)
+        MovieMasher.eventDispatcher.dispatch(event)
+        const { node } = event.detail
+        if (!node) return
+        byId[clip.id] = node
         // console.log(this.tagName, 'defaultContent', { frames, width: clipWidth, scale })
-        contents.push(html`
-          <movie-masher-composer-clip 
-            @drag-handled='${this.handleDragged}' 
-            style='left:${x}px;width:${clipWidth}px;' 
-            scale='${scale}'
-            clip-id='${clip.id}'
-            track-width='${width}'
-            track-index='${trackIndex}'
-            max-width='${this.maxWidth}'
-            x='${this.x}'
-            label='${label}'
-          ></movie-masher-composer-clip>
-        `) 
+        contents.push(node)
+        
+        // html`
+        //   <movie-masher-composer-clip 
+        //     @drag-handled='${this.handleDragged}'
+
+        //     clip-id='${clip.id}' 
+
+        //     style='left:${x}px;width:${width}px;' 
+        //     scale='${scale}'
+        //     track-width='${trackWidth}'
+        //     track-index='${trackIndex}'
+        //     max-width='${maxWidth}'
+        //     x='${x}'
+        //     label='${label}'
+        //   ></movie-masher-composer-clip>
+        // `
       })
+
     }
+    this.elementsById = byId
     return html`${contents}`
   }
+  
+  private elementsById: Record<string, Element> = {}
   
   override disconnectedCallback(): void {
     super.disconnectedCallback()
@@ -76,8 +111,7 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
   
   private handleResize(entries: ResizeObserverEntry[]): number { 
     for (const entry of entries) {
-      const { contentRect } = entry
-      this.height = contentRect.height 
+      this.height = entry.contentRect.height 
     }
     return this.height 
   }
@@ -116,7 +150,6 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
 
   x = 0
 
-
   static override properties: PropertyDeclarations = { 
     trackIndex: { type: Number, attribute: 'track-index' },
     height: { type: Number, attribute: false },
@@ -128,18 +161,23 @@ export class ComposerTrackElement extends WithDropTargetMixin implements DropTar
 
   static override styles?: CSSResultGroup = [
     Component.cssBorderBoxSizing,
+    Component.cssHostFlex,
     css`
       :host {
-        flex-grow: 1;
+        
         position: relative;
     
         padding: var(--padding);
         /* --drop-size: var(--border-size); */
-        display: flex;
+ 
         border: var(--border);
         overflow: hidden;
         background-color: var(--div-back);
         white-space: nowrap;
+      }
+      :host > div {
+        flex: 1;
+        display: flex;
       }
 
       :host(.dropping) {

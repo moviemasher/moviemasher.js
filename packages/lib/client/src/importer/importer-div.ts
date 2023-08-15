@@ -1,16 +1,12 @@
-import type { PropertyDeclarations } from 'lit'
-import type { StringEvent } from '@moviemasher/runtime-client'
-import type { ClientImporters, ClientImporter } from '@moviemasher/runtime-client'
-import type { PropertyValueMap } from 'lit'
+import type { ClientImporter, ClientImporters, StringEvent } from '@moviemasher/runtime-client'
+import type { PropertyDeclarations, PropertyValueMap } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
+import { ClassSelected, MovieMasher } from '@moviemasher/runtime-client'
 import { EventTypeImporters } from '@moviemasher/runtime-shared'
-import { MovieMasher } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
-
+import { html } from 'lit-html/lit-html.js'
 import { Div } from '../Base/LeftCenterRight.js'
-import { ClassSelected } from '@moviemasher/lib-shared'
 
 const EventTypeImporter = 'importer'
 export class ImporterDivElement extends Div {

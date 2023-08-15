@@ -1,7 +1,8 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { mashMedia, SizeOutput, AssetCollection } from "@moviemasher/lib-shared"
+import { mashMedia, AssetCollection } from "@moviemasher/lib-shared"
+import { SIZE_OUTPUT } from "@moviemasher/runtime-shared"
 import { expectArrayLength } from "../../../../../../images/tester/Utilities/Expect.mjs"
 import { generateTest, GenerateDefinitionObjects } from "../../../../../../images/tester/Utilities/Generate.mjs"
 
@@ -40,7 +41,7 @@ describe("FilterGraph", () => {
         visible: true,
         background: test.color,
         mash,
-        size: SizeOutput,
+        size: SIZE_OUTPUT,
         time: mash.timeRange,
         videoRate: 30,
       }

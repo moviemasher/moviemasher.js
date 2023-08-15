@@ -1,7 +1,8 @@
 import type { InstanceCacheArgs } from './CacheTypes.js'
+import type { ClipObject } from './ClipObject.js'
 import type { ContainerRectArgs } from './Container.js'
 import type { Strings } from './Core.js'
-import type { VisibleInstance, Instance } from './InstanceTypes.js'
+import type { Instance, VisibleInstance } from './InstanceTypes.js'
 import type { Propertied } from './Propertied.js'
 import type { Rects } from './Rect.js'
 import type { Sizing } from './Sizing.js'
@@ -15,6 +16,7 @@ export interface Clip extends Propertied {
   containerId: string
   content: Instance
   contentId: string
+  clipObject: ClipObject
   assetIds: Strings
   endFrame: number
   frame : number

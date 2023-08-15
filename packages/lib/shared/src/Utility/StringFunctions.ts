@@ -2,7 +2,7 @@ import type { Rect } from '@moviemasher/runtime-shared'
 
 import { assertObject, isAboveZero } from '../Shared/SharedGuards.js'
 import { isPopulatedString } from "@moviemasher/runtime-shared"
-import { RECT_ZERO } from './RectConstants.js'
+import { RECT_ZERO } from '@moviemasher/runtime-shared'
 
 export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : string => {
   const bits: string[] = []

@@ -1,36 +1,28 @@
+import type { BooleanRecord, PropertyIds, Strings } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { Contents, ControlGroup, OptionalContent } from '../../declarations.js'
 
+import { AspectFlip } from '@moviemasher/lib-shared'
+import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
+import { DotChar, Aspect, End, SIZE_KEYS,  } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
-
-import { EventChanged, EventControlGroup, StringEvent, MovieMasher } from '@moviemasher/runtime-client'
-import { BooleanRecord, DotChar, PropertyIds, Strings } from '@moviemasher/runtime-shared'
-
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
-
-import { Aspect, AspectFlip, End, SIZE_KEYS, isChangePropertyAction } from '@moviemasher/lib-shared'
 import { SizeReactiveMixin } from '../../Base/SizeReactiveMixin.js'
 
 const DimenstionsControlGroupElementName = 'movie-masher-control-group-dimensions'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
 const WithSizeReactive = SizeReactiveMixin(WithControlGroup)
-
 export class DimenstionsControlGroupElement extends WithSizeReactive implements ControlGroup {
-  constructor() {
-    super()
-    this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
-  }
-
   override connectedCallback(): void {
     const heightId = this.namePropertyId(`height${End}`)
     if (heightId) {
       const [target] = heightId.split(DotChar)
       const key = `control-group-${target}-height`
-      console.debug(this.tagName, 'connectedCallback', key)
+      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleHeight.bind(this)
     }
 
@@ -38,7 +30,7 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
     if (widthId) {
       const [target] = widthId.split(DotChar)
       const key = `control-group-${target}-width`
-      console.debug(this.tagName, 'connectedCallback', key)
+      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleWidth.bind(this)
     }
     super.connectedCallback()
@@ -62,39 +54,34 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
         ${this.propertyNameContent('lock')}
         ${this.dimensionsContent(aspectFlip, portrait)}
         ${this.controlContent(`size${Aspect}`, aspectIcon)}
-
       </fieldset>
     `
   }
 
   private dimensionsContent(aspectFlip: boolean, portrait: boolean): Contents {
     const contents: Contents = []
-    const widthIcon = portrait && aspectFlip ? 'height' : 'width'
-    const heightIcon = portrait && aspectFlip ? 'width' : 'height'
-
+    const flipped = aspectFlip && portrait
+    const widthIcon = flipped ? 'height' : 'width'
+    const heightIcon = flipped ? 'width' : 'height'
     // const lock = this.propertyIdValue('lock')
     const use: BooleanRecord = { width: true, height: true }
     // if (lock) {
     //   switch(lock) {
     //     case LockNone: break
     //     case LockWidth: {
-    //       use.height = false
+    //       // use.height = false
     //       break
     //     }
     //     case LockHeight: {
-    //       use.width = false
+    //       // use.width = false
     //       break
     //     }
     //     default: {
-    //       const event = new EventSize()
-    //       MovieMasher.eventDispatcher.dispatch(event)
-    //       const { size } = event.detail
-    //       if (size) {
-
-    //         if (lock === LockLongest) {
-    //           use[size.height < size.width ? 'height' : 'width'] = false
-    //         } else use[size.height > size.width ? 'height' : 'width'] = false
-    //       }      
+         
+    //       if (lock === LockLongest) {
+    //         use[flipped ? 'height' : 'width'] = false
+    //       } else use[!flipped ? 'height' : 'width'] = false
+            
     //     }
     //   }
     // }
@@ -108,21 +95,6 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
       if (heightContent) contents.push(heightContent)
     }
     return contents
-  }
-
-  private handleChanged(event: EventChanged) {
-    const { detail: action } = event
-    if (isChangePropertyAction(action)) {
-      switch (action.property) {
-        case `size${Aspect}`:
-        case 'lock':
-        case `width${End}`:
-        case `height${End}`: {
-          console.debug(this.tagName, 'handleChanged', action)
-          this.requestUpdate()
-        }
-      }
-    }
   }
 
   protected handleHeight(event: StringEvent) {

@@ -1,9 +1,9 @@
-import type { CSSResultGroup, PropertyValues } from 'lit'
-import type { PropertyDeclarations } from 'lit'
-import { isPopulatedString, type DataType, type PropertyId } from '@moviemasher/runtime-shared'
+import type { DataType, PropertyId } from '@moviemasher/runtime-shared'
+import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent } from '../declarations.js'
 
 import { EventControl, EventDataType, MovieMasher } from '@moviemasher/runtime-client'
+import { isPopulatedString } from '@moviemasher/runtime-shared'
 import { Component } from '../Base/Component.js'
 import { ControlPropertyMixin, ControlPropertyProperties } from '../Base/ControlPropertyMixin.js'
 
@@ -39,10 +39,7 @@ export class ControlInputElement extends WithControlProperty {
       console.warn(this.tagName, 'defaultContent', 'no selectedId')
       return
     }
-
-    const { control } = this
-    // console.log(this.tagName, 'defaultContent', this.propertyId, !!control)
-    return control
+    return this.control
   }
 
   private propertyDataType(propertyId: PropertyId): DataType | undefined {
@@ -59,8 +56,8 @@ export class ControlInputElement extends WithControlProperty {
   static dataTypeDeclaration: PropertyDeclarations = {
     dataType: { type: String, attribute: 'data-type' },
   }
+
   static override properties: PropertyDeclarations = {
-    // ...DisablableProperties,
     ...ControlInputElement.dataTypeDeclaration,
     ...ControlPropertyProperties,
   }

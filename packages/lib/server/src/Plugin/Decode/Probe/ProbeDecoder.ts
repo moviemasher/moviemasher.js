@@ -1,29 +1,24 @@
 
-import { Decoding, Numbers, errorCaught } from '@moviemasher/runtime-shared'
+import type { DecodeMethod, ProbingData, } from '@moviemasher/lib-shared'
+import type { Decoding, Numbers, Sizes, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
 
+import { JsonExtension, NewlineChar, ProbeAudible, ProbeDuration, ProbeSize, Runtime, TypeDecode, assertProbeOptions, idGenerateString } from '@moviemasher/lib-shared'
+import { TypeProbe, errorCaught } from '@moviemasher/runtime-shared'
+import { execSync } from 'child_process'
 import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs'
 import path from 'path'
-import { execSync } from "child_process"
-
-import { TypeProbe } from '@moviemasher/runtime-shared'
-
-import {
-  assertProbeOptions, ProbeAudible, DecodeMethod, TypeDecode,  
-  ProbeDuration, idGenerateString, JsonExtension, NewlineChar, 
- StringDataOrError, ProbingData, Runtime, ProbeSize
-} from "@moviemasher/lib-shared"
 import { EnvironmentKeyApiDirTemporary } from '../../../Environment/ServerEnvironment.js'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 
-let _alphaFormats: string[]
+let _alphaFormats: Strings
 
-const alphaFormats = (): string[] => {
+const alphaFormats = (): Strings => {
     return _alphaFormats ||= alphaFormatsInitialize()
   }
 
-const alphaFormatsInitialize = (): string[] => {
+const alphaFormatsInitialize = (): Strings => {
   const result = execSync(AlphaFormatsCommand).toString().trim()
   return result.split(NewlineChar)
 }
@@ -46,7 +41,7 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Str
         const { duration = 0 } = format
         const durations: Numbers = []
         const rotations: Numbers = []
-        const sizes: { width: number, height: number}[] = []
+        const sizes: Sizes = []
         for (const stream of streams) {
           const { rotation, width, height, duration, codec_type, pix_fmt } = stream
           types.forEach(type => {

@@ -2,7 +2,7 @@ import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 
-import { ClientActionAdd, ClientActionAddTrack } from '@moviemasher/lib-shared'
+import { ClientActionAdd, ClientActionAddTrack } from '@moviemasher/runtime-client'
 import { EventAction } from '@moviemasher/runtime-client'
 
 import { Footer } from '../Base/LeftCenterRight.js'

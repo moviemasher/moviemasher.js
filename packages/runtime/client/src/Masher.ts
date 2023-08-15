@@ -1,11 +1,10 @@
 import type { AssetObject, AssetType, MashAsset, MashAssetObject, StringRecord, Time, TimeRange } from '@moviemasher/runtime-shared'
-import type { Action } from './Action.js'
-import type { Actions } from './Actions.js'
+import type { Action, Actions } from './ActionTypes.js'
 import type { ClientAssets } from './ClientAsset.js'
 import type { ClientClip, ClientClips } from './ClientMashTypes.js'
 
 export interface Masher {
-  actions: Actions
+  // actions: Actions
   autoplay: boolean
   buffer: number
   // can(action: ClientAction): boolean
@@ -20,7 +19,6 @@ export interface Masher {
   editing: boolean
   fps: number
   goToTime(value: Time): Promise<void>
-  dispatchChanged(action: Action): void
   load(data: AssetObject): Promise<void>
   loop: boolean
   mashingType: AssetType
@@ -31,8 +29,8 @@ export interface Masher {
   position: number
   positionStep: number
   precision: number
-  mashAsset?: MashAsset
-  selection: ClientClip | false
+  // mashAsset?: MashAsset
+  // selection: ClientClip | false
   // readOnly: boolean
   // rect: Rect
   // redo(): void

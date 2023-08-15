@@ -1,13 +1,9 @@
-import type { PropertyDeclarations } from 'lit'
 import type { Strings } from '@moviemasher/runtime-shared'
-import type {  Htmls, Contents, OptionalContent} from '../declarations.js'
+import type { PropertyDeclarations } from 'lit'
+import type { Contents, Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
-import { PipeChar, DashChar } from '@moviemasher/lib-shared'
-
 import { ImporterComponent } from './ImporterComponent'
-
-// import { Component } from './Component'
 
 export class Slotted extends ImporterComponent {
   private get slotChildren() {
@@ -36,7 +32,7 @@ export class Slotted extends ImporterComponent {
         slots.push(html`
           <slot 
             name='${slot}' 
-            slot='${slot.split(DashChar).slice(1).join(DashChar)}'
+            slot='${slot.split(Slotted.slotSeparator).slice(1).join(Slotted.slotSeparator)}'
           ></slot>
         `)
         return false
@@ -53,19 +49,20 @@ export class Slotted extends ImporterComponent {
     return html`${slots}`
   }
 
+  parts = ''
+
   private slotChangeHandler(event: Event) {
     this.importElements(Array.from((event.target as HTMLSlotElement).children))
   }
 
   protected get slots(): Strings {
     const { parts } = this
-    return parts ? parts.split(PipeChar) : []
+    return parts ? parts.split(Slotted.partSeparator) : []
   }
 
-  parts = ''
+  static partSeparator = '|'
 
-  static override properties: PropertyDeclarations = { 
-    // ...Component.properties,
-    parts: { type: String },
-  }
+  static override properties: PropertyDeclarations = { parts: { type: String } }
+
+  static slotSeparator = '-'
 }

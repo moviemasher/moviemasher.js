@@ -16,7 +16,10 @@
   "include": [
     "**/src/*.ts",
     "**/src/**/*.ts"
-, "packages/lib/client/src/asset/importer/client.ts", "packages-deleted/client-deleted/client/importer-input.ts", "packages-deleted/MediaType.ts", "packages-deleted/EditorSelection.ts", "packages-deleted/EditorSelectionClass.ts"  ],
+, "packages-deleted/images-deleted/declarations.ts"
+
+
+],
   
   "exclude": [
     "**/node_modules", 

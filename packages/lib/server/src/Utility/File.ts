@@ -1,5 +1,5 @@
-import fs from 'fs'
 import { errorThrow, isPopulatedString } from '@moviemasher/runtime-shared'
+import fs from 'fs'
 
 export type FilePath = string
 

@@ -3,7 +3,7 @@ import { PreloadArgs } from "@moviemasher/runtime-shared";
 import { InstanceArgs, InstanceObject } from "@moviemasher/runtime-shared";
 import { AssetClass } from "../../Shared/Asset/AssetClass.js";
 import { ServerAsset } from "@moviemasher/runtime-server";
-import { requestPromise } from "../../Helpers/Request/ProtocolRequestFunctions.js";
+import { requestPromise } from "../Utility/ProtocolRequestFunctions.js";
 import { isRequest } from "../../Helpers/Request/RequestGuards.js";
 import { isDefiniteError } from '@moviemasher/runtime-shared';
 import { TypeString } from "@moviemasher/runtime-shared";

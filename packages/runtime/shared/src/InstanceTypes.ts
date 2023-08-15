@@ -31,6 +31,7 @@ export interface Instance extends Propertied, Identified {
   hasIntrinsicTiming: boolean
   height: number
   instanceCachePromise(args: InstanceCacheArgs): Promise<void>
+  instanceObject: InstanceObject
   intrinsicRect(editing?: boolean): Rect
   intrinsicsKnown(options: IntrinsicOptions): boolean
   isDefault: boolean

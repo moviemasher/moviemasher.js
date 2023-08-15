@@ -1,16 +1,12 @@
-import {
-  CommandFilters, CommandInputs, OutputOptions, StringDataOrError, 
-  VideoOutputOptions} from '@moviemasher/lib-shared'
-import type { Command } from './Command.js'
+import type { CommandFilters, CommandInputs, OutputOptions, VideoOutputOptions } from '@moviemasher/lib-shared'
+import type { StringDataOrError, ValueRecord, } from '@moviemasher/runtime-shared'
 import type { CommandOptions } from '../Plugin/Encode/Encode.js'
+import type { Command } from './Command.js'
 
+import { AVTypeAudio, AVTypeVideo, ColonRegex, CommaRegex, } from '@moviemasher/lib-shared'
+import { errorCaught, isNumber } from '@moviemasher/runtime-shared'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
-
-import {
-   ColonRegex, CommaRegex, AVTypeAudio, AVTypeVideo, 
-} from '@moviemasher/lib-shared'
 import { commandArgsString } from '../Utility/Command.js'
-import { ValueRecord, errorCaught, isNumber } from '@moviemasher/runtime-shared'
   
 
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(

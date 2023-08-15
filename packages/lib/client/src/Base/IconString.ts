@@ -1,19 +1,15 @@
-import type { PropertyDeclarations } from 'lit'
 import type { StringEvent } from '@moviemasher/runtime-client'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Htmls, OptionalContent } from '../declarations.js'
 
-import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent, StringSlot, IconSlot } from '../declarations.js'
-
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MovieMasher } from '@moviemasher/runtime-client'
-
-import { Slotted } from './Slotted.js'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from './Component'
-import { PipeChar } from '@moviemasher/lib-shared'
+import { Slotted } from './Slotted.js'
 
-const StringSlot: StringSlot = 'string'
-const IconSlot: IconSlot = 'icon'
+const StringSlot = 'string'
+const IconSlot = 'icon'
 
 export class IconString extends Slotted {
   detail = ''
@@ -51,7 +47,7 @@ export class IconString extends Slotted {
     return super.partContent(part, slots)
   }
 
-  override parts = [IconSlot, StringSlot].join(PipeChar)
+  override parts = [IconSlot, StringSlot].join(Slotted.partSeparator)
 
   string = ''
 

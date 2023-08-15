@@ -1,52 +1,19 @@
-import type { PropertyDeclarations } from 'lit'
-import type { PropertyValues, CSSResultGroup } from 'lit'
-import type { Icon } from '@moviemasher/runtime-client'
+import type { Icon, IconEventDetail } from '@moviemasher/runtime-client'
+import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent } from '../declarations.js'
-import type { IconEventDetail } from '@moviemasher/runtime-client'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-
-import { html } from 'lit-html/lit-html.js'
-import { nothing } from 'lit-html/lit-html.js'
-
-import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { EventTypeIconFromId, MovieMasher } from '@moviemasher/runtime-client'
-
+import { isDefiniteError } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 
 const IconElementTimeout = 1000
 
 export class IconElement extends Component {
-  // override async getUpdateComplete(): Promise<boolean> {
-  //   return super.getUpdateComplete().then(complete => {
-  //     if (!complete) {
-  //       console.log(this.constructor.name, this.icon, 'getUpdateComplete SUPER', complete)
-  //       return false
-  //     }
-  //     const { iconContent: content, icon } = this
-  //     console.log(this.constructor.name, 'getUpdateComplete SUPER', icon, content, complete)
-
-  //     if (content || !icon) return true
-
-  //     return this.iconPromise.then(() => {  
-  //       console.log(this.constructor.name, this.icon, 'getUpdateComplete iconPromise', !!this.content)
-  //       this.requestUpdate()
-  //       return Boolean(this.content)
-  //     })
-  //   })
-  // }
-
   icon = 'app'
 
   private iconContent?: OptionalContent   
-
-  // protected override dispatchConnection(connected: boolean): boolean {
-  //   const dispatched = super.dispatchConnection(connected)
-
-  //   // console.debug(this.tagName, this.icon, 'dispatchConnection', connected, this.parentElement?.tagName)
-
-  //   return dispatched
-  // }
 
   private _iconPromise?: Promise<Icon | void>
   private get iconPromise() {
@@ -76,7 +43,7 @@ export class IconElement extends Component {
       } else if (imgUrl) this.iconContent =  html`<img src='${imgUrl}' />`
       else {
         const svgOrImage = svgElement || imageElement
-        const element = svgOrImage || (svgString && this.svgStringNode(svgString))
+        const element = svgOrImage || (svgString && IconElement.svgStringNode(svgString))
         if (element) {
           element.setAttribute('part', 'element')
           this.iconContent = element
@@ -100,20 +67,51 @@ export class IconElement extends Component {
     return promise
   }
 
-  override render() { 
+  protected override get defaultContent(): OptionalContent {
+
     // console.log(this.constructor.name, this.icon, 'render', !!this.content)
-    const { iconContent: content } = this
-    if (!content) {
+    const { iconContent } = this
+    if (!iconContent) {
       this.iconPromise.then(icon => { 
         // console.log(this.constructor.name, this.icon, 'render', !!this.content)
         if (icon) this.requestUpdate() 
       })
-      return nothing
+      return html`<div></div>`
     }
-    return content 
+    return iconContent 
   }
 
-  private svgStringClean(svgString: string) {
+  override willUpdate(changedProperties: PropertyValues<this>) {
+    if (changedProperties.has('icon') && changedProperties.get('icon')) {
+      // console.debug(this.constructor.name, 'willUpdate', changedProperties)
+      delete this.iconContent
+      delete this._iconPromise
+    }
+  }
+  static override properties: PropertyDeclarations = {
+    // ...Component.properties,
+    icon: { type: String }
+  }
+
+  static override styles: CSSResultGroup = [
+    
+        // vertical-align: middle;
+    css`
+      :host {
+        --color: inherit;
+        color: var(--color);
+        display: inline-block;
+        height: 1em;
+        min-width: 1em;
+      }
+      svg, img, div {
+        height: 1em;
+        aspect-ratio: 1/1;
+      }
+    `
+  ]
+
+  private static svgStringClean(svgString: string) {
     // extract just the SVG tag
     const svgRegex = /<svg[^>]*>([\s\S]*?)<\/svg>/
     const svgMatch = svgString.match(svgRegex)
@@ -144,8 +142,8 @@ export class IconElement extends Component {
     return string 
   }
 
-  private svgStringNode(svgString: string) {
-    const cleaned = this.svgStringClean(svgString)
+  private static svgStringNode(svgString: string) {
+    const cleaned = IconElement.svgStringClean(svgString)
     if (!cleaned) return
 
     const parser = new DOMParser()
@@ -155,35 +153,6 @@ export class IconElement extends Component {
 
     return firstChild
   }
-
-  override willUpdate(changedProperties: PropertyValues<this>) {
-    if (changedProperties.has('icon') && changedProperties.get('icon')) {
-      // console.debug(this.constructor.name, 'willUpdate', changedProperties)
-      delete this.iconContent
-      delete this._iconPromise
-    }
-  }
-  static override properties: PropertyDeclarations = {
-    // ...Component.properties,
-    icon: { type: String }
-  }
-
-  static override styles: CSSResultGroup = [
-    
-    css`
-      :host {
-        --color: inherit;
-        color: var(--color);
-        display: inline-block;
-        height: 1em;
-        vertical-align: middle;
-      }
-      svg, img {
-        height: 1em !important;
-        aspect-ratio: 1/1 !important;
-      }
-    `
-  ]
 }
 
 // register web component as custom element

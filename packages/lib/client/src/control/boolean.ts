@@ -2,14 +2,13 @@ import type { EventControlDetail } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit-element/lit-element.js'
 import type { Control, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
-
 import { DataTypeBoolean } from '@moviemasher/lib-shared'
 import { EventControl, MovieMasher } from '@moviemasher/runtime-client'
+import { Scalar } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { ControlMixin, ControlProperties } from '../Base/ControlMixin.js'
 import { ControlPropertyMixin } from '../Base/ControlPropertyMixin.js'
-import { Scalar } from '@moviemasher/runtime-shared'
 
 const BooleanControlElementName = 'movie-masher-control-boolean'
 
@@ -17,12 +16,10 @@ const WithControlProperty = ControlPropertyMixin(Component)
 const WithControl = ControlMixin(WithControlProperty)
 export class BooleanControlElement extends WithControl implements Control {
   protected override get defaultContent(): OptionalContent {
-    const { selectedProperty } = this
-    if (!selectedProperty) return
+    const { property, scalar: value } = this
+    if (!property) return
 
-    const { property, value } = selectedProperty
     const { name } = property
-
     return html`
       <input 
         @input='${this.handleInput}'

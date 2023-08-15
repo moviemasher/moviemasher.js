@@ -1,6 +1,7 @@
-import {UnknownRecord} from '@moviemasher/runtime-shared'
-import {RequestableClass} from '../../../Base/Requestable/RequestableClass.js'
-import {Transcoding, TranscodingObject, TranscodingType} from '@moviemasher/runtime-shared'
+import type { Transcoding, TranscodingObject } from '@moviemasher/runtime-client'
+import type { UnknownRecord, TranscodingType } from '@moviemasher/runtime-shared'
+
+import { RequestableClass } from '../../../Base/Requestable/RequestableClass.js'
 
 
 export class TranscodingClass extends RequestableClass implements Transcoding {

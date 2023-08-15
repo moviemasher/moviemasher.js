@@ -1,20 +1,16 @@
-// import EventEmitter from 'events'
 
-import type { EncodePlugin, OutputOptions, StringDataOrError } from '@moviemasher/lib-shared'
+import type { EncodePlugin, OutputOptions } from '@moviemasher/lib-shared'
+import type { AssetType, MashAssetObject, StringDataOrError } from '@moviemasher/runtime-shared'
 import type { RenderingProcessArgs } from './RenderingProcess/RenderingProcess.js'
 
-import path from 'path'
+import { CommaChar, Runtime, TypeEncode, assertPopulatedString, idGenerateString } from '@moviemasher/lib-shared'
+import { TypesAsset } from '@moviemasher/runtime-shared'
 import fs from 'fs'
-
-import { CommaChar, Runtime, TypeEncode, idGenerateString, assertPopulatedString } from '@moviemasher/lib-shared'
-import { renderingProcessInstance } from './RenderingProcess/RenderingProcessFactory.js'
-import {
-  EnvironmentKeyApiDirCache, EnvironmentKeyApiDirFilePrefix,
-  EnvironmentKeyApiDirTemporary, EnvironmentKeyApiDirValid
-} from '../../Environment/ServerEnvironment.js'
+import path from 'path'
+import { EnvironmentKeyApiDirCache, EnvironmentKeyApiDirFilePrefix, EnvironmentKeyApiDirTemporary, EnvironmentKeyApiDirValid } from '../../Environment/ServerEnvironment.js'
 import { assertFilePath } from '../../Utility/File.js'
 import { hashMd5 } from '../../Utility/Hash.js'
-import { AssetType, MashAssetObject, TypesAsset } from '@moviemasher/runtime-shared'
+import { renderingProcessInstance } from './RenderingProcess/RenderingProcessFactory.js'
 
 class PluginEncode implements EncodePlugin {
   constructor(public encodingType: AssetType) {}

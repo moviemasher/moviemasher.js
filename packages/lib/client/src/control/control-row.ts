@@ -1,17 +1,15 @@
-import type { CSSResultGroup } from 'lit'
-import type { PropertyDeclarations } from 'lit'
 import type { DataType, PropertyId } from '@moviemasher/runtime-shared'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Content, Contents, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-
-import { ControlInputElement } from './control-input.js'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
-import { Content, Contents, OptionalContent } from '../declarations.js'
-import { ClassRow, End } from '@moviemasher/lib-shared'
-import { DotChar} from '@moviemasher/runtime-shared'
-import { Component } from '../Base/Component.js'
+import { ClassRow } from '@moviemasher/runtime-client'
+import { DotChar, End } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
+import { html } from 'lit-html/lit-html.js'
+import { Component } from '../Base/Component.js'
+import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { ControlInputElement } from './control-input.js'
 
 export class ControlRowElement extends ImporterComponent {
   protected override content(contents: Contents): Content {
@@ -61,7 +59,7 @@ export class ControlRowElement extends ImporterComponent {
     css`
       :host {
         display: flex;
-        height: var(--icon-size);
+        /* height: min-content; */
         line-height: var(--icon-size);
         font-size: var(--icon-size);
         margin-bottom: var(--spacing);
@@ -70,7 +68,7 @@ export class ControlRowElement extends ImporterComponent {
         flex-grow: 1;
         display: grid;
         gap: var(--inspector-spacing);
-        grid-template-columns: var(--icon-size) 1fr;
+        grid-template-columns: min-content 1fr;
       }
     `,
   ]

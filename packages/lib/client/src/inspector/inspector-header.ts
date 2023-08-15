@@ -2,7 +2,7 @@ import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { Header } from '../Base/LeftCenterRight.js'
-import { ClientActionRedo, ClientActionUndo } from '@moviemasher/lib-shared'
+import { ClientActionRedo, ClientActionSave, ClientActionUndo } from '@moviemasher/runtime-client'
 
 export class InspectorHeaderElement extends Header {
   protected override rightContent(htmls: Htmls): OptionalContent {
@@ -17,6 +17,12 @@ export class InspectorHeaderElement extends Header {
       <movie-masher-component-action
         detail='${ClientActionRedo}'
         icon='redo'
+      ></movie-masher-component-action>
+    `)
+    htmls.push(html`
+      <movie-masher-component-action
+        detail='${ClientActionSave}'
+        icon='save'
       ></movie-masher-component-action>
     `)
     return super.rightContent(htmls)

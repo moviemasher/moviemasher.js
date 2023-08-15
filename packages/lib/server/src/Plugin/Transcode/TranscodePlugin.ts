@@ -1,22 +1,13 @@
 
-import type { 
-  OutputOptions, 
-  StringDataOrError, TranscodePlugin, 
-  } from "@moviemasher/lib-shared"
+import type { OutputOptions, TranscodePlugin, } from '@moviemasher/lib-shared'
+import type { StringDataOrError, } from '@moviemasher/runtime-shared'
 
+import { Runtime, TypeTranscode, TypesTranscoding, assertPopulatedString, idGenerateString, outputOptions, urlFilename } from '@moviemasher/lib-shared'
+import { EncodingType, ErrorName, TranscodingType, TypeImage, TypeSequence, errorPromise, isAssetType } from '@moviemasher/runtime-shared'
 import path from 'path'
-
-import { 
-  TypeSequence, 
-  
-  Runtime, TypeTranscode, 
-  outputOptions,
-  assertPopulatedString, idGenerateString, urlFilename, TypesTranscoding 
-} from "@moviemasher/lib-shared"
-import { hashMd5 } from "../../Utility/Hash.js"
+import { ffmpegCommand, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../../Command/CommandFactory.js'
 import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment.js'
-import { ffmpegCommand, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from "../../Command/CommandFactory.js"
-import { EncodingType, ErrorName, TranscodingType, TypeImage, errorPromise, isAssetType } from "@moviemasher/runtime-shared"
+import { hashMd5 } from '../../Utility/Hash.js'
 
 
 class PluginTranscode implements TranscodePlugin {

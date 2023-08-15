@@ -2,8 +2,7 @@ import type { Icon, IconEvent } from '@moviemasher/runtime-client'
 import type { DataOrError, StringRecord } from '@moviemasher/runtime-shared'
 
 import { EventTypeIconFromId, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, error, isDefiniteError } from '@moviemasher/runtime-shared'
-import { isStringRecord } from '@moviemasher/lib-shared'
+import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { requestJsonRecordPromise, requestPopulate } from '../utility/request.js'
 
 class Handler {
@@ -13,23 +12,18 @@ class Handler {
     if (Handler.json) return Promise.resolve({ data: Handler.json })
 
     const { _jsonPromise } = Handler
-
     if (_jsonPromise) return _jsonPromise
 
     const { iconOptions = { request: {} } } = MovieMasher.options
     const { request = {}} = iconOptions
     request.endpoint ||= (new URL('../../json/icons.json', import.meta.url)).href
-
     const populated = requestPopulate(request)
-    // console.log('Handler.jsonPromise', populated)
     return this._jsonPromise = requestJsonRecordPromise(populated).then(orError => {
       if (isDefiniteError(orError)) return orError 
 
-      const { data: iconStringRecord } = orError
-      if (!isStringRecord(iconStringRecord)) return error(ErrorName.Url)
-      
+      const iconStringRecord = orError.data as StringRecord
       delete this._jsonPromise
-      Handler.json = iconStringRecord
+      Handler.json = iconStringRecord 
       return { data: iconStringRecord }
     })
   }
@@ -52,6 +46,7 @@ class Handler {
     event.stopPropagation()
   }
 }
+
 MovieMasher.eventDispatcher.addDispatchListener(EventTypeIconFromId, Handler.handle)
 
-export {}
+export { }

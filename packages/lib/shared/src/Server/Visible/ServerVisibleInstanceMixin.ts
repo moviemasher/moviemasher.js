@@ -14,7 +14,7 @@ import { Constrained } from '@moviemasher/runtime-shared'
 import { VisibleInstance } from '@moviemasher/runtime-shared'
 import { ServerVisibleAsset } from '../Asset/ServerAssetTypes.js'
 import { idGenerate } from '../../Utility/IdFunctions.js'
-import { POINT_ZERO } from '../../Utility/PointConstants.js'
+import { POINT_ZERO } from '@moviemasher/runtime-shared'
 
 
 export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance & VisibleInstance>>(Base: T):

@@ -7,9 +7,9 @@ import type { Point } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 
-import { EventChangedPreviews, EventPreviews, EventChangeClipId, MovieMasher, EventRect } from '@moviemasher/runtime-client'
+import { EventChangedPreviews, EventPreviews, EventChangeClipId, MovieMasher, EventRect, EventDragging } from '@moviemasher/runtime-client'
 import { Scroller } from '../Base/Scroller.js'
-import { DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
 import { RectObserverMixin } from '../Base/RectObserverMixin.js'
 import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
@@ -86,7 +86,12 @@ export class ViewerContentElement extends WithSizeReactive {
     delete this.watchingTimeout
 
     // TODO: we should send disabled argument to EventPreviews when dragging
-    const event = new EventPreviews(this.variable('max-dimension'))
+    const draggingEvent = new EventDragging()
+    MovieMasher.eventDispatcher.dispatch(draggingEvent)
+    const dragging = draggingEvent.detail.dragging
+
+    // console.log(this.tagName, 'requestItemsPromise', dragging)
+    const event = new EventPreviews(this.variable('max-dimension'), dragging)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
@@ -120,6 +125,7 @@ export class ViewerContentElement extends WithSizeReactive {
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     Component.cssHostFlex,
+    DropTargetCss,
     css`
       :host {
         position: relative;
@@ -134,7 +140,6 @@ export class ViewerContentElement extends WithSizeReactive {
         bottom: 0; */
       }
     `,
-    Scroller.cssDivDropping,
     css`
       div.root {
         display: block;

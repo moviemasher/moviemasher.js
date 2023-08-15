@@ -1,17 +1,16 @@
-import type { PropertyDeclarations } from 'lit'
 import type { AssetObjects } from '@moviemasher/runtime-shared'
-import type { Htmls, ImportAssetObjectsEvent, ImportAssetObjectsEventDetail, OptionalContent } from '../declarations.js'
+import type { PropertyDeclarations } from 'lit'
+import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
+import { EventDialog, ImportAssetObjectsEvent, EventTypeImporterComplete, MovieMasher, EventImporterChange } from '@moviemasher/runtime-client'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
-
+import { html } from 'lit-html/lit-html.js'
 import { Footer } from '../Base/LeftCenterRight.js'
-import { MovieMasher, EventTypeImportAssetObjects, EventDialog, EventTypeImporterChange, EventTypeImporterComplete } from '@moviemasher/runtime-client'
 
 export class ImporterFooterElement extends Footer {
   constructor() {
     super()
-    this.listeners[EventTypeImporterChange] = this.handleImporterChange.bind(this)
+    this.listeners[EventImporterChange.Type] = this.handleImporterChange.bind(this)
     this.listeners[EventTypeImporterComplete] = this.handleImporterComplete.bind(this)
   }
 
@@ -21,13 +20,11 @@ export class ImporterFooterElement extends Footer {
     MovieMasher.eventDispatcher.dispatch(new EventDialog())
 
     const { assetObjects } = this
-    const detail: ImportAssetObjectsEventDetail = { assetObjects }
-    const event = new CustomEvent(EventTypeImportAssetObjects, { detail })
-    MovieMasher.eventDispatcher.dispatch(event)
+    MovieMasher.eventDispatcher.dispatch(new ImportAssetObjectsEvent(assetObjects))
 
   }
 
-  protected handleImporterChange(event:ImportAssetObjectsEvent): void {
+  protected handleImporterChange(event: EventImporterChange): void {
     const { detail: { assetObjects } } = event
     console.log(this.tagName, 'handleImporterChange', assetObjects)
     this.assetObjects = assetObjects

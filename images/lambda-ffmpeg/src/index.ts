@@ -1,7 +1,7 @@
-import { JsonRecord } from '@moviemasher/runtime-shared'
 import type { MediaEvent } from '@moviemasher/lib-server'
+import type { JsonRecord } from '@moviemasher/runtime-shared'
 
-import { jobPromise, jobExtract } from '@moviemasher/lib-server'
+import { jobExtract, jobPromise } from '@moviemasher/lib-server'
 
 export const handler = async (event: MediaEvent, context: any) => {
   console.log('event', event)

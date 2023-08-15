@@ -8,10 +8,10 @@ import { html } from 'lit-html/lit-html.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import {  isArray } from '@moviemasher/runtime-shared'
 
-import { EventInspectorSelectors, EventChangedInspectorSelectors, MovieMasher, TypeMash, TypesTarget, isSelectorType } from '@moviemasher/runtime-client'
+import { ClassSelected, EventInspectorSelectors, EventChangedInspectorSelectors, MovieMasher, TypeMash, TypesTarget, isSelectorType } from '@moviemasher/runtime-client'
 import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
 import { Slotted } from '../Base/Slotted.js'
-import { ClassSelected, CommaChar, PipeChar, assertPopulatedString, assertPositive } from '@moviemasher/lib-shared'
+import { CommaChar, assertPopulatedString, assertPositive } from '@moviemasher/lib-shared'
 import { Component } from '../Base/Component.js'
 
 
@@ -31,10 +31,10 @@ export class InspectorChooserElement extends WithDisablable {
     const { selectors } = this
     if (!selectors.length) {
       const { parts } = this
-      const components = parts.split(PipeChar)
+      const components = parts.split(Slotted.partSeparator)
       const [part] = components
       selectors.push(...components)
-      this.dispatchChanged(part)
+      this.dispatchChangedInspectorSelectors(part)
     }
   }
 
@@ -44,7 +44,7 @@ export class InspectorChooserElement extends WithDisablable {
     `
   }
 
-  private dispatchChanged(part: string): void {
+  private dispatchChangedInspectorSelectors(part: string): void {
     const types = this.partSelectorTypes(part)
     this.selectedPart = part
     const setEvent = new EventChangedInspectorSelectors(types)
@@ -56,7 +56,7 @@ export class InspectorChooserElement extends WithDisablable {
     event.stopImmediatePropagation()
     const { detail: part } = event
     // console.log(this.tagName, 'handleInspectorChooser', { part })
-    this.dispatchChanged(part)
+    this.dispatchChangedInspectorSelectors(part)
 
   }
 
@@ -82,7 +82,7 @@ export class InspectorChooserElement extends WithDisablable {
   }
 
   private partSelectorTypes(part: string): SelectorTypes {
-    const index = this.parts.split(PipeChar).indexOf(part)
+    const index = this.parts.split(Slotted.partSeparator).indexOf(part)
     assertPositive(index)
 
     const selectorType = this.selectors[index]
@@ -96,14 +96,14 @@ export class InspectorChooserElement extends WithDisablable {
 
   selectors: Strings = []
   
-  override parts = TypesTarget.join(PipeChar)
+  override parts = TypesTarget.join(Slotted.partSeparator)
 
   static override properties: PropertyDeclarations = {
     ...DisablableProperties,
     selectedPart: { type: String, attribute: false },
     selectors: { type: Array, converter: {
-      fromAttribute: (value: string) => value ? value.split(PipeChar) : TypesTarget,
-      toAttribute: (value: Strings) => isArray(value) ? value.join(PipeChar) : ''
+      fromAttribute: (value: string) => value ? value.split(Slotted.partSeparator) : TypesTarget,
+      toAttribute: (value: Strings) => isArray(value) ? value.join(Slotted.partSeparator) : ''
     } },
   }
   

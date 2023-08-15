@@ -1,6 +1,5 @@
-import type { RenderingOptions, StringDataOrError } from "@moviemasher/lib-shared"
-
-
+import type { RenderingOptions } from '@moviemasher/lib-shared'
+import type { StringDataOrError } from '@moviemasher/runtime-shared'
 
 export interface ServerEncodeOptions {
   temporaryDirectory: string

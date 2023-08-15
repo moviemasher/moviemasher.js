@@ -1,4 +1,4 @@
-import type { Clip, Clips, MashAsset, TimeRange, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Clip, Clips, MashAsset, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/runtime-shared'
 import { isDefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../../Base/PropertiedClass.js"
 import { Default } from '../../../Setup/Default.js'
@@ -106,5 +106,12 @@ export class TrackClass extends PropertiedClass implements Track {
     const json = super.toJSON()
     json.clips = this.clips
     return json
+  }
+
+  get trackObject(): TrackObject {
+    const { clips: clipInstances, index, scalarRecord } = this
+    const clips = clipInstances.map(clip => clip.clipObject)
+    const trackObject: TrackObject = { ...scalarRecord, clips, index }
+    return trackObject
   }
 }

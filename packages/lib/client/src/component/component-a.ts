@@ -1,6 +1,6 @@
 import type { Contents, Content } from '../declarations.js'
-import { html } from 'lit-html/lit-html.js'
 
+import { html } from 'lit-html/lit-html.js'
 import { IconString } from '../Base/IconString.js'
 
 export class AElement extends IconString {

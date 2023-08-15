@@ -18,12 +18,11 @@ const WithControlProperty = ControlPropertyMixin(Component)
 const WithControl = ControlMixin(WithControlProperty)
 export class RgbControlElement extends WithControl {
   protected override get defaultContent(): OptionalContent {
-    const { selectedProperty } = this
-    if (!selectedProperty) {
+    const { property, scalar: value } = this
+    if (!property) {
       console.warn(this.tagName, 'no selectedProperty', this.propertyId)
       return
     }
-    const { property, value } = selectedProperty
     const { name } = property
     // console.debug(this.tagName, 'defaultContent', name, value)
     this.setInputValue(value)

@@ -11,6 +11,7 @@ export interface DecodingObject {
   type: DecodingType
   data?: UnknownRecord
 }
+
 export type DecodingObjects = DecodingObject[]
 
 

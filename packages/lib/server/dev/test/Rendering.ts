@@ -1,9 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import {
-  SizePreview,
+
   assertPopulatedArray, assertPopulatedString, assertTrue, 
-  idGenerateString, DurationUnknown, RenderingOptions, OutputOptions, 
+  idGenerateString, DurationUnknown, RenderingOptions, OutputOptions, sizeScale, 
   
 } from '@moviemasher/lib-shared'
 
@@ -24,8 +24,10 @@ import {
 
 
 import { TestRenderCache, TestRenderOutput, TestFilePrefix, TestTemporary } from "./TestRenderOutput"
-import { isPopulatedString, 
+import { isPopulatedString, SIZE_OUTPUT, 
   isDefiniteError, errorThrow, SourceMash, TypeVideo } from '@moviemasher/runtime-shared'
+
+const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
 
 
 export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, output: OutputOptions): Promise<void> => {
@@ -144,7 +146,7 @@ export const renderingMashTestPromise = (mashTest: GenerateMashTest, outputOptio
   const [id, mashObject] = mashTest
   const { tracks } = mashObject
   // assertPopulatedArray(tracks)
-  const { clips } = tracks[0]
+  const { clips } = tracks![0]
   assertPopulatedArray(clips)
 
   const options: RenderingOptions = {

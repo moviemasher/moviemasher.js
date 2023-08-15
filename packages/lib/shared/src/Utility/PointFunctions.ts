@@ -54,3 +54,11 @@ export const pointFlip = (point: Point): Point => {
   const { x, y } = point
   return { x: y, y: x }
 }
+
+export const pointTranslate = (point: Point, translate: Point, negate = false): Point => {
+  const { x, y } = point
+  const negator = negate ? -1 : 1
+  const { x: tx, y: ty } = translate
+  return { x: x + tx * negator, y: y + ty * negator }
+}
+

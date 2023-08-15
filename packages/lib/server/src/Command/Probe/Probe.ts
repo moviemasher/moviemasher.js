@@ -1,14 +1,14 @@
-import path from 'path'
-import fs from 'fs'
-import Ffmpeg from 'fluent-ffmpeg'
-import {  ProbingData,  NewlineChar } from '@moviemasher/lib-shared'
+import type { ProbingData } from '@moviemasher/lib-shared'
  
-import { isPositive, SIZE_ZERO, } from '@moviemasher/lib-shared'
+import Ffmpeg from 'fluent-ffmpeg'
+import fs from 'fs'
+import path from 'path'
 
-import { ffmpegCommand } from '../CommandFactory.js'
+import { isPositive, NewlineChar, } from '@moviemasher/lib-shared'
+import { ErrorName, errorObject, isNumeric, isPopulatedString, Numbers, SIZE_ZERO, Sizes } from '@moviemasher/runtime-shared'
 import { commandArgsString } from '../../Utility/Command.js'
 import { expandCommand } from '../../Utility/Expand.js'
-import { ErrorName, errorObject, isNumeric, isPopulatedString, Numbers, Sizes } from '@moviemasher/runtime-shared'
+import { ffmpegCommand } from '../CommandFactory.js'
 
 export class Probe {
   private static AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "

@@ -1,16 +1,20 @@
-import type { PropertyDeclarations } from 'lit'
-import type { PropertyValues } from 'lit'
+import type { PropertyDeclarations, PropertyValues } from 'lit'
 
-import { EventAction, EventActionEnabled, EventChanged, EventChangedMashAsset, MovieMasher } from '@moviemasher/runtime-client'
+import { EventAction, EventActionEnabled, EventChangedActionEnabled, MovieMasher } from '@moviemasher/runtime-client'
 import { ButtonElement } from './component-button.js'
-import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
 
-const WithDisablable = DisablableMixin(ButtonElement)
-export class ActionElement extends WithDisablable {
+// const WithDisablable = DisablableMixin(ButtonElement)
+export class ActionElement extends ButtonElement {
   constructor() {
     super()
     this.emit = EventAction.Type
-    this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
+    this.listeners[EventChangedActionEnabled.Type] = this.handleChangedActionEnabled.bind(this)
+  }
+
+  private handleChangedActionEnabled(event: EventChangedActionEnabled): void {
+    const { detail: actionType } = event
+    const { detail } = this
+    if (detail === actionType) this.handleChanged()
   }
 
   private handleChanged() {
@@ -19,23 +23,21 @@ export class ActionElement extends WithDisablable {
 
     const event = new EventActionEnabled(detail)
     MovieMasher.eventDispatcher.dispatch(event)
+    console.log(this.tagName, 'handleChanged', event.detail)
     this.disabled = !event.detail.enabled
   } 
 
-  override handleChangedMashAsset(event: EventChangedMashAsset): void {
-    super.handleChangedMashAsset(event)
-    if (event.detail) this.handleChanged()
-  }
+  // override handleChangedMashAsset(event: EventChangedMashAsset): void {
+  //   super.handleChangedMashAsset(event)
+  //   if (event.detail) this.handleChanged()
+  // }
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties)
-    if (changedProperties.has('detail')) {
-      this.handleChanged()
-    }
+    if (changedProperties.has('detail')) { this.handleChanged() }
   }
   static override properties: PropertyDeclarations = {
-    
-    DisablableProperties,
+    disabled: { type: Boolean, attribute: false },
   }
 }
 

@@ -46,3 +46,4 @@ export type EnvironmentArrayGetter = typeof EnvironmentGetArray
 export type EnvironmentGetter = typeof EnvironmentGet
 
 export type EnvironmentSetter = typeof EnvironmentSet
+

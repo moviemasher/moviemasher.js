@@ -1,17 +1,12 @@
-import type { ScalarRecord } from '@moviemasher/runtime-shared'
-import type { Endpoint } from '@moviemasher/runtime-shared'
+import type { Endpoint, ScalarRecord } from '@moviemasher/runtime-shared'
 
-import { Runtime } from '../../Runtime/Runtime.js'
-import { 
-  assertPopulatedString, isAboveZero} from '../../Shared/SharedGuards.js'
-import { isObject, isNumeric, isPopulatedString } from "@moviemasher/runtime-shared"
-import { arrayLast } from '../../Utility/ArrayFunctions.js'
-import { ColonChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
-import { DotChar } from "@moviemasher/runtime-shared"
-
-import { errorThrow } from '@moviemasher/runtime-shared'
+import { DotChar, errorThrow, isNumeric, isObject, isPopulatedString } from "@moviemasher/runtime-shared"
 import { ProtocolHttp } from '../../Plugin/Protocol/Protocol.js'
 import { EnvironmentKeyUrlBase } from '../../Runtime/Environment/Environment.js'
+import { Runtime } from '../../Runtime/Runtime.js'
+import { ColonChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
+import { assertPopulatedString, isAboveZero } from '../../Shared/SharedGuards.js'
+import { arrayLast } from '../../Utility/ArrayFunctions.js'
 
 const urlIsBlob = (url?: string) => Boolean(url?.startsWith('blob'))
 

@@ -1,20 +1,18 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup, PropertyValues } from 'lit'
-import type { MashAsset } from '@moviemasher/runtime-shared'
 import type { NumberEvent } from '@moviemasher/runtime-client'
+import type { MashAsset } from '@moviemasher/runtime-shared'
+import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { Content, Contents, DropTarget, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
+import { arrayOfNumbers, arrayReversed, assertMashAsset, isPositive } from '@moviemasher/lib-shared'
+import { EventChangeClipId, EventChangeFrame, EventChangedFrame, EventChangedMashAsset, EventTypeDuration, EventTypeScale, EventTypeTracks, EventTypeZoom, MovieMasher, eventStop } from '@moviemasher/runtime-client'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
-
-
-import { EventTypeDuration, EventChangedMashAsset, EventChangeClipId, EventTypeTracks, EventTypeZoom, EventTypeScale, MovieMasher, EventChangedFrame, EventChangeFrame } from '@moviemasher/runtime-client'
-import { arrayOfNumbers, arrayReversed, assertMashAsset, eventStop, isPositive, pixelToFrame } from '@moviemasher/lib-shared'
-import { pixelFromFrame, pixelPerFrame } from '../utility/pixel.js'
-import { Scroller } from '../Base/Scroller.js'
-import { DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { html } from 'lit-html/lit-html.js'
 import { DisablableMixin } from '../Base/DisablableMixin.js'
+import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { Scroller } from '../Base/Scroller.js'
+import { pixelFromFrame, pixelPerFrame } from '../utility/pixel.js'
+import { pixelToFrame } from '../Client/PixelFunctions.js'
 
 const WithDisablable = DisablableMixin(Scroller)
 const WithDropTargetMixin = DropTargetMixin(WithDisablable)
@@ -46,9 +44,7 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
   protected override get defaultContent(): OptionalContent { 
     const { framesWidth } = this
     const width = framesWidth > this.width ? `${framesWidth}px` : '100%'
-    
     const contents: Contents = []
-   
     const { tracksLength } = this
     // console.log(this.tagName, 'defaultContent', tracksLength)
     if (tracksLength) {
@@ -121,9 +117,9 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
 
   private framesWidth = 0
 
-
-  private handleDuration(event: NumberEvent): void {
-    this.frames = event.detail
+  private handleChangedFrame(event: EventChangedFrame): void {
+    const { detail: frame } = event
+    this.frame = frame
   }
 
   override handleChangedMashAsset(event: EventChangedMashAsset): void {
@@ -132,6 +128,10 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     this.tracksLength = mash?.tracks.length || 0
   }
   
+  private handleDuration(event: NumberEvent): void {
+    this.frames = event.detail
+  }
+
   private handleResize(_entries: ResizeObserverEntry[]) {
     const contentRect = this.element('div.drop-box').getBoundingClientRect()
     this.width = contentRect.width
@@ -177,11 +177,6 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
     window.removeEventListener('pointermove', this.handleScrubberPointerMove)
     window.removeEventListener('pointerup', this.handleScrubberPointerUp)
   }   
-
-  private handleChangedFrame(event: EventChangedFrame): void {
-    const { detail: frame } = event
-    this.frame = frame
-  }
 
   private handleTracks(event: NumberEvent): void {
     this.tracksLength = event.detail
@@ -251,7 +246,7 @@ export class ComposerContentElement extends WithDropTargetMixin implements DropT
 
   static override styles: CSSResultGroup = [
     Scroller.styles,
-    Scroller.cssDivDropping,
+    DropTargetCss,
     css`
       :host {
         isolation: isolate;

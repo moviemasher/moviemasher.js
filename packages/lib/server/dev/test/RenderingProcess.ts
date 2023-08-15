@@ -3,11 +3,14 @@ import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 
-import { MashAssetObject, OutputOptions, SizePreview, VideoOutputOptions, assertPopulatedArray, outputOptions } from "@moviemasher/lib-shared"
+import { OutputOptions, VideoOutputOptions, assertPopulatedArray, outputOptions, sizeScale } from "@moviemasher/lib-shared"
 
 import { renderingTestIdPromise, renderingMashTestPromise } from './Rendering'
-import { TypeVideo } from '@moviemasher/runtime-shared'
+import { SIZE_OUTPUT, MashAssetObject, TypeVideo } from '@moviemasher/runtime-shared'
 import { GenerateMashTest } from './Generate'
+
+const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
+
 
 describe("RenderingProcess", () => {
   // urlBaseInitialize('file://' + path.resolve(environment(EnvironmentKeyApiDirFilePrefix), 'user'))

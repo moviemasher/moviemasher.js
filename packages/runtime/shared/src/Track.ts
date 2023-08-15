@@ -23,6 +23,7 @@ export interface Track extends Propertied, Indexed {
   identifier: string
   mash: MashAsset
   sortClips(clips?: Clips): void
+  trackObject: TrackObject
 }
 
 export type Tracks = Track[]

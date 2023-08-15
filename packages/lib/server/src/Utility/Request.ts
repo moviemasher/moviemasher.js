@@ -1,10 +1,7 @@
-import { 
-  assertEndpoint,
-  endpointAbsolute, 
-} from "@moviemasher/lib-shared"
+import type { EndpointRequest, StringRecord, Value } from '@moviemasher/runtime-shared'
 
+import { assertEndpoint, endpointAbsolute, } from '@moviemasher/lib-shared'
 import { hashMd5 } from './Hash.js'
-import { EndpointRequest, StringRecord, Value } from "@moviemasher/runtime-shared"
 
 export interface RequestArgs {
   auth?: string

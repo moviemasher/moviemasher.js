@@ -20,11 +20,13 @@ describe("Mash Asset", () => {
   const media = new AssetCollection()
   media.define({
     id: 'image-square', type: ImageType, 
-    source: '../shared/image/globe.jpg',  sourceSize: { width: 640, height: 480 }
+    decodings: [{ type: 'probe', data: { width: 640, height: 480 } }],
+    source: '../shared/image/globe.jpg'
   })
   media.define({
     id: 'image-landscape', type: ImageType, 
-    source: '../shared/image/cable.jpg', sourceSize: { width: 640, height: 480 }
+    decodings: [{ type: 'probe', data: { width: 640, height: 480 } }],
+    source: '../shared/image/cable.jpg'
   })
   media.define({
     type: "videosequence",
@@ -32,14 +34,16 @@ describe("Mash Asset", () => {
     url: 'video/frames/',
     source: 'video/source.mp4',
     audio: 'video/audio.mp3',
-    duration: 3, fps: 30, sourceSize: { width: 640, height: 480 }
+    decodings: [{ type: 'probe', data: { width: 640, height: 480 } }],
+    duration: 3, fps: 30, 
   })
   media.define({
     type: "video",
     label: "Video", id: "video-rgb",
     url: 'video.mp4',
     source: 'video.mp4',
-    duration: 3, fps: 10, sourceSize: { width: 640, height: 480 }
+    decodings: [{ type: 'probe', data: { width: 640, height: 480 } }],
+    duration: 3, fps: 10,
     
   })
   fontDefault.url = fontDefault.source

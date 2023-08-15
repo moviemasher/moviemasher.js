@@ -12,7 +12,7 @@ export class AssetManagerClass implements AssetManager {
 
   protected asset(_: string | AssetObject): Asset { throw 'unimplemented' }
 
-  private installedAssetsById = new Map<string, Asset>()
+  protected installedAssetsById = new Map<string, Asset>()
 
   private setByType(type: AssetType): Assets {
     const assets: Assets = [] 
@@ -36,8 +36,6 @@ export class AssetManagerClass implements AssetManager {
   fromId(id: string): Asset {
     if (this.installed(id)) return this.installedAssetsById.get(id)!
 
-    if (this.predefined(id)) return this.predefinedAssetsById.get(id)!
-
     const assetType = this.idAssetType(id)
     assertAssetType(assetType)
 
@@ -52,7 +50,7 @@ export class AssetManagerClass implements AssetManager {
     const mediaArray = isArray(media) ? media : [media]
     return mediaArray.map(media => {
       const { type, id } = media
-      if (this.installed(id) || this.predefined(id)) return this.fromId(id)
+      if (this.installed(id)) return this.fromId(id)
 
       this.installedAssetsById.set(media.id, media)
     
@@ -71,30 +69,12 @@ export class AssetManagerClass implements AssetManager {
     return id.split(DotChar).find(isAssetType)
   }
 
-  predefine(id: string, asset: Asset): void {
-    this.predefinedAssetsById.set(id, asset)
-  }
-
-  private predefined(id: string) {
-    return this.predefinedAssetsById.has(id)
-  }
-
   undefine(manageType?: ManageType) {
     // TODO: be more graceful - tell definitions they are being destroyed...
     this.installedAssetsById = new Map<string, Asset>()
     this.assetArraysByType = new Map<AssetType, Assets>()
   }
-
-  updateDefinitionId(oldId: string, newId: string) {
-    // console.log(this.constructor.name, 'updateDefinitionId', oldId, '->', newId)
-    const media = this.installedAssetsById.get(oldId)
-    assertAsset(media, 'media')
-
-    this.installedAssetsById.delete(oldId)
-    this.installedAssetsById.set(newId, media)
-  }
-
-  private predefinedAssetsById: Map<string, Asset> = new Map()
 }
 
 export const ManageTypeBrowse: ManageType = 'browse'
+export const ManageTypeImport: ManageType = 'import'

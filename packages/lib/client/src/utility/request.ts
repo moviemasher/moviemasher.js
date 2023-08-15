@@ -1,5 +1,5 @@
-import type { Method, JsonRecordDataOrError, JsonRecordsDataOrError } from '@moviemasher/lib-shared'
-import type { EndpointRequest } from '@moviemasher/runtime-shared'
+import type { Method } from '@moviemasher/lib-shared'
+import type { EndpointRequest, JsonRecordDataOrError, JsonRecordsDataOrError } from '@moviemasher/runtime-shared'
 
 import { GetMethod, assertMethod, ContentTypeHeader, JsonMimetype, endpointFromUrl, assertEndpoint, assertDefined, urlForEndpoint } from '@moviemasher/lib-shared'
 import { isPopulatedString, isString, isUndefined } from '@moviemasher/runtime-shared'

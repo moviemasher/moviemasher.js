@@ -1,13 +1,11 @@
 import type { Htmls, OptionalContent } from '../declarations.js'
 
+import { ClientActionFlip } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
-// import { DataTypeRgb } from '@moviemasher/lib-shared'
-
-
 import { Header } from '../Base/LeftCenterRight.js'
-import { ClientActionFlip } from '@moviemasher/lib-shared'
 
 export class ViewerHeaderElement extends Header {
+
   protected override leftContent(slots: Htmls): OptionalContent {
     this.importTags('movie-masher-control-input')
     const htmls = [...slots]

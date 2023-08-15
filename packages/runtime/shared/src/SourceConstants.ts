@@ -6,3 +6,4 @@ export const SourcePrompt: PromptSource = 'prompt'
 export const SourceRaw: RawSource = 'raw'
 export const SourceShape: ShapeSource = 'shape'
 export const SourceText: TextSource = 'text'
+

@@ -1,12 +1,9 @@
-import type { Actions } from './Actions.js'
-import type { SelectedProperties } from './SelectedProperty.js'
-import type { Propertied, PropertyIds, SelectorType, Strings, TargetId, TargetIds } from '@moviemasher/runtime-shared'
+import type { Propertied, PropertyId, Scalar, ScalarsById, SelectorType } from '@moviemasher/runtime-shared'
+import type { ChangeActionObject } from './ActionTypes.js'
 
 export interface Selectable extends Propertied { 
-  targetId: TargetId
-  selectables(): Selectables
-  selectedProperties(actions: Actions, propertyNames: Strings): SelectedProperties
-  
+  changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeActionObject
+  changeScalars(scalars: ScalarsById): ChangeActionObject
 }
 
 export type Selectables = Selectable[]

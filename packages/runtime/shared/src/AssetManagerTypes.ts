@@ -6,8 +6,7 @@ export interface AssetManager {
   install(asset: Asset | Assets): Assets
   installed(id: string): boolean
   undefine(manageType?: ManageType): void
-  updateDefinitionId(oldId: string, newId: string): void
-  predefine(id: string, asset: Asset): void
+  
 }
 
 export type ManageType = string

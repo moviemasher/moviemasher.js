@@ -1,10 +1,8 @@
 import type { CSSResultGroup } from 'lit'
-
 import type { Content, Contents } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
-
 import { Component } from '../Base/Component.js'
 
 export class SpanElement extends Component {

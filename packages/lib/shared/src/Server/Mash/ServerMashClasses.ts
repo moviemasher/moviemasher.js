@@ -1,7 +1,6 @@
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../CommandFile.js'
 import { GraphFiles, ServerPromiseArgs } from "@moviemasher/runtime-server"
 import { PreloadArgs, Strings } from "@moviemasher/runtime-shared"
-import { MashAssetClass } from '../../Shared/Mash/MashAssetClass.js'
 import { ServerMashAsset, ServerClip, ServerClips, ServerTrack } from './ServerMashTypes.js'
 import { Time, TimeRange, Times } from '@moviemasher/runtime-shared'
 import { AVType } from '@moviemasher/runtime-shared'
@@ -24,6 +23,8 @@ import { TrackArgs } from '@moviemasher/runtime-shared'
 import { ClipObject } from '@moviemasher/runtime-shared'
 import { isColorInstance } from '../../Shared/Color/ColorGuards.js'
 import { Instance } from '@moviemasher/runtime-shared'
+import { ServerAssetClass } from '../Asset/ServerAssetClass.js'
+import { MashAssetMixin } from '../../Shared/Mash/MashAssetMixin.js'
 
 
 const contentColors = (instance: Instance, time: Time, range: TimeRange): Strings | undefined => {
@@ -36,7 +37,10 @@ const contentColors = (instance: Instance, time: Time, range: TimeRange): String
   return colors
 }
 
-export class ServerMashAssetClass extends MashAssetClass implements ServerMashAsset {
+
+const WithMashAsset = MashAssetMixin(ServerAssetClass)
+
+export class ServerMashAssetClass extends WithMashAsset implements ServerMashAsset {
   override get clips(): ServerClips { return super.clips as ServerClips }
 
   clipsInTimeOfType(time: Time, avType?: AVType): ServerClips {

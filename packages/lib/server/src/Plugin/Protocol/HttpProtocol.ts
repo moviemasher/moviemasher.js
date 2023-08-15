@@ -1,29 +1,15 @@
+
+import type { ClientAudio, ClientFont, ClientImage, ClientVideo, } from '@moviemasher/runtime-client'
+import type { AudioType, DataOrError, EndpointRequest, FontType, ImageType, JsonRecord, JsonRecords, LoadType, RecordType, RecordsType, StringData, StringType, VideoType, } from '@moviemasher/runtime-shared'
+
+import { ProtocolDataOrError, ProtocolHttp, ProtocolHttps, Runtime, TextExtension, TypeProtocol, assertEndpoint, assertPopulatedString, urlFilename, } from '@moviemasher/lib-shared'
+import { DotChar, ErrorName, error, errorCaught, isDefiniteError, isPopulatedString, } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import http from 'http'
 import https from 'https'
 import path from 'path'
-
-import { 
-  ProtocolDataOrError, StringData, assertEndpoint,  
-} from "@moviemasher/lib-shared"
-import {
-  TypeProtocol, ProtocolHttp, ProtocolHttps, urlFilename, TextExtension, 
-  
-  assertPopulatedString,
-  Runtime,
-} from "@moviemasher/lib-shared"
 import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment.js'
 import { requestArgs, requestArgsHash } from '../../Utility/Request.js'
-import { 
-  isDefiniteError, LoadType, FontType, StringType, AudioType, DataOrError, EndpointRequest, ImageType, 
-  JsonRecord, JsonRecords, VideoType, RecordsType, RecordType, DotChar, ErrorName, error, errorCaught, isPopulatedString, 
-} from '@moviemasher/runtime-shared'
-
-import { 
-  ClientImage, ClientAudio, ClientFont, 
-  ClientVideo, 
-} from '@moviemasher/runtime-client'
-
 
 interface FileAndMimetype { 
   file: string, 

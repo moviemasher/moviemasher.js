@@ -50,6 +50,8 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
     return files
   }
 
+  
+
   type = TypeVideo
 
   static handleAsset(event: EventAsset) {

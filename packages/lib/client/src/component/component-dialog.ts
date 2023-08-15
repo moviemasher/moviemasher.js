@@ -1,13 +1,10 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup } from 'lit'
-import type { Contents, Content, OptionalContent, Htmls } from '../declarations.js'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { EventDialog } from '@moviemasher/runtime-client'
-
+import { html } from 'lit-html/lit-html.js'
 import { Slotted } from '../Base/Slotted.js'
-import { PipeChar } from '@moviemasher/lib-shared'
 
 const PartImporter = 'importer'
 export class DialogElement extends Slotted {
@@ -91,7 +88,7 @@ export class DialogElement extends Slotted {
 
   section = ''
 
-  override parts = [PartImporter].join(PipeChar)
+  override parts = [PartImporter].join(Slotted.partSeparator)
 
   static override properties: PropertyDeclarations = {
     ...Slotted.properties,

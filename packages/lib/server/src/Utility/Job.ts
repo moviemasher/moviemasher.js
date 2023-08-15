@@ -1,27 +1,17 @@
-import type {  StringDataOrError,  
-} from '@moviemasher/lib-shared'
-import type { Input } from "../Types/Core.js"
-import type { JobType, } from "../Setup/Enums.js"
-import type { MediaRequest } from "../Media/Media.js"
+import type { EndpointRequest, EndpointRequests, Identified, JsonRecord, PotentialError, StringDataOrError } from '@moviemasher/runtime-shared'
+import type { MediaRequest } from '../Media/Media.js'
+import type { JobType, } from '../Setup/Enums.js'
+import type { Input } from '../Types/Core.js'
 
-import { 
-  assertObject,requestPromise, 
-  Runtime,  assertRequest
-} from "@moviemasher/lib-shared"
-
-import { assertJobType, JobTypeEncoding, JobTypeDecoding, JobTypeTranscoding  } from "../Setup/Enums.js"
-import { EnvironmentKeyApiKeypathJob, EnvironmentKeyApiKeypathType } from "../Environment/ServerEnvironment.js"
-import { 
-  assertDecodeRequest, decode 
-} from '../Plugin/Decode/DecodeFunctions.js'
-import { 
-  assertEncodeRequest, encode} from '../Plugin/Encode/EncodeFunctions.js'
-import { 
-  assertTranscodeRequest, transcode 
-} from '../Plugin/Transcode/TranscodeFunctions.js'
-import { assertFilePath } from './File.js'
+import { Runtime, assertObject, assertRequest, requestPromise } from '@moviemasher/lib-shared'
+import { ErrorName, TypeString, error, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
+import { EnvironmentKeyApiKeypathJob, EnvironmentKeyApiKeypathType } from '../Environment/ServerEnvironment.js'
 import { assertMediaRequest } from '../Media/MediaFunctions.js'
-import { EndpointRequest, isDefiniteError, TypeString, EndpointRequests, Identified, JsonRecord, PotentialError, ErrorName, error, isArray } from '@moviemasher/runtime-shared'
+import { assertDecodeRequest, decode } from '../Plugin/Decode/DecodeFunctions.js'
+import { assertEncodeRequest, encode } from '../Plugin/Encode/EncodeFunctions.js'
+import { assertTranscodeRequest, transcode } from '../Plugin/Transcode/TranscodeFunctions.js'
+import { JobTypeDecoding, JobTypeEncoding, JobTypeTranscoding, assertJobType } from '../Setup/Enums.js'
+import { assertFilePath } from './File.js'
 
 export type JobTuple = [JobType, MediaRequest]
 

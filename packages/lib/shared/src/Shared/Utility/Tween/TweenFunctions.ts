@@ -1,14 +1,13 @@
-import type { Lock, NumberRecord, Point, Points, PopulatedString, PropertySize, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Value } from '@moviemasher/runtime-shared'
+import type { Lock, NumberRecord, Point, PopulatedString, PropertySize, Rect, Rects, Scalar, SideDirectionRecord, Size, Value } from '@moviemasher/runtime-shared'
 
 import { isDefined, isNumber, isObject, isPopulatedString } from '@moviemasher/runtime-shared'
 import { AspectFlip, LockHeight, LockLongest, LockNone, LockShortest, LockWidth } from '../../../Setup/LockConstants.js'
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue } from '../../SharedGuards.js'
 import { arrayOfNumbers } from '../../../Utility/ArrayFunctions.js'
-import { assertRect, isRect, rectFromSize } from '../../../Utility/RectFunctions.js'
-import { assertSize, isSize, sizeCeil, sizeContain, sizeCopy, sizeCover, sizeFlip, sizeScale, sizesEqual } from '../../../Utility/SizeFunctions.js'
+import { isRect, rectFromSize } from '../../../Utility/RectFunctions.js'
+import { isSize, sizeCeil, sizeCopy, sizeCover, sizeFlip, sizeScale, sizesEqual } from '../../../Utility/SizeFunctions.js'
 import { colorMixRbg, colorMixRbga, colorRgbToHex, colorRgbaToHex, colorToRgb, colorToRgba, colorValidHex } from '../../../Helpers/Color/ColorFunctions.js'
 import { pointCopy, pointFlip } from '../../../Utility/PointFunctions.js'
-import { POINT_ZERO } from '../../../Utility/PointConstants.js'
 
 export const tweenPad = (outputDistance: number, scaledDistance: number, scale: number, leftCrop = false, rightCrop = false): number => {
   assertPositive(scale)

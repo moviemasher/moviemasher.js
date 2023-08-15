@@ -1,37 +1,10 @@
-import type {
-  ClientClips, 
-  MashIndex,
-  MashMoveClipEvent,
-  TrackClipsEventDetail,
-} from '@moviemasher/runtime-client'
-import type {
-  AssetObject, AssetObjects, AssetType, Clip, Point, Rect,
-  Strings, UnknownRecord
-} from '@moviemasher/runtime-shared'
+import type { ClientClips, MashIndex, MashMoveClipEvent, TrackClipsEventDetail } from '@moviemasher/runtime-client'
+import type { AssetObjects, AssetType, Clip, Point, Rect, Strings, UnknownRecord } from '@moviemasher/runtime-shared'
 
-
-import {
-  eventStop, isClip, 
-  isPositive, 
-  pixelToFrame
-} from '@moviemasher/lib-shared'
-
-import {
-  DragSuffix,
-  EventTypeImportAssetObjects, EventTypeImportRaw,
-  EventAddAssets,
-  EventTypeMashMoveClip,
-  EventTypeTrackClips,
-  MovieMasher,
-  EventManagedAsset,
-} from '@moviemasher/runtime-client'
-import {
-  isAssetObject, isAssetType,
-  isObject, isString} from '@moviemasher/runtime-shared'
-import {
-  ImportAssetObjectsEventDetail, ImportEventDetail
-} from '../declarations.js'
-
+import { isClip, isPositive } from '@moviemasher/lib-shared'
+import { DragSuffix, EventAddAssets, EventImport, EventManagedAsset, EventTypeMashMoveClip, EventTypeTrackClips, ImportAssetObjectsEvent, MovieMasher, eventStop, } from '@moviemasher/runtime-client'
+import { isAssetType, isObject, isPopulatedString, isString } from '@moviemasher/runtime-shared'
+import { pixelToFrame } from '../Client/PixelFunctions.js'
 
 export type DragFunction = (event: DragEvent) => void
 
@@ -43,9 +16,9 @@ export interface DragOffsetObject {
 }
 
 export interface DragDefinitionObject extends DragOffsetObject {
-  mediaObject: AssetObject
+  assetId: string
 }
-export type Draggable = AssetObject | Clip | FileList 
+export type Draggable = string | Clip | FileList 
 
 export type TransferType = `${string}/x-moviemasher`
 
@@ -54,8 +27,8 @@ export const TransferTypeFiles = 'Files'
 const isDragOffsetObject = (value: any): value is DragOffsetObject => {
   return isObject(value) && 'offset' in value
 }
-const isDragDefinitionObject = (value: any): value is DragDefinitionObject => {
-  return isDragOffsetObject(value) && 'mediaObject' in value && isAssetObject(value.mediaObject)
+export const isDragDefinitionObject = (value: any): value is DragDefinitionObject => {
+  return isDragOffsetObject(value) && 'assetId' in value && isPopulatedString(value.assetId)
 }
 
 export const isTransferType = (value: any): value is TransferType => {
@@ -68,7 +41,7 @@ export const dropType = (dataTransfer?: DataTransfer | null): TransferType | und
   return dataTransfer.types.find(isTransferType)
 }
 
-const dragMediaType = (transferType: TransferType): AssetType | undefined => {
+const dragAssetType = (transferType: TransferType): AssetType | undefined => {
   const [type] = transferType.split('/')
   return isAssetType(type) ? type : undefined
 }
@@ -100,10 +73,9 @@ export const dragTypeValid = (dataTransfer?: DataTransfer | null, allowClip = fa
   if (!type) return false
 
   // anything can be dropped on a clip 
-  if (allowClip || type.startsWith('clip')) return true
+  if (type.startsWith('clip')) return allowClip
 
-  const definitionType = dragMediaType(type)
-  return !!definitionType 
+  return !!dragAssetType(type)
 }
 
 
@@ -128,17 +100,18 @@ export const DragElementPoint = (event: DragEvent, current: Element | Rect,): Po
   return { x: clientX - x, y: clientY - y }
 }
 
-export const dropFiles = (fileList: FileList, mashIndex?: MashIndex) => {
-  const detail: ImportEventDetail = { fileList }
-  const event = new CustomEvent(EventTypeImportRaw, { detail })
+export const dropRawFiles = (fileList: FileList) => {
+  const event = new EventImport(fileList)
   MovieMasher.eventDispatcher.dispatch(event)
-  const { promise } = detail
-  if (!promise) return 
-
-  promise.then((assetObjects) => { dropAssetObjects(assetObjects, mashIndex) })
+  return event.detail.promise
 }
 
-export const dropAssetObjects = (assetObjects: AssetObjects, mashIndex?: MashIndex) => {
+const dropFiles = (fileList: FileList, mashIndex?: MashIndex): void => {
+  const promise = dropRawFiles(fileList)
+  promise?.then(assetObjects => { dropAssetObjects(assetObjects, mashIndex) })
+}
+
+const dropAssetObjects = (assetObjects: AssetObjects, mashIndex?: MashIndex) => {
   if (mashIndex) {
     const assets = assetObjects.flatMap(assetObject => {
       const event = new EventManagedAsset(assetObject)
@@ -149,29 +122,36 @@ export const dropAssetObjects = (assetObjects: AssetObjects, mashIndex?: MashInd
     if (assets.length) {
       MovieMasher.eventDispatcher.dispatch(new EventAddAssets(assets, mashIndex)) 
     }
-    
   }
-  // console.log('dropAssetObjects', assetObjects.length)
-
-  const detail: ImportAssetObjectsEventDetail = { assetObjects }
-  const importEvent = new CustomEvent(EventTypeImportAssetObjects, { detail })
-  MovieMasher.eventDispatcher.dispatch(importEvent) 
+  MovieMasher.eventDispatcher.dispatch(new ImportAssetObjectsEvent(assetObjects)) 
   return Promise.resolve()
 }
+
+
+const dropAssetId = (assetId: string, mashIndex?: MashIndex) => {
+  if (mashIndex) {
+    const event = new EventManagedAsset(assetId)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { asset } = event.detail
+    if (asset) {
+      MovieMasher.eventDispatcher.dispatch(new EventAddAssets([asset], mashIndex)) 
+    }
+  }
+}
+
 
 export const dropDraggable = (draggable: Draggable, editorIndex?: MashIndex)=> {
   if (isClip(draggable)) {
     // this does not happen since Timeline intercepts
-    console.log('dropDraggable Clip')
+    console.trace('dropDraggable Clip')
     return 
   }
-  if (isAssetObject(draggable)) {
-    return dropAssetObjects([draggable], editorIndex)
-  }
+  if (isString(draggable)) return dropAssetId(draggable, editorIndex)
+  
   return dropFiles(draggable, editorIndex) 
 }
 
-export const droppingFiles = (dataTransfer?: DataTransfer) => {
+export const droppingFiles = (dataTransfer: DataTransfer | null | undefined): boolean => {
   if (!dataTransfer) return false
 
   return dragTypes(dataTransfer).includes(TransferTypeFiles)
@@ -222,11 +202,9 @@ export const dropped = (event: DragEvent, mashIndex?: MashIndex) => {
   } else if (data.offset) {
     if (isDragDefinitionObject(data)) {
       // console.log('dropped ADD ASSET OBJECT', data)
-      const { mediaObject } = data
-      dropAssetObjects([mediaObject], mashIndex)
+      const { assetId } = data
+      dropAssetId(assetId, mashIndex)
     } else if (mashIndex) {
-            // console.log('dropped MOVE CLIP', data)
-
       const moveEvent: MashMoveClipEvent = new CustomEvent(EventTypeMashMoveClip, { detail: mashIndex })
       MovieMasher.eventDispatcher.dispatch(moveEvent)
     }

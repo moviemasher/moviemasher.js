@@ -18,10 +18,9 @@ const WithControlProperty = ControlPropertyMixin(Component)
 const WithControl = ControlMixin(WithControlProperty)
 export class StringControlElement extends WithControl {
   protected override get defaultContent(): OptionalContent {
-    const { selectedProperty } = this
-    if (!selectedProperty) return
+    const { property, scalar: value } = this
+    if (!property) return
 
-    const { property, value } = selectedProperty
     const { name, options } = property
     this.setInputValue(value)
     

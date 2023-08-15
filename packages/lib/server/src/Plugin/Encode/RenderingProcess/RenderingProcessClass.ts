@@ -1,41 +1,20 @@
+
+import type { CommandFilters, CommandInput, CommandInputs, OutputOptions, ServerMashAsset, VideoOutputOptions, } from '@moviemasher/lib-shared'
+import type { AVType, EncodingType, Numbers, StringData, StringDataOrError, } from '@moviemasher/runtime-shared'
+import type { CommandResult } from '../../../RunningCommand/RunningCommand.js'
+import type { CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, RenderingOutputArgs } from '../Encode.js'
+import type { RenderingProcess, RenderingProcessArgs } from './RenderingProcess.js'
+
+import { AVTypeBoth, AVTypeVideo, EmptyFunction, NewlineChar, assertAboveZero, assertPopulatedString, assertSize, assertTrue, idGenerateString, isMashAsset, outputOptions, } from '@moviemasher/lib-shared'
+import { EventAsset, MovieMasher, isServerAsset } from '@moviemasher/runtime-server'
+import { ErrorName, TypeImage, TypeVideo, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-import { EventAsset, MovieMasher, isServerAsset} from '@moviemasher/runtime-server'
-import {
-  CommandInput, CommandInputs,
-  CommandFilters,
-  ServerMashAsset, 
-   VideoOutputOptions, OutputOptions, assertPopulatedString, outputOptions, StringDataOrError, 
-   
-   StringData,
-   isMashAsset, 
-} from '@moviemasher/lib-shared'
-import type { 
-  CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, 
-  RenderingOutputArgs
-} from '../Encode.js'
-import type  { RenderingProcess, RenderingProcessArgs } from './RenderingProcess.js'
-import type { CommandResult } from '../../../RunningCommand/RunningCommand.js'
-import type { 
-  AVType, EncodingType, Numbers, 
-} from '@moviemasher/runtime-shared'
-import {
-  EmptyFunction, 
-  assertTrue, assertSize, assertAboveZero, idGenerateString, 
-NewlineChar, AVTypeBoth, AVTypeVideo, 
-  
-} from '@moviemasher/lib-shared'
-import {
-  BasenameRendering, ExtensionCommands, ExtensionLoadedInfo, TsExtension
-} from '../../../Setup/Constants.js'
-
-import { commandArgsString } from '../../../Utility/Command.js'
 import { Probe } from '../../../Command/Probe/Probe.js'
 import { runningCommandInstance } from '../../../RunningCommand/RunningCommandFactory.js'
+import { BasenameRendering, ExtensionCommands, ExtensionLoadedInfo, TsExtension } from '../../../Setup/Constants.js'
+import { commandArgsString } from '../../../Utility/Command.js'
 import { RenderingOutputClass } from '../RenderingOutputClass.js'
-import { 
- isDefiniteError, ErrorName, TypeImage, TypeVideo, errorThrow 
-} from '@moviemasher/runtime-shared'
 
 export type RenderingProcessConcatFileDuration = [string, number]
 
@@ -231,7 +210,6 @@ export class RenderingProcessClass implements RenderingProcess {
     if (this._mashAsset) return this._mashAsset
 
     const { mash } = this.args
-    // const size = sizeAboveZero(outputOptions) ? outputOptions : SIZE_ZERO
     const event = new EventAsset(mash)
     MovieMasher.eventDispatcher.dispatch(event)
 

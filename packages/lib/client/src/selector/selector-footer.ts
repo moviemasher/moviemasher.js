@@ -1,14 +1,12 @@
+import type { AssetType } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
-import type { AssetType } from '@moviemasher/runtime-shared'
 
+import { ClassSelected, EventDialog, EventTypeAssetType } from '@moviemasher/runtime-client'
 import { TypesAsset } from '@moviemasher/runtime-shared'
-import { EventDialog, EventTypeAssetType } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
-
+import { html } from 'lit-html/lit-html.js'
 import { Footer } from '../Base/LeftCenterRight.js'
-import { ClassSelected } from '@moviemasher/lib-shared'
 
 export class SelectorFooterElement extends Footer {
   constructor() {

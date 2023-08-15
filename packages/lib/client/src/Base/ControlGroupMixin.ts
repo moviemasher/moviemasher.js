@@ -1,18 +1,15 @@
+import type { SelectedProperty } from '@moviemasher/runtime-client'
+import type { Constrained, DataType, PropertyId, PropertyIds, Scalar } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit-element/lit-element.js'
-import type { Constrained, DataType, PropertyId, PropertyIds, Scalar } from '@moviemasher/runtime-shared'
 import type { ControlGroup, OptionalContent } from '../declarations.js'
-import type { SelectedProperty } from '@moviemasher/runtime-client'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-
+import { End } from '@moviemasher/runtime-shared'
+import { EventChangeScalar, EventChanged, EventScalar, EventSelectedProperties, MovieMasher, isPropertyId } from '@moviemasher/runtime-client'
 import { DotChar, isDefined } from '@moviemasher/runtime-shared'
-import { End } from '@moviemasher/lib-shared'
-import { EventChangedClipId, EventSelectedProperties, EventValue, MovieMasher, isPropertyId } from '@moviemasher/runtime-client'
-
-
+import { ifDefined } from 'lit-html/directives/if-defined.js'
+import { html } from 'lit-html/lit-html.js'
 import { ImporterComponent } from './ImporterComponent.js'
 
 export function ControlGroupMixin
@@ -21,21 +18,19 @@ T & Constrained<ControlGroup> {
   return class extends Base implements ControlGroup {
     constructor(...args: any[]) {
       super(...args)
-      this.listeners[EventChangedClipId.Type] = this.handleChangedClipId.bind(this)
+      this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
     }
 
     addOrRemoveEnd(addOrRemove: string, propertyNamePrefix: string): void {
       const value = this.currentValue(propertyNamePrefix, addOrRemove)
       const endName = `${propertyNamePrefix}${End}`
       const endPropertyId = this.namePropertyId(endName)
-      console.debug(this.tagName, 'addOrRemoveEnd', { addOrRemove, endPropertyId, value })
-      if (!endPropertyId) return
-
-      const selectedProperty = this.selectedProperty(endPropertyId)
-      if (!selectedProperty) return
-
-      console.log(this.tagName, 'addOrRemoveEnd', selectedProperty.propertyId)
-      selectedProperty.changeHandler(endName, value)
+      if (!endPropertyId) {
+        console.warn(this.tagName, 'addOrRemoveEnd', { endPropertyId, addOrRemove, value })
+        return
+      }
+      console.log(this.tagName, 'addOrRemoveEnd', endPropertyId)
+      MovieMasher.eventDispatcher.dispatch(new EventChangeScalar(endPropertyId, value))
     }
 
     controlContent(name: string, icon?: string): OptionalContent {
@@ -74,7 +69,7 @@ T & Constrained<ControlGroup> {
       const [target] = endPropertyId.split(DotChar)
   
       this.importTags('movie-masher-component-a')
-      const event = new EventValue(endPropertyId)
+      const event = new EventScalar(endPropertyId)
       MovieMasher.eventDispatcher.dispatch(event)
       const defined = isDefined(event.detail.value)
       const addOrRemove = defined ? 'remove' : 'add'
@@ -98,9 +93,20 @@ T & Constrained<ControlGroup> {
 
       return this.propertyIdValue(found)
     }
-      
-    private handleChangedClipId() { 
-      //this.requestUpdate()
+
+    private handleChanged(event: EventChanged) {
+      const { detail: action } = event
+      if (!action) return
+  
+      const { propertyIds } = this
+      if (!propertyIds?.length) return
+  
+      const { affects } = action
+      const found = propertyIds.some(id => affects.includes(id))
+      if (found) {
+        // console.debug(this.tagName, 'handleChanged', action)
+        this.requestUpdate()
+      }
     }
 
     namePropertyId(name: string): PropertyId | undefined {
@@ -125,7 +131,7 @@ T & Constrained<ControlGroup> {
       const propertyId = isPropertyId(found) ? found : this.namePropertyId(found)
       if (!propertyId) return
 
-      const event = new EventValue(propertyId)
+      const event = new EventScalar(propertyId)
       MovieMasher.eventDispatcher.dispatch(event)
       return event.detail.value 
     }
@@ -155,6 +161,13 @@ export const ControlGroupStyles: CSSResultGroup = [
       padding: var(--control-spacing);
       background-color: initial;
     }
+
+    fieldset > legend > movie-masher-component-icon,
+    fieldset > div > movie-masher-component-icon  {
+      display: inline-block;
+      min-width: 1em;
+      min-height: 1em;
+    }
     
     fieldset > div {
       display: flex;
@@ -162,6 +175,7 @@ export const ControlGroupStyles: CSSResultGroup = [
       grid-auto-flow: column;
       margin-bottom: var(--control-spacing);
     }
+
   `
 ]
 

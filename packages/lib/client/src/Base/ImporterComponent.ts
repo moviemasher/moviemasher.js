@@ -37,7 +37,6 @@ export class ImporterComponent extends Component {
   }
   
   protected static importTag(...names: string[]) {
-    
     const uniqueNames = Array.from(new Set(names))
     const { customElements } = globalThis.window
     const { promises } = this
@@ -55,8 +54,7 @@ export class ImporterComponent extends Component {
       const [first, second] = nameComponents
       const lib = second ? `${first}/${first}-${second}` : first || name
       // console.debug(this.name, 'importTag', name, '->', lib)
-      const promise = import(new URL(`../${lib}.js`, import.meta.url).href)
-      const libPromise = promise.then(() => {
+      const libPromise = import(new URL(`../${lib}.js`, import.meta.url).href).then(() => {
         promises.delete(name)
         return lib
       })

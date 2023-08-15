@@ -1,11 +1,9 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup } from 'lit'
 import type { MashIndex } from '@moviemasher/runtime-client'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-
+import { html } from 'lit-html/lit-html.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 
@@ -20,7 +18,7 @@ export class ComposerIconElement extends WithDropTargetMixin implements DropTarg
     const icon = dense ? 'trackDense' : 'track'
 
     contents.push(html`
-      <movie-masher-component-icon icon='${icon}'></movie-masher-icon>
+      <movie-masher-component-icon icon='${icon}'></movie-masher-component-icon>
     `)
     
     return html`${contents}`

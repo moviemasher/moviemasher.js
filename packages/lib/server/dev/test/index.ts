@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 
 import { 
-  SizePreview,  
-  isArray,
+
   outputOptions,
+  sizeScale,
   VideoOutputOptions
  } from '@moviemasher/lib-shared'
 
@@ -26,8 +26,10 @@ import {
 import { renderingTestIdPromise, renderingTestIdsPromise } from './Rendering'
 import { TestRenderOutput } from './TestRenderOutput'
 import { ExtensionLoadedInfo } from '@moviemasher/lib-server'
-import { TypeVideo } from '@moviemasher/runtime-shared'
+import { 
+  SIZE_OUTPUT, TypeVideo, isArray } from '@moviemasher/runtime-shared'
 
+const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
 
 const args = process.argv.slice(2)
 

@@ -1,22 +1,14 @@
-import type { PropertyDeclarations } from 'lit'
-
-import type { CSSResultGroup } from 'lit'
-import type { 
-  Content, Contents, DivSectionSlot, FooterSectionSlot, HeaderSectionSlot, 
-  Htmls, OptionalContent 
-} from '../declarations.js'
-
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
-
-import { Slotted } from './Slotted.js'
-import { PipeChar } from '@moviemasher/lib-shared'
 import { Component } from './Component.js'
+import { Slotted } from './Slotted.js'
 
-export const HeaderSlot: HeaderSectionSlot = 'header'
-export const FooterSlot: FooterSectionSlot = 'footer'
-export const DivSlot: DivSectionSlot = 'div'
+export const HeaderSlot = 'header'
+export const FooterSlot = 'footer'
+export const DivSlot = 'div'
 
 export class Section extends Slotted {
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
@@ -36,7 +28,7 @@ export class Section extends Slotted {
   
   icon = 'app'
   
-  override parts = [HeaderSlot, DivSlot, FooterSlot].join(PipeChar)
+  override parts = [HeaderSlot, DivSlot, FooterSlot].join(Slotted.partSeparator)
 
   protected override content(contents: Contents): Content {
     return html`<section

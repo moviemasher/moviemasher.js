@@ -1,17 +1,12 @@
-import type { PropertyValues, PropertyDeclarations } from 'lit'
 import type { EventDispatcherListenerRecord } from '@moviemasher/runtime-shared'
+import type { PropertyDeclarations, PropertyValues } from 'lit'
 import type { Content, Contents, Elements, Nodes, OptionalContent } from '../declarations.js'
 
-
-import { LitElement } from 'lit-element/lit-element.js'
-import { html } from 'lit-html/lit-html.js'
-import { nothing } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-
+import { EventTypeExportParts, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefined } from '@moviemasher/runtime-shared'
-import { MovieMasher, EventTypeExportParts } from '@moviemasher/runtime-client'
-
-import { assertPopulatedString } from '@moviemasher/lib-shared'
+import { LitElement } from 'lit-element/lit-element.js'
+import { html, nothing } from 'lit-html/lit-html.js'
 
 const partFirst = (element: Element): string => element.part[0] || ''
 
@@ -90,15 +85,16 @@ export class Component extends LitElement {
       if (child instanceof Component) {
         const { exportParts } = child 
         if (exportParts) {
-          const reexported = exportParts.split(',').map(exportPart => {
-            assertPopulatedString(exportPart, 'exportPart')
+          const reexported = exportParts.split(',').flatMap(exportPart => {
+            if (!exportPart) return []
+            
             const [_, childExportedPart] = exportPart.split(':')
-            assertPopulatedString(childExportedPart, 'childExportedPart')
+            if (!childExportedPart) return []
              
             const exportedAs = part ? [part, childExportedPart].join('-') : childExportedPart
-            if (childExportedPart === exportedAs) return exportedAs
+            if (childExportedPart === exportedAs) return [exportedAs]
 
-            return [childExportedPart, exportedAs].join(':')
+            return [[childExportedPart, exportedAs].join(':')]
           })
           exported.push(...reexported)
         }

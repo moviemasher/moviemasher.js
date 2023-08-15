@@ -1,8 +1,7 @@
-import type { Clip, ClipObject, ContainerRectArgs, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, RectTuple, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
+import type { Clip, ClipObject, ContainerRectArgs, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { EventManagedAsset, MovieMasher, TypeClip, TypeContainer, TypeContent } from '@moviemasher/runtime-client'
-import { assertAsset, isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
-
+import { EventManagedAsset, MovieMasher, TypeClip, isPropertyId } from '@moviemasher/runtime-client'
+import { DotChar, POINT_ZERO, assertAsset, isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
 import { DefaultContainerId } from '../../../Helpers/Container/ContainerConstants.js'
 import { assertContainerInstance, isContainerInstance } from '../../../Helpers/Container/ContainerGuards.js'
@@ -17,7 +16,6 @@ import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
 import { SizingContainer, SizingContent, SizingPreview, Sizings } from '../../../Setup/SizingConstants.js'
 import { TimingContainer, TimingContent, TimingCustom, Timings } from '../../../Setup/TimingConstants.js'
 import { idGenerateString } from '../../../Utility/IdFunctions.js'
-import { POINT_ZERO } from '../../../Utility/PointConstants.js'
 import { assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero } from '../../SharedGuards.js'
 
 export class ClipClass extends PropertiedClass implements Clip {
@@ -69,6 +67,16 @@ export class ClipClass extends PropertiedClass implements Clip {
     return Promise.all(promises).then(EmptyFunction)
   }
 
+  get clipObject(): ClipObject {
+    const object: ClipObject = { ...this.scalarRecord }
+    const { container, content } = this
+    object.content = content.instanceObject
+    if (container) {
+      object.container = container.instanceObject
+    } else object.containerId = ''
+    return object
+  }
+
   private _containerObject: InstanceObject = {}
 
   private _container?: VisibleInstance
@@ -77,6 +85,8 @@ export class ClipClass extends PropertiedClass implements Clip {
     const { containerId, _containerObject: containerObject } = this
     const assetId = containerId || containerObject.assetId
     if (!isPopulatedString(assetId)) return undefined
+
+    console.log(this.constructor.name, 'containerInitialize', assetId, containerId)
 
     const event = new EventManagedAsset(assetId)
     MovieMasher.eventDispatcher.dispatch(event)
@@ -105,6 +115,8 @@ export class ClipClass extends PropertiedClass implements Clip {
     const { contentId, _contentObject: contentObject } = this
     const assetId = contentId || contentObject.assetId
     assertPopulatedString(assetId)
+
+    console.log(this.constructor.name, 'contentInitialize', assetId, contentId)
 
     const event = new EventManagedAsset(assetId)
     MovieMasher.eventDispatcher.dispatch(event)
@@ -147,24 +159,24 @@ export class ClipClass extends PropertiedClass implements Clip {
   declare frames: number
   
   override initializeProperties(object: ClipObject): void {
-    this.properties.push(propertyInstance({
-      targetId: TypeContainer, name: 'containerId', type: DataTypeContainerId,
-      defaultValue: DefaultContainerId
-    }))
-    this.properties.push(propertyInstance({
-      targetId: TypeContent, name: 'contentId', type: DataTypeContentId,
-      defaultValue: DefaultContentId
-    }))
     this.properties.push(propertyInstance({ 
-      targetId: TypeClip, name: 'label', type: DataTypeString, 
+      targetId: TypeClip, name: 'label', type: DataTypeString, order: 1,
+    }))
+    this.properties.push(propertyInstance({
+      targetId: TypeClip, name: 'containerId', type: DataTypeContainerId,
+      defaultValue: DefaultContainerId, order: 5,
+    }))
+    this.properties.push(propertyInstance({
+      targetId: TypeClip, name: 'contentId', type: DataTypeContentId,
+      defaultValue: DefaultContentId, order: 5,
     }))
     this.properties.push(propertyInstance({ 
       targetId: TypeClip, name: 'sizing', type: DataTypeString, 
-      defaultValue: SizingContent, options: Sizings
+      defaultValue: SizingContent, options: Sizings, order: 2,
     }))
     this.properties.push(propertyInstance({ 
       targetId: TypeClip, name: 'timing', type: DataTypeString, 
-      defaultValue: TimingContent, options: Timings, 
+      defaultValue: TimingContent, options: Timings, order: 3,
     }))
     this.properties.push(propertyInstance({ 
       targetId: TypeClip, name: 'frame', type: DataTypeFrame, 
@@ -221,7 +233,7 @@ export class ClipClass extends PropertiedClass implements Clip {
 
     return !container.muted
   }
-    
+  
   rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
     const rect = { ...size, ...POINT_ZERO }
     const { sizing } = this
@@ -280,17 +292,18 @@ export class ClipClass extends PropertiedClass implements Clip {
     }
   }
 
-  setValue(name: string, value?: Scalar, property?: Property): void {
-    super.setValue(name, value, property)
+  override setValue(id: string, value?: Scalar, property?: Property): void {
+    super.setValue(id, value, property)
+    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
     switch (name) {
       case 'containerId': {
-        // console.log(this.constructor.name, 'setValue', name, value, !!property)
+        console.log(this.constructor.name, 'setValue', name, value, !!property)
         this._containerObject = this._container?.toJSON() || {}
         delete this._container
         break
       }
       case 'contentId': {
-        // console.log(this.constructor.name, 'setValue', name, value, !!property)
+        console.log(this.constructor.name, 'setValue', name, value, !!property)
         this._contentObject = this._content?.toJSON() || {}
         delete this._content
         break
@@ -315,11 +328,8 @@ export class ClipClass extends PropertiedClass implements Clip {
     const json = super.toJSON()
     const { container, content } = this
     json.content = content
-    json.contentId = content.assetId
-    if (container) {
-      json.container = container
-      json.containerId = container.assetId
-    } else json.containerId = ''
+    if (container) json.container = container
+    else json.containerId = ''
     return json
   }
 

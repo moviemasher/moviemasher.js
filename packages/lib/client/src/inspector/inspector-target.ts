@@ -6,7 +6,7 @@ import type { Content, Contents, OptionalContent } from '../declarations.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
 
-import { EventChangedAssetObject, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher, TypeAsset, TypeMash } from '@moviemasher/runtime-client'
+import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher, TypeAsset, TypeMash } from '@moviemasher/runtime-client'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 
 import { arraySet, assertPopulatedString, sortByOrder } from '@moviemasher/lib-shared'
@@ -25,7 +25,7 @@ export class InspectorTargetElement extends ImporterComponent {
 
     switch (targetId) {
       case TypeAsset: {
-        listeners[EventChangedAssetObject.Type] = this.handleChanged.bind(this)
+        listeners[EventChangedAssetId.Type] = this.handleChanged.bind(this)
         break
       }
       case TypeMash: {
@@ -45,7 +45,6 @@ export class InspectorTargetElement extends ImporterComponent {
 
   protected override get defaultContent(): OptionalContent { 
     const { selectedPropertyIds } = this
-    
     const groupDetails: EventControlGroupDetail[] = []
 
     if (!selectedPropertyIds.length) return 
@@ -88,7 +87,7 @@ export class InspectorTargetElement extends ImporterComponent {
       !usedPropertyIds.includes(propertyId)
     )
     const contents: Contents = []
-    console.debug(this.tagName, 'defaultContent', this.targetId, ...selectedPropertyIds)
+    // console.debug(this.tagName, 'defaultContent', this.targetId, ...selectedPropertyIds)
     // contents.push(html`TARGET: ${this.targetId}<br/>Properties: ${selectedPropertyIds.length}<br/>${groupedControls.length} groups and ${ungroupedPropertyIds.length} ungrouped`)
     if (ungroupedPropertyIds.length) {
       // some properties were not grouped
@@ -105,8 +104,8 @@ export class InspectorTargetElement extends ImporterComponent {
     return html`${contents}`
   }
 
-  private handleChanged(event: Event) { 
-    console.debug(this.tagName, 'handleChanged', this.targetId, event.type)
+  private handleChanged(_event: Event) { 
+    // console.debug(this.tagName, 'handleChanged', this.targetId, event.type)
     this.requestUpdate() 
   }
 
@@ -122,8 +121,8 @@ export class InspectorTargetElement extends ImporterComponent {
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties)
     if (changedProperties.has('targetId')) {
-      const { targetId } = this
-      console.debug(this.tagName, 'willUpdate', changedProperties.get('targetId'), targetId)
+      // const { targetId } = this
+      // console.debug(this.tagName, 'willUpdate', changedProperties.get('targetId'), targetId)
       this.resetListeners()
     }
   }
@@ -137,6 +136,11 @@ export class InspectorTargetElement extends ImporterComponent {
     css`
       div.content > * {
         margin-bottom: var(--inspector-padding);
+      }
+
+      div.content > movie-masher-control-row {
+        display: block;
+        min-height: var(--control-size);
       }
     `
   ]

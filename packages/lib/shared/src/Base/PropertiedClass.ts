@@ -1,18 +1,45 @@
-import type { Propertied, Properties, Property, PropertyIds, Scalar, ScalarRecord, Strings, TargetId, TargetIds, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { ChangeActionObject, ChangePropertiesActionObject, ChangePropertyActionObject } from '@moviemasher/runtime-client'
+import type { Propertied, Properties, Property, PropertyId, PropertyIds, Scalar, ScalarRecord, ScalarsById, Strings, TargetId, TargetIds, UnknownRecord } from '@moviemasher/runtime-shared'
 
 import { isPropertyId } from '@moviemasher/runtime-client'
 import { DotChar, isDefined } from '@moviemasher/runtime-shared'
 
-import { assertTrue } from '../Shared/SharedGuards.js'
+import { ActionTypeChange, ActionTypeChangeMultiple } from '../Setup/ActionTypeConstants.js'
+import { assertPopulatedString, assertTrue } from '../Shared/SharedGuards.js'
 import { arrayUnique } from '../Utility/ArrayFunctions.js'
+import { sortByOrder } from '../Utility/SortFunctions.js'
 import { propertyTypeCoerce, propertyTypeValid } from './PropertyTypeFunctions.js'
-import { sortByFrame, sortByOrder } from '../Utility/SortFunctions.js'
 
 
 export class PropertiedClass implements Propertied {
   constructor(..._: any[]) {}
 
   [index: string]: unknown
+
+  changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeActionObject {
+    // console.debug(this.constructor.name, 'changeScalar', propertyId, scalar)
+    const object: ChangePropertyActionObject = {
+      type: ActionTypeChange,
+      redoValue: scalar,
+      undoValue: this.scalar(propertyId),
+      property: propertyId,
+      target: this
+    }
+    return object
+  }
+
+  changeScalars(scalars: ScalarsById): ChangeActionObject {
+    const undoValues: ScalarsById = Object.fromEntries(Object.keys(scalars).map((propertyId) => {
+      if (!isPropertyId(propertyId)) return []
+
+      return [propertyId, this.scalar(propertyId)]
+    }))
+    const args: ChangePropertiesActionObject = {
+      target: this,
+      type: ActionTypeChangeMultiple, redoValues: scalars, undoValues 
+    }
+    return args
+  }
 
   initializeProperties(object: unknown) { this.propertiesInitialize(object) }
 
@@ -38,10 +65,11 @@ export class PropertiedClass implements Propertied {
     const propertyIds = targets.flatMap(id => 
       this.propertyNamesOfTarget(id).map(name => [id, name].join(DotChar))
     )
+    console.debug(this.constructor.name, 'propertyIds', targetIds, propertyIds)
     return propertyIds.filter(isPropertyId)
   }
 
-  protected get propertyTargetIds(): TargetIds {
+  private get propertyTargetIds(): TargetIds {
     return arrayUnique(this.properties.map(property => property.targetId))
   } 
 
@@ -58,18 +86,40 @@ export class PropertiedClass implements Propertied {
     return arrayUnique(populated)
   }
 
-  protected propertyNamesOfTarget(targetId: TargetId): Strings {
+  private propertyNamesOfTarget(targetId: TargetId): Strings {
     return this.propertiesOfTarget(targetId).map(property => property.name)
   }
 
-  protected propertiesOfTarget(targetId: TargetId): Properties {
+  private propertiesOfTarget(targetId: TargetId): Properties {
     const { properties } = this
-    const filtered = properties.filter(property => property.targetId === targetId)
+    const filtered = properties.filter(property => 
+      property.targetId === targetId && this.shouldSelectProperty(property.name)
+    )
 
     return filtered.sort(sortByOrder)
   }
 
-  setValue(name: string, value?: Scalar, property?: Property): void {
+  protected scalar(propertyId: PropertyId): Scalar | undefined {
+    const propertyName = propertyId.split(DotChar).pop()
+    if (!propertyName) return
+
+    return this.value(propertyName)
+  }
+
+  get scalarRecord(): ScalarRecord {
+    const record: ScalarRecord = {}
+    this.properties.forEach(property => {
+      const { name } = property
+      const value = this.value(name)
+      if (isDefined<Scalar>(value)) record[name] = value
+    })
+    return record
+  }
+  
+  setValue(id: string, value?: Scalar, property?: Property): void {
+    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    assertPopulatedString(name, 'name')
+
     const found = property || this.propertyFind(name)
     assertTrue(found, name)
 
@@ -84,13 +134,18 @@ export class PropertiedClass implements Propertied {
     this[name] = propertyTypeCoerce(value, type)
   }
 
-  toJSON(): UnknownRecord {
-    const { properties } = this
-    const names = properties.map(property => property.name)
-    return Object.fromEntries(names.map(name => ([name, this.value(name)])))
+  protected shouldSelectProperty(_name: string): boolean {
+    return true
   }
 
-  value(name: string): Scalar | undefined { 
+  declare targetId: TargetId
+
+  toJSON(): UnknownRecord { return this.scalarRecord }
+
+  value(id: string): Scalar | undefined { 
+    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    if (!name) return
+
     return this[name] as Scalar | undefined
   }
 }

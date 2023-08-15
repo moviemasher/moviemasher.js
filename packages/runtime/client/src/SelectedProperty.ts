@@ -7,7 +7,7 @@ export interface PropertiedChangeHandler {
 export interface SelectedProperty {
   propertyId: PropertyId
   property: Property
-  changeHandler: PropertiedChangeHandler
+  // changeHandler: PropertiedChangeHandler
   value?: Scalar
   frame?: number
 }

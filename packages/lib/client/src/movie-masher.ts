@@ -1,22 +1,15 @@
 import type { PropertyDeclarations } from 'lit'
 import type { AssetObject } from '@moviemasher/runtime-shared'
-import type { Masher, MasherOptions } from '@moviemasher/runtime-client'
+import type { Masher } from '@moviemasher/runtime-client'
 import type { CSSResultGroup } from 'lit'
-import type { AssetObjectPromiseEventDetail, CoreLib, Htmls, OptionalContent } from './declarations.js'
+import type { AssetObjectPromiseEventDetail, Htmls, OptionalContent } from './declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
-
 import { DotChar, SourceRaw, SourceText, isDefiniteError } from '@moviemasher/runtime-shared'
 import { EventTypeAssetObject, MovieMasher } from '@moviemasher/runtime-client'
-
-import { PipeChar } from '@moviemasher/lib-shared'
-
-import './utility/ClientAssetManagerClass.js'
-
-import { Component } from './Base/Component.js'
 import { Slotted } from './Base/Slotted.js'
-import { masherInstance } from './asset/mash/MasherFactory.js'
+import { Component } from './Base/Component.js'
 
 const FormSlotViewer = 'viewer'
 const FormSlotSelector = 'selector'
@@ -25,9 +18,6 @@ const FormSlotInspector = 'inspector'
 const FormSlotDialog = 'dialog'
 
 /**
- * @prop (String) icon - id of icon to use for viewer section
- * @cssprop --hue - component of oklch base color
- * 
  * @tag movie-masher
  */
 export class MovieMasherElement extends Slotted {
@@ -35,8 +25,14 @@ export class MovieMasherElement extends Slotted {
     super()
 
     this.imports = [
+      'media/client-audio.js',
+      'media/client-font.js',
+      'media/client-image.js',
+      'media/client-video.js',
       'asset/color/image.js',
       'asset/mash/video.js',
+      'asset/element.js',
+      'asset/save.js',
       'asset/object/video.js',
       'asset/objects/fetch.js',
       'asset/raw/audio.js',
@@ -44,6 +40,7 @@ export class MovieMasherElement extends Slotted {
       'asset/raw/video.js',
       'asset/shape/image.js',
       'asset/text/image.js',
+      'clip/element.js',
       'control/asset.js',
       'control/boolean.js',
       'control/group/aspect.js',
@@ -55,7 +52,6 @@ export class MovieMasherElement extends Slotted {
       'control/rgb.js',
       'control/string.js',
       'icon/fetch.js',
-      'selector/selector-asset.js',
       ...[SourceRaw, SourceText].map(source => `asset/${source}/importer.js`),
     ].map(suffix => `./${suffix}`).join(',')
   }
@@ -128,13 +124,18 @@ export class MovieMasherElement extends Slotted {
     return this._masherPromise ||= this.masherPromiseInitialize
   }
   private get masherPromiseInitialize(): Promise<void> {
-    return this.sharedPromise.then(() => {
-      // console.log(this.tagName, 'masherPromiseInitialize', rect)
-      const options: MasherOptions = {}
-      const masher = masherInstance(options)
-      MovieMasher.masher = this.masher = masher
-      // console.log(this.tagName, 'masherPromiseInitialize SET masher')
+    return import('./asset/mash/MasherFactory.js').then(lib => {
+      const { masherInstance } = lib
+      this.masher = masherInstance()
     })
+
+    // return this.sharedPromise.then(() => {
+    //   // console.log(this.tagName, 'masherPromiseInitialize', rect)
+    //   const options: MasherOptions = {}
+    //   const masher = masherInstance(options)
+    //   this.masher = masher
+    //   // console.log(this.tagName, 'masherPromiseInitialize SET masher')
+    // })
   }
 
   protected override partContent(part: string, slots: Htmls): OptionalContent {
@@ -190,26 +191,13 @@ export class MovieMasherElement extends Slotted {
     return super.partContent(part, slots)
   }
 
-  readonly = false
-
-  protected core?: CoreLib | undefined
-  private _sharedPromise?: Promise<void>
-  private get sharedPromise() {
-    return this._sharedPromise ||= this.sharedPromiseInitialize
-  }
-  private get sharedPromiseInitialize(): Promise<void> {
-    return import('@moviemasher/lib-shared').then((lib: CoreLib) => {
-      this.core = lib
-    })
-  }
-
   override parts = [
     FormSlotViewer, 
     FormSlotSelector,  
     FormSlotComposer, 
     FormSlotInspector, 
     FormSlotDialog,
-  ].join(PipeChar)
+  ].join(Slotted.partSeparator)
 
   static override properties: PropertyDeclarations = {
     ...Slotted.properties,
@@ -308,9 +296,6 @@ export class MovieMasherElement extends Slotted {
       --section-fore: oklch(var(--lightness-fore-tertiary) 0 0);
       --section-back: oklch(var(--lightness-back-tertiary) 0 0);
         
-      --label-fore: red;
-      --label-back: black;
-
       --control-back: oklch(var(--lightness-back-secondary) 0 0);
       --control-back-disabled: var(--control-back);
       --control-back-hover: var(--control-back);

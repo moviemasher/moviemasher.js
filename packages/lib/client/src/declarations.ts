@@ -1,18 +1,6 @@
 import type { EventChangedMashAsset, MashIndex, SelectedProperty } from '@moviemasher/runtime-client'
-import type { AssetObject, AssetObjects, AssetType, DataOrError, DataType, Identified, Importers, PropertyId, PropertyIds, Rect, Scalar, Size, StringRecord, Strings, TargetId } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetObjects, AssetType, DataOrError, DataType, Identified, Importers, Property, PropertyId, PropertyIds, Rect, Scalar, Size, StringRecord, Strings, TargetId } from '@moviemasher/runtime-shared'
 import type { TemplateResult } from 'lit'
-
-// TODO: remove these
-export type CoreLib = typeof import('@moviemasher/lib-shared')
-export type HeaderSectionSlot = 'header'
-export type FooterSectionSlot = 'footer'
-export type DivSectionSlot = 'div'
-export type SectionSlot = HeaderSectionSlot | FooterSectionSlot | DivSectionSlot
-export type LeftSlot = 'left'
-export type RightSlot = 'right'
-export type CenterSlot = 'center'
-export type IconSlot = 'icon'
-export type StringSlot = 'string'
 
 export type Constructor<T> = new (...args: any[]) => T
 
@@ -55,18 +43,6 @@ export interface AssetObjectPromiseEventDetail {
 export type AssetObjectPromiseEvent = CustomEvent<AssetObjectPromiseEventDetail>
 
 
-export interface ImportEventDetail {
-  fileList: FileList
-  promise?: Promise<AssetObjects>
-}
-
-export type ImportEvent = CustomEvent<ImportEventDetail>
-
-export interface ImportAssetObjectsEventDetail {
-  assetObjects: AssetObjects
-}
-export type ImportAssetObjectsEvent = CustomEvent<ImportAssetObjectsEventDetail>
-
 export interface AssetObjectsParams extends ClientReadParams {
   excludeImported?: boolean
   excludeMash?: boolean
@@ -87,6 +63,8 @@ export interface ImportersEventDetail {
 export interface DropTarget {
   acceptsClip: boolean
   handleDragged(): void
+  handleDropped(event: DragEvent): void 
+  dropValid(dataTransfer: DataTransfer | null): boolean
   mashIndex(event: DragEvent): MashIndex
   ondragenter(event: DragEvent): void 
   ondragleave(event: DragEvent): void 
@@ -121,13 +99,14 @@ export interface ControlGroup {
 export type ControlInput = HTMLInputElement | HTMLSelectElement
 
 export interface Control extends ControlProperty {
-  selectedProperty?: SelectedProperty
-  setInputValue(value?: Scalar): void 
+  setInputValue(value?: Scalar): boolean 
   input?: ControlInput
   handleInput(): void
   inputSelectContent: OptionalContent
   endValueDefined: boolean 
   inputValue?: Scalar 
+  property?: Property 
+  scalar?: Scalar
 }
 
 export interface ControlProperty {

@@ -1,6 +1,5 @@
 export * from './Output.js'
 export * from './PropertiedClass.js'
-export * from './PropertiedConstants.js'
 export * from './PropertiedGuards.js'
 export * from './PropertyTypeFunctions.js'
 export * from './Requestable/index.js'

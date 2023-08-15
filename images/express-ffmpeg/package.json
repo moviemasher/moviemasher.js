@@ -22,14 +22,25 @@
     "build": "rollup --config dev/rollup.config.mjs"
   },
   "dependencies": {
-    "express": "4.18.2"
+    "express": "^4.18.2"
   },
   "peerDependencies": {
-    "@moviemasher/lib-server": "5.1.2"
+    "@bitjourney/uuid-v4": "^1.0.1",
+    "@moviemasher/lib-server": "5.1.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-basic-auth": "^1.2.1",
+    "knex": "2.4.0",
+    "multer": "^1.4.5-lts.1",
+    "sqlite": "^4.0.25",
+    "sqlite3": "^5.0.8",
+    "tar": "^6.1.11"
   },
   "devDependencies": {
-    "npm-run-all": "^4.1.5",
+    "@types/cors": "^2.8.13",
     "@types/fluent-ffmpeg": "^2.1.20",
-    "@types/node": "18.13.0"
+    "@types/multer": "^1.4.7",
+    "@types/node": "18.13.0",
+    "npm-run-all": "^4.1.5"
   }
 }
