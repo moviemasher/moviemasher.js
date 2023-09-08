@@ -2,8 +2,10 @@ import type { Constrained, PropertyId, TargetId } from '@moviemasher/runtime-sha
 import type { PropertyDeclarations } from 'lit'
 import type { ControlProperty } from '../declarations.js'
 
-import { EventAssetId, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventMashAsset, MovieMasher, TypeAsset, TypeMash, isTargetId } from '@moviemasher/runtime-client'
-import { DotChar } from '@moviemasher/runtime-shared'
+import { DOT } from '@moviemasher/lib-shared'
+import { EventAssetId, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventMashAsset, MovieMasher } from '@moviemasher/runtime-client'
+import { TypeAsset, TypeMash } from '@moviemasher/runtime-shared'
+import { isTargetId } from '../TypeGuards.js'
 import { Component } from './Component.js'
 
 export function ControlPropertyMixin
@@ -64,23 +66,17 @@ T & Constrained<ControlProperty> {
         case TypeMash: {
           const event = new EventMashAsset() 
           MovieMasher.eventDispatcher.dispatch(event)
-          const id = event.detail.mashAsset?.id
-          if (!id) console.log(this.tagName, 'selectedIdDefined', targetId, id, event.detail)
-          return id
+          return event.detail.mashAsset?.id
         }
         case TypeAsset: {
           const event = new EventAssetId() 
           MovieMasher.eventDispatcher.dispatch(event)
-          const id = event.detail.assetId
-          if (!id) console.log(this.tagName, 'selectedIdDefined', targetId, id, event.detail)
-          return id
+          return event.detail.assetId
         }
         default: {
           const event = new EventClipId()
           MovieMasher.eventDispatcher.dispatch(event)
-          const { clipId: id } = event.detail
-          if (!id) console.log(this.tagName, 'selectedIdDefined', targetId, id)
-          return id
+          return event.detail.clipId
         }
       }
     }
@@ -91,7 +87,7 @@ T & Constrained<ControlProperty> {
         console.warn(this.tagName, 'targetId', 'propertyId undefined')
         return
       }
-      const [id] = propertyId.split(DotChar)
+      const [id] = propertyId.split(DOT)
       return isTargetId(id) ? id : undefined
     }
   }

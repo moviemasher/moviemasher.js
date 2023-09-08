@@ -5,9 +5,9 @@ import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { ControlGroup, OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { End } from '@moviemasher/runtime-shared'
-import { EventChangeScalar, EventChanged, EventScalar, EventSelectedProperties, MovieMasher, isPropertyId } from '@moviemasher/runtime-client'
-import { DotChar, isDefined } from '@moviemasher/runtime-shared'
+import { DOT, isPropertyId } from '@moviemasher/lib-shared'
+import { EventChangeScalar, EventChanged, EventScalar, EventSelectedProperties, MovieMasher } from '@moviemasher/runtime-client'
+import { End, isDefined } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { ImporterComponent } from './ImporterComponent.js'
@@ -66,7 +66,7 @@ T & Constrained<ControlGroup> {
       const endPropertyId = propertyIds?.find(id => id.endsWith(endName))
       if (!endPropertyId) return
 
-      const [target] = endPropertyId.split(DotChar)
+      const [target] = endPropertyId.split(DOT)
   
       this.importTags('movie-masher-component-a')
       const event = new EventScalar(endPropertyId)

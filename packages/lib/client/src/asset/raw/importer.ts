@@ -1,77 +1,18 @@
 import type { ProbingData } from '@moviemasher/lib-shared'
-import type { ClientImporter, ClientRawAssetObject, ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject, ClientTextAssetObject, MediaRequest } from '@moviemasher/runtime-client'
+import type { ClientImporter, ClientRawAssetObject, ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject, ClientTextAssetObject, ClientMediaRequest } from '@moviemasher/runtime-client'
 import type { AssetObject, AssetObjects, DecodingObject, DecodingObjects, ImportType } from '@moviemasher/runtime-shared'
-import type { ImportersEventDetail } from '../../declarations.js'
+import type { CSSResultGroup } from 'lit'
 
+import { css } from '@lit/reactive-element/css-tag.js'
 import { IdTemporaryPrefix } from '@moviemasher/lib-shared'
-
-import { EventClientAudioPromise, EventClientFontPromise, EventClientImagePromise, EventClientVideoPromise, EventImport, EventImporterChange, MovieMasher } from '@moviemasher/runtime-client'
-import { EventTypeImporters, SourceRaw, SourceText, TypeAudio, TypeFont, TypeImage, TypeProbe, TypeVideo, TypesImport, isAudibleAssetType, isDefiniteError, isImportType } from '@moviemasher/runtime-shared'
-import { LitElement } from 'lit-element/lit-element.js'
+import { EventClientAudioPromise, EventClientFontPromise, EventClientImagePromise, EventClientVideoPromise, EventImport, EventImporterChange, EventImporters, MovieMasher } from '@moviemasher/runtime-client'
+import { SourceRaw, SourceText, AUDIO, TypeFont, IMAGE, PROBE, VIDEO, TypesImport, isAudibleAssetType, isDefiniteError, isImportType } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
-
-const ClientRawElementName = 'movie-masher-client-raw'
-
-export class ClientRawElement extends LitElement {
-  protected handleChange(changeEvent: DragEvent) {
-    const { files: fileList } = changeEvent.currentTarget as HTMLInputElement
-    console.log(this.tagName, 'handleChange', fileList)
-    if (!fileList?.length) return
-    
-    const event = new EventImport(fileList)
-    MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return
-
-    promise.then((assetObjects) => {
-      MovieMasher.eventDispatcher.dispatch(new EventImporterChange(assetObjects))
-    })
-  }
-
-  override render(): unknown {
-    return html`<input type='file' multiple
-      accept='${accept()}'
-      @change='${this.handleChange}'
-    ></input>`
-  }
-}
-
-// register web component as custom element
-customElements.define(ClientRawElementName, ClientRawElement)
-
-declare global {
-  interface HTMLElementTagNameMap {
-    [ClientRawElementName]: ClientRawElement
-  }
-}
-
-class ClientRawImporter implements ClientImporter {
-  id = ClientRawElementName
-  label = 'Raw'
-
-  get icon(): Node {
-    const cleaned = "<svg version='1.1' stroke='currentColor' fill='none' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'><desc></desc><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M14 3v4a1 1 0 0 0 1 1h4'></path><path d='M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3'></path></svg>"
-    const parser = new DOMParser()
-    const document = parser.parseFromString(cleaned, 'image/svg+xml')
-    const [firstChild] = document.children
-    return firstChild
-  }
-
-  private _ui?: ClientRawElement
-  get ui(): Node {
-    console.log(this.id, 'ui')
-    return this._ui ||= document.createElement(ClientRawElementName)
-  }
-}
-const clientRawImporter = new ClientRawImporter()
-
-// listen for importers event
-MovieMasher.eventDispatcher.addDispatchListener<ImportersEventDetail>(EventTypeImporters, event => {
-  const { detail } = event
-  const { importers } = detail
-  importers.push(clientRawImporter)
-})
-
+import { Component } from '../../Base/Component.js'
+import { DropTargetCss, DropTargetMixin } from '../../Base/DropTargetMixin.js'
+import { Scroller } from '../../Base/Scroller.js'
+import { SizeReactiveMixin } from '../../Base/SizeReactiveMixin.js'
+import { droppingFiles } from '../../utility/draganddrop.js'
 
 const options = {
   audioExtensions: '',
@@ -99,23 +40,97 @@ const accept = (): string => {
   return accept
 }
 
+const ClientRawElementName = 'movie-masher-client-raw'
+
+const WithSizeReactive = SizeReactiveMixin(Scroller)
+const WithDropTarget = DropTargetMixin(WithSizeReactive)
+export class ClientRawElement extends WithDropTarget {
+  override acceptsClip = false
+  
+  override dropValid(dataTransfer: DataTransfer | null): boolean { 
+    return droppingFiles(dataTransfer)
+  }
+
+  protected handleChange(changeEvent: DragEvent) {
+    const { files: fileList } = changeEvent.currentTarget as HTMLInputElement
+    console.log(this.tagName, 'handleChange', fileList)
+    if (!fileList?.length) return
+    
+    const event = new EventImport(fileList)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { promise } = event.detail
+    if (!promise) return
+
+    promise.then((assetObjects) => {
+      MovieMasher.eventDispatcher.dispatch(new EventImporterChange(assetObjects))
+    })
+  }
+
+  override render(): unknown {
+    return html`<div class='content'>
+      <input 
+        aria-label='file'
+        type='file' multiple
+        accept='${accept()}'
+        @change='${this.handleChange}'
+      ></input>
+    </div>`
+  }
+
+  static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
+    Scroller.styles,
+    DropTargetCss,
+    css`
+      :host {
+        --ratio-preview-selector: var(--ratio-preview, 0.25);
+      }
+      div.root {
+        display: block;
+        overflow-y: auto;
+      }
+      div.content {
+        padding: var(--content-padding);
+        font-size: 0;
+      }
+
+      div.content > * {
+        margin-right: var(--content-spacing); 
+        margin-bottom: var(--content-spacing);
+      }
+
+      .dropping {
+        box-shadow: var(--dropping-shadow);
+      }
+    `
+  ]
+}
+
+// register web component as custom element
+customElements.define(ClientRawElementName, ClientRawElement)
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [ClientRawElementName]: ClientRawElement
+  }
+}
+
 const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObject | void> => {
   const { name: label } = file
-  const request: MediaRequest = { file, objectUrl: URL.createObjectURL(file) }
+  const request: ClientMediaRequest = { file, objectUrl: URL.createObjectURL(file) }
 
   // we can't reliably tell if there is an audio track so we assume there is 
   // one, and catch problems if it's played before decoded
   const info: ProbingData = { audible: isAudibleAssetType(type) }
-  const decoding: DecodingObject = { data: info, type: TypeProbe }
+  const decoding: DecodingObject = { data: info, type: PROBE }
   const decodings: DecodingObjects = [decoding]
   const id = `${IdTemporaryPrefix}-${crypto.randomUUID()}`
   const shared: ClientRawAssetObject = { 
-    type: TypeImage, label, request, decodings, id, source: SourceRaw,
+    type: IMAGE, label, request, decodings, id, source: SourceRaw,
   }
  
   switch (type) {
-    case TypeAudio: {
-      
+    case AUDIO: {
       const event = new EventClientAudioPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
@@ -130,7 +145,7 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
         return object
       })
     }
-    case TypeImage: {
+    case IMAGE: {
       const event = new EventClientImagePromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
@@ -147,7 +162,7 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
         return object
       })
     }
-    case TypeVideo: {
+    case VIDEO: {
       const event = new EventClientVideoPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
@@ -218,29 +233,61 @@ const fileMedia = (file: File): Promise<AssetObject | void> => {
   return fileAssetObjectPromise(file, type)
 }
 
-const handleImport = (event: EventImport) => {
-  const { detail } = event
-  const { fileList } = detail
-  const media: AssetObjects = []
-  const [file, ...rest] = Array.from(fileList)
-  let promise = fileMedia(file)
-  rest.forEach(file => {
-    promise = promise.then(mediaObject => {
-      if (mediaObject) media.push(mediaObject)
-      return fileMedia(file)
+class ClientRawImporter implements ClientImporter {
+  id = ClientRawElementName
+  label = 'Raw'
+
+  get icon(): Node {
+    const cleaned = "<svg version='1.1' stroke='currentColor' fill='none' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'><desc></desc><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M14 3v4a1 1 0 0 0 1 1h4'></path><path d='M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3'></path></svg>"
+    const parser = new DOMParser()
+    const document = parser.parseFromString(cleaned, 'image/svg+xml')
+    const [firstChild] = document.children
+    return firstChild
+  }
+
+  private _ui?: ClientRawElement
+  get ui(): Node {
+    console.log(this.id, 'ui')
+    return this._ui ||= document.createElement(ClientRawElementName)
+  }
+
+  static handleImport (event: EventImport) {
+    const { detail } = event
+    const { fileList } = detail
+    const objects: AssetObjects = []
+    const [file, ...rest] = Array.from(fileList)
+    let promise = fileMedia(file)
+    rest.forEach(file => {
+      promise = promise.then(object => {
+        if (object) objects.push(object)
+        return fileMedia(file)
+      })
     })
-  })
-  detail.promise = promise.then(mediaObject => {
-    if (mediaObject) media.push(mediaObject)
+    detail.promise = promise.then(object => {
+      if (object) objects.push(object)
 
+      return objects//.map(mediaObject => {
+      //   MovieMasher.eventDispatcher.dispatch(new EventManagedAsset(mediaObject, ManageTypeImport))
+      //   return mediaObject.id
+      // })
+    })
+    event.stopPropagation()
+  }
 
-    return media//.map(mediaObject => {
-    //   MovieMasher.eventDispatcher.dispatch(new EventManagedAsset(mediaObject, ManageTypeImport))
-    //   return mediaObject.id
-    // })
-  })
-  event.stopPropagation()
+  static handleImporters(event: EventImporters) {
+    const { detail } = event
+    const { importers } = detail
+    importers.push(ClientRawImporter.instance)
+  }
+
+  private static _instance?: ClientRawImporter
+  static get instance(): ClientRawImporter {
+    return this._instance ||= new ClientRawImporter()
+  }
 }
 
+// listen for importers event
+MovieMasher.eventDispatcher.addDispatchListener(EventImporters.Type, ClientRawImporter.handleImporters)
+
 // listen for import event
-MovieMasher.eventDispatcher.addDispatchListener(EventImport.Type, handleImport)
+MovieMasher.eventDispatcher.addDispatchListener(EventImport.Type, ClientRawImporter.handleImport)

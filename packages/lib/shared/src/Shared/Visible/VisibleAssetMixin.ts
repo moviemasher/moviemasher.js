@@ -1,7 +1,6 @@
 import type { Asset, Constrained, Size, VisibleAsset } from '@moviemasher/runtime-shared'
 
-import { TypeProbe } from '@moviemasher/runtime-shared'
-import { isProbing } from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
+import { PROBE } from '@moviemasher/runtime-shared'
 import { isAboveZero } from '../SharedGuards.js'
 
 export function VisibleAssetMixin
@@ -11,11 +10,13 @@ T & Constrained<VisibleAsset> {
     alpha?: boolean 
     
     get sourceSize(): Size | undefined {
-      const decoding = this.decodings.find(decoding => decoding.type === TypeProbe)
-      if (isProbing(decoding)) {
+      const decoding = this.decodings.find(decoding => decoding.type === PROBE)
+      if (decoding) {
         const { data } = decoding
-        const { width, height } = data
-        if (isAboveZero(width) && isAboveZero(height)) return { width, height }
+        if (data) {
+          const { width, height } = data
+          if (isAboveZero(width) && isAboveZero(height)) return { width, height }
+        }
       } else {
         console.log(this.constructor.name, 'sourceSize no probing', decoding, this.decodings.length)
       }
@@ -23,4 +24,3 @@ T & Constrained<VisibleAsset> {
     }
   }
 }
-

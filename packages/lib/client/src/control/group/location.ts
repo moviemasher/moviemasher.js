@@ -5,13 +5,14 @@ import type { Contents, ControlGroup, OptionalContent } from '../../declarations
 
 import { AspectFlip, DIRECTIONS_SIDE } from '@moviemasher/lib-shared'
 import { ClassSelected, EventChangeScalar, EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
-import { Aspect, POINT_KEYS, End, Crop, DotChar } from '@moviemasher/runtime-shared'
+import { Aspect, POINT_KEYS, End, Crop, } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
 import { SizeReactiveMixin } from '../../Base/SizeReactiveMixin.js'
+import { DOT } from '@moviemasher/lib-shared'
 
 const LocationControlGroupElementName = 'movie-masher-control-group-location'
 const EventLocationControlGroupType = 'point-control-group'
@@ -34,14 +35,14 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
   override connectedCallback(): void {
     const xId = this.namePropertyId(`x${End}`)
     if (xId) {
-      const [target] = xId.split(DotChar)
+      const [target] = xId.split(DOT)
       const key = `control-group-${target}-x`     
       // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleX.bind(this)
     }
     const yId = this.namePropertyId(`y${End}`)
     if (yId) {
-      const [target] = yId.split(DotChar)
+      const [target] = yId.split(DOT)
       const key = `control-group-${target}-y`     
       // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleY.bind(this)
@@ -109,7 +110,7 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
   //     )) return 
 
   //     const { propertyIds } = this
-  //     if (propertyIds?.some(id => id.endsWith(`${DotChar}${property}`))) {
+  //     if (propertyIds?.some(id => id.endsWith(`${DOT}${property}`))) {
   //       this.requestUpdate()
   //     }
   //   }

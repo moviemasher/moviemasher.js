@@ -1,1 +1,1 @@
-export * from './image.js'
+export * as TextImageAssetFunction from './image.js'

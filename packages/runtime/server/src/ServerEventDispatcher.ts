@@ -1,20 +1,19 @@
 
-import type { EventDispatcher, EventDispatcherListenerRecord } from '@moviemasher/runtime-shared'
+import type { EventDispatcher, EventDispatcherListener, EventDispatcherListenerRecord, EventDispatcherOptionsOrBoolean } from '@moviemasher/runtime-shared'
 
-import { EventEmitter }  from 'events'
-
-
-export class ServerEventDispatcher extends EventEmitter implements EventDispatcher {
-  addDispatchListener<T>(type: string, listener: (event: CustomEvent<T>) => void): EventDispatcher {
-    this.addListener(type, listener as EventListener)
-    return this
+/**
+ * Uses the global object as the event dispatcher.
+ */
+export class ServerEventDispatcher implements EventDispatcher {
+  addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventDispatcherOptionsOrBoolean): void {
+    addEventListener(type, listener as EventListener, options)
   }
 
   dispatch<T>(typeOrEvent: string | CustomEvent<T> | Event): boolean {
     const isString = typeof typeOrEvent === 'string'
     const name = isString ? typeOrEvent : typeOrEvent.type
     const event = isString ? new CustomEvent<T>(typeOrEvent) : typeOrEvent
-    return this.emit(name, event)
+    return dispatchEvent(event)
   }
 
   listenersAdd(record: EventDispatcherListenerRecord) {
@@ -29,8 +28,7 @@ export class ServerEventDispatcher extends EventEmitter implements EventDispatch
     })
   }
   
-  removeDispatchListener<T>(type: string, listener: (event: CustomEvent<T>) => void): EventDispatcher {
-    this.removeListener(type, listener as EventListener)
-    return this
+  removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventDispatcherOptionsOrBoolean): void {
+    removeEventListener(type, listener as EventListener, options)
   }
 }

@@ -3,7 +3,7 @@ import type { ClientAsset } from './ClientAsset.js'
 import type { ClientClip } from './ClientMashTypes.js'
 import type { ClientImage } from './ClientMedia.js'
 import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset } from './ClientTypes.js'
-import type { Transcoding, Transcodings } from './Transcoding.js'
+import type { Transcoding, Transcodings } from '@moviemasher/runtime-shared'
 
 export interface ClientRawAsset extends RawAsset, ClientAsset {
   instanceFromObject(object?: InstanceObject): Instance

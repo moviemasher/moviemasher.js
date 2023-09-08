@@ -1,18 +1,18 @@
-import type { Action, Actions, AudioPreview, AudioPreviewArgs, ClientClip, ClientClips, ClientMashAsset, ClientMashAssetObject, ClientTrack, ClientTracks, Encodings, NumberEvent, Previews } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, CacheOptions, ClipObject, EventDispatcherListenerRecord, InstanceCacheArgs, Propertied, Property, Scalar, Size, StringDataOrError, TargetId, Time, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Action, Actions, AudioPreview, AudioPreviewArgs, ClientClip, ClientClips, ClientMashAsset, ClientMashAssetObject, ClientTrack, ClientTracks, NumberEvent, Previews, ServerProgress } from '@moviemasher/runtime-client'
+import type { AVType, AssetCacheArgs, CacheOptions, ClipObject, Encodings, EventDispatcherListenerRecord, Propertied, Property, Scalar, Size, StringDataOrError, TargetId, Time, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { MashPreview, MashPreviewArgs, MashPreviewOptions } from '../../Client/Masher/MashPreview/MashPreview.js'
 
-import { AVTypeAudio, AVTypeBoth, AVTypeVideo, Default, EmptyFunction, MashAssetMixin, assertDefined, assertPositive, assertTime, assertTrue, encodingInstance, isAboveZero, isPositive, isTextInstance, sizeAboveZero, sortByIndex, timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '@moviemasher/lib-shared'
-import { ClientActionRedo, ClientActionSave, ClientActionUndo, EventChanged, EventChangedActionEnabled, EventChangedFrame, EventChangedPreviews, EventChangedSize, EventManagedAsset, EventSize, EventTypeDuration, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTracks, MovieMasher, TypeContent, TypeMash, isPropertyId } from '@moviemasher/runtime-client'
-import { AVType, DotChar, ErrorName, arrayFromOneOrMore, assertAsset, errorThrow, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
-import { ClientAssetClass } from '../ClientAssetClass.js'
-import { MashPreview, MashPreviewArgs, MashPreviewOptions } from '../../Client/Masher/MashPreview/MashPreview.js'
-import { ActionsClass } from '../../Client/Masher/Actions/ActionsClass.js'
+import { DOT, Default, EmptyFunction, MashAssetMixin, assertPositive, encodingInstance, isAboveZero, isPositive, isPropertyId, isTextInstance, sizeAboveZero, sortByIndex, timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '@moviemasher/lib-shared'
+import { EventChanged, EventChangedFrame, EventChangedFrames, EventChangedPreviews, EventChangedServerAction, EventChangedSize, EventFrames, EventSize, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTracks, MovieMasher, ServerActionSave } from '@moviemasher/runtime-client'
+import { TypeContent, TypeMash, arrayFromOneOrMore, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
 import { ClientClipClass } from '../../Client/Mash/ClientClipClass.js'
-import { audioPreviewInstance } from '../../Client/Masher/MashPreview/AudioPreview/AudioPreviewFactory.js'
-import { isChangePropertyAction } from '../../Client/Masher/Actions/Action/ActionFunctions.js'
 import { isClientClip } from '../../Client/Mash/ClientMashGuards.js'
-import { MashPreviewClass } from '../../Client/Masher/MashPreview/MashPreviewClass.js'
 import { ClientTrackClass } from '../../Client/Mash/ClientTrackClass.js'
+import { isChangePropertyAction } from '../../Client/Masher/Actions/Action/ActionFunctions.js'
+import { ActionsClass } from '../../Client/Masher/Actions/ActionsClass.js'
+import { audioPreviewInstance } from '../../Client/Masher/MashPreview/AudioPreview/AudioPreviewFactory.js'
+import { MashPreviewClass } from '../../Client/Masher/MashPreview/MashPreviewClass.js'
+import { ClientAssetClass } from '../ClientAssetClass.js'
 
 export type TrackClips = [ClientTrack, ClientClips]
 export type Interval = ReturnType<typeof setInterval>
@@ -21,41 +21,42 @@ const WithMashAsset = MashAssetMixin(ClientAssetClass)
 export class ClientMashAssetClass extends WithMashAsset implements ClientMashAsset {
   constructor(args: ClientMashAssetObject) {
     super(args)
+    this.listeners[EventFrames.Type] = this.handleFrames.bind(this)
     this.listeners[EventSize.Type] = this.handleSize.bind(this)
     this.actions = new ActionsClass(this)
   }
-
+  
   actions: Actions
 
-  override assetCachePromise(options: CacheOptions): Promise<void> {
-    options.time ||= this.timeToBuffer
-    const preloadOptions = this.cacheOptions(options)
-    const { time, audible, visible } = options
-    const { quantize } = this
-    assertTime(time)
+  // override assetCachePromise(options: AssetCacheArgs): Promise<void> {
+  //   options.time ||= this.timeToBuffer
+  //   const preloadOptions = this.cacheOptions(options)
+  //   const { time, audible, visible } = options
+  //   const { quantize } = this
+  //   assertTime(time)
 
-    const scaled = time.scale(this.quantize)
-    const type = (audible && visible) ? AVTypeBoth : (audible ? AVTypeAudio : AVTypeVideo)
-    const clips = this.clipsInTimeOfType(scaled, type)
+  //   const scaled = time.scale(this.quantize)
+  //   const type = (audible && visible) ? AVTypeBoth : (audible ? AVTypeAudio : AVTypeVideo)
+  //   const clips = this.clipsInTimeOfType(scaled, type)
 
-    const promises = clips.map(clip => {
-      const clipTime = clip.timeRange
-      const preloadArgs: InstanceCacheArgs = { 
-        ...preloadOptions, clipTime, quantize, time 
-      }
-      return clip.clipCachePromise(preloadArgs)
-    })
-    const promise = Promise.all(promises).then(EmptyFunction)
-    const removedPromise = promise.then(() => {
-      const index = this.loadingPromises.indexOf(promise)
-      if (index < 0) return errorThrow(ErrorName.Internal) 
+  //   const promises = clips.map(clip => {
+  //     const clipTime = clip.timeRange
+  //     const preloadArgs: InstanceCacheArgs = { 
+  //       ...preloadOptions, clipTime, quantize, time 
+  //     }
+  //     return clip.clipCachePromise(preloadArgs)
+  //   })
+  //   const promise = Promise.all(promises).then(EmptyFunction)
+  //   const removedPromise = promise.then(() => {
+  //     const index = this.loadingPromises.indexOf(promise)
+  //     if (index < 0) return errorThrow(ERROR.Internal) 
 
-      this.loadingPromises.splice(index, 1)
-    })
-    this.loadingPromises.push(promise)
+  //     this.loadingPromises.splice(index, 1)
+  //   })
+  //   this.loadingPromises.push(promise)
     
-    return removedPromise
-  }
+  //   return removedPromise
+  // }
 
   addClipToTrack(clip: ClientClip | ClientClips, trackIndex = 0, insertIndex = 0, frame?: number): void {
     const clips = arrayFromOneOrMore(clip) 
@@ -108,7 +109,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     this._bufferTimer = setInterval(() => {
       if (this._paused) return
 
-      const options: CacheOptions = { audible: true }
+      const options: AssetCacheArgs = { audible: true, assetTime: this.timeToBuffer }
       this.assetCachePromise(options)
       const clips = this.clipsAudibleInTime(this.timeToBuffer)
       this.composition.bufferClips(clips, this.quantize)
@@ -165,15 +166,9 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     return this._composition!
   }
 
-
-  private compositeVisible(time: Time): void {
-    this.drawingTime = time
-    this.clearPreview()
-    MovieMasher.eventDispatcher.dispatch(new EventChangedPreviews())
-  }
   
-  override definitionIcon(_size: Size): Promise<SVGSVGElement> | undefined {
-    throw new Error('Method not implemented.')
+  override assetIcon(_size: Size): Promise<SVGSVGElement> | undefined {
+    return
   }
 
   destroy(): void {
@@ -188,7 +183,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     if (isChangePropertyAction(action)) {
       const { property, target } = action
       switch(property) {
-        case `${TypeContent}${DotChar}gain`: {
+        case `${TypeContent}${DOT}gain`: {
           if (isClientClip(target)) {
             this.composition.adjustClipGain(target, this.quantize)
           }    
@@ -200,34 +195,26 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     // this.selection = action.selection
     // console.log(this.constructor.name, 'dispatchChanged', action.constructor.name)
     MovieMasher.eventDispatcher.dispatch(new EventChanged(action))
-    MovieMasher.eventDispatcher.dispatch(new EventChangedActionEnabled(ClientActionUndo))
-    MovieMasher.eventDispatcher.dispatch(new EventChangedActionEnabled(ClientActionRedo))
-    MovieMasher.eventDispatcher.dispatch(new EventChangedActionEnabled(ClientActionSave))
+    MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
     // const promise = this.reload() || Promise.resolve()
     
     // promise.then(() => this.dispatchDrawLater())
+    this.draw()
   }
 
-  
-
-  draw(): void {
-    const { time } = this
-    this.compositeVisible(time)
+  private dispatchChangedPreviews(time: Time): void {
+    this.drawingTime = time
+    this.clearPreview()
+    MovieMasher.eventDispatcher.dispatch(new EventChangedPreviews())
   }
+
+  draw(): void { this.dispatchChangedPreviews(this.time) }
 
   private drawInterval?: Interval
 
   private drawRequest(): void {
-    // console.log(this.constructor.name, 'drawRequest')
     const { time } = this
-    if (typeof requestAnimationFrame !== 'function') return 
-    
-    requestAnimationFrame(() => {
-      // if (this.counter) console.timeEnd(`anim-frame-${this.counter}`)
-      // this.counter++
-      // console.time(`anim-frame-${this.counter}`)
-      this.compositeVisible(time)
-    })
+    requestAnimationFrame(() => { this.dispatchChangedPreviews(time) })
   }
 
   private drawTime(time: Time): void {
@@ -252,8 +239,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     method()
     const { totalFrames: frames } = this
     if (origFrames !== frames) {
-      const event = new CustomEvent(EventTypeDuration, { detail: frames })
-      MovieMasher.eventDispatcher.dispatch(event)
+      MovieMasher.eventDispatcher.dispatch(new EventChangedFrames(frames))
       if (this.frame > frames) this.seekToTime(timeFromArgs(frames, this.quantize))
     }
   }
@@ -264,24 +250,24 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
 
   get frame(): number { return this.time.scale(this.quantize, 'floor').frame }
 
-  private cacheOptions(options: CacheOptions = {}): CacheOptions {
-    const { time, audible, visible } = options
-    const definedTime = time || this.time
-    const { isRange } = definedTime
-    const definedVisible = visible || !isRange
-    const definedAudible = isRange && audible
+  // private cacheOptions(options: CacheOptions = {}): CacheOptions {
+  //   const { time, audible, visible } = options
+  //   const definedTime = time || this.time
+  //   const { isRange } = definedTime
+  //   const definedVisible = visible || !isRange
+  //   const definedAudible = isRange && audible
 
-    const args: CacheOptions = {
-      audible: definedAudible, visible: definedVisible,
-      time: definedTime,
-      quantize: this.quantize,
-    }
+  //   const args: CacheOptions = {
+  //     audible: definedAudible, visible: definedVisible,
+  //     time: definedTime,
+  //     quantize: this.quantize,
+  //   }
 
-    const okay = definedVisible || definedAudible
-    // if (!okay) console.log(this.constructor.name, 'graphFileArgs', args)
-    assertTrue(okay, 'audible || visible')
-    return args
-  }
+  //   const okay = definedVisible || definedAudible
+  //   // if (!okay) console.log(this.constructor.name, 'graphFileArgs', args)
+  //   assertTrue(okay, 'audible || visible')
+  //   return args
+  // }
 
   private handleDrawInterval(): void {
     // console.log(this.constructor.name, 'handleDrawInterval', this._playing)
@@ -310,6 +296,12 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     }
   }
 
+  private handleFrames(event: EventFrames) {
+    const { totalFrames } = this
+    console.log(this.constructor.name, 'handleFrames', totalFrames)
+    event.detail.frames = totalFrames
+  }
+
   private handleSize(event: EventSize): void {
     event.detail.size = this.size
     event.stopImmediatePropagation()
@@ -327,6 +319,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     MovieMasher.eventDispatcher.listenersAdd(this.listeners)
 
     MovieMasher.eventDispatcher.dispatch(new EventChangedSize(this.size))
+    MovieMasher.eventDispatcher.dispatch(new EventChangedFrames(this.totalFrames))
   }
 
   get loading(): boolean { 
@@ -488,42 +481,26 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     return this.actions.canSave
   }
 
-  override get savePromise(): Promise<StringDataOrError> {
-    if (!this.saveNeeded) return Promise.resolve({ data: '' })
+  // override savePromise(progress?: ServerProgress): Promise<StringDataOrError> {
+  //   return super.savePromise(progress).then(orError => {
+  //     if (!isDefiniteError(orError)) this.actions.save()
+  //     return orError
+  //   })
+  // }
 
-    const { assetIds } = this
-    const assets = assetIds.map(id => {
-      const event = new EventManagedAsset(id)
-      MovieMasher.eventDispatcher.dispatch(event)
-      const { asset } = event.detail
-      assertAsset(asset)
 
-      return asset
-    })
-    const savingAssets = assets.filter(asset => asset.saveNeeded)
-    if (!savingAssets.length) return this.saveAndWipeActions
-
-    const firstAsset = savingAssets.shift()
-    assertDefined(firstAsset) 
-
-    let promise = firstAsset.savePromise
-    savingAssets.forEach(asset =>  {
-      promise = promise.then(orError => (
-        isDefiniteError(orError) ? orError : asset.savePromise
-      ))
-    })
-    return promise = promise.then(orError => (
-      isDefiniteError(orError) ? orError : this.saveAndWipeActions
-    ))
-  }
-
-  private get saveAndWipeActions(): Promise<StringDataOrError> {
-    return super.savePromise.then(orError => {
-      if (!isDefiniteError(orError)) this.actions.save()
+  override savePromise(progress?: ServerProgress): Promise<StringDataOrError> { 
+    const promise = this.savingPromise(progress)
+    return promise.then(orError => {
+      // console.log(this.constructor.name, 'savePromise', orError)
+      if (!isDefiniteError(orError)) {
+        this.actions.save()
+        this.saveId(orError.data)
+      }
       return orError
     })
-
   }
+
 
   private seekTime?: Time
 
@@ -552,7 +529,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     super.setValue(id, value, property)
     if (property) return 
     
-    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    const name = isPropertyId(id) ? id.split(DOT).pop() : id
     switch(name) {
       case 'buffer': {
         if (this._composition) this.composition.buffer = Number(value)
@@ -568,22 +545,19 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
         const { size } = this
         if (sizeAboveZero(size)) {
           MovieMasher.eventDispatcher.dispatch(new EventChangedSize(this.size))
-        } else {
-          console.trace(this.constructor.name, 'setValue', name, value, property)
-        }
+        } 
         break
       }
     }
   }
-
-
 
   private stopLoadAndDraw(seeking?: boolean): Promise<void> | undefined {
     const { time, paused, playing } = this
     // console.log(this.constructor.name, 'stopLoadAndDraw', seeking, playing, paused)
     if (playing) this.playing = false
     
-    const args: CacheOptions = { 
+    const args: AssetCacheArgs = { 
+      assetTime: time,
       visible: true, audible: playing 
     }
 

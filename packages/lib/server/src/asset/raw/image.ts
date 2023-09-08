@@ -1,20 +1,26 @@
-import { 
-  CommandFile, CommandFiles,  ImageAssetMixin, 
-  ImageInstanceMixin, ServerInstanceClass, ServerRawAssetClass, 
-  ServerVisibleAssetMixin, ServerVisibleInstanceMixin, VisibleAssetMixin, 
-  VisibleCommandFileArgs, VisibleInstanceMixin, assertEndpoint, 
-  assertPopulatedString, endpointUrl, isTimeRange 
-} from "@moviemasher/lib-shared"
-import { ServerRawImageAsset, ServerRawImageInstance } from "@moviemasher/lib-shared/dist/Server/Raw/ServerRawTypes.js"
-import { GraphFiles, GraphFile, EventAsset, MovieMasher } from "@moviemasher/runtime-server"
-import { PreloadArgs, SourceRaw, TypeImage, ValueRecord, isAssetObject } from "@moviemasher/runtime-shared"
+import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
+import type { ImageInstanceObject, InstanceArgs, PreloadArgs, RawImageAssetObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { CommandFile, CommandFiles, VisibleCommandFileArgs } from '../../Types/CommandTypes.js'
+import type { ServerRawImageAsset, ServerRawImageInstance } from '../../Types/ServerRawTypes.js'
+
+import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertEndpoint, assertPopulatedString, endpointUrl, isTimeRange } from '@moviemasher/lib-shared'
+import { EventServerAsset, MovieMasher } from '@moviemasher/runtime-server'
+import { SourceRaw, IMAGE, isAssetObject } from '@moviemasher/runtime-shared'
+import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
+import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
+import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
+import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
 const WithImageAsset = ImageAssetMixin(WithServerAsset)
 
 export class ServerRawImageAssetClass extends WithImageAsset implements ServerRawImageAsset {
- 
+  constructor(args: RawImageAssetObject) {
+    super(args)
+    this.initializeProperties(args)
+  }
+
   graphFiles(args: PreloadArgs): GraphFiles {
     const { visible } = args
     const files: GraphFiles = super.graphFiles(args)
@@ -22,26 +28,29 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
       return files
 
     const { request } = this
-    const { endpoint } = request
-    assertEndpoint(endpoint)
-    const file = endpointUrl(endpoint)
-    if (!file)
-      console.log(this.constructor.name, 'graphFiles', request)
+    const { path: file } = request
     assertPopulatedString(file)
-
+   
     const graphFile: GraphFile = {
-      input: true, type: TypeImage, file, definition: this
+      input: true, type: IMAGE, file, definition: this
     }
     files.push(graphFile)
     return files
   }
 
-  type = TypeImage
 
-  static handleAsset(event: EventAsset) {
+  override instanceFromObject(object?: ImageInstanceObject): ServerRawImageInstance {
+    const args = this.instanceArgs(object)
+    return new ServerRawImageInstanceClass(args)
+  }
+
+
+  type = IMAGE
+
+  static handleAsset(event: EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, TypeImage, SourceRaw)) {
+    if (isAssetObject(assetObject, IMAGE, SourceRaw)) {
       detail.asset = new ServerRawImageAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -49,20 +58,26 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
 }
 
 // listen for image/raw asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ServerRawImageAssetClass.handleAsset
-)
+export const ServerRawImageListeners = () => ({
+  [EventServerAsset.Type]: ServerRawImageAssetClass.handleAsset
+})
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
 const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)
 const WithImageInstance = ImageInstanceMixin(WithServerInstance)
 
-export class ServerImageInstanceClass extends WithImageInstance implements ServerRawImageInstance {
+export class ServerRawImageInstanceClass extends WithImageInstance implements ServerRawImageInstance {
+  constructor(args: ImageInstanceObject & InstanceArgs) {
+    super(args)
+    this.initializeProperties(args)
+  }
+
+  declare asset: ServerRawImageAsset
+
   visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const commandFiles: CommandFiles = []
     const { visible, time, videoRate } = args
-    if (!visible)
-      return commandFiles
+    if (!visible) return commandFiles
 
     const files = this.graphFiles(args)
     const [file] = files
@@ -77,6 +92,4 @@ export class ServerImageInstanceClass extends WithImageInstance implements Serve
 
     return commandFiles
   }
-
-  declare asset: ServerRawImageAsset
 }

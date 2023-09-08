@@ -1,10 +1,9 @@
-import type { NumberEvent } from '@moviemasher/runtime-client'
 import type { PropertyDeclarations } from 'lit'
 
 import { html } from 'lit-html/lit-html.js'
 
 import { isNumber } from '@moviemasher/runtime-shared'
-import { EventChangeFrame, EventChangedFrame, EventTypeDuration, MovieMasher } from '@moviemasher/runtime-client'
+import { EventChangeFrame, EventChangedFrame, EventChangedFrames, EventFrames, MovieMasher } from '@moviemasher/runtime-client'
 import { Component } from '../Base/Component'
 
 
@@ -12,16 +11,27 @@ export class ViewerSliderElement extends Component {
   constructor() {
     super()
     this.listeners[EventChangedFrame.Type] = this.handleFrame.bind(this)
-    this.listeners[EventTypeDuration] = this.handleDuration.bind(this)
+    this.listeners[EventChangedFrames.Type] = this.handleChangedFrames.bind(this)
   }
 
+
+  override connectedCallback(): void {
+    const event = new EventFrames()
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { frames } = event.detail
+    console.log(this.tagName, 'connectedCallback', { frames })
+    this.frames = frames
+    super.connectedCallback()
+  }
+  
   frame = 0
 
   frames = 0
 
-  private handleDuration(event: NumberEvent): void {
-    this.frames = event.detail
-    // console.log(this.tagName, 'handleDuration', this.frames) 
+  private handleChangedFrames(event: EventChangedFrames): void {
+    const { detail: frames } = event
+    this.frames = frames
+    console.log(this.tagName, 'handleChangedFrames', frames) 
   }
 
   private handleInput(event: Event): void {
@@ -42,6 +52,7 @@ export class ViewerSliderElement extends Component {
     if (input) input.value = String(this.frame)
 
     return html`<input 
+      aria-label='frame'
       @input=${this.handleInput}
       type='range'
       ?disabled='${!this.frames}'

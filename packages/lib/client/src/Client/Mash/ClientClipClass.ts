@@ -2,9 +2,9 @@ import type { ChangeActionObject, ChangePropertiesActionObject, ClientClip, Clie
 import type { ContainerRectArgs, PropertyId, Scalar, ScalarsById, Size, TargetId, Time } from '@moviemasher/runtime-shared'
 import type { MashPreviewArgs } from '../Masher/MashPreview/MashPreview.js'
 
-import { ActionTypeChangeFrame, ActionTypeChangeMultiple, ClipClass, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, arrayOfNumbers, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate } from '@moviemasher/lib-shared'
-import { EventManagedAsset, MovieMasher, Panel, TypeClip } from '@moviemasher/runtime-client'
-import { DotChar, POINT_ZERO, TypeAudio, assertAsset, isAudibleAssetType, isVisibleAssetType } from '@moviemasher/runtime-shared'
+import { ActionTypeChangeFrame, ActionTypeChangeMultiple, ClipClass, DOT, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, arrayOfNumbers, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate } from '@moviemasher/lib-shared'
+import { EventManagedAsset, MovieMasher, Panel } from '@moviemasher/runtime-client'
+import { AUDIO, POINT_ZERO, TypeClip, assertAsset, isAudibleAssetType, isVisibleAssetType } from '@moviemasher/runtime-shared'
 import { assertClientVisibleInstance } from '../ClientGuards.js'
 import { isChangePropertyActionObject } from '../Masher/Actions/Action/ActionFunctions.js'
 import { MashPreviewClass } from '../Masher/MashPreview/MashPreviewClass.js'
@@ -92,7 +92,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     const containerRectArgs: ContainerRectArgs = {
       size, time, timeRange: this.timeRange, editing: true,
     }
-    const containerRects = this.rects(containerRectArgs)
+    const containerRects = this.containerRects(containerRectArgs)
     assertTrue(containerRects.length === 1)
 
     const [containerRect] = containerRects
@@ -104,7 +104,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     const object = super.changeScalar(propertyId, scalar)
     if (!isChangePropertyActionObject(object)) return object
     
-    const name = propertyId.split(DotChar).pop()
+    const name = propertyId.split(DOT).pop()
     switch (name) {
       case 'frame': 
       case 'frames': {
@@ -125,8 +125,8 @@ export class ClientClipClass extends ClipClass implements ClientClip {
         const { undoValue, redoValue } = object
         assertPopulatedString(redoValue)
 
-        const sizingId: PropertyId = `${targetId}${DotChar}sizing`
-        const timingId: PropertyId = `${targetId}${DotChar}timing`
+        const sizingId: PropertyId = `${targetId}${DOT}sizing`
+        const timingId: PropertyId = `${targetId}${DOT}timing`
         const undoValues: ScalarsById = { 
           [timingId]: timing, 
           [sizingId]: sizing,
@@ -159,7 +159,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
 
   protected override shouldSelectProperty(name: string): boolean {
     switch (name) {
-      case 'sizing': return this.content.asset.type !== TypeAudio
+      case 'sizing': return this.content.asset.type !== AUDIO
       case 'timing': {
         if (this.content.hasIntrinsicTiming) break
         return !!this.container?.hasIntrinsicSizing

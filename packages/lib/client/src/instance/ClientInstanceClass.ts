@@ -2,9 +2,9 @@ import type { ChangeActionObject, ClientAsset, ClientClip, ClientInstance } from
 import type { InstanceArgs, PropertyId, Scalar, TargetId } from '@moviemasher/runtime-shared'
 
 import { ActionTypeChangeFrame, DataTypeFrame, InstanceClass, assertPopulatedString } from '@moviemasher/lib-shared'
-import { TypeContainer, TypeContent } from '@moviemasher/runtime-client'
-import { DotChar } from '@moviemasher/runtime-shared'
+import {  TypeContainer, TypeContent } from '@moviemasher/runtime-shared'
 import { isChangePropertyActionObject } from '../Client/Masher/Actions/Action/ActionFunctions.js'
+import { DOT } from '@moviemasher/lib-shared'
 
 export class ClientInstanceClass extends InstanceClass implements ClientInstance {
   declare asset: ClientAsset
@@ -13,7 +13,7 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
   override changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeActionObject {
     const object = super.changeScalar(propertyId, scalar)
     if (!isChangePropertyActionObject(object)) return object
-    const name = propertyId.split(DotChar).pop()
+    const name = propertyId.split(DOT).pop()
     assertPopulatedString(name)
 
     const property = this.propertyFind(name) 

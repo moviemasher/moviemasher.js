@@ -1,13 +1,12 @@
-import type { AVType, AudioInstance, AudioInstanceObject, Clip, ClipObject, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, MashAsset, MashAssetObject, Propertied, Size, Time, TimeRange, Track, TrackObject, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AVType, AudioInstance, AudioInstanceObject, Clip, ClipObject, EncodingObjects, Encodings, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, MashAsset, MashAssetObject, Propertied, Size, Time, TimeRange, Track, TrackObject, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { Action, Actions } from './ActionTypes.js'
 import type { AudioPreview } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
 import type { SvgOrImageDataOrError } from './ClientEvents.js'
 import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset, ClientVisibleInstance } from './ClientTypes.js'
-import type { EncodingObjects, Encodings } from './Encoding.js'
 import type { Panel } from './PanelTypes.js'
 import type { Selectable } from './Selectable.js'
 import type { Preview, Previews } from './Svg.js'
-import type { Action, Actions } from './ActionTypes.js'
 
 export interface ClientMashAsset extends ClientAsset, MashAsset {
   actions: Actions

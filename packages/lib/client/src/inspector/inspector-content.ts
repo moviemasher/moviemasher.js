@@ -6,11 +6,12 @@ import type { Contents, OptionalContent } from '../declarations.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
 
-import { CommaChar } from '@moviemasher/lib-shared'
-import { EventInspectorSelectors, EventChangedInspectorSelectors, MovieMasher, isPropertyId, isTargetId, TypesTarget } from '@moviemasher/runtime-client'
-import { isArray } from '@moviemasher/runtime-shared'
+import { isPropertyId, CommaChar } from '@moviemasher/lib-shared'
+import { EventInspectorSelectors, EventChangedInspectorSelectors, MovieMasher, } from '@moviemasher/runtime-client'
+import { TypesTarget, isArray } from '@moviemasher/runtime-shared'
 import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
 import { Scroller } from '../Base/Scroller.js'
+import { isTargetId } from '../TypeGuards.js'
 
 export const InspectorContentElementName = 'movie-masher-inspector-content'
 

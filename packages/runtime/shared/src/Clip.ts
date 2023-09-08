@@ -11,26 +11,25 @@ import type { Timing } from './Timing.js'
 import type { Track } from './Track.js'
 
 export interface Clip extends Propertied {
+  assetIds: Strings
   audible: boolean
+  clipCachePromise(args: InstanceCacheArgs): Promise<void>
+  clipObject: ClipObject
   container?: VisibleInstance
   containerId: string
   content: Instance
   contentId: string
-  clipObject: ClipObject
-  assetIds: Strings
   endFrame: number
   frame : number
   frames: number
   id: string
-  clipCachePromise(args: InstanceCacheArgs): Promise<void>
-
   intrinsicsKnown(options: IntrinsicOptions): boolean
   label: string
   maxFrames(quantize : number, trim? : number) : number
   mutable: boolean
   muted: boolean
   notMuted: boolean
-  rects(args: ContainerRectArgs): Rects
+  containerRects(args: ContainerRectArgs): Rects
   resetTiming(instance?: Instance, quantize?: number): void
   sizing: Sizing
   timeRange: TimeRange

@@ -22,8 +22,8 @@
     "@moviemasher/lib-shared": "5.1.2"
   },
   "devDependencies": {
-    "@types/fluent-ffmpeg": "2.1.20",
-    "@supabase/supabase-js": "2.2.0"
+    "@types/fluent-ffmpeg": "2.1.21",
+    "@supabase/supabase-js": "2.32.0"
   },
   "scripts": {
     "start": "node esm/lambda-ffmpeg.mjs",

@@ -1,37 +1,37 @@
-import type { Icon, IconEvent } from '@moviemasher/runtime-client'
+import type { Icon } from '@moviemasher/runtime-client'
 import type { DataOrError, StringRecord } from '@moviemasher/runtime-shared'
 
-import { EventTypeIconFromId, MovieMasher } from '@moviemasher/runtime-client'
+import { EventIcon, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { requestJsonRecordPromise, requestPopulate } from '../utility/request.js'
 
-class Handler {
+export class FetchIconHandler {
   static json?: StringRecord
   static _jsonPromise?: Promise<DataOrError<StringRecord>>
   static get jsonPromise(): Promise<DataOrError<StringRecord>> {
-    if (Handler.json) return Promise.resolve({ data: Handler.json })
+    if (FetchIconHandler.json) return Promise.resolve({ data: FetchIconHandler.json })
 
-    const { _jsonPromise } = Handler
+    const { _jsonPromise } = FetchIconHandler
     if (_jsonPromise) return _jsonPromise
 
     const { iconOptions = { request: {} } } = MovieMasher.options
     const { request = {}} = iconOptions
-    request.endpoint ||= (new URL('../../json/icons.json', import.meta.url)).href
+
     const populated = requestPopulate(request)
     return this._jsonPromise = requestJsonRecordPromise(populated).then(orError => {
       if (isDefiniteError(orError)) return orError 
 
       const iconStringRecord = orError.data as StringRecord
       delete this._jsonPromise
-      Handler.json = iconStringRecord 
+      FetchIconHandler.json = iconStringRecord 
       return { data: iconStringRecord }
     })
   }
 
-  static handle(event: IconEvent): void {
+  static handle(event: EventIcon): void {
     const { detail } = event
     const { id } = detail
-    if (id) detail.promise = Handler.jsonPromise.then(orError => {
+    if (id) detail.promise = FetchIconHandler.jsonPromise.then(orError => {
       if (isDefiniteError(orError)) return orError 
 
       const { data: iconStringRecord } = orError      
@@ -47,6 +47,4 @@ class Handler {
   }
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(EventTypeIconFromId, Handler.handle)
-
-export { }
+MovieMasher.eventDispatcher.addDispatchListener(EventIcon.Type, FetchIconHandler.handle)

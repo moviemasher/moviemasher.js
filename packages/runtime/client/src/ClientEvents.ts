@@ -1,38 +1,104 @@
-import type { AssetObject, AssetObjects, DataOrError, DataType, ManageType, MashAsset, Ordered, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, StringDataOrError, Strings, TargetIds, TimeRange } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetObjects, AssetParams, AssetType, Assets, DataOrError, DataType, EndpointRequest, Importers, ManageType, NumberSetter, Ordered, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, StringDataOrError, TargetIds, TimeRange } from '@moviemasher/runtime-shared'
 import type { Action } from './ActionTypes.js'
-import type { ClientAction } from './ClientAction.js'
-import type { ClientAsset, ClientAssetObject, ClientAssets } from './ClientAsset.js'
-import type { ClientClip, ClientClips, ClientTrack } from './ClientMashTypes.js'
-import type { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientVideoDataOrError, MediaRequest } from './ClientMedia.js'
+import type { ClientAsset, ClientAssetObjects, ClientAssets } from './ClientAsset.js'
+import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack } from './ClientMashTypes.js'
+import type { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientMediaRequest, ClientVideoDataOrError } from './ClientMedia.js'
 import type { MashIndex } from './Masher.js'
 import type { SelectedProperties } from './SelectedProperty.js'
 import type { Previews, SvgOrImage } from './Svg.js'
+import type { TranslateArgs } from './Translate.js'
 
+import { TypeAsset, TypeEncode } from '@moviemasher/runtime-shared'
 
 export class NumberEvent extends CustomEvent<number> {}
 export class StringEvent extends CustomEvent<string> {}
 
+export type ClientAction = string
+export type ServerAction = string
+
+export interface ServerProgress {
+  do: NumberSetter
+  did: NumberSetter
+  done: VoidFunction
+}
 
 /**
- * Dispatch to initiate a save request.
+ * Dispatch to initiate a save request for an asset.
  */
 export class EventSave extends CustomEvent<EventSaveDetail> {
   static Type = 'save'
-  constructor(assetObject: ClientAssetObject) { 
-    super(EventSave.Type, { detail: { assetObject } }) 
+  constructor(asset: ClientAsset, progress?: ServerProgress) { 
+    super(EventSave.Type, { detail: { asset, progress } }) 
   }
 }
+
 export interface EventSaveDetail {
-  assetObject: ClientAssetObject
+  asset: ClientAsset
   promise?: Promise<StringDataOrError>
+  progress?: ServerProgress
 }
 
 /**
- * Dispatch to retirve the time range of the mash's selected clip.
+ * Dispatch to initiate an encode request for a mash.
+ */
+export class EventClientEncode extends CustomEvent<EventClientEncodeDetail> {
+  static Type = TypeEncode
+  constructor(asset: ClientMashAsset, progress?: ServerProgress) { 
+    super(EventClientEncode.Type, { detail: { asset, progress } }) 
+  }
+}
+
+export interface EventClientEncodeDetail {
+  asset: ClientMashAsset
+  promise?: Promise<StringDataOrError>
+  progress?: ServerProgress
+}
+
+/**
+ * Dispatch to initiate an upload request, optionally replacing an existing asset.
+ */
+export class EventUpload extends CustomEvent<EventUploadDetail> {
+  static Type = 'upload'
+  constructor(request: ClientMediaRequest, progress?: ServerProgress, id?: string) { 
+    super(EventUpload.Type, { detail: { request, progress, id } }) 
+  }
+}
+
+export interface UploadResult {
+  request: EndpointRequest
+  id?: string
+}
+
+export interface EventUploadDetail {
+  id?: string
+  request: ClientMediaRequest
+  promise?: Promise<DataOrError<UploadResult>>
+  progress?: ServerProgress
+}
+
+/**
+ * Dispatch to retrieve the time range of the mash's selected clip.
  */
 export class EventTimeRange extends CustomEvent<{ timeRange?: TimeRange}> {
   static Type = 'time-range'
   constructor(..._: any[]) { super(EventTimeRange.Type, { detail: {} }) }
+}
+
+/**
+ * Dispatch to retrieve the total number of frames in the mash.
+ */
+export class EventFrames extends CustomEvent<{ frames: number}> {
+  static Type = 'frames'
+  constructor() { 
+    super(EventFrames.Type, { detail: { frames: 0 } }) 
+  }
+}
+/**
+ * Dispatched when the total number of frames in the mash changes.
+ */
+export class EventChangedFrames extends NumberEvent {
+  static Type = 'changed-frames'
+  constructor(frames: number) { super(EventChangedFrames.Type, { detail: frames }) }
 }
 
 /**
@@ -85,6 +151,7 @@ export class EventManagedAssetScalar extends CustomEvent<EventManagedAssetScalar
     super(EventManagedAssetScalar.Type, { detail: { assetId, propertyName } }) 
   }
 }
+
 export interface EventManagedAssetScalarDetail {
   assetId: string
   propertyName: string
@@ -96,12 +163,13 @@ export interface EventManagedAssetScalarDetail {
  */
 export class EventManagedAssetIcon extends CustomEvent<EventManagedAssetIconDetail> {
   static Type = 'managed-asset-icon'
-  constructor(assetId: string, size: Size) { 
-    super(EventManagedAssetIcon.Type, { detail: { assetId, size } }) 
+  constructor(assetId: string, size: Size, cover?: boolean) { 
+    super(EventManagedAssetIcon.Type, { detail: { assetId, size, cover } }) 
   }
 }
 
 export interface EventManagedAssetIconDetail {
+  cover?: boolean
   assetId: string
   size: Size
   promise?: Promise<SVGSVGElement>
@@ -125,7 +193,7 @@ export interface EventManagedAssetIdDetail {
 /**
  * Dispatch to release managed assets.
  */
-export class EventReleaseManagedAssets extends CustomEvent<string | undefined> {
+export class EventReleaseManagedAssets extends CustomEvent<ManageType | undefined> {
   static Type = 'release-managed-assets'
   constructor(detail?: ManageType) { 
     super(EventReleaseManagedAssets.Type, { detail }) 
@@ -151,7 +219,7 @@ export interface EventAddAssetsDetail {
  * Dispatch to retrieve a managed asset from an asset id or object.
  */
 export class EventManagedAsset extends CustomEvent<AssetEventDetail> {
-  static Type = 'managed-asset'
+  static Type = 'managedasset'
   constructor(assetIdOrObject: string | AssetObject, manageType?: ManageType) { 
     const string = typeof assetIdOrObject === 'string' 
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
@@ -165,7 +233,7 @@ export class EventManagedAsset extends CustomEvent<AssetEventDetail> {
  * Dispatch to retrieve an asset from an asset id or object.
  */
 export class EventAsset extends CustomEvent<AssetEventDetail> {
-  static Type = 'asset'
+  static Type = TypeAsset
   constructor(assetIdOrObject: string | AssetObject) { 
     const string = typeof assetIdOrObject === 'string' 
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
@@ -182,55 +250,106 @@ export interface AssetEventDetail {
   asset?: ClientAsset
 }
 
-
 /**
  * Dispatch to initiate a client action.
  */
-export class EventAction extends StringEvent {
-  static Type = 'action'
+export class EventDoClientAction extends CustomEvent<ClientAction> {
+  static Type = 'do-client-action'
   constructor(clientAction: ClientAction) { 
-    super(EventAction.Type, { detail: clientAction }) 
+    super(EventDoClientAction.Type, { detail: clientAction }) 
   }
 }
 
 /** 
- * Dispatched when the enabled state of a particular action has changed.
+ * Dispatched when the enabled state of a particular client action has changed.
  */
-export class EventChangedActionEnabled extends StringEvent {
-  static Type = 'changed-action-enabled'
-  constructor(detail: ClientAction) { super(EventChangedActionEnabled.Type, { detail }) }
+export class EventChangedClientAction extends CustomEvent<ClientAction> {
+  static Type = 'changed-client-action'
+  constructor(detail: ClientAction) { super(EventChangedClientAction.Type, { detail }) }
 }
-
-
 
 /**
  * Dispatch to retrieve current enabled state of a client action.
  */
-export class EventActionEnabled extends CustomEvent<EventActionEnabledDetail> {
-  static Type = 'action-enabled'
+export class EventEnabledClientAction extends CustomEvent<EventEnabledClientActionDetail> {
+  static Type = 'enabled-client-action'
   constructor(clientAction: ClientAction) { 
-    super(EventActionEnabled.Type, { detail: { clientAction } }) 
+    super(EventEnabledClientAction.Type, { detail: { clientAction } }) 
   }
 }
 
-
-export interface EventActionEnabledDetail {
+export interface EventEnabledClientActionDetail {
   clientAction: ClientAction
+  enabled?: boolean
+}
+
+
+/**
+ * Dispatched as progress is made on a server action with provided id.
+ */
+export class EventProgress extends CustomEvent<EventProgressDetail> {
+  static Type = 'progress'
+  constructor(id: string, progress: number) { 
+    super(EventProgress.Type, { detail: { id, progress } }) 
+  }
+}
+
+export interface EventProgressDetail {
+  id: string
+  progress: number
+}
+
+/**
+ * Dispatch to initiate a server action, optionally dispatching progress events.
+ */
+export class EventDoServerAction extends CustomEvent<EventDoServerActionDetail> {
+  static Type = 'do-server-action'
+  constructor(serverAction: ServerAction, id?: string) { 
+    super(EventDoServerAction.Type, { detail: { serverAction, id } }) 
+  }
+}
+
+export interface EventDoServerActionDetail {
+  serverAction: ServerAction
+  id?: string
+  promise?: Promise<void>
+}
+
+/** 
+ * Dispatched when the enabled state of a particular server action has changed.
+ */
+export class EventChangedServerAction extends CustomEvent<ServerAction> {
+  static Type = 'changed-server-action'
+  constructor(detail: ServerAction) { super(EventChangedServerAction.Type, { detail }) }
+}
+
+/**
+ * Dispatch to retrieve current enabled state of a server action.
+ */
+export class EventEnabledServerAction extends CustomEvent<EventEnabledServerActionDetail> {
+  static Type = 'enabled-server-action'
+  constructor(serverAction: ServerAction) { 
+    super(EventEnabledServerAction.Type, { detail: { serverAction } }) 
+  }
+}
+
+export interface EventEnabledServerActionDetail {
+  serverAction: ServerAction
   enabled?: boolean
 }
 
 /**
  * Dispatched when there's a new mash loaded.
  */
-export class EventChangedMashAsset extends CustomEvent<MashAsset | undefined> {
+export class EventChangedMashAsset extends CustomEvent<ClientMashAsset | undefined> {
   static Type = 'changed-mash-asset'
-  constructor(detail?: MashAsset) { super(EventChangedMashAsset.Type, { detail }) }
+  constructor(detail?: ClientMashAsset) { super(EventChangedMashAsset.Type, { detail }) }
 }
 
 /**
  * Dispatch to retrieve the mash being edited.
  */
-export class EventMashAsset extends CustomEvent<{ mashAsset?: MashAsset}> {
+export class EventMashAsset extends CustomEvent<{ mashAsset?: ClientMashAsset}> {
   static Type = 'mash-asset'
   constructor(..._: any[]) { 
     super(EventMashAsset.Type, { detail: {} }) 
@@ -253,13 +372,11 @@ export class EventDragging extends CustomEvent<{ dragging?: boolean }> {
   constructor() { super(EventDragging.Type, { detail: {} }) }
 }
 
-
-
 /**
- * Dispatch to retrieve a clip node.
+ * Dispatch to retrieve a clip element for display.
  */
 export class EventClipElement extends CustomEvent<EventClipElementDetail> {
-  static Type = 'clip-node'
+  static Type = 'clip-element'
   constructor(clipId: string, maxWidth: number, scale: number, trackIndex: number, trackWidth: number, width: number, x: number, label?: string, labels?: boolean, icons?: boolean) {
     super(EventClipElement.Type, { detail: { 
       clipId, maxWidth,
@@ -292,17 +409,19 @@ export interface EventClipElementDetail {
 }
 
 /** 
- * Dispatch to retrieve an asset object node.
+ * Dispatch to retrieve an asset element for display.
  */
-export class EventAssetObjectNode extends CustomEvent<EventAssetObjectNodeDetail> {
-  static Type = 'asset-object-node'
-  constructor(assetId: string, size: Size, icons?: boolean, labels?: boolean) { 
-    super(EventAssetObjectNode.Type, { detail: { assetId, size, labels, icons } }) 
+export class EventAssetElement extends CustomEvent<EventAssetElementDetail> {
+  static Type = 'asset-element'
+  constructor(assetId: string, size: Size, cover?: boolean, label?: string, icons?: boolean, labels?: boolean) { 
+    super(EventAssetElement.Type, { detail: { assetId, size, cover, label, labels, icons } }) 
   }
 }
 
-export interface EventAssetObjectNodeDetail {
+export interface EventAssetElementDetail {
+  cover?: boolean
   size: Size
+  label?: string
   labels?: boolean
   icons?: boolean
   assetId: string
@@ -339,7 +458,6 @@ export class EventAssetId extends CustomEvent<{ assetId?: string}> {
   }
 }
 
-
 /**
  * Dispatch when the preview rectangle has changed.
  */
@@ -347,7 +465,6 @@ export class EventRect extends CustomEvent<{ rect?: Rect }> {
   static Type = 'change-rect'
   constructor() { super(EventRect.Type, { detail: {} }) }
 }
-
 
 /**
  * Dispatced when the mash's targets have changed.
@@ -372,6 +489,7 @@ export class EventChangedSize extends CustomEvent<Size> {
   static Type = 'changed-size'
   constructor(detail: Size) { super(EventChangedSize.Type, { detail }) }
 }
+
 /**
  * Dispatch to retrieve the mash's current size.
  */
@@ -415,13 +533,11 @@ export interface EventClipIdDetail {
   clipId?: string
 }
 
-
-
 /**
  * Dispatch to set the currently selected clip.
  */
 export class EventChangeClipId extends StringEvent {
-  static Type = 'select-clip-id'
+  static Type = 'change-clip-id'
   constructor(detail = '') { super(EventChangeClipId.Type, { detail }) }
 }
 
@@ -429,7 +545,7 @@ export class EventChangeClipId extends StringEvent {
  * Dispatched when the mash's currently selected clip changes.  
  * */
 export class EventChangedClipId extends StringEvent {
-  static Type = 'selected-clip-id'
+  static Type = 'changed-clip-id'
   constructor(detail = '') { super(EventChangedClipId.Type, { detail }) }
 }
 
@@ -442,8 +558,6 @@ export class EventChanged extends CustomEvent<Action | undefined> {
   constructor(action?: Action) { super(EventChanged.Type, { detail: action }) }
 }
 
-// RETRIEVERS
-
 /**
  * Dispatch to retrieve selected properties.
  */
@@ -454,7 +568,6 @@ export class EventSelectedProperties extends CustomEvent<SelectedPropertiesEvent
     super(EventSelectedProperties.Type, { detail: { selectorTypes, selectedProperties } }) 
   }
 }
-
 
 export interface SelectedPropertiesEventDetail {
   selectorTypes?: SelectorTypes
@@ -500,6 +613,7 @@ export class EventChangeScalar extends CustomEvent<EventChangeScalarDetail> {
     super(EventChangeScalar.Type, { detail: { propertyId, value } }) 
   }
 }
+
 export interface EventChangeScalarDetail {
   propertyId: PropertyId
   value?: Scalar
@@ -601,12 +715,13 @@ export class EventDialog extends StringEvent {
  */
 export class EventClientAudioPromise extends CustomEvent<EventClientAudioPromiseDetail> {
   static Type = 'client-audio-promise'
-  constructor(request: MediaRequest) { 
+  constructor(request: ClientMediaRequest) { 
     super(EventClientAudioPromise.Type, { detail: { request } }) 
   }
 }
+
 export interface EventClientAudioPromiseDetail {
-  request: MediaRequest
+  request: ClientMediaRequest
   promise?: Promise<ClientAudioDataOrError>
 }
 
@@ -615,12 +730,13 @@ export interface EventClientAudioPromiseDetail {
 */
 export class EventClientFontPromise extends CustomEvent<EventClientFontPromiseDetail> {
   static Type = 'client-font-promise'
-  constructor(request: MediaRequest) {
+  constructor(request: ClientMediaRequest) {
     super(EventClientFontPromise.Type, { detail: { request } })
   }
 }
+
 export interface EventClientFontPromiseDetail {
-  request: MediaRequest
+  request: ClientMediaRequest
   promise?: Promise<ClientFontDataOrError>
 }
 
@@ -629,12 +745,13 @@ export interface EventClientFontPromiseDetail {
 */
 export class EventClientImagePromise extends CustomEvent<EventClientImagePromiseDetail> {
   static Type = 'client-image-promise'
-  constructor(request: MediaRequest) {
+  constructor(request: ClientMediaRequest) {
     super(EventClientImagePromise.Type, { detail: { request } })
   }
 }
+
 export interface EventClientImagePromiseDetail {
-  request: MediaRequest
+  request: ClientMediaRequest
   promise?: Promise<ClientImageDataOrError>
 }
 
@@ -643,12 +760,13 @@ export interface EventClientImagePromiseDetail {
  */
 export class EventClientVideoPromise extends CustomEvent<EventClientVideoPromiseDetail> {
   static Type = 'client-video-promise'
-  constructor(request: MediaRequest) { 
+  constructor(request: ClientMediaRequest) { 
     super(EventClientVideoPromise.Type, { detail: { request } })
   }
 }
+
 export interface EventClientVideoPromiseDetail {
-  request: MediaRequest
+  request: ClientMediaRequest
   promise?: Promise<ClientVideoDataOrError>
 }
 
@@ -661,36 +779,144 @@ export class EventImport extends CustomEvent<EventImportDetail> {
     super(EventImport.Type, { detail: { fileList } }) 
   }
 }
+
 export interface EventImportDetail {
   fileList: FileList
   promise?: Promise<AssetObjects>
 }
 
-
-
-export interface ImportAssetObjectsEventDetail {
-  assetObjects: AssetObjects
+/**
+ * Dispatch to retrieve icon promise for an icon ID.
+ */
+export class EventIcon extends CustomEvent<EventIconDetail> {
+  static Type = 'icon'
+  constructor(id: string) {
+    super(EventIcon.Type, { detail: { id } })
+  } 
 }
-export class ImportAssetObjectsEvent extends CustomEvent<ImportAssetObjectsEventDetail> {
+
+export interface Icon {
+  imageElement?: HTMLImageElement
+  imgUrl?: string
+  string?: string
+  svgElement?: SVGSVGElement
+  svgString?: string
+}
+
+export type IconDataOrError = DataOrError<Icon>
+
+export interface EventIconDetail extends TranslateArgs {
+  promise?: Promise<IconDataOrError>
+}
+
+/**
+ * Dispatch to retrieve the mash asset object to edit.
+ */
+export class EventAssetObject extends CustomEvent<AssetObjectEventDetail> {
+  static Type = 'asset-object'
+  constructor(assetType?: AssetType) { 
+    super(EventAssetObject.Type, { detail: { assetType } }) 
+  }
+}
+
+export interface AssetObjectEventDetail {
+  assetType?: AssetType
+  promise?: Promise<DataOrError<AssetObject>>
+}
+
+/**
+ * Dispatch to retrieve asset objects to display.
+ */
+export class EventAssetObjects extends CustomEvent<EventAssetObjectsDetail> {
+  static Type = 'asset-objects'
+  constructor(detail: AssetObjectsParams) { 
+    super(EventAssetObjects.Type, { detail }) 
+  }
+}
+
+export interface EventAssetObjectsDetail extends AssetObjectsParams {
+  promise?: Promise<DataOrError<AssetObjects>>
+}
+
+/**
+ * Dispatch to retrieve the assets to display.
+ */
+export class EventManagedAssets extends CustomEvent<EventManagedAssetsDetail> {
+  static Type = 'managed-assets'
+  constructor(detail: AssetObjectsParams) { 
+    super(EventManagedAssets.Type, { detail }) 
+  }
+}
+
+export interface AssetObjectsParams extends AssetParams {
+  excludeManagedTypes?: ManageType[]
+}
+
+export interface EventManagedAssetsDetail extends AssetObjectsParams {
+  promise?: Promise<DataOrError<Assets>>
+}
+
+/**
+ * Dispatch to retrieve an array of importers.
+ */
+export class EventImporters extends CustomEvent<EventImportersDetail> {
+  static Type = 'importers'
+  constructor(importers: Importers = []) { 
+    super(EventImporters.Type, { detail: { importers } }) 
+  }
+}
+
+export interface EventImportersDetail {
+  importers: Importers
+}
+
+/**
+ * Dispatch to import managed assets from client asset objects.
+ */
+
+export class EventImportManagedAssets extends CustomEvent<ClientAssetObjects> {
   static Type = 'import-asset-objects'
-  constructor(assetObjects: AssetObjects) {
-    super(ImportAssetObjectsEvent.Type, { detail: { assetObjects } })
+  constructor(detail: ClientAssetObjects) {
+    super(EventImportManagedAssets.Type, { detail })
   }
 }
 
-export class EventImporterChange extends CustomEvent<ImportAssetObjectsEventDetail> {
+/**
+ * Dispatch to retrieve the savable state of managed assets.
+ */
+export class EventSavableManagedAsset extends CustomEvent<{savable: boolean}> {
+  static Type = 'savable-managed-asset'
+  constructor() { 
+    super(EventSavableManagedAsset.Type, { detail: { savable: false } }) 
+  }
+}
+
+/**
+ * Dispatch to retrieve the savable managed assets.
+ */
+export class EventSavableManagedAssets extends CustomEvent<{assets: ClientAssets}> {
+  static Type = 'savable-managed-assets'
+  constructor(assets: ClientAssets = []) { 
+    super(EventSavableManagedAssets.Type, { detail: { assets } }) 
+  }
+}
+
+/**
+ * Dispatched when managed assets have been imported.
+ */
+export class EventImportedManagedAssets extends CustomEvent<ClientAssets> {
+  static Type = 'imported-asset-objects'
+  constructor(detail: ClientAssets) {
+    super(EventImportedManagedAssets.Type, { detail })
+  }
+}
+
+export class EventImporterChange extends CustomEvent<ClientAssetObjects> {
   static Type = 'importer-change'
-  constructor(assetObjects: AssetObjects) { 
-    super(EventImporterChange.Type, { detail: { assetObjects } }) 
+  constructor(detail: ClientAssetObjects) { 
+    super(EventImporterChange.Type, { detail }) 
   }
 }
-
-export const EventTypeImporterComplete = 'importer-complete'
-
-
-
-
-
 
 
 export type MashMoveClipEvent = CustomEvent<MashIndex>
@@ -716,7 +942,6 @@ export interface ScrollRootEventDetail {
 }
 
 export type ScrollRootEvent = CustomEvent<ScrollRootEventDetail>
-
 
 export interface ClipFromIdEventDetail {
   clipId: string
@@ -744,50 +969,34 @@ export interface DroppedEventDetail {
 
 export type SelectedPropertiesEvent = CustomEvent<SelectedPropertiesEventDetail>
 
-export const EventTypeDuration = 'durationchange'
 
+
+
+
+export const EventTypeAdded = 'added'
+export const EventTypeAssetType = 'asset-type'
+export const EventTypeDragHandled = 'drag-handled'
 export const EventTypeEnded = 'ended'
-
-
+export const EventTypeExportParts = 'export-parts'
 export const EventTypeFps = 'ratechange'
-
+export const EventTypeIconFromFrame = 'icon-from-frame'
+export const EventTypeImporterComplete = 'importer-complete'
 export const EventTypeLoaded = 'loadeddata'
+export const EventTypeMashMoveClip = 'mash-move-clip'
+export const EventTypeMashRemoveClip = 'mash-remove-clip'
+export const EventTypeMashRemoveTrack = 'mash-remove-track'
 export const EventTypePause = 'pause'
 export const EventTypePlay = 'play'
 export const EventTypePlaying = 'playing'
 export const EventTypeRender = 'render'
+export const EventTypeScale = 'scale'
+export const EventTypeScrollRoot = 'scroll-root'
 export const EventTypeSeeked = 'seeked'
 export const EventTypeSeeking = 'seeking'
+export const EventTypeSourceType = 'source-type'
 export const EventTypeTrack = 'track'
+export const EventTypeTrackClips = 'track-clips'
 export const EventTypeTracks = 'tracks'
 export const EventTypeVolume = 'volumechange'
 export const EventTypeWaiting = 'waiting'
-
 export const EventTypeZoom = 'zoom'
-export const EventTypeScale = 'scale'
-
-export const EventTypeAssetType = 'asset-type'
-export const EventTypeSourceType = 'source-type'
-
-
-export const EventTypeAdded = 'added'
-
-export const EventTypeMashRemoveTrack = 'mash-remove-track'
-export const EventTypeMashMoveClip = 'mash-move-clip'
-export const EventTypeMashRemoveClip = 'mash-remove-clip'
-
-
-export const EventTypeDragHandled = 'drag-handled'
-
-export const EventTypeExportParts = 'export-parts'
-
-
-export const EventTypeScrollRoot = 'scroll-root'
-
-export const EventTypeTrackClips = 'track-clips'
-
-export const EventTypeAssetObjects = 'fetch-asset-objects'
-export const EventTypeAssetObject = 'fetch-asset-object'
-
-export const EventTypeIconFromId = 'icon-from-id'
-export const EventTypeIconFromFrame = 'icon-from-frame'

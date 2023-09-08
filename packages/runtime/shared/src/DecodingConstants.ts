@@ -1,5 +1,3 @@
-import type { ProbeType, DecodingType, DecodingTypes } from './Decoding.js'
+import type { ProbeType } from './Decoding.js'
 
-
-export const TypeProbe: ProbeType = 'probe'
-export const TypesDecoding: DecodingTypes = [TypeProbe]
+export const PROBE: ProbeType = 'probe'

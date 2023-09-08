@@ -6,13 +6,9 @@
 
   "files": ["/dist/"],
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./index.js",
+  "module": "./index.js",
   "types": "./dist/index.d.ts",
-  
-  "dependencies": {
-    "@moviemasher/runtime-shared": "5.1.2"
-  },
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -35,7 +31,12 @@
   ],
   "scripts": {
     "script": "run-s",
-    "build": "run-s package",
+    "move": "mv dist/index.js index.js",
+    "build": "run-s package move",
     "package": "rollup --config dev/rollup/package.config.mjs"
+  },
+  
+  "dependencies": {
+    "@moviemasher/runtime-shared": "5.1.2"
   }
 }

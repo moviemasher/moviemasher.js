@@ -1,16 +1,11 @@
-import type {UnknownRecord} from '@moviemasher/runtime-shared'
+import type { Asset, AudibleAsset, AudibleAssetObject, Constrained, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { propertyInstance } from "../../Setup/PropertyFunctions.js"
+import { TypeAsset, PROBE, isUndefined } from '@moviemasher/runtime-shared'
+import { timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
+import { DataTypeBoolean, DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { DurationUnknown } from '../../Setup/DurationConstants.js'
-import { DataTypeBoolean, DataTypePercent } from "../../Setup/DataTypeConstants.js"
-import {isAboveZero} from '../SharedGuards.js'
-import { isUndefined } from "@moviemasher/runtime-shared"
-import {isProbing} from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
-import {timeFromSeconds} from '../../Helpers/Time/TimeUtilities.js'
-import {TypeProbe} from '@moviemasher/runtime-shared'
-import { Constrained } from '@moviemasher/runtime-shared'
-import { Asset, AudibleAsset, AudibleAssetObject } from '@moviemasher/runtime-shared'
-import { TypeAsset } from '@moviemasher/runtime-client'
+import { propertyInstance } from '../../Setup/PropertyFunctions.js'
+import { isAboveZero } from '../SharedGuards.js'
 
 export function AudibleAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -31,11 +26,13 @@ T & Constrained<AudibleAsset> {
     private _duration = 0
     get duration(): number {
       if (!isAboveZero(this._duration)) {
-        const probing = this.decodings.find(decoding => decoding.type === TypeProbe)
-        if (isProbing(probing)) {
+        const probing = this.decodings.find(decoding => decoding.type === PROBE)
+        if (probing) {
           const { data } = probing
-          const { duration } = data
-          if (isAboveZero(duration)) this._duration = duration
+          if (data) {
+            const { duration } = data
+            if (isAboveZero(duration)) this._duration = duration
+          }
         }
       }
       return this._duration

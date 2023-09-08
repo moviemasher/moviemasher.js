@@ -2,12 +2,21 @@ import { isNumber, isObject } from "@moviemasher/runtime-shared"
 import { errorThrow } from '@moviemasher/runtime-shared'
 import { CommaChar, EqualsChar, SemicolonChar } from '../Setup/Constants.js'
 import { Point } from '@moviemasher/runtime-shared'
+import { isAboveZero } from "../Shared/SharedGuards.js"
 
 
 export const isPoint = (value: any): value is Point => {
   return isObject(value) &&
     'x' in value && 'y' in value &&
     isNumber(value.x) && isNumber(value.y)
+}
+
+
+export const pointAboveZero = (point: any): point is Point => {
+  if (!isPoint(point)) return false
+
+  const { x, y } = point
+  return isAboveZero(x) && isAboveZero(y)
 }
 
 export function assertPoint(value: any, name?: string): asserts value is Point {

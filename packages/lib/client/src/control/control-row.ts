@@ -3,8 +3,9 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { Content, Contents, OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
+import { DOT } from '@moviemasher/lib-shared'
 import { ClassRow } from '@moviemasher/runtime-client'
-import { DotChar, End } from '@moviemasher/runtime-shared'
+import { End } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
@@ -23,7 +24,7 @@ export class ControlRowElement extends ImporterComponent {
   private get icon(): DataType | undefined {
     const { propertyId } = this
     if (!propertyId) return
-    const name = propertyId.split(DotChar).pop() 
+    const name = propertyId.split(DOT).pop() 
     if (!name) return
 
     if (name.endsWith(End)) return name.slice(0, -End.length)

@@ -1,51 +1,33 @@
+import type { Command, RenderingOptions, RenderingProcessArgs, ServerEncodeOptions } from '@moviemasher/lib-server'
+import type { OutputOptions } from '@moviemasher/runtime-shared'
+import type { GenerateMashTest, GenerateOptions, GenerateTestIds } from './Generate.js'
+
+import { ExtensionLoadedInfo, Probe, ffmpegCommand, renderingOutputFile, renderingProcessInstance, } from '@moviemasher/lib-server'
+import { DurationUnknown, assertPopulatedArray, assertPopulatedString, assertTrue, idGenerateString, sizeScale } from '@moviemasher/lib-shared'
+import { SIZE_OUTPUT, SourceMash, VIDEO, errorThrow, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-import {
-
-  assertPopulatedArray, assertPopulatedString, assertTrue, 
-  idGenerateString, DurationUnknown, RenderingOptions, OutputOptions, sizeScale, 
-  
-} from '@moviemasher/lib-shared'
-
-
-import {
-  ffmpegCommand, ExtensionLoadedInfo, Probe, 
-  renderingOutputFile, RenderingProcessArgs, ServerEncodeOptions, 
-  renderingProcessInstance, 
-  Command
-} from '@moviemasher/lib-server'
-
-import {
-  GenerateAssetObjects, GenerateOptions, GenerateMashTest,
-  generateTest,
-  generateIds,
-  GenerateTestIds
-} from "./Generate"
-
-
-import { TestRenderCache, TestRenderOutput, TestFilePrefix, TestTemporary } from "./TestRenderOutput"
-import { isPopulatedString, SIZE_OUTPUT, 
-  isDefiniteError, errorThrow, SourceMash, TypeVideo } from '@moviemasher/runtime-shared'
+import { GenerateAssetObjects, generateIds, generateTest } from './Generate.js'
+import { TestFilePrefix, TestRenderCache, TestRenderOutput, TestTemporary } from './TestRenderOutput.js'
 
 const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
 
-
 export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, output: OutputOptions): Promise<void> => {
   const id = `all-${suffix}`
-  const fileName = renderingOutputFile(output, TypeVideo, id)
+  const fileName = renderingOutputFile(output, VIDEO, id)
 
   const sources: string[] = ids.map(id => {
-    const resolved = path.resolve(path.join(TestRenderOutput, id, fileName))
-    assertTrue(fs.existsSync(resolved), resolved)
+    const resolvedPath = path.resolve(path.join(TestRenderOutput, id, fileName))
+    assertTrue(fs.existsSync(resolvedPath), resolvedPath)
 
-    return resolved
+    return resolvedPath
   })
   
 
 
   const destination = path.resolve(path.join(TestRenderOutput, id, fileName))
 
-  // console.log("renderingTestIdsPromise", sources.length, destination)
+  // console.log('renderingTestIdsPromise', sources.length, destination)
 
   if (!sources.length) return Promise.resolve()
   
@@ -53,7 +35,7 @@ export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, ou
     return new Promise<void>((resolve, reject) => {
       const command = ffmpegCommand() as Command
       command.on('error', (...args: any[]) => {
-        reject({ error: args.join(",") }) 
+        reject({ error: args.join(',') }) 
       })
       command.on('end', () => { resolve() })
       try {
@@ -61,7 +43,6 @@ export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, ou
         command.mergeToFile(destination, TestTemporary)
       }
       catch (error) { reject({ error }) }
-      
     }).then(() => {
       const dirName = path.dirname(destination)
       const extName = path.extname(destination)
@@ -74,9 +55,9 @@ export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, ou
 
 const renderingPromise = (renderingArgs: RenderingProcessArgs): Promise<void> => {
   // const { outputs } = renderingArgs
-  // console.log("renderingPromise", renderingArgs)
+  // console.log('renderingPromise', renderingArgs)
   const renderingProcess = renderingProcessInstance(renderingArgs)
-  // console.log("renderingPromise calling runPromise")
+  // console.log('renderingPromise calling runPromise')
   const runPromise = renderingProcess.runPromise()
   const checkPromise = runPromise.then(orError => {
     if (isDefiniteError(orError)) errorThrow(orError) 
@@ -91,7 +72,7 @@ const renderingPromise = (renderingArgs: RenderingProcessArgs): Promise<void> =>
   // .catch(result => {
   //   const error = isObject(result) ? result.error : result
   //   const errorMessage = isPopulatedString(error) ? error : String(result)
-  //   if (errorMessage) console.trace("errorMessage", errorMessage)
+  //   if (errorMessage) console.trace('errorMessage', errorMessage)
   //   assertTrue(!errorMessage, 'no caught error')
   // })
 }
@@ -127,10 +108,10 @@ export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
   const definedId = id || idGenerateString()
   const options: RenderingOptions = {
     mash: { 
-      id: definedId, type: TypeVideo, source: SourceMash, 
+      id: definedId, type: VIDEO, source: SourceMash, 
     }, 
     outputOptions: {}, 
-    encodingType: TypeVideo
+    encodingType: VIDEO
 
   }
   const testArgs = renderingProcessInput(definedId)
@@ -150,8 +131,8 @@ export const renderingMashTestPromise = (mashTest: GenerateMashTest, outputOptio
   assertPopulatedArray(clips)
 
   const options: RenderingOptions = {
-    mash: {...mashObject, media: GenerateAssetObjects},
-    encodingType: TypeVideo,
+    mash: {...mashObject, assets: GenerateAssetObjects},
+    encodingType: VIDEO,
     outputOptions
   }
   const input = renderingProcessInput(id)

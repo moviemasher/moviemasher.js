@@ -14,9 +14,10 @@ import {
   DurationUnknown,
 
   sizeScale,
+  TextHeight,
   
 } from '@moviemasher/lib-shared'
-import { SIZE_OUTPUT, AssetObjects, ClipObject, ColorInstanceObject, ImageAssetObject, InstanceObject, MashAssetObject, Point, PopulatedString, Size, SourceMash, TextAssetObject, TextInstanceObject, TrackObject, TypeFont, TypeImage, TypeVideo, VideoAssetObject, errorThrow, isPopulatedString, isString } from '@moviemasher/runtime-shared'
+import { SIZE_OUTPUT, AssetObjects, ClipObject, ColorInstanceObject, ImageAssetObject, InstanceObject, MashAssetObject, Point, PopulatedString, Size, SourceMash, TextAssetObject, TextInstanceObject, TrackObject, TypeFont, IMAGE, VIDEO, VideoAssetObject, errorThrow, isPopulatedString, isString } from '@moviemasher/runtime-shared'
 
 const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
 
@@ -169,7 +170,7 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
   const { width, height } = size
   const textHeight = 0.1
   const debug: TextInstanceObject = {
-    intrinsic: { x: 0, y: 0, width: width, height: 1000 / textHeight },
+    intrinsic: { x: 0, y: 0, width: width, height: TextHeight / textHeight },
     // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
     assetId: "com.moviemasher.font.luckiest-guy",
     // height: textHeight, 
@@ -353,26 +354,26 @@ export const GenerateAssetObjects: AssetObjects = [
     source: 'raw',
     type: "image",
     request: { endpoint: { pathname: "../shared/image/puppy/image.jpg" } },
-    decodings: [{ type: TypeImage, data: { width: 3024, height: 4032 } }]
+    decodings: [{ type: IMAGE, data: { width: 3024, height: 4032 } }]
   } as ImageAssetObject,
   {
     id: "rgb",
     source: 'raw',
     type: "video",
     request: { endpoint: { pathname: "../shared/video/rgb.mp4" } },
-    decodings: [{ type: TypeVideo, data: {width: 512, height: 288, audible: true }}]
+    decodings: [{ type: VIDEO, data: {width: 512, height: 288, audible: true }}]
   } as VideoAssetObject,
   {
     id: "kitten",
     source: 'raw',
     type: "image",
     request: { endpoint: { pathname: "../shared/image/kitten/image.jpg" } },
-    decodings: [{ type: TypeImage, data: {width: 4592, height: 3056}}]
+    decodings: [{ type: IMAGE, data: {width: 4592, height: 3056}}]
   } as ImageAssetObject,
   {
     id: "font.valken",
     source: 'text',
-    type: TypeImage,
+    type: IMAGE,
     label: "Valken",
     request: { endpoint: { pathname: "../shared/font/valken/valken.ttf" } },
     transcodings: [
@@ -456,7 +457,7 @@ export const generateTests = (generateOptions: GenerateOptions, testId = 'all', 
   const tracks: TrackObject[] = [{ clips }]
   if (labels) tracks.push({ clips: labelClips, dense: true })
   const mash: MashAssetObject = { 
-    type: TypeVideo,
+    type: VIDEO,
     source: SourceMash,
     id: testId, color: '#666666', tracks 
   }
@@ -468,7 +469,7 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
   const tracks: TrackObject[] = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
   const mash: MashAssetObject = { 
-    type: TypeVideo,
+    type: VIDEO,
     source: SourceMash,
     id: testId, color: '#666666', tracks 
   }

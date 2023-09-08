@@ -2,9 +2,9 @@ import type { ClientClip, ClientVisibleInstance, EventFunction, SvgItem, SvgItem
 import type { ContainerRectArgs, Direction, Point, Rect, ScalarsById, Size, Time, TimeRange } from '@moviemasher/runtime-shared'
 import type { TrackPreview, TrackPreviewArgs } from './TrackPreview.js'
 
-import { DirectionBottom, DirectionLeft, DirectionRight, DirectionTop, assertRect, assertSideDirection, assertSizeAboveZero, assertTrue, pointTranslate, pointsEqual, sizeTranslate, timeFromArgs, tweenMinMax } from '@moviemasher/lib-shared'
-import { EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalars, EventFrame, EventRect, MovieMasher, TypeContainer, eventStop } from '@moviemasher/runtime-client'
-import { Aspect, Crop, DotChar, End, POINT_ZERO, isDefined } from '@moviemasher/runtime-shared'
+import { DOT, DirectionBottom, DirectionLeft, DirectionRight, DirectionTop, assertRect, assertSideDirection, assertSizeAboveZero, assertTrue, pointTranslate, pointsEqual, sizeTranslate, timeFromArgs, tweenMinMax } from '@moviemasher/lib-shared'
+import { EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalars, EventFrame, EventRect, MovieMasher, eventStop } from '@moviemasher/runtime-client'
+import { Aspect, Crop, End, POINT_ZERO, TypeContainer, isDefined } from '@moviemasher/runtime-shared'
 import { svgAddClass, svgPolygonElement } from '../../../SvgFunctions.js'
 
 export const TrackPreviewHandleSize = 8
@@ -124,8 +124,8 @@ export class TrackPreviewClass implements TrackPreview {
       MovieMasher.eventDispatcher.dispatch(timeEvent)
       const tweening = pointTweening && timeEvent.detail.frame === range.lastTime.frame
   
-      const horzId = `${TypeContainer}${DotChar}${tweening ? horzEndKey : horzPointKey}`
-      const vertId = `${TypeContainer}${DotChar}${tweening ? vertEndKey : vertPointKey}`
+      const horzId = `${TypeContainer}${DOT}${tweening ? horzEndKey : horzPointKey}`
+      const vertId = `${TypeContainer}${DOT}${tweening ? vertEndKey : vertPointKey}`
 
       const redoValues: ScalarsById = { 
         [horzId]: totalSize.width ? limitedPoint.x / totalSize.width : container.value(horzId), 
@@ -204,7 +204,7 @@ export class TrackPreviewClass implements TrackPreview {
     const containerRectArgs: ContainerRectArgs = {
       size, time, timeRange, editing: true,
     }
-    const containerRects = clip.rects(containerRectArgs)
+    const containerRects = clip.containerRects(containerRectArgs)
     assertTrue(containerRects.length === 1)
 
     return containerRects[0]

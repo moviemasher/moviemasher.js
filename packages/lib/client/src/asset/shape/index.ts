@@ -1,1 +1,1 @@
-export * from './image.js'
+export * as ShapeImageAssetFunction from './image.js'

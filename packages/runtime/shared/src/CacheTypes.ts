@@ -25,7 +25,7 @@ export interface InstanceCacheArgs extends CacheOptions {
 }
 
 export interface AssetCacheArgs extends CacheOptions {
-  assetTime: Time
+  assetTime?: Time
 }
 
 export interface PreloadArgs extends CacheOptions {

@@ -1,23 +1,19 @@
-import path from "path"
+import type { Command } from './Command/Command.js'
+import type { CommandOptions } from '../encode/Encode.js'
+import type { CommandDestination, CommandResult, RunningCommand } from './RunningCommand.js'
+
+import { assertPopulatedString } from '@moviemasher/lib-shared'
+import { ERROR, errorThrow } from '@moviemasher/runtime-shared'
 import fs from 'fs'
-// import EventEmitter from "events"
-
-import {
-  assertPopulatedString,
-} from "@moviemasher/lib-shared"
-
-import { commandArgsString } from "../Utility/Command.js"
-import { Command } from "../Command/Command.js"
-import { commandInstance } from "../Command/CommandFactory.js"
-import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand.js"
-import { CommandOptions } from "../Plugin/Encode/Encode.js"
-import { errorThrow, ErrorName } from "@moviemasher/runtime-shared"
+import path from 'path'
+import { commandInstance } from './Command/CommandFactory.js'
+import { commandArgsString } from '../Utility/Command.js'
 
 export class RunningCommandClass implements RunningCommand {
   constructor(public id: string, public commandOptions: CommandOptions) {
     if (!(this.commandInputs.length || this.commandFilters.length)) {
-      console.trace(this.constructor.name, "with no inputs or commandFilters")
-      return errorThrow(ErrorName.Internal) 
+      console.trace(this.constructor.name, 'with no inputs or commandFilters')
+      return errorThrow(ERROR.Internal) 
     }
   }
 
@@ -31,7 +27,7 @@ export class RunningCommandClass implements RunningCommand {
   private get commandInputs() { return this.commandOptions.inputs || [] }
 
   kill() {
-    console.debug(this.constructor.name, "kill", this.id)
+    console.debug(this.constructor.name, 'kill', this.id)
     this._command?.kill('SIGKILL')
   }
 

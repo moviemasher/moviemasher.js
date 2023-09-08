@@ -106,7 +106,7 @@ export const stringFamilySizeRect = (string: string, family: string, size: numbe
     width: actualBoundingBoxLeft + actualBoundingBoxRight,
     height: actualBoundingBoxAscent + actualBoundingBoxDescent,
   } 
-  console.log('stringFamilySizeRect', rect)
+  // console.log('stringFamilySizeRect', rect)
   return rect
 }
 

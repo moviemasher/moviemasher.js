@@ -1,37 +1,36 @@
 import type { EndpointRequest, EndpointRequests, Identified, JsonRecord, PotentialError, StringDataOrError } from '@moviemasher/runtime-shared'
-import type { MediaRequest } from '../Media/Media.js'
-import type { JobType, } from '../Setup/Enums.js'
-import type { Input } from '../Types/Core.js'
+import type { IdentifiedRequest } from '../Media/Media.js'
+import type { Input } from '../Types/Input.js'
+import type { JobType } from '../Types/JobTypes.js'
 
-import { Runtime, assertObject, assertRequest, requestPromise } from '@moviemasher/lib-shared'
-import { ErrorName, TypeString, error, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
-import { EnvironmentKeyApiKeypathJob, EnvironmentKeyApiKeypathType } from '../Environment/ServerEnvironment.js'
-import { assertMediaRequest } from '../Media/MediaFunctions.js'
-import { assertDecodeRequest, decode } from '../Plugin/Decode/DecodeFunctions.js'
-import { assertEncodeRequest, encode } from '../Plugin/Encode/EncodeFunctions.js'
-import { assertTranscodeRequest, transcode } from '../Plugin/Transcode/TranscodeFunctions.js'
-import { JobTypeDecoding, JobTypeEncoding, JobTypeTranscoding, assertJobType } from '../Setup/Enums.js'
-import { assertFilePath } from './File.js'
+import { assertObject, assertRequest } from '@moviemasher/lib-shared'
+import { EventServerAssetPromise, MovieMasher } from '@moviemasher/runtime-server'
+import { ERROR, error, errorPromise, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
+import { EnvironmentKeyApiKeypathJob, EnvironmentKeyApiKeypathType, RuntimeEnvironment } from '../Environment/Environment.js'
+import { assertIdentifiedRequest } from '../Media/MediaFunctions.js'
+import { JobTypeDecoding, JobTypeEncoding, JobTypeTranscoding, assertJobType } from '../Setup/JobGuards.js'
+import { assertDecodeRequest, decode } from '../decode/DecodeFunctions.js'
+import { assertEncodeRequest, encode } from '../encode/EncodeFunctions.js'
+import { assertTranscodeRequest, transcode } from '../transcode/TranscodeGuards.js'
+import { assertFilePathExists } from './File.js'
 
-export type JobTuple = [JobType, MediaRequest]
+export type JobTuple = [JobType, IdentifiedRequest]
 
 export interface CallbackRequestBody extends Identified, PotentialError {
   completed: number
 }
 
 export const jobExtract = (object: JsonRecord): JobTuple => {
-
-  const { environment } = Runtime
-  const typeKeypath = environment.get(EnvironmentKeyApiKeypathType)
+  const typeKeypath = RuntimeEnvironment.get(EnvironmentKeyApiKeypathType)
         
-  const jobKeypath = environment.get(EnvironmentKeyApiKeypathJob)
+  const jobKeypath = RuntimeEnvironment.get(EnvironmentKeyApiKeypathJob)
         
   const { [typeKeypath]: jobType, [jobKeypath]: jobOrJobs } = object
   const job = isArray(jobOrJobs) ? jobOrJobs[0] : jobOrJobs
   
   assertObject(job, jobKeypath)
   assertJobType(jobType, typeKeypath)
-  assertMediaRequest(job)
+  assertIdentifiedRequest(job)
 
 
   return [jobType, job]
@@ -39,14 +38,19 @@ export const jobExtract = (object: JsonRecord): JobTuple => {
 
 const outputPromise = (localPath: string, request: EndpointRequest): Promise<PotentialError> => {
   throw new Error('outputPromise not implemented')
-  //requestPromise(request).then(() => { return {} })
 }
 
-
 const inputPromise = (input: Input): Promise<StringDataOrError> => {
-  const { request } = input
+  const { request, loadType } = input
   assertRequest(request)
-  return requestPromise(request, TypeString)
+
+  const event = new EventServerAssetPromise(request, loadType)
+  MovieMasher.eventDispatcher.dispatch(event)
+  const { promise } = event.detail
+  if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
+
+
+  return promise
 }
 
 export const callbackPromise = (request: EndpointRequest | EndpointRequests, body: CallbackRequestBody): Promise<PotentialError> => {
@@ -60,8 +64,7 @@ export const callbackPromise = (request: EndpointRequest | EndpointRequests, bod
   // return Promise.all(promises).then(() => ({}))
 }
 
-
-const mediaRequestPromise = (jobType: JobType, mediaRequest: MediaRequest): Promise<StringDataOrError> => {
+const mediaRequestPromise = (jobType: JobType, mediaRequest: IdentifiedRequest): Promise<StringDataOrError> => {
   const { input } = mediaRequest
   return inputPromise(input).then(inputResult => {
     if (isDefiniteError(inputResult)) return inputResult
@@ -84,13 +87,13 @@ const mediaRequestPromise = (jobType: JobType, mediaRequest: MediaRequest): Prom
         return transcode(localPath, output)
       }
       default: {
-        return error(ErrorName.Type, `Unknown job type ${jobType}`)
+        return error(ERROR.Type, `Unknown job type ${jobType}`)
       }
     } 
   })
 }
 
-export const jobPromise = async (jobType: JobType, mediaRequest: MediaRequest) => {
+export const jobPromise = async (jobType: JobType, mediaRequest: IdentifiedRequest) => {
   const { id, callback, output } = mediaRequest
   const endResponse: Identified = { id }
   if (callback) {
@@ -103,7 +106,7 @@ export const jobPromise = async (jobType: JobType, mediaRequest: MediaRequest) =
   const { request: outputRequest} = output
   if (outputRequest) {
     const { data: outputPath } = mediaResponse
-    assertFilePath(outputPath)
+    assertFilePathExists(outputPath)
     
     const uploadResult = await outputPromise(outputPath, outputRequest)
     if (isDefiniteError(uploadResult)) return uploadResult

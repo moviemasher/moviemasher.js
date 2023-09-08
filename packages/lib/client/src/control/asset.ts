@@ -40,6 +40,7 @@ export class AssetControlElement extends WithDropTarget implements Control {
       <input 
         type='hidden' 
         name='${name}' 
+        aria-label='${name}'
         value='${ifDefined(value)}'
       />
       <div 
@@ -79,7 +80,7 @@ export class AssetControlElement extends WithDropTarget implements Control {
     assertPopulatedString(scalar)
 
     // console.debug(this.tagName, this.propertyId, 'iconPromiseInitialize', { scalar, iconSize })
-    const event = new EventManagedAssetIcon(scalar, iconSize)
+    const event = new EventManagedAssetIcon(scalar, iconSize, true)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise: iconPromise } = event.detail 
     if (!iconPromise) return Promise.resolve()

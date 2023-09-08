@@ -1,16 +1,16 @@
 
-import type { ClientFont, ClientFontDataOrError, MediaRequest } from '@moviemasher/runtime-client'
+import type { ClientFont, ClientFontDataOrError, ClientMediaRequest } from '@moviemasher/runtime-client'
 
 import { EventClientFontPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, error, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestUrl } from '../Client/request/request.js'
+import { ERROR, error, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
+import { CssMimetype, requestUrl, urlFromCss } from '@moviemasher/lib-shared'
 
-export const requestFontPromise = (request: MediaRequest): Promise<ClientFontDataOrError> => {
+export const requestFontPromise = (request: ClientMediaRequest): Promise<ClientFontDataOrError> => {
   const { response } = request
   if (response) return Promise.resolve({ data: response as ClientFont })
 
-  const url = requestUrl(request)
-  if (!url) return errorPromise(ErrorName.Url)
+  const url = request.objectUrl || requestUrl(request)
+  if (!url) return errorPromise(ERROR.Url)
 
   const { init } = request
   const family = url.replace(/[^a-z0-9]/gi, '_')
@@ -28,13 +28,13 @@ export const requestFontPromise = (request: MediaRequest): Promise<ClientFontDat
     }
 
     //  mimetype does not match load type, try to load as css
-    if (!mimetype.startsWith('text/css'))
-      return error(ErrorName.ImportType)
+    if (!mimetype.startsWith(CssMimetype))
+      return error(ERROR.ImportType)
 
     return response.text().then(cssText => {
       const url = urlFromCss(cssText)
       if (!url)
-        return error(ErrorName.Url)
+        return error(ERROR.Url)
 
       return requestFontPromise({ endpoint: url })
     })
@@ -51,16 +51,6 @@ export const requestFontPromise = (request: MediaRequest): Promise<ClientFontDat
   })
 }
 
-const urlFromCss = (string: string): string => {
-  const exp = /url\(([^)]+)\)(?!.*\1)/g
-  const matches = string.matchAll(exp)
-  const matchesArray = Array.from(matches)
-  const { length: matchesLength } = matchesArray
-  const lastMatches = matchesArray[matchesLength - 1]
-  const { length: lastMatchesLength } = lastMatches
-  const lastMatch = lastMatches[lastMatchesLength - 1]
-  return lastMatch
-}
 
 const FontListener = (event: EventClientFontPromise) => {
   const { detail } = event

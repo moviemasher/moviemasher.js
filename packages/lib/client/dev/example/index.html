@@ -49,11 +49,11 @@
         padding: var(--gap);
       }
 
-      movie-masher::part(selector) {
+      movie-masher::part(browser) {
         border: 1px solid red;
         --control-fore: #fff;
       }
-      movie-masher::part(selector-footer) {
+      movie-masher::part(browser-footer) {
         border: 1px solid green;
       }
       movie-masher::part(dialog-importer-footer-left) {
@@ -67,8 +67,8 @@
   <body>
     <movie-masher>
       <span slot='dialog-importer-div-right'><movie-masher-component-icon icon='app'></movie-masher-component-icon></span>
-      <span slot='selector-div-left'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span>
-      <span slot='selector-footer-center'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span>
+      <span slot='browser-div-left'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span>
+      <span slot='browser-footer-center'><movie-masher-component-icon icon='effect'></movie-masher-component-icon></span>
     </movie-masher>
   </body>
 </html>

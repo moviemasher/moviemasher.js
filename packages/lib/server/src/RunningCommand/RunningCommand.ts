@@ -1,9 +1,7 @@
-import type { Writable } from 'stream'
+import type { Identified } from '@moviemasher/runtime-shared'
+import type { Command } from './Command/Command.js'
 
-import type { Command } from '../Command/Command.js'
-import { Identified } from '@moviemasher/runtime-shared'
-
-export type CommandDestination = string | Writable
+export type CommandDestination = string 
 
 export interface CommandResult {
   error?: string

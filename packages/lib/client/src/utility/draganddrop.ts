@@ -1,8 +1,8 @@
 import type { ClientClips, MashIndex, MashMoveClipEvent, TrackClipsEventDetail } from '@moviemasher/runtime-client'
-import type { AssetObjects, AssetType, Clip, Point, Rect, Strings, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { AssetType, Clip, Point, Rect, Strings, UnknownRecord } from '@moviemasher/runtime-shared'
 
 import { isClip, isPositive } from '@moviemasher/lib-shared'
-import { DragSuffix, EventAddAssets, EventImport, EventManagedAsset, EventTypeMashMoveClip, EventTypeTrackClips, ImportAssetObjectsEvent, MovieMasher, eventStop, } from '@moviemasher/runtime-client'
+import { DragSuffix, EventAddAssets, EventImport, EventManagedAsset, EventTypeMashMoveClip, EventTypeTrackClips, EventImportManagedAssets, MovieMasher, eventStop, } from '@moviemasher/runtime-client'
 import { isAssetType, isObject, isPopulatedString, isString } from '@moviemasher/runtime-shared'
 import { pixelToFrame } from '../Client/PixelFunctions.js'
 
@@ -108,25 +108,21 @@ export const dropRawFiles = (fileList: FileList) => {
 
 const dropFiles = (fileList: FileList, mashIndex?: MashIndex): void => {
   const promise = dropRawFiles(fileList)
-  promise?.then(assetObjects => { dropAssetObjects(assetObjects, mashIndex) })
-}
-
-const dropAssetObjects = (assetObjects: AssetObjects, mashIndex?: MashIndex) => {
-  if (mashIndex) {
-    const assets = assetObjects.flatMap(assetObject => {
-      const event = new EventManagedAsset(assetObject)
-      MovieMasher.eventDispatcher.dispatch(event)
-      const { asset } = event.detail
-      return asset ? [asset] : []
-    })
-    if (assets.length) {
-      MovieMasher.eventDispatcher.dispatch(new EventAddAssets(assets, mashIndex)) 
+  promise?.then(assetObjects => { 
+    if (mashIndex) {
+      const assets = assetObjects.flatMap(assetObject => {
+        const event = new EventManagedAsset(assetObject)
+        MovieMasher.eventDispatcher.dispatch(event)
+        const { asset } = event.detail
+        return asset ? [asset] : []
+      })
+      if (assets.length) {
+        MovieMasher.eventDispatcher.dispatch(new EventAddAssets(assets, mashIndex)) 
+      }
     }
-  }
-  MovieMasher.eventDispatcher.dispatch(new ImportAssetObjectsEvent(assetObjects)) 
-  return Promise.resolve()
+    MovieMasher.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects)) 
+  })
 }
-
 
 const dropAssetId = (assetId: string, mashIndex?: MashIndex) => {
   if (mashIndex) {

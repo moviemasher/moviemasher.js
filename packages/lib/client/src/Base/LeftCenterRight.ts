@@ -45,7 +45,7 @@ export class LeftCenterRight extends Slotted {
       flex-grow: 1; 
       background-color: var(--section-back);
       color: var(--section-fore);
-      gap: var(--spacing);
+      gap: var(--section-spacing);
       line-height: var(--icon-size);
       font-size: var(--icon-size);
     }
@@ -55,7 +55,10 @@ export class LeftCenterRight extends Slotted {
       padding: var(--section-padding);
     }
     .center > *, .left > *, .right > * {
-      margin: auto;
+      margin-block: auto;
+    }
+    .center {
+      justify-content: right;
     }
   
   `

@@ -10,9 +10,9 @@ export class ViewerHeaderElement extends Header {
     this.importTags('movie-masher-control-input')
     const htmls = [...slots]
     htmls.push(html`
-      <movie-masher-component-action 
+      <movie-masher-action-client 
         icon='${ClientActionFlip}' detail='${ClientActionFlip}'
-      ></movie-masher-component-action>
+      ></movie-masher-action-client>
     `)
     return super.leftContent(htmls)
   }

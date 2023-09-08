@@ -1,10 +1,8 @@
 import type { ClientImporter } from '@moviemasher/runtime-client'
-import type { ImportersEventDetail } from '../../declarations.js'
 
-import { EventTypeImporters } from '@moviemasher/runtime-shared'
-import { MovieMasher } from '@moviemasher/runtime-client'
+import { EventImporters, MovieMasher } from '@moviemasher/runtime-client'
 
-class ClientTextImporter implements ClientImporter {
+export class ClientTextImporter implements ClientImporter {
   label = 'Text'
   id = 'importer-text'
   get canImport(): boolean {
@@ -26,13 +24,16 @@ class ClientTextImporter implements ClientImporter {
     console.log(this.id, 'ui')
     return this._ui ||= globalThis.document.createTextNode('Text UI')
   }
-}
-const clientTextImporter = new ClientTextImporter()
-// listen for importers event
-MovieMasher.eventDispatcher.addDispatchListener<ImportersEventDetail>(EventTypeImporters, event => {
-  const { detail } = event
-  const { importers } = detail
-  importers.push(clientTextImporter)
-})
 
-export {}
+  static handleImporters(event: EventImporters) {
+    const { detail } = event
+    const { importers } = detail
+    importers.push(ClientTextImporter.instance)
+  }
+  private static _instance?: ClientTextImporter
+  static get instance(): ClientTextImporter {
+    return this._instance ||= new ClientTextImporter()
+  }
+}
+// listen for importers event
+MovieMasher.eventDispatcher.addDispatchListener(EventImporters.Type, ClientTextImporter.handleImporters)

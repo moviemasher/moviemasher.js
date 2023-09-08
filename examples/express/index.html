@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Movie Masher Express Example</title>
+    <script type='importmap'>
+      {
+        "imports": {
+          "@moviemasher/lib-shared": "./@moviemasher/lib-shared/dist/lib-shared.js",
+          "@moviemasher/runtime-shared": "./@moviemasher/runtime-shared/index.js",
+          "@moviemasher/runtime-client": "./@moviemasher/runtime-client/index.js",
+          "@moviemasher/lib-client/": "./@moviemasher/lib-client/dist/",
+          "@moviemasher/": "./@moviemasher/",
+          "lit-html/": "./lit-html/",
+          "lit-html": "./lit-html/lit-html.js",
+          "@lit-labs/": "./@lit-labs/",
+          "@lit/reactive-element": "./@lit/reactive-element/reactive-element.js",
+          "@lit/": "./@lit/",
+          "lit/": "./lit/",
+          "lit-element/": "./lit-element/"
+        }
+      }
+    </script>
+    <script type="module">
+      // import { MovieMasher } from '@moviemasher/runtime-client';
+      // MovieMasher.options.assetObjectsOptions = {
+      //   request: {
+      //     endpoint: 'data/asset/list',
+      //     init: { method: 'POST' }
+      //   }
+      // };
+      import '@moviemasher/lib-client/movie-masher.js';
+    </script>
+    <style>
+      body {
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+      @media(prefers-color-scheme: dark) {
+        body { background-color: #2d1e05; color: #fff; }
+      }
+      movie-masher {
+        --gap: 20px;
+        padding: var(--gap);
+      }
+    </style>
+  </head>
+  <body>
+    <movie-masher asset-object='data/asset/default' asset-objects='data/asset/list'></movie-masher>
+  </body>
+</html>
+ 

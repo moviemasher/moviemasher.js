@@ -1,7 +1,7 @@
 import type { ChangePropertiesAction, ChangePropertiesActionObject } from '@moviemasher/runtime-client'
 import type { PropertyIds, ScalarsById } from '@moviemasher/runtime-shared'
 
-import { isPropertyId } from '@moviemasher/runtime-client'
+import { isPropertyId } from '@moviemasher/lib-shared'
 import { ChangeActionClass } from './ChangeActionClass.js'
 
 /**

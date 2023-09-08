@@ -8,8 +8,8 @@ import { html } from 'lit-html/lit-html.js'
 import { Component } from './Component'
 import { Slotted } from './Slotted.js'
 
-const StringSlot = 'string'
-const IconSlot = 'icon'
+export const StringSlot = 'string'
+export const IconSlot = 'icon'
 
 export class IconString extends Slotted {
   detail = ''
@@ -17,12 +17,10 @@ export class IconString extends Slotted {
   emit = ''
 
   protected handleClick(event: PointerEvent): void {
-    const { emit } = this
+    const { emit, detail } = this
     if (emit) {
       event.stopPropagation()
-      const { detail } = this
-      const init: CustomEventInit<string> = { detail, bubbles: true, composed: true }
-      const stringEvent: StringEvent = new CustomEvent(emit, init)
+      const stringEvent: StringEvent = new CustomEvent(emit, { detail })
       MovieMasher.eventDispatcher.dispatch(stringEvent)
     }
   }
@@ -92,16 +90,19 @@ export class IconString extends Slotted {
       display: inline-flex;
       gap: var(--spacing);
       height: var(--size);
+      transition: 
+        background-color var(--color-transition),
+        border-color var(--color-transition),
+        color var(--color-transition);
     }
 
     a {
       font-size: var(--size);
       line-height: var(--size);
-      transition: var(--button-transition);
     }
 
     button {
-      --pad-height: calc(var(--size) - (4 * var(--padding)));
+      --pad-height: calc(var(--size) - ((2 * var(--padding)) + (2 * var(--border-size))));
       align-items: center;
       appearance: none;
       background-color: var(--back);
@@ -114,7 +115,10 @@ export class IconString extends Slotted {
       min-width: var(--size);
       outline: none;
       padding: var(--padding);
-      transition: var(--button-transition);
+    }
+
+    progress {
+      width: var(--progress-width);
     }
   `
 
@@ -129,7 +133,7 @@ export class IconString extends Slotted {
       --fore-hover: var(--control-fore-hover);
       --fore-selected: var(--control-fore-selected);
       --fore: var(--control-fore);
-      --padding: 2px;
+      --padding: 4px;
       --size: var(--control-size);
       --spacing: var(--control-spacing);
       display: inline-block;
@@ -150,5 +154,4 @@ export class IconString extends Slotted {
     string: { type: String },
     icon: { type: String },
   }
-
 }

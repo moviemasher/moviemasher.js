@@ -3,11 +3,8 @@
   "description": "Movie Masher Web Component Client",
   "license": "MIT",
   "version": "5.1.2",
-  "files": [
-    "dist",
-    "json",
-    "custom-elements.json"
-  ],
+  
+  "files": ["./dist/"],
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -17,10 +14,7 @@
   "scripts": {
     "package": "rollup -c dev/rollup/package.config.mjs",
     "client": "rollup -c dev/rollup/client.config.mjs",
-    "cem": "cem analyze --litelement",
-    "analyze": "npm run cem -- --exclude dist",
-    "build": "run-s package client analyze",
-    "serve": "node ../../../dev/utils/server.mjs",
+    "build": "run-s package client",
     "script": "run-s"
   },
   "peerDependencies": {
@@ -28,17 +22,11 @@
     "@moviemasher/runtime-client": "5.1.2"
   },
   "dependencies": {
-    "lit-html": "^2.7.4",
-    "lit-element": "3.3.2",
-    "tslib": "^2.5.3",
-    "@lit-labs/context": "^0.3.3",
+    "lit-html": "2.8.0",
+    "lit-element": "3.3.3",
+    "tslib": "2.6.2",
     "@lit-labs/observers": "2.0.0",
-    "@lit/reactive-element": "1.6.2",
-    "lit": "^2.7.5"
-  },
-  "devDependencies": {
-    "@custom-elements-manifest/analyzer": "^0.7.0",
-    "@web/dev-server": "^0.1.36"
-  },
-  "customElements": "custom-elements.json"
+    "@lit/reactive-element": "1.6.3",
+    "lit": "2.8.0"
+  }
 }

@@ -47,7 +47,6 @@ export class StringElement extends Component {
       :host {
         display: inline;
       }
-    
     `
   ]
 }

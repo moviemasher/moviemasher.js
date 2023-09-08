@@ -3,6 +3,10 @@
   "version": "5.1.2",
   "description": "Movie Masher Server Core - version 5.1.2",
   
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
   "files": ["dist"],
   "type": "module",
   "main": "dist/index.js",
@@ -24,7 +28,7 @@
   "homepage": "https://moviemasher.com",
   "scripts": {
     "script": "run-s",
-    "build": "run-s client package",
+    "build": "run-s package",
     "client": "rollup --config dev/rollup/client.config.mjs",
     "package": "rollup --config dev/rollup/package.config.mjs"
 
@@ -34,10 +38,10 @@
     "@moviemasher/runtime-server": "5.1.2",
     "fluent-ffmpeg": "^2.1.2",
     "ttf2woff2": "5.0.0",
-    "child_process": "^1.0.2"
+    "child_process": "^1.0.2", 
+    "events": "3.3.0"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "2.1.21"
-
   }
 }

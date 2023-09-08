@@ -31,6 +31,7 @@ export class StringControlElement extends WithControl {
         @input='${this.handleInput}'
         type='text'
         name='${name}' 
+        aria-label='${name}'
         value='${ifDefined(value)}'
       />
     `

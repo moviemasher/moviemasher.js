@@ -1,6 +1,6 @@
 import type { Numbers, Time, TimeRange } from '@moviemasher/runtime-shared'
 
-import { errorThrow, ErrorName } from '@moviemasher/runtime-shared'
+import { errorThrow, ERROR } from '@moviemasher/runtime-shared'
 import { assertAboveZero, assertInteger, assertPositive } from '../../Shared/SharedGuards.js'
 import { roundWithMethod } from '../../Utility/RoundFunctions.js'
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
@@ -135,7 +135,7 @@ export class TimeClass implements Time {
     return time
   }
 
-  get timeRange(): TimeRange { return errorThrow(ErrorName.Internal) }
+  get timeRange(): TimeRange { return errorThrow(ERROR.Internal) }
 
   toString() : string { return `[${this.description}]` }
 

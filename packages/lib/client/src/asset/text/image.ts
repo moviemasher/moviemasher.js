@@ -1,14 +1,14 @@
-import type { ClientFont, ClientTextAsset, ClientTextAssetObject, ClientTextInstance, Panel, Transcoding,SvgItem, ClientFontDataOrError } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time,  } from '@moviemasher/runtime-shared'
+import type { ClientFont, ClientFontDataOrError, ClientTextAsset, ClientTextAssetObject, ClientTextInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
+import type { AssetCacheArgs, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
 
-import { EmptyFunction, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, rectTransformAttribute, sizeCover, stringFamilySizeRect,} from '@moviemasher/lib-shared'
-import { EventAsset, EventClientFontPromise, MovieMasher, isPropertyId } from '@moviemasher/runtime-client'
-import { DotChar, SourceText, TypeFont, TypeImage, errorThrow, isAssetObject, isDefiniteError, POINT_ZERO, isPopulatedString, ErrorName, errorPromise } from '@moviemasher/runtime-shared'
-import { ClientRawAssetClass } from '../raw/ClientRawAssetClass.js'
-import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
+import { DOT, EmptyFunction, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, isPropertyId, rectTransformAttribute, sizeContain, stringFamilySizeRect } from '@moviemasher/lib-shared'
+import { EventAsset, EventClientFontPromise, MovieMasher } from '@moviemasher/runtime-client'
+import { ERROR, IMAGE, POINT_ZERO, SourceText, TypeFont, errorPromise, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { svgSvgElement, svgText } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
-import { svgText, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
+import { ClientRawAssetClass } from '../raw/ClientRawAssetClass.js'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -27,7 +27,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
     return this.loadFontPromise(transcoding).then(EmptyFunction)
   }
 
-  override definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
+  override assetIcon(size: Size): Promise<SVGSVGElement> | undefined {
     return this.loadFontPromise(this.findTranscoding(TypeFont)).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError)
 
@@ -36,7 +36,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
       assertPopulatedString(string)
       
       const inSize = this.intrinsicRect
-      const coverSize = sizeCover(inSize, size, true)
+      const coverSize = sizeContain(inSize, size)
       const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
 
       const transform = rectTransformAttribute(inSize, outRect)
@@ -96,7 +96,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
     const event = new EventClientFontPromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    if (!promise) return errorPromise(ErrorName.Unimplemented)
+    if (!promise) return errorPromise(ERROR.Unimplemented)
 
     return promise!.then(orError => {
       if (isDefiniteError(orError)) return orError
@@ -113,7 +113,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, TypeImage, SourceText)) {
+    if (isAssetObject(assetObject, IMAGE, SourceText)) {
       detail.asset = new ClientTextAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -121,9 +121,9 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
 }
 
 // listen for image/text asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ClientTextAssetClass.handleAsset
-)
+export const ClientTextImageListeners = () => ({
+  [EventAsset.Type]: ClientTextAssetClass.handleAsset
+})
 
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)
@@ -165,10 +165,10 @@ export class ClientTextInstanceClass extends WithTextInstance implements ClientT
     super.setValue(id, value, property)
     if (property) return
 
-    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    const name = isPropertyId(id) ? id.split(DOT).pop() : id
     switch (name) {
       case 'string': {
-        console.log(this.constructor.name, 'setValue', name, value)
+        // console.log(this.constructor.name, 'setValue', name, value)
         delete this.intrinsic
         break 
       }

@@ -1,32 +1,28 @@
 import type { Endpoint, ScalarRecord } from '@moviemasher/runtime-shared'
 
-import { DotChar, errorThrow, isNumeric, isObject, isPopulatedString } from "@moviemasher/runtime-shared"
-import { ProtocolHttp } from '../../Plugin/Protocol/Protocol.js'
-import { EnvironmentKeyUrlBase } from '../../Runtime/Environment/Environment.js'
-import { Runtime } from '../../Runtime/Runtime.js'
-import { ColonChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
+import { errorThrow, isNumeric, isObject, isPopulatedString } from '@moviemasher/runtime-shared'
+import { DOT, ColonChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
 import { assertPopulatedString, isAboveZero } from '../../Shared/SharedGuards.js'
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
 
+export const ProtocolHttp = 'http'
+
 const urlIsBlob = (url?: string) => Boolean(url?.startsWith('blob'))
 
+let _urlBase = ''
+
 const urlBase = (): string => {
-  const { environment } = Runtime
-  const environmentBase = environment.get(EnvironmentKeyUrlBase)
-  if (environmentBase) return environmentBase
+  if (_urlBase) return _urlBase
   
   const { document } = globalThis
   if (document) {
     const { baseURI } = document
-    environment.set(EnvironmentKeyUrlBase, baseURI)
-    return baseURI
+    return _urlBase = baseURI
   }
 
-  const base = [
+  return _urlBase = [
     ProtocolHttp, ColonChar, SlashChar, SlashChar, 'localhost', SlashChar
   ].join('')
-  environment.set(EnvironmentKeyUrlBase, base)
-  return base
 }
 
 export const isEndpoint = (value: any): value is Endpoint => {
@@ -75,12 +71,12 @@ export const urlResolve = (url: string, path?: string): string => {
   const [first, second] = path
   if (first === SlashChar) return path
 
-  if (first !== DotChar || second === SlashChar) return urlCombine(url, path)
+  if (first !== DOT || second === SlashChar) return urlCombine(url, path)
 
   const urlStripped = url.endsWith(SlashChar) ? url.slice(0, -1) : url
   const urlBits = urlStripped.split(SlashChar)
   path.split(SlashChar).forEach(component => {
-    if (component === `${DotChar}${DotChar}`) urlBits.pop()
+    if (component === `${DOT}${DOT}`) urlBits.pop()
     else urlBits.push(component)
   })
   return urlBits.join(SlashChar)
@@ -179,7 +175,7 @@ export const urlPrependProtocol = (protocol: string, url: string, options?: Scal
 }
 
 export const urlExtension = (extension: string): string => (
-  (extension[0] === DotChar) ? extension.slice(1) : extension
+  (extension[0] === DOT) ? extension.slice(1) : extension
 )
 
 export const urlFilename = (name: string, extension: string): string =>(

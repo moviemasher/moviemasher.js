@@ -1,6 +1,6 @@
 import type { BooleanType, NumberType, Scalar, ScalarType, Scalars, StringType, Strings } from '@moviemasher/runtime-shared'
 
-import { TypeBoolean, TypeNumber, TypeString } from '@moviemasher/runtime-shared'
+import { BOOLEAN, NUMBER, STRING } from '@moviemasher/runtime-shared'
 import { CommaChar } from '../Setup/Constants.js'
 
 export function scalar(value: Scalar, type: BooleanType): boolean
@@ -9,9 +9,9 @@ export function scalar(value: Scalar, type: StringType): string
 export function scalar(value: Scalar, type?: ScalarType): Scalar
 export function scalar(value: Scalar, type?: ScalarType) {
   switch (type) {
-    case TypeBoolean: return Boolean(value)
-    case TypeNumber: return Number(value)
-    case TypeString: return String(value)
+    case BOOLEAN: return Boolean(value)
+    case NUMBER: return Number(value)
+    case STRING: return String(value)
   }
   return value
 }

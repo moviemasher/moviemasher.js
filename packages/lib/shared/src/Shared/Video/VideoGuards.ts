@@ -1,13 +1,13 @@
 import type { VideoAsset } from "@moviemasher/runtime-shared"
 import type { VideoInstance } from "@moviemasher/runtime-shared"
 
-import { TypeVideo } from '@moviemasher/runtime-shared'
+import { VIDEO } from '@moviemasher/runtime-shared'
 import { errorThrow } from '@moviemasher/runtime-shared'
 import { isAsset, isAssetObject } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
 
 export const isVideoAsset = (value: any): value is VideoAsset => {
-  return isAsset(value) && value.type === TypeVideo
+  return isAsset(value) && value.type === VIDEO
 }
 export function assertVideoAsset(value: any, name?: string): asserts value is VideoAsset {
   if (!isVideoAsset(value)) errorThrow(value, 'VideoAsset', name)
@@ -22,5 +22,5 @@ export function assertVideoInstance(value: any, name?: string): asserts value is
 
 
 export const isVideoAssetObject = (value: any): value is VideoAsset => (
-  isAssetObject(value) && value.type === TypeVideo
+  isAssetObject(value) && value.type === VIDEO
 )

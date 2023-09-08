@@ -7,10 +7,10 @@ export interface Actions {
   canSave: boolean
   canUndo: boolean
   create(object: ActionObject): void
-  instances: Action[]
-  redo(): Action
+  // instances: Action[]
+  redo(): void
   save(): void
-  undo(): Action
+  undo(): void
 }
 
 export interface Action {

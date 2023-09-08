@@ -1,26 +1,35 @@
 import type { PropertyDeclarations } from 'lit'
 import type { Content, Contents } from '../declarations.js'
 
-import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { IconString } from '../Base/IconString.js'
 
+export const ButtonElementName = 'movie-masher-component-button'
 export class ButtonElement extends IconString {
   protected override content(contents: Contents): Content {
+    const title = this.icon || this.string
     return html`<button 
-      disabled='${ifDefined(this.disabled ? 'true' : undefined)}' 
+      title='${title}'
+      ?disabled='${this.disabled}' 
       @export-parts='${this.handleExportParts}'
       @click='${this.handleClick}'
     >${contents}</button>`
   }
 
-  disabled = false
+  protected disabled = false
 
   static override properties: PropertyDeclarations = {
     ...IconString.properties,
-    disabled: { type: Boolean }
+    disabled: { type: Boolean, attribute: false },
   }
 }
 
 // register web component as custom element
-customElements.define('movie-masher-component-button', ButtonElement)
+customElements.define(ButtonElementName, ButtonElement)
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [ButtonElementName]: ButtonElement
+  }
+}
+

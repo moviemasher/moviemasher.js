@@ -1,13 +1,15 @@
-import type { Asset, AssetObject, Size, StringDataOrError, TranscodingTypes } from '@moviemasher/runtime-shared'
+import type { Asset, AssetObject, Size, StringDataOrError } from '@moviemasher/runtime-shared'
 import type { Selectable } from './Selectable.js'
-import type { Transcoding, TranscodingObjects, Transcodings } from './Transcoding.js'
+import type { ServerProgress } from './ClientEvents.js'
 
 export interface ClientAsset extends Asset, Selectable {
-  definitionIcon(size: Size): Promise<SVGSVGElement> | undefined
-  savePromise: Promise<StringDataOrError>
+  assetIcon(size: Size, cover?: boolean): Promise<SVGSVGElement> | undefined
+  savePromise(progress?: ServerProgress): Promise<StringDataOrError>
   saveNeeded: boolean
 }
 
 export type ClientAssets = ClientAsset[]
 
 export interface ClientAssetObject extends AssetObject {}
+
+export type ClientAssetObjects = ClientAssetObject[]

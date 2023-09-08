@@ -6,4 +6,3 @@ export const ExtensionCommands = 'commands.txt'
 
 export type TsExtension = 'ts'
 export const TsExtension = 'ts'
-

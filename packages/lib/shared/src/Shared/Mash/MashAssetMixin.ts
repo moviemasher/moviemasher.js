@@ -1,7 +1,6 @@
-import type { Asset, Clip, ClipObject, Clips, Constrained, InstanceArgs, InstanceObject, MashAsset, MashAssetObject, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Asset, AssetCacheArgs, AssetObject, Assets, Clip, ClipObject, Clips, Constrained, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { EventManagedAsset, MovieMasher, TypeMash } from '@moviemasher/runtime-client'
-import { ErrorName, SIZE_OUTPUT, SourceMash, assertAsset, errorThrow, isArray } from '@moviemasher/runtime-shared'
+import { ERROR, SIZE_OUTPUT, SourceMash, TypeMash, errorThrow, isArray } from '@moviemasher/runtime-shared'
 import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
 import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from "../../Setup/AVTypeConstants.js"
@@ -9,10 +8,12 @@ import { DataTypeNumber, DataTypeRgb } from "../../Setup/DataTypeConstants.js"
 import { Default } from '../../Setup/Default.js'
 import { DurationNone, DurationUnknown } from '../../Setup/DurationConstants.js'
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
+import { arrayUnique } from '../../Utility/ArrayFunctions.js'
 import { sizeAspect } from "../../Utility/SizeFunctions.js"
 import { sortByIndex } from '../../Utility/SortFunctions.js'
-import { isPositive } from '../SharedGuards.js'
-import { arrayUnique } from '../../Utility/ArrayFunctions.js'
+import { assertTrue, isPositive } from '../SharedGuards.js'
+import { assertTime } from '../TimeGuards.js'
+import { EmptyFunction } from '../../Setup/EmptyFunction.js'
 
 export function MashAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -21,25 +22,73 @@ T & Constrained<MashAsset> {
     declare aspectWidth: number
     declare aspectHeight: number
     declare aspectShortest: number
+
+
+  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
+    console.log(this.constructor.name, 'MashAssetMixin.assetCachePromise', args)
+    // options.time ||= this.timeToBuffer
+    const preloadOptions = this.cacheOptions(args)
+    const { time, audible, visible } = args
+    const { quantize } = this
+    assertTime(time)
+
+    const scaled = time.scale(this.quantize)
+    const type = (audible && visible) ? AVTypeBoth : (audible ? AVTypeAudio : AVTypeVideo)
+    const clips = this.clipsInTimeOfType(scaled, type)
+
+    const promises = clips.map(clip => {
+      const clipTime = clip.timeRange
+      const preloadArgs: InstanceCacheArgs = { 
+        ...preloadOptions, clipTime, quantize, time 
+      }
+      return clip.clipCachePromise(preloadArgs)
+    })
+    return Promise.all(promises).then(EmptyFunction)
+    // const removedPromise = promise.then(() => {
+    //   const index = this.loadingPromises.indexOf(promise)
+    //   if (index < 0) return errorThrow(ERROR.Internal) 
+
+    //   this.loadingPromises.splice(index, 1)
+    // })
+    // this.loadingPromises.push(promise)
+    
+    // return removedPromise
+  }
+
+
+  private cacheOptions(options: AssetCacheArgs): AssetCacheArgs {
+    const { time, audible, visible, ...rest } = options
+    const isRange = time?.isRange
+    const definedVisible = visible || !isRange
+    const definedAudible = isRange && audible
+
+    const args: AssetCacheArgs = {
+      ...rest,
+      audible: definedAudible, visible: definedVisible,
+      time,
+      quantize: this.quantize,
+    }
+
+    const okay = definedVisible || definedAudible
+    // if (!okay) console.log(this.constructor.name, 'graphFileArgs', args)
+    assertTrue(okay, 'audible || visible')
+    return args
+  }
+
   
     get assetIds(): Strings {
       return arrayUnique(this.clips.flatMap(clip => clip.assetIds))
     }
   
     override get assetObject(): MashAssetObject {
-      const { tracks: trackInstances, assetIds } = this
-      const media = assetIds.map(id => {
-        const event = new EventManagedAsset(id)
-        MovieMasher.eventDispatcher.dispatch(event)
-        const { asset } = event.detail
-        assertAsset(asset)
-
-        return asset.assetObject
-      })
+      const { tracks: trackInstances } = this
       const tracks = trackInstances.map(track => track.trackObject)
-      const object: MashAssetObject = { ...super.assetObject, tracks, media }
-
+      const object: MashAssetObject = { ...super.assetObject, tracks }
       return object
+    }
+    
+    override get assets(): Assets { 
+      return this.assetIds.map(id => this.asset(id)) 
     }
 
     private assureTrack(): void {
@@ -54,7 +103,7 @@ T & Constrained<MashAsset> {
     audio = true
   
     clipInstance(_object: ClipObject): Clip {
-      return errorThrow(ErrorName.Unimplemented)
+      return errorThrow(ERROR.Unimplemented)
     }
   
     private clipIntersects(clip: Clip, range: Time): boolean {
@@ -83,7 +132,7 @@ T & Constrained<MashAsset> {
         case AVTypeAudio: return this.clipsAudibleInTime(time)
         case AVTypeVideo: return this.clipsVisibleInTime(time)
       }
-      return errorThrow(ErrorName.Internal)
+      return errorThrow(ERROR.Internal)
     }
   
     private get clipsVisible(): Clip[] {
@@ -144,12 +193,8 @@ T & Constrained<MashAsset> {
         targetId: TypeMash, name: 'quantize', type: DataTypeNumber, 
         defaultValue: Default.mash.buffer, step: 1, options: [10, 20, 40]
       }))
-      const { media, tracks } = object
-      if (isArray(media)) {
-        media.forEach(assetObject => {
-          MovieMasher.eventDispatcher.dispatch(new EventManagedAsset(assetObject))
-        })
-      }
+      const { tracks } = object
+
       if (isArray(tracks)) tracks.forEach((trackObject, index) => {
         const trackArgs: TrackArgs = {
           mashAsset: this, dense: !index, ...trackObject, index
@@ -199,7 +244,7 @@ T & Constrained<MashAsset> {
     }
   
     trackInstance(trackArgs: TrackArgs): Track {
-      return errorThrow(ErrorName.Unimplemented)
+      return errorThrow(ERROR.Unimplemented)
     }
   
     declare tracks: Track[] 

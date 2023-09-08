@@ -8,7 +8,7 @@ import {
   assertVisibleAsset, urlBaseInitialize
 } from "@moviemasher/lib-shared"
 import { 
-  TypeVideo, TypeImage
+  VIDEO, IMAGE
 } from "@moviemasher/runtime-shared"
 import { 
   MovieMasher
@@ -23,14 +23,14 @@ describe("videoFactory", () => {
 
   test("renderingDescriptionPromise", async () => {
     const id = 'video-from-multiple'
-    const output = outputDefaultPopulate({ outputType: TypeVideo, cover: false })
+    const output = outputDefaultPopulate({ outputType: VIDEO, cover: false })
     const globeDefinitionObject = {
-      id: 'image-id-globe', type: TypeImage, 
+      id: 'image-id-globe', type: IMAGE, 
       request: { endpoint: { pathname: '../shared/image/globe.jpg' }},
       decodings: [{info: { width: 320, height: 320 } }]
     }
     const cableDefinitionObject = {
-      id: 'image-id-cable', type: TypeImage, 
+      id: 'image-id-cable', type: IMAGE, 
       request: { endpoint: { pathname: '../shared/image/cable.jpg' }},
       decodings: [{ info: { width: 320, height: 240 } }]
     }
@@ -71,7 +71,7 @@ describe("videoFactory", () => {
     const { commandOutput, visibleCommandDescriptions } = renderingDescription
 
     const { outputType } = commandOutput
-    assert.equal(outputType, TypeVideo, 'output type video')
+    assert.equal(outputType, VIDEO, 'output type video')
     assert(visibleCommandDescriptions instanceof Array, 'visibleCommandDescriptions')
     assert.equal(visibleCommandDescriptions?.length, 2)
     visibleCommandDescriptions?.forEach((description, index) => {

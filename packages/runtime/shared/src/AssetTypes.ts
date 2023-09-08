@@ -1,20 +1,22 @@
-import type { AssetType } from './AssetType.js'
+import type { AssetType, AssetTypes } from './AssetType.js'
 import type { Labeled } from './Base.js'
 import type { CacheOptions } from './CacheTypes.js'
 import type { ClipObject } from './ClipObject.js'
-import type { Strings } from './Core.js'
+import type { StringRecord, Strings } from './Core.js'
 import type { DecodingObjects, Decodings } from './Decoding.js'
 import type { Identified } from './Identified.js'
 import type { Instance, InstanceArgs, InstanceObject } from './InstanceTypes.js'
 import type { Propertied } from './Propertied.js'
 import type { Size } from './Size.js'
-import type { Source } from './SourceType.js'
+import type { Source, Sourced, Sources } from './SourceType.js'
 import type { Typed } from './Typed.js'
 
 export interface Asset extends Propertied, Identified, Typed, Labeled {
+  asset(assetId: string | AssetObject): Asset 
   assetCachePromise(args: CacheOptions): Promise<void>
   assetIds: Strings
   assetObject: AssetObject
+  assets: Assets
   canBeContainer: boolean
   canBeContent: boolean
   container: boolean
@@ -30,9 +32,10 @@ export interface Asset extends Propertied, Identified, Typed, Labeled {
 
 export type Assets = Asset[]
 
-export interface AssetObject extends Identified, Typed, Labeled {
-  type: AssetType  
-  source: Source
+export interface AssetObject extends Identified, Labeled, Sourced, Typed {
+  created?: string
+  assets?: AssetObjects
+  type: AssetType 
   decodings?: DecodingObjects
 }
 
@@ -66,4 +69,14 @@ export interface VisibleAssetObject extends AssetObject {
 
 export interface SourceAsset extends Asset {
   source: Source
+}
+
+export type StringOrRecord = string | StringRecord
+export type StringOrRecords = StringOrRecord[]
+
+export interface AssetParams {
+  type?: AssetType | AssetTypes
+  source?: Source | Sources
+  order?: StringOrRecord | StringOrRecords
+  terms?: string
 }

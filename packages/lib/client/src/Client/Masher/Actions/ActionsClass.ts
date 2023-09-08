@@ -1,6 +1,7 @@
 import type { Action, ActionArgs, ActionObject, Actions, ClientMashAsset } from '@moviemasher/runtime-client'
 
 import { ActionTypeChange, assertDefined, isPositive } from '@moviemasher/lib-shared'
+import { ClientActionRedo, ClientActionUndo, EventChangedClientAction, MovieMasher } from '@moviemasher/runtime-client'
 import { actionInstance } from './Action/ActionFactory.js'
 import { isChangeAction, isChangeActionObject, isChangePropertiesAction, isChangePropertiesActionObject, isChangePropertyAction, isChangePropertyActionObject } from './Action/ActionFunctions.js'
 
@@ -23,7 +24,6 @@ export class ActionsClass implements Actions {
 
   create(object: ActionObject): void {
     const { type = ActionTypeChange, ...rest } = object
-
     const clone: ActionArgs = { ...rest, type }
     if (this.currentActionLast) {
       const { currentAction: action } = this
@@ -52,10 +52,9 @@ export class ActionsClass implements Actions {
         }
       }
     }
-   
     const action = actionInstance(clone)
     this.add(action)
-    this.dispatchChanged(this.redo())
+    this.redo()
   }
 
   get currentAction(): Action | undefined { return this.instances[this.index] }
@@ -67,9 +66,15 @@ export class ActionsClass implements Actions {
     this.instances.splice(0, this.instances.length)
   }
 
+  private dispatchChangedAction(): void {
+    MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionUndo))
+    MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionRedo))
+  }
+
   protected dispatchChanged(action: Action): void {
     const { mashAsset } = this
     action.updateSelection()
+    this.dispatchChangedAction()
     mashAsset.dispatchChanged(action)
   }
 
@@ -77,26 +82,27 @@ export class ActionsClass implements Actions {
 
   instances: Action[] = []
 
-  redo(): Action {
+  redo(): void {
     this.index += 1
     const action = this.currentAction
     assertDefined(action)
 
     action.redo()
-    return action
+    this.dispatchChanged(action)
   }
 
   save(): void {
     this.instances.splice(0, this.index + 1)
     this.index = -1
+    this.dispatchChangedAction()
   }
 
-  undo(): Action {
+  undo(): void {
     const action = this.currentAction
     assertDefined(action)
     
     this.index -= 1
     action.undo()
-    return action
+    this.dispatchChanged(action)
   }
 }

@@ -1,12 +1,21 @@
-import type { ClientAsset, Transcoding, Transcodings } from '@moviemasher/runtime-client'
-import type { InstanceArgs, InstanceObject, Size, StringDataOrError, Strings, TargetId, TranscodingType, TranscodingTypes } from '@moviemasher/runtime-shared'
+import type { ClientAsset, ServerProgress } from '@moviemasher/runtime-client'
+import type { AssetObject, InstanceArgs, Transcoding, Transcodings, InstanceObject, Size, StringDataOrError, Strings, TargetId, TranscodingType, TranscodingTypes } from '@moviemasher/runtime-shared'
 
 import { AssetClass, idIsTemporary } from '@moviemasher/lib-shared'
-import { EventManagedAssetId, EventSave, MovieMasher, TypeAsset } from '@moviemasher/runtime-client'
-import { ErrorName, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
+import { EventManagedAsset, EventManagedAssetId, EventSave, MovieMasher } from '@moviemasher/runtime-client'
+import { ERROR, TypeAsset, assertAsset, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
 
 export class ClientAssetClass extends AssetClass implements ClientAsset {
-  definitionIcon(_size: Size): Promise<SVGSVGElement> | undefined { return }
+  override asset(assetId: string | AssetObject): ClientAsset {
+    const event = new EventManagedAsset(assetId)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { asset } = event.detail
+    assertAsset(asset)
+
+    return asset
+  }
+  
+  assetIcon(_size: Size): Promise<SVGSVGElement> | undefined { return }
   
   findTranscoding(transcodingType: TranscodingType, ...kinds: Strings): Transcoding | undefined {
     return this.transcodings.find(transcoding => {
@@ -29,26 +38,32 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     return
   }
 
+  protected saveId(newId?: string) {
+    if (!newId) return
+
+    const { id: oldId } = this
+    if (newId !== oldId) {
+      this.id = newId
+      // console.debug(this.constructor.name, 'savePromise', oldId, newId)
+      MovieMasher.eventDispatcher.dispatch(new EventManagedAssetId(oldId, newId))
+    }
+  }
   get saveNeeded(): boolean { return idIsTemporary(this.id) }
 
-  get savePromise(): Promise<StringDataOrError> { 
-    const { saveNeeded } = this
-    if (!saveNeeded) return Promise.resolve({ data: '' })
-
-    const event = new EventSave(this.assetObject)
+  protected savingPromise(progress?: ServerProgress): Promise<StringDataOrError> {
+    const event = new EventSave(this, progress)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    if (!promise) return errorPromise(ErrorName.Unimplemented)
+    if (!promise) return errorPromise(ERROR.Unimplemented)
   
+    return promise
+  }
+
+  savePromise(progress?: ServerProgress): Promise<StringDataOrError> { 
+    const promise = this.savingPromise(progress)
     return promise.then(orError => {
-      if (!isDefiniteError(orError)) {
-        const { data: newId } = orError
-        if (newId) {
-          MovieMasher.eventDispatcher.dispatch(new EventManagedAssetId(this.id, newId))
-          console.debug(this.constructor.name, 'savePromise', this.id, newId)
-          this.id = newId
-        }
-      }
+      // console.log(this.constructor.name, 'savePromise', orError)
+      if (!isDefiniteError(orError)) this.saveId(orError.data)
       return orError
     })
   }

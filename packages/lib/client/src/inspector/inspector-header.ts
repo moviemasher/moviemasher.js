@@ -2,28 +2,25 @@ import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { Header } from '../Base/LeftCenterRight.js'
-import { ClientActionRedo, ClientActionSave, ClientActionUndo } from '@moviemasher/runtime-client'
+import { ClientActionRedo, ClientActionUndo } from '@moviemasher/runtime-client'
 
 export class InspectorHeaderElement extends Header {
+
   protected override rightContent(htmls: Htmls): OptionalContent {
-    this.importTags('movie-masher-component-action')
+    this.importTags('movie-masher-action-client')
     htmls.push(html`
-      <movie-masher-component-action
+      <movie-masher-action-client
         detail='${ClientActionUndo}'
-        icon='undo'
-      ></movie-masher-component-action>
+        icon='${ClientActionUndo}'
+        string='${ClientActionUndo}'
+      ></movie-masher-action-client>
     `)
     htmls.push(html`
-      <movie-masher-component-action
+      <movie-masher-action-client
         detail='${ClientActionRedo}'
-        icon='redo'
-      ></movie-masher-component-action>
-    `)
-    htmls.push(html`
-      <movie-masher-component-action
-        detail='${ClientActionSave}'
-        icon='save'
-      ></movie-masher-component-action>
+        icon='${ClientActionRedo}'
+        string='${ClientActionRedo}'
+      ></movie-masher-action-client>
     `)
     return super.rightContent(htmls)
   }

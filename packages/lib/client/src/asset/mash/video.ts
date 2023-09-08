@@ -2,8 +2,8 @@ import type { ClientMashVideoAsset, ClientMashVideoInstance, } from '@moviemashe
 import type { InstanceArgs, MashAssetObject, MashInstanceObject, } from '@moviemasher/runtime-shared'
 
 import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, timeFromArgs, } from '@moviemasher/lib-shared'
-import { EventAsset, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceMash, TypeVideo, isAssetObject } from '@moviemasher/runtime-shared'
+import { EventAsset } from '@moviemasher/runtime-client'
+import { SourceMash, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
 import { NonePreview } from '../../Client/Masher/MashPreview/NonePreview.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
@@ -17,7 +17,6 @@ const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
 const WithClientAudibleAsset = ClientAudibleAssetMixin(WithVisibleAsset)
 const WithClientVisibleAsset = ClientVisibleAssetMixin(WithClientAudibleAsset)
 const WithVideoAsset = VideoAssetMixin(WithClientVisibleAsset)
-
 export class ClientMashVideoAssetClass extends WithVideoAsset implements ClientMashVideoAsset {
   constructor(args: MashAssetObject) {
     super(args)
@@ -32,7 +31,7 @@ export class ClientMashVideoAssetClass extends WithVideoAsset implements ClientM
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, TypeVideo, SourceMash)) {
+    if (isAssetObject(assetObject, VIDEO, SourceMash)) {
       detail.asset = new ClientMashVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }    
@@ -40,16 +39,15 @@ export class ClientMashVideoAssetClass extends WithVideoAsset implements ClientM
 }
 
 // listen for video/mash asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ClientMashVideoAssetClass.handleAsset
-)
+export const ClientMashVideoListeners = () => ({
+  [EventAsset.Type]: ClientMashVideoAssetClass.handleAsset
+})
 
 const WithAudibleInstance = AudibleInstanceMixin(ClientInstanceClass)
 const WithVisibleInstance = VisibleInstanceMixin(WithAudibleInstance)
 const WithClientAudibleInstance = ClientAudibleInstanceMixin(WithVisibleInstance)
 const WithClientVisibleInstance = ClientVisibleInstanceMixin(WithClientAudibleInstance)
 const WithVideoInstance = VideoInstanceMixin(WithClientVisibleInstance)
-
 export class ClientMashVideoInstanceClass extends WithVideoInstance implements ClientMashVideoInstance {
   constructor(args: MashInstanceObject & InstanceArgs) {
     super(args)

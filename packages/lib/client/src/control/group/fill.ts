@@ -3,9 +3,9 @@ import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { ControlGroup, OptionalContent } from '../../declarations.js'
 
-import { End } from '@moviemasher/runtime-shared'
+import { DOT } from '@moviemasher/lib-shared'
 import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
-import { DotChar } from '@moviemasher/runtime-shared'
+import { End } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
@@ -23,14 +23,14 @@ export class FillControlGroupElement extends WithControlGroup implements Control
     }
     const colorId = this.namePropertyId(`color${End}`)
     if (colorId) {
-      const [target] = colorId.split(DotChar)
+      const [target] = colorId.split(DOT)
       const key = `control-group-${target}-color`     
       // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleColor.bind(this)
     }
     const opacityId = this.namePropertyId(`opacity${End}`)
     if (opacityId) {
-      const [target] = opacityId.split(DotChar)
+      const [target] = opacityId.split(DOT)
       const key = `control-group-${target}-opacity`     
       // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleOpacity.bind(this)

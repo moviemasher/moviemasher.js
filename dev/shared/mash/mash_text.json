@@ -1,34 +1,49 @@
 {
 	"id": "mash_text",
-	"type": "mash",
-	"mash": {
-		"quantize": 10,
-		"label": "Text",
-		"backcolor": "red",
-		"media": [],
-		"video": [
-			{
-				"type": "video",
-				"clips": [{
-					"id": "com.moviemasher.theme.text",
-					"effects": [],
-					"frame": 0,
-					"frames": 100,
-					"string": "hello world!",
-					"size": 0.2,
-					"x": 0,
-					"y": 0,
-					"color": "rgba(255, 0, 0, 0.5)",
-					"background": "rgb(0, 255, 0)",
-					"font": "blackout_midnight"
-				}]
+	"quantize": 10,
+	"type": "video",
+	"source": "mash",
+	"label": "Text",
+	"backcolor": "rgb(255, 255, 255)",
+	"assets": [   
+		{ 
+			"label": "Butcherman",
+			"id": "com.moviemasher.font.butcherman",
+			"type": "image",
+			"source": "text",
+			"request": { 
+				"endpoint": { 
+					"protocol": "https:",
+					"hostname": "fonts.googleapis.com", 
+					"pathname": "/css2", 
+					"search": "?family=Butcherman" 
+				}
 			}
-		],
-		"audio": [
-			{
-				"type": "audio",
-				"clips": []
+		},
+		{
+			"label": "Croissant One",
+			"id": "com.moviemasher.font.croissant-one",
+			"type": "image",
+			"source": "text",
+			"request": { 
+				"endpoint": "https://fonts.googleapis.com/css2?family=Croissant+One" 
 			}
-		]
-	}
+		}
+	],
+	"tracks": [
+		{
+			"clips": [{
+				"containerId": "com.moviemasher.font.butcherman",
+				"container": {
+					"string": "hello world!"
+				},
+				"content": {
+					"color": "rgba(255, 0, 0, 0.5)"
+				},
+				"frame": 0,
+				"frames": 10,
+				"size": 0.2
+			}]
+		}
+	]
 }

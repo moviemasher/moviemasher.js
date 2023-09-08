@@ -20,7 +20,6 @@ T & Constrained<Disablable> {
       const event = new EventMashAsset()
       MovieMasher.eventDispatcher.dispatch(event)
       this.disabled = !event.detail.mashAsset
-      // console.log(this.tagName, 'connectedCallback', !event.detail.mashAsset, this.disabled)
     }
     
     disabled = true

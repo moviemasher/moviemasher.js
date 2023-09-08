@@ -1,0 +1,61 @@
+version: "3"
+name: moviemasher-example-express
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${MOVIEMASHER_DB_PASSWORD}
+      POSTGRES_USER: ${MOVIEMASHER_DB_USERNAME}
+      POSTGRES_DB: ${MOVIEMASHER_DB_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${MOVIEMASHER_DB_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ../../../dev/data-migrations:/docker-entrypoint-initdb.d
+      # - ../../../temporary/express/postgres:/var/lib/postgresql/data
+  service:
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ../../../dev/local.env
+    image: moviemasher/express-ffmpeg:${MOVIEMASHER_VERSION}
+    container_name: moviemasher-example-express-${MOVIEMASHER_EXAMPLE_PORT}
+    # entrypoint: node_modules/pm2/bin/pm2-docker
+    entrypoint: node
+    command: examples/express/dist/server.js
+    environment:
+      MOVIEMASHER_DB_DATABASE: ${MOVIEMASHER_DB_DATABASE}
+      MOVIEMASHER_DB_HOST: ${MOVIEMASHER_DB_HOST}
+      MOVIEMASHER_DB_PASSWORD: ${MOVIEMASHER_DB_PASSWORD}
+      MOVIEMASHER_DB_PORT: ${MOVIEMASHER_DB_PORT}
+      MOVIEMASHER_DB_USERNAME: ${MOVIEMASHER_DB_USERNAME}
+      MOVIEMASHER_EXAMPLE_PORT: ${MOVIEMASHER_EXAMPLE_PORT}
+
+    ports:
+      - ${MOVIEMASHER_EXAMPLE_PORT}:${MOVIEMASHER_EXAMPLE_PORT}
+    volumes:
+      - ../../../dev:${MOVIEMASHER_DIR_ROOT}/dev
+      - ../../../packages:${MOVIEMASHER_DIR_ROOT}/packages
+      - ../../../docs:${MOVIEMASHER_DIR_ROOT}/examples/express/public/docs
+
+      - ../../../examples/express/dist:${MOVIEMASHER_DIR_ROOT}/examples/express/dist
+      - ../../../examples/express/package.json:${MOVIEMASHER_DIR_ROOT}/examples/express/package.json
+      - ../../../examples/express/index.html:${MOVIEMASHER_DIR_ROOT}/examples/express/public/index.html
+
+      - ../../../dev/img/favicon.ico:${MOVIEMASHER_DIR_ROOT}/examples/express/public/favicon.ico
+
+      - ../../../packages/lib/client:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/lib-client
+      - ../../../packages/lib/server:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/lib-server
+      - ../../../packages/lib/shared:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/lib-shared
+      - ../../../packages/runtime/client:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/runtime-client
+      - ../../../packages/runtime/server:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/runtime-server
+      - ../../../packages/runtime/shared:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/runtime-shared
+
+      # use temporary directories from host for user media, database files, etc.
+      - ../../../temporary/express/media:${MOVIEMASHER_DIR_ROOT}/examples/express/public/media
+      - ../../../temporary/express/data:${MOVIEMASHER_DIR_ROOT}/examples/express/private/data
+      - ../../../temporary/express/temporary:${MOVIEMASHER_DIR_ROOT}/temporary

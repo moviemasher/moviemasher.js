@@ -1,12 +1,11 @@
-import type { MediaRequest } from './Media.js'
+import type { IdentifiedRequest } from './Media.js'
 
-import { isIdentified, errorThrow, isObject} from '@moviemasher/runtime-shared'
+import { errorThrow, isIdentified, isObject } from '@moviemasher/runtime-shared'
 
-
-export const isMediaRequest = (value: any): value is MediaRequest => {
+export const isIdentifiedRequest = (value: any): value is IdentifiedRequest => {
   return isIdentified(value) && 'input' in value && isObject(value.input)
 }
 
-export function assertMediaRequest(value: any): asserts value is MediaRequest {
-  if (!isMediaRequest(value)) errorThrow(value, 'MediaRequest')
+export function assertIdentifiedRequest(value: any): asserts value is IdentifiedRequest {
+  if (!isIdentifiedRequest(value)) errorThrow(value, 'IdentifiedRequest')
 }

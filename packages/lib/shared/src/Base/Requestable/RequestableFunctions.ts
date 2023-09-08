@@ -1,4 +1,4 @@
-import type { Requestable } from '@moviemasher/runtime-client'
+import type { Requestable } from '@moviemasher/runtime-shared'
 
 import { isObject } from '@moviemasher/runtime-shared'
 

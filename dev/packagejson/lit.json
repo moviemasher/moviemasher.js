@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "lit": "^2.7.5",
+    "lit": "^2.8.0",
     "@lit-labs/observers": "2.0.0"
   },
   "devDependencies": {
-    "@custom-elements-manifest/analyzer": "^0.4.17",
+    "@custom-elements-manifest/analyzer": "0.8.4",
     "tslib": "^2.3.1",
     "typescript": "^4.5.2"
   }

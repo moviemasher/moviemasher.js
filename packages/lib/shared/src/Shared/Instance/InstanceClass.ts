@@ -1,6 +1,6 @@
 import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { Aspect, Crop, End, RECT_ZERO, TypeAudio, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
+import { Aspect, Crop, End, RECT_ZERO, AUDIO, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
 import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
@@ -11,11 +11,42 @@ import { DIRECTIONS, DIRECTIONS_SIDE } from '../../Setup/DirectionConstants.js'
 import { AspectFlip, Aspects, LockShortest, Locks } from '../../Setup/LockConstants.js'
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
-import { sizeAboveZero } from "../../Utility/SizeFunctions.js"
+import { sizeAboveZero, sizeCeil, sizeCover, sizeScale } from "../../Utility/SizeFunctions.js"
 import { assertDefined, assertNumber, assertPopulatedString } from '../SharedGuards.js'
 import { isTimeRange } from "../TimeGuards.js"
-import { numberRecord, tweenColorStep, tweenNumberStep, tweenRectsContainer, tweenRectsContent } from '../Utility/Tween/TweenFunctions.js'
+import { lockScaleSize, numberRecord, tweenColorStep, tweenNumberStep, tweenRectsContainer } from '../Utility/Tween/TweenFunctions.js'
+import { pointCopy } from '../../Utility/PointFunctions.js'
+import { rectFromSize } from '../../Utility/RectFunctions.js'
 
+
+
+const tweenCoverSize = (intrinsicSize: Size, containerSize: Size, scale: Size): Size => {
+  // const [size, sizeEnd] = sizes
+  // const [scale, scaleEnd] = scales
+  const unscaledSize = sizeCover(intrinsicSize, containerSize)
+  const { width, height } = scale
+  const scaledSize = sizeScale(unscaledSize, width, height)
+  return sizeCeil(scaledSize)
+
+  // const coverSizes: Sizes = [coverSize]
+  // if (sizeEnd && scaleEnd) {
+  //   const unscaledSizeEnd = sizeCover(inSize, sizeEnd)
+  //   const { width: widthEnd, height: heightEnd } = scaleEnd
+  //   const scaledSizeEnd = sizeScale(unscaledSizeEnd, widthEnd, heightEnd)
+  //   const coverSizeEnd = sizeCeil(scaledSizeEnd)
+  //   coverSizes.push(coverSizeEnd)
+  // }
+  // return coverSizes
+}
+const tweenCoverPoint = (coverSize: Size, rect: Size, scale: Point): Point => {
+  const { x, y } = scale
+  const point: Point = {
+    x: x * (coverSize.width - rect.width),
+    y: y * (coverSize.height - rect.height),
+  }
+  return point
+  
+}
 export class InstanceClass extends PropertiedClass implements Instance {
   constructor(object: InstanceArgs) {
     super(object)
@@ -67,13 +98,22 @@ export class InstanceClass extends PropertiedClass implements Instance {
   
   contentRects(args: ContentRectArgs): Rects {
     const { containerRects, time, timeRange, editing, shortest } = args    
+    
     const intrinsicRect = this.intrinsicRect(editing)
     // if I have no intrinsic size (like color source), use the container rects
     if (!sizeAboveZero(intrinsicRect)) return containerRects
     
     const { lock } = this
     const tweenRects = this.tweenRects(time, timeRange)
-    return tweenRectsContent(tweenRects, intrinsicRect, containerRects, lock, shortest)
+    
+    return tweenRects.map((tweenRect, index) => {
+      const tweenPoint = pointCopy(tweenRect)
+      const tweenSize = lockScaleSize(tweenRect, lock, shortest)
+      const containerRect = containerRects[index]
+      const size = tweenCoverSize(intrinsicRect, containerRect, tweenSize)
+      const point = tweenCoverPoint(size, containerRect, tweenPoint)
+      return rectFromSize(size, point)
+    })
   }
   
   get directions() { return DIRECTIONS }
@@ -151,6 +191,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     const { time } = args
     const assetTime = this.assetTime(time)
     const options: CacheOptions = { ...args, time: assetTime }
+    console.log(this.constructor.name, 'InstanceClass.instanceCachePromise', options, this.assetId)
     return this.asset.assetCachePromise(options)
   }
 
@@ -166,7 +207,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return [DefaultContentId, DefaultContainerId].includes(this.assetId) 
   }
 
-  get isAudio() { return this.type === TypeAudio }
+  get isAudio() { return this.type === AUDIO }
   get isDefaultOrAudio() { return this.isDefault || this.isAudio }
   
   protected _label = ''
@@ -276,4 +317,3 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
   declare y: number
 }
-

@@ -1,9 +1,9 @@
-import type { Icon, IconEventDetail } from '@moviemasher/runtime-client'
+import type { Icon } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { EventTypeIconFromId, MovieMasher } from '@moviemasher/runtime-client'
+import { EventIcon, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
@@ -23,10 +23,10 @@ export class IconElement extends Component {
   private get iconPromiseInitialize(): Promise<Icon | void> {
     const promise = this.iconEventPromise
     if (!promise) {
-      const promise = new Promise<Icon | void>(resolve => {
+      console.log(this.tagName, 'iconPromiseInitialize NO PROMISE')
+      return new Promise<Icon | void>(resolve => {
         setTimeout(() => { resolve(this.iconPromiseInitialize) }, IconElementTimeout)
       })
-      return promise
     }
 
     return promise.then(orError => {
@@ -43,12 +43,13 @@ export class IconElement extends Component {
       } else if (imgUrl) this.iconContent =  html`<img src='${imgUrl}' />`
       else {
         const svgOrImage = svgElement || imageElement
-        const element = svgOrImage || (svgString && IconElement.svgStringNode(svgString))
+        const element = svgOrImage || (svgString && IconElement.svgStringElement(svgString))
         if (element) {
           element.setAttribute('part', 'element')
           this.iconContent = element
         } else {
-          console.warn(this.constructor.name, 'contentInitialize with no content', icon)
+          this.icon = ''
+          console.warn(this.constructor.name, 'iconPromiseInitialize with no icon', this.icon)
         }
       } 
       return icon
@@ -56,25 +57,18 @@ export class IconElement extends Component {
   }
 
   private get iconEventPromise() {
-    const { icon: iconId } = this
-    const detail: IconEventDetail = { id: iconId }
-    const init: CustomEventInit<IconEventDetail> = { 
-      detail, composed: true, bubbles: true, cancelable: true
-    }
-    const event = new CustomEvent<IconEventDetail>(EventTypeIconFromId, init)
+    const { icon } = this
+    const event = new EventIcon(icon) 
     MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = detail
-    return promise
+    return event.detail.promise
   }
 
   protected override get defaultContent(): OptionalContent {
-
-    // console.log(this.constructor.name, this.icon, 'render', !!this.content)
-    const { iconContent } = this
+    const { iconContent, icon } = this
     if (!iconContent) {
-      this.iconPromise.then(icon => { 
+      if (icon) this.iconPromise.then(iconOrVoid => { 
         // console.log(this.constructor.name, this.icon, 'render', !!this.content)
-        if (icon) this.requestUpdate() 
+        if (iconOrVoid) this.requestUpdate() 
       })
       return html`<div></div>`
     }
@@ -142,7 +136,7 @@ export class IconElement extends Component {
     return string 
   }
 
-  private static svgStringNode(svgString: string) {
+  private static svgStringElement(svgString: string) {
     const cleaned = IconElement.svgStringClean(svgString)
     if (!cleaned) return
 

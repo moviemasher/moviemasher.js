@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  mashMedia, assertMashMedia, ErrorName, errorThrow
+  mashMedia, assertMashMedia, ERROR, errorThrow
  } from "@moviemasher/lib-shared"
 
 import { 
@@ -45,7 +45,7 @@ describe("FilterGraphs", () => {
     expectArrayLength(filterGraphsVisible, 1)
     const filterGraph = filterGraphsVisible[0]
     assert(filterGraph instanceof FilterGraphClass)
-    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
+    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ERROR.Internal)
     await filterGraphs.loadCommandFilesPromise
 
     const { commandFilters, filterGraphCommandFiles: commandFiles } = filterGraph
@@ -83,7 +83,7 @@ describe("FilterGraphs", () => {
 
       await mash.loadPromise(filterGraph)
       assert(filterGraph instanceof FilterGraphClass)
-      if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
+      if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ERROR.Internal)
 
       const clip = clips[index]
       const timeRange = clip.timeRange
@@ -118,7 +118,7 @@ describe("FilterGraphs", () => {
     expectArrayLength(filterGraphsVisible, 1)
     const [filterGraph] = filterGraphsVisible
     assert(filterGraph instanceof FilterGraphClass)
-    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
+    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ERROR.Internal)
 
     await mash.loadPromise(filterGraph)
     const { commandFilters } = filterGraph
@@ -149,7 +149,7 @@ describe("FilterGraphs", () => {
       expectArrayLength(filterGraphsVisible, 1)
       const [filterGraph] = filterGraphsVisible
       assert(filterGraph instanceof FilterGraphClass)
-      if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
+      if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ERROR.Internal)
 
       const { visible, quantize, time } = filterGraph
       const graphFileArgs = { 
@@ -204,7 +204,7 @@ describe("FilterGraphs", () => {
     const { filterGraphsVisible } = filterGraphs
     const [filterGraph] = filterGraphsVisible
     assert(filterGraph instanceof FilterGraphClass)
-    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
+    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ERROR.Internal)
 
     const { commandFilters, filterGraphCommandFiles: commandFiles, duration } = filterGraph
     assert.equal(duration, 0)

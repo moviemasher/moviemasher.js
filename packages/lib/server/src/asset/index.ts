@@ -1,5 +1,7 @@
 export * from './color/index.js'
+export * from './manager.js'
 export * from './mash/index.js'
+export * from './promise.js'
 export * from './raw/index.js'
 export * from './shape/index.js'
 export * from './text/index.js'

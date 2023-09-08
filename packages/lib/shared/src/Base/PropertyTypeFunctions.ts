@@ -1,15 +1,11 @@
-import type { Scalar, DataType, Strings } from '@moviemasher/runtime-shared'
+import type { DataType, Scalar, Strings } from '@moviemasher/runtime-shared'
 
 import { isBoolean, isNumber, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
-import {
-  DataTypeBoolean, DataTypeContainerId, DataTypeContentId,
-  DataTypeFrame,
-  DataTypeNumber, DataTypePercent, DataTypeRgb, DataTypeString
-} from '../Setup/DataTypeConstants.js'
-import { colorValid } from '../Helpers/Color/ColorFunctions.js'
 import { colorBlack } from '../Helpers/Color/ColorConstants.js'
+import { colorValid } from '../Helpers/Color/ColorFunctions.js'
 import { DefaultContainerId } from '../Helpers/Container/ContainerConstants.js'
 import { DefaultContentId } from '../Helpers/Content/ContentConstants.js'
+import { DataTypeBoolean, DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeNumber, DataTypePercent, DataTypeRgb, DataTypeString } from '../Setup/DataTypeConstants.js'
 
 export const PropertyTypesNumeric: Strings = [
   DataTypeFrame, DataTypePercent, DataTypeNumber,

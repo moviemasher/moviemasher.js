@@ -1,2 +1,2 @@
-export const TypeSequence = 'sequence'
-export const TypeWaveform = 'waveform'
+export const SEQUENCE = 'sequence'
+export const WAVEFORM = 'waveform'

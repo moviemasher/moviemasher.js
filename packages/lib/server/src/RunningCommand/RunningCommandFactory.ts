@@ -1,6 +1,6 @@
 
-import type { CommandOptions } from "../Plugin/Encode/Encode.js"
-import type { RunningCommand } from "./RunningCommand.js"
+import type { CommandOptions } from '../encode/Encode.js'
+import type { RunningCommand } from './RunningCommand.js'
 
 import { RunningCommandClass } from './RunningCommandClass.js'
 

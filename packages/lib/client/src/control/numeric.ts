@@ -31,6 +31,7 @@ export class NumericControlElement extends WithControl {
         @input='${this.handleInput}'
         type='${type === DataTypePercent ? 'range' : 'number'}'
         name='${name}' 
+        aria-label='${name}'
         max='${ifDefined(max)}'
         min='${ifDefined(min)}'
         step='${ifDefined(step)}'

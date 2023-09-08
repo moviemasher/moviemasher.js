@@ -60,7 +60,7 @@ export function isAssetObject(value: any, type?: ImageType, source?: ShapeSource
 export function isAssetObject(value: any, type?: AssetType, source?: Source): value is AssetObject 
 export function isAssetObject(value: any, type: undefined | AssetType = undefined, source: undefined | Source = undefined): value is AssetObject {
   return (
-    isIdentified(value) 
+    value && isIdentified(value) 
     && isTyped(value) && isAssetType(value.type) 
     && (!type || type === value.type)
     && 'source' in value && isPopulatedString(value.source)

@@ -1,13 +1,10 @@
-import type { AudibleInstance } from '@moviemasher/runtime-shared'
-import type { AudibleAsset } from '@moviemasher/runtime-shared'
+import type { AudibleAsset, AudibleInstance } from '@moviemasher/runtime-shared'
 
-import { errorThrow } from '@moviemasher/runtime-shared'
-import { isAsset } from '@moviemasher/runtime-shared'
+import { AUDIBLE_TYPES, errorThrow, isAsset } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
-import { TypesAudible } from '@moviemasher/runtime-shared'
 
 export const isAudibleAsset = (value: any): value is AudibleAsset => {
-  return isAsset(value) && TypesAudible.includes(value.type)
+  return isAsset(value) && AUDIBLE_TYPES.includes(value.type)
 }
 
 export function assertAudibleAsset(value: any, name?: string): asserts value is AudibleAsset {

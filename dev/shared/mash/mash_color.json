@@ -1,9 +1,9 @@
 { 
-	"id": "ten-seconds-of-green",
+	"id": "mash-color",
 	"type": "video",
 	"source": "mash",
 	"quantize": 10,
-	"label": "Ten Seconds of Green",
+	"label": "Ten Seconds of Red, Green, Blue",
 	"backcolor": "red",
 	"tracks": [
 		{

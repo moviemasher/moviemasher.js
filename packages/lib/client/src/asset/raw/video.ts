@@ -1,9 +1,9 @@
-import type { ClientImage, ClientInstance, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientVideo, MediaRequest, Panel, Preview, SvgItem, Transcoding } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, InstanceArgs, Rect, RectOptions, Size, Time, Times, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { ClientImage, ClientInstance, ClientMediaRequest, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientVideo, Panel, Preview, SvgItem } from '@moviemasher/runtime-client'
+import type { AssetCacheArgs, InstanceArgs, Rect, RectOptions, Size, Time, Times, Transcoding, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, EmptyFunction, NamespaceSvg, SemicolonChar, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTimeRange, assertTrue, centerPoint, pointCopy, sizeAboveZero, sizeContain, sizeCopy, sizeCover, sizeString, timeFromArgs, timeFromSeconds, } from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, AudibleInstanceMixin, EmptyFunction, NamespaceSvg, SemicolonChar, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTime, assertTimeRange, assertTrue, centerPoint, pointCopy, sizeAboveZero, sizeCopy, sizeCover, sizeString, timeFromArgs, timeFromSeconds } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientAudioPromise, EventClientImagePromise, EventClientVideoPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, SourceRaw, TypeAudio, TypeImage, TypeSequence, TypeVideo, errorThrow, isAssetObject, isBoolean, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, SourceRaw, AUDIO, IMAGE, SEQUENCE, VIDEO, errorThrow, isAssetObject, isBoolean, isDefiniteError } from '@moviemasher/runtime-shared'
 import { isClientAudio, isClientVideo } from '../../Client/ClientGuards.js'
 import { svgImagePromiseWithOptions, svgSetChildren, svgSetDimensions, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
@@ -125,7 +125,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     return super.audibleSource()
   }
 
-  override definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
+  override assetIcon(size: Size, cover?: boolean): Promise<SVGSVGElement> | undefined {
     const { previewTranscoding: transcoding } = this
     // if (!transcoding) return undefined
     
@@ -136,11 +136,11 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
 
       const { width, height } = image
       const inSize = { width, height }
-      const containedSize = sizeContain(inSize, size)
+      const containedSize = sizeCover(inSize, size, !cover)
       const outRect = { ...containedSize, ...centerPoint(size, containedSize) }
       const options: RectOptions = { ...outRect }
       return svgImagePromiseWithOptions(src, options).then(svgImage => {
-        // console.log(this.constructor.name, 'definitionIcon', svgImage.constructor.name, options, src)
+        // console.log(this.constructor.name, 'assetIcon', svgImage.constructor.name, options, src)
         return svgSvgElement(size, svgImage)
       })
     })
@@ -150,7 +150,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     const target = transcoding || this
     const { type, request } = target
     switch (type) {
-      case TypeImage: {
+      case IMAGE: {
         const event = new EventClientImagePromise(request)
         MovieMasher.eventDispatcher.dispatch(event)
         const { promise } = event.detail
@@ -160,17 +160,17 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
           return orError.data
         })
       }
-      case TypeVideo: {
+      case VIDEO: {
         console.log(this.constructor.name, 'imageFromTranscodingPromise', definitionTime, outSize)
         return this.imageFromVideoTranscodingPromise(transcoding, definitionTime, outSize)
       }
 
       // TODO: support...
-      // case TypeSequence: {
+      // case SEQUENCE: {
       //   return this.imageFromSequencePromise(transcoding, definitionTime, outSize)
       // }
     }
-    return errorThrow(ErrorName.Internal)
+    return errorThrow(ERROR.Internal)
   }
 
   private imageFromVideoTranscodingPromise(previewTranscoding: Transcoding | undefined, definitionTime: Time, outSize?: Size): Promise<ClientImage> {
@@ -236,7 +236,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<ClientImage>{
     // console.log(this.constructor.name, 'loadedImagePromise', definitionTime)
     const { previewTranscoding: transcoding } = this
-    // if (! transcoding) return errorThrow(ErrorName.Internal)
+    // if (! transcoding) return errorThrow(ERROR.Internal)
 
     return this.imageFromTranscodingPromise(transcoding, definitionTime, outSize)
   }
@@ -265,7 +265,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   private preloadAudiblePromise(_args: AssetCacheArgs): Promise<void> {
     if (this.loadedAudio) return Promise.resolve()
 
-    const transcoding = this.preferredTranscoding(TypeAudio, TypeVideo)
+    const transcoding = this.preferredTranscoding(AUDIO, VIDEO)
     const { request } = transcoding || this
 
     const event = new EventClientAudioPromise(request)
@@ -311,19 +311,19 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
       // })
     })
   }
-  declare request: MediaRequest
+  declare request: ClientMediaRequest
 
   private preloadVisiblePromise(args: AssetCacheArgs): Promise<void> {
     const promises: Promise<void>[] = []
     // const { audible } = args
     // const { audio } = this
-    const visibleTranscoding = this.preferredTranscoding(TypeSequence, TypeVideo)
+    const visibleTranscoding = this.preferredTranscoding(SEQUENCE, VIDEO)
    
     // if (visibleTranscoding) {
-    // const audibleTranscoding = audio && audible && this.preferredTranscoding(TypeAudio, TypeVideo)
+    // const audibleTranscoding = audio && audible && this.preferredTranscoding(AUDIO, VIDEO)
     // if (visibleTranscoding !== audibleTranscoding) {
     const { type, request } = visibleTranscoding || this  
-    if (type === TypeVideo) {
+    if (type === VIDEO) {
       const event = new EventClientVideoPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
@@ -345,11 +345,13 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   }
 
   get previewTranscoding(): Transcoding | undefined {
-    return this.findTranscoding(TypeVideo, TypeSequence, TypeVideo)
+    return this.findTranscoding(VIDEO, SEQUENCE, VIDEO)
   }
 
   private sequenceImagesPromise(args: AssetCacheArgs): Promise<void> {
     const { assetTime: range } = args
+    assertTime(range)
+    
     const definitionTimes: Times = []
     if (range.isRange) {
       assertTimeRange(range)
@@ -367,7 +369,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject, asset } = detail
-    if (!asset && isAssetObject(assetObject, TypeVideo, SourceRaw)) {
+    if (!asset && isAssetObject(assetObject, VIDEO, SourceRaw)) {
       detail.asset = new ClientRawVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -375,9 +377,9 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
 }
 
 // listen for video/raw asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ClientRawVideoAssetClass.handleAsset
-)
+export const ClientRawVideoListeners = () => ({
+  [EventAsset.Type]: ClientRawVideoAssetClass.handleAsset
+})
 
 const WithAudibleInstance = AudibleInstanceMixin(ClientInstanceClass)
 const WithVisibleInstance = VisibleInstanceMixin(WithAudibleInstance)
@@ -469,7 +471,7 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
 
 
   private sequenceItemPromise(rect: Rect, definitionTime: Time): Promise<SvgItem> {
-    // return errorThrow(ErrorName.Unimplemented)
+    // return errorThrow(ERROR.Unimplemented)
     const { asset } = this
     return asset.loadedImagePromise(definitionTime).then(loadedImage => {
       const { src } = loadedImage
@@ -495,8 +497,8 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
   private stylesSrcPromise(_zeroRect: Rect, _definitionTime: Time): Promise<string> {
     const { type, asset } = this
     const types: TranscodingTypes = []
-    if (type === TypeImage) types.push(type)
-    else types.push(TypeSequence, TypeVideo)
+    if (type === IMAGE) types.push(type)
+    else types.push(SEQUENCE, VIDEO)
     // const transcoding = asset.preferredTranscoding(...types)
     // assertDefined(transcoding)
 
@@ -504,14 +506,15 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
     // const { type: transcodingType } = transcoding
 
     // TODO: support sequences
-    // if (transcodingType === TypeSequence) {
+    // if (transcodingType === SEQUENCE) {
     //   assertVideoMedia(definition)
     //   return definition.loadedImagePromise(definitionTime, sizeCopy(zeroRect)).then(image => (
     //     image.src
     //   ))
     // }
-    const imageTranscoding = asset.preferredTranscoding(TypeImage) 
+    const imageTranscoding = asset.preferredTranscoding(IMAGE) 
     assertDefined(imageTranscoding)
+
     const { request } = imageTranscoding
     const event = new EventClientImagePromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
@@ -534,16 +537,16 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
  
     const { type } = target
     switch (type) {
-      case TypeVideo: {
+      case VIDEO: {
         return this.videoItemForPlayerPromise(previewTranscoding, rect, definitionTime)
       }
 
       // TODO: support sequence
-      // case TypeSequence: {
+      // case SEQUENCE: {
       //   return this.sequenceItemPromise(rect, definitionTime)
       // }
     }
-    return errorThrow(ErrorName.Type)
+    return errorThrow(ERROR.Type)
   }
 
   override svgItemForTimelinePromise(rect: Rect, time: Time): Promise<SvgItem> {

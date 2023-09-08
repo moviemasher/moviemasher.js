@@ -2,13 +2,17 @@ import type { ClientImporter, ClientImporters, StringEvent } from '@moviemasher/
 import type { PropertyDeclarations, PropertyValueMap } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { ClassSelected, MovieMasher } from '@moviemasher/runtime-client'
-import { EventTypeImporters } from '@moviemasher/runtime-shared'
+import { ClassSelected, EventImporters, MovieMasher } from '@moviemasher/runtime-client'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { Div } from '../Base/LeftCenterRight.js'
 
+import '../asset/raw/importer.js'
+import '../asset/text/importer.js'
+
 const EventTypeImporter = 'importer'
+export const ImporterDivName = 'movie-masher-importer-div'
+
 export class ImporterDivElement extends Div {
   constructor() {
     super()
@@ -43,12 +47,14 @@ export class ImporterDivElement extends Div {
   importerId = ''
 
   private _importers?: ClientImporters
+
   private get importers(): ClientImporters {
     return this._importers ||= this.importersInitialize
   }
+
   private get importersInitialize(): ClientImporters {
     const importers: ClientImporters = []
-    const event = new CustomEvent(EventTypeImporters, { detail: { importers } })
+    const event = new EventImporters(importers)
     MovieMasher.eventDispatcher.dispatch(event)
     const [importer] = importers
     if (importer) this.importerId ||= importer.id
@@ -56,6 +62,7 @@ export class ImporterDivElement extends Div {
   }
 
   private _importerElements?: Htmls
+
   private get importerElements(): Htmls {
     return this._importerElements ||= this.importerElementsInitialize
   }
@@ -70,10 +77,10 @@ export class ImporterDivElement extends Div {
       return html`<movie-masher-component-a 
         class='${ifDefined(importerId === id ? ClassSelected : undefined)}' 
         emit='${EventTypeImporter}' detail='${id}'
-      >${icon}</movie-masher-component-a>`
-      
+      >${icon}</movie-masher-component-a>`  
     })
   }
+
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     const { importerElements } = this
@@ -88,15 +95,17 @@ export class ImporterDivElement extends Div {
     }
   }
 
-
   static override properties: PropertyDeclarations = {
     ...Div.properties,
     importerId: { type: String, attribute: 'importer-id' }
   }
-
-  
 }
 
-
 // register web component as custom element
-customElements.define('movie-masher-importer-div', ImporterDivElement)
+customElements.define(ImporterDivName, ImporterDivElement)
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [ImporterDivName]: ImporterDivElement
+  }
+}

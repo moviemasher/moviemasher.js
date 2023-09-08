@@ -1,20 +1,18 @@
-import type { PropertyDeclarations, PropertyValues } from 'lit'
-import type { CSSResultGroup } from 'lit'
 import type { Timeout } from '@moviemasher/runtime-client'
-import type { Content, Contents, OptionalContent } from '../declarations.js'
 import type { Point } from '@moviemasher/runtime-shared'
+import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
+import type { Content, Contents, OptionalContent } from '../declarations.js'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-
-import { EventChangedPreviews, EventPreviews, EventChangeClipId, MovieMasher, EventRect, EventDragging } from '@moviemasher/runtime-client'
-import { Scroller } from '../Base/Scroller.js'
-import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
-import { RectObserverMixin } from '../Base/RectObserverMixin.js'
-import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
 import { assertSizeAboveZero, pointCopy, sizeContain } from '@moviemasher/lib-shared'
+import { EventChangeClipId, EventChangedPreviews, EventDragging, EventPreviews, EventRect, MovieMasher } from '@moviemasher/runtime-client'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
+import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
+import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
+import { RectObserverMixin } from '../Base/RectObserverMixin.js'
+import { Scroller } from '../Base/Scroller.js'
+import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
 
 const ViewerRefreshTics = 10
 
@@ -51,6 +49,13 @@ export class ViewerContentElement extends WithSizeReactive {
     `
   }
 
+  override dropValid(data: DataTransfer): boolean {
+    // TODO: don't allow mash to be dropped into itself
+    // here or anywhere within timeline
+    return super.dropValid(data) && !this.disabled 
+  }
+
+
   private handleChangedPreviewItems(): void { 
     if (this.watchingTimeout) {
       this.watchingRedraw = true
@@ -85,7 +90,8 @@ export class ViewerContentElement extends WithSizeReactive {
     this.watchingRedraw = false
     delete this.watchingTimeout
 
-    // TODO: we should send disabled argument to EventPreviews when dragging
+    if (this.disabled) return Promise.resolve()
+    
     const draggingEvent = new EventDragging()
     MovieMasher.eventDispatcher.dispatch(draggingEvent)
     const dragging = draggingEvent.detail.dragging
@@ -95,7 +101,7 @@ export class ViewerContentElement extends WithSizeReactive {
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
-      console.warn(this.tagName, 'requestItemsPromise NO PROMISE')
+      // console.warn(this.tagName, 'requestItemsPromise NO PROMISE')
       return Promise.resolve()
     }
 

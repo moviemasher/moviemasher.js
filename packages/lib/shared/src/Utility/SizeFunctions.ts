@@ -82,12 +82,12 @@ export const sizeContain = (inSize: Size, outSize: Size | number): Size => {
 }
 
 export const sizeAboveZero = (size: any): size is Size => {
-  if (!isSize(size))
-    return false
+  if (!isSize(size)) return false
 
   const { width, height } = size
   return isAboveZero(width) && isAboveZero(height)
 }
+
 export function assertSizeAboveZero(size: any, name?: string): asserts size is Size {
   if (!sizeAboveZero(size))
     errorThrow(size, 'SizeAboveZero', name)

@@ -2,8 +2,8 @@
 import type { VisibleAsset, AudibleAsset, RawAssetObject, Size } from '@moviemasher/runtime-shared'
 
 import type { ClientAsset } from './ClientAsset.js'
-import type { ClientAudioNode, ClientAudio, ClientImage, ClientVideo, MediaRequest } from './ClientMedia.js'
-import { TranscodingObjects } from './Transcoding.js'
+import type { ClientAudioNode, ClientAudio, ClientImage, ClientVideo, ClientMediaRequest } from './ClientMedia.js'
+import { TranscodingObjects } from '@moviemasher/runtime-shared'
 
 export interface ClientAudibleAsset extends ClientAsset, AudibleAsset {
   audibleSource(): ClientAudioNode | undefined
@@ -11,9 +11,7 @@ export interface ClientAudibleAsset extends ClientAsset, AudibleAsset {
 }
 
 export interface ClientVisibleAsset extends ClientAsset, VisibleAsset {
-
   previewSize?: Size
-
 }
 /* 
 
@@ -35,7 +33,7 @@ export interface ClientVisibleAsset extends ClientAsset, VisibleAsset {
 
 
 export interface ClientRawAssetObject extends ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject {
-  request: MediaRequest
+  request: ClientMediaRequest
   transcodings?: TranscodingObjects
 
 }

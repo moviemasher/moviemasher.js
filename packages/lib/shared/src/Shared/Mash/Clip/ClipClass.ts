@@ -1,7 +1,6 @@
 import type { Clip, ClipObject, ContainerRectArgs, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { EventManagedAsset, MovieMasher, TypeClip, isPropertyId } from '@moviemasher/runtime-client'
-import { DotChar, POINT_ZERO, assertAsset, isPopulatedString, isUndefined } from "@moviemasher/runtime-shared"
+import { POINT_ZERO, TypeClip, isPopulatedString, isUndefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
 import { DefaultContainerId } from '../../../Helpers/Container/ContainerConstants.js'
 import { assertContainerInstance, isContainerInstance } from '../../../Helpers/Container/ContainerGuards.js'
@@ -16,7 +15,8 @@ import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
 import { SizingContainer, SizingContent, SizingPreview, Sizings } from '../../../Setup/SizingConstants.js'
 import { TimingContainer, TimingContent, TimingCustom, Timings } from '../../../Setup/TimingConstants.js'
 import { idGenerateString } from '../../../Utility/IdFunctions.js'
-import { assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero } from '../../SharedGuards.js'
+import { assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPropertyId } from '../../SharedGuards.js'
+import { DOT } from '../../../Setup/Constants.js'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {
@@ -31,6 +31,12 @@ export class ClipClass extends PropertiedClass implements Clip {
     
     super(object)
     this.initializeProperties(object)
+  }
+
+  get assetIds(): Strings {
+    const ids = this.content.assetIds
+    if (this.container) ids.push(...this.container.assetIds)
+    return ids
   }
 
   private assureTimingAndSizing(timing: Timing, sizing: Sizing, instance: Instance) {
@@ -64,6 +70,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     const promises = [content.instanceCachePromise(args)]
 
     if (container) promises.push(container.instanceCachePromise(args))
+    console.log(this.constructor.name, 'clipCachePromise', args, promises.length)
     return Promise.all(promises).then(EmptyFunction)
   }
 
@@ -86,15 +93,11 @@ export class ClipClass extends PropertiedClass implements Clip {
     const assetId = containerId || containerObject.assetId
     if (!isPopulatedString(assetId)) return undefined
 
-    console.log(this.constructor.name, 'containerInitialize', assetId, containerId)
-
-    const event = new EventManagedAsset(assetId)
-    MovieMasher.eventDispatcher.dispatch(event)
-    const definition = event.detail.asset
-    assertAsset(definition, assetId)
+    // console.log(this.constructor.name, 'containerInitialize', assetId, containerId)
+    const asset = this.track.mash.asset(assetId)
 
     const object: VisibleInstanceObject  = { ...containerObject, assetId, container: true }
-    const instance = definition.instanceFromObject(object)
+    const instance = asset.instanceFromObject(object)
     assertContainerInstance(instance)
 
     this.assureTimingAndSizing(TimingContainer, SizingContainer, instance)
@@ -104,6 +107,18 @@ export class ClipClass extends PropertiedClass implements Clip {
   }
 
   declare containerId: string
+
+  containerRects(args: ContainerRectArgs): Rects {
+    const { size, loading, editing } = args
+    // console.log(this.constructor.name, 'rects rectIntrinsic', loading, editing)
+
+    const intrinsicRect = this.rectIntrinsic(size, loading, editing)
+    // console.log(this.constructor.name, 'rects intrinsicRect', intrinsicRect, args)
+    const { container } = this
+    assertContainerInstance(container)
+    
+    return container.containerRects(args, intrinsicRect)
+  }
 
   private _contentObject: InstanceObject = {}
   
@@ -116,15 +131,12 @@ export class ClipClass extends PropertiedClass implements Clip {
     const assetId = contentId || contentObject.assetId
     assertPopulatedString(assetId)
 
-    console.log(this.constructor.name, 'contentInitialize', assetId, contentId)
+    // console.log(this.constructor.name, 'contentInitialize', assetId, contentId)
 
-    const event = new EventManagedAsset(assetId)
-    MovieMasher.eventDispatcher.dispatch(event)
-    const definition = event.detail.asset
-    assertAsset(definition, assetId)
+    const asset = this.track.mash.asset(assetId)
 
     const object: InstanceObject = { ...contentObject, assetId }
-    const instance = definition.instanceFromObject(object)
+    const instance = asset.instanceFromObject(object)
     assertContentInstance(instance)
 
     if (this.assureTimingAndSizing(TimingContent, SizingContent, instance)) {
@@ -141,12 +153,6 @@ export class ClipClass extends PropertiedClass implements Clip {
   }
 
   declare contentId: string
-
-  get assetIds(): Strings {
-    const ids = this.content.assetIds
-    if (this.container) ids.push(...this.container.assetIds)
-    return ids
-  }
 
   get endFrame() { return this.frame + this.frames }
 
@@ -196,7 +202,11 @@ export class ClipClass extends PropertiedClass implements Clip {
   intrinsicsKnown(options: IntrinsicOptions): boolean {
     const { content, container } = this
     let known = content.intrinsicsKnown(options)
-    if (container) known &&= container.intrinsicsKnown(options)
+    console.log(this.constructor.name, 'intrinsicsKnown content', known, options)
+    if (known && container) {
+      known = container.intrinsicsKnown(options)
+      console.log(this.constructor.name, 'intrinsicsKnown container', known, options)
+    }
     return known
   }
 
@@ -234,7 +244,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     return !container.muted
   }
   
-  rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
+  private rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
     const rect = { ...size, ...POINT_ZERO }
     const { sizing } = this
     // console.log(this.constructor.name, 'rectIntrinsic', sizing, loading, editing) 
@@ -245,21 +255,9 @@ export class ClipClass extends PropertiedClass implements Clip {
     const known = target.intrinsicsKnown({ editing, size: true })
     if (loading && !known) return rect
 
-    assertTrue(known, `${target.constructor.name}.intrinsicsKnown`);
+    // assertTrue(known, `${target.constructor.name}.intrinsicsKnown`);
 
     return target.intrinsicRect(editing)
-  }
-
-  rects(args: ContainerRectArgs): Rects {
-    const { size, loading, editing } = args
-    // console.log(this.constructor.name, 'rects rectIntrinsic', loading, editing)
-
-    const intrinsicRect = this.rectIntrinsic(size, loading, editing)
-    // console.log(this.constructor.name, 'rects intrinsicRect', intrinsicRect, args)
-    const { container } = this
-    assertContainerInstance(container)
-    
-    return container.containerRects(args, intrinsicRect)
   }
 
   resetTiming(instance?: Instance, quantize?: number): void {
@@ -294,16 +292,16 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   override setValue(id: string, value?: Scalar, property?: Property): void {
     super.setValue(id, value, property)
-    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    const name = isPropertyId(id) ? id.split(DOT).pop() : id
     switch (name) {
       case 'containerId': {
-        console.log(this.constructor.name, 'setValue', name, value, !!property)
+        // console.log(this.constructor.name, 'setValue', name, value, !!property)
         this._containerObject = this._container?.toJSON() || {}
         delete this._container
         break
       }
       case 'contentId': {
-        console.log(this.constructor.name, 'setValue', name, value, !!property)
+        // console.log(this.constructor.name, 'setValue', name, value, !!property)
         this._contentObject = this._content?.toJSON() || {}
         delete this._content
         break

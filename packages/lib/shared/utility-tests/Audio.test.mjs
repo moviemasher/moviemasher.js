@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  AudioClass, audioDefinition, TypeAudio
+  AudioClass, audioDefinition, AUDIO
   } from "@moviemasher/lib-shared"
 
 describe("audio", () => {
@@ -13,7 +13,7 @@ describe("audio", () => {
     id: 'audio-blah', 
     url: "audio.mp3", 
     duration: seconds, 
-    type: TypeAudio
+    type: AUDIO
   }
   // const audioDefinitionObject = { id: 'audio-id-1', url: "audio.mp3", duration: 1 , type: AudioType}
   const definition = () => audioDefinition(audioMediaObject)

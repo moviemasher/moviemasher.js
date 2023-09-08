@@ -3,7 +3,7 @@ import type { Constrained } from '@moviemasher/runtime-shared'
 import type { VisibleAsset } from '@moviemasher/runtime-shared'
 import type { ShapeAsset, ShapeAssetObject } from '@moviemasher/runtime-shared'
 
-import { TypeImage } from '@moviemasher/runtime-shared'
+import { IMAGE } from '@moviemasher/runtime-shared'
 import { isAboveZero } from '../SharedGuards.js'
 import { sizeSvgD } from '../../Utility/SizeFunctions.js'
 
@@ -45,7 +45,7 @@ T & Constrained<ShapeAsset> {
       return object
     }
 
-    type = TypeImage
+    type = IMAGE
   }
 }
 

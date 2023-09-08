@@ -1,13 +1,8 @@
-import { TypeImage } from '@moviemasher/runtime-shared'
-import { Constrained } from '@moviemasher/runtime-shared'
-import { Asset } from '@moviemasher/runtime-shared'
-import { TextAsset, TextAssetObject, TextInstanceObject } from '@moviemasher/runtime-shared'
-import { isUndefined } from "@moviemasher/runtime-shared"
-import type { InstanceArgs } from '@moviemasher/runtime-shared'
-import { Default } from '../../Setup/Default.js'
-import { LockLongest } from '../../Setup/LockConstants.js'
-import { EndpointRequest } from '@moviemasher/runtime-shared'
+import type { Asset, Constrained, EndpointRequest, InstanceArgs } from '@moviemasher/runtime-shared'
 
+import { TextAsset, TextAssetObject, TextInstanceObject, IMAGE, isUndefined } from '@moviemasher/runtime-shared'
+import { Default } from '../../Setup/Default.js'
+import { AspectMaintain, LockWidth } from '../../Setup/LockConstants.js'
 
 export function TextAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -17,7 +12,9 @@ T & Constrained<TextAsset> {
 
     instanceArgs(object?: TextInstanceObject): TextInstanceObject & InstanceArgs {
       const textObject = object || {}
-      if (isUndefined(textObject.lock)) textObject.lock = LockLongest
+      if (isUndefined(textObject.lock)) textObject.lock = LockWidth
+      if (isUndefined(textObject.sizeAspect)) textObject.sizeAspect = AspectMaintain
+      if (isUndefined(textObject.pointAspect)) textObject.pointAspect = AspectMaintain
       return super.instanceArgs(textObject)
     }
 
@@ -39,7 +36,7 @@ T & Constrained<TextAsset> {
 
     isVector = true
 
-    type = TypeImage
+    type = IMAGE
   }
 }
 

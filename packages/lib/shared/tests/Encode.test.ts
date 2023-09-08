@@ -1,24 +1,22 @@
+import { EnvironmentKeyApiDirFilePrefix, RuntimeEnvironment } from '@moviemasher/lib-server'
+import assert from 'assert'
 import { describe, test } from 'node:test'
 import path from 'path'
-import assert from 'assert'
-import { Runtime } from '@moviemasher/lib-shared'
-import { EnvironmentKeyApiDirFilePrefix } from '@moviemasher/lib-server'
-import { renderingProcessInput } from "../../../../images/test-server/dev/renderingProcessInput.mjs"
+import { renderingProcessInput } from '../../../../images/test-server/dev/renderingProcessInput.mjs'
 
-describe("Encode", () => {
+describe('Encode', () => {
   
-  test("environment", async () => {
+  test('RuntimeEnvironment', async () => {
     // const { env } = process
     // console.log('env', env)
     
-    const { environment } = Runtime
-    const originalPrefix = environment.get(EnvironmentKeyApiDirFilePrefix)
-    assert.equal(originalPrefix, './packages/example/standalone/public/media')
+    const originalPrefix = RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix)
+    assert.equal(originalPrefix, './examples/express/public/assets')
 
     const filePrefix = 'file://' + path.resolve(originalPrefix, 'user')
-    environment.set(EnvironmentKeyApiDirFilePrefix, filePrefix)
+    RuntimeEnvironment.set(EnvironmentKeyApiDirFilePrefix, filePrefix)
  
-    const newPrefix: string = environment.get(EnvironmentKeyApiDirFilePrefix)
+    const newPrefix: string = RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix)
     assert.equal(newPrefix, filePrefix)
 
     const input = renderingProcessInput()

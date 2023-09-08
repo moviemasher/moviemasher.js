@@ -1,62 +1,186 @@
-import type { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, ServerTextAsset, Tweening, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/lib-shared'
-import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
-import type { PreloadArgs, ScalarRecord, Size, TextInstance, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { Tweening, } from '@moviemasher/lib-shared'
+import type { GraphFile, GraphFiles, ServerMediaRequest } from '@moviemasher/runtime-server'
+import type { AssetCacheArgs, InstanceArgs, PreloadArgs, Rect, ScalarRecord, Size, Strings, TextAssetObject, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Types/CommandTypes.js'
+import type { ServerTextAsset, ServerTextInstance } from '../../Types/ServerTypes.js'
 
-import { LockNone, ServerInstanceClass, ServerRawAssetClass, ServerTextInstance, ServerVisibleAssetMixin, ServerVisibleInstanceMixin, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertEndpoint, assertNumber, assertPopulatedString, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, endpointUrl, idGenerate, isAboveZero, isTrueValue, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
-import { EventAsset, GraphFileTypeTxt, MovieMasher } from '@moviemasher/runtime-server'
-import { SourceText, POINT_ZERO, End, TypeFont, TypeImage, isAssetObject, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { LockNone, NewlineChar, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, arrayOfNumbers, assertNumber, assertPopulatedString, assertRect, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, idGenerate, isAboveZero, isTrueValue, pointAboveZero, sizeAboveZero, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { EventServerAsset, EventServerAssetPromise, EventServerTextRect, GraphFileTypeTxt, MovieMasher } from '@moviemasher/runtime-server'
+import { End, ERROR, POINT_ZERO, RECT_KEYS, RECT_ZERO, SourceText, TypeFont, IMAGE, errorThrow, isAssetObject, isDefiniteError, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { execSync } from 'child_process'
+import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
+import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
+import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
+import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { fileRemove, fileRemovePromise, fileTemporaryPath, fileWrite, fileWritePromise } from '../../Utility/File.js'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
 const WithTextAsset = TextAssetMixin(WithServerAsset)
-
 export class ServerTextAssetClass extends WithTextAsset implements ServerTextAsset {
-  canColor(args: CommandFilterArgs): boolean { return true }
+  constructor(args: TextAssetObject) {
+    super(args)
+    this.initializeProperties(args)
+  }
+  
+  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
+    console.log(this.constructor.name, 'assetCachePromise', args)
+    const { request } = this
+    const event = new EventServerAssetPromise(request, TypeFont)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { promise } = event.detail
+    if (!promise) {
+      console.error(this.constructor.name, 'assetCachePromise EventServerAssetPromise no promise', request)
+      return errorThrow(ERROR.Unimplemented, EventServerAssetPromise.Type)
+    }
+    return promise.then(orError => {
+      console.log(this.constructor.name, 'assetCachePromise', orError)
+      if (isDefiniteError(orError)) errorThrow(orError)
+    })
+  }
 
-  canColorTween(args: CommandFilterArgs): boolean { return true }
+  canColor(_args: CommandFilterArgs): boolean { return true }
+
+  canColorTween(_args: CommandFilterArgs): boolean { return true }
 
   graphFiles(args: PreloadArgs): GraphFiles {
     const { visible } = args
     if (!visible) return []
     
     const { request } = this
-    const { endpoint } = request
-    assertEndpoint(endpoint)
-    const file = endpointUrl(endpoint) 
-
-
-    // const file = editing ? url : source
-    const graphFile: GraphFile = {
-      type: TypeFont, file, definition: this
-    }
+    const { path: file } = request
+    assertPopulatedString(file)
+    const graphFile: GraphFile = { type: TypeFont, file, definition: this }
     return [graphFile]
   }
 
-  instanceFromObject(object?: TextInstanceObject): TextInstance {
+  instanceFromObject(object?: TextInstanceObject): ServerTextInstance {
     const args = this.instanceArgs(object)
     return new ServerTextInstanceClass(args)
   }
 
-  static handleAsset(event:EventAsset) {
+  static handleAsset(event:EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, TypeImage, SourceText)) {
+    if (isAssetObject(assetObject, IMAGE, SourceText)) {
       detail.asset = new ServerTextAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
   }
+  static handleTextRect(event:EventServerTextRect) {
+    const { detail } = event
+    const { text, font, height } = detail
+    detail.rect = ServerTextAssetClass.textRect(text, font, height)
+    event.stopImmediatePropagation()
+  }
+
+  private static textRect(text: string, fontPath: string, height: number): Rect {
+    const textFile = fileTemporaryPath(GraphFileTypeTxt)
+    fileWrite(textFile, text)
+    
+    let multiplier = 2 
+    let rect: Rect = { ... RECT_ZERO }
+
+    const indices = arrayOfNumbers(3)
+    indices.find(index => {
+    
+      const charWidth = height * (1 + index)
+      const command = ServerTextAssetClass.probeCommand(textFile, fontPath, height, charWidth, text.length, multiplier)
+      const probeRect = ServerTextAssetClass.probeRect(command)
+      
+      if (!sizeAboveZero(probeRect)) return false
+
+      if (!pointAboveZero(probeRect)) {
+        multiplier++
+        return false
+      }
+      
+      const { 
+        x: actualX, y: actualY, width: actualWidth, height: actualHeight 
+      } = probeRect
+
+      const expectedX = Math.ceil((actualWidth * (multiplier - 1)) / 2) 
+      const x = actualX - expectedX
+      const expectedY = Math.ceil((actualHeight * (multiplier - 1)) / 2)
+      const y = actualY - expectedY
+      rect = { ...probeRect, x, y }
+      return true
+    })
+    // fileRemove(textFile)
+    return rect
+  }
+
+  private static probeRect(command: string): Rect {
+    const rect: Rect = { ...RECT_ZERO }
+    try {
+      const result = execSync(command).toString().trim()
+      const values = result.split(NewlineChar).map(Number)
+      RECT_KEYS.forEach((key, index) => rect[key] = values[index])
+      console.log('ServerTextAssetClass.probeRect', rect, ...values, command)
+    }
+    catch(error) { 
+      
+      console.error('ServerTextAssetClass.probeRect', error)
+      execSync(command.slice(0, -('-v quiet'.length)))
+    }
+    
+    return rect
+  }
+
+  private static probeCommand(textPath: string, fontPath: string, charHeight: number, charWidth: number, textLength: number, multiplier: number) {
+    const filters: Strings = []
+    const width = charWidth * textLength * multiplier
+    const height = charHeight * multiplier
+    filters.push(`color=size=${width}x${height}:duration=1:rate=1:color=black`)
+    filters.push(`drawtext=fontfile=${fontPath}:textfile=${textPath}:fontsize=${charHeight}:fontcolor=red:boxcolor=white:x=(w-text_w)/2:y=(h-text_h)/2`)
+    filters.push(`cropdetect=mode=black:skip=0`)
+    // metadata=mode=print
+
+    // color=size=320x240:duration=1:rate=1:color=black,drawtext=fontfile=temporary/test-server/1fe02cf3faae3032e16727ff06364759.ttf:fontsize=30:fontcolor=red:x=(w-text_w)/2:y=(h-text_h)/2:textPath=Stack:box=1:boxcolor=white,cropdetect=mode=black:skip=0,metadata=mode=print
+
+    const tags = RECT_KEYS.map(key => `lavfi.cropdetect.${key[0]}`).join(',')
+
+    const words = [
+      'ffprobe -f lavfi',
+      `"${filters.join(',')}"`,
+      `-show_entries frame_tags=${tags}`,
+      '-of default=noprint_wrappers=1:nokey=1 -v quiet',
+    ]
+    return words.join(' ')
+  }
 }
+
 // listen for image/text asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ServerTextAssetClass.handleAsset
-)
+export const ServerTextImageListeners = () => ({
+  [EventServerAsset.Type]: ServerTextAssetClass.handleAsset,
+  [EventServerTextRect.Type]: ServerTextAssetClass.handleTextRect,
+})
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
 const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)
 const WithTextInstance = TextInstanceMixin(WithServerInstance)
-
 export class ServerTextInstanceClass extends WithTextInstance implements ServerTextInstance { 
+  constructor(args: TextInstanceObject & InstanceArgs) {
+    super(args)
+    this.initializeProperties(args)
+  }
+  
   declare asset: ServerTextAsset
+  
+  private colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {
+    const { width, height } = dimensions
+    const transparentFilter = 'color'
+    const transparentId = idGenerate(transparentFilter)
+    const object: ValueRecord = { color, size: `${width}x${height}` }
+    if (videoRate) object.rate = videoRate
+    if (duration) object.duration = duration
+    const commandFilter: CommandFilter = {
+      inputs: [], ffmpegFilter: transparentFilter, 
+      options: object,
+      outputs: [transparentId]
+    }
+    return commandFilter
+  }
 
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     const commandFilters: CommandFilters = [] 
@@ -267,32 +391,40 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     } 
     return commandFilters
   }
-  private colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {
-    const { width, height } = dimensions
-    const transparentFilter = 'color'
-    const transparentId = idGenerate(transparentFilter)
-    const object: ValueRecord = { color, size: `${width}x${height}` }
-    if (videoRate) object.rate = videoRate
-    if (duration) object.duration = duration
-    const commandFilter: CommandFilter = {
-      inputs: [], ffmpegFilter: transparentFilter, 
-      options: object,
-      outputs: [transparentId]
-    }
-    return commandFilter
+
+
+  override intrinsicRect(_ = false): Rect { 
+    return this.intrinsic ||= this.intrinsicRectInitialize()
   }
 
+  private intrinsicRectInitialize(): Rect {
+    const { asset, string } = this
+    if (!string) return { width: 0, height: TextHeight, ...POINT_ZERO }
+
+    const request = asset.request as ServerMediaRequest
+    const { path: file } = request
+    assertPopulatedString(file)
+
+    const event = new EventServerTextRect(string, file, TextHeight)
+    MovieMasher.eventDispatcher.dispatch(event)
+    const { rect } = event.detail
+    console.log(this.constructor.name, 'intrinsicRectInitialize', rect)
+
+    assertRect(rect)
+
+    return rect
+  }
 
   visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const files = super.visibleCommandFiles(args)
-    const { string, asset: definition } = this
+    const { string: content, asset: asset, id } = this
+    const file = fileTemporaryPath(GraphFileTypeTxt)
     const textGraphFile: CommandFile = {
-      definition, type: GraphFileTypeTxt, 
-      file: this.id, inputId: this.id,
-      content: string, 
+      definition: asset, type: GraphFileTypeTxt, 
+      file, inputId: id,
+      content, 
     }
     files.push(textGraphFile)
     return files
   }
 }
-

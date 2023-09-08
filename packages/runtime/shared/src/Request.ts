@@ -5,6 +5,7 @@ export interface EndpointRequest {
   endpoint?: Endpoint | string
   init?: RequestInit
 }
+
 export type EndpointRequests = EndpointRequest[]
 
 export interface RequestInit {
@@ -12,4 +13,3 @@ export interface RequestInit {
   headers?: StringRecord
   method?: string
 }
-

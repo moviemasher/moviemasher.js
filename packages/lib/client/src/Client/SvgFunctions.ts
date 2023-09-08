@@ -23,7 +23,7 @@ export const PatchSvgInitialize = (): SVGSVGElement => {
 }
 
 export const svgPatch = (value?: SVGSVGElement): SVGSVGElement => {
-  console.trace('svgPatch', value)
+  // console.trace('svgPatch', value)
   if (value) return PatchSvgElement = value
   
   return PatchSvgElement ||= PatchSvgInitialize()

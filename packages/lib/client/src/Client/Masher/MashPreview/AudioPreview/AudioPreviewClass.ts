@@ -2,7 +2,7 @@ import type { AudioPreviewArgs, ClientAudibleInstance, StartOptions } from '@mov
 import type { Clip, Time, TimeRange } from '@moviemasher/runtime-shared'
 
 import { Default, isAboveZero, isPositive, isTimeRange } from '@moviemasher/lib-shared'
-import { ErrorName, errorThrow } from '@moviemasher/runtime-shared'
+import { ERROR, errorThrow } from '@moviemasher/runtime-shared'
 import { isClientAudibleInstance } from '../../../../asset/Audible/ClientAudibleInstanceGuards.js'
 import { AudibleContextInstance } from '../../../Mash/Context/AudibleContext.js'
 
@@ -153,8 +153,8 @@ export class AudioPreviewClass {
 
   startContext(): void {
     // console.log(this.constructor.name, 'startContext')
-    if (this.bufferSource) return errorThrow(ErrorName.Internal) 
-    if (this.playing) return errorThrow(ErrorName.Internal) 
+    if (this.bufferSource) return errorThrow(ERROR.Internal) 
+    if (this.playing) return errorThrow(ERROR.Internal) 
 
     const buffer = AudibleContextInstance.createBuffer(this.buffer)
     this.bufferSource = AudibleContextInstance.createBufferSource(buffer)
@@ -165,8 +165,8 @@ export class AudioPreviewClass {
 
   // called when playhead starts moving
   startPlaying(time: Time, clips: Clip[], quantize: number): boolean {
-    if (!this.bufferSource) return errorThrow(ErrorName.Internal) 
-    if (this.playing) return errorThrow(ErrorName.Internal)
+    if (!this.bufferSource) return errorThrow(ERROR.Internal) 
+    if (this.playing) return errorThrow(ERROR.Internal)
 
     const { seconds } = time
     this.playing = true

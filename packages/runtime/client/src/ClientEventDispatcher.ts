@@ -1,8 +1,8 @@
-import type { EventDispatcher, EventDispatcherListenerRecord } from '@moviemasher/runtime-shared'
+import type { EventDispatcher, EventDispatcherListener, EventDispatcherListenerRecord, EventDispatcherOptionsOrBoolean } from '@moviemasher/runtime-shared'
 
 export class ClientEventDispatcher extends EventTarget implements EventDispatcher {
-  addDispatchListener<T>(type: string, listener: (event: CustomEvent<T>) => void, options?: unknown): EventDispatcher {
-    this.addEventListener(type, listener as EventListener, options as AddEventListenerOptions)
+  addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventDispatcherOptionsOrBoolean): EventDispatcher {
+    this.addEventListener(type, listener as EventListener, options)
     return this
   }
 
@@ -23,8 +23,8 @@ export class ClientEventDispatcher extends EventTarget implements EventDispatche
     })
   }
   
-  removeDispatchListener<T>(type: string, listener: (event: CustomEvent<T>) => void, options?: unknown): EventDispatcher {
-    this.removeEventListener(type, listener as EventListener, options as AddEventListenerOptions)
+  removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventDispatcherOptionsOrBoolean): EventDispatcher {
+    this.removeEventListener(type, listener as EventListener, options)
     return this
   }
 }

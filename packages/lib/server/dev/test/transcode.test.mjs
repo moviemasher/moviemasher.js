@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { isFilePath, transcode } from '@moviemasher/lib-server'
-import { TypeImage, isPopulatedString, isTranscodeOutput } from '@moviemasher/lib-shared'
+import { IMAGE, isPopulatedString, isTranscodeOutput } from '@moviemasher/lib-shared'
 
 
 describe('transcode', () => {
@@ -12,8 +12,8 @@ describe('transcode', () => {
       options: { },
     }
     const output = {
-      type: TypeImage, 
-      // outputType: TypeImage, encodingType: TypeImage, 
+      type: IMAGE, 
+      // outputType: IMAGE, encodingType: IMAGE, 
       options: outputOptions
     }
 
@@ -23,7 +23,7 @@ describe('transcode', () => {
     // const object = { 
     //   id: 'transcode-test-id',
     //   input: { 
-    //     type: TypeImage, 
+    //     type: IMAGE, 
     //     request: { endpoint: 'file:///app/dev/shared/image/globe.jpg' }
     //   },
     //   output

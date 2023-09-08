@@ -3,7 +3,7 @@ import { isNumeric, isUndefined } from "@moviemasher/runtime-shared";
 import { DataType } from "@moviemasher/runtime-shared";
 import { DataTypeNumber, DataTypeString, DataTypes } from "./DataTypeConstants.js";
 import { errorThrow } from '@moviemasher/runtime-shared';
-import { ErrorName } from '@moviemasher/runtime-shared';
+import { ERROR } from '@moviemasher/runtime-shared';
 import { ParameterObject } from '@moviemasher/runtime-shared';
 
 
@@ -11,7 +11,7 @@ import { ParameterObject } from '@moviemasher/runtime-shared';
 export class ParameterClass {
   constructor({ name, value, dataType, values }: ParameterObject) {
     if (!name)
-      return errorThrow(ErrorName.Internal);
+      return errorThrow(ERROR.Internal);
 
     this.values = values;
     this.name = name;
@@ -19,7 +19,7 @@ export class ParameterClass {
       if (this.values?.length)
         this.value = this.values[0];
       else
-        return errorThrow(ErrorName.Internal);
+        return errorThrow(ERROR.Internal);
     } else
       this.value = value;
 

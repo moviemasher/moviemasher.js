@@ -1,7 +1,7 @@
 import type { Action, ActionArgs } from '@moviemasher/runtime-client'
 import type { PropertyIds } from '@moviemasher/runtime-shared'
 
-import { ErrorName, errorThrow } from '@moviemasher/runtime-shared'
+import { ERROR, errorThrow } from '@moviemasher/runtime-shared'
 
 export class ActionClass implements Action {
   constructor(object: ActionArgs) {
@@ -18,7 +18,7 @@ export class ActionClass implements Action {
   }
 
   protected redoAction(): void {
-    return errorThrow(ErrorName.Unimplemented)
+    return errorThrow(ERROR.Unimplemented)
   }
 
   type: string
@@ -29,7 +29,7 @@ export class ActionClass implements Action {
   }
 
   protected undoAction(): void {
-    return errorThrow(ErrorName.Unimplemented)
+    return errorThrow(ERROR.Unimplemented)
   }
 
   updateSelection(): void {}

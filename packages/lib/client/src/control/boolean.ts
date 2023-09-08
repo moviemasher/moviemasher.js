@@ -26,6 +26,7 @@ export class BooleanControlElement extends WithControl implements Control {
         ?checked='${Boolean(value)}'
         type='checkbox'
         name='${name}' 
+        aria-label='${name}'
       />
     `
   }

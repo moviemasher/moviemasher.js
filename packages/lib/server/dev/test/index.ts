@@ -1,33 +1,14 @@
+import type { VideoOutputOptions, } from '@moviemasher/runtime-shared'
+import type { GenerateOptions, GenerateTestIds } from "./Generate"
+
+import { ExtensionLoadedInfo } from '@moviemasher/lib-server'
+import { outputOptions, sizeScale, } from '@moviemasher/lib-shared'
+import { SIZE_OUTPUT, VIDEO, isArray } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-
-import { 
-
-  outputOptions,
-  sizeScale,
-  VideoOutputOptions
- } from '@moviemasher/lib-shared'
-
-import { 
-  // outputDefaultImage, outputDefaultAudio, outputDefaultSequence, 
- } from '@moviemasher/lib-server'
-
-
-
-import { 
-  generateIds, 
-  GenerateTestIds,
-  GenerateOptions,
-  generateArgsDynamic,
-  GenerateArg,
-  generateArgsStatic,
-  GenerateArgs
-} from "./Generate"
+import { GenerateArg, GenerateArgs, generateArgsDynamic, generateArgsStatic, generateIds } from "./Generate"
 import { renderingTestIdPromise, renderingTestIdsPromise } from './Rendering'
 import { TestRenderOutput } from './TestRenderOutput'
-import { ExtensionLoadedInfo } from '@moviemasher/lib-server'
-import { 
-  SIZE_OUTPUT, TypeVideo, isArray } from '@moviemasher/runtime-shared'
 
 const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
 
@@ -53,7 +34,7 @@ console.log("args", ...args)
 // const sequenceOutput = outputDefaultSequence({ ...SizePreview, cover: true }) 
 // const videoOutput = outputDefaultVideo({ ...SizePreview, mute: true }) 
 const options: VideoOutputOptions = { ...SizePreview }//, mute: true
-const videoOutput = outputOptions(TypeVideo, options) 
+const videoOutput = outputOptions(VIDEO, options) 
 
 // const testUploadVideo = async (test: GenerateMashTest) => {
 //   const outputs = [imageOutput, audioOutput, sequenceOutput] // 
@@ -279,7 +260,7 @@ cherryPick()
 //     describe("runPromise renders", () => {
 //       const renderingFiles = fs.readdirSync(TestRenderingsDir).filter(p => p.endsWith('.json'))
 //       test.each(renderingFiles)('%s', async (fileName) => {
-//         const json = expandFile(`${TestRenderingsDir}/${fileName}`)
+//         const json = fileRead(`${TestRenderingsDir}/${fileName}`)
 //         const args = JSON.parse(json) as RenderingProcessArgs
 //         const { id, outputs } = args
 //         const definedId = id || idGenerateString()

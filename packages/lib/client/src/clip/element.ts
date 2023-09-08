@@ -6,9 +6,9 @@ import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
 import { IntersectionController } from '@lit-labs/observers/intersection-controller.js'
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertDefined, sizeCopy } from '@moviemasher/lib-shared'
+import { assertDefined, isMashAsset, sizeCopy } from '@moviemasher/lib-shared'
 import { DragSuffix, EventChangeClipId, EventChanged, EventClipElement, EventTypeIconFromFrame, EventTypeMashRemoveClip, EventTypeScrollRoot, MovieMasher, eventStop } from '@moviemasher/runtime-client'
-import { SIZE_ZERO, isDefiniteError } from '@moviemasher/runtime-shared'
+import { SIZE_ZERO, TypeClip, TypeMash, isDefiniteError } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
@@ -19,7 +19,7 @@ import { isChangeAction } from '../Client/Masher/Actions/Action/ActionFunctions.
 import { isClientClip } from '../Client/Mash/ClientMashGuards.js'
 import { isClientInstance } from '../Client/ClientGuards.js'
 
-export const ComposerClipName = 'movie-masher-composer-clip'
+export const TimelineClipName = 'movie-masher-timeline-clip'
 
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
 const WithSizeReactiveMixin = SizeReactiveMixin(WithDropTargetMixin)
@@ -114,15 +114,20 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
 
   private handleChanged(event: EventChanged): void {
     const { detail: action } = event
-    if (isChangeAction(action)) {
-      const { target } = action
+    if (!isChangeAction(action)) return
+
+    const { target, affects } = action
+    if (isMashAsset(target)) {
+      if (!affects.includes(`${TypeMash}.color`)) return
+    } else {
       const isClip = isClientClip(target)
       const isInstance = !isClip && isClientInstance(target)
-      if (isClip || isInstance) {
-        const clip = isClip ? target : target.clip
-        if (clip.id === this.clipId) this.handleChange()
-      }
-    }
+      if (!(isClip || isInstance)) return
+
+      const clip = isClip ? target : target.clip
+      if (clip.id !== this.clipId) return
+    }  
+    this.handleChange()
   }
 
   private handleIntersection(entries: IntersectionObserverEntry[]): boolean {
@@ -222,7 +227,7 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     const data = { offset: clientX - left }
     const json = JSON.stringify(data)
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData('clip' + DragSuffix, json)
+    dataTransfer.setData(`${TypeClip}${DragSuffix}`, json)
   }
 
   override mashIndex(event: DragEvent): MashIndex {
@@ -284,7 +289,7 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
 
   x = 0
 
-  static handleNode(event: EventClipElement) {
+  static handleClipElement(event: EventClipElement) {
     const { detail } = event
     detail.node = ComposerClipElement.instance(detail)
     event.stopImmediatePropagation()
@@ -293,7 +298,7 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
   static instance(detail: EventClipElementDetail) {
     const { clipId, x, label, width, trackIndex, scale, maxWidth, trackWidth, labels, icons } = detail
 
-    const element = document.createElement(ComposerClipName)
+    const element = document.createElement(TimelineClipName)
     element.x = x
     element.trackIndex = trackIndex
     element.maxWidth = maxWidth
@@ -379,13 +384,13 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
 }
 
 // register web component as custom element
-customElements.define(ComposerClipName, ComposerClipElement)
+customElements.define(TimelineClipName, ComposerClipElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [ComposerClipName]: ComposerClipElement
+    [TimelineClipName]: ComposerClipElement
   }
 }
 
-// listen for asset object node event
-MovieMasher.eventDispatcher.addDispatchListener(EventClipElement.Type, ComposerClipElement.handleNode)
+// listen for  clip element event
+MovieMasher.eventDispatcher.addDispatchListener(EventClipElement.Type, ComposerClipElement.handleClipElement)

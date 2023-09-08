@@ -3,10 +3,10 @@ import type { AssetCacheArgs, AudioInstance, AudioInstanceArgs, AudioInstanceObj
 
 import { AudibleAssetMixin, AudibleInstanceMixin, AudioAssetMixin, AudioInstanceMixin, } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientAudioPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, TypeAudio, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
-import { ClientAudibleAssetMixin } from '../Audible/ClientAudibleAssetMixin.js'
+import { SourceRaw, AUDIO, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
 import { ClientAudibleInstanceMixin } from '../Audible'
+import { ClientAudibleAssetMixin } from '../Audible/ClientAudibleAssetMixin.js'
 import { ClientRawAssetClass } from './ClientRawAssetClass.js'
 
 const WithAsset = AudibleAssetMixin(ClientRawAssetClass)
@@ -25,13 +25,10 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
     const { loadedAudio } = this
     if (loadedAudio) return Promise.resolve()
 
-    const transcoding = this.preferredTranscoding(TypeAudio) 
+    const transcoding = this.preferredTranscoding(AUDIO) 
     if (!transcoding) return Promise.resolve()
 
     const { request } = transcoding
-    const { response } = request
-    if (response) return Promise.resolve()
-    
     const event = new EventClientAudioPromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
@@ -64,7 +61,7 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
   static handleAsset(event: EventAsset): void {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, TypeAudio, SourceRaw)) {
+    if (isAssetObject(assetObject, AUDIO, SourceRaw)) {
       detail.asset = new ClientRawAudioAssetClass(assetObject)
       event.stopImmediatePropagation()
     }  
@@ -72,7 +69,9 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
 }
 
 // listen for audio/raw asset event
-MovieMasher.eventDispatcher.addDispatchListener(EventAsset.Type, ClientRawAudioAssetClass.handleAsset)
+export const ClientRawAudioListeners = () => ({
+  [EventAsset.Type]: ClientRawAudioAssetClass.handleAsset
+})
 
 const WithInstance = AudibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientAudibleInstanceMixin(WithInstance)

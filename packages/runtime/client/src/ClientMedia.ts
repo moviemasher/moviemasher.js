@@ -20,7 +20,7 @@ export type ClientMediaType = AudioType | ImageType | VideoType | FontType
 export type ClientVideo = HTMLVideoElement 
 export type ClientVideoDataOrError = DataOrError<ClientVideo>
 
-export interface MediaRequest extends EndpointRequest {
+export interface ClientMediaRequest extends EndpointRequest {
   response?: ClientMedia
   objectUrl?: string
   file?: File

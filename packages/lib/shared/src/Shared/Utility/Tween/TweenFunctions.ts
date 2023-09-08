@@ -137,7 +137,7 @@ export const tweenMinMax = (value: number, min: number, max: number): number => 
   return Math.min(max, Math.max(min, value))
 }
 
-const lockScaleSize = (scaleSize: Size, lock: Lock, shortest: PropertySize): Size => {
+export const lockScaleSize = (scaleSize: Size, lock: Lock, shortest: PropertySize): Size => {
   if (lock === LockNone) return scaleSize
 
   const copy = sizeCopy(scaleSize)
@@ -171,25 +171,6 @@ const lockScaleSize = (scaleSize: Size, lock: Lock, shortest: PropertySize): Siz
 
 
 
-
-const tweenCoverSize = (intrinsicSize: Size, containerSize: Size, scale: Size): Size => {
-  // const [size, sizeEnd] = sizes
-  // const [scale, scaleEnd] = scales
-  const unscaledSize = sizeCover(intrinsicSize, containerSize)
-  const { width, height } = scale
-  const scaledSize = sizeScale(unscaledSize, width, height)
-  return sizeCeil(scaledSize)
-
-  // const coverSizes: Sizes = [coverSize]
-  // if (sizeEnd && scaleEnd) {
-  //   const unscaledSizeEnd = sizeCover(inSize, sizeEnd)
-  //   const { width: widthEnd, height: heightEnd } = scaleEnd
-  //   const scaledSizeEnd = sizeScale(unscaledSizeEnd, widthEnd, heightEnd)
-  //   const coverSizeEnd = sizeCeil(scaledSizeEnd)
-  //   coverSizes.push(coverSizeEnd)
-  // }
-  // return coverSizes
-}
 // const tweenCoverPoints = (scaledSizes: Sizes, outSizes: Sizes, scales: Points): Points => {
 //   const [coverSize, coverSizeEnd] = scaledSizes
 //   const [rect, rectEnd] = outSizes
@@ -212,36 +193,27 @@ const tweenCoverSize = (intrinsicSize: Size, containerSize: Size, scale: Size): 
 //   return points
 // }
 
-const tweenCoverPoint = (coverSize: Size, rect: Size, scale: Point): Point => {
-  const { x, y } = scale
-  const point: Point = {
-    x: x * (coverSize.width - rect.width),
-    y: y * (coverSize.height - rect.height),
-  }
-  return point
-  
-}
 
-export const tweenRectsContent = (tweenRects: Rects, intrinsicRect: Rect, containerRects: Rects, lock: Lock, shortest: PropertySize) => {
-  return tweenRects.map((tweenRect, index) => {
-    const tweenPoint = pointCopy(tweenRect)
-    const tweenSize = lockScaleSize(tweenRect, lock, shortest)
-    const containerRect = containerRects[index]
-    const size = tweenCoverSize(intrinsicRect, containerRect, tweenSize)
-    const point = tweenCoverPoint(size, containerRect, tweenPoint)
-    return rectFromSize(size, point)
-  })
+// export const tweenRectsContent = (tweenRects: Rects, intrinsicRect: Rect, containerRects: Rects, lock: Lock, shortest: PropertySize) => {
+//   return tweenRects.map((tweenRect, index) => {
+//     const tweenPoint = pointCopy(tweenRect)
+//     const tweenSize = lockScaleSize(tweenRect, lock, shortest)
+//     const containerRect = containerRects[index]
+//     const size = tweenCoverSize(intrinsicRect, containerRect, tweenSize)
+//     const point = tweenCoverPoint(size, containerRect, tweenPoint)
+//     return rectFromSize(size, point)
+//   })
   
-  // const locked = tweenRectsLock(tweenRects, lock, shortest) 
-  // const coverSizes = tweenCoverSizes(intrinsicRect, rects, locked)
-  // const [size, sizeEnd] = coverSizes 
-  // const coverPoints = tweenCoverPoints(coverSizes, rects, locked)
-  // const [point, pointEnd] = coverPoints
-  // const rect = rectFromSize(size, point)
-  // const rectEnd = rectFromSize(sizeEnd, pointEnd)
-  // return [rect, rectEnd]
+//   // const locked = tweenRectsLock(tweenRects, lock, shortest) 
+//   // const coverSizes = tweenCoverSizes(intrinsicRect, rects, locked)
+//   // const [size, sizeEnd] = coverSizes 
+//   // const coverPoints = tweenCoverPoints(coverSizes, rects, locked)
+//   // const [point, pointEnd] = coverPoints
+//   // const rect = rectFromSize(size, point)
+//   // const rectEnd = rectFromSize(sizeEnd, pointEnd)
+//   // return [rect, rectEnd]
   
-}
+// }
 
 const tweenScaleSizeRatioLock = (scale: Size, previewSize: Size, inRatio: number, lock: Lock, flipped: boolean): Size => {
   if (lock === LockNone) return scale

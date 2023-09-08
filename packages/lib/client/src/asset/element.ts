@@ -1,19 +1,17 @@
+import type { ClientAsset, EventAssetElementDetail, Timeout, } from '@moviemasher/runtime-client'
+import type { Size } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup, PropertyValues } from 'lit-element/lit-element.js'
-import type { ClientAsset, EventAssetObjectNodeDetail, Timeout, } from '@moviemasher/runtime-client'
-import type { Size } from '@moviemasher/runtime-shared'
-import type { Content, Contents, OptionalContent } from '../declarations.js'
+import type { Contents, OptionalContent } from '../declarations.js'
 import type { DragDefinitionObject } from '../utility/draganddrop.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-
-import { ClassSelected, DragSuffix, EventAssetId, EventAssetObjectNode, EventChangeAssetId, EventChangedAssetId, EventManagedAsset, EventManagedAssetIcon, MovieMasher } from '@moviemasher/runtime-client'
 import { assertDefined, assertSizeAboveZero } from '@moviemasher/lib-shared'
-
+import { ClassSelected, DragSuffix, EventAssetElement, EventAssetId, EventChangeAssetId, EventChangedAssetId, EventManagedAsset, EventManagedAssetIcon, MovieMasher } from '@moviemasher/runtime-client'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 
-export const SelectorAssetName = 'movie-masher-selector-asset'
+export const SelectorAssetName = 'movie-masher-browser-asset'
 
 export class SelectorAssetElement extends Component {
   constructor() {
@@ -38,24 +36,18 @@ export class SelectorAssetElement extends Component {
 
   assetId?: string
 
-  protected override content(contents: Contents): Content {
-    // console.log(this.tagName, this.assetId, 'content WTF', contents)
-    return html`<div>${contents}</div>`
-  }
-
+  // protected override content(contents: Contents): Content {
+  //   // console.log(this.tagName, this.assetId, 'content WTF', contents)
+  //   return html`<div>${contents}</div>`
+  // }
+  cover?: boolean
+  
   override get defaultContent(): OptionalContent { 
-    const { asset } = this
-    if (!asset) return 
-
-    // console.log(this.tagName, this.assetId, 'defaultContent', asset)
-
-    const { icon, labels, icons } = this
-    const htmls: Contents = []
-    const { label } = asset
-//  
-    const { size } = this
+    const { asset, icon, labels, icons, size } = this
+    const { label } = asset || this
     assertSizeAboveZero(size)
 
+    const htmls: Contents = []
     if (labels) {
       htmls.push(html`<label style='width:${size.width}px;'>${label}</label>`)
     }
@@ -88,13 +80,13 @@ export class SelectorAssetElement extends Component {
   }
 
   private get iconPromiseInitialize(): Promise<void> {
-    const { size } = this
+    const { size, cover } = this
     assertSizeAboveZero(size)
     
     const { assetId } = this
     if (!assetId) return Promise.resolve()
 
-    const event = new EventManagedAssetIcon(assetId, size)
+    const event = new EventManagedAssetIcon(assetId, size, cover)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail 
     if (!promise) return Promise.resolve()
@@ -107,6 +99,8 @@ export class SelectorAssetElement extends Component {
 
   icons?: boolean
 
+  label?: string 
+
   labels?: boolean
 
   override onpointerdown = (event: Event) => {
@@ -114,33 +108,30 @@ export class SelectorAssetElement extends Component {
     const { assetId } = this
     assertDefined(assetId)
 
-    // console.log(this.tagName, 'onpointerdown', assetId)
     MovieMasher.eventDispatcher.dispatch(new EventChangeAssetId(assetId))
   }
 
   override ondragstart = (event: DragEvent) => {
     this.onpointerdown(event)
 
+    const { dataTransfer, clientX } = event
+    if (!dataTransfer) return 
+
+
     const { asset } = this
     if (!asset) return
 
-    const { type } = asset
     const rect = this.getBoundingClientRect()
     const { left } = rect
-    const { clientX } = event
-    // const mediaObject = media.toJSON()
-    const data: DragDefinitionObject = { 
-      offset: clientX - left, assetId: asset.id
-    }
-    const json = JSON.stringify(data)
-    // console.log('DefinitionItem.onDragStart', json)
-    const { dataTransfer } = event
-    if (!dataTransfer) return 
     
+    const { id, type } = asset
+    const data: DragDefinitionObject = {  offset: clientX - left, assetId: id }
+    
+    const json = JSON.stringify(data)
     dataTransfer.effectAllowed = 'copy'
-    dataTransfer.setData(type + DragSuffix, json)
+    dataTransfer.setData(`${type}${DragSuffix}`, json)
+        // MovieMasher.eventDispatcher.dispatch(new EventChangeDragging(true))
 
-    // MovieMasher.eventDispatcher.dispatch(new EventChangeDragging(true))
   }
 
   private _selected = false
@@ -171,46 +162,52 @@ export class SelectorAssetElement extends Component {
     }
   }
 
-  static handleNode(event: EventAssetObjectNode) {
+  static handleAssetElement(event: EventAssetElement) {
     const { detail } = event
     detail.element = SelectorAssetElement.instance(detail)
     event.stopImmediatePropagation()
   }
 
-  static instance(detail: EventAssetObjectNodeDetail) {
-    const { assetId, size, labels, icons } = detail
+  static instance(detail: EventAssetElementDetail) {
+    const { assetId, size, cover, label, labels, icons } = detail
     const element = document.createElement(SelectorAssetName)
     element.size = size
+    element.label = label
     element.labels = labels
     element.icons = icons
     element.assetId = assetId
+    element.cover = cover
     element.draggable = true 
     return element
   }
   
   static override properties: PropertyDeclarations = {
-    assetId: { type: String, attribute: 'asset-id', reflect: false },
+    assetId: { type: String, attribute: 'asset-id' },
+    label: { type: String, attribute: true },  
     size: { type: Object, attribute: false },
-    labels: { type: Boolean, attribute: false }, 
-    icons: { type: Boolean, attribute: false }, 
+    // asset: { type: Object, attribute: false },
+    // labels: { type: Boolean, attribute: false }, 
+    // icons: { type: Boolean, attribute: false }, 
+    
   }
 
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     css`
       :host {
+        cursor: grab;
         display: inline-block;
-      }
-
-      :host > div {
-        display: inline-block;
+   
         border: var(--border);
         border-radius: var(--border-radius);
         border-color: var(--item-fore);
         color: var(--item-fore);
         background-color: var(--item-back);
       }
-      :host div > label {
+      :host > div {
+        display: inline-block;
+      }
+      :host > label {
         font-size: initial;
         --padding: 2px;
         display: block;
@@ -219,14 +216,14 @@ export class SelectorAssetElement extends Component {
         white-space: nowrap;
         padding: var(--padding);
       }
-      :host > div:hover,
-      :host(div.selected) {
+      :host(:hover),
+      :host(.selected) {
         border-color: var(--item-fore-selected);
         color: var(--item-fore-selected);
         background-color: var(--item-back-selected);
       }
 
-      :host > div.selected:hover {
+      :host(.selected:hover ){
         border-color: var(--item-back-hover);
         color: var(--item-back-hover);
         background-color: var(--item-fore-hover);
@@ -245,4 +242,4 @@ declare global {
 }
 
 // listen for asset object node event
-MovieMasher.eventDispatcher.addDispatchListener(EventAssetObjectNode.Type, SelectorAssetElement.handleNode)
+MovieMasher.eventDispatcher.addDispatchListener(EventAssetElement.Type, SelectorAssetElement.handleAssetElement)

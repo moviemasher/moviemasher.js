@@ -4,7 +4,7 @@ import { Time, TimeRange } from '@moviemasher/runtime-shared'
 import { TimeClass, timeEqualizeRates } from './TimeClass.js'
 import { TimeRangeClass } from './TimeRangeClass.js'
 import { errorThrow } from '@moviemasher/runtime-shared'
-import { ErrorName } from '@moviemasher/runtime-shared'
+import { ERROR } from '@moviemasher/runtime-shared'
 
 export const timeRangeFromArgs = (frame = 0, fps = 1, frames = 1) : TimeRange => {
   return new TimeRangeClass(frame, fps, frames)
@@ -22,7 +22,7 @@ export const timeRangeFromTimes = (startTime: Time, endTime?: Time): TimeRange =
   if (!endTime) return timeRangeFromTime(startTime)
 
   const [time1, time2] = <TimeRange[]> timeEqualizeRates(startTime, endTime)
-  if (time2.frame <= time1.frame) return errorThrow(ErrorName.Frame)
+  if (time2.frame <= time1.frame) return errorThrow(ERROR.Frame)
   
   const frames = time2.frame - time1.frame
   return timeRangeFromArgs(time1.frame, time1.fps, frames)

@@ -1,17 +1,16 @@
-import type { ClientImageDataOrError, MediaRequest } from '@moviemasher/runtime-client'
-
+import type { ClientImageDataOrError, ClientMediaRequest } from '@moviemasher/runtime-client'
 
 import { EventClientImagePromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, errorCaught, errorPromise } from '@moviemasher/runtime-shared'
-import { requestUrl } from '../Client/request/request.js'
+import { ERROR, errorCaught, errorPromise } from '@moviemasher/runtime-shared'
+import { requestUrl } from '@moviemasher/lib-shared'
 import { isClientImage } from '../Client/ClientGuards.js'
 
-export const requestImagePromise = (request: MediaRequest): Promise<ClientImageDataOrError> => {
+export const requestImagePromise = (request: ClientMediaRequest): Promise<ClientImageDataOrError> => {
   const { response } = request
   if (isClientImage(response)) return Promise.resolve({ data: response })
 
-  const url = requestUrl(request)
-  if (!url) return errorPromise(ErrorName.Url)
+  const url = request.objectUrl || requestUrl(request)
+  if (!url) return errorPromise(ERROR.Url)
 
   const loadPromise = urlPromise(url, request).then(url => {
     return new Promise<ClientImageDataOrError>(resolve => {
@@ -30,7 +29,7 @@ export const requestImagePromise = (request: MediaRequest): Promise<ClientImageD
   return loadPromise
 }
 
-const urlPromise = (url: string, request: MediaRequest) => {
+const urlPromise = (url: string, request: ClientMediaRequest) => {
   const { init } = request 
   if (!init) return Promise.resolve(url) 
 

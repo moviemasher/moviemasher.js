@@ -2,11 +2,12 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
+import type { OutputOptions,  MashAssetObject } from '@moviemasher/runtime-shared'
 
-import { OutputOptions, VideoOutputOptions, assertPopulatedArray, outputOptions, sizeScale } from "@moviemasher/lib-shared"
+import { VideoOutputOptions, assertPopulatedArray, outputOptions, sizeScale } from "@moviemasher/lib-shared"
 
 import { renderingTestIdPromise, renderingMashTestPromise } from './Rendering'
-import { SIZE_OUTPUT, MashAssetObject, TypeVideo } from '@moviemasher/runtime-shared'
+import { SIZE_OUTPUT, VIDEO } from '@moviemasher/runtime-shared'
 import { GenerateMashTest } from './Generate'
 
 const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
@@ -20,7 +21,7 @@ describe("RenderingProcess", () => {
   ]
   const testIdPromise = async (id) => {
     const options: VideoOutputOptions = { ...SizePreview }//, mute: true
-    const videoOutput = outputOptions(TypeVideo, options) 
+    const videoOutput = outputOptions(VIDEO, options) 
     const results = await renderingTestIdPromise(id, videoOutput, true, 5)
     // const [result] = results
     // assert(result, 'result')

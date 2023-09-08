@@ -1,15 +1,13 @@
 import type { ChangeActionObject, ChangePropertiesActionObject, ChangePropertyActionObject } from '@moviemasher/runtime-client'
 import type { Propertied, Properties, Property, PropertyId, PropertyIds, Scalar, ScalarRecord, ScalarsById, Strings, TargetId, TargetIds, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { isPropertyId } from '@moviemasher/runtime-client'
-import { DotChar, isDefined } from '@moviemasher/runtime-shared'
-
+import { isDefined } from '@moviemasher/runtime-shared'
 import { ActionTypeChange, ActionTypeChangeMultiple } from '../Setup/ActionTypeConstants.js'
-import { assertPopulatedString, assertTrue } from '../Shared/SharedGuards.js'
+import { assertPopulatedString, assertTrue, isPropertyId } from '../Shared/SharedGuards.js'
 import { arrayUnique } from '../Utility/ArrayFunctions.js'
 import { sortByOrder } from '../Utility/SortFunctions.js'
 import { propertyTypeCoerce, propertyTypeValid } from './PropertyTypeFunctions.js'
-
+import { DOT } from '../Setup/Constants.js'
 
 export class PropertiedClass implements Propertied {
   constructor(..._: any[]) {}
@@ -63,9 +61,9 @@ export class PropertiedClass implements Propertied {
   propertyIds(targetIds?: TargetIds): PropertyIds {
     const targets = targetIds?.length ? targetIds : this.propertyTargetIds
     const propertyIds = targets.flatMap(id => 
-      this.propertyNamesOfTarget(id).map(name => [id, name].join(DotChar))
+      this.propertyNamesOfTarget(id).map(name => [id, name].join(DOT))
     )
-    console.debug(this.constructor.name, 'propertyIds', targetIds, propertyIds)
+    // console.debug(this.constructor.name, 'propertyIds', targetIds, propertyIds)
     return propertyIds.filter(isPropertyId)
   }
 
@@ -75,14 +73,7 @@ export class PropertiedClass implements Propertied {
 
   protected selectorTypesPropertyNames(selectorTypes: Strings, targetId: TargetId): Strings {
     const { length } = selectorTypes
-    // const propertyTargetIds = this.propertyTargetIds as Strings
     const populated = length ? selectorTypes : this.propertyNamesOfTarget(targetId)
-    // const propertyNames = populated.flatMap(selectorType => {
-    //   if (!propertyTargetIds.includes(selectorType)) return [selectorType]
-    //   if (!isTargetId(selectorType)) return []
-
-    //   return this.propertiesOfTarget(selectorType).map(property => property.name)
-    // })
     return arrayUnique(populated)
   }
 
@@ -100,7 +91,7 @@ export class PropertiedClass implements Propertied {
   }
 
   protected scalar(propertyId: PropertyId): Scalar | undefined {
-    const propertyName = propertyId.split(DotChar).pop()
+    const propertyName = propertyId.split(DOT).pop()
     if (!propertyName) return
 
     return this.value(propertyName)
@@ -117,7 +108,7 @@ export class PropertiedClass implements Propertied {
   }
   
   setValue(id: string, value?: Scalar, property?: Property): void {
-    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    const name = isPropertyId(id) ? id.split(DOT).pop() : id
     assertPopulatedString(name, 'name')
 
     const found = property || this.propertyFind(name)
@@ -143,7 +134,7 @@ export class PropertiedClass implements Propertied {
   toJSON(): UnknownRecord { return this.scalarRecord }
 
   value(id: string): Scalar | undefined { 
-    const name = isPropertyId(id) ? id.split(DotChar).pop() : id
+    const name = isPropertyId(id) ? id.split(DOT).pop() : id
     if (!name) return
 
     return this[name] as Scalar | undefined

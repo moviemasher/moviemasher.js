@@ -1,32 +1,35 @@
-import type { AssetObjectsEvent } from '../../declarations.js'
 import type { AssetObject } from '@moviemasher/runtime-shared'
 
-import { ErrorName, error, isArray, isAssetObject, isAssetType, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
-import { MovieMasher, EventTypeAssetObjects } from '@moviemasher/runtime-client'
+import { ERROR, error, isArray, isAssetObject, isAssetType, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { MovieMasher, EventAssetObjects } from '@moviemasher/runtime-client'
 import { requestJsonRecordsPromise, requestPopulate } from '../../utility/request.js'
 
-MovieMasher.eventDispatcher.addDispatchListener(EventTypeAssetObjects, (event: AssetObjectsEvent) => {
-  const { assetObjectsOptions = { request: {} } } = MovieMasher.options
-  const { request = {}} = assetObjectsOptions
-  request.endpoint ||= (new URL('../../../json/asset-objects.json', import.meta.url)).href
-  const populated = requestPopulate(request)
+export class AssetObjectsHandler {
+  static handle(event: EventAssetObjects) {
+    event.stopImmediatePropagation()
+    const { detail } = event
+    const { assetObjectsOptions } = MovieMasher.options
+    if (!assetObjectsOptions?.request) {
+      detail.promise = Promise.resolve({ data: [] }) 
+      return
+    } 
+    const request = requestPopulate(assetObjectsOptions.request)
+    detail.promise = requestJsonRecordsPromise(request).then(orError => {
+      console.log(EventAssetObjects.Type, orError)
+      if (isDefiniteError(orError)) return orError 
 
-  const { detail } = event
-  detail.promise = requestJsonRecordsPromise(populated).then(orError => {
-    if (isDefiniteError(orError)) return orError 
+      const { data: json } = orError
+      const data = json.filter(object => {
+        const { type, source } = object
+        if (!(isAssetType(type) && isPopulatedString(source))) return false
+        
+        return isAssetObject(object, type, source)
+      })
+      if (!isArray<AssetObject>(data)) return error(ERROR.Url) 
 
-    const { data: json } = orError
-    const assetObjects = json.filter(object => {
-      const { type, source } = object
-      if (!(isAssetType(type) && isPopulatedString(source))) return false
-      
-      return isAssetObject(object, type, source)
+      return { data }
     })
-    if (!isArray<AssetObject>(assetObjects)) return error(ErrorName.Url) 
+  }
+}
 
-    return { data: assetObjects }
-  })
-  event.stopImmediatePropagation()
-})
-
-export {}
+MovieMasher.eventDispatcher.addDispatchListener(EventAssetObjects.Type, AssetObjectsHandler.handle)

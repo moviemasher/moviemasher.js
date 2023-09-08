@@ -1,4 +1,4 @@
-import type { StringTuple, } from '@moviemasher/runtime-shared'
+import type { StringTuple } from '@moviemasher/runtime-shared'
 
 import { NewlineChar, SemicolonChar } from '@moviemasher/lib-shared'
 import { isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
@@ -13,7 +13,6 @@ const commandErrorRegex = [
   'Invalid too big or non positive size',
 ]
 
-
 export const commandExpandComplex = (trimmed: string): string => {
   if (!trimmed.includes(SemicolonChar)) return trimmed
   
@@ -25,6 +24,7 @@ export const commandExpandComplex = (trimmed: string): string => {
   })
   return broken.join(`${SemicolonChar}${NewlineChar}`)
 }
+
 export const commandQuoteComplex = (trimmed: string): string => {
   if (!trimmed.includes(SemicolonChar)) return trimmed
   

@@ -29,3 +29,5 @@ export const isNumeric = (value: any): boolean => (
 export function isArray<T = unknown>(value: any): value is T[] {
   return Array.isArray(value)
 }
+
+export const isFunction = (value: any): value is Function => typeof value === 'function'

@@ -36,7 +36,7 @@ export class ControlInputElement extends WithControlProperty {
   protected override get defaultContent(): OptionalContent {
     const { selectedId } = this
     if (!isPopulatedString(selectedId)) {
-      console.warn(this.tagName, 'defaultContent', 'no selectedId')
+      // console.warn(this.tagName, 'defaultContent', 'no selectedId')
       return
     }
     return this.control

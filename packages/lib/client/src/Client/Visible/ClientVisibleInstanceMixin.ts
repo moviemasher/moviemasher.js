@@ -2,7 +2,7 @@ import type { ClientInstance, ClientVisibleAsset, ClientVisibleInstance, Panel, 
 import type { Constrained, ContainerInstance, IntrinsicOptions, PropertySize, Rect, Size, Time, TimeRange, VisibleInstance } from '@moviemasher/runtime-shared'
 
 import { NamespaceSvg, assertNumber, assertSizeAboveZero, colorWhite, idGenerateString, isBelowOne, sizeAboveZero } from '@moviemasher/lib-shared'
-import { ErrorName, POINT_ZERO, errorThrow } from '@moviemasher/runtime-shared'
+import { ERROR, POINT_ZERO, errorThrow } from '@moviemasher/runtime-shared'
 import { assertClientVisibleInstance } from '../ClientGuards.js'
 import { PanelPlayer } from "../PanelConstants.js"
 import { svgAddClass, svgAppend, svgClipPathElement, svgDefsElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgSvgElement } from '../SvgFunctions.js'
@@ -169,7 +169,7 @@ export function ClientVisibleInstanceMixin<T extends Constrained<ClientInstance 
     }
 
     svgItemForTimelinePromise(_rect: Rect, _time: Time): Promise<SvgItem> {
-      return errorThrow(ErrorName.Unimplemented)
+      return errorThrow(ERROR.Unimplemented)
     }
   }
 }

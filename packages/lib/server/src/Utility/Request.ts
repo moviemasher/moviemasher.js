@@ -1,6 +1,8 @@
 import type { EndpointRequest, StringRecord, Value } from '@moviemasher/runtime-shared'
 
-import { assertEndpoint, endpointAbsolute, } from '@moviemasher/lib-shared'
+import { ProtocolHttp, assertEndpoint, endpointAbsolute, } from '@moviemasher/lib-shared'
+import path from 'path'
+import { EnvironmentKeyApiDirFilePrefix, RuntimeEnvironment } from '../Environment/Environment.js'
 import { hashMd5 } from './Hash.js'
 
 export interface RequestArgs {
@@ -15,10 +17,11 @@ export interface RequestArgs {
 
 export const requestArgs = (request: EndpointRequest): RequestArgs => {
   const { endpoint, init = {} } = request
+
   assertEndpoint(endpoint)
   
   const absolute = endpointAbsolute(endpoint)
-  const { protocol, hostname, port, pathname, search } = absolute
+  const { protocol = ProtocolHttp, hostname, port, pathname, search } = absolute
   const pathComponents: string[] = []
   if (pathname) pathComponents.push(pathname)
   if (search) pathComponents.push(search)
@@ -28,10 +31,19 @@ export const requestArgs = (request: EndpointRequest): RequestArgs => {
   const entries = Object.entries(initHeaders)
   const lowerCased = entries.map(([key, value]) => ([key.toLowerCase(), value]))
   const headers = Object.fromEntries(lowerCased)
-  const args: RequestArgs = { method, protocol, hostname, port, path, headers }
+  const args: RequestArgs = { protocol, hostname }
+  if (path) args.path = path
+
+  if (method) args.method = method
+  if (port) args.port = port
+  if (entries.length) args.headers = headers
   return args
 }
 
-export const requestArgsHash = (args: RequestArgs): string => (
+export const requestArgsHash = (args: any): string => (
   hashMd5(JSON.stringify(args))
+)
+
+export const pathResolvedToPrefix = (url: string, prefix?: string): string => (
+  path.resolve(prefix || RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix), url)
 )

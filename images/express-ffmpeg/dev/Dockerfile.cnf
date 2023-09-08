@@ -1,41 +1,17 @@
+
+FROM moviemasher/node-ffmpeg:5.1.2
 ARG DIR_ROOT=/app
 
-FROM amazonlinux:2022 AS code
-ARG DIR_ROOT
-
 COPY package.json ${DIR_ROOT}/package.json
-COPY dev ${DIR_ROOT}/dev
 
-COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
-COPY packages/lib/shared/dist ${DIR_ROOT}/packages/lib/shared/dist
+COPY packages/lib/client/package.json ${DIR_ROOT}/packages/lib/client/package.json
+COPY packages/lib/client/dist ${DIR_ROOT}/packages/lib/client/dist
 
-COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
-COPY packages/lib/server/dist ${DIR_ROOT}/packages/lib/server/dist
-
-COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
-COPY packages/runtime/shared/dist ${DIR_ROOT}/packages/runtime/shared/dist
-
-COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
-COPY packages/runtime/server/dist ${DIR_ROOT}/packages/runtime/server/dist
-
+COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
+COPY packages/runtime/client/index.js ${DIR_ROOT}/packages/runtime/client/index.js
 
 COPY images/express-ffmpeg/package.json ${DIR_ROOT}/images/express-ffmpeg/package.json
 
-FROM amazonlinux:2022 
-ARG DIR_ROOT
-ARG OS_INSTALL=''
-ARG OS_EXECUTE='npm install -g npm'
-ARG INSTALL_NODE='18.12.1'
-ARG NPM_INSTALL='--workspace=@moviemasher/express-ffmpeg'
-
-WORKDIR ${DIR_ROOT}
-COPY --from=code ${DIR_ROOT} ${DIR_ROOT}
-COPY dev/image/sh ${DIR_ROOT}/dev/image/sh
-RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-aws2022.sh \
-  -n "${NPM_INSTALL}" \
-  -e "${OS_EXECUTE}" \
-  -o "${OS_INSTALL}" \
-  -r "${DIR_ROOT}" \ 
-  -i "${INSTALL_NODE}"
+RUN npm install 
 
 LABEL org.opencontainers.image.authors="support@moviemasher.com"

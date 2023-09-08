@@ -1,18 +1,18 @@
-import type { ClientVideoDataOrError, MediaRequest } from '@moviemasher/runtime-client'
+import type { ClientVideoDataOrError, ClientMediaRequest } from '@moviemasher/runtime-client'
 
 import { EventClientVideoPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, error, errorCaught, errorPromise } from '@moviemasher/runtime-shared'
-import { requestUrl } from '../Client/request/request.js'
+import { ERROR, error, errorCaught, errorPromise } from '@moviemasher/runtime-shared'
+import { requestUrl } from '@moviemasher/lib-shared'
 import { isClientVideo } from '../Client/ClientGuards.js'
 
 
-export const requestVideoPromise = (request: MediaRequest): Promise<ClientVideoDataOrError> => {
+export const requestVideoPromise = (request: ClientMediaRequest): Promise<ClientVideoDataOrError> => {
   const { response } = request
   if (isClientVideo(response)) return Promise.resolve({ data: response })
 
-  const url = requestUrl(request)
+  const url = request.objectUrl || requestUrl(request)
   // console.debug('requestVideoPromise', url, request)
-  if (!url) return errorPromise(ErrorName.Url) 
+  if (!url) return errorPromise(ERROR.Url) 
 
   return new Promise<ClientVideoDataOrError>(resolve => {
     const video = globalThis.document.createElement('video')
@@ -24,9 +24,9 @@ export const requestVideoPromise = (request: MediaRequest): Promise<ClientVideoD
       const width = videoWidth || clientWidth
       const height = videoHeight || clientHeight
       if (!(width && height)) {
-        resolve(error(ErrorName.ImportSize))
+        resolve(error(ERROR.ImportSize))
       } else if (!duration) {
-        resolve(error(ErrorName.ImportDuration))
+        resolve(error(ERROR.ImportDuration))
       } else {
         video.width = width
         video.height = height

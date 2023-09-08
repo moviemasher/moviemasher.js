@@ -1,4 +1,4 @@
-export const ErrorName = {
+export const ERROR = {
   ClientDisabledDelete: 'client.disabled.delete',
   ClientDisabledGet: 'client.disabled.get',
   ClientDisabledList: 'client.disabled.list',
@@ -13,7 +13,7 @@ export const ErrorName = {
   ImportSize: 'import.size',
   ImportType: 'import.type',
   Internal: 'error.internal',
-  MediaId: 'media.id',
+  AssetId: 'asset.id',
   OutputDimensions: 'output.dimensions',
   OutputDuration: 'output.duration',
   Range: 'error.range',
@@ -27,18 +27,17 @@ export const ErrorName = {
   Url: 'error.url',
 
 } as const
-export type ErrorName = typeof ErrorName[keyof typeof ErrorName]
-export type ErrorNames = ErrorName[]
-export const ErrorNames: ErrorNames = Object.values(ErrorName)
 
-export const StandardErrorName = {
-  Error: ErrorName.Unknown,
-  EvalError: ErrorName.Evaluation,
-  InternalError: ErrorName.Internal,
-  RangeError: ErrorName.Range,
-  ReferenceError: ErrorName.Reference,
-  SyntaxError: ErrorName.Syntax,
-  TypeError: ErrorName.Type,
-  URIError: ErrorName.Url,
-}
-export type StandardErrorName = typeof StandardErrorName[keyof typeof StandardErrorName]
+export const ERROR_NAMES = Object.values(ERROR)
+
+// export const StandardErrorName = {
+//   Error: ERROR.Unknown,
+//   EvalError: ERROR.Evaluation,
+//   InternalError: ERROR.Internal,
+//   RangeError: ERROR.Range,
+//   ReferenceError: ERROR.Reference,
+//   SyntaxError: ERROR.Syntax,
+//   TypeError: ERROR.Type,
+//   URIError: ERROR.Url,
+// }
+// export type StandardErrorName = typeof StandardErrorName[keyof typeof StandardErrorName]

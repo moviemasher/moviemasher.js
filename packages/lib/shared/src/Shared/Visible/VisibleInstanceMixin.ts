@@ -1,18 +1,10 @@
-import type { ContentRectArgs, PropertySize } from '@moviemasher/runtime-shared'
-import type {IntrinsicOptions} from '@moviemasher/runtime-shared'
-import type {Rect} from '@moviemasher/runtime-shared'
-import type {Time} from '@moviemasher/runtime-shared'
+import type { Constrained, ContentRectArgs, Instance, IntrinsicOptions, PropertySize, Rect, Time, VisibleAsset, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { assertSizeAboveZero, sizeAboveZero } from '../../Utility/SizeFunctions.js'
-import { propertyInstance } from '../../Setup/PropertyFunctions.js'
+import { End, POINT_ZERO, TypeContainer, TypeContent } from '@moviemasher/runtime-shared'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
-import { POINT_ZERO } from '@moviemasher/runtime-shared'
+import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { rectFromSize } from '../../Utility/RectFunctions.js'
-import { Constrained } from '@moviemasher/runtime-shared'
-import { VisibleAsset } from '@moviemasher/runtime-shared'
-import { Instance, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
-import { End } from '@moviemasher/runtime-shared'
-import { TypeContainer, TypeContent } from '@moviemasher/runtime-client'
+import { assertSizeAboveZero, sizeAboveZero } from '../../Utility/SizeFunctions.js'
 
 export function VisibleInstanceMixin
 <T extends Constrained<Instance>>(Base: T): 
@@ -68,7 +60,9 @@ T & Constrained<VisibleInstance> {
     }
     
     intrinsicsKnown(options: IntrinsicOptions): boolean {
-      return options.size ? sizeAboveZero(this.asset.sourceSize) : true
+      if (options.size) return sizeAboveZero(this.asset.sourceSize)
+      
+      return super.intrinsicsKnown(options)
     }
 
     itemContentRect(containerRect: Rect, shortest: PropertySize, time: Time): Rect {

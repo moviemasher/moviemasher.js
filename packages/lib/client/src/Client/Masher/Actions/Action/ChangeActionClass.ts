@@ -2,7 +2,7 @@ import type { ChangeAction, ChangeActionObject } from '@moviemasher/runtime-clie
 import type { Propertied } from '@moviemasher/runtime-shared'
 
 import { EventChangeAssetId, EventChangeClipId, EventChangedScalars, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, errorThrow, isAsset } from '@moviemasher/runtime-shared'
+import { ERROR, errorThrow, isAsset } from '@moviemasher/runtime-shared'
 import { isClientInstance } from '../../../ClientGuards.js'
 import { isClientClip } from '../../../Mash/ClientMashGuards.js'
 import { ActionClass } from './ActionClass.js'
@@ -17,7 +17,7 @@ export class ChangeActionClass extends ActionClass implements ChangeAction {
   target: Propertied
   
   updateAction(_object: ChangeActionObject): void {
-    return errorThrow(ErrorName.Unimplemented)
+    return errorThrow(ERROR.Unimplemented)
   }
 
   override updateSelection(): void {

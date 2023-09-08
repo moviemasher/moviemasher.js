@@ -35,7 +35,7 @@ export interface Masher {
   // rect: Rect
   // redo(): void
   redraw(): void
-  saved(temporaryIdLookup?: StringRecord): void
+  // saved(temporaryIdLookup?: StringRecord): void
   time: Time
   timeRange: TimeRange
   // undo(): void

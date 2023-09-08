@@ -21,12 +21,8 @@
     "build-image-test-client": "npm run build-image --image=test-client",
     "build-image-test-shared": "npm run build-image --image=test-shared",
     "build-image-test-server": "npm run build-image --image=test-server",
-
-    "build-image-tests": "run-s build-image-test-shared build-image-test-client build-image-test-server",
-
-    "build-builder-plugin": "npm run build-builder --builder=plugin",
-    "build-builder-test": "npm run build-builder --builder=test",
-    "build-builder": "npm run docker-build --dir=packages/build/${npm_config_builder:=core}",
+    "build-image-node-ffmpeg": "npm run build-image --image=node-ffmpeg",
+    "build-image-tests": "run-s build-image-test-shared build-image-test-client build-image-node-ffmpeg build-image-test-server",
     "build-builders": "run-s build-image-packages build-image-docs",
     "build-client": "npm run docker-run-with --with=client",
     "build-packages": "npm run docker-run-with --with=packages",
@@ -47,15 +43,17 @@
     "docker-run": "npm run docker-do --do='run -it --rm' --dir=${npm_config_dir}",
     "docker-up": "docker compose --env-file dev/local.env --file ${npm_config_dir:=packages}/${npm_config_space:=docs}/dev/docker-compose.yml up -d ${npm_config_service:=service}",
     "frameworks": "npm run cli frameworks",
-    "logs": "npm run docker-logs --dir=${npm_config_dir:=packages/example} --space=${npm_config_space:=standalone}",
+    "logs": "npm run docker-logs --dir=${npm_config_dir:=examples} --space=${npm_config_space:=express}",
     "publish": "npm publish --access public --workspace @moviemasher/${npm_config_space}",
     "start-docs": "npm run start --dir=${npm_config_dir:=dev} --space=${npm_config_space:=docs}",
     "start-client": "npm run start --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
-    "start-server": "npm run start --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=server}",
+    "start-static": "npm run start --dir=${npm_config_dir:=examples} --space=${npm_config_space:=static}",
+    "start-server": "npm run start --dir=${npm_config_dir:=examples} --space=${npm_config_space:=express}",
     "start": "npm run docker-up --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
     "stop-docs": "npm run stop --dir=${npm_config_dir:=dev} --space=${npm_config_space:=docs}",
     "stop-client": "npm run stop --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
-    "stop-server": "npm run stop --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=server}",
+    "stop-server": "npm run stop --dir=${npm_config_dir:=examples} --space=${npm_config_space:=express}",
+    "stop-static": "npm run stop --dir=${npm_config_dir:=examples} --space=${npm_config_space:=static}",
     "stop": "npm run docker-down --dir=${npm_config_dir:=packages/lib} --space=${npm_config_space:=client}",
     "test-client": "npm run docker-run --dir=images/test-client/dev",
     "test-shared": "run-s docker-run --dir=images/test-shared/dev",
@@ -64,11 +62,12 @@
     "versions": "echo \"NodeJs: $(node -v)\" ; echo \"NPM: $(npm -v)\" ; echo \"TypeScript: $(tsc -v)\""
   },
   "devDependencies": {
-    "@types/node": "18.13.0",
-    "npm-run-all": "^4.1.5",
+    "@types/node": "20.5.1",
+    "npm-run-all": "4.1.5",
     "typescript": "5.1.3"
   },
   "workspaces": [
+    "examples/*",
     "packages/lib/*",
     "packages/runtime/*",
     "images/*"

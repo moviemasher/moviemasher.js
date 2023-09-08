@@ -3,9 +3,9 @@ import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { Contents, ControlGroup, OptionalContent } from '../../declarations.js'
 
-import { AspectFlip } from '@moviemasher/lib-shared'
+import { AspectFlip, DOT } from '@moviemasher/lib-shared'
 import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
-import { DotChar, Aspect, End, SIZE_KEYS,  } from '@moviemasher/runtime-shared'
+import { Aspect, End, SIZE_KEYS, } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
@@ -20,7 +20,7 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
   override connectedCallback(): void {
     const heightId = this.namePropertyId(`height${End}`)
     if (heightId) {
-      const [target] = heightId.split(DotChar)
+      const [target] = heightId.split(DOT)
       const key = `control-group-${target}-height`
       // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleHeight.bind(this)
@@ -28,7 +28,7 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
 
     const widthId = this.namePropertyId(`width${End}`)
     if (widthId) {
-      const [target] = widthId.split(DotChar)
+      const [target] = widthId.split(DOT)
       const key = `control-group-${target}-width`
       // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleWidth.bind(this)

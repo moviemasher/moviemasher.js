@@ -4,20 +4,19 @@ import type { CSSResultGroup, PropertyValues } from 'lit-element/lit-element.js'
 import type { Content, Contents, OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-
-import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher, TypeAsset, TypeMash } from '@moviemasher/runtime-client'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
-
 import { arraySet, assertPopulatedString, sortByOrder } from '@moviemasher/lib-shared'
+import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher } from '@moviemasher/runtime-client'
+import { TypeAsset, TypeMash } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
+import { ImporterComponent } from '../Base/ImporterComponent.js'
 
 export const InspectorTargetElementName = 'movie-masher-inspector-target'
 export class InspectorTargetElement extends ImporterComponent {
   private resetListeners(): void {
     const { targetId } = this
     assertPopulatedString(targetId)
-    console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
+    // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
 
     MovieMasher.eventDispatcher.listenersRemove(this.listeners)
     this.listeners = {}
@@ -71,9 +70,7 @@ export class InspectorTargetElement extends ImporterComponent {
         !groupedPropertyIds.includes(id))
       )
     }
-    
     const groupedControls: Node[] = []
-
     if (groupDetails.length) {
       groupDetails.sort(sortByOrder)
       groupDetails.forEach(detail => {
@@ -87,8 +84,6 @@ export class InspectorTargetElement extends ImporterComponent {
       !usedPropertyIds.includes(propertyId)
     )
     const contents: Contents = []
-    // console.debug(this.tagName, 'defaultContent', this.targetId, ...selectedPropertyIds)
-    // contents.push(html`TARGET: ${this.targetId}<br/>Properties: ${selectedPropertyIds.length}<br/>${groupedControls.length} groups and ${ungroupedPropertyIds.length} ungrouped`)
     if (ungroupedPropertyIds.length) {
       // some properties were not grouped
       this.importTags('movie-masher-control-row')
@@ -110,10 +105,12 @@ export class InspectorTargetElement extends ImporterComponent {
   }
 
   private get selectedPropertyIds(): PropertyIds {
-    const ids: PropertyIds = []
     const { targetId: id } = this
-    if (id) MovieMasher.eventDispatcher.dispatch(new EventPropertyIds([id], ids))  
-    return ids
+    if (!id) return []
+    
+    const event = new EventPropertyIds([id])
+    MovieMasher.eventDispatcher.dispatch(event)  
+    return event.detail.propertyIds
   }
 
   targetId?: TargetId 

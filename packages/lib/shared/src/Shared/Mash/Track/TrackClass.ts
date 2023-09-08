@@ -1,15 +1,15 @@
 import type { Clip, Clips, MashAsset, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/runtime-shared'
-import { isDefined } from '@moviemasher/runtime-shared'
-import { PropertiedClass } from "../../../Base/PropertiedClass.js"
+
+import { TypeMash, isDefined } from '@moviemasher/runtime-shared'
+import { PropertiedClass } from '../../../Base/PropertiedClass.js'
+import { DataTypeBoolean } from '../../../Setup/DataTypeConstants.js'
 import { Default } from '../../../Setup/Default.js'
 import { DurationNone, DurationUnknown, DurationUnlimited } from '../../../Setup/DurationConstants.js'
-import { propertyInstance } from "../../../Setup/PropertyFunctions.js"
+import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
 import { arrayLast } from '../../../Utility/ArrayFunctions.js'
 import { idGenerate } from '../../../Utility/IdFunctions.js'
 import { sortByFrame } from '../../../Utility/SortFunctions.js'
 import { isAboveZero, isPositive } from '../../SharedGuards.js'
-import { DataTypeBoolean } from '../../../Setup/DataTypeConstants.js'
-import { TypeMash } from '@moviemasher/runtime-client'
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {

@@ -2,9 +2,9 @@
 import type { ClientShapeAsset, ClientShapeInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
 import type { InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
 
-import { DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeCover, } from '@moviemasher/lib-shared'
-import { EventAsset, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceShape, TypeImage, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
+import { DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeContain } from '@moviemasher/lib-shared'
+import { EventAsset } from '@moviemasher/runtime-client'
+import { SourceShape, IMAGE, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
 import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
@@ -21,7 +21,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     this.initializeProperties(args)
   }
 
-  override definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
+  override assetIcon(size: Size): Promise<SVGSVGElement> | undefined {
     const { id, pathHeight: height, pathWidth: width, path } = this
     if (id === DefaultContainerId) {
       return Promise.resolve(svgSvgElement(size, svgPolygonElement(size, '', 'currentColor')))
@@ -29,7 +29,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const inSize = { width, height }
     if (!(sizeAboveZero(inSize) && isPopulatedString(path))) return
 
-    const coverSize = sizeCover(inSize, size, true)
+    const coverSize = sizeContain(inSize, size)
     const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
     const pathElement = svgPathElement(path)
     svgSetTransformRects(pathElement, inSize, outRect)
@@ -44,7 +44,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
   private static _defaultAsset?: ClientShapeAsset
   private static get defaultAsset(): ClientShapeAsset {
   return this._defaultAsset ||= new ClientShapeAssetClass({ 
-      id: DefaultContainerId, type: TypeImage, 
+      id: DefaultContainerId, type: IMAGE, 
       source: SourceShape, label: 'Rectangle'
     })
   }
@@ -53,17 +53,18 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const { assetObject, assetId } = detail
     
     const isDefault = assetId === DefaultContainerId
-    if (!(isDefault || isAssetObject(assetObject, TypeImage, SourceShape))) return
+    if (!(isDefault || isAssetObject(assetObject, IMAGE, SourceShape))) return
       
     event.stopImmediatePropagation()
     if (isDefault) detail.asset = ClientShapeAssetClass.defaultAsset
     else detail.asset = new ClientShapeAssetClass(assetObject as ShapeAssetObject) 
   }
 }
+
 // listen for image/shape asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ClientShapeAssetClass.handleAsset
-)
+export const ClientShapeImageListeners = () => ({
+  [EventAsset.Type]: ClientShapeAssetClass.handleAsset
+})
 
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)

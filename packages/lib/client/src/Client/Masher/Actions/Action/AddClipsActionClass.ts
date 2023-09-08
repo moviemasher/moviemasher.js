@@ -41,7 +41,7 @@ export class AddClipsActionClass extends AddTrackActionClass {
   override updateSelection(): void {
     const { done } = this
     const id = done ? this.clips[0].id : undefined
-    console.debug(this.constructor.name, 'updateSelection', id)
+    // console.debug(this.constructor.name, 'updateSelection', id)
     MovieMasher.eventDispatcher.dispatch(new EventChangeClipId(id))
   }
 }

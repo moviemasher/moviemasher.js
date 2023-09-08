@@ -1,15 +1,12 @@
-import type { AudibleInstance, AudioAsset, AudioInstance, AudioInstanceObject, ColorAsset, ColorInstance, ContainerInstance, ImageAsset, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, MovieMasherRuntime, PropertySize, Rect, ShapeAsset, ShapeInstance, Size, TextAsset, TextAssetObject, TextInstance, Time, TimeRange, VideoAsset, VideoInstance, VideoInstanceObject, VisibleInstance } from '@moviemasher/runtime-shared'
+import type { AudibleInstance, AudioAsset, AudioInstance, AudioInstanceObject, ColorAsset, ColorInstance, ContainerInstance, EndpointRequest, ImageAsset, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, JsonRecord, MovieMasherOptions, MovieMasherRuntime, PropertySize, RawAsset, Rect, RequestObject, ShapeAsset, ShapeInstance, Size, TextAsset, TextAssetObject, TextInstance, Time, TimeRange, Transcoding, IMAGE, VideoAsset, VideoInstance, VideoInstanceObject, VisibleInstance } from '@moviemasher/runtime-shared'
 import type { StartOptions } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
 import type { ClientAudibleAsset, ClientVisibleAsset } from './ClientAssetTypes.js'
 import type { ClientClip } from './ClientMashTypes.js'
-import type { ClientFont, MediaRequest } from './ClientMedia.js'
-import type { Masher } from './Masher.js'
+import type { ClientFont, ClientMediaRequest } from './ClientMedia.js'
 import type { Panel } from './PanelTypes.js'
-import type { RequestObject } from './Requestable.js'
 import type { Selectable } from './Selectable.js'
 import type { Preview, SvgItem } from './Svg.js'
-import type { Transcoding } from './Transcoding.js'
 
 export type Timeout = ReturnType<typeof setTimeout>
 export type AnimationFrame = ReturnType<typeof requestAnimationFrame>
@@ -36,7 +33,6 @@ export interface ClientVisibleInstance extends ClientInstance, VisibleInstance {
   pathElement(rect: Rect): SvgItem 
   svgItemForPlayerPromise(rect: Rect, time: Time): Promise<SvgItem> 
   svgItemForTimelinePromise(rect: Rect, time: Time): Promise<SvgItem> 
-
 }
 
 export interface ClientAudioAsset extends AudioAsset, ClientAudibleAsset {
@@ -62,7 +58,6 @@ export interface ClientColorInstance extends ColorInstance, ClientInstance {
   asset: ClientColorAsset
 }
 
-
 export interface ClientShapeAsset extends ShapeAsset, ClientAsset {}
 
 export interface ClientShapeInstance extends ShapeInstance, ClientInstance {
@@ -70,9 +65,8 @@ export interface ClientShapeInstance extends ShapeInstance, ClientInstance {
   asset: ClientShapeAsset
 }
 
-
-export interface ClientTextAsset extends TextAsset, ClientAsset {
-  request: MediaRequest
+export interface ClientTextAsset extends TextAsset, ClientAsset, RawAsset {
+  request: ClientMediaRequest
 }
 
 export interface ClientTextInstance extends TextInstance, ClientInstance {
@@ -84,12 +78,17 @@ export interface ClientTextAssetObject extends TextAssetObject {
   loadedFont?: ClientFont
 }
 
-
-export interface MovieMasherClientRuntime extends MovieMasherRuntime {
-  options: {
-    assetObjectOptions?: RequestObject
-    assetObjectsOptions?: RequestObject
-    iconOptions?: RequestObject
+export interface MovieMasherClientOptions extends MovieMasherOptions {
+  assetObjectOptions?: RequestObject
+  assetObjectsOptions?: RequestObject
+  iconOptions?: RequestObject
+  transcodeOptions?: {
+    auto: {
+      [IMAGE]: []
+    }
   }
 }
 
+export interface MovieMasherClientRuntime extends MovieMasherRuntime {
+  options: MovieMasherClientOptions
+}

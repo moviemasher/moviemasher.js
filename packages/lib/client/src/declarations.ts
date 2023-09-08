@@ -1,5 +1,5 @@
 import type { EventChangedMashAsset, MashIndex, SelectedProperty } from '@moviemasher/runtime-client'
-import type { AssetObject, AssetObjects, AssetType, DataOrError, DataType, Identified, Importers, Property, PropertyId, PropertyIds, Rect, Scalar, Size, StringRecord, Strings, TargetId } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetType, DataType, Identified, Property, PropertyId, PropertyIds, Rect, Scalar, Size, TargetId } from '@moviemasher/runtime-shared'
 import type { TemplateResult } from 'lit'
 
 export type Constructor<T> = new (...args: any[]) => T
@@ -24,11 +24,6 @@ export type ConnectionEvent = CustomEvent<ConnectionEventDetail>
 
 export type AssetTypeEvent = CustomEvent<AssetType>
 
-export interface AssetObjectsEventDetail extends AssetObjectsParams {
-  promise?: Promise<DataOrError<AssetObjects>>
-}
-
-export type AssetObjectsEvent = CustomEvent<AssetObjectsEventDetail>
 
 export interface AssetObjectFromIdEventDetail extends Identified {
   assetObject?: AssetObject
@@ -37,28 +32,6 @@ export interface AssetObjectFromIdEventDetail extends Identified {
 export type AssetObjectFromIdEvent = CustomEvent<AssetObjectFromIdEventDetail>
 
 
-export interface AssetObjectPromiseEventDetail {
-  promise?: Promise<DataOrError<AssetObject>>
-}
-export type AssetObjectPromiseEvent = CustomEvent<AssetObjectPromiseEventDetail>
-
-
-export interface AssetObjectsParams extends ClientReadParams {
-  excludeImported?: boolean
-  excludeMash?: boolean
-  excludeSource?: boolean
-}
-
-export interface ClientReadParams {
-  type: AssetType 
-  kind?: string | Strings
-  order?: string | StringRecord
-  terms?: string
-}
-
-export interface ImportersEventDetail {
-  importers: Importers
-}
 
 export interface DropTarget {
   acceptsClip: boolean

@@ -1,5 +1,5 @@
 
-export * from './video.js'
+export * as MashVideoAssetFunction from './video.js'
 
 export * from './MasherFactory.js'
 

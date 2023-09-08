@@ -16,10 +16,9 @@
   "include": [
     "**/src/*.ts",
     "**/src/**/*.ts"
-, "packages-deleted/images-deleted/declarations.ts"
-
-
-],
+, "packages/lib/server/dev/test/job.test.ts"
+, "packages-deleted/lib-deleted/Protocol/ProtocolRequestFunctions.ts"
+, "packages-deleted/lib-deleted/Protocol/PluginFunctions.ts", "packages-deleted/lib-deleted/Protocol/PluginConstants.ts", "packages-deleted/lib-deleted/Protocol/HttpProtocol.ts"],
   
   "exclude": [
     "**/node_modules", 

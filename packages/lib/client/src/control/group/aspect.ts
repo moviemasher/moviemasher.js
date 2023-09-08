@@ -25,7 +25,7 @@ export class AspectControlGroupElement extends WithControlGroup implements Contr
     const height = Number(aspectHeightId ? this.propertyIdValue(aspectHeightId) : 0)
     const icon = width === height ? 'square' : (width > height ? 'landscape' : 'portrait')
 
-    this.importTags('movie-masher-component-action')
+    this.importTags('movie-masher-action-client')
     this.importTags('movie-masher-component-icon')
     return html`
       <fieldset>
@@ -37,9 +37,9 @@ export class AspectControlGroupElement extends WithControlGroup implements Contr
           ${this.controlInputContent(aspectWidthId)}
           /
           ${this.controlInputContent(aspectHeightId)}
-          <movie-masher-component-action 
+          <movie-masher-action-client 
             icon='${ClientActionFlip}' detail='${ClientActionFlip}'
-          ></movie-masher-component-action>
+          ></movie-masher-action-client>
         </div>
         <div>
           <movie-masher-component-icon icon='aspectShortest'></movie-masher-component-icon>

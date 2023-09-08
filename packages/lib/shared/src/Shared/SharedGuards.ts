@@ -1,13 +1,8 @@
-import type { 
-  PopulatedString, Unknowns, ValueRecord, 
-  Value, JsonRecord, Integer, JsonRecords, Scalar, StringRecord, 
-  NestedStringRecord, ScalarRecord 
-} from '@moviemasher/runtime-shared'
+import type { Integer, JsonRecord, JsonRecords, NestedStringRecord, PopulatedString, PropertyId, Scalar, ScalarRecord, StringRecord, Unknowns, Value, ValueRecord } from '@moviemasher/runtime-shared'
 import type { Rgb } from '../Helpers/Color/ColorTypes.js'
 
-import { errorThrow } from '@moviemasher/runtime-shared'
+import { TypesTarget, errorThrow, isArray, isBoolean, isDefined, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isString, length } from '@moviemasher/runtime-shared'
 import { isRgb } from './RgbGuards.js'
-import { isArray, length, isNumber, isString, isBoolean, isObject, isNumeric, isPopulatedString, isNumberOrNaN, isDefined } from '@moviemasher/runtime-shared'
 
 export function isPopulatedArray<T = unknown>(value: any): value is T[] {
   return isArray<T>(value) && length(value)
@@ -19,7 +14,6 @@ export const isPositive = (value: any): value is number => isNumber(value) && va
 export const isBelowOne = (value: any): value is number => isNumber(value) && value < 1
 export const isAboveZero = (value: any): value is number => isNumber(value) && value > 0
 
-
 export const isValue = (value: any): value is Value => {
   return isNumber(value) || isString(value)
 }
@@ -27,8 +21,6 @@ export const isValue = (value: any): value is Value => {
 export const isScalar = (value: any): value is Scalar => (
   isBoolean(value) || isValue(value)
 )
-
-
 
 export const isTrueValue = (value: any): value is Value => {
   if (!isValue(value)) return false
@@ -126,3 +118,9 @@ export function assertValueRecord(value: any, name?: string): asserts value is V
 export function assertScalar(value: any, name?: string): asserts value is Scalar {
   if (!isScalar(value)) errorThrow(value, 'Scalar', name)
 }
+
+export const isPropertyId = (value: any): value is PropertyId => (
+  isPopulatedString(value) 
+    && TypesTarget.some(type => value.startsWith(type))
+    && value.split('.').length === 2
+)

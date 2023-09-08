@@ -8,7 +8,7 @@ services:
       context: ../../../../
       dockerfile: images/express-ffmpeg/dev/Dockerfile.cnf
     image: moviemasher/express-ffmpeg:${MOVIEMASHER_VERSION}
-    command: 
+    command: npm run start
     volumes:
       - ../../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
       - ../../../../images/:${MOVIEMASHER_DIR_ROOT}/images/

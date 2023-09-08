@@ -31,6 +31,7 @@ export class RgbControlElement extends WithControl {
         @input='${this.handleInput}'
         type='color'
         name='${name}' 
+        aria-label='${name}'
         value='${ifDefined(value)}'
       />
     `

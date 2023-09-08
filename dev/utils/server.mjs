@@ -52,8 +52,6 @@ app.get('/', function (_, res) {
 })
 
 
-
-
 app.use(express.json())
 
 const port = process.env.MOVIEMASHER_EXAMPLE_PORT || 8573

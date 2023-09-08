@@ -1,33 +1,38 @@
 import type { Method } from '@moviemasher/lib-shared'
 import type { EndpointRequest, JsonRecordDataOrError, JsonRecordsDataOrError } from '@moviemasher/runtime-shared'
 
-import { GetMethod, assertMethod, ContentTypeHeader, JsonMimetype, endpointFromUrl, assertEndpoint, assertDefined, urlForEndpoint } from '@moviemasher/lib-shared'
-import { isPopulatedString, isString, isUndefined } from '@moviemasher/runtime-shared'
+import { GetMethod, assertMethod, ContentTypeHeader, JsonMimetype, endpointFromUrl, assertEndpoint, assertDefined, urlForEndpoint, PostMethod, FormDataMimetype } from '@moviemasher/lib-shared'
+import { isDefiniteError, isPopulatedString, isString, isUndefined } from '@moviemasher/runtime-shared'
 
 const requestMethod = (request: EndpointRequest): Method => {
-  const { init = {} } = request
-  const { method = GetMethod } = init
+  request.init ||= {}
+  const { method = PostMethod } = request.init
   assertMethod(method)
 
+  request.init.method = method
   return method
 }
+
 const requestContentType = (request: EndpointRequest): string => {
-  const { init = {} } = request
-  const { headers = {} } = init
-  const { [ContentTypeHeader]: contentType = JsonMimetype } = headers
+  request.init ||= {}
+  request.init.headers ||= {}
+  const { [ContentTypeHeader]: contentType = JsonMimetype } = request.init.headers
+  request.init.headers[ContentTypeHeader] = contentType
   return contentType
 }
+
 const requestFormData = (values: any = {}): FormData => {
   const formData = new FormData()
   Object.entries(values).forEach(([key, value]) => {
     if (isUndefined(value)) return
+    console.log('requestFormData', key, value)
 
-    const isBlobOrFile = value instanceof Blob || value instanceof File
-    const blobFileOrString = isBlobOrFile ? value : String(value)
-    formData.set(key, blobFileOrString)
+    if (value instanceof Blob || value instanceof File) formData.set(key, value)
+    else formData.set(key, String(value))
   })
   return formData
 }
+
 const requestSearch = (values: any = {}): string => {
   return `?${new URLSearchParams(values)}`
 }
@@ -38,7 +43,6 @@ export const requestPopulate = (request: EndpointRequest, params?: any): Endpoin
   const copy = { ...request }
   if (requestMethod(copy) === GetMethod) {
     const { endpoint } = copy
-
     if (isPopulatedString(endpoint)) copy.endpoint = endpointFromUrl(endpoint)
     else copy.endpoint ||= {}
     const { endpoint: copyEndpoint } = copy
@@ -51,6 +55,10 @@ export const requestPopulate = (request: EndpointRequest, params?: any): Endpoin
     if (contentType === JsonMimetype) {
       copy.init.body = JSON.stringify(params)
     } else {
+      const { headers } = copy.init
+      if (headers && FormDataMimetype === headers[ContentTypeHeader]) {
+        delete headers[ContentTypeHeader]
+      }
       copy.init.body = requestFormData(params)
     }
   }
@@ -62,7 +70,14 @@ export const requestJsonRecordPromise = (request: EndpointRequest): Promise<Json
   assertDefined(endpoint)
 
   const url = isString(endpoint) ? endpoint : urlForEndpoint(endpoint)
-  return fetch(url, init).then(response => response.json()).then(data => ({ data }))
+  return fetch(url, init).then(response => {
+    
+    return response.json()
+  }).then(orError => {
+    if (isDefiniteError(orError)) return orError
+
+    return orError.data ? orError : { data: orError }
+  })
 }
 
 export const requestJsonRecordsPromise = (request: EndpointRequest): Promise<JsonRecordsDataOrError> => {
@@ -70,8 +85,9 @@ export const requestJsonRecordsPromise = (request: EndpointRequest): Promise<Jso
   assertDefined(endpoint)
 
   const url = isString(endpoint) ? endpoint : urlForEndpoint(endpoint)
-  return fetch(url, init).then(response => response.json()).then(data => {
-    // console.log('requestJsonRecordsPromise', url, data)
-    return { data }
+  return fetch(url, init).then(response => response.json()).then(orError => {
+    if (isDefiniteError(orError)) return orError
+
+    return orError.data ? orError : { data: orError }
   })
 }

@@ -1,9 +1,9 @@
 import type { ClientImage, ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, SvgItem } from '@moviemasher/runtime-client'
 import type { AssetCacheArgs, ImageInstance, ImageInstanceObject, InstanceArgs, Rect, RectOptions, Size, Time, } from '@moviemasher/runtime-shared'
 
-import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeContain, } from '@moviemasher/lib-shared'
+import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeCover } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientImagePromise, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, TypeImage, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
+import { SourceRaw, IMAGE, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
 import { svgImagePromiseWithOptions, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
@@ -27,7 +27,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     const { loadedImage } = this
     if (loadedImage) return Promise.resolve()
 
-    const transcoding = this.preferredTranscoding(TypeImage) 
+    const transcoding = this.preferredTranscoding(IMAGE) 
     if (!transcoding) return Promise.resolve()
     
     const { request } = transcoding
@@ -44,10 +44,11 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     })
   }
 
-  override definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    // console.debug(this.constructor.name, 'definitionIcon', { size })
-    const transcoding = this.preferredTranscoding(TypeImage) || this
+  override assetIcon(size: Size, cover?: boolean): Promise<SVGSVGElement> | undefined {
+    // console.debug(this.constructor.name, 'assetIcon', { size })
+    const transcoding = this.preferredTranscoding(IMAGE) || this
     if (!transcoding) return undefined
+    
     const { request } = transcoding
     const event = new EventClientImagePromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
@@ -59,13 +60,13 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
       assertSizeAboveZero(clientImage)
 
       const { width, height, src } = clientImage
-      console.debug(this.constructor.name, 'definitionIcon', { src })
+      console.debug(this.constructor.name, 'assetIcon', { src })
 
       const inSize = { width, height }
-      const coverSize = sizeContain(inSize, size)
+      const coverSize = sizeCover(inSize, size, !cover)
       const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
       const options: RectOptions = { ...outRect } // , lock: LockShortest, shortest: size.width > size.height ? 'height' : 'width' }
-      // console.debug(this.constructor.name, 'definitionIcon calling svgImagePromiseWithOptions', { options })
+      // console.debug(this.constructor.name, 'assetIcon calling svgImagePromiseWithOptions', { options })
       return svgImagePromiseWithOptions(src, options).then(svgImage => {
         return svgSvgElement(size, svgImage)
       })
@@ -87,7 +88,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject, asset } = detail
-    if (!asset && isAssetObject(assetObject, TypeImage, SourceRaw)) {
+    if (!asset && isAssetObject(assetObject, IMAGE, SourceRaw)) {
       detail.asset = new ClientRawImageAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -95,9 +96,9 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
 }
 
 // listen for image/raw asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ClientRawImageAssetClass.handleAsset
-)
+export const ClientRawImageListeners = () => ({
+  [EventAsset.Type]: ClientRawImageAssetClass.handleAsset
+})
 
 const WithInstance = VisibleInstanceMixin(ClientInstanceClass)
 const WithClientInstance = ClientVisibleInstanceMixin(WithInstance)
@@ -111,10 +112,10 @@ export class ClientRawImageInstanceClass extends WithImageInstance implements Cl
 
   override svgItemForTimelinePromise(rect: Rect, _time: Time, ): Promise<SvgItem> {
     const { asset } = this
-    const requestable = asset.preferredTranscoding(TypeImage) || asset
+    const requestable = asset.preferredTranscoding(IMAGE) || asset
     if (!requestable) {
       console.debug(this.constructor.name, 'svgItemForTimelinePromise no requestable')
-      return errorThrow(`No requestable for ${TypeImage}`)
+      return errorThrow(`No requestable for ${IMAGE}`)
     }
     
     const { request } = requestable

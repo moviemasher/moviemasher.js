@@ -3,15 +3,15 @@ import assert from 'assert'
 
 import { 
   sequenceDefinition, idGenerateString, 
-  SequenceClass, SequenceMediaClass, TypeSequence
+  SequenceClass, SequenceMediaClass, SEQUENCE
 } from "@moviemasher/lib-shared"
 
 
-describe(TypeSequence, () => {
+describe(SEQUENCE, () => {
   const definitionObject = {
     id: idGenerateString(),
     url: "frames/",
-    type: TypeSequence,
+    type: SEQUENCE,
     fps: 30, duration: 10
   }
 

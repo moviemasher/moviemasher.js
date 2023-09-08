@@ -1,7 +1,6 @@
 import type { Asset, ColorAsset, ColorInstance, ColorInstanceObject, Constrained, Instance, IntrinsicOptions, Rect } from '@moviemasher/runtime-shared'
 
-import { TypeContent } from '@moviemasher/runtime-client'
-import { End, RECT_ZERO, TypeImage } from '@moviemasher/runtime-shared'
+import { End, RECT_ZERO, TypeContent, IMAGE } from '@moviemasher/runtime-shared'
 import { colorGray } from '../../Helpers/Color/ColorConstants.js'
 import { DataTypeRgb } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
@@ -14,7 +13,7 @@ T & Constrained<ColorAsset> {
   
     container = false
     
-    type = TypeImage
+    type = IMAGE
   }
 }
 

@@ -1,12 +1,9 @@
-import type { MovieMasherRuntime } from '@moviemasher/runtime-shared'
+import type { MovieMasherOptions, MovieMasherRuntime } from '@moviemasher/runtime-shared'
 
-export type EventsModule = 'module'
-export type EventsGlobal = 'global'
-export type EventsOption = EventsModule | EventsGlobal
-
+export interface MovieMasherServerOptions extends MovieMasherOptions {
+  
+}
 
 export interface MovieMasherServerRuntime extends MovieMasherRuntime {
-  options: {
-    events: EventsOption
-  }
+  options: MovieMasherServerOptions
 }

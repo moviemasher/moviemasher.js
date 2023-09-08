@@ -33,7 +33,6 @@ export interface MashAssetObject extends AssetObject {
   color?: string
   quantize?: number
   tracks?: TrackObject[]
-  media?: AssetObjects
   loop?: boolean
   buffer?: number
   aspectWidth?: number

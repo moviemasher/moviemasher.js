@@ -1,62 +1,46 @@
+import type { Tweening, } from '@moviemasher/lib-shared'
+import type { InstanceArgs, ShapeAssetObject, ShapeInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Types/CommandTypes.js'
+import type { ServerShapeAsset, ServerShapeInstance } from '../../Types/ServerTypes.js'
 
-import type {
-  ValueRecord, ShapeInstance, ShapeInstanceObject, ShapeAssetObject, 
-} from '@moviemasher/runtime-shared'
-import type {
-  CommandFile, CommandFileArgs, 
-  VisibleCommandFileArgs, CommandFiles, 
-  ServerShapeInstance, ServerShapeAsset,
-  CommandFilter, 
-  CommandFilterArgs, VisibleCommandFilterArgs, CommandFilters, Tweening, 
-} from '@moviemasher/lib-shared'
-import {
-   POINT_ZERO, isAssetObject, isBoolean, isPopulatedString, SourceShape, TypeImage 
-} from '@moviemasher/runtime-shared'
-import { 
-  EventAsset,
-  GraphFileTypeSvg, MovieMasher 
-} from '@moviemasher/runtime-server'
-
-import { 
-  ServerAssetClass, ServerInstanceClass, ServerVisibleAssetMixin, 
-  ServerVisibleInstanceMixin, ShapeAssetMixin, 
-  ShapeInstanceMixin, VisibleAssetMixin, 
-  VisibleInstanceMixin,  
-  isPopulatedArray, 
-  assertPopulatedString, commandFilesInput, tweenMaxSize, sizeEven, 
-  idGenerate, sizesEqual, colorBlackOpaque, arrayLast, 
-  rectsEqual, 
-  NamespaceSvg, 
-  colorBlack, colorWhite, isTimeRange, assertPopulatedArray, 
-  DefaultContainerId,
-  isTrueValue, 
-  rectTransformAttribute
-} from '@moviemasher/lib-shared'
-
-
+import { DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven, sizesEqual, tweenMaxSize } from '@moviemasher/lib-shared'
+import { EventServerAsset, GraphFileTypeSvg } from '@moviemasher/runtime-server'
+import { POINT_ZERO, SourceShape, IMAGE, isAssetObject, isBoolean, isPopulatedString } from '@moviemasher/runtime-shared'
+import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
+import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
+import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
+import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
 const WithShapeAsset = ShapeAssetMixin(WithServerAsset)
-
 export class ServerShapeAssetClass extends WithShapeAsset implements ServerShapeAsset {
-  override instanceFromObject(object?: ShapeInstanceObject): ShapeInstance {
+  constructor(args: ShapeAssetObject) {
+    super(args)
+    this.initializeProperties(args)
+  }
+  
+  override instanceFromObject(object?: ShapeInstanceObject): ServerShapeInstance {
     const args = this.instanceArgs(object)
     return new ServerShapeInstanceClass(args)
   }
+
   private static _defaultAsset?: ServerShapeAsset
+
   private static get defaultAsset(): ServerShapeAsset {
     return this._defaultAsset ||= new ServerShapeAssetClass({ 
-      id: DefaultContainerId, type: TypeImage, 
+      id: DefaultContainerId, type: IMAGE, 
       source: SourceShape, label: 'Rectangle'
     })
   }
-  static handleAsset(event: EventAsset) {
+  
+  static handleAsset(event: EventServerAsset) {
     const { detail } = event
     const { assetObject, assetId } = detail
     
     const isDefault = assetId === DefaultContainerId
-    if (!(isDefault || isAssetObject(assetObject, TypeImage, SourceShape))) return
+    if (!(isDefault || isAssetObject(assetObject, IMAGE, SourceShape))) return
       
     event.stopImmediatePropagation()
     if (isDefault) detail.asset = ServerShapeAssetClass.defaultAsset
@@ -65,15 +49,19 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
 }
 
 // listen for image/shape asset event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventAsset.Type, ServerShapeAssetClass.handleAsset
-)
+export const ServerShapeImageListeners = () => ({
+  [EventServerAsset.Type]: ServerShapeAssetClass.handleAsset
+})
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
 const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)
 const WithShapeInstance = ShapeInstanceMixin(WithServerInstance)
-
 export class ServerShapeInstanceClass extends WithShapeInstance implements ServerShapeInstance { 
+  constructor(args: ShapeInstanceObject & InstanceArgs) {
+    super(args)
+    this.initializeProperties(args)
+  }
+  
   declare asset: ServerShapeAsset
 
   override canColor(args: CommandFilterArgs): boolean { 
@@ -237,8 +225,8 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
   private isTweeningColor(args: CommandFileArgs): boolean {
     const { contentColors } = args
-    assertPopulatedArray(contentColors, 'contentColors')
-    // if (!isPopulatedArray(contentColors)) return false
+    // assertPopulatedArray(contentColors, 'contentColors')
+    if (!isPopulatedArray(contentColors)) return false
 
     const [forecolor, forecolorEnd] = contentColors
     return contentColors.length === 2 && forecolor !== forecolorEnd

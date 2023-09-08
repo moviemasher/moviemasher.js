@@ -25,8 +25,6 @@ export default {
   },
   external: [
     '@moviemasher/runtime-shared',
-    '@moviemasher/runtime-client',
-    '@moviemasher/runtime-server',
   ],
   plugins: [ typescript(typescriptConfig) ],
 }

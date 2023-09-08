@@ -8,6 +8,7 @@ export const NewlineChar = '\n'
 export const QuestionChar = '?'
 export const SemicolonChar = ';'
 export const SlashChar = '/'
+export const DOT = '.';
 
 
 export const SpaceChar = ' '

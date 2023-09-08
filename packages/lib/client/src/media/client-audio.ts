@@ -1,10 +1,10 @@
-import type { ClientAudioDataOrError, MediaRequest } from '@moviemasher/runtime-client'
+import type { ClientAudioDataOrError, ClientMediaRequest } from '@moviemasher/runtime-client'
 import type { DataOrError } from '@moviemasher/runtime-shared'
 
 import { EventClientAudioPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ErrorName, errorCaught, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, errorCaught, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
 import { isClientAudio, isClientVideo } from '../Client/ClientGuards.js'
-import { requestUrl } from '../Client/request/request.js'
+import { requestUrl } from '@moviemasher/lib-shared'
 
 let _context: AudioContext | undefined = undefined
 
@@ -15,13 +15,13 @@ const audioContext = () => {
   return _context = new Klass()
 }
 
-export const requestAudioPromise = (request: MediaRequest): Promise<ClientAudioDataOrError> => {
+export const requestAudioPromise = (request: ClientMediaRequest): Promise<ClientAudioDataOrError> => {
   const { response } = request
   if (isClientAudio(response)) return Promise.resolve({ data: response })
 
-  const responseIsVideo = isClientVideo(response)
-  const url = responseIsVideo ? response.src : requestUrl(request)
-  if (!url) return errorPromise(ErrorName.Url) 
+  const isVideo = isClientVideo(response)
+  const url = isVideo ? response.src : (request.objectUrl || requestUrl(request))
+  if (!url) return errorPromise(ERROR.Url) 
 
   const { init } = request
   const blobPromise = fetch(url, init).then(response => response.blob())
@@ -47,7 +47,7 @@ export const requestAudioPromise = (request: MediaRequest): Promise<ClientAudioD
       audioContext().decodeAudioData(
         data,
         data => { 
-          if (!responseIsVideo) request.response = data
+          if (!isVideo) request.response = data
           resolve({ data }) 
         },
         error => { resolve(errorCaught(error)) }

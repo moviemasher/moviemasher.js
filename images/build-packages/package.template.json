@@ -2,6 +2,7 @@
   "name": "@moviemasher/build-packages",
   "description": "Builds Movie Masher core packages",
   "scripts": {
+    "example-express": "npm run build -w @moviemasher/example-express",
     "lib-client": "npm run build -w @moviemasher/lib-client",
     "lib-server": "npm run build -w @moviemasher/lib-server",
     "lib-shared": "npm run build -w @moviemasher/lib-shared",
@@ -10,6 +11,7 @@
     "runtime-server": "npm run build -w @moviemasher/runtime-server",
     "runtime-shared": "npm run build -w @moviemasher/runtime-shared",
     "runtime": "run-s runtime-shared runtime-client runtime-server",
+    "example": "run-s example-express",
     "build": "run-s runtime lib"
   },
   "devDependencies": {
