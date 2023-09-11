@@ -41,6 +41,7 @@ const ERROR = {
     Evaluation: 'error.evaluation',
     FilterId: 'filter.id',
     Frame: 'error.frame',
+    Ffmpeg: 'ffpmeg',
     ImportDuration: 'import.duration',
     ImportFile: 'import.file',
     ImportSize: 'import.size',

@@ -28,7 +28,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">EventServerManagedAsset</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in packages/runtime/server/src/ServerEvents.ts:22</li></ul></aside>
+<li>Defined in packages/runtime/server/src/ServerEvents.ts:26</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -87,7 +87,7 @@
 <h4 class="tsd-returns-title">Returns <a href="runtime_server.EventServerManagedAsset.html" class="tsd-signature-type tsd-kind-class">EventServerManagedAsset</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="runtime_server.CustomEvent.html">CustomEvent</a>.<a href="runtime_server.CustomEvent.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in packages/runtime/server/src/ServerEvents.ts:24</li></ul></aside></li></ul></section></section>
+<li>Defined in packages/runtime/server/src/ServerEvents.ts:28</li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external"><a id="AT_TARGET" class="tsd-anchor"></a>
@@ -178,7 +178,7 @@
 <div class="tsd-signature"><span class="tsd-kind-property">detail</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/runtime_server.EventServerAssetDetail.html" class="tsd-signature-type tsd-kind-interface">EventServerAssetDetail</a></div><aside class="tsd-sources">
 <p>Inherited from <a href="runtime_server.CustomEvent.html">CustomEvent</a>.<a href="runtime_server.CustomEvent.html#detail">detail</a></p>
 <ul>
-<li>Defined in packages/runtime/server/src/ServerEvents.ts:10</li></ul></aside></section>
+<li>Defined in packages/runtime/server/src/ServerEvents.ts:14</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external"><a id="eventPhase" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>event<wbr/>Phase</span><a href="#eventPhase" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">event<wbr/>Phase</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -275,7 +275,7 @@
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>Type</span><a href="#Type-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">Type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;managedasset&#39;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in packages/runtime/server/src/ServerEvents.ts:23</li></ul></aside></section></section>
+<li>Defined in packages/runtime/server/src/ServerEvents.ts:27</li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external"><a id="composedPath" class="tsd-anchor"></a>
@@ -410,16 +410,52 @@
 <li><a href="runtime_server.CustomEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Custom<wbr/>Event</span></a></li>
 <li><a href="runtime_server.EventReleaseServerManagedAssets.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Release<wbr/>Server<wbr/>Managed<wbr/>Assets</span></a></li>
 <li><a href="runtime_server.EventServerAsset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Asset</span></a></li>
+<li><a href="runtime_server.EventServerAssetPromise.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Asset<wbr/>Promise</span></a></li>
+<li><a href="runtime_server.EventServerDecode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Decode</span></a></li>
+<li><a href="runtime_server.EventServerDecodeFinish.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Decode<wbr/>Finish</span></a></li>
+<li><a href="runtime_server.EventServerEncode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Encode</span></a></li>
+<li><a href="runtime_server.EventServerEncodeFinish.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Encode<wbr/>Finish</span></a></li>
+<li><a href="runtime_server.EventServerEncodeProgress.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Encode<wbr/>Progress</span></a></li>
 <li><a href="runtime_server.EventServerManagedAsset.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Managed<wbr/>Asset</span></a></li>
+<li><a href="runtime_server.EventServerTextRect.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Text<wbr/>Rect</span></a></li>
+<li><a href="runtime_server.EventServerTranscode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Transcode</span></a></li>
+<li><a href="runtime_server.EventServerTranscodeFinish.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Event<wbr/>Server<wbr/>Transcode<wbr/>Finish</span></a></li>
 <li><a href="runtime_server.ServerEventDispatcher.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Server<wbr/>Event<wbr/>Dispatcher</span></a></li>
-<li><a href="../interfaces/runtime_server.EventServerAssetDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>Event<wbr/>Server<wbr/>Asset<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.CommandFile.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>Command<wbr/>File</span></a></li>
+<li><a href="../interfaces/runtime_server.CommandFileArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Command<wbr/>File<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.CommandFileOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Command<wbr/>File<wbr/>Options</span></a></li>
+<li><a href="../interfaces/runtime_server.CommandFilter.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Command<wbr/>Filter</span></a></li>
+<li><a href="../interfaces/runtime_server.CommandFilterArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Command<wbr/>Filter<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.CommandInput.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Command<wbr/>Input</span></a></li>
+<li><a href="../interfaces/runtime_server.DecodeArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Decode<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.EncodeArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Encode<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerAssetDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Asset<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerAssetPromiseDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Asset<wbr/>Promise<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerDecodeDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Decode<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerDecodeFinishDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Decode<wbr/>Finish<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerEncodeDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Encode<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerEncodeFinishDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Encode<wbr/>Finish<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerEncodeProgressDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Encode<wbr/>Progress<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerTextRectDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Text<wbr/>Rect<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerTranscodeDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Transcode<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.EventServerTranscodeFinishDetail.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Server<wbr/>Transcode<wbr/>Finish<wbr/>Detail</span></a></li>
+<li><a href="../interfaces/runtime_server.FilterArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Filter<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.FilterCommandFileArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Filter<wbr/>Command<wbr/>File<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.FilterCommandFilterArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Filter<wbr/>Command<wbr/>Filter<wbr/>Args</span></a></li>
 <li><a href="../interfaces/runtime_server.GraphFile.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Graph<wbr/>File</span></a></li>
 <li><a href="../interfaces/runtime_server.MovieMasherServerOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Movie<wbr/>Masher<wbr/>Server<wbr/>Options</span></a></li>
 <li><a href="../interfaces/runtime_server.MovieMasherServerRuntime.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Movie<wbr/>Masher<wbr/>Server<wbr/>Runtime</span></a></li>
 <li><a href="../interfaces/runtime_server.ServerAsset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Server<wbr/>Asset</span></a></li>
 <li><a href="../interfaces/runtime_server.ServerImporter.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Server<wbr/>Importer</span></a></li>
+<li><a href="../interfaces/runtime_server.ServerMediaRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Server<wbr/>Media<wbr/>Request</span></a></li>
 <li><a href="../interfaces/runtime_server.ServerPromiseArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Server<wbr/>Promise<wbr/>Args</span></a></li>
-<li><a href="../types/runtime_server.GraphFileType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4194304"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>Graph<wbr/>File<wbr/>Type</span></a></li>
+<li><a href="../interfaces/runtime_server.TranscodeArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Transcode<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.VisibleCommandFileArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Visible<wbr/>Command<wbr/>File<wbr/>Args</span></a></li>
+<li><a href="../interfaces/runtime_server.VisibleCommandFilterArgs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Visible<wbr/>Command<wbr/>Filter<wbr/>Args</span></a></li>
+<li><a href="../types/runtime_server.CommandFiles.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4194304"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>Command<wbr/>Files</span></a></li>
+<li><a href="../types/runtime_server.CommandFilters.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Command<wbr/>Filters</span></a></li>
+<li><a href="../types/runtime_server.CommandInputs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Command<wbr/>Inputs</span></a></li>
+<li><a href="../types/runtime_server.GraphFileType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Graph<wbr/>File<wbr/>Type</span></a></li>
 <li><a href="../types/runtime_server.GraphFiles.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Graph<wbr/>Files</span></a></li>
 <li><a href="../types/runtime_server.ServerAssets.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Server<wbr/>Assets</span></a></li>
 <li><a href="../types/runtime_server.SvgGraphFileType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Svg<wbr/>Graph<wbr/>File<wbr/>Type</span></a></li>

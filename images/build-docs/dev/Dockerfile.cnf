@@ -21,5 +21,5 @@ COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/pa
 RUN npm install 
 
 ENTRYPOINT ["npm", "run"]
-CMD ["build-typedoc"]
+CMD ["build-docs-contained"]
 LABEL org.opencontainers.image.authors="support@moviemasher.com"

@@ -7,7 +7,7 @@ import type { ServerAuthentication } from '../Server/Server.js'
 import type { WebServerArgs } from '../Server/WebServer/WebServer.js'
 import type { HostOptions } from './Host.js'
 
-import { RuntimeEnvironment } from '@moviemasher/lib-server'
+import { ENVIRONMENT } from '@moviemasher/lib-server'
 import { AUDIO, IMAGE, NUMBER, VIDEO } from '@moviemasher/runtime-shared'
 import path from 'path'
 
@@ -46,7 +46,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   if (!uploadDir.startsWith(publicDirectory)) throw 'mediaDirectory must be public'
 
   const commandOutput: VideoOutputOptions = {}
-  const basePort = port || RuntimeEnvironment.get('MOVIEMASHER_EXAMPLE_PORT', NUMBER)
+  const basePort = port || ENVIRONMENT.get('MOVIEMASHER_EXAMPLE_PORT', NUMBER)
   if (outputSize) {
     const { width, height } = outputSize
     commandOutput.width = width

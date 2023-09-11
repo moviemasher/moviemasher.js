@@ -2,6 +2,7 @@ import type { InstanceCacheArgs } from './CacheTypes.js'
 import type { ClipObject } from './ClipObject.js'
 import type { ContainerRectArgs } from './Container.js'
 import type { Strings } from './Core.js'
+import { DataOrError } from './DataOrError.js'
 import type { Instance, VisibleInstance } from './InstanceTypes.js'
 import type { Propertied } from './Propertied.js'
 import type { Rects } from './Rect.js'
@@ -13,7 +14,7 @@ import type { Track } from './Track.js'
 export interface Clip extends Propertied {
   assetIds: Strings
   audible: boolean
-  clipCachePromise(args: InstanceCacheArgs): Promise<void>
+  clipCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
   clipObject: ClipObject
   container?: VisibleInstance
   containerId: string

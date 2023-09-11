@@ -4,7 +4,7 @@ import { EmptyFunction } from '@moviemasher/lib-shared'
 import { errorThrow, isPopulatedString } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-import { EnvironmentKeyApiDirTemporary, RuntimeEnvironment } from '../Environment/Environment.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { idUnique } from './Hash.js'
 
 export type FilePath = string
@@ -17,8 +17,8 @@ export function assertFilePathExists(value: any, name?: string): asserts value i
   if (!filePathExists(value)) errorThrow(value, 'FilePath', name)
 }
 
-export const directoryCreate = (directoryPath: string): void => {
-  fs.mkdirSync(directoryPath, { recursive: true })
+export const directoryCreate = (path: string): void => {
+  if (!filePathExists(path)) fs.mkdirSync(path, { recursive: true })
 }
 
 export const directoryCreatePromise = (directoryPath: string): Promise<void> => {
@@ -53,9 +53,9 @@ export const fileReadPromise = (file?: string): Promise<string> => {
   return fs.promises.readFile(file).then(res => res.toString()) 
 }
 
-export const fileTemporaryPath = (extension?: string): string => {
-  const directory = RuntimeEnvironment.get(EnvironmentKeyApiDirTemporary)
-  const components: Strings = [idUnique()]
+export const fileTemporaryPath = (fileName = '', extension?: string): string => {
+  const directory = ENVIRONMENT.get(ENV.ApiDirCache)
+  const components: Strings = [fileName || idUnique()]
   if (extension) components.push(extension)
   const name = components.join('.')
   return path.resolve(directory, name)

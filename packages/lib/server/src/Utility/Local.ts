@@ -6,7 +6,7 @@ import { NewlineChar, assertPopulatedString, isLoadType } from '@moviemasher/lib
 import { GraphFileTypeSvgSequence } from '@moviemasher/runtime-server'
 import { ERROR, AUDIO, TypeFont, IMAGE, VIDEO, errorThrow, } from '@moviemasher/runtime-shared'
 import path from 'path'
-import { EnvironmentKeyApiDirCache, EnvironmentKeyApiDirFilePrefix, EnvironmentKeyApiDirValid, RuntimeEnvironment } from '../Environment/Environment.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { BasenameCache } from '../Setup/Constants.js'
 import { hashMd5 } from './Hash.js'
 
@@ -35,9 +35,9 @@ export const localPath = (username: string, graphFile: GraphFile): string => {
   }
   assertPopulatedString(file, 'file')
 
-  const cacheDirectory = RuntimeEnvironment.get(EnvironmentKeyApiDirCache)
-  const filePrefix = RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix)
-  const validDirectories = RuntimeEnvironment.get(EnvironmentKeyApiDirValid)
+  const cacheDirectory = ENVIRONMENT.get(ENV.ApiDirCache)
+  const filePrefix = ENVIRONMENT.get(ENV.ApiDirFilePrefix)
+  const validDirectories = ENVIRONMENT.get(ENV.ApiDirValid)
 
   const defaultDirectory = username
 

@@ -1,5 +1,5 @@
 import type { Size, Time } from '@moviemasher/runtime-shared'
-import type { CommandFiles, CommandFilters, CommandInputs } from '../../Types/CommandTypes.js'
+import type { CommandFiles, CommandFilters, CommandInputs } from '@moviemasher/runtime-server'
 import type { ServerMashAsset } from '../../Types/ServerMashTypes.js'
 
 export interface FilterGraphArgs {

@@ -1,5 +1,5 @@
 import type { ClientAudio, ClientRawAudioAsset, ClientRawAudioAssetObject, ClientRawAudioInstance } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, AudioInstance, AudioInstanceArgs, AudioInstanceObject, InstanceArgs } from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, AudioInstance, AudioInstanceArgs, AudioInstanceObject, DataOrError, InstanceArgs } from '@moviemasher/runtime-shared'
 
 import { AudibleAssetMixin, AudibleInstanceMixin, AudioAssetMixin, AudioInstanceMixin, } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientAudioPromise, MovieMasher } from '@moviemasher/runtime-client'
@@ -18,15 +18,15 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
     this.initializeProperties(args)
   }
   
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
     const { audible } = args
-    if (!audible) return Promise.resolve()
+    if (!audible) return Promise.resolve({ data: 0 })
 
     const { loadedAudio } = this
-    if (loadedAudio) return Promise.resolve()
+    if (loadedAudio) return Promise.resolve({ data: 0 })
 
     const transcoding = this.preferredTranscoding(AUDIO) 
-    if (!transcoding) return Promise.resolve()
+    if (!transcoding) return Promise.resolve({ data: 0 })
 
     const { request } = transcoding
     const event = new EventClientAudioPromise(request)
@@ -37,7 +37,7 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
 
       const { data: clientAudio } = orError
       this.loadedAudio = clientAudio
-      return 
+      return { data: 1 }
     })
   }
 

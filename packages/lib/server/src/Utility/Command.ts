@@ -1,19 +1,10 @@
-import type { StringTuple } from '@moviemasher/runtime-shared'
+import type { ErrorObject, StringTuple, Strings } from '@moviemasher/runtime-shared'
 
-import { NewlineChar, SemicolonChar } from '@moviemasher/lib-shared'
-import { isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
-import path from 'path'
+import { DOT, NewlineChar, SemicolonChar, SpaceChar } from '@moviemasher/lib-shared'
+import { ERROR, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 
-const commandErrorRegex = [
-  /Input frame sizes do not match \([0-9]*x[0-9]* vs [0-9]*x[0-9]*\)/,
-  /Option '[0-9a-z_-]*' not found/,
-  'Error:',
-  'Cannot find a matching stream',
-  'Unable to parse option value',
-  'Invalid too big or non positive size',
-]
-
-export const commandExpandComplex = (trimmed: string): string => {
+const commandExpandComplex = (trimmed: string): string => {
   if (!trimmed.includes(SemicolonChar)) return trimmed
   
   const lines = trimmed.split(SemicolonChar)
@@ -25,25 +16,25 @@ export const commandExpandComplex = (trimmed: string): string => {
   return broken.join(`${SemicolonChar}${NewlineChar}`)
 }
 
-export const commandQuoteComplex = (trimmed: string): string => {
+const commandQuoteComplex = (trimmed: string): string => {
   if (!trimmed.includes(SemicolonChar)) return trimmed
   
   return `'${trimmed}'`
 }
 
-export const commandErrors = (...args: any[]): string[] => {
-  return args.flatMap(arg => {
-    const stringArg = String(arg)
-    const lines = stringArg.split(NewlineChar).map(line => line.trim())
-    return lines.filter(line => commandErrorRegex.some(regex => line.match(regex)))
-  })
+export const commandError = (args: Strings, destination: string, error: any, stderr?: string, _stdout?: string): ErrorObject => {
+  const standard = stderr && stderr.split(NewlineChar).join(DOT + SpaceChar)
+  const message = standard || String(error.message || error)
+  const cause = commandString(args, destination) 
+  return { name: ERROR.Ffmpeg, message, cause }
 }
 
-export const commandArgsString = (args: string[], destination: string, ...errors: any[]): string => {
+export const commandString = (args: string[], destination: string, exapnded?: boolean): string => {
   let name = ''
-  const isError = !!errors.length
+  let foundYes = false
   const params: StringTuple[] = []
-  const rootPath = `${path.resolve('./')}/`
+  
+  const rootPath = ENVIRONMENT.get(ENV.DirRoot) 
   args.forEach(arg => {
     if (!isPopulatedString(arg)) return
 
@@ -51,35 +42,28 @@ export const commandArgsString = (args: string[], destination: string, ...errors
     const firstArgChar = trimmed.slice(0, 1)
     const isName = firstArgChar === '-' 
     if (isName) {
-      if (name) params.push([name, ''])
+      if (name) {
+        params.push([name, ''])
+      }
       name = trimmed.slice(1)
+      if (name === 'y') foundYes = true
     } else {
-      if (name) params.push([name, trimmed.replace(rootPath, '')])
+      if (name) params.push([name, trimmed.replaceAll(rootPath, '')])
       name = ''
     }
   })
+  // make sure command has YES option
+  if (!foundYes) params.unshift(['y', ''])
+  const commandParams = params.map(([name, value]) => {
+    const nameParam = `-${name}`
+    if (!value) return nameParam
 
-  const displayParams: string[] = []
-  if (isError && destination) {
-    displayParams.push(`${destination} failed`)
-    displayParams.push(...commandErrors(...errors))
-  }
-  
-  displayParams.push('ffmpeg')
-  displayParams.push(...params.map(([name, value]) => (
-    value ? `-${name} ${commandExpandComplex(value)}${NewlineChar}` : `-${name}${NewlineChar}`
-  )))
-  if (destination) displayParams.push(destination)
-  
-  if (!isError) params.unshift(['y', ''])
-  const commandParams = params.map(([name, value]) => (
-     value ? `-${name} ${commandQuoteComplex(value)}` : `-${name}`
-  ))
+    if (exapnded) return `${nameParam} ${commandExpandComplex(value)}${NewlineChar}`
+
+    return `${nameParam} ${commandQuoteComplex(value)}` 
+  })
   commandParams.unshift('ffmpeg')
-  if (destination) commandParams.push(destination)
-
-  const blocks = [displayParams.join(NewlineChar)]
-  blocks.push(...errors)
-  blocks.push(commandParams.join(' '))
-  return blocks.join(`${NewlineChar}${NewlineChar}`)
+  if (destination) commandParams.push(destination.replace(rootPath, ''))
+  return commandParams.join(' ')
 }
+

@@ -1,7 +1,7 @@
 import type { ClientFont, ClientFontDataOrError, ClientTextAsset, ClientTextAssetObject, ClientTextInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, DataOrError, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
 
-import { DOT, EmptyFunction, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, isPropertyId, rectTransformAttribute, sizeContain, stringFamilySizeRect } from '@moviemasher/lib-shared'
+import { DOT, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, isPropertyId, rectTransformAttribute, sizeContain, stringFamilySizeRect } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientFontPromise, MovieMasher } from '@moviemasher/runtime-client'
 import { ERROR, IMAGE, POINT_ZERO, SourceText, TypeFont, errorPromise, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 import { svgSvgElement, svgText } from '../../Client/SvgFunctions.js'
@@ -18,17 +18,18 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
     super(args)
     this.initializeProperties(args)
   }
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
     const { visible } = args
     const { family } = this
-    if (family || !visible) return Promise.resolve()
+    if (family || !visible) return Promise.resolve({ data: 0 })
 
     const transcoding =  this.findTranscoding(TypeFont, 'woff', 'woff2') 
-    return this.loadFontPromise(transcoding).then(EmptyFunction)
+    return this.loadFontPromise(transcoding).then(() => ({ data: 1 }))
   }
 
   override assetIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    return this.loadFontPromise(this.findTranscoding(TypeFont)).then(orError => {
+    const transcoding = this.findTranscoding(TypeFont)
+    return this.loadFontPromise(transcoding).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError)
 
       const { string, family } = this

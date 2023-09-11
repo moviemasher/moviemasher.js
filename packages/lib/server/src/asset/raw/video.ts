@@ -1,10 +1,10 @@
-import type { GraphFile, GraphFiles, ServerPromiseArgs } from '@moviemasher/runtime-server'
-import type { AssetCacheArgs, InstanceArgs, PreloadArgs, RawVideoAssetObject, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
+import type { InstanceArgs, PreloadArgs, RawVideoAssetObject, VideoInstanceObject } from '@moviemasher/runtime-shared'
 import type { ServerRawVideoAsset, ServerRawVideoInstance } from '../../Types/ServerRawTypes.js'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, EmptyFunction, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertEndpoint, assertPopulatedString, endpointUrl } from '@moviemasher/lib-shared'
-import { EventServerAsset, EventServerAssetPromise, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, SourceRaw, AUDIO, VIDEO, errorPromise, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
+import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString } from '@moviemasher/lib-shared'
+import { EventServerAsset } from '@moviemasher/runtime-server'
+import { SourceRaw, AUDIO, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
 import { ServerAudibleInstanceMixin } from '../../Base/ServerAudibleInstanceMixin.js'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
@@ -95,14 +95,4 @@ export class ServerRawVideoInstanceClass extends WithVideoInstance implements Se
   }
 
   declare asset: ServerRawVideoAsset
-
-  serverPromise(args: ServerPromiseArgs): Promise<void> {
-    console.log(this.constructor.name, 'serverPromise', args)
-    const { asset: definition } = this
-    const { audio } = definition
-    const { visible } = args
-    if (visible || audio) return definition.serverPromise(args)
-
-    return Promise.resolve()
-  }
 }

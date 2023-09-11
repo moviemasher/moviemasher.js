@@ -1,4 +1,4 @@
-import type { Asset, AssetCacheArgs, AssetObject, AssetType, Assets, ClipObject, Decodings, Instance, InstanceArgs, InstanceObject, Source, Strings } from '@moviemasher/runtime-shared'
+import type { Asset, AssetCacheArgs, AssetObject, AssetType, Assets, ClipObject, DataOrError, Decodings, Instance, InstanceArgs, InstanceObject, Source, Strings } from '@moviemasher/runtime-shared'
 
 import { ERROR, TypeAsset, AUDIO, errorThrow, isArray } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../Base/PropertiedClass.js'
@@ -25,9 +25,9 @@ export class AssetClass extends PropertiedClass implements Asset {
     return errorThrow(ERROR.Unimplemented) 
   }
 
-  assetCachePromise(_args: AssetCacheArgs): Promise<void> {
-    console.log(this.constructor.name, 'AssetClass.assetCachePromise', _args)
-    return Promise.resolve()
+  assetCachePromise(_args: AssetCacheArgs): Promise<DataOrError<number>> {
+    // console.log(this.constructor.name, 'AssetClass.assetCachePromise', _args)
+    return Promise.resolve({ data: 0 })
   }
 
   get assetIds(): Strings { return [this.id] }

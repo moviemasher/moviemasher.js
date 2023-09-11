@@ -3,6 +3,8 @@ import { describe, test } from 'node:test'
 
 
 describe('EventServerTextRect', () => {
-  test.skip('correctly encodes color mash', async () => {
+  test.skip('correctly determines text rect', () => {
+
+    
   })
 })

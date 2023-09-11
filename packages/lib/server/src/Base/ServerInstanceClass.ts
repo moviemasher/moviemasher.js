@@ -1,7 +1,7 @@
 import type { Tweening } from '@moviemasher/lib-shared'
 import type { GraphFile, GraphFiles, ServerAsset, ServerPromiseArgs } from '@moviemasher/runtime-server'
 import type { IntrinsicOptions, PreloadArgs, Size, Value, ValueRecord } from '@moviemasher/runtime-shared'
-import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../Types/CommandTypes.js'
+import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerInstance } from '../Types/ServerInstanceTypes.js'
 
 import { InstanceClass, arrayLast, assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, assertTimeRange, colorBlackOpaque, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, idGenerate, isAboveZero, isBelowOne, isTimeRange, sizeEven, sizesEqual, timeFromArgs, timeRangeFromArgs, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
@@ -58,7 +58,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
 
     const { id } = this
-    // console.log(this.constructor.name, 'audibleCommandFilters calling commandFilesInput', id)
+    // console.log(this.constructor.name, 'audibleCommandFilters calling commandFilesInput', commandFiles.length)
     let filterInput = commandFilesInput(commandFiles, id, false)
 
     const trimFilter = 'atrim'
@@ -258,20 +258,20 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
   colorMaximize = false
 
   commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
-    const commandFilters: CommandFilters = []
+    const filters: CommandFilters = []
     const { filterInput: input = '' } = args
     let filterInput = input
-    // console.log(this.constructor.name, 'commandFilters', container)
+    // console.log(this.constructor.name, 'commandFilters', container, args.commandFiles.length)
     const initialFilters = this.initialCommandFilters(args, tweening, container)
     if (initialFilters.length) {
-      commandFilters.push(...initialFilters)
+      filters.push(...initialFilters)
       filterInput = arrayLast(arrayLast(initialFilters).outputs)
     }
     if (container)
-      commandFilters.push(...this.containerCommandFilters({ ...args, filterInput }, tweening))
+      filters.push(...this.containerCommandFilters({ ...args, filterInput }, tweening))
     else
-      commandFilters.push(...this.contentCommandFilters({ ...args, filterInput }, tweening))
-    return commandFilters
+      filters.push(...this.contentCommandFilters({ ...args, filterInput }, tweening))
+    return filters
   }
 
   containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
@@ -384,8 +384,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       const { input } = graphFile
       const inputId = (index && input) ? `${this.id}-${inputCount}` : this.id
       const commandFile: CommandFile = { ...graphFile, inputId }
-      if (input)
-        inputCount++
+      if (input) inputCount++
       return commandFile
     }))
     return commandFiles
@@ -485,13 +484,8 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     }
     return [commandFilter]
   }
-
-  serverPromise(args: ServerPromiseArgs): Promise<void> {
-    return this.asset.serverPromise(args)
-  }
   
   translateCommandFilters(args: CommandFilterArgs): CommandFilters {
-    const commandFilters: CommandFilters = []
     const {
       outputSize, time, containerRects, chainInput, filterInput, videoRate
     } = args

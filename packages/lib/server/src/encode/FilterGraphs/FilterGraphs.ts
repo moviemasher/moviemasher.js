@@ -1,5 +1,5 @@
 import type { GraphFiles } from '@moviemasher/runtime-server'
-import type { AVType, Size, Time, Times } from '@moviemasher/runtime-shared'
+import type { AVType, DataOrError, Size, Time, Times } from '@moviemasher/runtime-shared'
 import type { ServerMashAsset } from '../../Types/ServerMashTypes.js'
 import type { FilterGraph } from '../FilterGraph/FilterGraph.js'
 
@@ -9,7 +9,7 @@ export interface FilterGraphs {
   filterGraphVisible: FilterGraph
   filterGraphsVisible: FilterGraph[]
   commandFiles: GraphFiles
-  loadCommandFilesPromise: Promise<void>
+  loadCommandFilesPromise: Promise<DataOrError<number>>
 }
 
 export interface FilterGraphsOptions {

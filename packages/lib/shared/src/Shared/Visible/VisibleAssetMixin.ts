@@ -18,7 +18,7 @@ T & Constrained<VisibleAsset> {
           if (isAboveZero(width) && isAboveZero(height)) return { width, height }
         }
       } else {
-        console.log(this.constructor.name, 'sourceSize no probing', decoding, this.decodings.length)
+        console.warn(this.constructor.name, 'sourceSize no probing', decoding, this.decodings.length)
       }
       return undefined
     }

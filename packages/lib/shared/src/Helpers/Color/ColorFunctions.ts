@@ -11,7 +11,7 @@ const colorStrip = (color: string): string => color.toLowerCase().replace(/[\s]/
 
 const colorStyle = ():{ color: string } => {
   if (typeof Option !== 'function') return { color: '' }
-  console.log('colorStyle Option', Option)
+  // console.log('colorStyle Option', Option)
   return new Option().style
 }
 

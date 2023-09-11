@@ -2,7 +2,7 @@ import type { EndpointRequest, StringRecord, Value } from '@moviemasher/runtime-
 
 import { ProtocolHttp, assertEndpoint, endpointAbsolute, } from '@moviemasher/lib-shared'
 import path from 'path'
-import { EnvironmentKeyApiDirFilePrefix, RuntimeEnvironment } from '../Environment/Environment.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { hashMd5 } from './Hash.js'
 
 export interface RequestArgs {
@@ -45,5 +45,5 @@ export const requestArgsHash = (args: any): string => (
 )
 
 export const pathResolvedToPrefix = (url: string, prefix?: string): string => (
-  path.resolve(prefix || RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix), url)
+  path.resolve(prefix || ENVIRONMENT.get(ENV.ApiDirFilePrefix), url)
 )

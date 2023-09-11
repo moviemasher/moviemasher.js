@@ -16,44 +16,37 @@
 <div class="tsd-panel tsd-typography"><p><a href="https://moviemasher.com"><img src="https://moviemasher.com/media/img/moviemasher.svg" alt="Image" title="Movie Masher"></a></p>
 <p><em>JavaScript video editor and encoder</em></p>
 <ul>
-<li>easy to customize</li>
-<li>simple to integrate</li>
-<li>flexible API</li>
-<li>modular architecture</li>
-<li>standards based<!-- MAGIC:END --></li>
+<li><strong>edit</strong> video, audio, and images in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components">Web Components</a> </li>
+<li><strong>customize</strong> the editor with standard <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/--*">CSS Variables</a></li>
+<li><strong>encode</strong> high resolution media files using <a href="https://ffmpeg.org">FFmpeg</a></li>
+<li><strong>extend</strong> the system by listening for <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent">Custom Events</a></li>
 </ul>
-<a id="md:description" class="tsd-anchor"></a><h2><a href="#md:description">Description</a></h2><p>Movie Masher adds video editing and encoding capabilities to your web application. 
+<a id="md:description" class="tsd-anchor"></a><h2><a href="#md:description">Description</a></h2><p>Movie Masher adds media editing and encoding capabilities to your web application. 
 The client interface is implemented as a collection of standard
-<a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components">Web Components</a> 
-which are easily integrated with popular reactive libraries like
+Web Components (Custom HTML Elements)
+which integrate easily with popular reactive libraries like
 <a href="https://svelte.dev">Svelte</a>, 
 <a href="https://vuejs.org">Vue</a>, and 
 <a href="https://react.dev">React</a>. 
-The server interface is based on
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promises</a>
-and built atop 
-<a href="https://ffmpeg.org">FFmpeg</a>, so simple to integrate with common 
+The server interface is built atop 
+<a href="https://ffmpeg.org">FFmpeg</a> and designed to integrate with common 
 runtimes like 
 <a href="https://nodejs.org">Node.js</a>
 and
-<a href="https://deno.land">Deno</a> in any LINUX environment.</p>
-<p>The client and server are both strongly typed and utilize standard
-<a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent">Custom Events</a> 
+<a href="https://deno.land">Deno</a>. The client and server are both strongly typed and utilize standard
+JavaScript Events
 to facilitate a modular architecture. 
 The provided examples demonstrate deploying on a variety of platforms like 
 <a href="https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6">AWS</a>, 
 <a href="https://supabase.com">Supabase</a>, and 
 <a href="https://expressjs.com">ExpressJS</a>. </p>
-<a id="md:new-in-version-511" class="tsd-anchor"></a><h3><a href="#md:new-in-version-511"><em>NEW in version 5.1.1</em></a></h3><ul>
-<li>container/content pattern</li>
-<li>vector-based masking</li>
-<li>transform/color tweening</li>
-<li>reorganized inspector</li>
-<li><em>visual compositing</em> through <strong>SVG API</strong></li>
-<li><em>audio mixing</em> through <strong>WebAudio API</strong></li>
-<li><em>encode</em> and <em>transcode</em> through <strong>FFmpeg</strong></li>
-<li><em>client</em> implemented in <strong>ReactJS</strong></li>
-<li><em>server</em> implemented in <strong>ExpressJS</strong></li>
+<a id="md:new-in-version-512" class="tsd-anchor"></a><h3><a href="#md:new-in-version-512"><em>NEW in version 5.1.2</em></a></h3><ul>
+<li>switched from React to Web Components</li>
+<li>inputs and input groups retrieved via Events</li>
+<li>icons and translations retrieved via Events</li>
+<li>assets and raw media retrieved via Events</li>
+<li>browser and timeline previews retrieved via Events</li>
+<li>encoding, decoding, and transcoding handled via Events</li>
 </ul>
 <!-- MAGIC:START (FILE:src=dev/documentation/snippet/documentation.md) -->
 <!-- The below content is automatically added from dev/documentation/snippet/documentation.md -->
@@ -64,7 +57,7 @@ more <a href="https://moviemasher.com/docs/index.html">extensive documentation</
 also available when using a code editor that supports TypeScript and IntelliSense.</p>
 <!-- MAGIC:END -->
 
-<a id="md:availability" class="tsd-anchor"></a><h2><a href="#md:availability">Availability</a></h2><p>Movie Masher is packaged into several formats and published on some of the most popular platforms. The <a href="https://www.npmjs.com/package/@moviemasher/lib-shared">core library</a> 
+<a id="md:availability" class="tsd-anchor"></a><h2><a href="#md:availability">Availability</a></h2><p>Movie Masher is packaged in ESM2020 format and published on some of the most popular platforms. The <a href="https://www.npmjs.com/package/@moviemasher/lib-shared">core library</a> 
 as well as the
 <a href="https://www.npmjs.com/package/@moviemasher/server-express">server</a>, 
 <a href="https://www.npmjs.com/package/@moviemasher/client-react">client</a>, and
@@ -78,7 +71,7 @@ provides a functional demo you can run and build upon locally,
 while the
 <a href="https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6">AMI</a>
 in AWS Marketplace does the same within their hosted environment.</p>
-<a id="md:docker-usage" class="tsd-anchor"></a><h2><a href="#md:docker-usage">Docker Usage</a></h2><p>A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:</p>
+<a id="md:docker-usage" class="tsd-anchor"></a><h2><a href="#md:docker-usage">Docker Usage</a></h2><p>A fully functional demo of the system including server rendering can be launched within Docker using the following command:</p>
 <pre><code class="language-shell"><span class="hl-0">docker</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-3">-d</span><span class="hl-1"> </span><span class="hl-3">-p</span><span class="hl-1"> </span><span class="hl-2">&#39;8570:8570&#39;</span><span class="hl-1"> </span><span class="hl-3">--name</span><span class="hl-1"> </span><span class="hl-2">moviemasher</span><span class="hl-1"> </span><span class="hl-2">moviemasher/moviemasher.js:5.1.2</span>
 </code><button>Copy</button></pre>
 <p>Then navigate to <a href="http://localhost:8570">http://localhost:8570</a> in your browser, supplying any username/password
@@ -168,7 +161,7 @@ and the web site is also needed. Please review the <a href="https://moviemasher.
 <li><a href="#md:description"><span>Description</span></a></li>
 <li>
 <ul>
-<li><a href="#md:new-in-version-511"><span>NEW in version 5.1.1</span></a></li>
+<li><a href="#md:new-in-version-512"><span>NEW in version 5.1.2</span></a></li>
 <li><a href="#md:documentation"><span>Documentation</span></a></li>
 <li><a href="#md:availability"><span>Availability</span></a></li>
 <li><a href="#md:docker-usage"><span>Docker <wbr/>Usage</span></a></li>

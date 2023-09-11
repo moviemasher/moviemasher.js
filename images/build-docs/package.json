@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/build-docs",
-  "description": "Builds everything in packages/themes and packages/protocols",
+  "description": "Builds Movie Masher documentation",
   "scripts": {
     "start": "web-dev-server --node-resolve --open --watch"
   },
@@ -9,7 +9,10 @@
     "typedoc-plugin-merge-modules": "^5.0.1",
     "typedoc-plugin-mdn-links": "^3.0.3",
     "typedoc-plugin-extras": "^2.3.3",
-    "typedoc-plugin-coverage": "^2.1.0"
+    "typedoc-plugin-coverage": "^2.1.0",
+    "markdown-magic": "2.6.1",
+    "@types/markdown-magic": "^1.0.1"
+
   },
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"

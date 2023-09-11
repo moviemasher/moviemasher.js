@@ -96,7 +96,7 @@ export class SaveHandler {
     const { asset } = detail
 
     const request = {
-      endpoint: '/data/asset/put', init: { method: 'POST' }
+      endpoint: '/asset/put', init: { method: 'POST' }
     }
     const putRequest = requestPopulate(request, { asset: asset.assetObject })
     

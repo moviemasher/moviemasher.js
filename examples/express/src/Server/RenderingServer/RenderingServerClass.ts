@@ -10,7 +10,7 @@ import Express from 'express'
 import { Endpoints } from '../../Api/Endpoints.js'
 import { ServerClass } from '../ServerClass.js'
 import path from 'path'
-import { EnvironmentKeyApiDirFilePrefix, EnvironmentKeyApiDirTemporary, RuntimeEnvironment, renderingOutputFile } from '@moviemasher/lib-server'
+import { ENV, ENVIRONMENT, renderingOutputFile } from '@moviemasher/lib-server'
 import { outputOptions } from '@moviemasher/lib-shared'
 import { idUnique } from '../../Utilities/Id.js'
 import { JsonExtension } from '@moviemasher/lib-shared'
@@ -68,12 +68,12 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
       const user = this.userFromRequest(req)
       const encodingId = idUnique()
-      const filePrefix = RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix)
+      const filePrefix = ENVIRONMENT.get(ENV.ApiDirFilePrefix)
       const fileName = renderingOutputFile(options, encodingType)
-      const temporaryDirectory = RuntimeEnvironment.get(EnvironmentKeyApiDirTemporary)
+      const temporaryDirectory = ENVIRONMENT.get(ENV.ApiDirTemporary)
       
 
-      // const validDirectories = RuntimeEnvironment.get(EnvironmentKeyApiDirValid).split(CommaChar)
+      // const validDirectories = ENVIRONMENT.get(ENV.ApiDirValid).split(CommaChar)
       // const defaultDirectory = ''
       const outputPath = path.resolve(filePrefix, user, encodingId, fileName)
       const inputPath = path.resolve(temporaryDirectory, encodingId, `${TypeMash}.${JsonExtension}`)
@@ -92,6 +92,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
      }
     res.send(response)
   }
+  
   startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
     return super.startServer(app, activeServers).then(() => {
       app.post(Endpoints.encode.start, this.encode)
@@ -138,9 +139,9 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       // res.send(response)
       // return
     //   const user = this.userFromRequest(req)
-    //   const prefix = RuntimeEnvironment.get(EnvironmentKeyApiDirFilePrefix)
+    //   const prefix = ENVIRONMENT.get(ENV.ApiDirFilePrefix)
     //   const urlBase = 'file://' + path.resolve(prefix, user)
-    //   RuntimeEnvironment.set(EnvironmentKeyUrlBase, urlBase)
+    //   ENVIRONMENT.set(ENV.UrlBase, urlBase)
   
     //   const { cacheDirectory, temporaryDirectory } = this.args
     //   const filePrefix = this.args.outputDirectory

@@ -1,12 +1,12 @@
 import type { ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { AVType, AssetCacheArgs, DecodingObject, EncodingType, IntrinsicOptions, Size, Time, VideoOutputOptions } from '@moviemasher/runtime-shared'
+import type { AVType, AssetCacheArgs, DataOrError, DecodingObject, EncodingType, IntrinsicOptions, Size, Time, VideoOutputOptions } from '@moviemasher/runtime-shared'
 import type { ServerClips } from '../Types/ServerMashTypes.js'
 import type { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs } from './Encode.js'
 import type { FilterGraphsOptions } from './FilterGraphs/FilterGraphs.js'
 
-import { AVTypeAudio, AVTypeBoth, AVTypeVideo, JsonExtension, assertAboveZero, isAboveZero, isRequestable, sizeAboveZero, sizeCopy, timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '@moviemasher/lib-shared'
+import { AVTypeAudio, AVTypeBoth, AVTypeVideo, JsonExtension, assertAboveZero, isAboveZero, isRequestable, promiseNumbers, sizeAboveZero, sizeCopy, timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '@moviemasher/lib-shared'
 import { EventServerDecode, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, AUDIO, IMAGE, PROBE, VIDEO, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, AUDIO, IMAGE, PROBE, VIDEO, errorThrow, isDefiniteError, errorPromise } from '@moviemasher/runtime-shared'
 import { idUnique } from '../Utility/Hash.js'
 import { KindsProbe } from '../decode/ProbeConstants.js'
 import { isServerAudibleAsset, isServerVisibleAsset } from '../guard/assets.js'
@@ -15,10 +15,10 @@ import { filterGraphsArgs, filterGraphsInstance } from './FilterGraphs/FilterGra
 export class RenderingOutputClass implements RenderingOutput {
   constructor(public args: RenderingOutputArgs) {}
 
-  protected assureClipFrames(): Promise<void> {
+  protected assureClipFrames(): Promise<DataOrError<number>> {
     const { durationClips, args } = this
     const { quantize } = args.mash
-    const promises = durationClips.flatMap(clip => {
+    const promises: Promise<DataOrError<number>>[] = durationClips.flatMap(clip => {
       const { content } = clip
       const { asset } = content
       if (!isRequestable(asset)) return []
@@ -26,17 +26,16 @@ export class RenderingOutputClass implements RenderingOutput {
       const request = asset.request as ServerMediaRequest
       const { path: inputPath } = request
       if (!inputPath) return []
-      const decodingId = idUnique()
 
+      const decodingId = idUnique()
       const event = new EventServerDecode(PROBE, inputPath, JsonExtension, { types: KindsProbe }, decodingId)
       MovieMasher.eventDispatcher.dispatch(event)
       
       const { promise } = event.detail
-      if (!promise) return []
+      if (!promise) return errorPromise(ERROR.Unimplemented, EventServerDecode.Type)
 
-
-      const framesPromise = promise.then(orError => {
-        if (isDefiniteError(orError)) return
+      const framesPromise: Promise<DataOrError<number>> = promise.then(orError => {
+        if (isDefiniteError(orError)) return orError
 
         const { data: json } = orError
         const probingData: DecodingObject = JSON.parse(json)
@@ -51,13 +50,13 @@ export class RenderingOutputClass implements RenderingOutput {
 
           console.error(this.constructor.name, 'assureClipFrames size intrinsics unknown', asset.id)
         }
-        console.log(this.constructor.name, 'assureClipFrames', asset.id, frames)
-
+        // console.log(this.constructor.name, 'assureClipFrames', asset.id, frames)
+        return { data: 1 }
         
       })
       return [framesPromise]
     })
-    return promises.reduce((promise, next) => promise.then(() => next), Promise.resolve())
+    return promiseNumbers(promises) 
   }
 
   private get avType() { 
@@ -95,14 +94,14 @@ export class RenderingOutputClass implements RenderingOutput {
   private get durationClips(): ServerClips { return this._durationClips ||= this.durationClipsInitialize }
   private get durationClipsInitialize(): ServerClips {
     const { mash } = this.args
-    const { totalFrames: frames } = mash
-    console.log(this.constructor.name, 'durationClipsInitialize', frames)
+    // const { totalFrames: frames } = mash
+    // console.log(this.constructor.name, 'durationClipsInitialize', frames)
     // if (isPositive(frames)) return []
     
     const { clips } = mash
     const options: IntrinsicOptions = { duration: true, size: true }
     const zeroClips = clips.filter(clip => !clip.intrinsicsKnown(options))
-    console.log(this.constructor.name, 'durationClipsInitialize', zeroClips.length)
+    // console.log(this.constructor.name, 'durationClipsInitialize', zeroClips.length)
 
     return zeroClips
   }
@@ -140,22 +139,23 @@ export class RenderingOutputClass implements RenderingOutput {
     return filterGraphsOptions
   }
 
-  private get mashDurationPromise(): Promise<void> {
-    return this.loadClipsPromise(this.durationClips)
-  }
+  private get mashDurationPromise(): Promise<DataOrError<number>> {
+    const { durationClips: clips } = this
+    if (!clips.length) return Promise.resolve({ data: 0 })
 
-  private loadClipsPromise(clips: ServerClips): Promise<void> {
-    if (!clips.length) return Promise.resolve()
-    
     const { quantize } = this.args.mash
     const options: AssetCacheArgs = { quantize, audible: true, visible: true }
+
     const promises = clips.flatMap(clip => {
       const { content, container } = clip
       const promises = [content.asset.assetCachePromise(options)]
-      if (container) promises.push(container.asset.assetCachePromise(options))
+      if (container) {
+        promises.push(container.asset.assetCachePromise(options))
+      }
       return promises
     })
-    return promises.reduce((promise, next) => promise.then(() => next), Promise.resolve())
+
+    return promiseNumbers(promises)
   }
 
   private get outputOptions() { return this.args.outputOptions }
@@ -171,50 +171,51 @@ export class RenderingOutputClass implements RenderingOutput {
 
   private get encodingType(): EncodingType { return this.args.encodingType }
 
-  renderingDescriptionPromise(): Promise<RenderingDescription> {
-    // console.log(this.constructor.name, 'renderingDescriptionPromise')
+  renderingDescriptionPromise(): Promise<DataOrError<RenderingDescription>> {
+    return this.mashDurationPromise.then(orError => {
+      if (isDefiniteError(orError)) return orError
 
-    let promise = this.mashDurationPromise
-    promise = promise.then(() => { 
-      console.log(this.constructor.name, 'mashDurationPromise done')
-      return this.assureClipFrames() 
-    })
+      // return errorPromise(ERROR.Ffmpeg, 'mashDurationPromise')
+  
+      // console.log(this.constructor.name, 'mashDurationPromise done')
+      return this.assureClipFrames().then(orError => {
+        if (isDefiniteError(orError)) return orError
 
-    promise = promise.then(() => {
-      return this.filterGraphs.loadCommandFilesPromise 
-    })
-    // promise = promise.then(() => this.assureClipFrames())
+        // return errorPromise(ERROR.Ffmpeg, 'assureClipFrames')
+        return this.filterGraphs.loadCommandFilesPromise.then(orError => {
+          if (isDefiniteError(orError)) return orError
 
-    return promise.then(() => {
-      const { outputOptions, encodingType } = this
-      const renderingDescription: RenderingDescription = { 
-        outputOptions, encodingType
-       }
-      const avType = this.avTypeNeededForClips
-      const { filterGraphs } = this
-      // console.log(this.constructor.name, 'renderingDescriptionPromise avType', avType)
-      if (avType !== AVTypeAudio) {
-        const { filterGraphsVisible } = filterGraphs
-        const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
-          const { commandInputs: inputs, commandFilters, duration } = filterGraph
-          const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVTypeVideo }
-        // console.log(this.constructor.name, 'renderingDescriptionPromise inputs, commandFilters', inputs, commandFilters)
-          return commandDescription
-        })
-        renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
-      }
-      if (avType !== AVTypeVideo) {
-        const { filterGraphAudible, duration } = filterGraphs
-        if (filterGraphAudible) {
-          const { commandFilters, commandInputs: inputs } = filterGraphAudible
-         
-          const commandDescription: CommandDescription = {
-            inputs, commandFilters, duration, avType: AVTypeAudio
+          const { outputOptions, encodingType } = this
+          const renderingDescription: RenderingDescription = { 
+            outputOptions, encodingType
           }
-          renderingDescription.audibleCommandDescription = commandDescription
-        }
-      }
-      return renderingDescription
+          const avType = this.avTypeNeededForClips
+          const { filterGraphs } = this
+          // console.log(this.constructor.name, 'renderingDescriptionPromise avType', avType)
+          if (avType !== AVTypeAudio) {
+            const { filterGraphsVisible } = filterGraphs
+            const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
+              const { commandInputs: inputs, commandFilters, duration } = filterGraph
+              const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVTypeVideo }
+            // console.log(this.constructor.name, 'renderingDescriptionPromise inputs, commandFilters', inputs, commandFilters)
+              return commandDescription
+            })
+            renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
+          }
+          if (avType !== AVTypeVideo) {
+            const { filterGraphAudible, duration } = filterGraphs
+            if (filterGraphAudible) {
+              const { commandFilters, commandInputs: inputs } = filterGraphAudible
+            
+              const commandDescription: CommandDescription = {
+                inputs, commandFilters, duration, avType: AVTypeAudio
+              }
+              renderingDescription.audibleCommandDescription = commandDescription
+            }
+          }
+          return { data: renderingDescription }
+        })
+      })
     })
   }
 

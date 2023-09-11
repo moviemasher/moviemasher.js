@@ -1,4 +1,4 @@
-import type { Identified } from '@moviemasher/runtime-shared'
+import type { Identified, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
 import type { Command } from './Command/Command.js'
 
 export type CommandDestination = string 
@@ -8,7 +8,9 @@ export interface CommandResult {
 }
 
 export interface RunningCommand extends Identified {
-  runPromise(destination: CommandDestination): Promise<CommandResult>
+  commandArguments: Strings
+  runPromise(destination: CommandDestination): Promise<StringDataOrError>
   command: Command
+  commandString(destination: string): string
   kill(): void
 }

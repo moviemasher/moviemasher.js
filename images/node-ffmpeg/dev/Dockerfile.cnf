@@ -45,9 +45,11 @@ LABEL org.opencontainers.image.authors="support@moviemasher.com"
 # RUN chown 1000:1000 /usr/local/src/ffmpeg-6.0/configure; chmod +x /usr/local/src/ffmpeg-6.0/configure;
 # COPY images/node-ffmpeg/dev/librsvgdec.c /usr/local/src/ffmpeg-6.0/libavcodec/librsvgdec.c
 # RUN ln -s /usr/lib64/pkgconfig/librsvg-2.0.pc /usr/lib64/pkgconfig/librsvg.pc 
-# RUN cd /usr/local/src/ffmpeg-6.0 ; chown 1000:1000 ./configure; chmod +x ./configure; ls -al ./; \
-#   PATH="/usr/bin:$PATH" LD_LIBRARY_PATH="/usr/lib:/usr/lib64" PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/lib64/pkgconfig" ./configure --prefix=/usr --bindir=/usr/bin --disable-debug --disable-doc --disable-ffplay --extra-cflags="-I/usr/include" --extra-ldflags="-L/usr/lib" --extra-libs=-lpthread --extra-libs=-lm --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-version3 --enable-libopenjpeg --enable-librsvg --enable-libx264 --enable-libfdk_aac --enable-libmp3lame --enable-libvpx --enable-libfontconfig --enable-libfreetype --enable-libspeex --enable-libtheora --enable-libvorbis  --enable-zlib --enable-libopus --enable-postproc --enable-pthreads --enable-swresample ; \
-#   cat ffbuild/config.log exit 1;
+RUN cd /usr/local/src/ffmpeg-6.0 ; \
+  PATH="/usr/bin:$PATH" LD_LIBRARY_PATH="/usr/lib:/usr/lib64" PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/lib64/pkgconfig" ./configure --prefix=/usr --bindir=/usr/bin --disable-debug --disable-doc --disable-ffplay --extra-cflags="-I/usr/include" --extra-ldflags="-L/usr/lib" --extra-libs=-lpthread --extra-libs=-lm --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-version3 --enable-libopenjpeg --enable-librsvg --enable-libx264 --enable-libfdk_aac --enable-libmp3lame --enable-libvpx --enable-libfontconfig --enable-libfreetype --enable-libspeex --enable-libtheora --enable-libvorbis  --enable-zlib --enable-libopus --enable-postproc --enable-pthreads --enable-swresample ; \
+  make ; \
+  make install ;
+# cat ffbuild/config.log exit 1;
 
 # RUN find /usr/lib64 -name "*jpeg*" ; exit 1
 

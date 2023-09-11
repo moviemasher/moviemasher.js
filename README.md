@@ -1,34 +1,30 @@
+<!-- MAGIC:START (FILE:src=./dev/documentation/snippet/head.md) -->
+<!-- The below content is automatically added from ./dev/documentation/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor and encoder_
-- easy to customize
-- simple to integrate
-- flexible API
-- modular architecture
-- standards based
+- **edit** video, audio, and images in [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
+- **customize** the editor with standard [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
+- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent) 
+- **encode** high resolution media files using [FFmpeg](https://ffmpeg.org)
 <!-- MAGIC:END -->
 
+
 ## Description
-Movie Masher adds video editing and encoding capabilities to your web application. 
+Movie Masher adds media editing and encoding capabilities to your web application. 
 The client interface is implemented as a collection of standard
-[Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
-which are easily integrated with popular reactive libraries like
+Web Components (Custom HTML Elements)
+which integrate easily with popular reactive libraries like
 [Svelte](https://svelte.dev), 
 [Vue](https://vuejs.org), and 
 [React](https://react.dev). 
-The server interface is based on
-[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-and built atop 
-[FFmpeg](https://ffmpeg.org), so simple to integrate with common 
+The server interface is built atop 
+[FFmpeg](https://ffmpeg.org) and designed to integrate with common 
 runtimes like 
 [Node.js](https://nodejs.org)
 and
-[Deno](https://deno.land) in any LINUX environment.
-
-
-
-The client and server are both strongly typed and utilize standard
-[Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent) 
+[Deno](https://deno.land). The client and server are both strongly typed and utilize standard
+JavaScript Events
 to facilitate a modular architecture. 
 The provided examples demonstrate deploying on a variety of platforms like 
 [AWS](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6), 
@@ -37,16 +33,13 @@ The provided examples demonstrate deploying on a variety of platforms like
 
 
 
-### _NEW in version 5.1.1_
-- container/content pattern
-- vector-based masking
-- transform/color tweening
-- reorganized inspector
-- _visual compositing_ through **SVG API**
-- _audio mixing_ through **WebAudio API**
-- _encode_ and _transcode_ through **FFmpeg**
-- _client_ implemented in **ReactJS**
-- _server_ implemented in **ExpressJS**
+### _NEW in version 5.1.2_
+- switched from React to Web Components
+- inputs and input groups retrieved via Events
+- icons and translations retrieved via Events
+- assets and raw media retrieved via Events
+- browser and timeline previews retrieved via Events
+- encoding, decoding, and transcoding handled via Events
 
 <!-- MAGIC:START (FILE:src=dev/documentation/snippet/documentation.md) -->
 <!-- The below content is automatically added from dev/documentation/snippet/documentation.md -->
@@ -61,7 +54,7 @@ also available when using a code editor that supports TypeScript and IntelliSens
 
 ## Availability
 
-Movie Masher is packaged into several formats and published on some of the most popular platforms. The [core library](https://www.npmjs.com/package/@moviemasher/lib-shared) 
+Movie Masher is packaged in ESM2020 format and published on some of the most popular platforms. The [core library](https://www.npmjs.com/package/@moviemasher/lib-shared) 
 as well as the
 [server](https://www.npmjs.com/package/@moviemasher/server-express), 
 [client](https://www.npmjs.com/package/@moviemasher/client-react), and
@@ -79,7 +72,7 @@ in AWS Marketplace does the same within their hosted environment.
 
 ## Docker Usage
 
-A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
+A fully functional demo of the system including server rendering can be launched within Docker using the following command:
 
 ```shell
 docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.1.2

@@ -1,9 +1,9 @@
-import type { AssetCacheArgs, RawAsset, RawAssetObject } from '@moviemasher/runtime-shared'
-import type { ServerMediaRequest, ServerPromiseArgs } from '@moviemasher/runtime-server'
+import type { AssetCacheArgs, DataOrError, RawAsset, RawAssetObject } from '@moviemasher/runtime-shared'
+import type { CommandFile, ServerMediaRequest, ServerPromiseArgs } from '@moviemasher/runtime-server'
 
 import { ServerAssetClass } from './ServerAssetClass.js'
 import { EventServerAssetPromise, MovieMasher, } from '@moviemasher/runtime-server'
-import { ERROR, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
 
 export class ServerRawAssetClass extends ServerAssetClass implements RawAsset {
   constructor(object: RawAssetObject) {
@@ -13,34 +13,39 @@ export class ServerRawAssetClass extends ServerAssetClass implements RawAsset {
   }
 
 
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
-    console.log(this.constructor.name, 'assetCachePromise', args)
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
+    // console.log(this.constructor.name, 'ServerRawAssetClass.assetCachePromise', args)
+
     const { request, type } = this
     const event = new EventServerAssetPromise(request, type)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
       console.error(this.constructor.name, 'assetCachePromise EventServerAssetPromise no promise', request)
-      return errorThrow(ERROR.Unimplemented, EventServerAssetPromise.Type)
+      return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
     }
     return promise.then(orError => {
-      console.log(this.constructor.name, 'assetCachePromise', orError)
-      if (isDefiniteError(orError)) errorThrow(orError)
+      // console.log(this.constructor.name, 'assetCachePromise', orError)
+      if (isDefiniteError(orError)) return orError
+
+      return { data: 1 }
     })
   }
   
-  serverPromise(_args: ServerPromiseArgs): Promise<void> {
-    const { request, type } = this
-    const event = new EventServerAssetPromise(request, type)
+  serverPromise(_args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>> {
+    const { request, type: assetType } = this
+    const { type } = commandFile
+    if (type !== assetType) return Promise.resolve({ data: 0 })
+
+    const event = new EventServerAssetPromise(request, assetType)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    if (!promise) return Promise.resolve()
+    if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
 
     return promise.then(orError => {
-      if (!isDefiniteError(orError)) {
-        const { data } = orError
-        this.serverPath = data
-      }
+      if (isDefiniteError(orError)) return orError
+
+      return { data: 1 }
     })
   }
 

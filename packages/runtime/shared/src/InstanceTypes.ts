@@ -12,6 +12,7 @@ import type { Rect, Rects } from './Rect.js'
 import type { PropertySize } from './Size.js'
 import type { Time, TimeRange } from './Time.js'
 import type { Lock } from './Lock.js'
+import { DataOrError } from './DataOrError.js'
 
 
 export interface Instance extends Propertied, Identified {
@@ -30,7 +31,7 @@ export interface Instance extends Propertied, Identified {
   hasIntrinsicSizing: boolean
   hasIntrinsicTiming: boolean
   height: number
-  instanceCachePromise(args: InstanceCacheArgs): Promise<void>
+  instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
   instanceObject: InstanceObject
   intrinsicRect(editing?: boolean): Rect
   intrinsicsKnown(options: IntrinsicOptions): boolean

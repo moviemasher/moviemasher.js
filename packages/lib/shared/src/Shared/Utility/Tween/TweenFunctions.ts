@@ -330,7 +330,7 @@ export const tweenRectsContainer = (tweenRects: Rects, intrinsicRect: Rect, lock
 
 
 
-  //   console.log('tweenScaleSizeToRect', intrinsicRect, forcedScale, sideDirectionRecord)
+  // console.log('tweenScaleSizeToRect', intrinsicRect, forcedScale, sideDirectionRecord)
 
   //   return tweenScaleSizeToRect(intrinsicRect, forcedScale, sideDirectionRecord)
 

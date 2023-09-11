@@ -1,4 +1,4 @@
-import type { CommandFiles } from '../Types/CommandTypes.js'
+import type { CommandFiles } from '@moviemasher/runtime-server'
 
 import { assertPositive, isPositive } from '@moviemasher/lib-shared'
 

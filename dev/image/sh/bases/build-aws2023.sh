@@ -81,15 +81,15 @@ $SUDO yum install -y $AV_DEPENDENCIES ;
 # . dev/image/sh/makes/x265.sh ;
 . dev/image/sh/makes/ffmpeg.sh ;
 
-if [[ ! -z "${NPM_INSTALL}" ]] ; then  
-  echo "NPM_INSTALL: ${NPM_INSTALL}" ;
-  $SUDO npm install $NPM_INSTALL ;
-fi
+# if [[ ! -z "${NPM_INSTALL}" ]] ; then  
+#   echo "NPM_INSTALL: ${NPM_INSTALL}" ;
+#   $SUDO npm install $NPM_INSTALL ;
+# fi
 
-$SUDO yum remove -y $TOOL_DEPENDENCIES ;
+# $SUDO yum remove -y $TOOL_DEPENDENCIES ;
 
-$SUDO yum clean all ;
-# $SUDO yum autoremove -y ;
-$SUDO rm -rf /tmp/* /var/tmp/* /var/cache/* ;
-$SUDO rm -r dev/image* ;
+# $SUDO yum clean all ;
+# # $SUDO yum autoremove -y ;
+# $SUDO rm -rf /tmp/* /var/tmp/* /var/cache/* ;
+# $SUDO rm -r dev/image* ;
 

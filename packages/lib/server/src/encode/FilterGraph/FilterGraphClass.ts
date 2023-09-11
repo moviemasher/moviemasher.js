@@ -1,5 +1,5 @@
 import type { Size, Time, } from '@moviemasher/runtime-shared'
-import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, CommandInput, CommandInputs } from '../../Types/CommandTypes.js'
+import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, CommandInput, CommandInputs } from '@moviemasher/runtime-server'
 import type { ServerClips, ServerMashAsset } from '../../Types/ServerMashTypes.js'
 import type { FilterGraph, FilterGraphArgs } from './FilterGraph.js'
 
@@ -13,6 +13,7 @@ export const FilterGraphInputAudible = 'SILENCE'
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
     const { mash, background, size, time, streaming, videoRate, visible } = args
+    // console.log('FilterGraphClass', this.id, visible, time)
     assertMashAsset(mash)
 
     this.mash = mash
@@ -67,17 +68,10 @@ export class FilterGraphClass implements FilterGraph {
   }
 
   private commandFileKey(commandFile: CommandFile): string {
-    const { definition, ...rest } = commandFile
+    const { definition } = commandFile
     assertAsset(definition)
-    console.log(this.constructor.name, 'commandFileKey', rest)
-
 
     return commandFile.file
-    // // TODO!!
-    // errorThrow('commandFileKey', 'TODO!!')
-    
-    // const { label = ''} = definition
-    // return label
   }
 
   get commandInputs(): CommandInputs {
@@ -98,10 +92,9 @@ export class FilterGraphClass implements FilterGraph {
     return this._filterGraphCommandFiles ||= this.filterGraphCommandFilesInitialize
   }
   get filterGraphCommandFilesInitialize(): CommandFiles {
-    // console.log(this.constructor.name, 'commandFilesInitialize')
     const { time, videoRate, quantize, size: outputSize, clips, visible } = this
     
-    // console.log(this.constructor.name, this.id, 'commandFilesInitialize', visible, outputSize)
+    // console.log(this.constructor.name, this.id, 'filterGraphCommandFilesInitialize', visible, outputSize)
     const commandFiles = clips.flatMap(clip => {
       const clipTime = clip.timeRange
       const chainArgs: CommandFileArgs = { 
@@ -111,11 +104,13 @@ export class FilterGraphClass implements FilterGraph {
     })
 
     commandFiles.forEach(commandFile => {
-      const { resolved } = commandFile
+      // const { resolved } = commandFile
       commandFile.resolved ||= this.commandFileKey(commandFile)
-      console.log(this.constructor.name, 'filterGraphCommandFilesInitialize', resolved, '->', commandFile.resolved)
+      // console.log(this.constructor.name, this.id, 'filterGraphCommandFilesInitialize', resolved, '->', commandFile.resolved)
 
     })
+    // console.log(this.constructor.name, this.id, 'filterGraphCommandFilesInitialize', commandFiles.length)
+
     return commandFiles
   }
 
@@ -126,7 +121,7 @@ export class FilterGraphClass implements FilterGraph {
       visible, videoRate, filterGraphCommandFiles: commandFiles
     } = this
 
-    // console.log(this.constructor.name, this.id, 'commandFilters', visible, outputSize)
+    // console.log(this.constructor.name, this.id, 'commandFilters', commandFiles.length)
 
     const chainArgs: CommandFilterArgs = { 
       commandFiles,
@@ -146,7 +141,7 @@ export class FilterGraphClass implements FilterGraph {
     clips.forEach((clip, index) => {
       chainArgs.clipTime = clip.timeRange
       chainArgs.track = index
-      // console.log(this.constructor.name, 'commandFilters', chainArgs)
+      // console.log(this.constructor.name, this.id, 'commandFilters', commandFiles.length, index)
       filters.push(...clip.commandFilters(chainArgs))
     
       const lastFilter = arrayLast(filters)

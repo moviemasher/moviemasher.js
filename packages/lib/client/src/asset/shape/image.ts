@@ -1,6 +1,6 @@
 
 import type { ClientShapeAsset, ClientShapeInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
-import type { InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
+import type { DataOrError, InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
 
 import { DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeContain } from '@moviemasher/lib-shared'
 import { EventAsset } from '@moviemasher/runtime-client'
@@ -82,8 +82,8 @@ export class ClientShapeInstanceClass extends WithShapeInstance implements Clien
     return Promise.resolve(this.pathElement(containerRect))
   }
 
-  override instanceCachePromise(_args: InstanceCacheArgs): Promise<void> {
-    return Promise.resolve()
+  override instanceCachePromise(_args: InstanceCacheArgs): Promise<DataOrError<number>> {
+    return Promise.resolve({ data: 0 })
   }
 
   override pathElement(rect: Rect, forecolor = ''): SvgItem {

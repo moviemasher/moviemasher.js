@@ -1,6 +1,6 @@
 import type { Tweening } from '@moviemasher/lib-shared'
 import type { Constrained, ContentRectArgs, ValueRecord, VisibleInstance } from '@moviemasher/runtime-shared'
-import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '../Types/CommandTypes.js'
+import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerVisibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../Types/ServerInstanceTypes.js'
 
@@ -48,7 +48,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       const colorInput = arrayLast(arrayLast(commandFilters).outputs)
 
       const { id } = this
-      // console.log(this.constructor.name, 'containerCommandFilters calling commandFilesInput', id)
+      // console.log(this.constructor.name, 'containerCommandFilters calling commandFilesInput', commandFiles.length)
       const fileInput = commandFilesInput(commandFiles, id, true)
 
       // then add file input, scaled

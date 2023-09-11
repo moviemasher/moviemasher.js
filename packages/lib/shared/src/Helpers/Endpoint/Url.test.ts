@@ -39,7 +39,7 @@ describe('urlForEndpoint', () => {
   //     const base = path.resolve('./')
   //     const url = 'file://' + path.join(base, 'images/standalone/public/assets', user)
   //     const pathname = `${base}/images/standalone/public/assets/${user}`
-  //     RuntimeEnvironment.set(EnvironmentKeyUrlBase, url)
+  //     ENVIRONMENT.set(ENV.UrlBase, url)
       
   //     assert.deepStrictEqual(urlEndpoint(), { protocol: 'file:', hostname: '', pathname })
   //  })

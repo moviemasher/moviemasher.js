@@ -38,7 +38,7 @@
 					"string": "hello world!"
 				},
 				"content": {
-					"color": "rgba(255, 0, 0, 0.5)"
+					"color": "#00FF00FF"
 				},
 				"frame": 0,
 				"frames": 10,

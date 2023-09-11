@@ -1,4 +1,4 @@
-import type { AudioInstance, AudioInstanceObject, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, RawAsset, Size, Time, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AudioInstance, AudioInstanceObject, DataOrError, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, RawAsset, Size, Time, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 import type { ClientAsset } from './ClientAsset.js'
 import type { ClientClip } from './ClientMashTypes.js'
 import type { ClientImage } from './ClientMedia.js'
@@ -22,7 +22,7 @@ export interface ClientRawImageAsset extends ClientRawAsset, ClientImageAsset {
 
 export interface ClientRawVideoAsset extends ClientRawAsset, ClientVideoAsset {
   instanceFromObject(object?: VideoInstanceObject): VideoInstance
-  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<ClientImage>
+  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<DataOrError<ClientImage>>
 }
 
 export interface ClientRawInstance extends Instance, ClientInstance {

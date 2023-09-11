@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/test-shared",
   "version": "5.1.2",
-  "description": "Movie Masher Server Tests",
+  "description": "Runs all Movie Masher shared tests",
   "type": "module",
   "license": "MIT",
   "author": {

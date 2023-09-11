@@ -1,6 +1,5 @@
 import type { BooleanDataType, NumberDataType, Scalar, StringDataType, Strings } from '@moviemasher/runtime-shared'
 
-
 export type EnvironmentArrayGetter = (key: EnvironmentKey, type?: StringDataType) => Strings
 
 export type EnvironmentGetter = {
@@ -11,7 +10,7 @@ export type EnvironmentGetter = {
 
 export type EnvironmentSetter = (key: EnvironmentKey, value: Scalar) => Scalar
 
-export interface Environment {
+export interface ServerEnvironment {
   get: EnvironmentGetter
   getArray: EnvironmentArrayGetter
   set: EnvironmentSetter
@@ -19,8 +18,4 @@ export interface Environment {
 
 export type EnvironmentKey = `MOVIEMASHER_${string}`
 
-
 export type EnvironmentRecord = Record<EnvironmentKey, Scalar>
-
-
-

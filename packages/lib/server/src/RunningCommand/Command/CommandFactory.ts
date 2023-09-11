@@ -1,13 +1,15 @@
-import type { OutputOptions, VideoOutputOptions, StringDataOrError, ValueRecord, } from '@moviemasher/runtime-shared'
+import type { CommandFilters, CommandInputs } from '@moviemasher/runtime-server'
+import type { OutputOptions, StringDataOrError, ValueRecord, VideoOutputOptions, } from '@moviemasher/runtime-shared'
 import type { CommandOptions } from '../../encode/Encode.js'
-import type { CommandFilters, CommandInputs } from '../../Types/CommandTypes.js'
 import type { Command } from './Command.js'
 
 import { AVTypeAudio, AVTypeVideo, ColonRegex, CommaRegex, } from '@moviemasher/lib-shared'
 import { errorCaught, isNumber } from '@moviemasher/runtime-shared'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
-import { commandArgsString } from '../../Utility/Command.js'
-  
+import path from 'path'
+import { commandError } from '../../Utility/Command.js'
+import { directoryCreate } from '../../Utility/File.js'
+
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(
   ([key, value]) => {
     const keyString = `-${key}`
@@ -76,11 +78,14 @@ export const ffmpegInputs = (command: FfmpegCommand, inputs: CommandInputs): voi
 
 export const ffmpegSavePromise = (command: FfmpegCommand, outputPath: string): Promise<StringDataOrError> => {
   const promise = new Promise<StringDataOrError>(resolve => {
-    command.on('error', (error) => { 
-      resolve(errorCaught({ error: commandArgsString(command._getArguments(), outputPath, error) })) 
+    command.on('error', (error, stdout, stderr) => { 
+      resolve(errorCaught({ error: commandError(command._getArguments(), outputPath, error, stderr, stdout) })) 
     })
     command.on('end', () => { resolve({ data: outputPath }) })
-    try { command.save(outputPath) }
+    try { 
+      
+      directoryCreate(path.dirname(outputPath))
+      command.save(outputPath) }
     catch (error) { resolve(errorCaught(error)) }
   })
   return promise
@@ -114,8 +119,6 @@ export const commandInstance = (args: CommandOptions): Command => {
 }
 
 export const commandPath = (path = 'ffmpeg') => { ffmpeg.setFfmpegPath(path) }
-
-
 
 
 /*

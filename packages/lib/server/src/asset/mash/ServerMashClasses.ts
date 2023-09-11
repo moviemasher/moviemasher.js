@@ -1,7 +1,7 @@
 import type { Tweening } from '@moviemasher/lib-shared'
-import type { GraphFiles, ServerPromiseArgs } from '@moviemasher/runtime-server'
-import type { AVType, ClipObject, ContainerRectArgs, Instance, IntrinsicOptions, PreloadArgs, Strings, Time, TimeRange, Times, TrackArgs } from '@moviemasher/runtime-shared'
-import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Types/CommandTypes.js'
+import type { CommandFile, GraphFiles, ServerPromiseArgs } from '@moviemasher/runtime-server'
+import type { AVType, ClipObject, ContainerRectArgs, DataOrError, Instance, IntrinsicOptions, PreloadArgs, Strings, Time, TimeRange, Times, TrackArgs } from '@moviemasher/runtime-shared'
+import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerClip, ServerClips, ServerMashAsset, ServerTrack } from '../../Types/ServerMashTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../../Types/ServerInstanceTypes.js'
 
@@ -35,7 +35,7 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
     throw new Error('Method not implemented.')
   }
 
-  serverPromise(args: ServerPromiseArgs): Promise<void> {
+  serverPromise(_args: ServerPromiseArgs, _commandFile: CommandFile): Promise<DataOrError<number>> {
     throw new Error('Method not implemented.')
   }
 
@@ -102,8 +102,6 @@ export class ServerClipClass extends ClipClass implements ServerClip {
         commandFiles.push(...contentFiles)
       }
       const containerFiles = container.visibleCommandFiles(fileArgs)
-
-      // console.log(this.constructor.name, 'commandFiles container:', containerFiles.length)
       commandFiles.push(...containerFiles)
     } else {
       assertTrue(!visible, 'outputSize && container')
@@ -178,13 +176,6 @@ export class ServerClipClass extends ClipClass implements ServerClip {
       files.push(container.intrinsicGraphFile(options))
     }
     return files
-  }
-
-  serverPromise(args: ServerPromiseArgs): Promise<void> {
-    const { content, container } = this
-    const promises = [content.serverPromise(args)]
-    if (container) promises.push(container.serverPromise(args))
-    return Promise.all(promises).then(EmptyFunction)  
   }
 }
 

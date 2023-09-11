@@ -1,9 +1,9 @@
 import type { ClientImage, ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, SvgItem } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, ImageInstance, ImageInstanceObject, InstanceArgs, Rect, RectOptions, Size, Time, } from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, DataOrError, ImageInstance, ImageInstanceObject, InstanceArgs, Rect, RectOptions, Size, Time, } from '@moviemasher/runtime-shared'
 
 import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeCover } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientImagePromise, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, IMAGE, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
+import { SourceRaw, IMAGE, errorThrow, isAssetObject, isDefiniteError, errorPromise, ERROR } from '@moviemasher/runtime-shared'
 import { svgImagePromiseWithOptions, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
@@ -20,27 +20,29 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     this.initializeProperties(args)
   }
   
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
     const { visible } = args
-    if (!visible) return Promise.resolve()
+    if (!visible) return Promise.resolve({ data: 0 })
 
     const { loadedImage } = this
-    if (loadedImage) return Promise.resolve()
+    if (loadedImage) return Promise.resolve({ data: 0 })
 
     const transcoding = this.preferredTranscoding(IMAGE) 
-    if (!transcoding) return Promise.resolve()
+    if (!transcoding) return Promise.resolve({ data: 0 })
     
     const { request } = transcoding
     const event = new EventClientImagePromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    return promise!.then(orError => {
-      if (isDefiniteError(orError)) return errorThrow(orError.error)
+    if (!promise) return errorPromise(ERROR.Unimplemented, EventClientImagePromise.Type)
+    
+    return promise.then(orError => {
+      if (isDefiniteError(orError)) return orError
 
       const { data: clientImage } = orError
       console.log(this.constructor.name, 'assetCachePromise setting loadedImage')
       this.loadedImage = clientImage
-      return
+      return { data: 1 }
     })
   }
 

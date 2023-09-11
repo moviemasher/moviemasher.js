@@ -1,13 +1,13 @@
 import type { Command } from './Command/Command.js'
 import type { CommandOptions } from '../encode/Encode.js'
-import type { CommandDestination, CommandResult, RunningCommand } from './RunningCommand.js'
+import type { CommandDestination, RunningCommand } from './RunningCommand.js'
 
 import { assertPopulatedString } from '@moviemasher/lib-shared'
-import { ERROR, errorThrow } from '@moviemasher/runtime-shared'
-import fs from 'fs'
+import { ERROR, StringDataOrError, Strings, errorThrow } from '@moviemasher/runtime-shared'
 import path from 'path'
 import { commandInstance } from './Command/CommandFactory.js'
-import { commandArgsString } from '../Utility/Command.js'
+import { commandString, commandError } from '../Utility/Command.js'
+import { directoryCreate } from '../Utility/File.js'
 
 export class RunningCommandClass implements RunningCommand {
   constructor(public id: string, public commandOptions: CommandOptions) {
@@ -17,7 +17,10 @@ export class RunningCommandClass implements RunningCommand {
     }
   }
 
+  get commandArguments(): Strings { return this.command._getArguments() }
+
   private _command?: Command
+  
   get command(): Command {
     return this._command ||= commandInstance(this.commandOptions)
   }
@@ -26,33 +29,32 @@ export class RunningCommandClass implements RunningCommand {
 
   private get commandInputs() { return this.commandOptions.inputs || [] }
 
-  kill() {
-    console.debug(this.constructor.name, 'kill', this.id)
-    this._command?.kill('SIGKILL')
+  commandString(destination: string): string {
+    return commandString(this.commandArguments, destination)
   }
+
+  kill() { this._command?.kill('SIGKILL') }
 
   get output() { return this.commandOptions.commandFilters || [] }
 
-  private runError(destination: string, ...args: any[]): string {
-    return commandArgsString(this.command._getArguments(), destination, ...args) 
-  }
-
-  runPromise(destination: CommandDestination): Promise<CommandResult> {
+  runPromise(destination: CommandDestination): Promise<StringDataOrError> {
     assertPopulatedString(destination)
-
-    const result: CommandResult = {}
-    const promise = new Promise<CommandResult>((resolve, reject) => {
+  
+    const promise = new Promise<StringDataOrError>(resolve => {
       const { command } = this
-      command.on('error', (...args: any[]) => {
-        reject({ error: this.runError(destination, ...args)})
+      command.on('error', (error, stdout, stderr) => {
+        // console.error(this.constructor.name, 'runPromise ON ERROR', {error, stdout, stderr})
+        resolve({ error: commandError(this.commandArguments, destination, error, stderr, stdout)})
       })
-      command.on('end', () => { resolve(result) })
+      command.on('end', () => { resolve({ data: destination }) })
       try {
-        fs.mkdirSync(path.dirname(destination), { recursive: true })
+
+        directoryCreate(path.dirname(destination))
         command.save(destination)
       }
       catch (error) {
-        reject({ error: this.runError(destination, error) })
+        // console.error(this.constructor.name, 'runPromise CAUGHT', error)
+        resolve({ error: commandError(this.commandArguments, destination, error) })
       }
     })
     return promise

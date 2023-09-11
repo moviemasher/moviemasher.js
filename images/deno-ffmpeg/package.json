@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/deno-ffmpeg",
   "version": "5.1.2",
-  "description": "Movie Masher Deno Example",
+  "description": "Movie Masher Deno Image",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"

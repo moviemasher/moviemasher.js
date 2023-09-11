@@ -1,7 +1,7 @@
 import type { GraphFiles, ServerAsset, ServerPromiseArgs } from '@moviemasher/runtime-server'
 import type { AVType, AudioInstance, AudioInstanceObject, Clip, ImageInstance, Instance, InstanceArgs, InstanceObject, IntrinsicOptions, MashAsset, MashInstance, Time, Times, Track, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 import type { ServerInstance, ServerVisibleInstance } from './ServerInstanceTypes.js'
-import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from './CommandTypes.js'
+import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from '@moviemasher/runtime-server'
 import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset, ServerVisibleAsset } from './ServerAssetTypes.js'
 
 export interface ServerMashAsset extends MashAsset, ServerAsset {
@@ -46,8 +46,6 @@ export interface ServerClip extends Clip {
   container?: ServerVisibleInstance
   content: ServerInstance
   intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles
-  serverPromise(args: ServerPromiseArgs): Promise<void>
-
 }
 
 export type ServerClips = ServerClip[]

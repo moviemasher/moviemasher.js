@@ -1,4 +1,4 @@
-import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
 
 import { Aspect, Crop, End, RECT_ZERO, AUDIO, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
@@ -187,11 +187,11 @@ export class InstanceClass extends PropertiedClass implements Instance {
     super.initializeProperties(object)
   }
 
-  instanceCachePromise(args: InstanceCacheArgs): Promise<void> {
+  instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>> {
     const { time } = args
     const assetTime = this.assetTime(time)
     const options: CacheOptions = { ...args, time: assetTime }
-    console.log(this.constructor.name, 'InstanceClass.instanceCachePromise', options, this.assetId)
+    // console.log(this.constructor.name, 'InstanceClass.instanceCachePromise', options, this.assetId)
     return this.asset.assetCachePromise(options)
   }
 

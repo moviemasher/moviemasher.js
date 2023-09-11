@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/lambda-ffmpeg",
   "version": "0.0.1",
-  "description": "Movie Masher FFmpeg for AWS Lambda",
+  "description": "Movie Masher AWS Lambda Image",
   "license": "MIT",
   "author": {
     "name": "Movie Masher",

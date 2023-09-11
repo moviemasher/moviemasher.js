@@ -1,9 +1,9 @@
 import type { ClientImage, ClientInstance, ClientMediaRequest, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientVideo, Panel, Preview, SvgItem } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, InstanceArgs, Rect, RectOptions, Size, Time, Times, Transcoding, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, DataOrError, InstanceArgs, Rect, RectOptions, Size, Time, Times, Transcoding, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, EmptyFunction, NamespaceSvg, SemicolonChar, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTime, assertTimeRange, assertTrue, centerPoint, pointCopy, sizeAboveZero, sizeCopy, sizeCover, sizeString, timeFromArgs, timeFromSeconds } from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, AudibleInstanceMixin, NamespaceSvg, SemicolonChar, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTime, assertTimeRange, assertTrue, centerPoint, pointCopy, promiseNumbers, sizeAboveZero, sizeCopy, sizeCover, sizeString, timeFromArgs, timeFromSeconds } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientAudioPromise, EventClientImagePromise, EventClientVideoPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, SourceRaw, AUDIO, IMAGE, SEQUENCE, VIDEO, errorThrow, isAssetObject, isBoolean, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, SourceRaw, AUDIO, IMAGE, SEQUENCE, VIDEO, errorThrow, isAssetObject, isBoolean, isDefiniteError, errorPromise, error } from '@moviemasher/runtime-shared'
 import { isClientAudio, isClientVideo } from '../../Client/ClientGuards.js'
 import { svgImagePromiseWithOptions, svgSetChildren, svgSetDimensions, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
@@ -33,13 +33,13 @@ const canvasContext = (size: Size): [HTMLCanvasElement, CanvasRenderingContext2D
   return [canvas, context]
 }
 
-const seekingPromises = new Map<ClientVideo, Promise<ClientImage>>()
+const seekingPromises = new Map<ClientVideo, Promise<DataOrError<ClientImage>>>()
 
 const seek = (definitionTime: Time, video:HTMLVideoElement): void => {
   video.currentTime = definitionTime.seconds
 }
 
-const videoImagePromise = (video: ClientVideo, outSize?: Size): Promise<ClientImage> => {
+const videoImagePromise = (video: ClientVideo, outSize?: Size): Promise<DataOrError<ClientImage>> => {
   const inSize = sizeCopy(video)
   const size = sizeAboveZero(outSize) ? sizeCover(inSize, outSize) : inSize
   const { width, height } = size
@@ -47,7 +47,7 @@ const videoImagePromise = (video: ClientVideo, outSize?: Size): Promise<ClientIm
   context.drawImage(video, 0, 0, width, height)
   const image = new Image()
   image.src = canvas.toDataURL()
-  return image.decode().then(() => image)
+  return image.decode().then(() => ({ data: image}))
 }
 
 const seekNeeded = (definitionTime: Time, video:HTMLVideoElement): boolean => {
@@ -58,31 +58,26 @@ const seekNeeded = (definitionTime: Time, video:HTMLVideoElement): boolean => {
   return !videoTime.equalsTime(definitionTime)
 }
 
-const imageFromVideoPromise = (video: ClientVideo, definitionTime: Time, outSize?: Size): Promise<ClientImage> => {
+const imageFromVideoPromise = (video: ClientVideo, definitionTime: Time, outSize?: Size): Promise<DataOrError<ClientImage>> => {
   // console.log('imageFromVideoPromise', definitionTime)
   
-  const promise: Promise<ClientImage> = new Promise(resolve => {
+  const promise: Promise<DataOrError<ClientImage>> = new Promise(resolve => {
     if (!seekNeeded(definitionTime, video)) {
       // console.log('imageFromVideoPromise !seekNeeded', definitionTime)
 
       seekingPromises.delete(video)
-      return videoImagePromise(video, outSize)
+      resolve(videoImagePromise(video, outSize))
+      return 
+    } else {
+      video.onseeked = () => {
+        video.onseeked = null
+        resolve(videoImagePromise(video, outSize).then(orError => {        
+          seekingPromises.delete(video)
+          return orError
+        }))
+      }
+      seek(definitionTime, video)
     }
-    // console.log('imageFromVideoPromise seekNeeded', definitionTime)
-
-    video.onseeked = () => {
-      // console.log('imageFromVideoPromise onseeked', definitionTime)
-
-      video.onseeked = null
-      videoImagePromise(video, outSize).then(image => {
-        // console.log('imageFromVideoPromise resolving after videoImagePromise', definitionTime)
-
-        seekingPromises.delete(video)
-        resolve(image)
-      })
-    }
-    seek(definitionTime, video)
-    return
   })
   const existing = seekingPromises.get(video)
   
@@ -109,14 +104,14 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     this.initializeProperties(args)
   }
   
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
     // console.debug(this.constructor.name, 'assetCachePromise', args)
-    const promises: Promise<void>[] = []
+    const promises: Promise<DataOrError<number>>[] = []
     const { audible, visible } = args
     const { audio } = this
     if (audible && audio) promises.push(this.preloadAudiblePromise(args))
     if (visible) promises.push(this.preloadVisiblePromise(args))
-    return Promise.all(promises).then(EmptyFunction)
+    return promiseNumbers(promises)
   }
 
   override audibleSource(): AudioBufferSourceNode | undefined {
@@ -130,7 +125,10 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     // if (!transcoding) return undefined
     
     const time = timeFromArgs(1)
-    return this.imageFromTranscodingPromise(transcoding, time).then(image => {
+    return this.imageFromTranscodingPromise(transcoding, time).then(orError => {
+      if (isDefiniteError(orError)) return errorThrow(orError.error)
+      
+      const { data: image} = orError
       const { src } = image
       assertSizeAboveZero(image)
 
@@ -146,7 +144,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     })
   }
 
-  private imageFromTranscodingPromise(transcoding: Transcoding | undefined, definitionTime: Time, outSize?: Size): Promise<ClientImage> {
+  private imageFromTranscodingPromise(transcoding: Transcoding | undefined, definitionTime: Time, outSize?: Size): Promise<DataOrError<ClientImage>> {
     const target = transcoding || this
     const { type, request } = target
     switch (type) {
@@ -154,11 +152,9 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
         const event = new EventClientImagePromise(request)
         MovieMasher.eventDispatcher.dispatch(event)
         const { promise } = event.detail
-        return promise!.then(orError => {
-          if (isDefiniteError(orError)) return errorThrow(orError.error)
-          
-          return orError.data
-        })
+        if (!promise) return errorPromise(ERROR.Unimplemented, EventClientImagePromise.Type)
+
+        return promise
       }
       case VIDEO: {
         console.log(this.constructor.name, 'imageFromTranscodingPromise', definitionTime, outSize)
@@ -170,37 +166,35 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
       //   return this.imageFromSequencePromise(transcoding, definitionTime, outSize)
       // }
     }
-    return errorThrow(ERROR.Internal)
+    return errorPromise(ERROR.Internal)
   }
 
-  private imageFromVideoTranscodingPromise(previewTranscoding: Transcoding | undefined, definitionTime: Time, outSize?: Size): Promise<ClientImage> {
+  private imageFromVideoTranscodingPromise(previewTranscoding: Transcoding | undefined, definitionTime: Time, outSize?: Size): Promise<DataOrError<ClientImage>> {
     console.log(this.constructor.name, 'imageFromVideoTranscodingPromise', definitionTime, outSize)
     
     const loaded = this.loadedImage(definitionTime, outSize)
-    if (loaded) {
-      // console.debug(this.constructor.name, 'imageFromVideoTranscodingPromise loaded', definitionTime, outSize)
-      return Promise.resolve(loaded)
-    }
-
-    // const { loadedVideoPromise } = this
-    // assertDefined(loadedVideoPromise)
-
+    if (loaded) return Promise.resolve({ data: loaded })
+    
     const { request } = previewTranscoding || this
 
     const event = new EventClientVideoPromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    assertDefined(promise)
+    if (!promise) return errorPromise(ERROR.Unimplemented, EventClientVideoPromise.Type)
+
     return promise.then(orError => {
-      if (isDefiniteError(orError)) return errorThrow(orError.error)
+      if (isDefiniteError(orError)) return orError
 
       const { data: clientVideo } = orError
       const key = this.loadedImageKey(definitionTime, outSize)
 
-      return imageFromVideoPromise(clientVideo, definitionTime, outSize).then(image => {
-        // console.debug(this.constructor.name, 'imageFromVideoTranscodingPromise SETTING', key)
-        this.loadedImages.set(key, image)
-        return image
+      return imageFromVideoPromise(clientVideo, definitionTime, outSize).then(orError => {
+        if (!isDefiniteError(orError)) {
+          const { data: image } = orError
+          // console.debug(this.constructor.name, 'imageFromVideoTranscodingPromise SETTING', key)
+          this.loadedImages.set(key, image)
+        }
+        return orError
       })
     })
   }  
@@ -233,7 +227,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     return `${frameFps}-${sizeString(outSize)}`
   }
 
-  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<ClientImage>{
+  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<DataOrError<ClientImage>>{
     // console.log(this.constructor.name, 'loadedImagePromise', definitionTime)
     const { previewTranscoding: transcoding } = this
     // if (! transcoding) return errorThrow(ERROR.Internal)
@@ -262,8 +256,8 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   //   })
   // }
 
-  private preloadAudiblePromise(_args: AssetCacheArgs): Promise<void> {
-    if (this.loadedAudio) return Promise.resolve()
+  private preloadAudiblePromise(_args: AssetCacheArgs): Promise<DataOrError<number>> {
+    if (this.loadedAudio) return Promise.resolve({ data: 0 })
 
     const transcoding = this.preferredTranscoding(AUDIO, VIDEO)
     const { request } = transcoding || this
@@ -271,21 +265,25 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     const event = new EventClientAudioPromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    assertDefined(promise, 'audio promise')
+    if (!promise) return errorPromise(ERROR.Unimplemented, EventClientAudioPromise.Type)
 
+    
     return promise.then(orError => {
       if (isDefiniteError(orError)) {
         // console.debug(this.constructor.name, 'preloadAudiblePromise', 'isDefiniteError', orError)
         this.audio = false
-        return
+        return orError
       }
 
       const { data } = orError
       if (isClientAudio(data)) {
         // console.debug(this.constructor.name, 'preloadAudiblePromise', 'isClientAudio')
         this.loadedAudio = data
-        return
+        return { data: 1 }
       }
+
+      return error(ERROR.Internal)
+
       // assertClientVideo(data)
 
       // const { src } = data
@@ -300,7 +298,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
 
       // return promise.then(orError => {
       //   if (isDefiniteError(orError)) {
-          console.debug(this.constructor.name, 'preloadAudiblePromise', 'isDefiniteError', orError)
+          // console.debug(this.constructor.name, 'preloadAudiblePromise', 'isDefiniteError', orError)
       //     return
       //   }
 
@@ -313,8 +311,8 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   }
   declare request: ClientMediaRequest
 
-  private preloadVisiblePromise(args: AssetCacheArgs): Promise<void> {
-    const promises: Promise<void>[] = []
+  private preloadVisiblePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
+    const promises: Promise<DataOrError<number>>[] = []
     // const { audible } = args
     // const { audio } = this
     const visibleTranscoding = this.preferredTranscoding(SEQUENCE, VIDEO)
@@ -327,28 +325,31 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
       const event = new EventClientVideoPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
-      promises.push(promise!.then(orError => {
-        if (isDefiniteError(orError)) return errorThrow(orError.error)
+      if (!promise) return errorPromise(ERROR.Unimplemented, EventClientVideoPromise.Type)
+
+
+      promises.push(promise.then(orError => {
+        if (isDefiniteError(orError)) return orError
 
         const { data: clientVideo } = orError
         this.loadedVideo = clientVideo
         // console.debug(this.constructor.name, 'preloadVisiblePromise', 'isClientVideo', args)
         // const { time } = args
 
-        return
+        return { data: 1 }
       }))
     } else promises.push(this.sequenceImagesPromise(args))
 
       // } 
     // } 
-    return Promise.all(promises).then(() => {})
+    return promiseNumbers(promises)
   }
 
   get previewTranscoding(): Transcoding | undefined {
     return this.findTranscoding(VIDEO, SEQUENCE, VIDEO)
   }
 
-  private sequenceImagesPromise(args: AssetCacheArgs): Promise<void> {
+  private sequenceImagesPromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
     const { assetTime: range } = args
     assertTime(range)
     
@@ -361,9 +362,13 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
       definitionTimes.push(...range.frameTimes)
     } else definitionTimes.push(range)
     const promises = definitionTimes.map(definitionTime => {
-      return this.loadedImagePromise(definitionTime)
+      return this.loadedImagePromise(definitionTime).then(orError => {
+        if (isDefiniteError(orError)) return orError
+
+        return { data: 1 }
+      })
     })
-    return Promise.all(promises).then(EmptyFunction)
+    return promiseNumbers(promises)
   }
 
   static handleAsset(event: EventAsset) {
@@ -473,7 +478,11 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
   private sequenceItemPromise(rect: Rect, definitionTime: Time): Promise<SvgItem> {
     // return errorThrow(ERROR.Unimplemented)
     const { asset } = this
-    return asset.loadedImagePromise(definitionTime).then(loadedImage => {
+    return asset.loadedImagePromise(definitionTime).then(orError => {
+      if (isDefiniteError(orError)) errorThrow(ERROR.Internal)
+
+      const { data: loadedImage } = orError
+      
       const { src } = loadedImage
       // const coverSize = sizeCover(sizeCopy(loadedImage), sizeCopy(rect))
       // console.debug(this.constructor.name, 'sequenceItemPromise', { rect, definitionTime })

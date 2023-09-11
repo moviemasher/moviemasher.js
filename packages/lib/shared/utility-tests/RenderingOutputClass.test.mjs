@@ -66,8 +66,6 @@ describe("videoFactory", () => {
     
     console.log('renderingDescription', renderingDescription)
 
-
-
     const { commandOutput, visibleCommandDescriptions } = renderingDescription
 
     const { outputType } = commandOutput

@@ -6,7 +6,7 @@ import { EventServerTranscode } from '@moviemasher/runtime-server'
 import { ERROR, IMAGE, SEQUENCE, errorPromise, isAssetType } from '@moviemasher/runtime-shared'
 import path from 'path'
 import { ffmpegCommand, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../RunningCommand/Command/CommandFactory.js'
-import { EnvironmentKeyApiDirTemporary, RuntimeEnvironment } from '../Environment/Environment.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { hashMd5 } from '../Utility/Hash.js'
 
 const transcodeEncodingType = (transcodingType: TranscodingType): EncodingType | undefined  =>{
@@ -23,7 +23,7 @@ const transcode = (transcodingType: TranscodingType, localPath: string, options:
 
   const id = idGenerateString()
   const hash = hashMd5(id)
-  const temporaryDirectory = RuntimeEnvironment.get(EnvironmentKeyApiDirTemporary)
+  const temporaryDirectory = ENVIRONMENT.get(ENV.ApiDirTemporary)
   const outputPath = path.resolve(temporaryDirectory, urlFilename(hash, ext))
   assertPopulatedString(localPath)
 

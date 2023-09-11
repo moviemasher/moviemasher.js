@@ -5,7 +5,7 @@ import type { HostServers } from '../../Host/Host.js'
 import type { ExpressHandler } from '../Server.js'
 import type { DataServer, DataServerArgs } from './DataServer.js'
 
-import { RuntimeEnvironment } from '@moviemasher/lib-server'
+import { ENVIRONMENT } from '@moviemasher/lib-server'
 import { EmptyFunction, arrayOfNumbers, colorBlue, idIsTemporary, idTemporary, stringPluralize } from '@moviemasher/lib-shared'
 import { ERROR, SIZE_OUTPUT, TypeMash, NUMBER, STRING, VIDEO, arrayFromOneOrMore, errorCaught, errorName, isString } from '@moviemasher/runtime-shared'
 import Express from 'express'
@@ -77,6 +77,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   private assetDefault: ExpressHandler<DataMashDefaultResponse | PotentialError, DataMashDefaultRequest> = async (req, res) => {
     const { width, height } = SIZE_OUTPUT
+    console.log(this.constructor.name, 'assetDefault', JSON.stringify(req.body, null, 2))
 
     const response: DataMashDefaultResponse = { 
       data: { 
@@ -270,8 +271,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   private assetPut: ExpressHandler<DataDefinitionPutResponse | PotentialError, DataDefinitionPutRequest> = async (req, res) => {
-  console.log(this.constructor.name, 'assetPut', JSON.stringify(req.body, null, 2))
-   const { asset } = req.body
+    console.log(this.constructor.name, 'assetPut', JSON.stringify(req.body, null, 2))
+    const { asset } = req.body
     const response: DataDefinitionPutResponse = { id: '' }
     try {
       const user = this.userFromRequest(req)
@@ -323,11 +324,11 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   private get clientInitialize() {
-    const port = RuntimeEnvironment.get('MOVIEMASHER_DB_PORT', NUMBER)
-    const host = RuntimeEnvironment.get('MOVIEMASHER_DB_HOST', STRING)
-    const database = RuntimeEnvironment.get('MOVIEMASHER_DB_DATABASE', STRING)
-    const user = RuntimeEnvironment.get('MOVIEMASHER_DB_USERNAME', STRING)
-    const password = RuntimeEnvironment.get('MOVIEMASHER_DB_PASSWORD', STRING)
+    const port = ENVIRONMENT.get('MOVIEMASHER_DB_PORT', NUMBER)
+    const host = ENVIRONMENT.get('MOVIEMASHER_DB_HOST', STRING)
+    const database = ENVIRONMENT.get('MOVIEMASHER_DB_DATABASE', STRING)
+    const user = ENVIRONMENT.get('MOVIEMASHER_DB_USERNAME', STRING)
+    const password = ENVIRONMENT.get('MOVIEMASHER_DB_PASSWORD', STRING)
     const client = new ClientClass({ host, database, port, user, password })
     client.on('end', () => {
       console.debug('DataServerClass', 'client end')
@@ -428,7 +429,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
     return super.startServer(app, activeServers).then(() => {
-      console.debug(this.constructor.name, 'startServer')
+      console.debug(this.constructor.name, 'startServer', Endpoints.asset.default)
       app.get(Endpoints.asset.default, this.assetDefault)
       app.post(Endpoints.asset.delete, this.assetDelete)
       app.post(Endpoints.asset.get, this.assetGet)
@@ -593,8 +594,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   //   return this._mediaKeys ||= this.mediaKeysInitialize
   // }
   // private get mediaKeysInitialize(): string[] {
-  //   const columnOwner = RuntimeEnvironment.get(EnvironmentKeyAppColumnOwner)
-  //   const columnSource = RuntimeEnvironment.get(EnvironmentKeyAppColumnSource)
+  //   const columnOwner = ENVIRONMENT.get(EnvironmentKeyAppColumnOwner)
+  //   const columnSource = ENVIRONMENT.get(EnvironmentKeyAppColumnSource)
         
   //   return [...DataServerColumns, columnOwner, columnSource].filter(Boolean)
   // }

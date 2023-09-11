@@ -6,7 +6,7 @@ import type { JobType } from '../Types/JobTypes.js'
 import { assertObject, assertRequest } from '@moviemasher/lib-shared'
 import { EventServerAssetPromise, MovieMasher } from '@moviemasher/runtime-server'
 import { ERROR, error, errorPromise, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
-import { EnvironmentKeyApiKeypathJob, EnvironmentKeyApiKeypathType, RuntimeEnvironment } from '../Environment/Environment.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { assertIdentifiedRequest } from '../Media/MediaFunctions.js'
 import { JobTypeDecoding, JobTypeEncoding, JobTypeTranscoding, assertJobType } from '../Setup/JobGuards.js'
 import { assertDecodeRequest, decode } from '../decode/DecodeFunctions.js'
@@ -21,9 +21,9 @@ export interface CallbackRequestBody extends Identified, PotentialError {
 }
 
 export const jobExtract = (object: JsonRecord): JobTuple => {
-  const typeKeypath = RuntimeEnvironment.get(EnvironmentKeyApiKeypathType)
+  const typeKeypath = ENVIRONMENT.get(ENV.ApiKeypathType)
         
-  const jobKeypath = RuntimeEnvironment.get(EnvironmentKeyApiKeypathJob)
+  const jobKeypath = ENVIRONMENT.get(ENV.ApiKeypathJob)
         
   const { [typeKeypath]: jobType, [jobKeypath]: jobOrJobs } = object
   const job = isArray(jobOrJobs) ? jobOrJobs[0] : jobOrJobs

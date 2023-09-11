@@ -1,18 +1,20 @@
 import type { Tweening, } from '@moviemasher/lib-shared'
-import type { GraphFile, GraphFiles, ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { AssetCacheArgs, InstanceArgs, PreloadArgs, Rect, ScalarRecord, Size, Strings, TextAssetObject, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
-import type { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Types/CommandTypes.js'
+import type { GraphFile, GraphFiles, ServerMediaRequest, ServerPromiseArgs } from '@moviemasher/runtime-server'
+import type { AssetCacheArgs, DataOrError, InstanceArgs, PreloadArgs, Rect, ScalarRecord, Size, Strings, TextAssetObject, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerTextAsset, ServerTextInstance } from '../../Types/ServerTypes.js'
 
-import { LockNone, NewlineChar, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, arrayOfNumbers, assertNumber, assertPopulatedString, assertRect, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, idGenerate, isAboveZero, isTrueValue, pointAboveZero, sizeAboveZero, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { DOT, EqualsChar, LockNone, NewlineChar, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, arrayOfNumbers, assertNumber, assertPopulatedString, assertRect, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, idGenerate, isAboveZero, isPopulatedArray, isTrueValue, pointAboveZero, sizeAboveZero, sizesEqual, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
 import { EventServerAsset, EventServerAssetPromise, EventServerTextRect, GraphFileTypeTxt, MovieMasher } from '@moviemasher/runtime-server'
-import { End, ERROR, POINT_ZERO, RECT_KEYS, RECT_ZERO, SourceText, TypeFont, IMAGE, errorThrow, isAssetObject, isDefiniteError, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { End, ERROR, POINT_ZERO, RECT_KEYS, RECT_ZERO, SourceText, TypeFont, IMAGE, errorThrow, isAssetObject, isDefiniteError, isNumber, isPopulatedString, POINT_KEYS, SIZE_KEYS, isBoolean, errorPromise } from '@moviemasher/runtime-shared'
 import { execSync } from 'child_process'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
-import { fileRemove, fileRemovePromise, fileTemporaryPath, fileWrite, fileWritePromise } from '../../Utility/File.js'
+import { fileReadPromise, fileRemove, fileRemovePromise, fileTemporaryPath, fileWrite, fileWritePromise } from '../../Utility/File.js'
+import { hashMd5 } from '../../Utility/Hash.js'
+import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -23,19 +25,20 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     this.initializeProperties(args)
   }
   
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
-    console.log(this.constructor.name, 'assetCachePromise', args)
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
     const { request } = this
     const event = new EventServerAssetPromise(request, TypeFont)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
-    if (!promise) {
-      console.error(this.constructor.name, 'assetCachePromise EventServerAssetPromise no promise', request)
-      return errorThrow(ERROR.Unimplemented, EventServerAssetPromise.Type)
-    }
+    if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
+   
     return promise.then(orError => {
-      console.log(this.constructor.name, 'assetCachePromise', orError)
-      if (isDefiniteError(orError)) errorThrow(orError)
+      // return errorPromise(ERROR.Ffmpeg, 'assetCachePromise')
+
+      // console.log(this.constructor.name, 'ServerTextAssetClass.assetCachePromise', orError)
+      if (isDefiniteError(orError)) return orError
+
+      return { data: 1 }
     })
   }
 
@@ -59,6 +62,18 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     return new ServerTextInstanceClass(args)
   }
 
+  override serverPromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>> {
+    const { visible } = args
+    if (!visible) return Promise.resolve( { data: 0 })
+
+    const { input, file, content, type } = commandFile
+    if (!input && type === GraphFileTypeTxt && content) {
+      return fileWritePromise(file, content).then(() => ({ data: 0 }))
+    }
+    return super.serverPromise(args, commandFile)
+  }
+
+
   static handleAsset(event:EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
@@ -74,8 +89,9 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     event.stopImmediatePropagation()
   }
 
-  private static textRect(text: string, fontPath: string, height: number): Rect {
-    const textFile = fileTemporaryPath(GraphFileTypeTxt)
+  private static textRect(text: string, fontPath: string, charHeight: number): Rect {
+    const fileName = hashMd5(`${fontPath}/${text}`)
+    const textFile = fileTemporaryPath(fileName, GraphFileTypeTxt)
     fileWrite(textFile, text)
     
     let multiplier = 2 
@@ -83,9 +99,9 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
 
     const indices = arrayOfNumbers(3)
     indices.find(index => {
-    
-      const charWidth = height * (1 + index)
-      const command = ServerTextAssetClass.probeCommand(textFile, fontPath, height, charWidth, text.length, multiplier)
+      const { length: textLength } = text
+      const charWidth = charHeight * (1 + index)
+      const command = ServerTextAssetClass.probeCommand(textFile, fontPath, charHeight, charWidth, textLength, multiplier)
       const probeRect = ServerTextAssetClass.probeRect(command)
       
       if (!sizeAboveZero(probeRect)) return false
@@ -98,15 +114,16 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
       const { 
         x: actualX, y: actualY, width: actualWidth, height: actualHeight 
       } = probeRect
-
-      const expectedX = Math.ceil((actualWidth * (multiplier - 1)) / 2) 
+      const width = charWidth * textLength * multiplier
+      const height = charHeight * multiplier
+      const expectedX = Math.ceil((width - actualWidth) / 2) 
       const x = actualX - expectedX
-      const expectedY = Math.ceil((actualHeight * (multiplier - 1)) / 2)
+      const expectedY = Math.ceil((height - actualHeight) / 2)
       const y = actualY - expectedY
       rect = { ...probeRect, x, y }
       return true
     })
-    // fileRemove(textFile)
+    fileRemove(textFile)
     return rect
   }
 
@@ -114,9 +131,22 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     const rect: Rect = { ...RECT_ZERO }
     try {
       const result = execSync(command).toString().trim()
-      const values = result.split(NewlineChar).map(Number)
-      RECT_KEYS.forEach((key, index) => rect[key] = values[index])
-      console.log('ServerTextAssetClass.probeRect', rect, ...values, command)
+      result.split(NewlineChar).forEach(string => {
+        const [key, value] = string.split(EqualsChar)
+        const number = Number(value.trim())
+        const char = arrayLast(key.split(DOT))
+        switch(char) {
+          case POINT_KEYS[0]:
+          case POINT_KEYS[1]:
+            rect[char] = number
+            break
+          default: {
+            const key = SIZE_KEYS.find(key => key.startsWith(char))
+            if (key) rect[key] = number
+          }
+        }
+      })
+      // console.log('ServerTextAssetClass.probeRect', rect, result, command)
     }
     catch(error) { 
       
@@ -144,7 +174,7 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
       'ffprobe -f lavfi',
       `"${filters.join(',')}"`,
       `-show_entries frame_tags=${tags}`,
-      '-of default=noprint_wrappers=1:nokey=1 -v quiet',
+      '-of default=noprint_wrappers=1 -v quiet', //:nokey=1
     ]
     return words.join(' ')
   }
@@ -182,7 +212,43 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     return commandFilter
   }
 
-  initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
+
+  override containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
+    const commandFilters: CommandFilters = [] 
+    const { 
+      contentColors: colors, commandFiles, filterInput: input 
+    } = args
+
+    let filterInput = input
+    // console.log(this.constructor.name, 'containerCommandFilters', filterInput)
+
+
+    const noContentFilters = isPopulatedArray(colors)
+    const alpha = this.requiresAlpha(args, !!tweening.size)
+
+    //  console.log(this.constructor.name, 'containerCommandFilters', {filterInput, alpha, noContentFilters})
+
+    if (alpha) {
+      assertPopulatedString(filterInput, 'container input')
+      const { contentColors: _, ...argsWithoutColors } = args
+      const superArgs: VisibleCommandFilterArgs = { 
+        ...argsWithoutColors, filterInput
+      }
+      commandFilters.push(...super.containerCommandFilters(superArgs, tweening))
+    } else if (noContentFilters) {
+      const { id } = this
+      if (!filterInput) console.log(this.constructor.name, 'containerCommandFilters calling commandFilesInput', id)
+      
+      filterInput ||= commandFilesInput(commandFiles, id, true)
+      assertPopulatedString(filterInput, 'final input')
+      
+      commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput}))
+    }
+    return commandFilters
+  }
+  
+  
+  override initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     const commandFilters: CommandFilters = [] 
     const { 
       contentColors: colors = [], outputSize, track, filterInput: input,
@@ -271,7 +337,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
    
     const tweeningColor = isPopulatedString(colorEnd) && color !== colorEnd
 
-    const ffmpegFilter = 'text'
+    const ffmpegFilter = 'drawtext'
     const drawtextId = idGenerate(ffmpegFilter)
     
     const foreColor = (tweeningColor || filterInput) ? colorWhite : color
@@ -408,21 +474,39 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     const event = new EventServerTextRect(string, file, TextHeight)
     MovieMasher.eventDispatcher.dispatch(event)
     const { rect } = event.detail
-    console.log(this.constructor.name, 'intrinsicRectInitialize', rect)
+    // console.log(this.constructor.name, 'intrinsicRectInitialize', rect)
 
     assertRect(rect)
 
     return rect
   }
 
-  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+  private isTweeningColor(args: CommandFileArgs): boolean {
+    const { contentColors } = args
+    // assertPopulatedArray(contentColors, 'contentColors')
+    if (!isPopulatedArray(contentColors)) return false
+
+    const [forecolor, forecolorEnd] = contentColors
+    return contentColors.length === 2 && forecolor !== forecolorEnd
+  }
+
+
+  private requiresAlpha(args: CommandFileArgs, tweeningSize?: boolean): boolean {
+    const { contentColors } = args
+    const colorContent = isPopulatedArray(contentColors)
+    if (!colorContent) return true // always need to mask content
+
+    return this.isTweeningColor(args)
+  }
+  
+
+  override visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const files = super.visibleCommandFiles(args)
-    const { string: content, asset: asset, id } = this
-    const file = fileTemporaryPath(GraphFileTypeTxt)
+    const { string: content, asset: definition, id: inputId } = this
+    // console.log(this.constructor.name, 'visibleCommandFiles', inputId)
+    const file = fileTemporaryPath(inputId, GraphFileTypeTxt)
     const textGraphFile: CommandFile = {
-      definition: asset, type: GraphFileTypeTxt, 
-      file, inputId: id,
-      content, 
+      type: GraphFileTypeTxt, definition, file, inputId, content, 
     }
     files.push(textGraphFile)
     return files

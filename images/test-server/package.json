@@ -1,8 +1,11 @@
 {
   "name": "@moviemasher/test-server",
-  "description": "Runs all tests",
+  "description": "Runs all Movie Masher server tests",
+  "type": "module",
   "scripts": {
-    "test": "node --experimental-global-customevent --loader tsx --test ../../packages/lib/server/src/**/*.test.ts"
+    "test": "run-s clean test-ts",
+    "clean": "rm -rf /app/temporary/test-server/*",
+    "test-ts": "node --experimental-global-customevent --loader tsx --test ./src/*.test.ts"
   },
   "dependencies": {},
   "devDependencies": {

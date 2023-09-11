@@ -1,4 +1,4 @@
-import type { Clip, ClipObject, ContainerRectArgs, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
+import type { Clip, ClipObject, ContainerRectArgs, DataOrError, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
 import { POINT_ZERO, TypeClip, isPopulatedString, isUndefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
@@ -10,13 +10,13 @@ import { timeFromArgs, timeRangeFromArgs } from '../../../Helpers/Time/TimeUtili
 import { DataTypeContainerId, DataTypeContentId, DataTypeFrame, DataTypeString } from '../../../Setup/DataTypeConstants.js'
 import { Default } from '../../../Setup/Default.js'
 import { DurationNone, DurationUnknown } from '../../../Setup/DurationConstants.js'
-import { EmptyFunction } from '../../../Setup/EmptyFunction.js'
 import { propertyInstance } from '../../../Setup/PropertyFunctions.js'
 import { SizingContainer, SizingContent, SizingPreview, Sizings } from '../../../Setup/SizingConstants.js'
 import { TimingContainer, TimingContent, TimingCustom, Timings } from '../../../Setup/TimingConstants.js'
 import { idGenerateString } from '../../../Utility/IdFunctions.js'
-import { assertAboveZero, assertDefined, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPropertyId } from '../../SharedGuards.js'
+import { assertAboveZero, assertDefined, assertPopulatedString, assertPositive, isAboveZero, isPropertyId } from '../../SharedGuards.js'
 import { DOT } from '../../../Setup/Constants.js'
+import { promiseNumbers } from '../../../Utility/PromiseFunctions.js'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {
@@ -62,16 +62,13 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   get audible(): boolean { return this.mutable }
 
-  clipCachePromise(args: InstanceCacheArgs): Promise<void> {
+  clipCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>> {
     const { content, container, frames } = this
-
     if (isAboveZero(frames)) args.clipTime ||= this.timeRange
-
     const promises = [content.instanceCachePromise(args)]
-
     if (container) promises.push(container.instanceCachePromise(args))
-    console.log(this.constructor.name, 'clipCachePromise', args, promises.length)
-    return Promise.all(promises).then(EmptyFunction)
+    // console.log(this.constructor.name, 'clipCachePromise', args, promises.length)
+    return promiseNumbers(promises)
   }
 
   get clipObject(): ClipObject {
@@ -202,10 +199,10 @@ export class ClipClass extends PropertiedClass implements Clip {
   intrinsicsKnown(options: IntrinsicOptions): boolean {
     const { content, container } = this
     let known = content.intrinsicsKnown(options)
-    console.log(this.constructor.name, 'intrinsicsKnown content', known, options)
+    // console.log(this.constructor.name, 'intrinsicsKnown content', known, options)
     if (known && container) {
       known = container.intrinsicsKnown(options)
-      console.log(this.constructor.name, 'intrinsicsKnown container', known, options)
+      // console.log(this.constructor.name, 'intrinsicsKnown container', known, options)
     }
     return known
   }

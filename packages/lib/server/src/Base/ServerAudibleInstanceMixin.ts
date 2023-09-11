@@ -1,6 +1,6 @@
 import type { Tweening } from '@moviemasher/lib-shared'
 import type { AudibleInstance, Constrained, ValueRecord } from '@moviemasher/runtime-shared'
-import type { CommandFilter, CommandFilters, VisibleCommandFilterArgs } from '../Types/CommandTypes.js'
+import type { CommandFilter, CommandFilters, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerAudibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerAudibleInstance, ServerInstance } from '../Types/ServerInstanceTypes.js'
 

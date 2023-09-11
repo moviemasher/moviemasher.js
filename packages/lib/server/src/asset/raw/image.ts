@@ -1,6 +1,6 @@
 import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
 import type { ImageInstanceObject, InstanceArgs, PreloadArgs, RawImageAssetObject, ValueRecord } from '@moviemasher/runtime-shared'
-import type { CommandFile, CommandFiles, VisibleCommandFileArgs } from '../../Types/CommandTypes.js'
+import type { CommandFile, CommandFiles, VisibleCommandFileArgs } from '@moviemasher/runtime-server'
 import type { ServerRawImageAsset, ServerRawImageInstance } from '../../Types/ServerRawTypes.js'
 
 import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertEndpoint, assertPopulatedString, endpointUrl, isTimeRange } from '@moviemasher/lib-shared'

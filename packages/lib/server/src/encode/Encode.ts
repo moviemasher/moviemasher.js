@@ -1,8 +1,8 @@
-import type { EncodingType, OutputOptions, } from '@moviemasher/runtime-shared'
+import type { DataOrError, EncodingType, OutputOptions, } from '@moviemasher/runtime-shared'
 import type { GraphFiles } from '@moviemasher/runtime-server'
 import type { AVType, AssetType, Assets, DefiniteError, Identified, MashAssetObject, Time } from '@moviemasher/runtime-shared'
 import type { IdentifiedRequest } from '../Media/Media.js'
-import type { CommandFilters, CommandInputs } from '../Types/CommandTypes.js'
+import type { CommandFilters, CommandInputs } from '@moviemasher/runtime-server'
 import type { Input } from '../Types/Input.js'
 import type { ServerMashAsset } from '../Types/ServerMashTypes.js'
 import type { EncodeOutput, EncoderOptions } from './EncodeTypes.js'
@@ -56,7 +56,7 @@ export interface RenderingOutputArgs extends OutputConstructorArgs {
 }
 
 export interface RenderingOutput {
-  renderingDescriptionPromise(): Promise<RenderingDescription>
+  renderingDescriptionPromise(): Promise<DataOrError<RenderingDescription>>
   /** seconds between startTime and endTime, but zero for image outputs */
   // duration: number
   // encodingType: EncodingType

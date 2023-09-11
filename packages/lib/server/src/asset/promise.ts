@@ -1,20 +1,19 @@
 import type { ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { DataOrError, EndpointRequest, LoadType, StringData, StringDataOrError, } from '@moviemasher/runtime-shared'
+import type { DataOrError, EndpointRequest, LoadType, StringDataOrError } from '@moviemasher/runtime-shared'
 
-import { DOT, TextExtension, assertDefined, requestUrl, urlFilename, urlFromCss } from '@moviemasher/lib-shared'
-import { EventServerAssetPromise, MovieMasher } from '@moviemasher/runtime-server'
+import { DOT, TextExtension, assertDefined, requestUrl, urlFilename, urlFromCss, urlIsHttp } from '@moviemasher/lib-shared'
+import { EventServerAssetPromise } from '@moviemasher/runtime-server'
 import { ERROR, TypeFont, error, errorCaught, isDefiniteError, isPopulatedString, isString } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import { ReadableStream } from 'stream/web'
-import { EnvironmentKeyApiDirTemporary, RuntimeEnvironment } from '../Environment/Environment.js'
-import { filePathExists, fileRead } from '../Utility/File.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
+import { directoryCreate, filePathExists, fileRead } from '../Utility/File.js'
 import { pathResolvedToPrefix, requestArgsHash } from '../Utility/Request.js'
 
 const ProtocolFile = 'file'
-const ProtocolHttp = 'http'
 const temporaryExtension = TextExtension
 
 interface FileAndMimetype { 
@@ -34,33 +33,41 @@ const requestExtension = (request: EndpointRequest): string => {
 }
 
 const fetchPromise = (url: string, request: EndpointRequest, type: LoadType): Promise<DataOrError<FileAndMimetype>> => {
-  console.log('fetchPromise', request, type)
+  // console.log('fetchPromise', request, type)
   
   const { init = {} } = request
   
-  const temporaryDirectory = RuntimeEnvironment.get(EnvironmentKeyApiDirTemporary)
+  const cacheDirectory = ENVIRONMENT.get(ENV.ApiDirCache)
 
   const requestExt = requestExtension(request) 
   const extOk = isPopulatedString(requestExt) 
-  console.log('fetchPromise REQUEST', url)
+  // console.log('fetchPromise REQUEST', url)
 
   return fetch(url, init).then(response => {
     const { body, headers } = response
+    if (!body) return error(ERROR.Url, url)
+    
     const mimetype = headers.get('content-type') || ''
-    console.log('fetchPromise RESPONSE', mimetype)
+    // console.log('fetchPromise RESPONSE', mimetype)
     
     const mimeOk = isPopulatedString(mimetype) && mimetype.startsWith(type)
     const ext = (mimeOk && extOk) ? requestExt : temporaryExtension 
     const hash = requestArgsHash(request)
-    const filePath = path.resolve(temporaryDirectory, urlFilename(hash, ext))
+    const filePath = path.resolve(cacheDirectory, urlFilename(hash, ext))
     const data = { filePath, mimetype, mimeOk, extOk }
-    if (filePathExists(filePath)) return { data }
+    if (filePathExists(filePath)) {
+      // console.log('fetchPromise FOUND', filePath)
+      body?.cancel()
+      return { data }
+    }
 
-    console.log('fetchPromise WRITING', filePath)
-
-    const stream = fs.createWriteStream(filePath, { flags: 'wx' })
-    return finished(Readable.fromWeb(body as ReadableStream).pipe(stream)).then(() => {
-      console.log('fetchPromise FINISHED', url)
+    // console.log('fetchPromise WRITING', filePath)
+    const parentDir = path.dirname(filePath)
+    if (!filePathExists(parentDir)) directoryCreate(parentDir)
+    const stream = fs.createWriteStream(filePath)
+    const writeStream = Readable.fromWeb(body as ReadableStream).pipe(stream)
+    return finished(writeStream).then(() => {
+      // console.log('fetchPromise FINISHED', url)
       return { data }
     })
   
@@ -75,54 +82,57 @@ function httpPromise(url: string, request: ServerMediaRequest, type: LoadType): 
     const { filePath, mimetype, mimeOk, extOk } = data
     if (mimeOk && extOk) {
       request.path = filePath
-      return { data: filePath } as StringData
+      // console.log('httpPromise OK', filePath)
+      return { data: filePath } 
     }
 
-    // console.log('httpPromise', data)
+    // console.log('httpPromise', mimeOk, extOk, mimetype)
 
-    // file was saved with temporary extension
     if (mimetype) {
       if (type === TypeFont) {
         const fileText = fileRead(filePath)
         // console.log('httpPromise', fileText)
 
         const url = urlFromCss(fileText)
-        if (!url) return error(ERROR.Url, fileText)
+        if (!urlIsHttp(url)) return error(ERROR.Url, fileText)
 
         request.endpoint = url
-        // const request: EndpointRequest = { endpoint: url }
-        const event = new EventServerAssetPromise(request, TypeFont)
-        MovieMasher.eventDispatcher.dispatch(event)
-        const { promise } = event.detail
-        if (!promise) return error(ERROR.Unimplemented, EventServerAssetPromise.Type)
+        return httpPromise(url, request, TypeFont)
+        // const event = new EventServerAssetPromise(request, TypeFont)
+        // MovieMasher.eventDispatcher.dispatch(event)
+        // const { promise } = event.detail
+        // if (!promise) return error(ERROR.Unimplemented, EventServerAssetPromise.Type)
         
-        return promise
+        // return promise
       }
     }
-    return error(ERROR.Type)
+    return error(ERROR.Url, url)
   })
 }
 const handler = (event: EventServerAssetPromise) => {
   const { detail } = event
   const { request, loadType } = detail
   const { path } = request
-  if (path) detail.promise = Promise.resolve({ data: path })
-  else {
+  if (path) {
+    detail.promise = Promise.resolve({ data: path })
+    // console.log(EventServerAssetPromise.Type, 'path existed', path)
+  } else {
     const url = requestUrl(request)
-    if (url.startsWith(ProtocolHttp)) {
+    if (urlIsHttp(url)) {
+      // console.log(EventServerAssetPromise.Type, 'no path for HTTP', url)
       detail.promise = httpPromise(url, request, loadType)
     } else {
       const isFile = url.startsWith(ProtocolFile)
-      const filePath = isFile ? url.slice(ProtocolFile.length) : url
+      const filePath = isFile ? url.slice(ProtocolFile.length + 3) : url
       const absolutePath = pathResolvedToPrefix(filePath)
       // TODO: check if file exists and is in allowed directory
+      // console.log(EventServerAssetPromise.Type, 'no path for FILE', absolutePath)
 
       request.path = absolutePath
       detail.promise = Promise.resolve({ data: absolutePath })
     } 
   }
-  event.stopImmediatePropagation()
-
+  // event.stopImmediatePropagation()
 }
 
 export const ServerAssetPromiseListeners = () => ({

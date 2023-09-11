@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/build-packages",
-  "description": "Builds Movie Masher core packages",
+  "description": "Builds Movie Masher library and runtime packages",
   "scripts": {
     "example-express": "npm run build -w @moviemasher/example-express",
     "lib-client": "npm run build -w @moviemasher/lib-client",

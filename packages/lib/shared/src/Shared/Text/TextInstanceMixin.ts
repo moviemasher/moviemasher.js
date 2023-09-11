@@ -56,7 +56,7 @@ export function TextInstanceMixin<T extends Constrained<VisibleInstance>>(Base: 
     intrinsicsKnown(options: IntrinsicOptions): boolean {
       const { size } = options
       if (!size || isRect(this.intrinsic) || this.asset.family) {
-        console.log(this.constructor.name, 'intrinsicsKnown', this.intrinsic, this.asset.family)
+        // console.log(this.constructor.name, 'intrinsicsKnown', this.intrinsic, this.asset.family)
         return true
       }
       return false

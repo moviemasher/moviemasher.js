@@ -1,11 +1,11 @@
 
 import type { ServerPromiseArgs } from '@moviemasher/runtime-server'
-import type { Numbers, Time, } from '@moviemasher/runtime-shared'
-import type { CommandFiles } from '../../Types/CommandTypes.js'
+import type { DataOrError, Numbers, Time, } from '@moviemasher/runtime-shared'
+import type { CommandFiles } from '@moviemasher/runtime-server'
 import type { FilterGraph, FilterGraphArgs } from '../FilterGraph/FilterGraph.js'
 import type { FilterGraphs, FilterGraphsArgs } from './FilterGraphs.js'
 
-import { AVTypeAudio, AVTypeVideo, EmptyFunction, assertTrue, timeFromArgs, timeRangeFromArgs } from '@moviemasher/lib-shared'
+import { AVTypeAudio, AVTypeVideo, assertTrue, promiseNumbers, timeFromArgs, timeRangeFromArgs } from '@moviemasher/lib-shared'
 import { ERROR, assertAsset, errorThrow } from '@moviemasher/runtime-shared'
 import { FilterGraphClass } from '../FilterGraph/FilterGraphClass.js'
 
@@ -78,7 +78,7 @@ export class FilterGraphsClass implements FilterGraphs {
     return this.commandFiles.filter(graphFile => graphFile.input)
   }
 
-  get loadCommandFilesPromise(): Promise<void> {
+  get loadCommandFilesPromise(): Promise<DataOrError<number>> {
     const { commandFiles, time } = this
     const args: ServerPromiseArgs = {
       visible: true, audible: true, time
@@ -86,12 +86,10 @@ export class FilterGraphsClass implements FilterGraphs {
     const promises = commandFiles.map(commandFile => {
       const { definition } = commandFile
       assertAsset(definition)
-      return definition.serverPromise(args)
+      return definition.serverPromise(args, commandFile)
       
     })
-    return Promise.all(promises).then(EmptyFunction)
-
-    
+    return promiseNumbers(promises)
   }
 
   time: Time

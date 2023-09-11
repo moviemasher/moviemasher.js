@@ -1,20 +1,19 @@
 
-import type { AVType, DecodeOptions, EncodeOptions, EncodingType, Numbers, OutputOptions, StringDataOrError, VideoOutputOptions } from '@moviemasher/runtime-shared'
+import type { AVType, DataOrError, DecodeOptions, EncodeOptions, EncodingType, Numbers, OutputOptions, StringDataOrError, VideoOutputOptions } from '@moviemasher/runtime-shared'
 import type { CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, RenderingOutputArgs, RenderingProcessConcatFileDuration } from './Encode.js'
 import type { CommandResult } from '../RunningCommand/RunningCommand.js'
-import type { CommandFilters, CommandInput, CommandInputs } from '../Types/CommandTypes.js'
+import type { CommandFilters, CommandInput, CommandInputs } from '@moviemasher/runtime-server'
 
 import { AVTypeBoth, AVTypeVideo, EmptyFunction, JsonExtension, NewlineChar, assertAboveZero, assertPopulatedString, assertSize, assertTrue, idGenerate } from '@moviemasher/lib-shared'
 import { EventServerDecode, EventServerEncode, EventServerManagedAsset, MovieMasher } from '@moviemasher/runtime-server'
 import { ERROR, SourceMash, AUDIO, IMAGE, PROBE, VIDEO, error, errorCaught, errorPromise, isAssetObject, isDefiniteError, } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-import { EnvironmentKeyApiDirCache, EnvironmentKeyApiDirTemporary, RuntimeEnvironment } from '../Environment/Environment.js'
+import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { assertServerMashAsset } from '../guard/mash.js'
 import { RenderingOutputClass } from './RenderingOutputClass.js'
 import { runningCommandInstance } from '../RunningCommand/RunningCommandFactory.js'
 import { BasenameRendering, ExtensionCommands, ExtensionLoadedInfo, TsExtension } from '../Setup/Constants.js'
-import { commandArgsString } from '../Utility/Command.js'
 import { fileRead } from '../Utility/File.js'
 import { ProbeDuration } from '../decode/ProbeConstants.js'
 import { renderingOutputFile } from './EncodeFunctions.js'
@@ -37,18 +36,22 @@ const renderResultPromise = (encodingId: string, destination: string, cmdPath: s
     }
   }
   const command = runningCommandInstance(encodingId, commandOptions)
-  const commandsText = commandArgsString(command.command._getArguments(), destination)
+  const commandsText = command.commandString(destination)
   const writeCommandPromise = fs.promises.writeFile(cmdPath, commandsText)
-  const runCommandPromise = writeCommandPromise.then(() => (
-    command.runPromise(destination)//.then(() => stringData)
-  ))
-  const decodePromise = runCommandPromise.then((commandResult: CommandResult) => {
+  const runCommandPromise = writeCommandPromise.then(() => {
+    // console.log('writeCommandPromise FINISHED')
+    return command.runPromise(destination)
+  })
+  const decodePromise = runCommandPromise.then((commandResult: StringDataOrError) => {
     if (isDefiniteError(commandResult)) {
+      // console.log('runCommandPromise FINISHED with ERROR')
       const renderingResult = {
         ...commandResult, destination, outputType: encodingType
       }
       return fs.promises.writeFile(infoPath, JSON.stringify(renderingResult)).then(() => commandResult)
     }
+    // console.log('runCommandPromise FINISHED OK')
+
     const decodingId = idGenerate('decoding')
     const decodeOptions: DecodeOptions = { types: [ProbeDuration] }
     const event = new EventServerDecode(PROBE, destination, `${destination}.${JsonExtension}`, decodeOptions, decodingId)
@@ -61,6 +64,7 @@ const renderResultPromise = (encodingId: string, destination: string, cmdPath: s
   return decodePromise.then((something) => {
     if (isDefiniteError(something)) return something
 
+    // console.log('decodePromise FINISHED OK')
     return { data: encodingId }
   })
 }
@@ -74,10 +78,10 @@ const concatString = (fileDurations: RenderingProcessConcatFileDuration[]): stri
   return lines.join(NewlineChar)
 }
 
-const combinedRenderingDescriptionPromise = (encodingId: string, outputDirectory: string, encodingType: EncodingType, renderingDescription: RenderingDescription): Promise<RenderingDescription> => {
+const combinedRenderingDescriptionPromise = (encodingId: string, outputDirectory: string, encodingType: EncodingType, renderingDescription: RenderingDescription): Promise<DataOrError<RenderingDescription>> => {
   const { visibleCommandDescriptions, audibleCommandDescription, outputOptions } = renderingDescription
   const length = visibleCommandDescriptions?.length
-  if (!length || length === 1) return Promise.resolve(renderingDescription)
+  if (!length || length === 1) return Promise.resolve({ data: renderingDescription })
   
   const extension = TsExtension
   const { 
@@ -93,7 +97,7 @@ const combinedRenderingDescriptionPromise = (encodingId: string, outputDirectory
 
   const concatDirectory = path.join(outputDirectory, concatDirectoryName)
   
-  let promise: Promise<void> = directoryCreatePromise(concatDirectory)
+  let promise: Promise<StringDataOrError> = directoryCreatePromise(concatDirectory).then(() => ({ data: concatDirectory }))
   const fileDurations = visibleCommandDescriptions.map((description, index) => {
     const baseName = `concat-${index}`
     const fileName = `${baseName}.${extension}`
@@ -104,24 +108,31 @@ const combinedRenderingDescriptionPromise = (encodingId: string, outputDirectory
     assertAboveZero(duration, 'duration')
 
     const concatFileDuration: RenderingProcessConcatFileDuration = [fileName, duration]
-    promise = promise.then(() => {
+    promise = promise.then(orError => {
+      if (isDefiniteError(orError)) return orError
       const concatOutputOptions: OutputOptions = {
          ...rest, options, extension 
       }
       return renderResultPromise(
         encodingId, destinationPath, cmdPath, infoPath, concatOutputOptions, VIDEO, description
-      ).then(EmptyFunction)
+      )
     })
     return concatFileDuration
   })
 
   const concatFile = concatString(fileDurations)
   const concatFilePath = path.join(concatDirectory, 'concat.txt')
-  promise = promise.then(() => {
-    return fileWritePromise(concatFilePath, concatFile)
+  promise = promise.then(orError => {
+    if (isDefiniteError(orError)) return orError
+
+    return fileWritePromise(concatFilePath, concatFile).then(() => (
+      { data: concatFilePath }
+    ))
   })
 
-  return promise.then(() => {
+  return promise.then(orError => {
+    if (isDefiniteError(orError)) return orError
+
     assertSize(outputOptions)
     const { width, height } = outputOptions
 
@@ -154,7 +165,7 @@ const combinedRenderingDescriptionPromise = (encodingId: string, outputDirectory
       visibleCommandDescriptions: [description],
       outputOptions: renderingOutputOptions, 
     }
-    return renderingDescription
+    return { data: renderingDescription }
   })
 }
 
@@ -200,13 +211,16 @@ const commandDescriptionMerged = (flatDescription: RenderingDescription): Comman
 
 const encode = (encodingId: string, outputPath: string, encodingType: EncodingType, inputPath: string, options: EncodeOptions): Promise<StringDataOrError> => {
   try {
-    const mashObject = JSON.parse(fileRead(inputPath))
+
+    const mashString = inputPath.startsWith('{') ? inputPath : fileRead(inputPath)
+    
+    const mashObject =  JSON.parse(mashString)
     if (!isAssetObject(mashObject, encodingType, SourceMash)) {
       return errorPromise(ERROR.Internal, `invalid ${encodingType} mash`)
     }
 
-    const outputDirectory = path.resolve(RuntimeEnvironment.get(EnvironmentKeyApiDirTemporary), encodingId)
-    const cacheDirectory = path.resolve(RuntimeEnvironment.get(EnvironmentKeyApiDirCache))
+    const outputDirectory = path.resolve(ENVIRONMENT.get(ENV.ApiDirTemporary), encodingId)
+    const cacheDirectory = path.resolve(ENVIRONMENT.get(ENV.ApiDirCache))
 
     const expectDuration = encodingType !== IMAGE
     
@@ -218,20 +232,31 @@ const encode = (encodingId: string, outputPath: string, encodingType: EncodingTy
     const data = { id: encodingId, outputs: options, mash: mashObject }
     const dataPath = path.join(outputDirectory, `${BasenameRendering}.json`)
     const directoryPromise = fileWriteJsonPromise(dataPath, data)
-    const renderingOutputPromise = directoryPromise.then(() => {
+    
+    const descriptionPromise = directoryPromise.then(() => {
+      // console.log('directoryPromise FINISHED')
       const args: RenderingOutputArgs = { 
         encodingType, outputOptions: options, cacheDirectory, mash: asset 
       }
-      return new RenderingOutputClass(args)
+      const renderingOutput = new RenderingOutputClass(args)
+      return renderingOutput.renderingDescriptionPromise()
     })
+    const flatPromise = descriptionPromise.then(orError => {
+      if (isDefiniteError(orError)) return orError
+
+      // return errorPromise(ERROR.Ffmpeg, 'descriptionPromise')
+  
+      const { data: renderingDescription } = orError
     
-    const descriptionPromise = renderingOutputPromise.then(renderingOutput => (
-      renderingOutput.renderingDescriptionPromise()
-    ))
-    const flatPromise = descriptionPromise.then(renderingDescription => (
-      combinedRenderingDescriptionPromise(encodingId, outputDirectory, encodingType, renderingDescription)
-    ))
-    return flatPromise.then(flatDescription => {
+      // console.log('descriptionPromise FINISHED')
+      return combinedRenderingDescriptionPromise(encodingId, outputDirectory, encodingType, renderingDescription)
+    })
+    return flatPromise.then(orError => {
+      if (isDefiniteError(orError)) return orError
+  
+      const { data: flatDescription } = orError
+
+      // console.log('flatPromise FINISHED')
       const { outputOptions } = flatDescription
       const infoFilename = renderingOutputFile(outputOptions, encodingType, ExtensionLoadedInfo)
       const infoPath = path.join(outputDirectory, infoFilename)
@@ -253,7 +278,10 @@ const encode = (encodingId: string, outputPath: string, encodingType: EncodingTy
       )
     })  
   }
-  catch(error) { return Promise.resolve(errorCaught(error)) }
+  catch(error) { 
+    console.error('encode caught', error)
+    return Promise.resolve(errorCaught(error)) 
+  }
 }
 
 const audioHandler = (event: EventServerEncode) => {
@@ -262,15 +290,18 @@ const audioHandler = (event: EventServerEncode) => {
   if (encodingType !== AUDIO) return
   
   detail.promise = encode(encodingId, outputPath, encodingType, inputPath, encodeOptions)
+  event.stopImmediatePropagation()
 }
 
 
 const videoHandler = (event: EventServerEncode) => {
   const { detail } = event
+
   const { inputPath, encodeOptions, encodingType, encodingId, outputPath } = detail
   if (encodingType !== VIDEO) return
   
   detail.promise = encode(encodingId, outputPath, encodingType, inputPath, encodeOptions)
+  event.stopImmediatePropagation()
 }
 
 const imageHandler = (event: EventServerEncode) => {
@@ -279,6 +310,7 @@ const imageHandler = (event: EventServerEncode) => {
   if (encodingType !== IMAGE) return
 
   detail.promise = encode(encodingId, outputPath, encodingType, inputPath, encodeOptions)
+  event.stopImmediatePropagation()
 }
 
 export const ServerEncodeAudioListeners = () => ({

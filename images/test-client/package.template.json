@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/test-client",
-  "description": "Runs all tests",
+  "description": "Runs all Movie Masher client tests",
   "scripts": {
     "test-component": "web-test-runner",
     "start": "web-dev-server --node-resolve --open --watch",

@@ -1,16 +1,17 @@
 import type { Tweening, } from '@moviemasher/lib-shared'
-import type { InstanceArgs, ShapeAssetObject, ShapeInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
-import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Types/CommandTypes.js'
+import type { DataOrError, InstanceArgs, ShapeAssetObject, ShapeInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerShapeAsset, ServerShapeInstance } from '../../Types/ServerTypes.js'
 
 import { DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven, sizesEqual, tweenMaxSize } from '@moviemasher/lib-shared'
 import { EventServerAsset, GraphFileTypeSvg } from '@moviemasher/runtime-server'
-import { POINT_ZERO, SourceShape, IMAGE, isAssetObject, isBoolean, isPopulatedString } from '@moviemasher/runtime-shared'
+import { POINT_ZERO, SourceShape, IMAGE, isAssetObject, isBoolean, isPopulatedString, isDefiniteError } from '@moviemasher/runtime-shared'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
 import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
+import { fileTemporaryPath, fileWritePromise } from '../../Utility/File.js'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -45,6 +46,20 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
     event.stopImmediatePropagation()
     if (isDefault) detail.asset = ServerShapeAssetClass.defaultAsset
     else detail.asset = new ServerShapeAssetClass(assetObject as ShapeAssetObject) 
+  }
+
+  serverPromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>> {
+    const { visible } = args
+    const { content, type, file } = commandFile
+    if (!(content && visible && type === GraphFileTypeSvg)) {
+      return Promise.resolve({ data: 0 })
+    }
+
+    return fileWritePromise(file, content).then(orError => {
+      if (isDefiniteError(orError)) return orError
+
+      return { data: 1 }
+    })
   }
 }
 
@@ -111,7 +126,6 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       const superArgs: VisibleCommandFilterArgs = { 
         ...argsWithoutColors, filterInput
       }
-
       commandFilters.push(...super.containerCommandFilters(superArgs, tweening))
     } else if (this.isDefault || noContentFilters) {
       const { id } = this
@@ -297,7 +311,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     if (!isDefault) tags.push(`<path d='${path}' fill='${forecolor}'/>`)
     tags.push('</g>')
     tags.push('</svg>')
-    const svgTag = tags.join('')
+    const content = tags.join('')
   
     const options: ValueRecord = {}
     if (duration) {
@@ -306,8 +320,13 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       options.t = duration
       // options.re = ''
     }
+    const type = GraphFileTypeSvg
+
+    const file = fileTemporaryPath(id, type)
+
+
     const commandFile: CommandFile = { 
-      type: GraphFileTypeSvg, file: id, content: svgTag, 
+      type, file, content, 
       input: true, inputId: id, definition, options
     }
   

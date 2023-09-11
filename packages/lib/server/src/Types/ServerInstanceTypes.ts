@@ -1,7 +1,7 @@
 import type { Tweening } from '@moviemasher/lib-shared'
 import type { GraphFile, GraphFiles, ServerAsset, ServerPromiseArgs } from '@moviemasher/runtime-server'
 import type { AudibleInstance, Instance, IntrinsicOptions, PreloadArgs, Size, StringDataOrError, StringsDataOrError, Value, VisibleInstance } from '@moviemasher/runtime-shared'
-import type { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from './CommandTypes.js'
+import type { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerAudibleAsset, ServerVisibleAsset } from './ServerAssetTypes.js'
 
 export interface ServerInstance extends Instance {
@@ -29,7 +29,6 @@ export interface ServerInstance extends Instance {
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters
-  serverPromise(args: ServerPromiseArgs): Promise<void> 
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles
 }

@@ -1,4 +1,4 @@
-import type { Asset, AssetCacheArgs, AssetObject, Assets, Clip, ClipObject, Clips, Constrained, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Asset, AssetCacheArgs, Assets, Clip, ClipObject, Clips, Constrained, DataOrError, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
 
 import { ERROR, SIZE_OUTPUT, SourceMash, TypeMash, errorThrow, isArray } from '@moviemasher/runtime-shared'
 import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
@@ -13,7 +13,7 @@ import { sizeAspect } from "../../Utility/SizeFunctions.js"
 import { sortByIndex } from '../../Utility/SortFunctions.js'
 import { assertTrue, isPositive } from '../SharedGuards.js'
 import { assertTime } from '../TimeGuards.js'
-import { EmptyFunction } from '../../Setup/EmptyFunction.js'
+import { promiseNumbers } from '../../Utility/PromiseFunctions.js'
 
 export function MashAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -24,8 +24,8 @@ T & Constrained<MashAsset> {
     declare aspectShortest: number
 
 
-  override assetCachePromise(args: AssetCacheArgs): Promise<void> {
-    console.log(this.constructor.name, 'MashAssetMixin.assetCachePromise', args)
+  override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
+    // console.log(this.constructor.name, 'MashAssetMixin.assetCachePromise', args)
     // options.time ||= this.timeToBuffer
     const preloadOptions = this.cacheOptions(args)
     const { time, audible, visible } = args
@@ -43,16 +43,7 @@ T & Constrained<MashAsset> {
       }
       return clip.clipCachePromise(preloadArgs)
     })
-    return Promise.all(promises).then(EmptyFunction)
-    // const removedPromise = promise.then(() => {
-    //   const index = this.loadingPromises.indexOf(promise)
-    //   if (index < 0) return errorThrow(ERROR.Internal) 
-
-    //   this.loadingPromises.splice(index, 1)
-    // })
-    // this.loadingPromises.push(promise)
-    
-    // return removedPromise
+    return promiseNumbers(promises)
   }
 
 

@@ -3,6 +3,7 @@ import type { Labeled } from './Base.js'
 import type { CacheOptions } from './CacheTypes.js'
 import type { ClipObject } from './ClipObject.js'
 import type { StringRecord, Strings } from './Core.js'
+import { DataOrError } from './DataOrError.js'
 import type { DecodingObjects, Decodings } from './Decoding.js'
 import type { Identified } from './Identified.js'
 import type { Instance, InstanceArgs, InstanceObject } from './InstanceTypes.js'
@@ -13,7 +14,7 @@ import type { Typed } from './Typed.js'
 
 export interface Asset extends Propertied, Identified, Typed, Labeled {
   asset(assetId: string | AssetObject): Asset 
-  assetCachePromise(args: CacheOptions): Promise<void>
+  assetCachePromise(args: CacheOptions): Promise<DataOrError<number>>
   assetIds: Strings
   assetObject: AssetObject
   assets: Assets
