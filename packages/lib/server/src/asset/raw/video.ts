@@ -1,10 +1,10 @@
 import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
-import type { InstanceArgs, PreloadArgs, RawVideoAssetObject, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { InstanceArgs, CacheArgs, RawVideoAssetObject, VideoInstanceObject } from '@moviemasher/runtime-shared'
 import type { ServerRawVideoAsset, ServerRawVideoInstance } from '../../Types/ServerRawTypes.js'
 
 import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString } from '@moviemasher/lib-shared'
 import { EventServerAsset } from '@moviemasher/runtime-server'
-import { SourceRaw, AUDIO, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
+import { RAW, AUDIO, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
 import { ServerAudibleInstanceMixin } from '../../Base/ServerAudibleInstanceMixin.js'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
@@ -22,23 +22,15 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
     super(args)
     this.initializeProperties(args)
   }
-
-
-  graphFiles(args: PreloadArgs): GraphFiles {
-    const files: GraphFiles = []
-
+  
+  assetGraphFiles(args: CacheArgs): GraphFiles {
     const { audible, visible } = args
-
+    const files: GraphFiles = []
     const { request } = this
     const { path: file } = request
-
-    // const { endpoint } = request
-    // assertEndpoint(endpoint)
-
-    // const file = endpointUrl(endpoint)
-
     assertPopulatedString(file)
 
+    // console.log(this.constructor.name, 'assetGraphFiles', args, file)
     if (visible) {
       const visibleGraphFile: GraphFile = {
         input: true, type: VIDEO, file, definition: this
@@ -50,7 +42,7 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
       if (mutable && !this.muted) {
         const audioGraphFile: GraphFile = {
           input: true, type: AUDIO, definition: this,
-          file: '',
+          file,
         }
         files.push(audioGraphFile)
       }
@@ -70,7 +62,7 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
   static handleAsset(event: EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, VIDEO, SourceRaw)) {
+    if (isAssetObject(assetObject, VIDEO, RAW)) {
       detail.asset = new ServerRawVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }

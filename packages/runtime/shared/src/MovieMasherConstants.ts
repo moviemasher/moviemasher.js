@@ -6,7 +6,7 @@ import { ERROR } from './ErrorName.js'
 import { isListenerRecord } from './EventDispatcher.js'
 import { isFunction } from './TypeofGuards.js'
 
-export const MovieMasherImportPromise = (imports: StringRecord, eventDispatcher: EventDispatcher) => {
+export const importPromise = (imports: StringRecord, eventDispatcher: EventDispatcher) => {
   const functions = Object.keys(imports).sort((a, b) => b.length - a.length)
   const moduleIds = [...new Set(Object.values(imports))]
   const byId: StringsRecord = Object.fromEntries(moduleIds.map(id => (
@@ -33,7 +33,7 @@ export const MovieMasherImportPromise = (imports: StringRecord, eventDispatcher:
   })
   return Promise.all(promises).then(results => {
     results.filter(isDefiniteError).forEach(error => {
-      console.error('MovieMasherImportPromise', error)
+      console.error('importPromise', error)
     })
   })
 }

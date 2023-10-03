@@ -3,7 +3,7 @@ import type { AssetCacheArgs, AudioInstance, AudioInstanceArgs, AudioInstanceObj
 
 import { AudibleAssetMixin, AudibleInstanceMixin, AudioAssetMixin, AudioInstanceMixin, } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientAudioPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, AUDIO, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
+import { RAW, AUDIO, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
 import { ClientAudibleInstanceMixin } from '../Audible'
 import { ClientAudibleAssetMixin } from '../Audible/ClientAudibleAssetMixin.js'
@@ -25,8 +25,10 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
     const { loadedAudio } = this
     if (loadedAudio) return Promise.resolve({ data: 0 })
 
-    const transcoding = this.preferredTranscoding(AUDIO) 
-    if (!transcoding) return Promise.resolve({ data: 0 })
+    const transcoding = this.preferredTranscoding(AUDIO) || this
+    if (!transcoding) {
+      return Promise.resolve({ data: 0 })
+    }
 
     const { request } = transcoding
     const event = new EventClientAudioPromise(request)
@@ -61,7 +63,7 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
   static handleAsset(event: EventAsset): void {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, AUDIO, SourceRaw)) {
+    if (isAssetObject(assetObject, AUDIO, RAW)) {
       detail.asset = new ClientRawAudioAssetClass(assetObject)
       event.stopImmediatePropagation()
     }  

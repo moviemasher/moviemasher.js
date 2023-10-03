@@ -3,7 +3,7 @@ import type { Size, Rect } from '@moviemasher/runtime-shared'
 import { isNumber, isObject, errorThrow } from '@moviemasher/runtime-shared'
 
 import { isAboveZero } from '../Shared/SharedGuards.js'
-import { EqualsChar, SemicolonChar } from '../Setup/Constants.js'
+import { EQUALS, SEMICOLON } from '../Setup/Constants.js'
 
 export const isSize = (value: any): value is Size => {
   return isObject(value) &&
@@ -22,9 +22,14 @@ export const sizesEqual = (size: Size, sizeEnd?: any) => {
   return size.width === sizeEnd.width && size.height === sizeEnd.height
 }
 
+export const sizeMax = (size: Size): Size => {
+  const { width, height } = size
+  const max = Math.max(width, height)
+  return { width: max, height: max }
+}
 
-export const sizedEven = (number: number): number => {
-  return 2 * Math.max(1, Math.ceil(number / 2))
+const sizedEven = (number: number): number => {
+  return 2 * Math.max(1, Math.floor(number / 2))
 }
 
 export const sizeEven = (size: Size): Size => {
@@ -103,8 +108,8 @@ export const sizeCopy = (size: any) => {
 export const sizeString = (size: Size) => {
   const { width, height } = size
   return [
-    ['width', width].join(EqualsChar), ['height', height].join(EqualsChar)
-  ].join(SemicolonChar)
+    ['width', width].join(EQUALS), ['height', height].join(EQUALS)
+  ].join(SEMICOLON)
 }
 
 

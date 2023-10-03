@@ -1,6 +1,7 @@
 import type { Elements } from '../declarations.js'
 
 import { Component } from './Component'
+import { DASH } from '@moviemasher/lib-shared'
 
 export class ImporterComponent extends Component {
   override connectedCallback() {
@@ -50,7 +51,7 @@ export class ImporterComponent extends Component {
     // if (unloaded.length) console.debug(this.name, 'importTag loading', ...unloaded)
 
     unloaded.forEach(name => {
-      const nameComponents = name.split('-').slice(2)
+      const nameComponents = name.split(DASH).slice(2)
       const [first, second] = nameComponents
       const lib = second ? `${first}/${first}-${second}` : first || name
       // console.debug(this.name, 'importTag', name, '->', lib)

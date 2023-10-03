@@ -2,7 +2,7 @@ import type { ChangeActionObject, ClientAsset, ClientClip, ClientInstance } from
 import type { InstanceArgs, PropertyId, Scalar, TargetId } from '@moviemasher/runtime-shared'
 
 import { ActionTypeChangeFrame, DataTypeFrame, InstanceClass, assertPopulatedString } from '@moviemasher/lib-shared'
-import {  TypeContainer, TypeContent } from '@moviemasher/runtime-shared'
+import {  CONTAINER, CONTENT } from '@moviemasher/runtime-shared'
 import { isChangePropertyActionObject } from '../Client/Masher/Actions/Action/ActionFunctions.js'
 import { DOT } from '@moviemasher/lib-shared'
 
@@ -25,14 +25,14 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
 
   override initializeProperties(object: InstanceArgs): void {
     const { container } = this
-    if (container) this.targetId = TypeContainer
+    if (container) this.targetId = CONTAINER
     super.initializeProperties(object)
   }
     
   // protected override propertiesOfTarget(targetId: TargetId): Properties {
   //   const properties = super.propertiesOfTarget(targetId)
   //   // console.log(this.constructor.name, 'propertiesOfTarget', targetId)
-  //   if (targetId === TypeContainer || targetId === TypeContent) {
+  //   if (targetId === CONTAINER || targetId === CONTENT) {
   //     properties.push(this.propertyFromClip)
   //   }
   //   return properties
@@ -59,7 +59,7 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
 
 
   // private get selectorType(): SelectorType {
-  //   return this.container ? TypeContainer : TypeContent
+  //   return this.container ? CONTAINER : CONTENT
   // }
 
   // selectedProperties(_actions: Actions, _propertyNames: Strings): SelectedProperties {
@@ -76,7 +76,7 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
 
 
 
-  override targetId: TargetId = TypeContent
+  override targetId: TargetId = CONTENT
 
   unload(): void {}
 

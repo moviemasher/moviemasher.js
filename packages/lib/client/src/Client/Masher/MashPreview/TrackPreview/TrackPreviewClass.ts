@@ -2,9 +2,9 @@ import type { ClientClip, ClientVisibleInstance, EventFunction, SvgItem, SvgItem
 import type { ContainerRectArgs, Direction, Point, Rect, ScalarsById, Size, Time, TimeRange } from '@moviemasher/runtime-shared'
 import type { TrackPreview, TrackPreviewArgs } from './TrackPreview.js'
 
-import { DOT, DirectionBottom, DirectionLeft, DirectionRight, DirectionTop, assertRect, assertSideDirection, assertSizeAboveZero, assertTrue, pointTranslate, pointsEqual, sizeTranslate, timeFromArgs, tweenMinMax } from '@moviemasher/lib-shared'
+import { DASH, DOT, DirectionBottom, DirectionLeft, DirectionRight, DirectionTop, assertRect, assertSideDirection, assertSizeAboveZero, pointTranslate, pointsEqual, sizeTranslate, timeFromArgs, tweenMinMax } from '@moviemasher/lib-shared'
 import { EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalars, EventFrame, EventRect, MovieMasher, eventStop } from '@moviemasher/runtime-client'
-import { Aspect, Crop, End, POINT_ZERO, TypeContainer, isDefined } from '@moviemasher/runtime-shared'
+import { ASPECT, CROP, END, POINT_ZERO, CONTAINER, isDefined } from '@moviemasher/runtime-shared'
 import { svgAddClass, svgPolygonElement } from '../../../SvgFunctions.js'
 
 export const TrackPreviewHandleSize = 8
@@ -49,13 +49,13 @@ export class TrackPreviewClass implements TrackPreview {
 
     const { container, clipTimeRange: range, rect: clipRect, clip } = this
 
-    const pointAspect = container.value(`point${Aspect}`)
+    const pointAspect = container.value(`point${ASPECT}`)
     const flipped = pointAspect && previewRect.width < previewRect.height
  
     const horzPointKey = flipped ? 'y' : 'x'
     const vertPointKey = flipped ? 'x' : 'y'
-    const horzEndKey = `${horzPointKey}${End}`
-    const vertEndKey = `${vertPointKey}${End}`
+    const horzEndKey = `${horzPointKey}${END}`
+    const vertEndKey = `${vertPointKey}${END}`
 
     const pointTweening = (
       isDefined(container.value(horzEndKey)) || isDefined(container.value(vertEndKey))
@@ -89,10 +89,10 @@ export class TrackPreviewClass implements TrackPreview {
       // remove any offset from the down point
       const movePoint = pointTranslate(currentPoint, offsetPoint, true)
         
-      const leftCrop = container.value(`${flipped ? 'top' : 'left'}${Crop}`)
-      const rightCrop = container.value(`${flipped ? 'bottom' : 'right'}${Crop}`)
-      const topCrop = container.value(`${flipped ? 'left' : 'top'}${Crop}`)
-      const bottomCrop = container.value(`${flipped ? 'right' : 'bottom'}${Crop}`)
+      const leftCrop = container.value(`${flipped ? 'top' : 'left'}${CROP}`)
+      const rightCrop = container.value(`${flipped ? 'bottom' : 'right'}${CROP}`)
+      const topCrop = container.value(`${flipped ? 'left' : 'top'}${CROP}`)
+      const bottomCrop = container.value(`${flipped ? 'right' : 'bottom'}${CROP}`)
       
       const totalSize = sizeTranslate(previewRect, clipRect, true)
       
@@ -124,8 +124,8 @@ export class TrackPreviewClass implements TrackPreview {
       MovieMasher.eventDispatcher.dispatch(timeEvent)
       const tweening = pointTweening && timeEvent.detail.frame === range.lastTime.frame
   
-      const horzId = `${TypeContainer}${DOT}${tweening ? horzEndKey : horzPointKey}`
-      const vertId = `${TypeContainer}${DOT}${tweening ? vertEndKey : vertPointKey}`
+      const horzId = `${CONTAINER}${DOT}${tweening ? horzEndKey : horzPointKey}`
+      const vertId = `${CONTAINER}${DOT}${tweening ? vertEndKey : vertPointKey}`
 
       const redoValues: ScalarsById = { 
         [horzId]: totalSize.width ? limitedPoint.x / totalSize.width : container.value(horzId), 
@@ -205,7 +205,6 @@ export class TrackPreviewClass implements TrackPreview {
       size, time, timeRange, editing: true,
     }
     const containerRects = clip.containerRects(containerRectArgs)
-    assertTrue(containerRects.length === 1)
 
     return containerRects[0]
   }
@@ -259,7 +258,7 @@ export class TrackPreviewClass implements TrackPreview {
 
     const { width, height } = dimensions
     const point = { ...POINT_ZERO }
-    const [first, second] = String(direction).split('-')
+    const [first, second] = String(direction).split(DASH)
     assertSideDirection(first, direction)
 
     const last = second || first

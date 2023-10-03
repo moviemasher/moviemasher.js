@@ -1,4 +1,4 @@
-import type { ProbingData } from '@moviemasher/lib-shared'
+import type { ProbingData } from '@moviemasher/runtime-shared'
 import type { ClientImporter, ClientRawAssetObject, ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject, ClientTextAssetObject, ClientMediaRequest } from '@moviemasher/runtime-client'
 import type { AssetObject, AssetObjects, DecodingObject, DecodingObjects, ImportType } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup } from 'lit'
@@ -6,7 +6,7 @@ import type { CSSResultGroup } from 'lit'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { IdTemporaryPrefix } from '@moviemasher/lib-shared'
 import { EventClientAudioPromise, EventClientFontPromise, EventClientImagePromise, EventClientVideoPromise, EventImport, EventImporterChange, EventImporters, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, SourceText, AUDIO, TypeFont, IMAGE, PROBE, VIDEO, TypesImport, isAudibleAssetType, isDefiniteError, isImportType } from '@moviemasher/runtime-shared'
+import { RAW, TEXT, AUDIO, FONT, IMAGE, PROBE, VIDEO, IMPORT_TYPES, isAudibleAssetType, isDefiniteError, isImportType } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { DropTargetCss, DropTargetMixin } from '../../Base/DropTargetMixin.js'
@@ -26,7 +26,7 @@ const options = {
 }
 
 const accept = (): string => {
-  const accept = TypesImport.flatMap(type => {
+  const accept = IMPORT_TYPES.flatMap(type => {
     const max = options[`${type}Max`]
     if (!max) return []
 
@@ -117,7 +117,7 @@ declare global {
 
 const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObject | void> => {
   const { name: label } = file
-  const request: ClientMediaRequest = { file, objectUrl: URL.createObjectURL(file) }
+  const request: ClientMediaRequest = { file, objectUrl: URL.createObjectURL(file), endpoint: '' }
 
   // we can't reliably tell if there is an audio track so we assume there is 
   // one, and catch problems if it's played before decoded
@@ -126,7 +126,7 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
   const decodings: DecodingObjects = [decoding]
   const id = `${IdTemporaryPrefix}-${crypto.randomUUID()}`
   const shared: ClientRawAssetObject = { 
-    type: IMAGE, label, request, decodings, id, source: SourceRaw,
+    type: IMAGE, label, request, decodings, id, source: RAW,
   }
  
   switch (type) {
@@ -181,7 +181,7 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
         return object
       })
     }
-    case TypeFont: {
+    case FONT: {
       const event = new EventClientFontPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
@@ -191,7 +191,7 @@ const fileAssetObjectPromise = (file: File, type: ImportType): Promise<AssetObje
         const { data: font } = orError
         request.response = font
         const object: ClientTextAssetObject = { 
-          ...shared, source: SourceText, loadedFont: font 
+          ...shared, source: TEXT, loadedFont: font 
         }
         return object
       })

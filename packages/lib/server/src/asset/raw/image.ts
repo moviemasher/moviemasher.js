@@ -1,11 +1,11 @@
 import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
-import type { ImageInstanceObject, InstanceArgs, PreloadArgs, RawImageAssetObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { ImageInstanceObject, InstanceArgs, CacheArgs, RawImageAssetObject, ValueRecord } from '@moviemasher/runtime-shared'
 import type { CommandFile, CommandFiles, VisibleCommandFileArgs } from '@moviemasher/runtime-server'
 import type { ServerRawImageAsset, ServerRawImageInstance } from '../../Types/ServerRawTypes.js'
 
-import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertEndpoint, assertPopulatedString, endpointUrl, isTimeRange } from '@moviemasher/lib-shared'
-import { EventServerAsset, MovieMasher } from '@moviemasher/runtime-server'
-import { SourceRaw, IMAGE, isAssetObject } from '@moviemasher/runtime-shared'
+import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, isTimeRange } from '@moviemasher/lib-shared'
+import { EventServerAsset } from '@moviemasher/runtime-server'
+import { RAW, IMAGE, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
@@ -21,11 +21,10 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
     this.initializeProperties(args)
   }
 
-  graphFiles(args: PreloadArgs): GraphFiles {
+  assetGraphFiles(args: CacheArgs): GraphFiles {
     const { visible } = args
-    const files: GraphFiles = super.graphFiles(args)
-    if (!visible)
-      return files
+    const files: GraphFiles = super.assetGraphFiles(args)
+    if (!visible) return files
 
     const { request } = this
     const { path: file } = request
@@ -50,7 +49,7 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
   static handleAsset(event: EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, IMAGE, SourceRaw)) {
+    if (isAssetObject(assetObject, IMAGE, RAW)) {
       detail.asset = new ServerRawImageAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -79,12 +78,11 @@ export class ServerRawImageInstanceClass extends WithImageInstance implements Se
     const { visible, time, videoRate } = args
     if (!visible) return commandFiles
 
-    const files = this.graphFiles(args)
+    const files = this.asset.assetGraphFiles(args)
     const [file] = files
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
     const options: ValueRecord = { loop: 1, framerate: videoRate }
-    if (duration)
-      options.t = duration
+    if (duration) options.t = duration
     const { id } = this
     const commandFile: CommandFile = { ...file, inputId: id, options }
     // console.log(this.constructor.name, 'commandFiles', id)

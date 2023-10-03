@@ -2,10 +2,7 @@ const path = require('path');
 const glob = require('glob');
 const fs = require('fs');
 
-console.log('HI');
-
-
-const outputPath = './'
+const outputPath = '/app'
 const attributeExp = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gm;
 const stripLines = (code, start, end) => {
   let inTag = false;
@@ -92,9 +89,9 @@ const trimCode = (_content, options) => {
 };
 const colorSvg = (_content, options) => {
   // console.log("colorSvg", content)
-  const defaults = { src: `${outputPath}/**/*.svg`, replacements: '' };
+  const defaults = { src: path.join(outputPath, '**/*.svg'), replacements: '' };
   const settings = Object.assign({}, defaults, options);
-  const pattern = path.join(outputPath, '/', settings.src);
+  const pattern = path.join(outputPath, settings.src);
   // console.log("pattern", pattern, '=', outputPath, settings.src)
   const paths = glob.sync(pattern, { ignore: '**/node_modules/**' });
   const svgs = paths.map(filePath => {

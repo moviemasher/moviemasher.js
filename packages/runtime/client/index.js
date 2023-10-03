@@ -1,4 +1,4 @@
-import { TypeEncode, TypeAsset, isAsset, MovieMasherImportPromise } from '@moviemasher/runtime-shared';
+import { importPromise, DECODE, ENCODE, TRANSCODE, assertAsset, ASSET, isAsset } from '@moviemasher/runtime-shared';
 
 const ClassDisabled = 'disabled';
 const ClassButton = 'button';
@@ -52,9 +52,57 @@ class ClientEventDispatcher extends EventTarget {
     }
 }
 
+const MovieMasher = {
+    eventDispatcher: new ClientEventDispatcher(),
+    options: {
+        imports: {
+            ClientColorImageListeners: '@moviemasher/lib-client/asset/color/image.js',
+            ClientMashVideoListeners: '@moviemasher/lib-client/asset/mash/video.js',
+            ClientRawAudioListeners: '@moviemasher/lib-client/asset/raw/audio.js',
+            ClientRawImageListeners: '@moviemasher/lib-client/asset/raw/image.js',
+            ClientRawVideoListeners: '@moviemasher/lib-client/asset/raw/video.js',
+            ClientShapeImageListeners: '@moviemasher/lib-client/asset/shape/image.js',
+            ClientTextImageListeners: '@moviemasher/lib-client/asset/text/image.js',
+            ClientAssetManagerListeners: '@moviemasher/lib-client/asset/manager.js',
+        },
+    },
+    get importPromise() {
+        const { options, eventDispatcher } = MovieMasher;
+        const { imports } = options;
+        return importPromise(imports, eventDispatcher);
+    },
+};
+
 class NumberEvent extends CustomEvent {
 }
 class StringEvent extends CustomEvent {
+}
+/**
+ * Dispatch to initiate a decode request for an asset.
+ */
+class EventClientDecode extends CustomEvent {
+    static Type = DECODE;
+    constructor(asset, decodingType, options, progress) {
+        super(EventClientDecode.Type, { detail: { asset, options, decodingType, progress } });
+    }
+}
+/**
+ * Dispatch to initiate an encode request for a mash.
+ */
+class EventClientEncode extends CustomEvent {
+    static Type = ENCODE;
+    constructor(mashAssetObject, encodingType, encodeOptions, progress) {
+        super(EventClientEncode.Type, { detail: { mashAssetObject, encodingType, encodeOptions, progress } });
+    }
+}
+/**
+ * Dispatch to initiate a transcoding request for an asset.
+ */
+class EventClientTranscode extends CustomEvent {
+    static Type = TRANSCODE;
+    constructor(asset, transcodingType, options, progress) {
+        super(EventClientTranscode.Type, { detail: { asset, transcodingType, options, progress } });
+    }
 }
 /**
  * Dispatch to initiate a save request for an asset.
@@ -63,15 +111,6 @@ class EventSave extends CustomEvent {
     static Type = 'save';
     constructor(asset, progress) {
         super(EventSave.Type, { detail: { asset, progress } });
-    }
-}
-/**
- * Dispatch to initiate an encode request for a mash.
- */
-class EventClientEncode extends CustomEvent {
-    static Type = TypeEncode;
-    constructor(asset, progress) {
-        super(EventClientEncode.Type, { detail: { asset, progress } });
     }
 }
 /**
@@ -187,7 +226,7 @@ class EventAddAssets extends CustomEvent {
  * Dispatch to retrieve a managed asset from an asset id or object.
  */
 class EventManagedAsset extends CustomEvent {
-    static Type = 'managedasset';
+    static Type = 'managed-asset';
     constructor(assetIdOrObject, manageType) {
         const string = typeof assetIdOrObject === 'string';
         const assetId = string ? assetIdOrObject : assetIdOrObject.id;
@@ -195,12 +234,23 @@ class EventManagedAsset extends CustomEvent {
         const detail = { assetId, assetObject, manageType };
         super(EventManagedAsset.Type, { detail });
     }
+    static Detail(assetIdOrObject, manageType) {
+        const event = new EventManagedAsset(assetIdOrObject, manageType);
+        MovieMasher.eventDispatcher.dispatch(event);
+        return event.detail;
+    }
+    static asset(assetIdOrObject, manageType) {
+        const detail = EventManagedAsset.Detail(assetIdOrObject, manageType);
+        const { asset } = detail;
+        assertAsset(asset);
+        return asset;
+    }
 }
 /**
  * Dispatch to retrieve an asset from an asset id or object.
  */
 class EventAsset extends CustomEvent {
-    static Type = TypeAsset;
+    static Type = ASSET;
     constructor(assetIdOrObject) {
         const string = typeof assetIdOrObject === 'string';
         const assetId = string ? assetIdOrObject : assetIdOrObject.id;
@@ -643,6 +693,15 @@ class EventSavableManagedAsset extends CustomEvent {
     }
 }
 /**
+ * Dispatch to retrieve the clips for a track.
+ */
+class EventTrackClips extends CustomEvent {
+    static Type = 'track-clips';
+    constructor(trackIndex) {
+        super(EventTrackClips.Type, { detail: { trackIndex } });
+    }
+}
+/**
  * Dispatch to retrieve the savable managed assets.
  */
 class EventSavableManagedAssets extends CustomEvent {
@@ -660,39 +719,76 @@ class EventImportedManagedAssets extends CustomEvent {
         super(EventImportedManagedAssets.Type, { detail });
     }
 }
+/**
+ * Dispatch to retrieve a track icon for a clip.
+ */
+class EventTrackClipIcon extends CustomEvent {
+    static Type = 'track-clip-icon';
+    constructor(clipId, clipSize, scale, gap) {
+        super(EventTrackClipIcon.Type, { detail: { clipId, clipSize, scale, gap } });
+    }
+}
+/**
+ * Dispatched when an importer has finished importing.
+ */
+class EventImporterComplete extends Event {
+    static Type = 'importer-complete';
+    constructor() { super(EventImporterComplete.Type); }
+}
+/**
+ * Dispatched when an importer's asset objects have changed.
+ */
 class EventImporterChange extends CustomEvent {
     static Type = 'importer-change';
     constructor(detail) {
         super(EventImporterChange.Type, { detail });
     }
 }
-const EventTypeAdded = 'added';
-const EventTypeAssetType = 'asset-type';
-const EventTypeDragHandled = 'drag-handled';
-const EventTypeEnded = 'ended';
-const EventTypeExportParts = 'export-parts';
-const EventTypeFps = 'ratechange';
-const EventTypeIconFromFrame = 'icon-from-frame';
-const EventTypeImporterComplete = 'importer-complete';
-const EventTypeLoaded = 'loadeddata';
-const EventTypeMashMoveClip = 'mash-move-clip';
-const EventTypeMashRemoveClip = 'mash-remove-clip';
+/**
+ * Dispatch to move the selected clip within the mash.
+ */
+class EventMoveClip extends CustomEvent {
+    static Type = 'move-clip';
+    constructor(clipLocation, clipId) {
+        super(EventMoveClip.Type, { detail: { clipLocation, clipId } });
+    }
+}
+/**
+ * Dispatch to remove a specific clip from the mash.
+ * Alternatively, use EventDoClientAction to remove the selected clip.
+ */
+class EventRemoveClip extends CustomEvent {
+    static Type = 'remove-clip';
+    constructor(clipId) {
+        super(EventRemoveClip.Type, { detail: { clipId } });
+    }
+}
 const EventTypeMashRemoveTrack = 'mash-remove-track';
+// used in components, dispatched via DOM
+const EventTypeExportParts = 'export-parts';
+const EventTypeScrollRoot = 'scroll-root';
+const EventTypeDragHandled = 'drag-handled';
+// used just between components 
+const EventTypeZoom = 'zoom';
+const EventTypeAssetType = 'asset-type';
+// TODO: dispatched by mash and used
+const EventTypeTracks = 'tracks';
+// TODO: dispatched by mash and unused
 const EventTypePause = 'pause';
 const EventTypePlay = 'play';
 const EventTypePlaying = 'playing';
-const EventTypeRender = 'render';
-const EventTypeScale = 'scale';
-const EventTypeScrollRoot = 'scroll-root';
-const EventTypeSeeked = 'seeked';
 const EventTypeSeeking = 'seeking';
-const EventTypeSourceType = 'source-type';
-const EventTypeTrack = 'track';
-const EventTypeTrackClips = 'track-clips';
-const EventTypeTracks = 'tracks';
-const EventTypeVolume = 'volumechange';
+const EventTypeSeeked = 'seeked';
+const EventTypeEnded = 'ended';
+// TODO: unused!
 const EventTypeWaiting = 'waiting';
-const EventTypeZoom = 'zoom';
+const EventTypeTrack = 'track';
+const EventTypeRender = 'render';
+const EventTypeLoaded = 'loadeddata';
+// TODO: dispatched by masher but not used
+const EventTypeFps = 'ratechange';
+const EventTypeVolume = 'volumechange';
+const EventTypeAdded = 'added';
 
 const isClientAsset = (value) => {
     return isAsset(value) && 'assetIcon' in value;
@@ -708,25 +804,4 @@ const eventStop = event => {
     event.stopPropagation();
 };
 
-const MovieMasher = {
-    eventDispatcher: new ClientEventDispatcher(),
-    options: {
-        imports: {
-            ClientColorImageListeners: '@moviemasher/lib-client/asset/color/image.js',
-            ClientMashVideoListeners: '@moviemasher/lib-client/asset/mash/video.js',
-            ClientRawAudioListeners: '@moviemasher/lib-client/asset/raw/audio.js',
-            ClientRawImageListeners: '@moviemasher/lib-client/asset/raw/image.js',
-            ClientRawVideoListeners: '@moviemasher/lib-client/asset/raw/video.js',
-            ClientShapeImageListeners: '@moviemasher/lib-client/asset/shape/image.js',
-            ClientTextImageListeners: '@moviemasher/lib-client/asset/text/image.js',
-            ClientAssetManagerListeners: '@moviemasher/lib-client/asset/manager.js',
-        },
-    },
-    get importPromise() {
-        const { options, eventDispatcher } = MovieMasher;
-        const { imports } = options;
-        return MovieMasherImportPromise(imports, eventDispatcher);
-    },
-};
-
-export { ClassAnimate, ClassBack, ClassBounds, ClassButton, ClassDisabled, ClassDropping, ClassFore, ClassHandle, ClassLine, ClassOutline, ClassOutlines, ClassRow, ClassSelected, ClassTrack, ClientActionAdd, ClientActionAddTrack, ClientActionFlip, ClientActionRedo, ClientActionRemove, ClientActionTogglePaused, ClientActionUndo, ClientEventDispatcher, CurrentIndex, DragSuffix, EventAddAssets, EventAsset, EventAssetElement, EventAssetId, EventAssetObject, EventAssetObjects, EventChangeAssetId, EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalar, EventChangeScalars, EventChanged, EventChangedAssetId, EventChangedClientAction, EventChangedClipId, EventChangedFrame, EventChangedFrames, EventChangedInspectorSelectors, EventChangedMashAsset, EventChangedPreviews, EventChangedScalars, EventChangedServerAction, EventChangedSize, EventChangedTargetIds, EventClientAudioPromise, EventClientEncode, EventClientFontPromise, EventClientImagePromise, EventClientVideoPromise, EventClipElement, EventClipId, EventControl, EventControlGroup, EventDataType, EventDialog, EventDoClientAction, EventDoServerAction, EventDragging, EventEnabledClientAction, EventEnabledServerAction, EventFrame, EventFrames, EventIcon, EventImport, EventImportManagedAssets, EventImportedManagedAssets, EventImporterChange, EventImporters, EventInspectorSelectors, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetScalar, EventManagedAssets, EventMashAsset, EventPreviews, EventProgress, EventPropertyIds, EventRect, EventReleaseManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, EventSave, EventScalar, EventSelectedProperties, EventSize, EventTargetIds, EventTimeRange, EventTypeAdded, EventTypeAssetType, EventTypeDragHandled, EventTypeEnded, EventTypeExportParts, EventTypeFps, EventTypeIconFromFrame, EventTypeImporterComplete, EventTypeLoaded, EventTypeMashMoveClip, EventTypeMashRemoveClip, EventTypeMashRemoveTrack, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeRender, EventTypeScale, EventTypeScrollRoot, EventTypeSeeked, EventTypeSeeking, EventTypeSourceType, EventTypeTrack, EventTypeTrackClips, EventTypeTracks, EventTypeVolume, EventTypeWaiting, EventTypeZoom, EventUpload, LastIndex, MovieMasher, NextIndex, NumberEvent, ServerActionDecode, ServerActionEncode, ServerActionSave, ServerActionTranscode, StringEvent, eventStop, isClientAsset };
+export { ClassAnimate, ClassBack, ClassBounds, ClassButton, ClassDisabled, ClassDropping, ClassFore, ClassHandle, ClassLine, ClassOutline, ClassOutlines, ClassRow, ClassSelected, ClassTrack, ClientActionAdd, ClientActionAddTrack, ClientActionFlip, ClientActionRedo, ClientActionRemove, ClientActionTogglePaused, ClientActionUndo, ClientEventDispatcher, CurrentIndex, DragSuffix, EventAddAssets, EventAsset, EventAssetElement, EventAssetId, EventAssetObject, EventAssetObjects, EventChangeAssetId, EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalar, EventChangeScalars, EventChanged, EventChangedAssetId, EventChangedClientAction, EventChangedClipId, EventChangedFrame, EventChangedFrames, EventChangedInspectorSelectors, EventChangedMashAsset, EventChangedPreviews, EventChangedScalars, EventChangedServerAction, EventChangedSize, EventChangedTargetIds, EventClientAudioPromise, EventClientDecode, EventClientEncode, EventClientFontPromise, EventClientImagePromise, EventClientTranscode, EventClientVideoPromise, EventClipElement, EventClipId, EventControl, EventControlGroup, EventDataType, EventDialog, EventDoClientAction, EventDoServerAction, EventDragging, EventEnabledClientAction, EventEnabledServerAction, EventFrame, EventFrames, EventIcon, EventImport, EventImportManagedAssets, EventImportedManagedAssets, EventImporterChange, EventImporterComplete, EventImporters, EventInspectorSelectors, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetScalar, EventManagedAssets, EventMashAsset, EventMoveClip, EventPreviews, EventProgress, EventPropertyIds, EventRect, EventReleaseManagedAssets, EventRemoveClip, EventSavableManagedAsset, EventSavableManagedAssets, EventSave, EventScalar, EventSelectedProperties, EventSize, EventTargetIds, EventTimeRange, EventTrackClipIcon, EventTrackClips, EventTypeAdded, EventTypeAssetType, EventTypeDragHandled, EventTypeEnded, EventTypeExportParts, EventTypeFps, EventTypeLoaded, EventTypeMashRemoveTrack, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeRender, EventTypeScrollRoot, EventTypeSeeked, EventTypeSeeking, EventTypeTrack, EventTypeTracks, EventTypeVolume, EventTypeWaiting, EventTypeZoom, EventUpload, LastIndex, MovieMasher, NextIndex, NumberEvent, ServerActionDecode, ServerActionEncode, ServerActionSave, ServerActionTranscode, StringEvent, eventStop, isClientAsset };

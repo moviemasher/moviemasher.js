@@ -3,7 +3,7 @@ import type { ServerMashVideoAsset, ServerMashVideoInstance } from '../../Types/
 
 import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared'
 import { EventServerAsset } from '@moviemasher/runtime-server'
-import { SourceMash, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
+import { MASH, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
 import { ServerAudibleInstanceMixin } from '../../Base/ServerAudibleInstanceMixin.js'
 import { ServerMashAssetClass } from './ServerMashClasses.js'
@@ -27,7 +27,7 @@ export class ServerMashVideoAssetClass extends WithVideoAsset implements ServerM
   static handleAsset(event: EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, VIDEO, SourceMash)) {
+    if (isAssetObject(assetObject, VIDEO, MASH)) {
       detail.asset = new ServerMashVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }

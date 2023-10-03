@@ -2,13 +2,13 @@ import { errorThrow } from '@moviemasher/runtime-shared'
 import { MashAsset, MashInstance } from '@moviemasher/runtime-shared'
 import { isInstance } from '../Instance/InstanceGuards.js'
 import { isSourceAsset } from '@moviemasher/runtime-shared'
-import { SourceMash } from '@moviemasher/runtime-shared'
+import { MASH } from '@moviemasher/runtime-shared'
 import { isVideoAsset } from '../Video/VideoGuards.js'
 
 export const isMashAsset = (value: any): value is MashAsset => (
   isVideoAsset(value) 
   && isSourceAsset(value)
-  && value.source === SourceMash 
+  && value.source === MASH 
   && 'trackInstance' in value
 )
 export function assertMashAsset(value: any, name?: string): asserts value is MashAsset {

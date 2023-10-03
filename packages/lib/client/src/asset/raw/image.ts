@@ -3,7 +3,7 @@ import type { AssetCacheArgs, DataOrError, ImageInstance, ImageInstanceObject, I
 
 import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertSizeAboveZero, centerPoint, sizeCover } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientImagePromise, MovieMasher } from '@moviemasher/runtime-client'
-import { SourceRaw, IMAGE, errorThrow, isAssetObject, isDefiniteError, errorPromise, ERROR } from '@moviemasher/runtime-shared'
+import { RAW, IMAGE, errorThrow, isAssetObject, isDefiniteError, errorPromise, ERROR } from '@moviemasher/runtime-shared'
 import { svgImagePromiseWithOptions, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
@@ -90,7 +90,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject, asset } = detail
-    if (!asset && isAssetObject(assetObject, IMAGE, SourceRaw)) {
+    if (!asset && isAssetObject(assetObject, IMAGE, RAW)) {
       detail.asset = new ClientRawImageAssetClass(assetObject)
       event.stopImmediatePropagation()
     }

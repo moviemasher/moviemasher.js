@@ -6,9 +6,9 @@ import type { Contents, OptionalContent } from '../declarations.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
 
-import { isPropertyId, CommaChar } from '@moviemasher/lib-shared'
+import { isPropertyId, COMMA } from '@moviemasher/lib-shared'
 import { EventInspectorSelectors, EventChangedInspectorSelectors, MovieMasher, } from '@moviemasher/runtime-client'
-import { TypesTarget, isArray } from '@moviemasher/runtime-shared'
+import { TARGET_IDS, isArray } from '@moviemasher/runtime-shared'
 import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
 import { Scroller } from '../Base/Scroller.js'
 import { isTargetId } from '../TypeGuards.js'
@@ -40,7 +40,7 @@ export class InspectorContentElement extends WithDisablable {
     const { length } = selectors
     const contents: Contents = []
     const propertyIds = length ? selectors.filter(isPropertyId) : []
-    const targetIds = length ? selectors.filter(isTargetId) : TypesTarget
+    const targetIds = length ? selectors.filter(isTargetId) : TARGET_IDS
     if (propertyIds.length) {
       this.importTags('movie-masher-control-row')
       propertyIds.forEach(id => {
@@ -78,8 +78,8 @@ export class InspectorContentElement extends WithDisablable {
   static override properties: PropertyDeclarations = {
     ...DisablableProperties,
     selectors: { type: Array, converter: {
-      fromAttribute: (value: string) => value ? value.split(CommaChar) : [],
-      toAttribute: (value: Strings) => isArray(value) ? value.join(CommaChar) : ''
+      fromAttribute: (value: string) => value ? value.split(COMMA) : [],
+      toAttribute: (value: Strings) => isArray(value) ? value.join(COMMA) : ''
     } },
     filter: { type: String },
   }

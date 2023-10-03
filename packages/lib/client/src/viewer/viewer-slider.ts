@@ -19,7 +19,6 @@ export class ViewerSliderElement extends Component {
     const event = new EventFrames()
     MovieMasher.eventDispatcher.dispatch(event)
     const { frames } = event.detail
-    console.log(this.tagName, 'connectedCallback', { frames })
     this.frames = frames
     super.connectedCallback()
   }
@@ -31,7 +30,6 @@ export class ViewerSliderElement extends Component {
   private handleChangedFrames(event: EventChangedFrames): void {
     const { detail: frames } = event
     this.frames = frames
-    console.log(this.tagName, 'handleChangedFrames', frames) 
   }
 
   private handleInput(event: Event): void {

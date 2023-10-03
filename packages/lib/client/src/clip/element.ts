@@ -1,4 +1,4 @@
-import type { EventClipElementDetail, IconFromFrameEventDetail, MashIndex, ScrollRootEventDetail, StringEvent, SvgOrImageDataOrError, Timeout } from '@moviemasher/runtime-client'
+import type { EventClipElementDetail, ScrollRootEventDetail, StringEvent, SvgOrImageDataOrError, Timeout } from '@moviemasher/runtime-client'
 import type { Size } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
@@ -7,14 +7,13 @@ import { IntersectionController } from '@lit-labs/observers/intersection-control
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined, isMashAsset, sizeCopy } from '@moviemasher/lib-shared'
-import { DragSuffix, EventChangeClipId, EventChanged, EventClipElement, EventTypeIconFromFrame, EventTypeMashRemoveClip, EventTypeScrollRoot, MovieMasher, eventStop } from '@moviemasher/runtime-client'
-import { SIZE_ZERO, TypeClip, TypeMash, isDefiniteError } from '@moviemasher/runtime-shared'
+import { DragSuffix, EventChangeClipId, EventChanged, EventClipElement, EventTrackClipIcon, EventRemoveClip, EventTypeScrollRoot, MovieMasher, eventStop } from '@moviemasher/runtime-client'
+import { SIZE_ZERO, CLIP, MASH, isDefiniteError } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
-import { droppedMashIndex } from '../utility/draganddrop.js'
 import { isChangeAction } from '../Client/Masher/Actions/Action/ActionFunctions.js'
 import { isClientClip } from '../Client/Mash/ClientMashGuards.js'
 import { isClientInstance } from '../Client/ClientGuards.js'
@@ -25,6 +24,7 @@ const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
 const WithSizeReactiveMixin = SizeReactiveMixin(WithDropTargetMixin)
 export class ComposerClipElement extends WithSizeReactiveMixin implements DropTarget {
   constructor() {
+    console.log('ComposerClipElement')
     super()
     this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
   }
@@ -41,7 +41,6 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     this.dispatchEvent(event)
     const { root } = detail
     if (root) {
-      this.scrollRoot = root
       this.intersectionController = new IntersectionController<boolean>(
         this, { target: this, config: { root }, callback: this.handleIntersection.bind(this) }
       )
@@ -85,11 +84,11 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     // console.log(this.tagName, 'drawBackground')
     const { clipId, scale, clipSize: clipSize, gap } = this
     this.sizeWhenUpdated = sizeCopy(clipSize)
-    const detail: IconFromFrameEventDetail = { clipSize, clipId, gap, scale }
-    const event = new CustomEvent(EventTypeIconFromFrame, { detail })
+    const event = new EventTrackClipIcon(clipId, clipSize, scale, gap)
     MovieMasher.eventDispatcher.dispatch(event)
 
-    const { promise, background } = detail
+    const { promise, background } = event.detail
+    console.log('drawBackgroundAndUpdate', !!promise)
     if (!(promise && background)) return 
   
     const svgElement = this.element('div.background')
@@ -111,14 +110,13 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     this.drawBackgroundAndUpdate()
   }
 
-
   private handleChanged(event: EventChanged): void {
     const { detail: action } = event
     if (!isChangeAction(action)) return
 
     const { target, affects } = action
     if (isMashAsset(target)) {
-      if (!affects.includes(`${TypeMash}.color`)) return
+      if (!affects.includes(`${MASH}.color`)) return
     } else {
       const isClip = isClientClip(target)
       const isInstance = !isClip && isClientInstance(target)
@@ -128,6 +126,10 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
       if (clip.id !== this.clipId) return
     }  
     this.handleChange()
+  }
+
+  override handleDropped(_event: DragEvent): void {
+    // we do nothing here so timeline track handles the drop event
   }
 
   private handleIntersection(entries: IntersectionObserverEntry[]): boolean {
@@ -168,6 +170,7 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     assertDefined(promise)
   
     const iconPromise = promise.then(orError => {
+      console.log(this.tagName, 'iconPromise', orError)
       if (iconPromise !== this.iconFromFramePromise) {
         // console.warn(this.tagName, 'handleTimeout', 'iconPromise !== this.iconFromFramePromise')
         return
@@ -209,13 +212,12 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     const { dropEffect } = dataTransfer
     if (dropEffect === 'none') {
       const { clipId } = this
-      const event: StringEvent = new CustomEvent(EventTypeMashRemoveClip, { detail: clipId })
-      MovieMasher.eventDispatcher.dispatch(event)
+      MovieMasher.eventDispatcher.dispatch(new EventRemoveClip(clipId))
     }
   }
 
   override ondragstart = (event: DragEvent) => {
-    // console.log(this.tagName, 'ondragstart', event)
+    console.log(this.tagName, 'ondragstart', event.target)
     this.onpointerdown(event)
 
     const { dataTransfer, clientX } = event
@@ -223,24 +225,26 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
 
     const rect = this.getBoundingClientRect()
     const { left } = rect
-
+    // const { clipSize } = this
+    // if (target instanceof Element) {
+    //   target.setAttribute('style', `width:${clipSize.width}px;`)
+    // }
     const data = { offset: clientX - left }
     const json = JSON.stringify(data)
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(`${TypeClip}${DragSuffix}`, json)
+    dataTransfer.setData(`${CLIP}${DragSuffix}`, json)
   }
 
-  override mashIndex(event: DragEvent): MashIndex {
-    const { dataTransfer } = event
-    const { clientX } = event
-    const scrollX = this.scrollRoot?.scrollLeft ?? 0
-    const { x } = this
-    const offsetDrop = scrollX + clientX - x
-
-    const { scale, clipId, trackIndex } = this
+  // override mashIndex(event: DragEvent): ClipLocation {
+  //   const { dataTransfer } = event
+  //   const { clientX } = event
+  //   const scrollX = this.scrollRoot?.scrollLeft ?? 0
+  //   const { x, scale, clipId, trackIndex } = this
+  //   const offsetDrop = scrollX + clientX - x
+  //   console.log(this.tagName, 'mashIndex', { scale, offsetDrop, scrollX, clientX, x })
    
-    return droppedMashIndex(dataTransfer!, trackIndex, scale, offsetDrop, clipId)
-  }
+  //   return droppedMashIndex(dataTransfer!, trackIndex, scale, offsetDrop, clipId)
+  // }
 
   override onpointerdown = (event: Event) => {
     event.stopPropagation()
@@ -252,8 +256,6 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
   private resizeController?: ResizeController<Size>
 
   scale = 0
-
-  private scrollRoot?: Element
 
   private clipSize = { ...SIZE_ZERO } 
 
@@ -346,6 +348,9 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
         border: var(--border);
         display: inline-block;
         flex-grow: 1;
+
+        /* https://github.com/react-dnd/react-dnd/issues/832 */
+        transform: translate3d(0, 0, 0);
       }
 
       div.drop-box {

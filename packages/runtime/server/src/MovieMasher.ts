@@ -1,6 +1,6 @@
 import type { MovieMasherServerRuntime } from './ServerTypes.js'
 
-import { MovieMasherImportPromise } from '@moviemasher/runtime-shared'
+import { importPromise } from '@moviemasher/runtime-shared'
 import { ServerEventDispatcher } from './ServerEventDispatcher.js'
 
 export const MovieMasher: MovieMasherServerRuntime = {
@@ -15,19 +15,19 @@ export const MovieMasher: MovieMasherServerRuntime = {
       ServerShapeImageListeners: '@moviemasher/lib-server/asset/shape/image.js',
       ServerTextImageListeners: '@moviemasher/lib-server/asset/text/image.js',
       ServerAssetManagerListeners: '@moviemasher/lib-server/asset/manager.js',
-      ServerDecodeProbeListeners: '@moviemasher/lib-server/decode/probe.js',
-      ServerEncodeAudioListeners: '@moviemasher/lib-server/encode/start.js',
-      ServerEncodeImageListeners: '@moviemasher/lib-server/encode/start.js',
-      ServerEncodeVideoListeners: '@moviemasher/lib-server/encode/start.js',
-      // ServerEncodeProgressListeners: '@moviemasher/lib-server/progress.js',
-      // ServerEncodeFinishListeners: '@moviemasher/lib-server/encode/finish.js',
       ServerAssetPromiseListeners: '@moviemasher/lib-server/asset/promise.js',
+      ServerEncodeAudioListeners: '@moviemasher/lib-server/encode/encode.js',
+      ServerEncodeImageListeners: '@moviemasher/lib-server/encode/encode.js',
+      ServerEncodeVideoListeners: '@moviemasher/lib-server/encode/encode.js',
+      ServerEncodeStatusListeners: '@moviemasher/lib-server/encode/encode.js',
+      ServerDecodeProbeListeners: '@moviemasher/lib-server/decode/probe.js',
       ServerTranscodeListeners: '@moviemasher/lib-server/transcode/transcode.js',
+      ServerTranscodeStatusListeners: '@moviemasher/lib-server/transcode/transcode.js',
     },
   },
   get importPromise() { 
     const { options, eventDispatcher } = MovieMasher
     const { imports } = options
-    return MovieMasherImportPromise(imports, eventDispatcher)
+    return importPromise(imports, eventDispatcher)
   },
 }

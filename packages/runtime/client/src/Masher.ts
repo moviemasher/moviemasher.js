@@ -43,10 +43,10 @@ export interface Masher {
   volume: number
 }
 
-export interface MashIndex {
-  clip?: number
+export interface ClipLocation {
+  index?: number
   track?: number
-  effect?: number
+  frame?: number
 }
 
 export interface MasherArgs {

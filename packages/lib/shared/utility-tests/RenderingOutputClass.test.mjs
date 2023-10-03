@@ -6,22 +6,22 @@ import { Environment, environment } from '@moviemasher/lib-server'
 import { 
   mashMedia, 
   assertVisibleAsset, urlBaseInitialize
-} from "@moviemasher/lib-shared"
+} from '@moviemasher/lib-shared'
 import { 
   VIDEO, IMAGE
-} from "@moviemasher/runtime-shared"
+} from '@moviemasher/runtime-shared'
 import { 
   MovieMasher
-} from "@moviemasher/runtime-server"
+} from '@moviemasher/runtime-server'
 
 import { RenderingOutputClass, outputDefaultPopulate } from '@moviemasher/lib-server'
 import { renderingProcessInput } from '../../../../images/tester/Utilities/Rendering.mjs'
-import { expectArrayLength } from "../../../../images/tester/Utilities/Expect.mjs"
+import { expectArrayLength } from '../../../../images/tester/Utilities/Expect.mjs'
 
-describe("videoFactory", () => {
+describe('videoFactory', () => {
   urlBaseInitialize('file://' + path.resolve(environment(Environment.API_DIR_FILE_PREFIX), 'user'))
 
-  test("renderingDescriptionPromise", async () => {
+  test('renderingDescriptionPromise', async () => {
     const id = 'video-from-multiple'
     const output = outputDefaultPopulate({ outputType: VIDEO, cover: false })
     const globeDefinitionObject = {

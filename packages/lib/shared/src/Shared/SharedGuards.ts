@@ -1,7 +1,7 @@
 import type { Integer, JsonRecord, JsonRecords, NestedStringRecord, PopulatedString, PropertyId, Scalar, ScalarRecord, StringRecord, Unknowns, Value, ValueRecord } from '@moviemasher/runtime-shared'
 import type { Rgb } from '../Helpers/Color/ColorTypes.js'
 
-import { TypesTarget, errorThrow, isArray, isBoolean, isDefined, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isString, length } from '@moviemasher/runtime-shared'
+import { TARGET_IDS, errorThrow, isArray, isBoolean, isDefined, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isString, length } from '@moviemasher/runtime-shared'
 import { isRgb } from './RgbGuards.js'
 
 export function isPopulatedArray<T = unknown>(value: any): value is T[] {
@@ -121,6 +121,6 @@ export function assertScalar(value: any, name?: string): asserts value is Scalar
 
 export const isPropertyId = (value: any): value is PropertyId => (
   isPopulatedString(value) 
-    && TypesTarget.some(type => value.startsWith(type))
+    && TARGET_IDS.some(type => value.startsWith(type))
     && value.split('.').length === 2
 )

@@ -1,30 +1,16 @@
 import type { ClientAsset, ServerProgress } from '@moviemasher/runtime-client'
-import type { AssetObject, InstanceArgs, Transcoding, Transcodings, InstanceObject, Size, StringDataOrError, Strings, TargetId, TranscodingType, TranscodingTypes } from '@moviemasher/runtime-shared'
+import type { AssetObject, InstanceArgs, Transcoding, Transcodings, InstanceObject, Size, StringDataOrError, TargetId, TranscodingTypes } from '@moviemasher/runtime-shared'
 
 import { AssetClass, idIsTemporary } from '@moviemasher/lib-shared'
 import { EventManagedAsset, EventManagedAssetId, EventSave, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, TypeAsset, assertAsset, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, ASSET, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
 
 export class ClientAssetClass extends AssetClass implements ClientAsset {
-  override asset(assetId: string | AssetObject): ClientAsset {
-    const event = new EventManagedAsset(assetId)
-    MovieMasher.eventDispatcher.dispatch(event)
-    const { asset } = event.detail
-    assertAsset(asset)
-
-    return asset
+  override asset(assetIdOrObject: string | AssetObject): ClientAsset {
+    return EventManagedAsset.asset(assetIdOrObject)
   }
   
   assetIcon(_size: Size): Promise<SVGSVGElement> | undefined { return }
-  
-  findTranscoding(transcodingType: TranscodingType, ...kinds: Strings): Transcoding | undefined {
-    return this.transcodings.find(transcoding => {
-      const { type, kind } = transcoding
-      if (transcodingType !== type) return false
-      if (kinds.length && !kinds.includes(kind)) return false
-      return true
-    })
-  }
 
   override instanceArgs(object?: InstanceObject): InstanceArgs {
     return { ...super.instanceArgs(object), asset: this, assetId: this.id }
@@ -68,7 +54,7 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     })
   }
 
-  override targetId: TargetId = TypeAsset
+  override targetId: TargetId = ASSET
 
   transcodings: Transcodings = []
 }

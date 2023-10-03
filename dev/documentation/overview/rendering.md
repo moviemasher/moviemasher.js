@@ -4,7 +4,7 @@ At the lowest level, [FFmpeg](https://www.ffmpeg.org) is used server-side throug
 [fluent-ffmpeg](https://www.npmjs.com/package/fluent-ffmpeg) library to render
 a [[Mash]] into files of various types. To run FFmpeg commands Movie Masher wraps an instance from this library with an instance of the [[Command]] class, that itself is wrapped by a [[RunningCommand]] instance which allows the FFmpeg process to be monitored and potentially stopped.
 
-At the highest level, the [[RenderingServer]] receives a request to render a [[MashObject]] into one or more output files, represented by [[CommandOutputs]]. It validates the request and passes it to a new [[RenderingProcess]] instance. This creates a specific type of [[RenderingOutput]] instance for each [[CommandOutput]] provided, which is responsible for converting the [[Mash]] into a corresponding [[RenderingDescription]] object. The [[RenderingProcess]] then converts each of them to a [[CommandDescription]] that it creates a [[RunningCommand]] with:
+At the highest level, the [[RenderingServer]] receives a request to render a [[MashObject]] into one or more output files, represented by [[CommandOutputs]]. It validates the request and passes it to a new [[RenderingProcess]] instance. This creates a specific type of [[RenderingOutput]] instance for each [[CommandOutput]] provided, which is responsible for converting the [[Mash]] into a corresponding [[MashDescription]] object. The [[RenderingProcess]] then converts each of them to a [[CommandDescription]] that it creates a [[RunningCommand]] with:
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/ffmpeg-abstraction.svg) -->
 <svg width="640" height="190" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 190" class='diagram'>
@@ -35,7 +35,7 @@ multiple output files from a [[MashObject]], [[DefinitionObjects]], and [[Comman
 ## Outputs
 
 Movie Masher supports five [[RenderingOutput]] interfaces that convert a
-[[Mash]] into the [[RenderingDescription]] that will render its specific output:
+[[Mash]] into the [[MashDescription]] that will render its specific output:
 
 - [[VideoOutput]]: a single video file, with audio tracks
 - [[AudioOutput]]: a single audio file
@@ -43,12 +43,12 @@ Movie Masher supports five [[RenderingOutput]] interfaces that convert a
 - [[ImageSequenceOutput]]: multple image files, one for each frame
 - [[WaveformOutput]]: a single image file, representing audio visually
 
-Each [[RenderingOutput]] will return a different [[RenderingDescription]] for the same [[Mash]]
-content. For instance, one returned by an [[AudioOutput]] will only describe a range of its audible content while one from an [[ImageOutput]] will only describe its visible content at a single point in time. A [[VideoOutput]] will return one describing a range of both, with the visible content potentially broken up into smaller chunks. To accommodate all these cases, the [[RenderingDescription]] can contain:
+Each [[RenderingOutput]] will return a different [[MashDescription]] for the same [[Mash]]
+content. For instance, one returned by an [[AudioOutput]] will only describe a range of its audible content while one from an [[ImageOutput]] will only describe its visible content at a single point in time. A [[VideoOutput]] will return one describing a range of both, with the visible content potentially broken up into smaller chunks. To accommodate all these cases, the [[MashDescription]] can contain:
 
 - a single [[CommandDescription]] object, describing the audible content
 - multiple [[CommandDescriptions]] object, describing the visual content
-- a single [[RenderingCommandOutput]] object that specifies output options
+- a single [[OutputOptions]] object that specifies output options
 
 The [[CommandDescription]] object structure closely matches FFmpeg's command line options and as such can contain:
 
@@ -57,14 +57,14 @@ The [[CommandDescription]] object structure closely matches FFmpeg's command lin
 - multiple [[GraphFilters]], each describing an FFmpeg filter to apply (AKA a [filtergraph](https://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description))
 
 ## Descriptions
-To generate an appropriate [[RenderingDescription]], a [[RenderingOutput]] will have its [[Mash]] create a new [[FilterGraphs]] instance - a specialized collection of [[FilterGraph]] objects:
+To generate an appropriate [[MashDescription]], a [[RenderingOutput]] will have its [[Mash]] create a new [[FilterGraphs]] instance - a specialized collection of [[FilterGraph]] objects:
 
 - a single [[FilterGraph]] instance, describing audible content
 - multiple [[FilterGraph]] instances, describing visible content
 
 Each [[FilterGraph]] describes a section of the [[Mash]] that can be conveniently
 cached and rendered together, including just the [[Clips]] in that section relevant to the [[RendingOutput]].
-Together that are used to build the remaining [[RenderingDescription]] data:
+Together that are used to build the remaining [[MashDescription]] data:
 
 - multiple [[CommandInput]] objects, describing any input files
 - mutiple [[GraphFilter]] objects, describing any filters to apply
@@ -84,7 +84,7 @@ are converted to [[CommandInputs]] because FFmpeg's underlying
 [drawtext](https://ffmpeg.org/ffmpeg-filters.html#drawtext)
 filter expects paths to these files to be specified as option values. The font file is cached though, and the text is written to disk. 
 
-To assure that all files in a [[RenderingDescription]] are available locally, a [[RenderingOutput]] will retrieve a promise from its [[Mash]] to cache them. In some cases, it will retrieve one directly from its [[Loader]] to load specific [[GraphFiles]] from the [[FilterGraphs]] which are required to determine output duration or dimensions, if it can't be calculated from information supplied in the [[DefinitionObjects]].
+To assure that all files in a [[MashDescription]] are available locally, a [[RenderingOutput]] will retrieve a promise from its [[Mash]] to cache them. In some cases, it will retrieve one directly from its [[Loader]] to load specific [[GraphFiles]] from the [[FilterGraphs]] which are required to determine output duration or dimensions, if it can't be calculated from information supplied in the [[DefinitionObjects]].
 
 The [[NodeLoader]] handles all the complexity of caching each [[GraphFile]]
 locally and correctly providing its file path to [[GraphFilters]].

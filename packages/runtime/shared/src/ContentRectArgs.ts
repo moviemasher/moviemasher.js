@@ -1,9 +1,9 @@
-import type { Rects } from './Rect.js'
+import type { RectTuple } from './Rect.js'
 import { PropertySize } from './Size.js'
 import type { Time, TimeRange } from './Time.js'
 
 export interface ContentRectArgs {
-  containerRects: Rects
+  containerRects: RectTuple
   editing?: boolean
   loading?: boolean
   shortest: PropertySize

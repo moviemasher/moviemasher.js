@@ -67,6 +67,7 @@ export class RgbControlElement extends WithControl {
         min-width: 50px;
         width: 100%;
         height: var(--control-size);
+        accent-color: var(--control-fore);
       }`
   ]
 }

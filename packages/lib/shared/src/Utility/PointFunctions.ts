@@ -1,6 +1,6 @@
 import { isNumber, isObject } from "@moviemasher/runtime-shared"
 import { errorThrow } from '@moviemasher/runtime-shared'
-import { CommaChar, EqualsChar, SemicolonChar } from '../Setup/Constants.js'
+import { COMMA, EQUALS, SEMICOLON } from '../Setup/Constants.js'
 import { Point } from '@moviemasher/runtime-shared'
 import { isAboveZero } from "../Shared/SharedGuards.js"
 
@@ -45,13 +45,13 @@ export const pointRound = (point: Point): Point => {
 export const pointString = (point: Point): string => {
   const { x, y } = point
   return [
-    ['x', x].join(EqualsChar), ['y', y].join(EqualsChar)
-  ].join(SemicolonChar)
+    ['x', x].join(EQUALS), ['y', y].join(EQUALS)
+  ].join(SEMICOLON)
 }
 
 export const pointValueString = (point: Point): string => {
   const { x, y } = point
-  return [x, y].join(CommaChar)
+  return [x, y].join(COMMA)
 }
 
 export const pointNegate = (point: Point): Point => {

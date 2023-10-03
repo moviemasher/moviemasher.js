@@ -38,7 +38,7 @@ ENABLE='--enable-nonfree --enable-libfdk_aac --enable-librsvg --enable-libfontco
 AMR_VERSION='0.1.3' 
 LAME_VERSION='3.100' 
 XVID_VERSION='1.3.5' 
-FFMPEG_VERSION='6.0' 
+# FFMPEG_VERSION='6.0' 
 
 
 $SUDO yum update -y 

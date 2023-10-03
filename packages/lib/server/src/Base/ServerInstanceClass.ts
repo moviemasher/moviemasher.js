@@ -1,19 +1,19 @@
 import type { Tweening } from '@moviemasher/lib-shared'
-import type { GraphFile, GraphFiles, ServerAsset, ServerPromiseArgs } from '@moviemasher/runtime-server'
-import type { IntrinsicOptions, PreloadArgs, Size, Value, ValueRecord } from '@moviemasher/runtime-shared'
+import type { GraphFile, ServerAsset } from '@moviemasher/runtime-server'
+import type { IntrinsicOptions, CacheArgs, Size, Value, ValueRecord } from '@moviemasher/runtime-shared'
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerInstance } from '../Types/ServerInstanceTypes.js'
 
-import { InstanceClass, arrayLast, assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, assertTimeRange, colorBlackOpaque, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, idGenerate, isAboveZero, isBelowOne, isTimeRange, sizeEven, sizesEqual, timeFromArgs, timeRangeFromArgs, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { InstanceClass, arrayLast, assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, assertTimeRange, colorBlackOpaque, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, idGenerate, isAboveZero, isBelowOne, isTimeRange, sizeEven, sizesEqual, timeFromArgs, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
 import { ERROR, errorThrow, isDefined, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 
 export class ServerInstanceClass extends InstanceClass implements ServerInstance {
   alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
-    const { videoRate, outputSize: rect, track, filterInput } = args
+    const { videoRate, track, filterInput } = args
     const chainInput = `content-${track}`
     assertAboveZero(videoRate)
-    assertSize(rect)
+
     assertPopulatedString(chainInput, 'chainInput')
     assertPopulatedString(filterInput, 'filterInput')
 
@@ -44,18 +44,17 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
 
 
   audibleCommandFiles(args: CommandFileArgs): CommandFiles {
-    const graphFileArgs: PreloadArgs = {
-      ...args, audible: true, visible: false
-    }
+    const graphFileArgs: CacheArgs = { audible: true }
     return this.fileCommandFiles(graphFileArgs)
   }
 
   audibleCommandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
     const { time, quantize, commandFiles, clipTime } = args
-    // console.log(this.constructor.name, 'initialCommandFilters', time, clipTime)
     const timeDuration = time.isRange ? time.lengthSeconds : 0
     const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
+
+    // console.log(this.constructor.name, 'audibleCommandFilters', {time, clipTime, duration, timeDuration})
 
     const { id } = this
     // console.log(this.constructor.name, 'audibleCommandFilters calling commandFilesInput', commandFiles.length)
@@ -67,10 +66,8 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
 
     const { frame } = this.assetTime(time)
 
-    if (duration)
-      trimOptions.duration = duration
-    if (frame)
-      trimOptions.start = timeFromArgs(frame, quantize).seconds
+    if (duration) trimOptions.duration = duration
+    if (frame) trimOptions.start = timeFromArgs(frame, quantize).seconds
 
     const commandFilter: CommandFilter = {
       inputs: [filterInput],
@@ -97,30 +94,35 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     return commandFilters
   }
 
-
   canColor(args: CommandFilterArgs): boolean { return false }
 
   canColorTween(args: CommandFilterArgs): boolean { return false }
 
-
-  colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters {
+  colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string, intrinsicSize?: Size): CommandFilters {
+    const outputString = output || idGenerate('back')
     const { contentColors = [], videoRate, outputSize, duration } = args
     assertSize(outputSize)
     const evenSize = sizeEven(outputSize)
     const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
-    const outputString = output || idGenerate('back')
   
-    const commandFilters = this.colorCommandFilters(duration, videoRate, evenSize, evenSize, color, colorEnd)
+    // console.log(this.constructor.name, 'colorBackCommandFilters', {color, colorEnd})
+    const commandFilters: CommandFilters = []
+    
 
     if (sizesEqual(evenSize, outputSize)) {
-      arrayLast(commandFilters).outputs = [outputString]
+      commandFilters.push(...this.colorCommandFilters(duration, videoRate, evenSize, evenSize, color, colorEnd))
+      const lastFilter = arrayLast(commandFilters)
+      // console.log(this.constructor.name, 'colorBackCommandFilters', 'sizesEqual', evenSize, outputSize, 'SET', lastFilter.outputs, '=', outputString)
+      lastFilter.outputs = [outputString]
     } else {
+      const doubleSize = { width: evenSize.width * 2, height: evenSize.height * 2 }
+      commandFilters.push(...this.colorCommandFilters(duration, videoRate, evenSize, evenSize, color, colorEnd))
       const filterInput = arrayLast(arrayLast(commandFilters).outputs)
       assertPopulatedString(filterInput, 'crop input')
 
       const cropCommandFilter: CommandFilter = {
         inputs: [filterInput], ffmpegFilter: 'crop',
-        options: { w: outputSize.width, h: outputSize.height, exact: 1 },
+        options: { w: outputSize.width, h: outputSize.height },//, exact: 1
         outputs: [outputString]
       }
       commandFilters.push(cropCommandFilter)
@@ -130,12 +132,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
 
   colorCommandFilters(duration: number, videoRate: number, rect: Size, rectEnd: Size, color: Value, colorTween: Value): CommandFilters {
     const commandFilters: CommandFilters = []
-   
     assertAboveZero(videoRate, 'videoRate')
-
-    const ffmpegFilter = 'color'
-    let filterInput = idGenerate(ffmpegFilter)
-   
     assertPopulatedString(color)
 
     const colorEnd = duration ? colorTween : undefined
@@ -160,7 +157,9 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
         endSize.height = heightEnd
       }
     }
-    const maxSize = tweeningSize ? tweenMaxSize(startSize, endSize) : startSize
+    const maxSize = sizeEven(tweeningSize ? tweenMaxSize(startSize, endSize) : startSize)
+    const ffmpegFilter = 'color'
+    let filterInput = idGenerate(ffmpegFilter)
     const commandFilter: CommandFilter = {
       inputs: [], ffmpegFilter, 
       options: { 
@@ -171,7 +170,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     if (isAboveZero(duration)) commandFilter.options.duration = duration
     commandFilters.push(commandFilter)
 
-    // console.log(this.constructor.name, 'commandFilters', tweeningColor, color, colorEnd, duration)
+    // console.log(this.constructor.name, 'colorCommandFilters', {filterInput, tweeningColor, tweeningSize, duration})
 
     if (tweeningColor) {
       const fadeFilter = 'fade'
@@ -258,6 +257,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
   colorMaximize = false
 
   commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
+    // console.log(this.constructor.name, 'commandFilters', container, tweening, args)
     const filters: CommandFilters = []
     const { filterInput: input = '' } = args
     let filterInput = input
@@ -267,6 +267,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       filters.push(...initialFilters)
       filterInput = arrayLast(arrayLast(initialFilters).outputs)
     }
+    // console.log(this.constructor.name, 'commandFilters', container, initialFilters)
     if (container)
       filters.push(...this.containerCommandFilters({ ...args, filterInput }, tweening))
     else
@@ -276,43 +277,49 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
 
   containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
-    const { contentColors: colors = [], containerRects, videoRate, duration } = args
+    const { contentColors: colors = [], containerRects, videoRate, duration, track } = args
     assertArray(containerRects, 'containerRects')
     const [rect, rectEnd] = containerRects
 
-    const [colorOrNot, colorEndOrNot] = colors
-    const color = colorOrNot || colorWhite
-    const colorEnd = colorEndOrNot || colorWhite
-    
+    const [color = colorWhite, colorEnd = colorWhite] = colors
+ 
+    // console.log(this.constructor.name, this.assetId, 'containerColorCommandFilters', {color, colorEnd})
     commandFilters.push(...this.colorCommandFilters(duration, videoRate, rect, rectEnd, color, colorEnd))
-
-    const { contentColors, track } = args
-
-    const { colorMaximize } = this
-    if (!colorMaximize)
-      return commandFilters
-
-    assertPopulatedArray(contentColors)
-
-    const maxSize = tweenMaxSize(rect, rectEnd) 
-    const filterArgs: VisibleCommandFilterArgs = {
-      ...args, outputSize: maxSize
-    }
-    commandFilters.push(...this.colorBackCommandFilters(filterArgs, `content-${track}`))
-
     return commandFilters
+    // const { colorMaximize } = this
+    // if (!colorMaximize) return commandFilters
+
+    // const maxSize = tweenMaxSize(rect, rectEnd) 
+    // const filterArgs: VisibleCommandFilterArgs = {
+    //   ...args, outputSize: maxSize
+    // }
+
+    // const colorInput = `content-${track}`
+    // console.log(this.constructor.name, 'ServerInstanceClass.containerColorCommandFilters calling colorBackCommandFilters', colorInput)
+    // commandFilters.push(...this.colorBackCommandFilters(filterArgs, colorInput))
+
+    // return commandFilters
   }
 
   containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
+    return this.instanceCommandFilters(args, tweening)
+  }
+
+  protected instanceCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
+    // console.log(this.constructor.name, 'ServerInstanceClass.containerCommandFilters')
     const commandFilters: CommandFilters = []
     const { contentColors, filterInput: input } = args
     let filterInput = input
     // console.log(this.constructor.name, 'containerCommandFilters', filterInput)
     assertPopulatedString(filterInput, 'filterInput')
 
-    if (!contentColors?.length) {
-      commandFilters.push(...this.alphamergeCommandFilters({ ...args, filterInput }))
+    if (!tweening.canColor){ //} contentColors?.length) {
+      const mergeFilters = this.alphamergeCommandFilters({ ...args, filterInput })
+      
+      commandFilters.push(...mergeFilters)
       filterInput = arrayLast(arrayLast(commandFilters).outputs)
+      // console.log(this.constructor.name, 'containerCommandFilters no contentColors', mergeFilters, filterInput)
+
     }
 
     commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
@@ -331,6 +338,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       commandFilters.push(...opacityFilters)
       filterInput = arrayLast(arrayLast(opacityFilters).outputs)
     }
+    // console.debug(this.constructor.name, 'containerFinalCommandFilters', opacityFilters.length)
     commandFilters.push(...this.translateCommandFilters({ ...args, filterInput }))
 
     return commandFilters
@@ -344,41 +352,25 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
   // containerFinalCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
   //   return []
   // }
+
+
   contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     // console.log(this.constructor.name, 'contentCommandFilters returning empty')
     return []//this.effectsCommandFilters(args)
   }
 
   copyCommandFilter(input: string, track: number, id = 'content'): CommandFilter {
-    const contentOutput = `${id}-${track}`
+    const output = `${id}-${track}`
     const commandFilter: CommandFilter = {
-      inputs: [input], ffmpegFilter: 'copy', options: {}, outputs: [contentOutput]
+      inputs: [input], ffmpegFilter: 'copy', options: {}, outputs: [output]
     }
     return commandFilter
   }
 
-  // private effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
-  //   const commandFilters: CommandFilters = []
-  //   const { filterInput: input } = args
-  //   let filterInput = input
-  //   assertPopulatedString(filterInput)
-
-  //   const { effects, isDefaultOrAudio } = this
-  //   if (isDefaultOrAudio)
-  //     return commandFilters
-
-  //   commandFilters.push(...effects.flatMap(effect => {
-  //     const filters = effect.commandFilters({ ...args, filterInput })
-  //     if (filters.length)
-  //       filterInput = arrayLast(arrayLast(filters).outputs)
-  //     return filters
-  //   }))
-  //   return commandFilters
-  // }
-
-  fileCommandFiles(graphFileArgs: PreloadArgs): CommandFiles {
+  fileCommandFiles(cacheArgs: CacheArgs): CommandFiles {
     const commandFiles: CommandFiles = []
-    const files = this.graphFiles(graphFileArgs)
+    const files = this.asset.assetGraphFiles(cacheArgs)
+    // console.log(this.constructor.name, 'ServerInstanceClass.fileCommandFiles', cacheArgs, files.length)
     let inputCount = 0
     commandFiles.push(...files.map((graphFile, index) => {
       const { input } = graphFile
@@ -390,20 +382,14 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     return commandFiles
   }
 
-  graphFiles(args: PreloadArgs): GraphFiles { return this.asset.graphFiles(args) }
-
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
     return errorThrow(ERROR.Unimplemented)
   }
 
   intrinsicGraphFile(options: IntrinsicOptions): GraphFile {
-    const { size, duration } = options
-    const clipTime = timeRangeFromArgs()
-    const graphFileArgs: PreloadArgs = {
-      time: clipTime.startTime, clipTime, quantize: clipTime.fps,
-      visible: size, audible: duration,
-    }
-    const [graphFile] = this.graphFiles(graphFileArgs)
+    const { size: visible, duration: audible } = options
+    const graphFileArgs: CacheArgs = { visible, audible }
+    const [graphFile] = this.asset.assetGraphFiles(graphFileArgs)
     assertObject(graphFile, 'graphFile')
 
     return graphFile
@@ -433,7 +419,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       }
     }
     const commandFilter: CommandFilter = {
-      ffmpegFilter: 'opacity', 
+      ffmpegFilter: 'geq', 
       inputs: [filterInput], 
       options, outputs: [idGenerate('opacity')]
     }
@@ -464,8 +450,8 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     assertRect(rect)
     assertRect(rectEnd)
 
-    const { width, height } = rect
-    const { width: widthEnd, height: heightEnd } = rectEnd
+    const { width, height } = sizeEven(rect)
+    const { width: widthEnd, height: heightEnd } = sizeEven(rectEnd)
 
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
     // console.log(this.constructor.name, 'scaleCommandFilters', containerRects, duration)
@@ -519,10 +505,9 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     }
     return [overlayCommandFilter]
   }
-  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
-    const graphFileArgs: PreloadArgs = {
-      ...args, audible: false, visible: true
-    }
+
+  visibleCommandFiles(_args: VisibleCommandFileArgs): CommandFiles {
+    const graphFileArgs: CacheArgs = { visible: true }
     return this.fileCommandFiles(graphFileArgs)
   }
 }

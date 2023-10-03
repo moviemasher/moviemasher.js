@@ -18,6 +18,7 @@ export default {
   input: 'src/index.ts',
   output: {
     format: 'esm',
+    indent: '  ',
     preserveModules: true,
     preserveModulesRoot: rootDir,
     dir: 'dist'

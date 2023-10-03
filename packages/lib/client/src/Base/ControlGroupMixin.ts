@@ -7,7 +7,7 @@ import type { ControlGroup, OptionalContent } from '../declarations.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { DOT, isPropertyId } from '@moviemasher/lib-shared'
 import { EventChangeScalar, EventChanged, EventScalar, EventSelectedProperties, MovieMasher } from '@moviemasher/runtime-client'
-import { End, isDefined } from '@moviemasher/runtime-shared'
+import { END, isDefined } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { ImporterComponent } from './ImporterComponent.js'
@@ -23,7 +23,7 @@ T & Constrained<ControlGroup> {
 
     addOrRemoveEnd(addOrRemove: string, propertyNamePrefix: string): void {
       const value = this.currentValue(propertyNamePrefix, addOrRemove)
-      const endName = `${propertyNamePrefix}${End}`
+      const endName = `${propertyNamePrefix}${END}`
       const endPropertyId = this.namePropertyId(endName)
       if (!endPropertyId) {
         console.warn(this.tagName, 'addOrRemoveEnd', { endPropertyId, addOrRemove, value })
@@ -62,7 +62,7 @@ T & Constrained<ControlGroup> {
 
     controlInputContentEnd(namePrefix: string): OptionalContent {
       const { propertyIds } = this
-      const endName = `${namePrefix}${End}`
+      const endName = `${namePrefix}${END}`
       const endPropertyId = propertyIds?.find(id => id.endsWith(endName))
       if (!endPropertyId) return
 
@@ -87,7 +87,7 @@ T & Constrained<ControlGroup> {
     currentValue(name: string, addOrRemove: string): Scalar | undefined  {
       if (addOrRemove === 'remove') return
 
-      // const name = `${widthOrHeight}${End}`
+      // const name = `${widthOrHeight}${END}`
       const found = this.namePropertyId(name)
       if (!found) return
 

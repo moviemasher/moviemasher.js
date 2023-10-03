@@ -1,14 +1,15 @@
 import type { ClientFont, ClientFontDataOrError, ClientTextAsset, ClientTextAssetObject, ClientTextInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
 import type { AssetCacheArgs, DataOrError, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
 
-import { DOT, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, isPropertyId, rectTransformAttribute, sizeContain, stringFamilySizeRect } from '@moviemasher/lib-shared'
+import { DOT, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, isPropertyId, rectTransformAttribute, sizeContain } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientFontPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, IMAGE, POINT_ZERO, SourceText, TypeFont, errorPromise, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { ERROR, IMAGE, POINT_ZERO, TEXT, FONT, errorPromise, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 import { svgSvgElement, svgText } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
 import { ClientRawAssetClass } from '../raw/ClientRawAssetClass.js'
+import { stringFamilySizeRect } from '../../utility/string.js'
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -23,13 +24,12 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
     const { family } = this
     if (family || !visible) return Promise.resolve({ data: 0 })
 
-    const transcoding =  this.findTranscoding(TypeFont, 'woff', 'woff2') 
+    const transcoding =  this.preferredTranscoding(FONT) 
     return this.loadFontPromise(transcoding).then(() => ({ data: 1 }))
   }
 
   override assetIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    const transcoding = this.findTranscoding(TypeFont)
-    return this.loadFontPromise(transcoding).then(orError => {
+    return this.loadFontPromise().then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError)
 
       const { string, family } = this
@@ -114,7 +114,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, IMAGE, SourceText)) {
+    if (isAssetObject(assetObject, IMAGE, TEXT)) {
       detail.asset = new ClientTextAssetClass(assetObject)
       event.stopImmediatePropagation()
     }

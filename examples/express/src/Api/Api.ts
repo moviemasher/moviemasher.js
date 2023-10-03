@@ -1,35 +1,54 @@
-import type { EndpointRequest, Identified, JsonRecord, PotentialError } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetParams, Data, DecodeArgs, DefiniteError, EncodeArgs, EndpointRequest, Identified, TranscodeArgs, Typed } from '@moviemasher/runtime-shared'
 
-
- export interface ApiRequest {
+export interface ApiRequest {
   [index: string]: any
   version?: string
 }
  
-export interface ApiResponse extends PotentialError {}
-
-
- export interface EndpointPromiser {
- (id: string, body?: JsonRecord): Promise<any>
+export interface VersionResponse {
+  version?: string
 }
 
+export interface VersionedError extends VersionResponse, DefiniteError {}
 
- export interface ApiCallback extends EndpointRequest {
-  expires?: string
+export interface VersionedData<T = unknown> extends VersionResponse, Data<T> {}
+
+export type VersionedDataOrError<T = unknown> = VersionedError | VersionedData<T>
+
+export interface StatusRequest extends ApiRequest, Identified {}
+
+export interface DataAssetPutRequest extends ApiRequest {
+  assetObject: AssetObject
 }
 
- export interface ApiCallbacks extends Record<string, ApiCallback> {}
-
- export interface ApiServerInit { }
-
-
- export interface ApiCallbacksRequest extends ApiRequest, Identified {}
-
-
- export interface ApiCallbacksResponse extends ApiResponse {
-  apiCallbacks: ApiCallbacks
+export interface DataAssetListRequest extends ApiRequest, AssetParams {
+  partial?: boolean
 }
 
- export interface ApiCallbackResponse extends ApiResponse {
-  apiCallback?: ApiCallback
+export interface DataAssetDeleteRequest extends ApiRequest, Identified { }
+
+export interface DataAssetDefaultRequest extends ApiRequest { }
+
+export interface DataAssetGetRequest extends ApiRequest, Identified { }
+
+export interface EncodeStartRequest extends ApiRequest, EncodeArgs { }
+
+export interface TranscodeStartRequest extends ApiRequest, TranscodeArgs { }
+
+export interface DecodeStartRequest extends ApiRequest, DecodeArgs { }
+
+export interface UploadFileRequest extends ApiRequest, Identified { }
+
+export interface UploadFileResponse extends Identified { }
+
+export interface UploadRequestRequest extends ApiRequest, Partial<Identified>, Typed {
+  name: string
+  size: number
+}
+
+export interface UploadResponse {
+  id: string
+  fileProperty?: string
+  assetRequest: EndpointRequest
+  storeRequest: EndpointRequest
 }

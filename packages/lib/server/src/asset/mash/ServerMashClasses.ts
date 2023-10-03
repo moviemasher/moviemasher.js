@@ -1,11 +1,11 @@
 import type { Tweening } from '@moviemasher/lib-shared'
-import type { CommandFile, GraphFiles, ServerPromiseArgs } from '@moviemasher/runtime-server'
-import type { AVType, ClipObject, ContainerRectArgs, DataOrError, Instance, IntrinsicOptions, PreloadArgs, Strings, Time, TimeRange, Times, TrackArgs } from '@moviemasher/runtime-shared'
+import { EventServerManagedAsset, type CommandFile, type GraphFiles, type ServerPromiseArgs } from '@moviemasher/runtime-server'
+import type { AVType, ClipObject, ContainerRectArgs, DataOrError, Instance, IntrinsicOptions, CacheArgs, Strings, Time, TimeRange, Times, TrackArgs, AssetObject, Asset } from '@moviemasher/runtime-shared'
 import type { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerClip, ServerClips, ServerMashAsset, ServerTrack } from '../../Types/ServerMashTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../../Types/ServerInstanceTypes.js'
 
-import { AVTypeAudio, ClipClass, EmptyFunction, MashAssetMixin, TrackClass, arrayLast, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, isColorInstance, isPopulatedArray, pointsEqual, sizesEqual, timeRangeFromArgs } from '@moviemasher/lib-shared'
+import { AVTypeAudio, ClipClass, MashAssetMixin, TrackClass, arrayLast, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, isColorInstance, isPopulatedArray, pointsEqual, sizesEqual, timeRangeFromArgs } from '@moviemasher/lib-shared'
 import { isPopulatedString } from '@moviemasher/runtime-shared'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
 
@@ -31,7 +31,7 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
     return new ServerClipClass(object)
   } 
 
-  graphFiles(args: PreloadArgs): GraphFiles {
+  assetGraphFiles(args: CacheArgs): GraphFiles {
     throw new Error('Method not implemented.')
   }
 
@@ -73,7 +73,12 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
 }
 
 export class ServerClipClass extends ClipClass implements ServerClip {
+  override asset(assetIdOrObject: string | AssetObject): Asset {
+    return EventServerManagedAsset.asset(assetIdOrObject)
+  }
+
   clipCommandFiles(args: CommandFileArgs): CommandFiles {
+    // console.log(this.constructor.name, 'clipCommandFiles', args)
     const commandFiles: CommandFiles = []
     const { visible, outputSize, time } = args
     const clipTime = this.timeRange
@@ -114,8 +119,8 @@ export class ServerClipClass extends ClipClass implements ServerClip {
 
   override get container(): ServerVisibleInstance { return super.container as ServerVisibleInstance}
 
-  commandFilters(args: CommandFilterArgs): CommandFilters {
-    const commandFilters:CommandFilters = []
+  clipCommandFilters(args: CommandFilterArgs): CommandFilters {
+    const filters: CommandFilters = []
     const { visible, outputSize, time } = args
     const clipTime = this.timeRange
     const contentArgs: CommandFilterArgs = { ...args, clipTime }
@@ -144,26 +149,31 @@ export class ServerClipClass extends ClipClass implements ServerClip {
       tweening.canColor = tweening.color ? container.canColorTween(args) : container.canColor(args)
     }
 
+
     const timeDuration = time.isRange ? time.lengthSeconds : 0
     const duration = timeDuration ? Math.min(timeDuration, clipTime.lengthSeconds) : 0
     
     const containerArgs: VisibleCommandFilterArgs = { 
       ...contentArgs, contentColors: colors, outputSize, containerRects, duration
     }
+
+    //  console.log(this.constructor.name, 'clipCommandFilters', hasColorContent, tweening)
+   
     if (hasColorContent) {
       if (!tweening.canColor) {
-        // inject color filter, I will alphamerge to colorize myself later
-        commandFilters.push(...container.containerColorCommandFilters(containerArgs))
-        containerArgs.filterInput = arrayLast(arrayLast(commandFilters).outputs)
+        // inject color filter, since container cannot colorize itself
+        filters.push(...container.containerColorCommandFilters(containerArgs))
+        containerArgs.filterInput = arrayLast(arrayLast(filters).outputs)
       }
     } else {
-      commandFilters.push(...content.commandFilters(containerArgs, tweening))
-      containerArgs.filterInput = arrayLast(arrayLast(commandFilters).outputs)
+      filters.push(...content.commandFilters(containerArgs, tweening))
+      containerArgs.filterInput = arrayLast(arrayLast(filters).outputs)
     }
+    // console.log(this.constructor.name, 'clipCommandFilters', filters)
 
-    commandFilters.push(...container.commandFilters(containerArgs, tweening, true))
+    filters.push(...container.commandFilters(containerArgs, tweening, true))
      
-    return commandFilters
+    return filters
   }
 
   intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles {

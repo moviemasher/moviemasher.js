@@ -9,7 +9,7 @@ import {
   timeFromArgs, timeRangeFromArgs, isClipObject, 
   TrackClass, AssetCollection, 
   fontDefault,
-  ImageType, TypeFont, 
+  ImageType, FONT, 
 } from "@moviemasher/lib-shared"
 
 
@@ -203,13 +203,13 @@ describe("Mash Asset", () => {
       const files = mash.editedGraphFiles()
       expectArrayLength(files, 1)
       const [fontGraphFile] = files
-      assert.equal(fontGraphFile.type, TypeFont)
+      assert.equal(fontGraphFile.type, FONT)
       assert(!fontGraphFile.input)
 
       const editingGraphFiles = mash.editedGraphFiles({ editing: true })
       expectArrayLength(editingGraphFiles, 1)
       const [editingFontGraphFile] = editingGraphFiles
-      assert.equal(editingFontGraphFile.type, TypeFont)
+      assert.equal(editingFontGraphFile.type, FONT)
       assert(!editingFontGraphFile.input)
     })
   })

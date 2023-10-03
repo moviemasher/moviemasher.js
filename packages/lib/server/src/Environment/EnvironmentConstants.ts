@@ -14,10 +14,20 @@ export const ENV = {
   ApiDirFilePrefix: 'MOVIEMASHER_API_DIR_FILE_PREFIX',
   ApiDirTemporary: 'MOVIEMASHER_API_DIR_TEMPORARY',
   AppColumnOwner: 'MOVIEMASHER_APP_COLUMN_OWNER',
+  Debug: 'MOVIEMASHER_DEBUG',
   AppColumnSource: 'MOVIEMASHER_APP_COLUMN_SOURCE',
   UrlBase: 'MOVIEMASHER_URL_BASE',
   Languages: 'MOVIEMASHER_LANGUAGES',
   DirRoot: 'MOVIEMASHER_DIR_ROOT',
+
+
+  RelativeRequestRoot: 'MOVIEMASHER_RELATIVE_REQUEST_ROOT',
+  /**
+   * Where to store output files.
+   */
+  OutputRoot: 'MOVIEMASHER_OUTPUT_ROOT',
+
+
 } as const
 
 const ENVIRONMENT_DEFAULTS: EnvironmentRecord = {
@@ -27,8 +37,9 @@ const ENVIRONMENT_DEFAULTS: EnvironmentRecord = {
   [ENV.ApiKeypathJob]: 'job',
   [ENV.ApiDirTemporary]: '/app/temporary',
   [ENV.ApiDirCache]: '/app/temporary/cache',
-  [ENV.ApiDirValid]: 'shared',
-  [ENV.ApiDirFilePrefix]: '/app/examples/express/public/assets',
+  [ENV.ApiDirValid]: '../shared',
+  [ENV.RelativeRequestRoot]: '/app/examples/express/public/assets',
+  [ENV.OutputRoot]: '/app/examples/express/public/assets',
   [ENV.AppColumnOwner]: 'user_id',
   [ENV.AppColumnSource]: 'object_id',
   [ENV.DirRoot]: '/app/',
@@ -38,7 +49,7 @@ const ENVIRONMENT_RECORD: EnvironmentRecord = {}
 
 function environmentGetArray(key: EnvironmentKey, type?: StringDataType): Strings
 function environmentGetArray(key: EnvironmentKey, type: ScalarType = STRING): Scalars {
-  return scalars(ENVIRONMENT_RECORD[key] || '', type)
+  return scalars(environmentGet(key) || '', type)
 }
 
 function environmentGet(key: EnvironmentKey, type?: StringType): string

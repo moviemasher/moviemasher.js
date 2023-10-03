@@ -1,9 +1,9 @@
 import type { ClientImage, ClientInstance, ClientMediaRequest, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientVideo, Panel, Preview, SvgItem } from '@moviemasher/runtime-client'
 import type { AssetCacheArgs, DataOrError, InstanceArgs, Rect, RectOptions, Size, Time, Times, Transcoding, TranscodingTypes, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, NamespaceSvg, SemicolonChar, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTime, assertTimeRange, assertTrue, centerPoint, pointCopy, promiseNumbers, sizeAboveZero, sizeCopy, sizeCover, sizeString, timeFromArgs, timeFromSeconds } from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, AudibleInstanceMixin, NamespaceSvg, SEMICOLON, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertDefined, assertSizeAboveZero, assertTime, assertTimeRange, assertTrue, centerPoint, pointCopy, promiseNumbers, sizeAboveZero, sizeCopy, sizeCover, sizeString, timeFromArgs, timeFromSeconds } from '@moviemasher/lib-shared'
 import { EventAsset, EventClientAudioPromise, EventClientImagePromise, EventClientVideoPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, SourceRaw, AUDIO, IMAGE, SEQUENCE, VIDEO, errorThrow, isAssetObject, isBoolean, isDefiniteError, errorPromise, error } from '@moviemasher/runtime-shared'
+import { ERROR, RAW, AUDIO, IMAGE, SEQUENCE, VIDEO, errorThrow, isAssetObject, isBoolean, isDefiniteError, errorPromise, error } from '@moviemasher/runtime-shared'
 import { isClientAudio, isClientVideo } from '../../Client/ClientGuards.js'
 import { svgImagePromiseWithOptions, svgSetChildren, svgSetDimensions, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
@@ -259,8 +259,8 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   private preloadAudiblePromise(_args: AssetCacheArgs): Promise<DataOrError<number>> {
     if (this.loadedAudio) return Promise.resolve({ data: 0 })
 
-    const transcoding = this.preferredTranscoding(AUDIO, VIDEO)
-    const { request } = transcoding || this
+    const transcoding = this.preferredTranscoding(AUDIO, VIDEO) || this
+    const { request } = transcoding 
 
     const event = new EventClientAudioPromise(request)
     MovieMasher.eventDispatcher.dispatch(event)
@@ -315,12 +315,12 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
     const promises: Promise<DataOrError<number>>[] = []
     // const { audible } = args
     // const { audio } = this
-    const visibleTranscoding = this.preferredTranscoding(SEQUENCE, VIDEO)
+    const requestable = this.preferredTranscoding(SEQUENCE, VIDEO) || this
    
     // if (visibleTranscoding) {
     // const audibleTranscoding = audio && audible && this.preferredTranscoding(AUDIO, VIDEO)
     // if (visibleTranscoding !== audibleTranscoding) {
-    const { type, request } = visibleTranscoding || this  
+    const { type, request } = requestable  
     if (type === VIDEO) {
       const event = new EventClientVideoPromise(request)
       MovieMasher.eventDispatcher.dispatch(event)
@@ -346,7 +346,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   }
 
   get previewTranscoding(): Transcoding | undefined {
-    return this.findTranscoding(VIDEO, SEQUENCE, VIDEO)
+    return this.preferredTranscoding(SEQUENCE, VIDEO)
   }
 
   private sequenceImagesPromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
@@ -374,7 +374,7 @@ export class ClientRawVideoAssetClass extends WithVideoAsset implements ClientRa
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject, asset } = detail
-    if (!asset && isAssetObject(assetObject, VIDEO, SourceRaw)) {
+    if (!asset && isAssetObject(assetObject, VIDEO, RAW)) {
       detail.asset = new ClientRawVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -429,7 +429,7 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
       //   styles.push(`clip-path:${svgUrl(clipId)}`)
       //   items.push(svg)
       // }
-      div.setAttribute('style', styles.join(SemicolonChar) + SemicolonChar)
+      div.setAttribute('style', styles.join(SEMICOLON) + SEMICOLON)
       svgSetChildren(div, [video])
 
       return div

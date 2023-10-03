@@ -6,7 +6,7 @@ import type { Content, Contents, OptionalContent } from '../declarations.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { arraySet, assertPopulatedString, sortByOrder } from '@moviemasher/lib-shared'
 import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher } from '@moviemasher/runtime-client'
-import { TypeAsset, TypeMash } from '@moviemasher/runtime-shared'
+import { ASSET, MASH } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
@@ -23,11 +23,11 @@ export class InspectorTargetElement extends ImporterComponent {
     const { listeners } = this
 
     switch (targetId) {
-      case TypeAsset: {
+      case ASSET: {
         listeners[EventChangedAssetId.Type] = this.handleChanged.bind(this)
         break
       }
-      case TypeMash: {
+      case MASH: {
         listeners[EventChangedMashAsset.Type] = this.handleChanged.bind(this)
         break 
       }

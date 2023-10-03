@@ -7,7 +7,7 @@ import { IconString } from '../Base/IconString.js'
 export const ButtonElementName = 'movie-masher-component-button'
 export class ButtonElement extends IconString {
   protected override content(contents: Contents): Content {
-    const title = this.icon || this.string
+    const title = this.string || this.icon 
     return html`<button 
       title='${title}'
       ?disabled='${this.disabled}' 
@@ -20,7 +20,7 @@ export class ButtonElement extends IconString {
 
   static override properties: PropertyDeclarations = {
     ...IconString.properties,
-    disabled: { type: Boolean, attribute: false },
+    disabled: { type: Boolean },//, attribute: false
   }
 }
 

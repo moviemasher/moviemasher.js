@@ -1,3 +1,5 @@
+import { Strings } from './Core.js'
+
 export const ERROR = {
   ClientDisabledDelete: 'client.disabled.delete',
   ClientDisabledGet: 'client.disabled.get',
@@ -26,19 +28,6 @@ export const ERROR = {
   Unimplemented: 'error.unimplemented',
   Unknown: 'error.unknown',
   Url: 'error.url',
-
 } as const
 
-export const ERROR_NAMES = Object.values(ERROR)
-
-// export const StandardErrorName = {
-//   Error: ERROR.Unknown,
-//   EvalError: ERROR.Evaluation,
-//   InternalError: ERROR.Internal,
-//   RangeError: ERROR.Range,
-//   ReferenceError: ERROR.Reference,
-//   SyntaxError: ERROR.Syntax,
-//   TypeError: ERROR.Type,
-//   URIError: ERROR.Url,
-// }
-// export type StandardErrorName = typeof StandardErrorName[keyof typeof StandardErrorName]
+export const ERROR_NAMES: Strings = Object.values(ERROR)

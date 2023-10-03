@@ -19,7 +19,7 @@ const DefaultMash = {
 }
 
 export const Default = {
-  duration: 10,
+  duration: 3,
   label: 'Unlabeled',
   editor: DefaultMasherArgs,
   video: DefaultMash,

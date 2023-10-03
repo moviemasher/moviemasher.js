@@ -61,20 +61,9 @@ const ERROR = {
     Url: 'error.url',
 };
 const ERROR_NAMES = Object.values(ERROR);
-// export const StandardErrorName = {
-//   Error: ERROR.Unknown,
-//   EvalError: ERROR.Evaluation,
-//   InternalError: ERROR.Internal,
-//   RangeError: ERROR.Range,
-//   ReferenceError: ERROR.Reference,
-//   SyntaxError: ERROR.Syntax,
-//   TypeError: ERROR.Type,
-//   URIError: ERROR.Url,
-// }
-// export type StandardErrorName = typeof StandardErrorName[keyof typeof StandardErrorName]
 
-const isErrorName = (value) => ((typeof value === 'string') && ERROR_NAMES.includes(value));
-const errorMessage = (name, context) => (typeof context === 'string' ? context : name);
+const isErrorName = (value) => ((isString(value)) && ERROR_NAMES.includes(value));
+const errorMessage = (name, context) => (isString(context) ? context : name);
 const errorObject = (message, name = ERROR.Internal, cause) => {
     const error = new Error(message);
     Object.assign(error, { name, cause });
@@ -83,7 +72,7 @@ const errorObject = (message, name = ERROR.Internal, cause) => {
 const errorObjectCaught = (error) => {
     if (isErrorName(error))
         return errorName(error);
-    if (typeof error === 'string')
+    if (isString(error))
         return errorObject(error);
     const { message: errorMessage = '', name = ERROR.Internal } = error;
     const message = errorMessage || String(name);
@@ -93,7 +82,10 @@ const errorName = (name, context) => {
     // console.log('errorName', name, context)
     return { name, message: errorMessage(name, context), cause: context };
 };
-const errorCaught = (error) => ({ error: errorObjectCaught(error) });
+const errorCaught = (error) => {
+    // console.error('errorCaught', error)
+    return { error: errorObjectCaught(error) };
+};
 const errorPromise = (name, context) => (Promise.resolve(error(name, context)));
 const errorExpected = (value, expected, prop) => {
     const type = typeof value;
@@ -116,7 +108,7 @@ const errorThrow = (value, type, property) => {
 };
 const error = (code, context) => ({ error: errorName(code, context) });
 const isDefiniteError = (value) => {
-    return isObject(value) && 'error' in value && isObject(value.error);
+    return isObject(value) && 'error' in value; // && isObject(value.error)
 };
 
 function assertAssetType(type, name) {
@@ -162,46 +154,39 @@ function isAssetObject(value, type = undefined, source = undefined) {
         && (!source || source === value.source));
 }
 
+const VERSION = '5.1.2';
+
 const BOOLEAN = 'boolean';
 const NUMBER = 'number';
 const STRING = 'string';
 
 const PROBE = 'probe';
 
+const isDecodingType = isPopulatedString;
+const isDecoding = (value) => (isObject(value) && 'type' in value && isDecodingType(value.type));
+function assertDecoding(value) {
+    if (!isDecoding(value))
+        errorThrow(value, 'Decoding');
+}
+
 const isListenerRecord = (value) => (isObject(value) && Object.values(value).every(isFunction));
 
-const EventTypeAsset = 'asset';
+const FONT = 'font';
+const IMPORT_TYPES = [FONT, ...ASSET_TYPES];
 
-const TypeFont = 'font';
-const TypesImport = [TypeFont, ...ASSET_TYPES];
-
-const isImportType = (value) => (TypesImport.includes(value));
+const isImportType = (value) => (IMPORT_TYPES.includes(value));
 const isImporter = (value) => (isIdentified(value)
     && 'source' in value && isPopulatedString(value.source)
     && 'types' in value && isArray(value.types));
 
-const TypeRecord = 'record';
-const TypeRecords = 'records';
+const DECODE = 'decode';
+const ENCODE = 'encode';
+const TRANSCODE = 'transcode';
 
-const TypeDecode = 'decode';
-const TypeEncode = 'encode';
-const TypeTranscode = 'transcode';
+const RECORD = 'record';
+const RECORDS = 'records';
 
-const POINT_ZERO = { x: 0, y: 0 };
-const POINT_KEYS = ['x', 'y'];
-
-const End = 'End';
-const Crop = 'Crop';
-const Aspect = 'Aspect';
-
-const SIZE_ZERO = { width: 0, height: 0 };
-const SIZE_OUTPUT = { width: 1920, height: 1080 };
-const SIZE_KEYS = ['width', 'height'];
-
-const RECT_ZERO = { ...POINT_ZERO, ...SIZE_ZERO };
-const RECT_KEYS = [...POINT_KEYS, ...SIZE_KEYS];
-
-const MovieMasherImportPromise = (imports, eventDispatcher) => {
+const importPromise = (imports, eventDispatcher) => {
     const functions = Object.keys(imports).sort((a, b) => b.length - a.length);
     const moduleIds = [...new Set(Object.values(imports))];
     const byId = Object.fromEntries(moduleIds.map(id => ([id, functions.filter(key => imports[key] === id)])));
@@ -226,32 +211,16 @@ const MovieMasherImportPromise = (imports, eventDispatcher) => {
     });
     return Promise.all(promises).then(results => {
         results.filter(isDefiniteError).forEach(error => {
-            console.error('MovieMasherImportPromise', error);
+            console.error('importPromise', error);
         });
     });
 };
 
-const COLOR = 'color';
-const SourceMash = 'mash';
-const SourcePrompt = 'prompt';
-const SourceRaw = 'raw';
-const SourceShape = 'shape';
-const SourceText = 'text';
-
 const SEQUENCE = 'sequence';
 const WAVEFORM = 'waveform';
 
-const TypeAsset = 'asset';
-const TypeClip = 'clip';
-const TypeContainer = 'container';
-const TypeContent = 'content';
-const TypeMash = 'mash';
-const TypesTarget = [
-    TypeMash, TypeClip, TypeContent, TypeContainer, TypeAsset
-];
-
-const OutputEncodeDefaults = {
-    audio: {
+const OUTPUT_DEFAULTS = {
+    [AUDIO]: {
         options: {},
         audioBitrate: 160,
         audioCodec: 'libmp3lame',
@@ -259,11 +228,11 @@ const OutputEncodeDefaults = {
         audioRate: 44100,
         extension: 'mp3',
     },
-    font: {
+    [FONT]: {
         options: {},
         extension: 'woff2',
     },
-    sequence: {
+    [SEQUENCE]: {
         options: {},
         format: 'image2',
         width: 320,
@@ -271,7 +240,7 @@ const OutputEncodeDefaults = {
         videoRate: 10,
         extension: 'jpg',
     },
-    waveform: {
+    [WAVEFORM]: {
         options: {},
         width: 320,
         height: 240,
@@ -283,13 +252,13 @@ const OutputEncodeDefaults = {
         audioRate: 44100,
         extension: 'png',
     },
-    image: {
+    [IMAGE]: {
         options: {},
         width: 320,
         height: 240,
         extension: 'jpg',
     },
-    video: {
+    [VIDEO]: {
         options: {
             g: 60,
             level: 41,
@@ -308,8 +277,8 @@ const OutputEncodeDefaults = {
         format: 'mp4',
     },
 };
-const OutputAlphaDefaults = {
-    image: {
+const ALPHA_OUTPUT_DETAULTS = {
+    [IMAGE]: {
         options: {},
         width: 320,
         height: 240,
@@ -317,7 +286,7 @@ const OutputAlphaDefaults = {
         format: 'image2',
         offset: 0
     },
-    sequence: {
+    [SEQUENCE]: {
         options: {},
         format: 'image2',
         width: 320,
@@ -325,7 +294,7 @@ const OutputAlphaDefaults = {
         videoRate: 10,
         extension: 'png',
     },
-    video: {
+    [VIDEO]: {
         options: {
             g: 60,
             level: 41,
@@ -346,4 +315,42 @@ const OutputAlphaDefaults = {
     },
 };
 
-export { ASSET_TYPES, AUDIBLE_TYPES, AUDIO, Aspect, BOOLEAN, COLOR, Crop, ERROR, ERROR_NAMES, End, EventTypeAsset, IMAGE, MovieMasherImportPromise, NUMBER, OutputAlphaDefaults, OutputEncodeDefaults, POINT_KEYS, POINT_ZERO, PROBE, RECT_KEYS, RECT_ZERO, SEQUENCE, SIZE_KEYS, SIZE_OUTPUT, SIZE_ZERO, STRING, SourceMash, SourcePrompt, SourceRaw, SourceShape, SourceText, TypeAsset, TypeClip, TypeContainer, TypeContent, TypeDecode, TypeEncode, TypeFont, TypeMash, TypeRecord, TypeRecords, TypeTranscode, TypesImport, TypesTarget, VIDEO, VISIBLE_TYPES, WAVEFORM, arrayFromOneOrMore, assertAsset, assertAssetType, assertIdentified, assertTyped, error, errorCaught, errorMessage, errorName, errorObject, errorObjectCaught, errorPromise, errorThrow, isArray, isAsset, isAssetObject, isAssetType, isAudibleAssetType, isBoolean, isDefined, isDefiniteError, isErrorName, isFunction, isIdentified, isImportType, isImporter, isListenerRecord, isNan, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isSourceAsset, isString, isTyped, isUndefined, isVisibleAssetType, length };
+const POINT_ZERO = { x: 0, y: 0 };
+const POINT_KEYS = ['x', 'y'];
+
+const isProbing = (value) => {
+    return isDecoding(value) && value.type === PROBE;
+};
+function assertProbing(value) {
+    if (!isProbing(value))
+        errorThrow(value, 'Probing');
+}
+
+// Note: these are all capitalized since they are suffixes
+const END = 'End';
+const CROP = 'Crop';
+const ASPECT = 'Aspect';
+
+const SIZE_ZERO = { width: 0, height: 0 };
+const SIZE_OUTPUT = { width: 1920, height: 1080 };
+const SIZE_KEYS = ['width', 'height'];
+
+const RECT_ZERO = { ...POINT_ZERO, ...SIZE_ZERO };
+const RECT_KEYS = [...POINT_KEYS, ...SIZE_KEYS];
+
+const COLOR = 'color';
+const MASH = 'mash';
+const PROMPT = 'prompt';
+const RAW = 'raw';
+const SHAPE = 'shape';
+const TEXT = 'text';
+
+const ASSET = 'asset';
+const CLIP = 'clip';
+const CONTAINER = 'container';
+const CONTENT = 'content';
+const TARGET_IDS = [
+    MASH, CLIP, CONTENT, CONTAINER, ASSET
+];
+
+export { ALPHA_OUTPUT_DETAULTS, ASPECT, ASSET, ASSET_TYPES, AUDIBLE_TYPES, AUDIO, BOOLEAN, CLIP, COLOR, CONTAINER, CONTENT, CROP, DECODE, ENCODE, END, ERROR, ERROR_NAMES, FONT, IMAGE, IMPORT_TYPES, MASH, NUMBER, OUTPUT_DEFAULTS, POINT_KEYS, POINT_ZERO, PROBE, PROMPT, RAW, RECORD, RECORDS, RECT_KEYS, RECT_ZERO, SEQUENCE, SHAPE, SIZE_KEYS, SIZE_OUTPUT, SIZE_ZERO, STRING, TARGET_IDS, TEXT, TRANSCODE, VERSION, VIDEO, VISIBLE_TYPES, WAVEFORM, arrayFromOneOrMore, assertAsset, assertAssetType, assertDecoding, assertIdentified, assertProbing, assertTyped, error, errorCaught, errorMessage, errorName, errorObject, errorObjectCaught, errorPromise, errorThrow, importPromise, isArray, isAsset, isAssetObject, isAssetType, isAudibleAssetType, isBoolean, isDecoding, isDecodingType, isDefined, isDefiniteError, isErrorName, isFunction, isIdentified, isImportType, isImporter, isListenerRecord, isNan, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isProbing, isSourceAsset, isString, isTyped, isUndefined, isVisibleAssetType, length };

@@ -9,13 +9,16 @@ services:
       dockerfile: images/test-server/dev/Dockerfile.cnf
     image: moviemasher/test-server:${MOVIEMASHER_VERSION}
     environment:
-      - MOVIEMASHER_API_DIR_TEMPORARY=${MOVIEMASHER_DIR_ROOT}/temporary/test-server
+      - MOVIEMASHER_API_DIR_TEMPORARY=${MOVIEMASHER_DIR_ROOT}/temporary/test-server/temporary
       - MOVIEMASHER_API_DIR_CACHE=${MOVIEMASHER_DIR_ROOT}/temporary/test-server/cache
+      - MOVIEMASHER_OUTPUT_ROOT=${MOVIEMASHER_DIR_ROOT}/temporary/test-server/output
+      - MOVIEMASHER_RELATIVE_REQUEST_ROOT=${MOVIEMASHER_DIR_ROOT}/dev/shared
       - MOVIEMASHER_FOO=foo
+      - MOVIEMASHER_DEBUG=1
     volumes:
       - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
       - ../../../images/test-server:${MOVIEMASHER_DIR_ROOT}/images/test-server
-      - ../../../dev/shared:${MOVIEMASHER_DIR_ROOT}/examples/express/public/shared
+      - ../../../dev/shared:${MOVIEMASHER_DIR_ROOT}/dev/shared
       - ../../../packages:${MOVIEMASHER_DIR_ROOT}/packages
       - ../../../temporary/test-server:${MOVIEMASHER_DIR_ROOT}/temporary/test-server
 

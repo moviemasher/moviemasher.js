@@ -1,12 +1,12 @@
-<!-- MAGIC:START (FILE:src=./dev/documentation/snippet/head.md) -->
-<!-- The below content is automatically added from ./dev/documentation/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=dev/documentation/snippet/head.md) -->
+<!-- The below content is automatically added from dev/documentation/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor and encoder_
 - **edit** video, audio, and images in [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
-- **customize** the editor with standard [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
-- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent) 
 - **encode** high resolution media files using [FFmpeg](https://ffmpeg.org)
+- **customize** the editor with standard [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
+- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
 <!-- MAGIC:END -->
 
 

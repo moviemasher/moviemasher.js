@@ -1,6 +1,6 @@
 import type { Asset, AssetCacheArgs, Assets, Clip, ClipObject, Clips, Constrained, DataOrError, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { ERROR, SIZE_OUTPUT, SourceMash, TypeMash, errorThrow, isArray } from '@moviemasher/runtime-shared'
+import { ERROR, SIZE_OUTPUT, MASH, errorThrow, isArray } from '@moviemasher/runtime-shared'
 import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
 import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from "../../Setup/AVTypeConstants.js"
@@ -28,7 +28,7 @@ T & Constrained<MashAsset> {
     // console.log(this.constructor.name, 'MashAssetMixin.assetCachePromise', args)
     // options.time ||= this.timeToBuffer
     const preloadOptions = this.cacheOptions(args)
-    const { time, audible, visible } = args
+    const { time = timeFromArgs(), audible, visible } = args
     const { quantize } = this
     assertTime(time)
 
@@ -165,27 +165,29 @@ T & Constrained<MashAsset> {
       this.tracks = []
   
       this.properties.push(propertyInstance({
-        targetId: TypeMash, name: 'aspectHeight', type: DataTypeNumber, 
+        targetId: MASH, name: 'aspectHeight', type: DataTypeNumber, 
         defaultValue: 9, min: 1, step: 1, order: 2
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeMash, name: 'aspectWidth', type: DataTypeNumber, 
+        targetId: MASH, name: 'aspectWidth', type: DataTypeNumber, 
         defaultValue: 16, min: 1, step: 1, order: 1
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeMash, name: 'aspectShortest', type: DataTypeNumber, 
+        targetId: MASH, name: 'aspectShortest', type: DataTypeNumber, 
         defaultValue: SIZE_OUTPUT.height, min: 1, step: 1, order: 3
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeMash, name: 'color', type: DataTypeRgb, 
+        targetId: MASH, name: 'color', type: DataTypeRgb, 
         defaultValue: colorBlack, 
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeMash, name: 'quantize', type: DataTypeNumber, 
-        defaultValue: Default.mash.buffer, step: 1, options: [10, 20, 40]
+        targetId: MASH, name: 'quantize', type: DataTypeNumber, 
+        defaultValue: Default.mash.quantize, step: 1, options: [10, 20, 40]
       }))
       const { tracks } = object
 
+      super.initializeProperties(object)
+      
       if (isArray(tracks)) tracks.forEach((trackObject, index) => {
         const trackArgs: TrackArgs = {
           mashAsset: this, dense: !index, ...trackObject, index
@@ -197,7 +199,6 @@ T & Constrained<MashAsset> {
       })
       this.assureTrack()
       this.tracks.sort(sortByIndex)
-      super.initializeProperties(object)
     }
   
   
@@ -216,7 +217,7 @@ T & Constrained<MashAsset> {
       return size
     }
     
-    source = SourceMash
+    source = MASH
   
     toJSON(): UnknownRecord {
       const { tracks, quantize } = this

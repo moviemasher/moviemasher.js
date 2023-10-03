@@ -20,6 +20,7 @@ const typescriptConfig = {
 export default {
   input: 'src/index.ts',
   output: {
+    indent: '  ',
     format: 'esm',
     file: 'dist/lib-client.js'
   },

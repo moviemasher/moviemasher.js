@@ -1,4 +1,4 @@
-import type { MashIndex } from '@moviemasher/runtime-client'
+import type { ClipLocation } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
 
@@ -27,8 +27,8 @@ export class TimelineIconElement extends WithDropTargetMixin implements DropTarg
 
   dense = false
 
-  override mashIndex(_event: DragEvent): MashIndex {
-    return { track: this.trackIndex, clip: 0 }
+  override mashIndex(_event: DragEvent): ClipLocation {
+    return { track: this.trackIndex, index: 0, frame: 0 }
   }
 
   trackIndex = -1

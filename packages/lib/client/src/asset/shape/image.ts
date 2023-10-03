@@ -4,7 +4,7 @@ import type { DataOrError, InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObje
 
 import { DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeContain } from '@moviemasher/lib-shared'
 import { EventAsset } from '@moviemasher/runtime-client'
-import { SourceShape, IMAGE, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
+import { SHAPE, IMAGE, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
 import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../Client/SvgFunctions.js'
 import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
 import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
@@ -45,7 +45,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
   private static get defaultAsset(): ClientShapeAsset {
   return this._defaultAsset ||= new ClientShapeAssetClass({ 
       id: DefaultContainerId, type: IMAGE, 
-      source: SourceShape, label: 'Rectangle'
+      source: SHAPE, label: 'Rectangle'
     })
   }
   static handleAsset(event: EventAsset) {
@@ -53,7 +53,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const { assetObject, assetId } = detail
     
     const isDefault = assetId === DefaultContainerId
-    if (!(isDefault || isAssetObject(assetObject, IMAGE, SourceShape))) return
+    if (!(isDefault || isAssetObject(assetObject, IMAGE, SHAPE))) return
       
     event.stopImmediatePropagation()
     if (isDefault) detail.asset = ClientShapeAssetClass.defaultAsset
@@ -83,6 +83,7 @@ export class ClientShapeInstanceClass extends WithShapeInstance implements Clien
   }
 
   override instanceCachePromise(_args: InstanceCacheArgs): Promise<DataOrError<number>> {
+    // console.log(this.constructor.name, 'instanceCachePromise', _args)
     return Promise.resolve({ data: 0 })
   }
 

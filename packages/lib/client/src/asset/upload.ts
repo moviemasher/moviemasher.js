@@ -16,7 +16,7 @@ export class UploadHandler {
 
     progress?.do(sizeMb + 1)
     const jsonRequest = {
-      endpoint: '/file/upload', init: { method: 'POST' }
+      endpoint: '/file/request', init: { method: 'POST' }
     }
     const uploadRequest = requestPopulate(jsonRequest, { name, size, type })
     console.debug(EventUpload.Type, 'handleUpload uploadRequest', uploadRequest)
@@ -28,9 +28,9 @@ export class UploadHandler {
       const { data } = orError 
       console.debug(EventUpload.Type, 'handleUpload response', data)
 
-      const { request, storeRequest, fileProperty, id } = data
+      const { assetRequest, storeRequest, fileProperty, id } = data
       assertRequest(storeRequest)
-      assertRequest(request)
+      assertRequest(assetRequest)
       assertPopulatedString(id)
 
       const { init } = storeRequest
@@ -48,7 +48,7 @@ export class UploadHandler {
 
       return requestJsonRecordPromise(populatedRequest).then(orError => {
         progress?.did(sizeMb)
-        return isDefiniteError(orError) ? orError : { data: {request, id } }
+        return isDefiniteError(orError) ? orError : { data: { assetRequest, id } }
       })
     })
   }

@@ -29,6 +29,7 @@ export default {
     'fluent-ffmpeg',
     'ttf2woff2',
     'child_process',
+    'util',
     'path',
     'fs',
     'events',

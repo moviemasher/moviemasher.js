@@ -64,7 +64,10 @@ export class FilterGraphClass implements FilterGraph {
   private get clips() { return this._clips ||= this.clipsInitialize }
   private get clipsInitialize() {
     const { time, mash, avType } = this
-    return mash.clipsInTimeOfType(time, avType).sort(sortByTrack)
+    const clips = mash.clipsInTimeOfType(time, avType).sort(sortByTrack)
+    // if (!clips.length) console.log(this.constructor.name, this.id, 'clipsInitialize', time, avType)
+    // console.log(this.constructor.name, this.id, 'clipsInitialize', clips.length, time, avType) 
+    return clips
   }
 
   private commandFileKey(commandFile: CommandFile): string {
@@ -75,6 +78,7 @@ export class FilterGraphClass implements FilterGraph {
   }
 
   get commandInputs(): CommandInputs {
+    // console.log(this.constructor.name, 'commandInputs')
     return this.inputCommandFiles.map(commandFile => {
       const { options, definition } = commandFile
       assertAsset(definition)
@@ -94,7 +98,7 @@ export class FilterGraphClass implements FilterGraph {
   get filterGraphCommandFilesInitialize(): CommandFiles {
     const { time, videoRate, quantize, size: outputSize, clips, visible } = this
     
-    // console.log(this.constructor.name, this.id, 'filterGraphCommandFilesInitialize', visible, outputSize)
+    // console.log(this.constructor.name, this.id, 'filterGraphCommandFilesInitialize', clips.length)
     const commandFiles = clips.flatMap(clip => {
       const clipTime = clip.timeRange
       const chainArgs: CommandFileArgs = { 
@@ -142,7 +146,7 @@ export class FilterGraphClass implements FilterGraph {
       chainArgs.clipTime = clip.timeRange
       chainArgs.track = index
       // console.log(this.constructor.name, this.id, 'commandFilters', commandFiles.length, index)
-      filters.push(...clip.commandFilters(chainArgs))
+      filters.push(...clip.clipCommandFilters(chainArgs))
     
       const lastFilter = arrayLast(filters)
       if (index < length - 1 ) {
@@ -155,7 +159,9 @@ export class FilterGraphClass implements FilterGraph {
 
   get duration(): number { return this.time.lengthSeconds }
 
-  get inputCommandFiles(): CommandFiles { return this.filterGraphCommandFiles.filter(file => file.input) }
+  get inputCommandFiles(): CommandFiles { 
+    return this.filterGraphCommandFiles.filter(file => file.input) 
+  }
   
   mash: ServerMashAsset
 

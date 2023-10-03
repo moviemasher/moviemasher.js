@@ -1,12 +1,13 @@
 import type { Endpoint, ScalarRecord } from '@moviemasher/runtime-shared'
 
 import { errorThrow, isNumeric, isObject, isPopulatedString } from '@moviemasher/runtime-shared'
-import { DOT, ColonChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
+import { DOT, COLON, EQUALS, QUESTION, SEMICOLON, SLASH } from '../../Setup/Constants.js'
 import { assertPopulatedString, isAboveZero } from '../../Shared/SharedGuards.js'
 import { arrayLast } from '../../Utility/ArrayFunctions.js'
 
 export const ProtocolHttp = 'http'
-
+export const ProtocolHttps = 'https'
+export const ProtocolSuffix = [COLON, SLASH, SLASH].join('')
 const urlIsBlob = (url?: string) => Boolean(url?.startsWith('blob'))
 
 let _urlBase = ''
@@ -21,7 +22,7 @@ const urlBase = (): string => {
   }
 
   return _urlBase = [
-    ProtocolHttp, ColonChar, SlashChar, SlashChar, 'localhost', SlashChar
+    ProtocolHttp, COLON, SLASH, SLASH, 'localhost', SLASH
   ].join('')
 }
 
@@ -44,9 +45,9 @@ export const endpointFromAbsolute = (urlString: string): Endpoint => {
 export const endpointFromUrl = (urlString: string): Endpoint => {
   if (urlHasProtocol(urlString)) return endpointFromAbsolute(urlString)
   
-  const [pathname, search] = urlString.split(QuestionChar)
+  const [pathname, search] = urlString.split(QUESTION)
   const result: Endpoint = { pathname }
-  if (search) result.search = `${QuestionChar}${search}`
+  if (search) result.search = `${QUESTION}${search}`
   return result
 }
 export const endpointIsAbsolute = (endpoint: Endpoint): boolean => {
@@ -69,17 +70,17 @@ export const urlResolve = (url: string, path?: string): string => {
   if (!path) return url
 
   const [first, second] = path
-  if (first === SlashChar) return path
+  if (first === SLASH) return path
 
-  if (first !== DOT || second === SlashChar) return urlCombine(url, path)
+  if (first !== DOT || second === SLASH) return urlCombine(url, path)
 
-  const urlStripped = url.endsWith(SlashChar) ? url.slice(0, -1) : url
-  const urlBits = urlStripped.split(SlashChar)
-  path.split(SlashChar).forEach(component => {
+  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
+  const urlBits = urlStripped.split(SLASH)
+  path.split(SLASH).forEach(component => {
     if (component === `${DOT}${DOT}`) urlBits.pop()
     else urlBits.push(component)
   })
-  return urlBits.join(SlashChar)
+  return urlBits.join(SLASH)
 }
 
 /**
@@ -98,16 +99,18 @@ export const urlEndpoint = (endpoint: Endpoint = {}): Endpoint => {
   return result
 }
 
-export const urlIsObject = (url: string) => url.startsWith(`object${ColonChar}${SlashChar}`)
+export const urlIsObject = (url: string) => url.startsWith(`object${ProtocolSuffix}`)
 
-export const urlIsHttp = (url: string) => url.startsWith(ProtocolHttp)
-
-export const urlHasProtocol = (url: string) => url.includes(ColonChar)
+export const urlIsHttp = (url: string) => (
+  url.startsWith(`${ProtocolHttp}${ProtocolSuffix}`) 
+  || url.startsWith(`${ProtocolHttps}${ProtocolSuffix}`) 
+)
+export const urlHasProtocol = (url: string) => url.includes(COLON)
 
 export const urlCombine = (url: string, path: string): string => {
-  const urlStripped = url.endsWith(SlashChar) ? url.slice(0, -1) : url
-  const pathStripped = path.startsWith(SlashChar) ? path.slice(1) : path
-  return urlStripped + SlashChar + pathStripped
+  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
+  const pathStripped = path.startsWith(SLASH) ? path.slice(1) : path
+  return urlStripped + SLASH + pathStripped
 }
 
 export const urlFromEndpoint = (endpoint: Endpoint): string => {
@@ -120,7 +123,7 @@ export const urlFromEndpoint = (endpoint: Endpoint): string => {
   
   const bits: string[] = []
   bits.push(protocol, '//', hostname)
-  if (isNumeric(port)) bits.push(ColonChar, String(port))
+  if (isNumeric(port)) bits.push(COLON, String(port))
   const url = bits.join('')
   if (!pathname) return url
 
@@ -134,7 +137,7 @@ export const urlForEndpoint = (endpoint: Endpoint, suffix = ''): string => {
   if (suffix && urlHasProtocol(suffix)) return suffix
   
   const base = urlFromEndpoint(endpoint)
-  const slashed = (base.endsWith(SlashChar) || !suffix) ? base : base + SlashChar
+  const slashed = (base.endsWith(SLASH) || !suffix) ? base : base + SLASH
   if (!urlHasProtocol(slashed)) return slashed + suffix
 
   const url = new URL(suffix, slashed)
@@ -143,7 +146,7 @@ export const urlForEndpoint = (endpoint: Endpoint, suffix = ''): string => {
 }
 
 export const urlProtocol = (string: string) => {
-  const colonIndex = string.indexOf(ColonChar)
+  const colonIndex = string.indexOf(COLON)
   if (!isAboveZero(colonIndex)) return ''
   return string.slice(0, colonIndex + 1)
 }
@@ -152,9 +155,9 @@ export const urlOptionsObject = (options?: string): ScalarRecord | undefined => 
   if (!isPopulatedString(options)) return 
   // console.log('parseOptions', type, options)
 
-  const pairs = options.split(SemicolonChar)
+  const pairs = options.split(SEMICOLON)
   const entries = pairs.map(pair => {
-    const [key, string] = pair.split(EqualsChar)
+    const [key, string] = pair.split(EQUALS)
     const value = isNumeric(string) ? Number(string) : string
     return [key, value]
   })
@@ -164,14 +167,14 @@ export const urlOptionsObject = (options?: string): ScalarRecord | undefined => 
 export const urlOptions = (options?: ScalarRecord) => {
   if (!options) return ''
 
-  return Object.entries(options).map(entry => entry.join('=')).join(SemicolonChar)
+  return Object.entries(options).map(entry => entry.join('=')).join(SEMICOLON)
 } 
 
 export const urlPrependProtocol = (protocol: string, url: string, options?: ScalarRecord): string => {
-  const withColon = protocol.endsWith(ColonChar) ? protocol : `${protocol}:`
+  const withColon = protocol.endsWith(COLON) ? protocol : `${protocol}:`
   if (url.startsWith(withColon) && !options) return url
 
-  return `${withColon}${urlOptions(options)}${SlashChar}${url}`
+  return `${withColon}${urlOptions(options)}${SLASH}${url}`
 }
 
 export const urlExtension = (extension: string): string => (
@@ -188,7 +191,9 @@ export const urlFilename = (name: string, extension: string): string =>(
 export const urlFromCss = (string: string): string => {
   const exp = /url\(([^)]+)\)(?!.*\1)/g
   const matches = string.matchAll(exp)
-  const matchesArray = [...matches]
+  const matchesArray = Array.from(matches)
+  if (!matchesArray.length) return ''
+
   const url = arrayLast(arrayLast(matchesArray))
   return url
 }
@@ -198,9 +203,9 @@ export const endpointUrl = (endpoint: Endpoint): string => {
   const absolute = endpointAbsolute(endpoint)
   const { protocol, hostname, pathname, port, search  } = absolute
   const bits = [protocol]
-  if (!urlIsBlob(protocol)) bits.push(SlashChar + SlashChar)
+  if (!urlIsBlob(protocol)) bits.push(SLASH + SLASH)
   bits.push(hostname)
-  if (isNumeric(port)) bits.push(`${ColonChar}${port}`)
+  if (isNumeric(port)) bits.push(`${COLON}${port}`)
   if (pathname) bits.push(pathname)
   if (search) bits.push(search)
   return bits.join('')

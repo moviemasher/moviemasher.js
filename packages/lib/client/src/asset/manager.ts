@@ -87,7 +87,7 @@ export class ClientAssetManagerClass {
       this.assetsById.set(id, asset)
       this.byType(manageType).push(asset)
       if (idIsTemporary(id)) {
-        console.log(this.constructor.name, 'install', id)
+        // console.log(this.constructor.name, 'install', id)
         MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
       }
       return asset
@@ -147,7 +147,6 @@ export class ClientAssetManagerClass {
     assertDefined(id)
 
     detail.asset = instance.fromId(id)
-    console.debug('ClientAssetManagerClass handleManagedAsset', id, !!detail.asset)
     if (!detail.asset) {
       const idOrObject = assetObject || assetId 
       assertDefined(idOrObject)

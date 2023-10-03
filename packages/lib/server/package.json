@@ -39,6 +39,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "ttf2woff2": "5.0.0",
     "child_process": "^1.0.2", 
+    "util": "^0.12.5", 
     "events": "3.3.0"
   },
   "devDependencies": {

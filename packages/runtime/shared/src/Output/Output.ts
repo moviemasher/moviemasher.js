@@ -2,6 +2,7 @@ import type { Value, ValueRecord } from '../Core.js'
 import type { Size } from '../Size.js'
 
 export interface OutputOptions {
+  [_: string]: string | Value | ValueRecord | undefined
   extension?: string
   format?: string
   options?: ValueRecord
@@ -29,7 +30,6 @@ export interface FontOutputOptions extends OutputOptions {}
 export interface WaveformOutputOptions extends OutputOptions {}
 
 
-export interface DecodeOptions {}
 
 export type EncodeOptions = AudioOutputOptions | VideoOutputOptions | ImageOutputOptions
 

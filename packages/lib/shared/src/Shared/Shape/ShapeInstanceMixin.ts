@@ -1,6 +1,6 @@
 import type { Constrained, IntrinsicOptions, Rect, ShapeAsset, ShapeInstance, ShapeInstanceObject, VisibleInstance } from '@moviemasher/runtime-shared'
 
-import { End, POINT_ZERO, TypeContainer } from '@moviemasher/runtime-shared'
+import { END, POINT_ZERO, CONTAINER } from '@moviemasher/runtime-shared'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 
@@ -15,22 +15,22 @@ export function ShapeInstanceMixin<T extends Constrained<VisibleInstance>>(Base:
 
     override initializeProperties(object: ShapeInstanceObject) {
       this.properties.push(propertyInstance({
-        targetId: TypeContainer, name: 'width', type: DataTypePercent,
+        targetId: CONTAINER, name: 'width', type: DataTypePercent,
         min: 0, max: 2, step: 0.01,
         defaultValue: 1, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeContainer, name: `width${End}`,
+        targetId: CONTAINER, name: `width${END}`,
         type: DataTypePercent, min: 0, max: 2, step: 0.01,
         undefinedAllowed: true, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeContainer, name: 'height', type: DataTypePercent,
+        targetId: CONTAINER, name: 'height', type: DataTypePercent,
         min: 0, max: 2, step: 0.01, tweens: true,
         defaultValue: 1,
       }))
       this.properties.push(propertyInstance({
-        targetId: TypeContainer, name: `height${End}`,
+        targetId: CONTAINER, name: `height${END}`,
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
         min: 0, max: 2, step: 0.01,
       }))

@@ -1,3 +1,4 @@
-export const End = 'End'
-export const Crop = 'Crop'
-export const Aspect = 'Aspect'
+// Note: these are all capitalized since they are suffixes
+export const END = 'End'
+export const CROP = 'Crop'
+export const ASPECT = 'Aspect'

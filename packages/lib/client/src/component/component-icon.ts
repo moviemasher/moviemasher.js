@@ -23,7 +23,7 @@ export class IconElement extends Component {
   private get iconPromiseInitialize(): Promise<Icon | void> {
     const promise = this.iconEventPromise
     if (!promise) {
-      console.log(this.tagName, 'iconPromiseInitialize NO PROMISE')
+      // console.log(this.tagName, 'iconPromiseInitialize NO PROMISE')
       return new Promise<Icon | void>(resolve => {
         setTimeout(() => { resolve(this.iconPromiseInitialize) }, IconElementTimeout)
       })
@@ -31,14 +31,14 @@ export class IconElement extends Component {
 
     return promise.then(orError => {
       if (isDefiniteError(orError)) {
-        console.log(this.tagName, 'iconPromiseInitialize ERROR', orError.error)
+        // console.log(this.tagName, 'iconPromiseInitialize ERROR', orError.error)
         return 
       }
 
       const { data: icon } = orError
       const { imageElement, imgUrl, string, svgElement, svgString } = icon
       if (string) {
-        console.log(this.constructor.name, 'iconPromiseInitialize STRING', string)
+        // console.log(this.constructor.name, 'iconPromiseInitialize STRING', string)
         this.iconContent = string
       } else if (imgUrl) this.iconContent =  html`<img src='${imgUrl}' />`
       else {

@@ -8,7 +8,7 @@ import type { Numbers, Scalars, Strings, Value } from './Core.js'
 import type { Directions, SideDirectionRecord } from './Direction.js'
 import type { Identified } from './Identified.js'
 import type { Propertied } from './Propertied.js'
-import type { Rect, Rects } from './Rect.js'
+import type { Rect, RectTuple, Rects } from './Rect.js'
 import type { PropertySize } from './Size.js'
 import type { Time, TimeRange } from './Time.js'
 import type { Lock } from './Lock.js'
@@ -22,8 +22,8 @@ export interface Instance extends Propertied, Identified {
   clip: Clip
   clipped: boolean
   container: boolean
-  containerRects(args: ContainerRectArgs, inRect: Rect): Rects
-  contentRects(args: ContentRectArgs): Rects 
+  containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple
+  contentRects(args: ContentRectArgs): RectTuple 
   assetTime(masherTime: Time): Time
   sideDirectionRecord: SideDirectionRecord
   directions: Directions

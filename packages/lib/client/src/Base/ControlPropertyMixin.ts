@@ -4,7 +4,7 @@ import type { ControlProperty } from '../declarations.js'
 
 import { DOT } from '@moviemasher/lib-shared'
 import { EventAssetId, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventMashAsset, MovieMasher } from '@moviemasher/runtime-client'
-import { TypeAsset, TypeMash } from '@moviemasher/runtime-shared'
+import { ASSET, MASH } from '@moviemasher/runtime-shared'
 import { isTargetId } from '../TypeGuards.js'
 import { Component } from './Component.js'
 
@@ -17,11 +17,11 @@ T & Constrained<ControlProperty> {
       if (isTargetId(targetId)) {
         // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
         switch (targetId) {
-          case TypeAsset: {
+          case ASSET: {
             this.listeners[EventChangedAssetId.Type] = this.handleChangedAssetId.bind(this)
             break
           }
-          case TypeMash: {
+          case MASH: {
             this.listeners[EventChangedMashAsset.Type] = this.handleChangedMashAsset.bind(this)
             break
           }
@@ -63,12 +63,12 @@ T & Constrained<ControlProperty> {
       if (!targetId) return
 
       switch (targetId) {
-        case TypeMash: {
+        case MASH: {
           const event = new EventMashAsset() 
           MovieMasher.eventDispatcher.dispatch(event)
           return event.detail.mashAsset?.id
         }
-        case TypeAsset: {
+        case ASSET: {
           const event = new EventAssetId() 
           MovieMasher.eventDispatcher.dispatch(event)
           return event.detail.assetId

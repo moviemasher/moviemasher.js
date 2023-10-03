@@ -6,20 +6,20 @@ export const Endpoints = {
     list: '/asset/list',
     put: '/asset/put',
   },
-  file: {
-    store: '/file/store',
-    upload: '/file/upload',
+  upload: {
+    request: '/upload/request',
+    file: '/upload/file',
   },
   encode: {
     start: '/encode/start',
-    finish: '/encode/finish',
+    status: '/encode/status',
   },
   decode: {
     start: '/decode/start',
-    finish: '/decode/finish',
+    status: '/decode/status',
   },
   transcode: {
     start: '/transcode/start',
-    finish: '/transcode/finish',
+    status: '/transcode/status',
   },
 }

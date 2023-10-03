@@ -34,8 +34,8 @@ export class SaveHandler {
         dispatch()
        },
        done: () => {
-          current = total
-          dispatch()
+        current = total
+        dispatch()
        },
     }
   }
@@ -98,7 +98,8 @@ export class SaveHandler {
     const request = {
       endpoint: '/asset/put', init: { method: 'POST' }
     }
-    const putRequest = requestPopulate(request, { asset: asset.assetObject })
+    const { assetObject } = asset
+    const putRequest = requestPopulate(request, { assetObject })
     
     console.log(EventSave.Type, JSON.stringify(putRequest, null, 2))
 

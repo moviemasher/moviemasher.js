@@ -126,7 +126,7 @@ export class AssetControlElement extends WithDropTarget implements Control {
   
   override handleDropped(event: DragEvent): void {
     const { dataTransfer } = event
-    console.log(this.tagName, this.propertyId, 'handleDropped', !!dataTransfer)
+    // console.log(this.tagName, this.propertyId, 'handleDropped', !!dataTransfer)
     assertDefined(dataTransfer)
 
     if (droppingFiles(dataTransfer)) {
@@ -138,13 +138,13 @@ export class AssetControlElement extends WithDropTarget implements Control {
         MovieMasher.eventDispatcher.dispatch(new EventManagedAsset(assetObject))
 
         this.setInputValue(assetObject.id)
-        console.log(this.tagName, this.propertyId, 'handleDropped', assetObject)
+        // console.log(this.tagName, this.propertyId, 'handleDropped', assetObject)
       })
       return 
     } 
     const data = dragData(dataTransfer)
     if (isDragDefinitionObject(data)) {
-      console.log(this.tagName, this.propertyId, 'handleDropped', data)
+      // console.log(this.tagName, this.propertyId, 'handleDropped', data)
       const { assetId } = data
       this.setInputValue(assetId)
       this.handleInput()
@@ -205,6 +205,10 @@ export class AssetControlElement extends WithDropTarget implements Control {
         border-radius: var(--border-radius);
         display: inline-block;
         position: relative;
+      }
+
+      :host > select {
+        accent-color: var(--control-fore);
       }
     `
   ]

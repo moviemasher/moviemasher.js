@@ -42,8 +42,8 @@ export class MovieMasherElement extends Slotted {
       'asset/save.js',
       'asset/upload.js',
       'asset/encode.js',
-      // 'asset/decode.js',
-      // 'asset/transcode.js',
+      'asset/decode.js',
+      'asset/transcode.js',
 
       'control/asset.js',
       'control/boolean.js',

@@ -12,7 +12,7 @@ export const requestVideoPromise = (request: ClientMediaRequest): Promise<Client
 
   const url = request.objectUrl || requestUrl(request)
   // console.debug('requestVideoPromise', url, request)
-  if (!url) return errorPromise(ERROR.Url) 
+  if (!url) return errorPromise(ERROR.Url, `requestVideoPromise`) 
 
   return new Promise<ClientVideoDataOrError>(resolve => {
     const video = globalThis.document.createElement('video')

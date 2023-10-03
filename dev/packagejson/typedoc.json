@@ -1,9 +1,10 @@
 {
   "devDependencies": {
-    "typedoc": "^0.24.8",
-    "typedoc-plugin-merge-modules": "^5.0.1",
-    "typedoc-plugin-mdn-links": "^3.0.3",
-    "typedoc-plugin-extras": "^2.3.3", 
-    "typedoc-plugin-coverage": "^2.1.0"
+    "typedoc": "^0.25.1",
+    "typedoc-plugin-mdn-links": "^3.1.0",
+    "typedoc-plugin-extras": "^3.0.0",
+    "typedoc-plugin-coverage": "^2.2.0",
+    "markdown-magic": "2.6.1",
+    "@types/markdown-magic": "^1.0.1"
   }
 }

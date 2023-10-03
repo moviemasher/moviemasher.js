@@ -1,6 +1,6 @@
-import type { Asset, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Asset, AssetCacheArgs, AssetCacheOptions, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, RectTuple, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { Aspect, Crop, End, RECT_ZERO, AUDIO, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
+import { ASPECT, CROP, END, RECT_ZERO, AUDIO, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
 import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
@@ -12,7 +12,7 @@ import { AspectFlip, Aspects, LockShortest, Locks } from '../../Setup/LockConsta
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
 import { sizeAboveZero, sizeCeil, sizeCover, sizeScale } from "../../Utility/SizeFunctions.js"
-import { assertDefined, assertNumber, assertPopulatedString } from '../SharedGuards.js'
+import { assertAboveZero, assertDefined, assertNumber, assertPopulatedString } from '../SharedGuards.js'
 import { isTimeRange } from "../TimeGuards.js"
 import { lockScaleSize, numberRecord, tweenColorStep, tweenNumberStep, tweenRectsContainer } from '../Utility/Tween/TweenFunctions.js'
 import { pointCopy } from '../../Utility/PointFunctions.js'
@@ -79,46 +79,59 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
   container = false
 
-  containerRects(args: ContainerRectArgs, intrinsicRect: Rect): Rects {
+  containerRects(args: ContainerRectArgs, intrinsicRect: Rect): RectTuple {
     const { size: previewSize, time, timeRange } = args
     const { width: intrinsicWidth, height: intrinsicHeight } = intrinsicRect
 
-    const intrinsicSize = {
-      ...intrinsicRect,
+    const intrinsicSize: Size = {
+      // ...intrinsicRect,
       width: intrinsicWidth || previewSize.width, 
       height: intrinsicHeight || previewSize.height
     }
+    // console.log(this.constructor.name, 'containerRects intrinsicSize', intrinsicSize)
 
     const tweenRects = this.tweenRects(time, timeRange)
     const { lock, pointAspect, sizeAspect } = this
     const { sideDirectionRecord } = this
 
-    return tweenRectsContainer(tweenRects, intrinsicSize, lock, previewSize, sideDirectionRecord, pointAspect, sizeAspect)
+    const rects =  tweenRectsContainer(tweenRects, intrinsicSize, lock, previewSize, sideDirectionRecord, pointAspect, sizeAspect)
+    
+    // console.log(this.constructor.name, 'containerRects', sideDirectionRecord, rects)
+  
+    return rects
   }
   
-  contentRects(args: ContentRectArgs): Rects {
+  contentRects(args: ContentRectArgs): RectTuple {
     const { containerRects, time, timeRange, editing, shortest } = args    
     
-    const intrinsicRect = this.intrinsicRect(editing)
+    const rectIntrinsic = this.intrinsicRect(editing)
     // if I have no intrinsic size (like color source), use the container rects
-    if (!sizeAboveZero(intrinsicRect)) return containerRects
+    if (!sizeAboveZero(rectIntrinsic)) return containerRects
     
     const { lock } = this
     const tweenRects = this.tweenRects(time, timeRange)
     
-    return tweenRects.map((tweenRect, index) => {
+    const rects = tweenRects.map((tweenRect, index) => {
       const tweenPoint = pointCopy(tweenRect)
       const tweenSize = lockScaleSize(tweenRect, lock, shortest)
       const containerRect = containerRects[index]
-      const size = tweenCoverSize(intrinsicRect, containerRect, tweenSize)
+      containerRect.x += rectIntrinsic.x
+      containerRect.y += rectIntrinsic.y
+
+      const size = tweenCoverSize(rectIntrinsic, containerRect, tweenSize)
       const point = tweenCoverPoint(size, containerRect, tweenPoint)
       return rectFromSize(size, point)
-    })
+    }) as RectTuple
+    // console.log(this.constructor.name, 'contentRects', rects)
+
+    return rects
   }
   
   get directions() { return DIRECTIONS }
   
   frames(quantize: number): number {
+    assertAboveZero(quantize, 'frames quantize') 
+
     return timeFromArgs(Default.duration, quantize).frame
   }
 
@@ -137,7 +150,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     if (container) {
       DIRECTIONS_SIDE.forEach(direction => {
         this.properties.push(propertyInstance({
-          targetId, name: `${direction}${Crop}`, 
+          targetId, name: `${direction}${CROP}`, 
           type: DataTypeBoolean, defaultValue: false, 
         }))
       })
@@ -146,7 +159,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
         defaultValue: 1.0, min: 0.0, max: 1.0, step: 0.01, tweens: true,
       }))       
       this.properties.push(propertyInstance({
-        targetId, name: `opacity${End}`, 
+        targetId, name: `opacity${END}`, 
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
         min: 0.0, max: 1.0, step: 0.01,
       }))       
@@ -158,7 +171,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
         min: 0.0, max: 1.0, step: 0.01, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId, name: `x${End}`, 
+        targetId, name: `x${END}`, 
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
         min: 0.0, max: 1.0, step: 0.01,
       }))
@@ -167,7 +180,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
         min: 0.0, max: 1.0, step: 0.01, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId, name: `y${End}`, 
+        targetId, name: `y${END}`, 
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
         min: 0.0, max: 1.0, step: 0.01,
       }))
@@ -176,11 +189,11 @@ export class InstanceClass extends PropertiedClass implements Instance {
         defaultValue: LockShortest, options: Locks, 
       }))
       this.properties.push(propertyInstance({
-        targetId, name: `point${Aspect}`, type: DataTypeString, 
+        targetId, name: `point${ASPECT}`, type: DataTypeString, 
         defaultValue: AspectFlip, options: Aspects, 
       }))
       this.properties.push(propertyInstance({
-        targetId, name: `size${Aspect}`, type: DataTypeString, 
+        targetId, name: `size${ASPECT}`, type: DataTypeString, 
         defaultValue: AspectFlip, options: Aspects, 
       }))
     }
@@ -190,7 +203,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
   instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>> {
     const { time } = args
     const assetTime = this.assetTime(time)
-    const options: CacheOptions = { ...args, time: assetTime }
+    const options: AssetCacheArgs = { ...args, time: assetTime }
     // console.log(this.constructor.name, 'InstanceClass.instanceCachePromise', options, this.assetId)
     return this.asset.assetCachePromise(options)
   }
@@ -233,7 +246,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
   get sideDirectionRecord(): SideDirectionRecord {
     return Object.fromEntries(DIRECTIONS_SIDE.map(direction => 
-      [direction, Boolean(this.value(`${direction}Crop`))]
+      [direction, Boolean(this.value(`${direction}CROP`))]
     ))
   }
 
@@ -251,7 +264,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     }
     assertDefined<Scalar>(value, keyPrefix)
 
-    const valueEnd = this.value(`${keyPrefix}${End}`)
+    const valueEnd = this.value(`${keyPrefix}${END}`)
     if (isUndefined(valueEnd)) return value
 
     const { frame: rangeFrame, frames } = range
@@ -279,14 +292,15 @@ export class InstanceClass extends PropertiedClass implements Instance {
     return points
   }
 
-  private tweenRects(time: Time, range: TimeRange): Rects {
+  private tweenRects(time: Time, range: TimeRange): RectTuple {
     const [size, sizeEnd] = this.tweenSizes(time, range)
     const [point, pointEnd] = this.tweenPoints(time, range)
-    const rects: Rects = [ { ...point , ...size } ]
+    const rect = { ...point , ...size }
+    const rects: RectTuple = [ rect, rect ]
     if (isDefined(sizeEnd) || isDefined(pointEnd)) {
-      rects.push({ ...(pointEnd || point) , ...(sizeEnd || size) })  
+      rects[1] = { ...(pointEnd || point) , ...(sizeEnd || size) }
     }
-    return rects
+    return rects 
   }
 
   private tweenSizes(time: Time, range: TimeRange): Sizes {

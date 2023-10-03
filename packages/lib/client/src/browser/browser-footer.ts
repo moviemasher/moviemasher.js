@@ -19,7 +19,6 @@ export class BrowserFooterElement extends Footer {
   assetType?: AssetType
 
   private handleAssetType(event: CustomEvent<AssetType>) {
-    // console.log(this.tagName, 'handleAssetType', event.detail)
     this.assetType = event.detail
   }
 

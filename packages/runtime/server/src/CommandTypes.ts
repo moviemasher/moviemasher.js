@@ -1,4 +1,4 @@
-import type { AVType, Propertied, Rects, Size, Strings, Time, TimeRange, ValueRecord } from '@moviemasher/runtime-shared'
+import type { AVType, Propertied, RectTuple, Size, Strings, Time, TimeRange, ValueRecord } from '@moviemasher/runtime-shared'
 import type { GraphFile } from './GraphFile.js'
 
 export interface FilterArgs {
@@ -35,7 +35,7 @@ export interface CommandFileOptions {
   time: Time
   quantize: number
   outputSize?: Size
-  containerRects?: Rects
+  containerRects?: RectTuple
   contentColors?: Strings
   videoRate: number
   clipTime?: TimeRange
@@ -47,7 +47,7 @@ export interface CommandFileArgs extends CommandFileOptions {
 
 export interface VisibleCommandFileArgs extends CommandFileArgs {
   outputSize: Size
-  containerRects: Rects
+  containerRects: RectTuple
 }
 
 export interface CommandFilterArgs extends CommandFileArgs {
@@ -59,7 +59,7 @@ export interface CommandFilterArgs extends CommandFileArgs {
 
 export interface VisibleCommandFilterArgs extends CommandFilterArgs {
   outputSize: Size
-  containerRects: Rects
+  containerRects: RectTuple
   duration: number
 }
 
@@ -74,7 +74,7 @@ export interface FilterCommandFilterArgs extends FilterArgs {
 
 export interface FilterCommandFileArgs extends FilterArgs {
   outputSize: Size
-  containerRects: Rects
+  containerRects: RectTuple
   clipTime: TimeRange
   streaming?: boolean
   visible?: boolean

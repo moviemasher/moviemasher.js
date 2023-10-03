@@ -1,11 +1,11 @@
 import type { Asset, AudibleAsset, AudibleAssetObject, Constrained, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { TypeAsset, PROBE, isUndefined } from '@moviemasher/runtime-shared'
+import { ASSET, PROBE, isUndefined, isProbing } from '@moviemasher/runtime-shared'
 import { timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
 import { DataTypeBoolean, DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { DurationUnknown } from '../../Setup/DurationConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
-import { isAboveZero } from '../SharedGuards.js'
+import { assertAboveZero, isAboveZero } from '../SharedGuards.js'
 
 export function AudibleAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
@@ -27,12 +27,14 @@ T & Constrained<AudibleAsset> {
     get duration(): number {
       if (!isAboveZero(this._duration)) {
         const probing = this.decodings.find(decoding => decoding.type === PROBE)
-        if (probing) {
+        // console.debug(this.constructor.name, 'duration', probing, probing?.data?.duration)
+        if (isProbing(probing)) {
           const { data } = probing
-          if (data) {
-            const { duration } = data
-            if (isAboveZero(duration)) this._duration = duration
-          }
+          const { duration } = data
+          if (isAboveZero(duration)) this._duration = duration
+        
+        } else {
+          // console.warn(this.constructor.name, 'no duration no probing', this.decodings)
         }
       }
       return this._duration
@@ -41,24 +43,27 @@ T & Constrained<AudibleAsset> {
 
     frames(quantize: number): number {
       const { duration } = this
-      // console.log(this.constructor.name, 'frames duration =', duration)
       if (!duration) return DurationUnknown
 
-      return timeFromSeconds(this.duration, quantize, 'floor').frame
+      assertAboveZero(quantize)
+      const { frame } = timeFromSeconds(duration, quantize, 'floor')
+      // console.log(this.constructor.name, 'frames', frame, { duration, quantize })
+
+      return frame
     }
 
     override initializeProperties(object: AudibleAssetObject): void {
       const { audio } = this
       if (audio) { 
         this.properties.push(propertyInstance({ 
-          targetId: TypeAsset,
+          targetId: ASSET,
           name: 'loop', type: DataTypeBoolean,
         }))
         this.properties.push(propertyInstance({ 
-          targetId: TypeAsset, name: 'muted', type: DataTypeBoolean, 
+          targetId: ASSET, name: 'muted', type: DataTypeBoolean, 
         }))
         this.properties.push(propertyInstance({ 
-          targetId: TypeAsset, name: 'gain', type: DataTypePercent,
+          targetId: ASSET, name: 'gain', type: DataTypePercent,
           defaultValue: 1.0, min: 0, max: 2.0, step: 0.01 
         }))
       }

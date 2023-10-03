@@ -3,7 +3,7 @@ import type { Constrained, Property, Scalar } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations, PropertyValues } from 'lit'
 import type { Control, ControlInput, ControlProperty, OptionalContent } from '../declarations.js'
 
-import { End } from '@moviemasher/runtime-shared'
+import { END } from '@moviemasher/runtime-shared'
 import { isPropertyId } from '@moviemasher/lib-shared'
 import { EventChangeFrame, EventChangeScalar, EventChanged, EventScalar, EventSelectedProperties, EventTimeRange, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefined } from '@moviemasher/runtime-shared'
@@ -24,7 +24,7 @@ T & Constrained<Control> {
       const { propertyId } = this
       if (!propertyId) return false
   
-      const event = new EventScalar(`${propertyId}${End}`)
+      const event = new EventScalar(`${propertyId}${END}`)
       MovieMasher.eventDispatcher.dispatch(event)
       return isDefined(event.detail.value)
     }
@@ -44,7 +44,7 @@ T & Constrained<Control> {
       if (!(selectedProperty && input && propertyId)) return
   
       const { inputValue } = this
-      const isEnd = propertyId.endsWith(End)
+      const isEnd = propertyId.endsWith(END)
       if (isEnd || this.endValueDefined) {
         // console.debug(this.tagName, propertyId, 'handleInput END DEFINED')
         const event = new EventTimeRange()

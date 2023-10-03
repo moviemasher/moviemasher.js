@@ -12,12 +12,14 @@ export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance 
   return class extends Base implements ServerAudibleInstance {
     declare asset: ServerAudibleAsset
 
-
-    initialCommandFilters(args: VisibleCommandFilterArgs, _tweening: Tweening, _container = false): CommandFilters {
+    initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       const commandFilters: CommandFilters = []
       const { 
-        time, quantize, commandFiles, clipTime, videoRate, duration 
+        time, quantize, commandFiles, videoRate, duration, visible
       } = args
+
+      if (!(visible || container)) return super.initialCommandFilters(args, tweening, container)
+
 
       const { id } = this
       // console.log(this.constructor.name, 'initialCommandFilters calling commandFilesInput', id)

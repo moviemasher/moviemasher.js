@@ -2,7 +2,7 @@ import type { AssetObjects } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { EventDialog, EventImportManagedAssets, EventTypeImporterComplete, MovieMasher, EventImporterChange } from '@moviemasher/runtime-client'
+import { EventDialog, EventImportManagedAssets, EventImporterComplete, MovieMasher, EventImporterChange } from '@moviemasher/runtime-client'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { Footer } from '../Base/LeftCenterRight.js'
@@ -11,7 +11,7 @@ export class ImporterFooterElement extends Footer {
   constructor() {
     super()
     this.listeners[EventImporterChange.Type] = this.handleImporterChange.bind(this)
-    this.listeners[EventTypeImporterComplete] = this.handleImporterComplete.bind(this)
+    this.listeners[EventImporterComplete.Type] = this.handleImporterComplete.bind(this)
   }
 
   assetObjects: AssetObjects = []
@@ -21,12 +21,11 @@ export class ImporterFooterElement extends Footer {
 
     const { assetObjects } = this
     MovieMasher.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects))
-
   }
 
   protected handleImporterChange(event: EventImporterChange): void {
     const { detail: assetObjects } = event
-    console.log(this.tagName, 'handleImporterChange', assetObjects)
+    // console.log(this.tagName, 'handleImporterChange', assetObjects)
     this.assetObjects = assetObjects
   }
 
@@ -46,7 +45,7 @@ export class ImporterFooterElement extends Footer {
       <movie-masher-component-button 
         icon='add'
         string='Import ${this.assetObjects.length}'
-        emit='${EventTypeImporterComplete}' 
+        emit='${EventImporterComplete.Type}' 
         disabled='${ifDefined(disabled ? true : undefined)}' 
       ></movie-masher-component-button>
     `)

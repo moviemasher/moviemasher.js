@@ -42,7 +42,7 @@ export interface ServerMashVideoInstance extends VideoInstance, ServerInstance {
 
 export interface ServerClip extends Clip {
   clipCommandFiles(args: CommandFileArgs): CommandFiles
-  commandFilters(args: CommandFilterArgs): CommandFilters
+  clipCommandFilters(args: CommandFilterArgs): CommandFilters
   container?: ServerVisibleInstance
   content: ServerInstance
   intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles

@@ -1,4 +1,4 @@
-export const TextHeight = 100
+export const TextHeight = 1000
 
 
 

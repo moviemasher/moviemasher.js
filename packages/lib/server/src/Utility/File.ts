@@ -1,16 +1,33 @@
-import type { Strings } from '@moviemasher/runtime-shared'
+import type { DataOrError, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
 
-import { EmptyFunction } from '@moviemasher/lib-shared'
-import { errorThrow, isPopulatedString } from '@moviemasher/runtime-shared'
+import { ERROR, error, errorCaught, errorThrow, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
 import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 import { idUnique } from './Hash.js'
+import { DOT } from '@moviemasher/lib-shared'
 
 export type FilePath = string
 
 export const filePathExists = (value: any): value is FilePath => {
   return isPopulatedString(value) && fs.existsSync(value)
+}
+
+export const filenameAppend = (filePath: string, append: string, delimiter = DOT): string => {
+  const { dir, ext, name, } = path.parse(filePath)
+  const fileName = [name, delimiter, append, ext].join('')
+  return path.join(dir, fileName)
+}
+
+export const fileMovePromise = async (source: string, destination: string): Promise<StringDataOrError> => {
+  if (!filePathExists(source)) return error(ERROR.Internal, `fileMovePromise source ${source}`)
+  if (filePathExists(destination)) return error(ERROR.Internal, `fileMovePromise destination ${destination}`)
+
+  try {
+    await fs.promises.rename(source, destination)
+  } catch (error) { return errorCaught(error) }
+
+  return { data: destination }
 }
 
 export function assertFilePathExists(value: any, name?: string): asserts value is FilePath {
@@ -21,15 +38,26 @@ export const directoryCreate = (path: string): void => {
   if (!filePathExists(path)) fs.mkdirSync(path, { recursive: true })
 }
 
-export const directoryCreatePromise = (directoryPath: string): Promise<void> => {
-  return fs.promises.mkdir(directoryPath, { recursive: true }).then(EmptyFunction)
+export const directoryCreatePromise = async (directoryPath: string): Promise<StringDataOrError> => {
+  const exists = filePathExists(directoryPath)
+  if (!exists) {
+    try {
+      await fs.promises.mkdir(directoryPath, { recursive: true })
+    } catch (error) { return errorCaught(error) }
+  }
+  return { data: directoryPath }
 }
 
-export const fileWritePromise = (filePath: string, content: string): Promise<void> => {
-  const dir = path.dirname(filePath)
-  const dirPromise = filePathExists(dir) ? Promise.resolve() : directoryCreatePromise(dir)
-  const writePromise = dirPromise.then(() => fs.promises.writeFile(filePath, content))
-  return writePromise.then(EmptyFunction)
+export const fileWritePromise = async (filePath: string, content: string, dontReplace?: boolean): Promise<StringDataOrError> => {
+  if (!(dontReplace && filePathExists(filePath))) {
+    const dir = path.dirname(filePath)
+    const orError = await directoryCreatePromise(dir)
+    if (isDefiniteError(orError)) return orError
+    try {
+      await fs.promises.writeFile(filePath, content)
+    } catch (error) { return errorCaught(error) }
+  }
+  return { data: filePath }
 }
 
 export const fileWrite = (filePath: string, content: string): void => {
@@ -39,34 +67,47 @@ export const fileWrite = (filePath: string, content: string): void => {
   fs.writeFileSync(filePath, content)
 }
 
-export const fileWriteJsonPromise = (filePath: string, data: any): Promise<void> => {
-  return fileWritePromise(filePath, JSON.stringify(data, null, 2))
+export const fileWriteJsonPromise = async (filePath: string, data: any): Promise<StringDataOrError> => {
+  return await fileWritePromise(filePath, JSON.stringify(data, null, 2))
 }
 
 export const fileRead = (file?: string): string => {
   return file ? fs.readFileSync(file).toString() : ''
 }
 
-export const fileReadPromise = (file?: string): Promise<string> => {
-  if (!file) return Promise.resolve('')
-
-  return fs.promises.readFile(file).then(res => res.toString()) 
+export const fileReadPromise = async (file?: string): Promise<StringDataOrError> => {
+  if (!file) return error(ERROR.Url, 'file')
+  try {
+    const res = await fs.promises.readFile(file)
+    return { data: res.toString() }
+  } catch (error) { return errorCaught(error) }
 }
 
-export const fileTemporaryPath = (fileName = '', extension?: string): string => {
-  const directory = ENVIRONMENT.get(ENV.ApiDirCache)
-  const components: Strings = [fileName || idUnique()]
-  if (extension) components.push(extension)
-  const name = components.join('.')
-  return path.resolve(directory, name)
+export const fileReadJsonPromise = async <T = any>(file?: string): Promise<DataOrError<T>> => {
+  const orError = await fileReadPromise(file)
+  if (isDefiniteError(orError)) return orError
+  try {
+    const data: T = JSON.parse(orError.data)
+    return { data }
+  } catch (error) { return errorCaught(error) }
 }
 
 export const fileRemove = (filePath: string) => {
   if (filePathExists(filePath)) fs.unlinkSync(filePath)
 }
 
-export const fileRemovePromise = (filePath: string) => {
-  if (!filePathExists(filePath)) return Promise.resolve()
-  
-  return fs.promises.unlink(filePath)
+export const fileRemovePromise = async (filePath: string) => {
+  if (!filePathExists(filePath)) return { data: filePath }
+  try {
+    await fs.promises.unlink(filePath)
+  } catch (error) { return errorCaught(error) }
+}
+
+export const fileCreatedPromise = async (filePath: string): Promise<DataOrError<Date>> => {
+  if (!filePathExists(filePath)) return error(ERROR.Internal, 'non-existent file')
+  try {
+    const stats = await fs.promises.stat(filePath)
+    const { mtime: data } = stats
+    return { data }
+  } catch (error) { return errorCaught(error) }
 }

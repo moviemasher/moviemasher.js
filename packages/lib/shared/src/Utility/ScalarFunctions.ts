@@ -1,7 +1,7 @@
 import type { BooleanType, NumberType, Scalar, ScalarType, Scalars, StringType, Strings } from '@moviemasher/runtime-shared'
 
 import { BOOLEAN, NUMBER, STRING } from '@moviemasher/runtime-shared'
-import { CommaChar } from '../Setup/Constants.js'
+import { COMMA } from '../Setup/Constants.js'
 
 export function scalar(value: Scalar, type: BooleanType): boolean
 export function scalar(value: Scalar, type: NumberType): number
@@ -22,6 +22,6 @@ export function scalars(value: Scalar, type: StringType): Strings
 export function scalars(value: Scalar, type: ScalarType): Scalars
 export function scalars(value: Scalar, _?: ScalarType): Scalars {
   const stringValue = String(value)
-  const split = stringValue.split(CommaChar)
+  const split = stringValue.split(COMMA)
   return split.filter(Boolean)
 }

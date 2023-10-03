@@ -1,4 +1,4 @@
-import type { EventChangedMashAsset, MashIndex, SelectedProperty } from '@moviemasher/runtime-client'
+import type { EventChangedMashAsset, ClipLocation, SelectedProperty } from '@moviemasher/runtime-client'
 import type { AssetObject, AssetType, DataType, Identified, Property, PropertyId, PropertyIds, Rect, Scalar, Size, TargetId } from '@moviemasher/runtime-shared'
 import type { TemplateResult } from 'lit'
 
@@ -38,7 +38,7 @@ export interface DropTarget {
   handleDragged(): void
   handleDropped(event: DragEvent): void 
   dropValid(dataTransfer: DataTransfer | null): boolean
-  mashIndex(event: DragEvent): MashIndex
+  mashIndex(event: DragEvent): ClipLocation
   ondragenter(event: DragEvent): void 
   ondragleave(event: DragEvent): void 
   ondragover(event: DragEvent): void 

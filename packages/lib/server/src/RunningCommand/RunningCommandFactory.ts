@@ -1,5 +1,5 @@
 
-import type { CommandOptions } from '../encode/Encode.js'
+import type { CommandOptions } from '../encode/MashDescriberTypes.js'
 import type { RunningCommand } from './RunningCommand.js'
 
 import { RunningCommandClass } from './RunningCommandClass.js'

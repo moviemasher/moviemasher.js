@@ -10,20 +10,17 @@
           "no-unknown-tag-name": "off",
           "no-missing-import": "warning",
           "no-unused-locals": "off"
-      
         }
       }
     ]
   },
-  "include": [
-    "./src/**/*", "./src/*", "./src/utility/*.ts"
-
-
-
-  ],
   "exclude": [
     "**/dist/*",
     "src/**/*.e2e.ts", 
     "src/**/*.test.ts"
+  ],
+  "include": [
+    "./src/*.ts",
+    "./src/**/*.ts"
   ]
 }

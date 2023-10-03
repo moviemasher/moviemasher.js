@@ -1,32 +1,25 @@
 import type { ErrorObject, StringTuple, Strings } from '@moviemasher/runtime-shared'
 
-import { DOT, NewlineChar, SemicolonChar, SpaceChar } from '@moviemasher/lib-shared'
+import { DASH, DOT, NEWLINE, SEMICOLON, SPACE, arrayLast } from '@moviemasher/lib-shared'
 import { ERROR, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
 import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
 
 const commandExpandComplex = (trimmed: string): string => {
-  if (!trimmed.includes(SemicolonChar)) return trimmed
+  if (!trimmed.includes(SEMICOLON)) return trimmed
   
-  const lines = trimmed.split(SemicolonChar)
+  const lines = trimmed.split(SEMICOLON)
   const broken = lines.map(line => {
     const [firstChar, secondChar] = line
-    if (firstChar !== '[' || isNumeric(secondChar)) return `${NewlineChar}${line}`
+    if (firstChar !== '[' || isNumeric(secondChar)) return `${NEWLINE}${line}`
     return line
   })
-  return broken.join(`${SemicolonChar}${NewlineChar}`)
+  return broken.join(`${SEMICOLON}${NEWLINE}`)
 }
 
 const commandQuoteComplex = (trimmed: string): string => {
-  if (!trimmed.includes(SemicolonChar)) return trimmed
+  if (!trimmed.includes(SEMICOLON)) return trimmed
   
   return `'${trimmed}'`
-}
-
-export const commandError = (args: Strings, destination: string, error: any, stderr?: string, _stdout?: string): ErrorObject => {
-  const standard = stderr && stderr.split(NewlineChar).join(DOT + SpaceChar)
-  const message = standard || String(error.message || error)
-  const cause = commandString(args, destination) 
-  return { name: ERROR.Ffmpeg, message, cause }
 }
 
 export const commandString = (args: string[], destination: string, exapnded?: boolean): string => {
@@ -40,7 +33,7 @@ export const commandString = (args: string[], destination: string, exapnded?: bo
 
     const trimmed = arg.trim()
     const firstArgChar = trimmed.slice(0, 1)
-    const isName = firstArgChar === '-' 
+    const isName = firstArgChar === DASH
     if (isName) {
       if (name) {
         params.push([name, ''])
@@ -58,12 +51,23 @@ export const commandString = (args: string[], destination: string, exapnded?: bo
     const nameParam = `-${name}`
     if (!value) return nameParam
 
-    if (exapnded) return `${nameParam} ${commandExpandComplex(value)}${NewlineChar}`
+    if (exapnded) return `${nameParam} ${commandExpandComplex(value)}${NEWLINE}`
 
     return `${nameParam} ${commandQuoteComplex(value)}` 
   })
   commandParams.unshift('ffmpeg')
-  if (destination) commandParams.push(destination.replace(rootPath, ''))
+  if (destination) {
+    const replaced = destination.replace(rootPath, '')
+    const lastParam = arrayLast(commandParams)
+    if (!lastParam?.endsWith(replaced)) commandParams.push(replaced)
+  }
   return commandParams.join(' ')
+}
+
+export const commandError = (args: Strings, destination: string, error: any, stderr?: string, _stdout?: string): ErrorObject => {
+  const standard = stderr && stderr.split(NEWLINE).join(DOT + SPACE)
+  const message = standard || String(error.message || error)
+  const cause = commandString(args, destination) 
+  return { name: ERROR.Ffmpeg, message, cause }
 }
 

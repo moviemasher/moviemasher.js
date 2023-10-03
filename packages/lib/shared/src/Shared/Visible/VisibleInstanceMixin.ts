@@ -1,6 +1,6 @@
 import type { Constrained, ContentRectArgs, Instance, IntrinsicOptions, PropertySize, Rect, Time, VisibleAsset, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { End, POINT_ZERO, TypeContainer, TypeContent } from '@moviemasher/runtime-shared'
+import { END, POINT_ZERO, SIZE_ZERO, CONTAINER, CONTENT } from '@moviemasher/runtime-shared'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { rectFromSize } from '../../Utility/RectFunctions.js'
@@ -25,14 +25,14 @@ T & Constrained<VisibleInstance> {
         const hasWidth = properties.some(property => property.name.endsWith('width'))
         const hasHeight = properties.some(property => property.name.endsWith('height'))
         const min = container ? 0.0 : 1.0
-        const targetId = container ? TypeContainer : TypeContent
+        const targetId = container ? CONTAINER : CONTENT
         if (!hasWidth) {
           this.properties.push(propertyInstance({
             targetId, name: 'width', type: DataTypePercent, 
             defaultValue: 1.0, min, max: 2.0, step: 0.01, tweens: true,
           }))
           this.properties.push(propertyInstance({
-            targetId, name: `width${End}`, type: DataTypePercent, 
+            targetId, name: `width${END}`, type: DataTypePercent, 
             step: 0.01, max: 2.0, min, undefinedAllowed: true, tweens: true,
           }))
         }
@@ -42,7 +42,7 @@ T & Constrained<VisibleInstance> {
             defaultValue: 1.0, max: 2.0, min, step: 0.01, tweens: true,
           }))
           this.properties.push(propertyInstance({
-            targetId, name: `height${End}`, type: DataTypePercent, 
+            targetId, name: `height${END}`, type: DataTypePercent, 
             step: 0.01, max: 2.0, min, undefinedAllowed: true, tweens: true,
           }))
       }
@@ -51,8 +51,8 @@ T & Constrained<VisibleInstance> {
     }
 
     intrinsicRect(_editing?: boolean): Rect {
-      const { sourceSize: size } = this.asset
-      assertSizeAboveZero(size)
+      const { sourceSize: size = SIZE_ZERO } = this.asset
+      // assertSizeAboveZero(size)
 
       const rect = { ...POINT_ZERO, ...size } 
       // console.log(this.constructor.name, 'intrinsicRect', editing, rect)
@@ -70,7 +70,7 @@ T & Constrained<VisibleInstance> {
       const timeRange = this.clip.timeRange
 
       const contentArgs: ContentRectArgs = {
-        containerRects: [containerRect], time, timeRange, editing: true, shortest
+        containerRects: [containerRect, containerRect], time, timeRange, editing: true, shortest
       }
       const [contentRect] = this.contentRects(contentArgs)
       const { x, y } = contentRect    

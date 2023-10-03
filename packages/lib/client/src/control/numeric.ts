@@ -80,6 +80,7 @@ export class NumericControlElement extends WithControl {
         width: 100%;
         min-width: 50px;
         height: var(--control-size);
+        accent-color: var(--control-fore);
       }`
   ]
 

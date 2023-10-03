@@ -26,7 +26,7 @@ export class TimelineZoomElement extends WithDisablable {
       @input=${this.handleInput}
       type='range'
       ?disabled='${this.disabled}'
-      min='0'
+      min='0.001'
       max='1'
       step='0.001'
       value='${this.zoom}'

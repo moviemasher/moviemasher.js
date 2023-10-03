@@ -2,7 +2,7 @@ import type { StringRecord } from './Core.js'
 import type { Endpoint } from './Endpoint.js'
 
 export interface EndpointRequest {
-  endpoint?: Endpoint | string
+  endpoint: Endpoint | string
   init?: RequestInit
 }
 

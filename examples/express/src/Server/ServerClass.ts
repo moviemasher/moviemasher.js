@@ -1,4 +1,3 @@
-import type { HostServers } from '../Host/Host.js'
 import type { Server, ServerArgs } from './Server.js'
 
 import Express from 'express'
@@ -9,7 +8,7 @@ export class ServerClass implements Server {
 
   id = ''
 
-  startServer(app: Express.Application, _activeServers: HostServers): Promise<void> {
+  startServer(app: Express.Application): Promise<void> {
     const { authentication } = this.args
     if (authentication?.type === 'basic') {
       const { password, users } = authentication
@@ -22,7 +21,7 @@ export class ServerClass implements Server {
         return basicAuth.safeCompare(suppliedPassword, password)
       }
       const options: basicAuth.BasicAuthMiddlewareOptions = {
-        users, authorizer, challenge: true, realm: 'moviemasher',
+        users, authorizer, challenge: true, realm: 'MovieMasher',
       }
       app.use(`/${this.id}/*`, basicAuth(options), (_req, _res, next) => { next() })
     }
@@ -33,7 +32,6 @@ export class ServerClass implements Server {
 
   userFromRequest(req: unknown): string {
     const request = <basicAuth.IBasicAuthedRequest> req
-    const { user } = request.auth
-    return user
+    return request.auth?.user || ''
   }
 }

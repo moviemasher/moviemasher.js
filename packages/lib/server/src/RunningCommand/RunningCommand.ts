@@ -12,5 +12,6 @@ export interface RunningCommand extends Identified {
   runPromise(destination: CommandDestination): Promise<StringDataOrError>
   command: Command
   commandString(destination: string): string
+  graphString: string
   kill(): void
 }

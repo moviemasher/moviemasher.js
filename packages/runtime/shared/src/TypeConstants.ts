@@ -1,11 +1,11 @@
 import { TargetIds } from './Select.js'
+import { MASH } from './SourceConstants.js'
 
-export const TypeAsset = 'asset'
-export const TypeClip = 'clip'
-export const TypeContainer = 'container'
-export const TypeContent = 'content'
-export const TypeMash = 'mash'
+export const ASSET = 'asset'
+export const CLIP = 'clip'
+export const CONTAINER = 'container'
+export const CONTENT = 'content'
 
-export const TypesTarget: TargetIds = [
-  TypeMash, TypeClip, TypeContent, TypeContainer, TypeAsset
+export const TARGET_IDS: TargetIds = [
+  MASH, CLIP, CONTENT, CONTAINER, ASSET
 ]

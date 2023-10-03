@@ -1,23 +1,18 @@
-import { UnknownRecord } from './Core.js'
-import { Identified } from './Identified.js'
-import { LoadType } from './LoadType.js'
-import { Propertied } from './Propertied.js'
-import { EndpointRequest } from './Request.js'
-import { Typed } from './Typed.js'
+import type { UnknownRecord } from './Core.js'
+import type { Identified } from './Identified.js'
+import type { EndpointRequest } from './Request.js'
+import type { Typed } from './Typed.js'
 
 export interface RequestObject {
   request: EndpointRequest
 }
 
-export interface RequestableObject extends UnknownRecord, Identified, Partial<Typed> {
+export interface RequestableObject extends UnknownRecord, Partial<Identified>, Typed {
   createdAt?: string
-  kind?: string
-  request?: EndpointRequest
+  request: EndpointRequest
 }
 
-export interface Requestable extends Propertied, Typed, Identified {
+export interface Requestable extends RequestObject, Typed, Identified {
   createdAt?: string
-  kind: string
   request: EndpointRequest
-  loadType: LoadType
 }

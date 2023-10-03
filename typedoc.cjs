@@ -1,6 +1,7 @@
 module.exports = {
-  "entryPointStrategy": "packages",
+  "$schema": "https://typedoc.org/schema.json",
 
+  "entryPointStrategy": "packages",
   "entryPoints": [
     "packages/lib/*",
     "packages/runtime/*",
@@ -20,17 +21,16 @@ module.exports = {
   "excludeProtected": true,
   "excludeExternals": true,
   "excludeInternal": true,
-  "exclude": true,
   "githubPages": false,
   // "categorizeByGroup": false,
   "readme": "README.md",
   "hideGenerator": true,
-  "externalSymbolLinkMappings": {
-    "lit-element": {
-      "LitElement": "https://lit.dev",
-    },
+  // "externalSymbolLinkMappings": {
+  //   "lit-element": {
+  //     "LitElement": "https://lit.dev",
+  //   },
     
-  },
+  // },
   // "kindSortOrder": [
   //   "Reference",
   //   "Project",
@@ -57,14 +57,14 @@ module.exports = {
   //   "GetSignature",
   //   "SetSignature",
   // ],
-  // "visibilityFilters": {
-  //   "protected": false,
-  //   "private": false,
-  //   "inherited": false,
-  //   "external": false,
-  //   "@alpha": false,
-  //   "@beta": false
-  // },
+  "visibilityFilters": {
+    "protected": false,
+    "private": false,
+    "inherited": false,
+    "external": false,
+    "@alpha": false,
+    "@beta": false
+  },
   // "sort": ["kind", "visibility"],
   // "markedOptions": {
   //   "mangle": false

@@ -1,17 +1,20 @@
 import type { Tweening, } from '@moviemasher/lib-shared'
-import type { DataOrError, InstanceArgs, ShapeAssetObject, ShapeInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { DataOrError, InstanceArgs, ShapeAssetObject, ShapeInstanceObject, Size, ValueRecord } from '@moviemasher/runtime-shared'
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerShapeAsset, ServerShapeInstance } from '../../Types/ServerTypes.js'
 
-import { DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven, sizesEqual, tweenMaxSize } from '@moviemasher/lib-shared'
+import { DOT, DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven, tweenMaxSize } from '@moviemasher/lib-shared'
 import { EventServerAsset, GraphFileTypeSvg } from '@moviemasher/runtime-server'
-import { POINT_ZERO, SourceShape, IMAGE, isAssetObject, isBoolean, isPopulatedString, isDefiniteError } from '@moviemasher/runtime-shared'
+import { POINT_ZERO, SHAPE, IMAGE, isAssetObject, isBoolean, isPopulatedString, isDefiniteError } from '@moviemasher/runtime-shared'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
 import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
-import { fileTemporaryPath, fileWritePromise } from '../../Utility/File.js'
+import { fileWritePromise } from '../../Utility/File.js'
+import { hashMd5 } from '../../Utility/Hash.js'
+import { ENV, ENVIRONMENT } from '../../Environment/EnvironmentConstants.js'
+import path from 'path'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -32,7 +35,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
   private static get defaultAsset(): ServerShapeAsset {
     return this._defaultAsset ||= new ServerShapeAssetClass({ 
       id: DefaultContainerId, type: IMAGE, 
-      source: SourceShape, label: 'Rectangle'
+      source: SHAPE, label: 'Rectangle'
     })
   }
   
@@ -41,7 +44,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
     const { assetObject, assetId } = detail
     
     const isDefault = assetId === DefaultContainerId
-    if (!(isDefault || isAssetObject(assetObject, IMAGE, SourceShape))) return
+    if (!(isDefault || isAssetObject(assetObject, IMAGE, SHAPE))) return
       
     event.stopImmediatePropagation()
     if (isDefault) detail.asset = ServerShapeAssetClass.defaultAsset
@@ -55,7 +58,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
       return Promise.resolve({ data: 0 })
     }
 
-    return fileWritePromise(file, content).then(orError => {
+    return fileWritePromise(file, content, true).then(orError => {
       if (isDefiniteError(orError)) return orError
 
       return { data: 1 }
@@ -83,13 +86,16 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     const { isDefault } = this
 
     // default rect has no content to colorize, so needs color filter input
-    if (isDefault) return false
-
     // shape files can only colorize a single color at a single size
-    return !this.isTweeningColor(args)
+    const can = isDefault ? false : !this.isTweeningColor(args)
+    // console.log(this.constructor.name, 'canColor', can, args)
+    return can
   }
   
   override containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
+
+
+
     const commandFilters: CommandFilters = [] 
     // i am either default rect or a shape tweening color
 
@@ -99,11 +105,14 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
     const [rect, rectEnd] = containerRects
     const [color, colorEnd] = contentColors
-    const maxSize = isDefault ? rect : tweenMaxSize(rect, rectEnd)
+    
+
+    const maxSize = sizeEven(isDefault ? rect : tweenMaxSize(rect, rectEnd))
 
     const endRect = isDefault ? rectEnd : maxSize
 
-  
+    // console.log(this.constructor.name, this.assetId, 'containerColorCommandFilters', {color, maxSize})
+
     commandFilters.push(...this.colorCommandFilters(duration, videoRate, maxSize, endRect, color || colorWhite, colorEnd))
     return commandFilters
   }
@@ -115,18 +124,21 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     } = args
 
     let filterInput = input
-    // console.log(this.constructor.name, 'containerCommandFilters', filterInput)
-
+  
 
     const noContentFilters = isPopulatedArray(colors)
     const alpha = this.requiresAlpha(args, !!tweening.size)
+
+    // console.log(this.constructor.name, 'containerCommandFilters',{filterInput, alpha, noContentFilters})
+
     if (alpha) {
       assertPopulatedString(filterInput, 'container input')
       const { contentColors: _, ...argsWithoutColors } = args
       const superArgs: VisibleCommandFilterArgs = { 
         ...argsWithoutColors, filterInput
       }
-      commandFilters.push(...super.containerCommandFilters(superArgs, tweening))
+      commandFilters.push(...this.instanceCommandFilters(superArgs, tweening))
+
     } else if (this.isDefault || noContentFilters) {
       const { id } = this
       // if (!filterInput) console.log(this.constructor.name, 'containerCommandFilters calling commandFilesInput', id)
@@ -139,23 +151,18 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     return commandFilters
   }
 
-  override initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, _container = false): CommandFilters {
+  override initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     const commandFilters: CommandFilters = [] 
     const { contentColors, ...argsWithoutColors } = args
-
     const { 
       commandFiles, track, filterInput: input, containerRects,
     } = argsWithoutColors
-
     let filterInput = input 
     const alpha = this.requiresAlpha(args, !!tweening.size)
     const { isDefault } = this
-    const tweeningSize = tweening.size 
-    const maxSize = tweeningSize ? tweenMaxSize(containerRects[0], containerRects[1]) : containerRects[0]
-    const evenSize = sizeEven(maxSize)
+    const maxSize = sizeEven(tweenMaxSize(...containerRects))
     const contentInput = `content-${track}`
     const containerInput = `container-${track}`
-  
     if (!tweening.canColor) {
       if (isPopulatedString(filterInput) && !isDefault) {
         if (alpha) {
@@ -168,38 +175,26 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
           }
           commandFilters.push(formatCommandFilter)
           filterInput = formatFilterId
-        } else if (!sizesEqual(evenSize, maxSize)) {
-          const colorArgs: VisibleCommandFilterArgs = { 
-            ...args, 
-            contentColors: [colorBlackOpaque, colorBlackOpaque], 
-            outputSize: evenSize
-          }
-          commandFilters.push(...this.colorBackCommandFilters(colorArgs, `${contentInput}-back`))
-          const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
-          assertPopulatedString(filterInput, 'overlay input')
-      
-          commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
-          filterInput = arrayLast(arrayLast(commandFilters).outputs)  
         }
       }   
     }
-    
     if (commandFilters.length) arrayLast(commandFilters).outputs = [contentInput]
     else if (isPopulatedString(filterInput) && contentInput !== filterInput) {
       commandFilters.push(this.copyCommandFilter(filterInput, track))
+      filterInput = arrayLast(arrayLast(commandFilters).outputs)  
     }
-
     if (alpha) {
       const { id } = this
-      // console.log(this.constructor.name, 'initialCommandFilters ALPHA calling commandFilesInput', id)
       const fileInput = commandFilesInput(commandFiles, id, true)   
       assertPopulatedString(fileInput, 'scale input')
+      // console.log(this.constructor.name, 'initialCommandFilters ALPHA commandFilesInput', id, fileInput)
 
       const colorArgs: VisibleCommandFilterArgs = { 
         ...args, 
-        contentColors: [colorBlackOpaque, colorBlackOpaque], 
+        contentColors: [colorBlack, colorBlack], 
         outputSize: maxSize
       }
+      // console.log(this.constructor.name, 'initialCommandFilters maxSize', maxSize)
       commandFilters.push(...this.colorBackCommandFilters(colorArgs, `${containerInput}-back`))
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
 
@@ -212,7 +207,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       filterInput = arrayLast(arrayLast(commandFilters).outputs)         
       assertPopulatedString(filterInput, 'crop input')
 
-      const options: ValueRecord = { exact: 1, ...POINT_ZERO }
+      const options: ValueRecord = { ...POINT_ZERO }//exact: 1, 
       const cropOutput = idGenerate('crop')
       const { width, height } = maxSize
       if (isTrueValue(width)) options.w = width
@@ -226,9 +221,8 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       commandFilters.push(commandFilter)
       filterInput = cropOutput
  
-      const formatFilter = 'format'
       const formatCommandFilter: CommandFilter = {
-        inputs: [filterInput], ffmpegFilter: formatFilter, 
+        inputs: [filterInput], ffmpegFilter: 'format', 
         options: { pix_fmts: alpha ? 'yuv420p' : 'yuva420p' },
         outputs: [containerInput]
       }
@@ -281,14 +275,14 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       // console.log(this.constructor.name, 'commandFiles NONE', id, isDefault, alpha, tweeningColor)
       return []
     }
-    const { asset: definition } = this
-    const { path } = definition
+    const { asset } = this
+    const { path: assetPath } = asset
     const { contentColors: colors = [], containerRects, time, videoRate } = args
     assertPopulatedArray(containerRects, 'containerRects')
 
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
-    const [rect, rectEnd] = containerRects
-    const maxSize = { ...POINT_ZERO, ...tweenMaxSize(rect, rectEnd)}
+
+    const maxSize: Size = sizeEven(tweenMaxSize(...containerRects))
     const { width: maxWidth, height: maxHeight} = maxSize
 
     let [forecolor] = colors
@@ -297,22 +291,27 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
    
     let fill = 'none'
     if (isDefault) fill = colorWhite
-    else if (alpha) fill = colorBlack
+    else if (alpha) fill = colorBlackOpaque
 
     const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width='${inWidth}' height='${inHeight}'`
 
-    const transformAttribute = rectTransformAttribute(intrinsicRect, maxSize)
+    const transformAttribute = rectTransformAttribute(intrinsicRect, { ...POINT_ZERO, ...maxSize })
     const tags: string[] = []
     tags.push(`<svg viewBox='0 0 ${maxWidth} ${maxHeight}' xmlns='${NamespaceSvg}'>`)
     tags.push(`<g ${dimensionsString} transform='${transformAttribute}' >`)
     tags.push(`<rect ${dimensionsString} fill='${fill}'/>`)
-    if (!isDefault) tags.push(`<path d='${path}' fill='${forecolor}'/>`)
+    if (!isDefault) tags.push(`<path d='${assetPath}' fill='${forecolor}'/>`)
     tags.push('</g>')
     tags.push('</svg>')
     const content = tags.join('')
-  
+    const type = GraphFileTypeSvg
+    const fileName = hashMd5(content)
+    const directory = ENVIRONMENT.get(ENV.ApiDirCache)
+    const name = [fileName, DOT, type].join('')
+    const file = path.resolve(directory, name)
+
     const options: ValueRecord = {}
     if (duration) {
       options.loop = 1
@@ -320,14 +319,9 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       options.t = duration
       // options.re = ''
     }
-    const type = GraphFileTypeSvg
-
-    const file = fileTemporaryPath(id, type)
-
-
     const commandFile: CommandFile = { 
       type, file, content, 
-      input: true, inputId: id, definition, options
+      input: true, inputId: id, definition: asset, options
     }
   
     return [commandFile]

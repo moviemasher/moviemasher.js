@@ -4,6 +4,7 @@ import type { Contents, Htmls, OptionalContent } from '../declarations.js'
 
 import { html } from 'lit-html/lit-html.js'
 import { ImporterComponent } from './ImporterComponent'
+import { DASH, PIPE } from '@moviemasher/lib-shared'
 
 export class Slotted extends ImporterComponent {
   private get slotChildren() {
@@ -32,7 +33,7 @@ export class Slotted extends ImporterComponent {
         slots.push(html`
           <slot 
             name='${slot}' 
-            slot='${slot.split(Slotted.slotSeparator).slice(1).join(Slotted.slotSeparator)}'
+            slot='${slot.split(DASH).slice(1).join(DASH)}'
           ></slot>
         `)
         return false
@@ -60,9 +61,7 @@ export class Slotted extends ImporterComponent {
     return parts ? parts.split(Slotted.partSeparator) : []
   }
 
-  static partSeparator = '|'
+  static partSeparator = PIPE
 
   static override properties: PropertyDeclarations = { parts: { type: String } }
-
-  static slotSeparator = '-'
 }

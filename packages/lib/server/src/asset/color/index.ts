@@ -1,2 +1,2 @@
 
-export * as ColorImageAssetFunction from './image.js'
+export * from './image.js'

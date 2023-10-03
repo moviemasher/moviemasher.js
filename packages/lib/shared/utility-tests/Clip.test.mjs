@@ -45,16 +45,16 @@ describe("Clip", () => {
       assert(describedClip.container instanceof ShapeContainerClass)
     })
  
-    test("commandFilters() returns expected color and overlay", () => {
+    test("clipCommandFilters() returns expected color and overlay", () => {
       const commandFiles = describedClip.clipCommandFiles(commandFileArgs(describedClip))
       expectEmptyArray(commandFiles)
-      const commandFilters = describedClip.commandFilters({ 
+      const clipCommandFilters = describedClip.clipCommandFilters({ 
         ...commandFilterArgs(describedClip), commandFiles 
       })
   
-      expectArrayLength(commandFilters, 3, Object)
-      // console.log("commandFilters", commandFilters)
-      const [colorCommand, copyCommand, overlayCommand] = commandFilters
+      expectArrayLength(clipCommandFilters, 3, Object)
+      // console.log("clipCommandFilters", clipCommandFilters)
+      const [colorCommand, copyCommand, overlayCommand] = clipCommandFilters
       assert.equal(colorCommand.ffmpegFilter, 'color')
       assert.equal(copyCommand.ffmpegFilter, 'copy')
       assert.equal(overlayCommand.ffmpegFilter, 'overlay')
@@ -82,15 +82,15 @@ describe("Clip", () => {
       const [commandFile] = commandFiles
       // console.log("commandFile", commandFile)
     })
-    test("commandFilters() returns expected CommandFilters", () => {
+    test("clipCommandFilters() returns expected CommandFilters", () => {
       const describedClip = createClipWithImage(media)
 
       const commandFiles = describedClip.clipCommandFiles(commandFileArgs(describedClip))
-      const commandFilters = describedClip.commandFilters({
+      const clipCommandFilters = describedClip.clipCommandFilters({
         ...commandFilterArgs(describedClip), commandFiles 
       })
       expectArrayLength(commandFiles, 1, Object)
-      expectArrayLength(commandFilters)
+      expectArrayLength(clipCommandFilters)
     })
   })
 
@@ -116,15 +116,15 @@ describe("Clip", () => {
       assert.equal(imageFile.type, IMAGE)
       assert.equal(svgFile.type, GraphFileType.Svg)
     })
-    test("commandFilters() returns expected CommandFilters", () => {
+    test("clipCommandFilters() returns expected CommandFilters", () => {
       const describedClip = createImageClip(media)
       const commandFiles = describedClip.clipCommandFiles(commandFileArgs(describedClip))
       expectArrayLength(commandFiles, 2, Object)
-      const commandFilters = describedClip.commandFilters({
+      const clipCommandFilters = describedClip.clipCommandFilters({
         ...commandFilterArgs(describedClip), commandFiles 
       })
-      // console.log("commandFilters", commandFilters)//.map(f => f.ffmpegFilter))
-      expectArrayLength(commandFilters)
+      // console.log("clipCommandFilters", clipCommandFilters)//.map(f => f.ffmpegFilter))
+      expectArrayLength(clipCommandFilters)
       
     })
   })
@@ -161,16 +161,16 @@ describe("Clip", () => {
       assert.equal(type, AUDIO)
       assert.equal(input, true)
     })
-    test("commandFilters() returns expected CommandFilters", () => {
+    test("clipCommandFilters() returns expected CommandFilters", () => {
       const describedClip = createClipWithAudio(media)
       const commandFiles = describedClip.clipCommandFiles(audioCommandFileArgs(describedClip))
       expectArrayLength(commandFiles, 1, Object)
-      const commandFilters = describedClip.commandFilters({
+      const clipCommandFilters = describedClip.clipCommandFilters({
         ...audioCommandFilterArgs(describedClip), commandFiles 
       })
-      // console.log("commandFilters", commandFilters)
-      expectCommandFilters(commandFilters, "atrim", "amix")
-      const [atrimCommand, amixCommand] = commandFilters
+      // console.log("clipCommandFilters", clipCommandFilters)
+      expectCommandFilters(clipCommandFilters, "atrim", "amix")
+      const [atrimCommand, amixCommand] = clipCommandFilters
       expectArrayLength(atrimCommand.inputs, 1)
       expectArrayLength(atrimCommand.outputs, 1)
 

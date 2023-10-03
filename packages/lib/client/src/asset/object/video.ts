@@ -3,7 +3,7 @@ import { error, ERROR, isAssetObject, isAssetType, isDefiniteError, isPopulatedS
 import { MovieMasher, EventAssetObject } from '@moviemasher/runtime-client'
 import { requestJsonRecordPromise, requestPopulate } from '../../utility/request.js'
 
-MovieMasher.eventDispatcher.addDispatchListener(EventAssetObject.Type, (event: EventAssetObject) => {
+export const AssetObjectHandler = (event: EventAssetObject) => {
   event.stopImmediatePropagation()
   const { detail } = event
   const { assetObjectOptions } = MovieMasher.options
@@ -19,7 +19,7 @@ MovieMasher.eventDispatcher.addDispatchListener(EventAssetObject.Type, (event: E
   } 
   const request = requestPopulate(assetObjectOptions.request)
   detail.promise = requestJsonRecordPromise(request).then(orError => {
-    console.log(EventAssetObject.Type, orError)
+    // console.log(EventAssetObject.Type, orError)
     if (isDefiniteError(orError)) return orError 
 
     const { data: json } = orError    
@@ -31,6 +31,6 @@ MovieMasher.eventDispatcher.addDispatchListener(EventAssetObject.Type, (event: E
     }
     return error(ERROR.Url) 
   })
-})
+}
 
-export {}
+MovieMasher.eventDispatcher.addDispatchListener(EventAssetObject.Type, AssetObjectHandler)

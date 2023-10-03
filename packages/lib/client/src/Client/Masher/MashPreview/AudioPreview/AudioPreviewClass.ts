@@ -92,17 +92,17 @@ export class AudioPreviewClass {
         const { start, duration, offset } = options
 
         if (isPositive(start) && isAboveZero(duration)) {
-          const { asset: definition, id } = av
-          const source = definition.audibleSource()
+          const { asset, id } = av
+          const source = asset.audibleSource()
           if (!source) {
             if (!start) {
-              console.log(this.constructor.name, 'createSources no audible source', definition.label)
+              console.log(this.constructor.name, 'createSources no audible source', asset.label)
               // wanted to start immediately but it's not loaded
-              return !definition.audio
+              return !asset.audio
             }
             return true
           }
-          const { loop } = definition 
+          const { loop } = asset 
           // console.log(this.constructor.name, 'createSources', options, loop)
           AudibleContextInstance.startAt(id, source, start, duration, offset, loop)
 
@@ -124,7 +124,6 @@ export class AudioPreviewClass {
       avs.forEach(av => AudibleContextInstance.deleteSource(av.id))
     })
     this.playingClips = clipsToKeep
-    // console.log(this.constructor.name, 'destroySources removed', clipsToRemove.length, 'kept', this.playingClips.length)
   }
 
   gain = Default.mash.gain
@@ -147,12 +146,10 @@ export class AudioPreviewClass {
   get seconds(): number {
     const ellapsed = AudibleContextInstance.currentTime - this.contextSecondsWhenStarted
     const started = ellapsed + this.startedMashAt
-    // console.log('seconds', started, '=', this.startedMashAt, '+', ellapsed, '=', audibleContext.currentTime, '-', this.contextSecondsWhenStarted)
     return started
   }
 
   startContext(): void {
-    // console.log(this.constructor.name, 'startContext')
     if (this.bufferSource) return errorThrow(ERROR.Internal) 
     if (this.playing) return errorThrow(ERROR.Internal) 
 
@@ -172,15 +169,11 @@ export class AudioPreviewClass {
     this.playing = true
     this.startedMashAt = seconds
     this.contextSecondsWhenStarted = AudibleContextInstance.currentTime
-    // console.log(this.constructor.name, 'startPlaying', 'startedMashAt', this.startedMashAt, 'contextSecondsWhenStarted', this.contextSecondsWhenStarted)
 
     if (!this.createSources(clips, quantize, time)) {    
-      // console.log(this.constructor.name, 'startPlaying stalled')
-
       this.stopPlaying()
       return false
     }
-    // console.log(this.constructor.name, 'startPlaying', this.startedMashAt, this.contextSecondsWhenStarted)
     return true
   }
 

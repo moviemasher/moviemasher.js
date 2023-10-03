@@ -7,6 +7,7 @@ import { EventTypeExportParts, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefined } from '@moviemasher/runtime-shared'
 import { LitElement } from 'lit-element/lit-element.js'
 import { html, nothing } from 'lit-html/lit-html.js'
+import { DASH } from '@moviemasher/lib-shared'
 
 const partFirst = (element: Element): string => element.part[0] || ''
 
@@ -81,7 +82,7 @@ export class Component extends LitElement {
     const childrenExports = childParts.flatMap(child => {
       const childPart = partFirst(child)
       const exported = []
-      if (part) exported.push([childPart, [part, childPart].join('-')].join(':'))
+      if (part) exported.push([childPart, [part, childPart].join(DASH)].join(':'))
       if (child instanceof Component) {
         const { exportParts } = child 
         if (exportParts) {
@@ -91,7 +92,7 @@ export class Component extends LitElement {
             const [_, childExportedPart] = exportPart.split(':')
             if (!childExportedPart) return []
              
-            const exportedAs = part ? [part, childExportedPart].join('-') : childExportedPart
+            const exportedAs = part ? [part, childExportedPart].join(DASH) : childExportedPart
             if (childExportedPart === exportedAs) return [exportedAs]
 
             return [[childExportedPart, exportedAs].join(':')]

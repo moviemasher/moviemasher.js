@@ -5,7 +5,7 @@ import type { Content, Contents, DropTarget, OptionalContent } from '../declarat
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { arrayOfNumbers, arrayReversed, assertMashAsset, isPositive } from '@moviemasher/lib-shared'
-import { EventChangeClipId, EventChangeFrame, EventChangedFrame, EventChangedMashAsset, EventChangedFrames, EventTypeScale, EventTypeTracks, EventTypeZoom, MovieMasher, eventStop, EventFrames } from '@moviemasher/runtime-client'
+import { EventChangeClipId, EventChangeFrame, EventChangedFrame, EventChangedMashAsset, EventChangedFrames, EventTypeTracks, EventTypeZoom, MovieMasher, eventStop, EventFrames } from '@moviemasher/runtime-client'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { DisablableMixin } from '../Base/DisablableMixin.js'
@@ -31,13 +31,12 @@ export class TimelineContentElement extends WithDropTargetMixin implements DropT
     this.listeners[EventTypeZoom] = this.handleZoom.bind(this)
   }
   
-  private clientXRef = -1
+  private scrubberX = -1
 
   override connectedCallback(): void {
     const event = new EventFrames()
     MovieMasher.eventDispatcher.dispatch(event)
     const { frames } = event.detail
-    console.log(this.tagName, 'connectedCallback', { frames })
     this.frames = frames
     super.connectedCallback()
   }
@@ -143,7 +142,6 @@ export class TimelineContentElement extends WithDropTargetMixin implements DropT
   }
   
   private handleChangedFrames(event: EventChangedFrames): void {
-    console.log(this.tagName, 'handleChangedFrames', event.detail)
     this.frames = event.detail
   }
 
@@ -159,7 +157,7 @@ export class TimelineContentElement extends WithDropTargetMixin implements DropT
 
   private handleScrubberPointerDown(event: PointerEvent): void {
     event.stopPropagation()
-    this.clientXRef = -1
+    this.scrubberX = -1
     const { window } = globalThis
     window.addEventListener('pointermove', this.handleScrubberPointerMove)
     window.addEventListener('pointerup', this.handleScrubberPointerUp)
@@ -173,9 +171,9 @@ export class TimelineContentElement extends WithDropTargetMixin implements DropT
     eventStop(event)
     
     const { clientX } = event
-    if (this.clientXRef === clientX) return
+    if (this.scrubberX === clientX) return
 
-    this.clientXRef = clientX
+    this.scrubberX = clientX
 
     const rect = this.element('.scrubber-icon').getBoundingClientRect()
     const max = rect.width - trackWidth
@@ -213,18 +211,11 @@ export class TimelineContentElement extends WithDropTargetMixin implements DropT
     const { frame, frames, width, zoom } = this
     if (!width) return
 
-    const detail = pixelPerFrame(frames, width, zoom) 
-    console.log(this.tagName, 'recalculateLeft', detail, " = pixelPerFrame(", frames, ",", width, ",", zoom, ")")
-    if (isPositive(detail)) {
-      if (this.scale !== detail) {
-        this.scale = detail
-        // console.log(this.tagName, 'recalculateLeft', detail)
-        const event: NumberEvent = new CustomEvent(EventTypeScale, { detail })
-        MovieMasher.eventDispatcher.dispatch(event)
-      }
-
-      this.framesWidth = pixelFromFrame(frames, detail)
-      this.left = pixelFromFrame(frame, detail)
+    const scale = pixelPerFrame(frames, width, zoom) 
+    if (isPositive(scale)) {
+      if (this.scale !== scale) this.scale = scale
+      this.framesWidth = pixelFromFrame(frames, scale)
+      this.left = pixelFromFrame(frame, scale)
     }
   }
 

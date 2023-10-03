@@ -1,8 +1,8 @@
-import type { ClientClips, MashIndex, MashMoveClipEvent, TrackClipsEventDetail } from '@moviemasher/runtime-client'
+import type { ClientClips, ClipLocation } from '@moviemasher/runtime-client'
 import type { AssetType, Clip, Point, Rect, Strings, UnknownRecord } from '@moviemasher/runtime-shared'
 
 import { isClip, isPositive } from '@moviemasher/lib-shared'
-import { DragSuffix, EventAddAssets, EventImport, EventManagedAsset, EventTypeMashMoveClip, EventTypeTrackClips, EventImportManagedAssets, MovieMasher, eventStop, } from '@moviemasher/runtime-client'
+import { LastIndex, DragSuffix, EventAddAssets, EventImport, EventManagedAsset, EventImportManagedAssets, MovieMasher, eventStop, EventTrackClips, EventMoveClip } from '@moviemasher/runtime-client'
 import { isAssetType, isObject, isPopulatedString, isString } from '@moviemasher/runtime-shared'
 import { pixelToFrame } from '../Client/PixelFunctions.js'
 
@@ -106,7 +106,7 @@ export const dropRawFiles = (fileList: FileList) => {
   return event.detail.promise
 }
 
-const dropFiles = (fileList: FileList, mashIndex?: MashIndex): void => {
+const dropFiles = (fileList: FileList, mashIndex?: ClipLocation): void => {
   const promise = dropRawFiles(fileList)
   promise?.then(assetObjects => { 
     if (mashIndex) {
@@ -124,7 +124,7 @@ const dropFiles = (fileList: FileList, mashIndex?: MashIndex): void => {
   })
 }
 
-const dropAssetId = (assetId: string, mashIndex?: MashIndex) => {
+const dropAssetId = (assetId: string, mashIndex?: ClipLocation) => {
   if (mashIndex) {
     const event = new EventManagedAsset(assetId)
     MovieMasher.eventDispatcher.dispatch(event)
@@ -136,7 +136,7 @@ const dropAssetId = (assetId: string, mashIndex?: MashIndex) => {
 }
 
 
-export const dropDraggable = (draggable: Draggable, editorIndex?: MashIndex)=> {
+export const dropDraggable = (draggable: Draggable, editorIndex?: ClipLocation)=> {
   if (isClip(draggable)) {
     // this does not happen since Timeline intercepts
     console.trace('dropDraggable Clip')
@@ -154,38 +154,37 @@ export const droppingFiles = (dataTransfer: DataTransfer | null | undefined): bo
 }
 
 //  const offsetDrop = scrollX + clientX - viewX   
-export const droppedMashIndex = (dataTransfer: DataTransfer, trackIndex = -1, scale = 0, offsetDrop = 0, clipId = ''): MashIndex => {
+export const droppedMashIndex = (dataTransfer: DataTransfer, trackIndex = LastIndex, scale = 0, offsetDrop = 0, clipId = ''): ClipLocation => {
   const files = droppingFiles(dataTransfer)
 
   const clientClips: ClientClips = []
-  let dense = false
+  let isDense = false
   
   if (isPositive(trackIndex)) {
-    const detail: TrackClipsEventDetail = { trackIndex }
-    const event = new CustomEvent(EventTypeTrackClips, { detail })
+    const event = new EventTrackClips(trackIndex)
     MovieMasher.eventDispatcher.dispatch(event)
-    const { clips } = detail
+    const { clips, dense } = event.detail
     if (clips) {
       clientClips.push(...clips)
-      dense = !!detail.dense
-      // console.debug('droppedMashIndex', trackIndex, clips.length, dense)
+      isDense = !!dense
+      console.debug('droppedMashIndex', trackIndex, clips.length, dense, scale, offsetDrop)
     } else {
       // console.warn('droppedMashIndex no clips', trackIndex)
     }
   }
-  let indexDrop = -1   
-  if (dense) {
-    if (clipId) indexDrop = clientClips.findIndex(clip => clip.id === clipId) + 1
+  
+  const mashIndex: ClipLocation = { track: trackIndex }
+
+  if (isDense) {
+    mashIndex.index = clipId ? clientClips.findIndex(clip => clip.id === clipId) + 1 : LastIndex
   } else {
     const data = files ? { offset: 0 } : dragData(dataTransfer)
-    indexDrop = pixelToFrame(Math.max(0, offsetDrop - data.offset), scale)
-    // console.debug('droppedMashIndex', indexDrop, "= pixelToFrame(Math.max(0, ", offsetDrop, "-", data.offset, "), ", scale, ")")
+    mashIndex.frame = pixelToFrame(Math.max(0, offsetDrop - data.offset), scale)
   }
-  const mashIndex: MashIndex = { clip: indexDrop, track: trackIndex }
   return mashIndex
 }
 
-export const dropped = (event: DragEvent, mashIndex?: MashIndex) => {
+export const dropped = (event: DragEvent, clipLocation?: ClipLocation) => {
   eventStop(event)
   const { dataTransfer } = event 
   if (!dataTransfer) return
@@ -194,14 +193,14 @@ export const dropped = (event: DragEvent, mashIndex?: MashIndex) => {
   const data = files ? { offset: 0 } : dragData(dataTransfer)
 
   if (files) {
-    dropFiles(dataTransfer.files, mashIndex)
+    dropFiles(dataTransfer.files, clipLocation)
   } else if (data.offset) {
     if (isDragDefinitionObject(data)) {
       // console.log('dropped ADD ASSET OBJECT', data)
       const { assetId } = data
-      dropAssetId(assetId, mashIndex)
-    } else if (mashIndex) {
-      const moveEvent: MashMoveClipEvent = new CustomEvent(EventTypeMashMoveClip, { detail: mashIndex })
+      dropAssetId(assetId, clipLocation)
+    } else if (clipLocation) {
+      const moveEvent = new EventMoveClip(clipLocation)
       MovieMasher.eventDispatcher.dispatch(moveEvent)
     }
   } 

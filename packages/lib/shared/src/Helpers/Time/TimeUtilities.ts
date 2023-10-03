@@ -44,3 +44,78 @@ export const timeFromSeconds = (seconds = 0, fps = 1, rounding = '') : Time => {
   return timeFromArgs(rounded, fps)
 }
 
+export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0, delimiter = '.') : string => {
+  const bits: string[] = []
+  let pad = 2
+  let time = 60 * 60 // an hour
+  let do_rest = !!fps
+  
+  const duration = lengthSeconds || seconds
+
+  // console.log('stringSeconds seconds', seconds, 'fps', fps, 'duration', duration)
+  if (duration >= time) {
+    if (seconds >= time) {
+      bits.push(String(Math.floor(seconds / time)).padStart(pad, '0'))
+      do_rest = true
+      seconds = seconds % time
+    } else bits.push('00')
+  }
+  time = 60 // a minute
+  if (do_rest || (duration >= time)) {
+    // console.log('stringSeconds duration', duration, '>=', time, 'time')
+    if (do_rest) bits.push(':')
+    if (seconds >= time) {
+      bits.push(String(Math.floor(seconds / time)).padStart(pad, '0'))
+      do_rest = true
+      seconds = seconds % time
+    } else bits.push('00')
+  } else {
+    // console.log('stringSeconds duration', duration, '<', time, 'time')
+  }
+  time = 1 // a second
+
+  if (do_rest || (duration >= time)) {
+    // console.log('stringSeconds duration', duration, '>=', time, 'time')
+
+    if (do_rest) bits.push(':')
+    if (seconds >= time) {
+      // console.log('stringSeconds seconds', seconds, '>=', time, 'time')
+
+
+      bits.push(String(Math.floor(seconds / time)).padStart(pad, '0'))
+      do_rest = true
+      seconds = seconds % time
+    } else {
+      // console.log('stringSeconds seconds', seconds, '<', time, 'time')
+      bits.push('00')
+    }
+  } else {
+    // console.log('stringSeconds duration', duration, '<', time, 'time')
+    bits.push('00')
+  }
+  if (fps > 1) {
+    // console.log('stringSeconds fps', fps, '> 1')
+
+    pad = String(fps).length - 1
+    bits.push(delimiter)
+    if (seconds) {
+       // console.log('stringSeconds seconds', seconds, 'true pad', pad)
+
+      seconds = Math.round(seconds * fps) / fps
+      
+      // console.log('stringSeconds seconds', String(seconds), 'presliced')
+      seconds = Number(String(seconds).slice(2))
+
+      // console.log('stringSeconds seconds', seconds, 'sliced')
+
+      bits.push(String(seconds).padEnd(pad, '0'))
+      // console.log('stringSeconds seconds', seconds, 'padded')
+    } else {
+      // console.log('stringSeconds seconds', seconds, 'false')
+      bits.push('0'.padStart(pad, '0'))
+    }
+  } else {
+    // console.log('stringSeconds fps', fps, '<= 1')
+  }
+  return bits.join('')
+}

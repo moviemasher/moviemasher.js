@@ -45,6 +45,7 @@ services:
       - ../../../examples/express/dist:${MOVIEMASHER_DIR_ROOT}/examples/express/dist
       - ../../../examples/express/package.json:${MOVIEMASHER_DIR_ROOT}/examples/express/package.json
       - ../../../examples/express/index.html:${MOVIEMASHER_DIR_ROOT}/examples/express/public/index.html
+      - ../../../examples/express/json/:${MOVIEMASHER_DIR_ROOT}/examples/express/public/json
 
       - ../../../dev/img/favicon.ico:${MOVIEMASHER_DIR_ROOT}/examples/express/public/favicon.ico
 
@@ -56,6 +57,5 @@ services:
       - ../../../packages/runtime/shared:${MOVIEMASHER_DIR_ROOT}/examples/express/public/@moviemasher/runtime-shared
 
       # use temporary directories from host for user media, database files, etc.
-      - ../../../temporary/express/media:${MOVIEMASHER_DIR_ROOT}/examples/express/public/media
-      - ../../../temporary/express/data:${MOVIEMASHER_DIR_ROOT}/examples/express/private/data
+      - ../../../temporary/express/assets:${MOVIEMASHER_DIR_ROOT}/examples/express/public/assets
       - ../../../temporary/express/temporary:${MOVIEMASHER_DIR_ROOT}/temporary

@@ -61,6 +61,7 @@ export class FilterGraphsClass implements FilterGraphs {
 
   private _commandFiles?: CommandFiles
   get commandFiles(): CommandFiles {
+    // console.log(this.constructor.name, 'commandFiles')
     const graphs = [...this.filterGraphsVisible]
     if (this.filterGraphAudible) graphs.push(this.filterGraphAudible)
     return this._commandFiles ||= graphs.flatMap(graph => graph.filterGraphCommandFiles)
@@ -89,6 +90,7 @@ export class FilterGraphsClass implements FilterGraphs {
       return definition.serverPromise(args, commandFile)
       
     })
+    // console.log(this.constructor.name, 'loadCommandFilesPromise', promises.length)
     return promiseNumbers(promises)
   }
 

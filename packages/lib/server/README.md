@@ -1,13 +1,12 @@
-<!-- MAGIC:START (FILE:src=../../dev/documentation/snippet/head.md) -->
-<!-- The below content is automatically added from ../../dev/documentation/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/head.md) -->
+<!-- The below content is automatically added from ../../../dev/documentation/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor and encoder_
-- _visual compositing_ through **SVG API**
-- _audio mixing_ through **WebAudio API**
-- _encode_ and _transcode_ through **FFmpeg**
-- _client_ implemented in **ReactJS**
-- _server_ implemented in **ExpressJS**
+- **edit** video, audio, and images in [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
+- **encode** high resolution media files using [FFmpeg](https://ffmpeg.org)
+- **customize** the editor with standard [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
+- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
 <!-- MAGIC:END -->
 
 ## Server Core
@@ -27,8 +26,8 @@ This server implementation utilizes
 [Node Media Server](https://github.com/illuspas/Node-Media-Server), and
 [WebRTC](https://github.com/node-webrtc/node-webrtc) to support its data, rendering, and streaming APIs.
 
-<!-- MAGIC:START (FILE:src=../../dev/documentation/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../dev/documentation/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../../dev/documentation/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -39,7 +38,7 @@ also available when using a code editor that supports TypeScript and IntelliSens
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILEMD:src=../../dev/documentation/snippet/example-server.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-server.md&stripMagic=true) -->
 ## Server Example
 
 The following shell command installs the server and required packages to your NPM project,
@@ -57,15 +56,10 @@ The script below can then be included in your project and triggered in a variety
 
 
 ```js
-const MovieMasherServer = require("@moviemasher/server-express")
-
-const { Host } = MovieMasherServer
-const options = { 
-  port: 8572, host: '0.0.0.0', 
-  api: { authentication: { type: 'basic' } } 
-}
-const host = new Host(options)
-host.start()
+// src/server.ts
+import { Host, HostDefaultOptions } from "@moviemasher/server-express";
+var host = new Host(HostDefaultOptions());
+host.start();
 ```
 </fieldset>
 
@@ -77,8 +71,8 @@ While the server is running, requests can be made to http://localhost:8570 follo
 This example installs an FFmpeg build that has limited rendering capabilities due to lack of support of SVG files. Typically a custom build is utilized instead. Learn more about integrating your own services in the [Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html).
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILE:src=../../dev/documentation/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../dev/documentation/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../../dev/documentation/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a

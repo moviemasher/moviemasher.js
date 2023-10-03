@@ -1,6 +1,11 @@
+import { AUDIO, IMAGE, VIDEO } from '../AssetTypeConstants.js'
+import { TranscodingType } from '../ImportType.js'
+import { FONT } from '../ImportTypeConstants.js'
+import { SEQUENCE, WAVEFORM } from '../TranscodingConstants.js'
+import { OutputOptions } from './Output.js'
 
-export const OutputEncodeDefaults = {
-  audio:  {
+export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
+  [AUDIO]:  {
     options: {},
     audioBitrate: 160,
     audioCodec: 'libmp3lame',
@@ -8,11 +13,11 @@ export const OutputEncodeDefaults = {
     audioRate: 44100,
     extension: 'mp3',
   }, 
-  font: {
+  [FONT]: {
     options: {},
     extension: 'woff2',
   },
-  sequence: {
+  [SEQUENCE]: {
     options: {},
     format: 'image2',
     width: 320,
@@ -20,7 +25,7 @@ export const OutputEncodeDefaults = {
     videoRate: 10,
     extension: 'jpg',
   },
-  waveform: {
+  [WAVEFORM]: {
     options: {},
     width: 320,
     height: 240,
@@ -32,13 +37,13 @@ export const OutputEncodeDefaults = {
     audioRate: 44100,
     extension: 'png',
   },
-  image: {
+  [IMAGE]: {
     options: {},
     width: 320,
     height: 240,
     extension: 'jpg',
   },
-  video: {
+  [VIDEO]: {
     options: {
       g: 60,
       level: 41,
@@ -58,8 +63,8 @@ export const OutputEncodeDefaults = {
   },
 }
 
-export const OutputAlphaDefaults = {
-  image: {
+export const ALPHA_OUTPUT_DETAULTS = {
+  [IMAGE]: {
     options: {},
     width: 320,
     height: 240,
@@ -67,7 +72,7 @@ export const OutputAlphaDefaults = {
     format: 'image2',
     offset: 0
   },
-  sequence: {
+  [SEQUENCE]: {
     options: {},
     format: 'image2',
     width: 320,
@@ -75,7 +80,7 @@ export const OutputAlphaDefaults = {
     videoRate: 10,
     extension: 'png',
   },
-  video: {
+  [VIDEO]: {
     options: {
       g: 60,
       level: 41,

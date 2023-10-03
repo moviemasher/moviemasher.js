@@ -1,6 +1,6 @@
 import type { Tweening } from '@moviemasher/lib-shared'
 import type { GraphFile, GraphFiles, ServerAsset, ServerPromiseArgs } from '@moviemasher/runtime-server'
-import type { AudibleInstance, Instance, IntrinsicOptions, PreloadArgs, Size, StringDataOrError, StringsDataOrError, Value, VisibleInstance } from '@moviemasher/runtime-shared'
+import type { AudibleInstance, Instance, IntrinsicOptions, CacheArgs, Size, StringDataOrError, StringsDataOrError, Value, VisibleInstance } from '@moviemasher/runtime-shared'
 import type { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { ServerAudibleAsset, ServerVisibleAsset } from './ServerAssetTypes.js'
 
@@ -12,7 +12,7 @@ export interface ServerInstance extends Instance {
   audibleCommandFilters(args: CommandFilterArgs): CommandFilters
   canColor(args: CommandFilterArgs): boolean
   canColorTween(args: CommandFilterArgs): boolean
-  colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters
+  colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string, intrinsicSize?: Size): CommandFilters
   colorCommandFilters(duration: number, videoRate: number, size: Size, sizeEnd: Size, color: Value, colorEnd: Value): CommandFilters 
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
@@ -22,8 +22,7 @@ export interface ServerInstance extends Instance {
   containerFinalCommandFilters(args: VisibleCommandFilterArgs): CommandFilters
   contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters
   copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
-  fileCommandFiles(graphFileArgs: PreloadArgs): CommandFiles
-  graphFiles(args: PreloadArgs): GraphFiles
+  fileCommandFiles(graphFileArgs: CacheArgs): CommandFiles
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters
   intrinsicGraphFile(options: IntrinsicOptions): GraphFile
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters

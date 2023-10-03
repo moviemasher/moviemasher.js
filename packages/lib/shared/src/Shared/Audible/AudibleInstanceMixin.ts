@@ -1,8 +1,8 @@
 import type { AudibleAsset, AudibleInstance, AudibleInstanceObject, Constrained, Instance, IntrinsicOptions, Numbers, Property, Scalar, Time, UnknownRecord, Value } from '@moviemasher/runtime-shared'
 
-import { TypeContent, isString } from '@moviemasher/runtime-shared'
+import { CONTENT, isString } from '@moviemasher/runtime-shared'
 import { timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
-import { CommaChar, DOT } from '../../Setup/Constants.js'
+import { COMMA, DOT } from '../../Setup/Constants.js'
 import { DataTypeBoolean, DataTypeFrame, DataTypeNumber, DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { arrayOfNumbers } from '../../Utility/ArrayFunctions.js'
@@ -10,8 +10,8 @@ import { assertAboveZero, isAboveZero, isPositive, isPropertyId } from '../Share
 
 export const gainFromString = (gain: Value): number | Numbers[] => {
   if (isString(gain)) {
-    if (gain.includes(CommaChar)) {
-      const floats = gain.split(CommaChar).map(string => parseFloat(string))
+    if (gain.includes(COMMA)) {
+      const floats = gain.split(COMMA).map(string => parseFloat(string))
       const z = floats.length / 2
       return arrayOfNumbers(z).map(i => [floats[i * 2], floats[i * 2 + 1]])
     }  
@@ -57,8 +57,10 @@ T & Constrained<AudibleInstance> {
     declare endTrim: number
 
     frames(quantize: number): number {
-      const { asset: definition, startTrim, endTrim } = this
-      const frames = definition.frames(quantize)
+      assertAboveZero(quantize)
+
+      const { asset, startTrim, endTrim } = this
+      const frames = asset.frames(quantize)
       return frames - (startTrim + endTrim)
     }
 
@@ -66,7 +68,7 @@ T & Constrained<AudibleInstance> {
 
     gainPairs: Numbers[] = []
 
-    // graphFiles(args: PreloadArgs): GraphFiles {
+    // graphFiles(args: CacheArgs): GraphFiles {
     //   const { audible } = args
     //   if (!audible) return []
     //   if (!(this.mutable() && !this.muted)) return []
@@ -99,29 +101,29 @@ T & Constrained<AudibleInstance> {
       const { asset } = this
       if (asset.audio) {
         this.properties.push(propertyInstance({ 
-          targetId: TypeContent, name: 'muted', type: DataTypeBoolean, 
+          targetId: CONTENT, name: 'muted', type: DataTypeBoolean, 
         }))
         if (asset.loop) {
           this.properties.push(propertyInstance({ 
-            targetId: TypeContent, name: 'loops', type: DataTypeNumber, 
+            targetId: CONTENT, name: 'loops', type: DataTypeNumber, 
             defaultValue: 1, 
           }))
         }
         this.properties.push(propertyInstance({ 
-          targetId: TypeContent, name: 'gain', type: DataTypePercent, 
+          targetId: CONTENT, name: 'gain', type: DataTypePercent, 
           defaultValue: 1.0, min: 0, max: 2.0, step: 0.01 
         }))
       }
       this.properties.push(propertyInstance({ 
-        targetId: TypeContent, name: 'speed', type: DataTypePercent, 
+        targetId: CONTENT, name: 'speed', type: DataTypePercent, 
         defaultValue: 1.0, min: 0.1, max: 2.0, step: 0.1, 
       }))
       this.properties.push(propertyInstance({ 
-        targetId: TypeContent, name: 'startTrim', type: DataTypeFrame,
+        targetId: CONTENT, name: 'startTrim', type: DataTypeFrame,
         defaultValue: 0, step: 1, min: 0, 
       }))
       this.properties.push(propertyInstance({ 
-        targetId: TypeContent, name: 'endTrim', type: DataTypeFrame,
+        targetId: CONTENT, name: 'endTrim', type: DataTypeFrame,
         defaultValue: 0, step: 1, min: 0, 
       }))
       super.initializeProperties(object)

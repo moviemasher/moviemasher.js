@@ -1,9 +1,14 @@
+import { Strings } from './Core.js'
 import type { Size } from './Size.js'
 import type { Time, TimeRange } from './Time.js'
 
-export interface CacheOptions {
+export interface CacheArgs {
+  validDirectories?: Strings
   audible?: boolean
   visible?: boolean
+}
+
+export interface CacheOptions extends CacheArgs {
   quantize?: number
   time?: Time
   size?: Size
@@ -28,7 +33,3 @@ export interface AssetCacheArgs extends CacheOptions {
   assetTime?: Time
 }
 
-export interface PreloadArgs extends CacheOptions {
-  quantize: number
-  clipTime: TimeRange
-}

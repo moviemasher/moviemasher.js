@@ -1,12 +1,14 @@
 import type { Asset, AssetCacheArgs, AssetObject, AssetType, Assets, ClipObject, DataOrError, Decodings, Instance, InstanceArgs, InstanceObject, Source, Strings } from '@moviemasher/runtime-shared'
 
-import { ERROR, TypeAsset, AUDIO, errorThrow, isArray } from '@moviemasher/runtime-shared'
+import { ERROR, ASSET, AUDIO, errorThrow, isArray } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../Base/PropertiedClass.js'
 import { DataTypeString } from '../../Setup/DataTypeConstants.js'
 import { Default } from '../../Setup/Default.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { SizingContainer, SizingContent } from '../../Setup/SizingConstants.js'
 import { idGenerateString } from '../../Utility/IdFunctions.js'
+import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
+import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 
 export class AssetClass extends PropertiedClass implements Asset {
   constructor(object: AssetObject) {
@@ -61,8 +63,9 @@ export class AssetClass extends PropertiedClass implements Asset {
       clipObject.sizing = SizingContent
       clipObject.contentId = id
       clipObject.content = object
+      if (type !== AUDIO) clipObject.containerId = DefaultContainerId
     }
-    if (type === AUDIO) clipObject.containerId = ''
+    // console.log(this.constructor.name, 'clipObject', clipObject, { id, type, canBeContainer, canBeContent })
     return clipObject
   }
 
@@ -76,7 +79,7 @@ export class AssetClass extends PropertiedClass implements Asset {
   
   override initializeProperties(object: AssetObject): void {
     this.properties.push(propertyInstance({
-      targetId: TypeAsset, name: `label`, type: DataTypeString, 
+      targetId: ASSET, name: `label`, type: DataTypeString, 
       defaultValue: Default.mash.label
     }))
     super.initializeProperties(object)

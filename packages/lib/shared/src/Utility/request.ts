@@ -1,7 +1,7 @@
 import type { EndpointRequest, Strings } from '@moviemasher/runtime-shared'
 
 import { isEndpoint } from '../Helpers/Endpoint/EndpointFunctions.js'
-import { ColonChar, SlashChar } from '../Setup/Constants.js'
+import { COLON, SLASH } from '../Setup/Constants.js'
 
 export const ProtocolBlob = 'blob'
 
@@ -19,9 +19,9 @@ export const requestUrl = (request: EndpointRequest): string => {
   if (!(protocol && hostname)) return pathBits.join('')
 
   const bits = [protocol]
-  if (!urlIsBlob(protocol)) bits.push(SlashChar, SlashChar)
+  if (!urlIsBlob(protocol)) bits.push(SLASH, SLASH)
   bits.push(hostname)
-  if (port) bits.push(`${ColonChar}${port}`)
+  if (port) bits.push(`${COLON}${port}`)
   bits.push(...pathBits)
   return bits.join('')
 }

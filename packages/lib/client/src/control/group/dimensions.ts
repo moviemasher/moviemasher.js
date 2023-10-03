@@ -5,7 +5,7 @@ import type { Contents, ControlGroup, OptionalContent } from '../../declarations
 
 import { AspectFlip, DOT } from '@moviemasher/lib-shared'
 import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
-import { Aspect, End, SIZE_KEYS, } from '@moviemasher/runtime-shared'
+import { ASPECT, END, SIZE_KEYS, } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
@@ -18,19 +18,17 @@ const WithControlGroup = ControlGroupMixin(ImporterComponent)
 const WithSizeReactive = SizeReactiveMixin(WithControlGroup)
 export class DimenstionsControlGroupElement extends WithSizeReactive implements ControlGroup {
   override connectedCallback(): void {
-    const heightId = this.namePropertyId(`height${End}`)
+    const heightId = this.namePropertyId(`height${END}`)
     if (heightId) {
       const [target] = heightId.split(DOT)
       const key = `control-group-${target}-height`
-      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleHeight.bind(this)
     }
 
-    const widthId = this.namePropertyId(`width${End}`)
+    const widthId = this.namePropertyId(`width${END}`)
     if (widthId) {
       const [target] = widthId.split(DOT)
       const key = `control-group-${target}-width`
-      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleWidth.bind(this)
     }
     super.connectedCallback()
@@ -41,7 +39,7 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
     if (!(size && propertyIds?.length)) return
 
 
-    const aspectFlip = this.propertyIdValue(`size${Aspect}`) === AspectFlip
+    const aspectFlip = this.propertyIdValue(`size${ASPECT}`) === AspectFlip
     const portrait = size.height > size.width
     const aspectIcon = portrait ? 'landscape' : 'portrait' 
 
@@ -53,7 +51,7 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
         </legend>
         ${this.propertyNameContent('lock')}
         ${this.dimensionsContent(aspectFlip, portrait)}
-        ${this.controlContent(`size${Aspect}`, aspectIcon)}
+        ${this.controlContent(`size${ASPECT}`, aspectIcon)}
       </fieldset>
     `
   }
@@ -130,9 +128,9 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
   }
 
   private static names: Strings = [
-    ...SIZE_KEYS.flatMap(key => [key, `${key}${End}`]),
+    ...SIZE_KEYS.flatMap(key => [key, `${key}${END}`]),
     'lock',
-    `size${Aspect}`,
+    `size${ASPECT}`,
   ]
 
   static override properties: PropertyDeclarations = {

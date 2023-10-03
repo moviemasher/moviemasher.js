@@ -1,62 +1,52 @@
 import type { StringRecord } from '@moviemasher/runtime-shared'
-import type { DataServer, DataServerArgs } from '../Server/DataServer/DataServer.js'
-import type { FileServer, FileServerArgs } from '../Server/FileServer/FileServer.js'
-import type { RenderingServer, RenderingServerArgs } from '../Server/RenderingServer/RenderingServer.js'
-import type { Server } from '../Server/Server.js'
-import type { WebServer, WebServerArgs } from '../Server/WebServer/WebServer.js'
+import type { DataServerArgs, DecodeServerArgs, EncodeServerArgs, Server, TranscodeServerArgs, UploadServerArgs, WebServerArgs } from '../Server/Server.js'
 
 import cors from 'cors'
 import Express from 'express'
-import { DataServerClass } from '../Server/DataServer/DataServerClass.js'
-import { FileServerClass } from '../Server/FileServer/FileServerClass.js'
-import { RenderingServerClass } from '../Server/RenderingServer/RenderingServerClass.js'
-import { WebServerClass } from '../Server/WebServer/index.js'
+import { DataServerClass } from '../Server/DataServerClass.js'
+import { EncodeServerClass } from '../Server/EncodeServerClass.js'
+import { UploadServerClass } from '../Server/UploadServerClass.js'
+import { WebServerClass } from '../Server/WebServerClass.js'
+import { DecodeServerClass } from '../Server/DecodeServerClass.js'
+import { TranscodeServerClass } from '../Server/TranscodeServerClass.js'
 
 export interface HostOptions {
   corsOptions?: StringRecord | false
   data?: DataServerArgs | false
-  file?: FileServerArgs | false
+  upload?: UploadServerArgs | false
+  decode?: DecodeServerArgs | false
+  transcode?: TranscodeServerArgs | false
   port: number
   host: string
-  rendering?: RenderingServerArgs | false
+  encode?: EncodeServerArgs | false
   web?: WebServerArgs | false
   version?: string
 }
 
-export interface HostServers {
-  data?: DataServer
-  file?: FileServer
-  rendering?: RenderingServer
-  web?: WebServer
-}
-
 export class Host {
-  constructor(object: HostOptions) { this.args = object }
-
-  args: HostOptions
+  constructor(public args: HostOptions) { }
 
   start() {
-    const { corsOptions, host, port, file, data, rendering, web } = this.args
-    const HostServers: HostServers = {}
-    if (data) HostServers.data = new DataServerClass(data)
-    if (file) HostServers.file = new FileServerClass(file)
-    if (rendering) HostServers.rendering = new RenderingServerClass(rendering)
-    if (web) HostServers.web = new WebServerClass(web)
+    const { corsOptions, host, port, upload, data, encode, web, decode, transcode } = this.args
+    const servers: Server[] = []
+    if (data) servers.push(new DataServerClass(data))
+    if (upload) servers.push(new UploadServerClass(upload))
+    if (encode) servers.push(new EncodeServerClass(encode))
+    if (transcode) servers.push(new TranscodeServerClass(transcode))
 
-    const servers: Server[] = Object.values(HostServers)
+    if (decode) servers.push(new DecodeServerClass(decode))
+    if (web) servers.push(new WebServerClass(web))
     if (!servers.length) {
       console.warn(this.constructor.name, 'nothing configured')
       return
     }
-
     const app = Express()
     app.use(Express.json())
     if (corsOptions) app.use(cors(corsOptions))
-    const promises = servers.map(server => server.startServer(app, HostServers))
+    const promises = servers.map(server => server.startServer(app))
     return Promise.all(promises).then(() => {
       const server = app.listen(port, host, () => { console.log(`Listening on port ${port} ${host}`) })
       server.once('close', () => { servers.forEach(server => server.stopServer()) })
     })
-
   }
 }

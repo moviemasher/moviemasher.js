@@ -1,6 +1,6 @@
 import type { Clip, Clips, MashAsset, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { TypeMash, isDefined } from '@moviemasher/runtime-shared'
+import { MASH, isDefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
 import { DataTypeBoolean } from '../../../Setup/DataTypeConstants.js'
 import { Default } from '../../../Setup/Default.js'
@@ -23,7 +23,7 @@ export class TrackClass extends PropertiedClass implements Track {
     this.dense = isDefined(dense) ? !!dense : !this.index  
 
     this.properties.push(propertyInstance({ 
-      targetId: TypeMash, name: 'dense', type: DataTypeBoolean, 
+      targetId: MASH, name: 'dense', type: DataTypeBoolean, 
     }))
     this.propertiesInitialize(args)
     
@@ -61,6 +61,7 @@ export class TrackClass extends PropertiedClass implements Track {
       const { frames } = clip
       if (isAboveZero(frames)) return
       
+      // console.log(this.constructor.name, 'assureFrames', 'resetting clip', {quantize})
       clip.resetTiming(undefined, quantize)
       if (isAboveZero(clip.frames) || !suppliedClips) return
 

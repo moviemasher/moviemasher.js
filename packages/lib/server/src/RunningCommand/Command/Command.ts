@@ -1,4 +1,4 @@
-import type { RawProbeData } from '@moviemasher/lib-shared'
+import type { RawProbeData } from '@moviemasher/runtime-shared'
 import type { CommandDestination } from '../RunningCommand.js'
 
 import type { EventEmitter } from 'events'

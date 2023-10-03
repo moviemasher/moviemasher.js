@@ -1,12 +1,13 @@
 import type { Tweening } from '@moviemasher/lib-shared'
-import type { Constrained, ContentRectArgs, ValueRecord, VisibleInstance } from '@moviemasher/runtime-shared'
 import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
+import type { Constrained, ContentRectArgs, ValueRecord, VisibleInstance } from '@moviemasher/runtime-shared'
 import type { ServerVisibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../Types/ServerInstanceTypes.js'
 
-import { arrayLast, assertPopulatedArray, assertPopulatedString, assertTimeRange, colorBlackOpaque, colorTransparent, idGenerate, isTimeRange, isTrueValue, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { arrayLast, assertDefined, assertPopulatedArray, assertPopulatedString, assertTimeRange, colorBlackOpaque, colorTransparent, idGenerate, isTimeRange, isTrueValue, sizeEven, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
 import { POINT_ZERO } from '@moviemasher/runtime-shared'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
+import { isServerVisibleAsset } from '../guard/assets.js'
 
 
 export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance & VisibleInstance>>(Base: T):
@@ -23,31 +24,44 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
 
         // relabel input as content
         assertPopulatedString(filterInput)
+        // console.log(this.constructor.name, 'initialCommandFilters calling copyCommandFilter', filterInput)
         commandFilters.push(this.copyCommandFilter(filterInput, track))
       }
       return commandFilters
     }
 
     containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
-      // console.log(this.constructor.name, 'containerCommandFilters')
+      // console.log(this.constructor.name, 'ServerVisibleInstanceMixin.containerCommandFilters')
       const commandFilters: CommandFilters = []
       const {
         commandFiles, containerRects, filterInput: input, videoRate, track
       } = args
       let filterInput = input
       const [containerRect, containerRectEnd] = containerRects
-      const maxSize = tweening.size ? tweenMaxSize(containerRect, containerRectEnd) : containerRect
+      const maxSize = sizeEven(tweening.size ? tweenMaxSize(containerRect, containerRectEnd) : containerRect)
 
+      const { id } = this
+
+      const commandInput = commandFiles.find(commandFile => commandFile.input && commandFile.inputId === id)
+      assertDefined(commandInput, 'commandInput')
+      const { definition } = commandInput
+      if (!isServerVisibleAsset(definition)) {
+        return commandFilters
+      }
+      const { sourceSize } = definition
+        
       // add color box first
       const colorArgs: VisibleCommandFilterArgs = {
         ...args,
         contentColors: [colorBlackOpaque, colorBlackOpaque],
-        outputSize: maxSize, //{ width: maxSize.width * 2, height: maxSize.height * 2 }
-      }
-      commandFilters.push(...this.colorBackCommandFilters(colorArgs, `container-${track}-back`))
-      const colorInput = arrayLast(arrayLast(commandFilters).outputs)
+        outputSize: maxSize,
+      }//, //
+      const colorInput = `container-${track}-back`
+      // console.log(this.constructor.name, 'ServerVisibleInstanceMixin.containerCommandFilters calling colorBackCommandFilters', colorInput)
+      commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput, sourceSize))
+      // const colorInput = arrayLast(arrayLast(commandFilters).outputs)
 
-      const { id } = this
+    
       // console.log(this.constructor.name, 'containerCommandFilters calling commandFilesInput', commandFiles.length)
       const fileInput = commandFilesInput(commandFiles, id, true)
 
@@ -64,7 +78,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       // crop file input
       assertPopulatedString(filterInput, 'crop input')
 
-      const options: ValueRecord = { exact: 1, ...POINT_ZERO }
+      const options: ValueRecord = {  ...POINT_ZERO }//exact: 1,
       const cropOutput = idGenerate('crop')
       const { width, height } = maxSize
       if (isTrueValue(width)) options.w = width
@@ -83,14 +97,13 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
         assertPopulatedString(filterInput, 'overlay input')
         commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
         filterInput = arrayLast(arrayLast(commandFilters).outputs)
-
       }
 
       assertPopulatedString(filterInput, 'alphamerge input')
       commandFilters.push(...this.alphamergeCommandFilters({ ...args, filterInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs)
 
-      // then we need to do effects, opacity, etc, and merge
+      // then we need to do opacity and merge
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
@@ -115,20 +128,18 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
         containerRects, time, timeRange: clipTime, shortest,
       }
       const contentRects = this.contentRects(contentArgs)
-
-      const [containerRect, containerRectEnd] = containerRects
-
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
-      const maxContainerSize = tweenMaxSize(containerRect, containerRectEnd) 
-
-      const colorInput = `content-${track}-back`
+      const maxContainerSize = sizeEven(tweenMaxSize(...containerRects))
 
       const colorArgs: VisibleCommandFilterArgs = {
         ...args, contentColors: [colorTransparent, colorTransparent],
         outputSize: maxContainerSize
       }
-      commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput))
+      // console.log(this.constructor.name, 'ServerVisibleInstanceMixin.contentCommandFilters calling colorBackCommandFilters',colorInput)
+      
+      const contentBackInput = `content-${track}-back`
+      commandFilters.push(...this.colorBackCommandFilters(colorArgs, contentBackInput))
 
       const scaleArgs: CommandFilterArgs = {
         ...args, filterInput, containerRects: contentRects
@@ -138,11 +149,11 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       filterInput = arrayLast(arrayLast(commandFilters).outputs)
 
       if (tweening.size) {
-        commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
+        commandFilters.push(...this.overlayCommandFilters(contentBackInput, filterInput))
         filterInput = arrayLast(arrayLast(commandFilters).outputs)
       }
       const cropOutput = idGenerate('crop')
-      const options: ValueRecord = { exact: 1 }
+      const options: ValueRecord = {} // exact: 1 
       const position = tweenPosition(videoRate, duration)
       options.x = tweenOption(contentRect.x, contentRectEnd.x, position, true)
       options.y = tweenOption(contentRect.y, contentRectEnd.y, position, true)
@@ -172,12 +183,13 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       filterInput = setsarOutput
 
       if (!tweening.size) {
-        commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, this.asset.alpha))
+        commandFilters.push(...this.overlayCommandFilters(contentBackInput, filterInput, this.asset.alpha))
         filterInput = arrayLast(arrayLast(commandFilters).outputs)
       }
 
       commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening))
       return commandFilters
     }
+
   }
 }

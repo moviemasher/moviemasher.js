@@ -1,10 +1,10 @@
 import type { ChangeActionObject, ChangePropertiesActionObject, ClientClip, ClientInstance, ClientTrack, ClientVisibleInstance, Preview, SvgItems, SvgOrImageDataOrError } from '@moviemasher/runtime-client'
-import type { ContainerRectArgs, PropertyId, Scalar, ScalarsById, Size, TargetId, Time } from '@moviemasher/runtime-shared'
+import type { Asset, AssetObject, ContainerRectArgs, PropertyId, Scalar, ScalarsById, Size, TargetId, Time } from '@moviemasher/runtime-shared'
 import type { MashPreviewArgs } from '../Masher/MashPreview/MashPreview.js'
 
-import { ActionTypeChangeFrame, ActionTypeChangeMultiple, ClipClass, DOT, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, arrayOfNumbers, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate } from '@moviemasher/lib-shared'
-import { EventManagedAsset, MovieMasher, Panel } from '@moviemasher/runtime-client'
-import { AUDIO, POINT_ZERO, TypeClip, assertAsset, isAudibleAssetType, isVisibleAssetType } from '@moviemasher/runtime-shared'
+import { ActionTypeChangeFrame, ActionTypeChangeMultiple, ClipClass, DOT, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, arrayOfNumbers, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate, isContainerInstance } from '@moviemasher/lib-shared'
+import { EventManagedAsset, Panel } from '@moviemasher/runtime-client'
+import { AUDIO, ERROR, POINT_ZERO, CLIP, errorPromise, isAudibleAssetType, isVisibleAssetType } from '@moviemasher/runtime-shared'
 import { assertClientVisibleInstance } from '../ClientGuards.js'
 import { isChangePropertyActionObject } from '../Masher/Actions/Action/ActionFunctions.js'
 import { MashPreviewClass } from '../Masher/MashPreview/MashPreviewClass.js'
@@ -12,6 +12,10 @@ import { pixelToFrame } from '../PixelFunctions.js'
 import { svgAppend, svgDefsElement, svgPatternElement, svgPolygonElement, svgSetDimensions, svgSvgElement, svgUrl } from '../SvgFunctions.js'
 
 export class ClientClipClass extends ClipClass implements ClientClip {
+  override asset(assetIdOrObject: string | AssetObject): Asset {
+    return EventManagedAsset.asset(assetIdOrObject)
+  }
+
   backgroundNode = (size: Size, patternedSize: Size, spacing = 0) => {
     const { width, height } = size
     const { color: fill } = this.track.mash
@@ -32,10 +36,10 @@ export class ClientClipClass extends ClipClass implements ClientClip {
 
   clipIcon(frameSize: Size, size: Size, scale: number, gap = 1): Promise<SvgOrImageDataOrError> {
     const { container } = this
-    assertContainerInstance(container, 'clipIcon')
-
+    if (!isContainerInstance(container)) {
+      return errorPromise(ERROR.Type, 'clip has no container')
+    }
     const { mash } = this.track
-
     const widthAndBuffer = frameSize.width + gap
     const cellCount = Math.ceil(size.width / widthAndBuffer)
     const clipTime = this.timeRange
@@ -93,7 +97,6 @@ export class ClientClipClass extends ClipClass implements ClientClip {
       size, time, timeRange: this.timeRange, editing: true,
     }
     const containerRects = this.containerRects(containerRectArgs)
-    assertTrue(containerRects.length === 1)
 
     const [containerRect] = containerRects
     assertClientVisibleInstance(content)
@@ -134,10 +137,8 @@ export class ClientClipClass extends ClipClass implements ClientClip {
         }
         const redoValues: ScalarsById = { ...undoValues, [propertyId]: redoValue }
       
-        const event = new EventManagedAsset(redoValue)
-        MovieMasher.eventDispatcher.dispatch(event)
-        const { asset } = event.detail
-        assertAsset(asset)
+        const asset = this.asset(redoValue)
+       
 
         const { type } = asset
         if (timingBound && !isAudibleAssetType(type)) {
@@ -170,7 +171,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     return true
   }
 
-  override targetId: TargetId = TypeClip
+  override targetId: TargetId = CLIP
 
   declare track: ClientTrack
 

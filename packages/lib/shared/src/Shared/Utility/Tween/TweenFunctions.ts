@@ -1,4 +1,4 @@
-import type { Lock, NumberRecord, Point, PopulatedString, PropertySize, Rect, Rects, Scalar, SideDirectionRecord, Size, Value } from '@moviemasher/runtime-shared'
+import type { Lock, NumberRecord, Point, PopulatedString, PropertySize, Rect, RectTuple, Rects, Scalar, SideDirectionRecord, Size, Value } from '@moviemasher/runtime-shared'
 
 import { isDefined, isNumber, isObject, isPopulatedString } from '@moviemasher/runtime-shared'
 import { AspectFlip, LockHeight, LockLongest, LockNone, LockShortest, LockWidth } from '../../../Setup/LockConstants.js'
@@ -111,9 +111,13 @@ export const tweenableRects = (rect: Rect, rectEnd?: Rect): rectEnd is Rect => {
   return false
 }
 
-export const tweenPosition = (videoRate: number, duration: number, frame = 'n') => (
-  `(${frame}/${videoRate * duration})`
-)
+export const tweenPosition = (videoRate: number, duration: number, frame = 'n') => {
+  const frames = videoRate * duration
+
+  // return `abs(sin((${frame}-${frames})*${frames}*PI/8))`
+
+  return `(${frame}/${frames})`
+}
 
 export const numberRecord = (object: any): NumberRecord => {
   if (!isObject(object)) return {}
@@ -249,6 +253,7 @@ const tweenScaleSizeRatioLock = (scale: Size, previewSize: Size, inRatio: number
 }
 
 export const tweenScaleSizeToRect = (size: Size, scaleRect: Rect, directions: SideDirectionRecord = {}): Rect => {
+  // console.log('tweenScaleSizeToRect', size, scaleRect, directions)
   const { width: outWidth, height: outHeight } = size
   const { x, y, width, height } = scaleRect
   assertPositive(x)
@@ -276,7 +281,10 @@ const sideDirectionRecordFlip = (directions: SideDirectionRecord): SideDirection
   }
 }
 
-const tweenRectContainer = (tweenRect: Rect, intrinsicRect: Rect, lock: Lock, previewSize: Size, sideDirectionRecord: SideDirectionRecord, pointAspect: string, sizeAspect: String): Rect => {
+const tweenRectContainer = (tweenRect: Rect, intrinsicSize: Size, lock: Lock, previewSize: Size, sideDirectionRecord: SideDirectionRecord, pointAspect: string, sizeAspect: String): Rect => {
+  // console.log('tweenRectContainer', tweenRect, intrinsicSize, lock, previewSize, sideDirectionRecord, pointAspect, sizeAspect)
+
+
   const portrait = previewSize.width < previewSize.height
 
   const flippedPoint = pointAspect === AspectFlip 
@@ -297,23 +305,22 @@ const tweenRectContainer = (tweenRect: Rect, intrinsicRect: Rect, lock: Lock, pr
   //   ...tweenPoint, ...lockScaleSize(tweenRect, lock, shortest)
   // }
 
-  const ratio = intrinsicRect.width / intrinsicRect.height
+  const ratio = intrinsicSize.width / intrinsicSize.height
   const forcedScale = {
     ...tweenPoint, 
     ...tweenScaleSizeRatioLock(tweenSize, previewSize, ratio, lock, portrait && flippedSize)
   }
 
-  // console.log('tweenScaleSizeToRect', intrinsicRect, forcedScale, directions)
 
   return tweenScaleSizeToRect(previewSize, forcedScale, directions)
 
 }
 
-export const tweenRectsContainer = (tweenRects: Rects, intrinsicRect: Rect, lock: Lock, previewSize: Size, directions: SideDirectionRecord, pointAspect: string, sizeAspect: String): Rects => {
-
-  return tweenRects.map(tweenRect => 
-    tweenRectContainer(tweenRect, intrinsicRect, lock, previewSize, directions, pointAspect, sizeAspect)
-  )
+export const tweenRectsContainer = (tweenRects: RectTuple, intrinsicSize: Size, lock: Lock, previewSize: Size, directions: SideDirectionRecord, pointAspect: string, sizeAspect: String): RectTuple => {
+  // console.log('tweenRectsContainer', tweenRects, intrinsicSize, lock, previewSize, directions, pointAspect, sizeAspect)
+  return tweenRects.map(rect => 
+    tweenRectContainer(rect, intrinsicSize, lock, previewSize, directions, pointAspect, sizeAspect)
+  ) as RectTuple
 }
   // tweenRect => {
   //   const tweenPoint = pointCopy(tweenRect)

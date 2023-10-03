@@ -15,7 +15,7 @@ export class AssetObjectsHandler {
     } 
     const request = requestPopulate(assetObjectsOptions.request)
     detail.promise = requestJsonRecordsPromise(request).then(orError => {
-      console.log(EventAssetObjects.Type, orError)
+      // console.log(EventAssetObjects.Type, orError)
       if (isDefiniteError(orError)) return orError 
 
       const { data: json } = orError

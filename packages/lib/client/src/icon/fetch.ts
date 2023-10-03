@@ -14,8 +14,8 @@ export class FetchIconHandler {
     const { _jsonPromise } = FetchIconHandler
     if (_jsonPromise) return _jsonPromise
 
-    const { iconOptions = { request: {} } } = MovieMasher.options
-    const { request = {}} = iconOptions
+    const { iconOptions = { request: { endpoint: '' } } } = MovieMasher.options
+    const { request } = iconOptions
 
     const populated = requestPopulate(request)
     return this._jsonPromise = requestJsonRecordPromise(populated).then(orError => {

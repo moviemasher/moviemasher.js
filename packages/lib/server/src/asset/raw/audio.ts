@@ -3,7 +3,7 @@ import type { ServerRawAudioAsset, ServerRawAudioInstance } from '../../Types/Se
 
 import { AudibleAssetMixin, AudibleInstanceMixin, AudioAssetMixin, AudioInstanceMixin } from '@moviemasher/lib-shared'
 import { EventServerAsset, MovieMasher } from '@moviemasher/runtime-server'
-import { SourceRaw, AUDIO, isAssetObject } from '@moviemasher/runtime-shared'
+import { RAW, AUDIO, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
 import { ServerAudibleInstanceMixin } from '../../Base/ServerAudibleInstanceMixin.js'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
@@ -27,7 +27,7 @@ export class ServerRawAudioAssetClass extends WithAudioAsset implements ServerRa
   static handleAsset(event: EventServerAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, AUDIO, SourceRaw)) {
+    if (isAssetObject(assetObject, AUDIO, RAW)) {
       detail.asset = new ServerRawAudioAssetClass(assetObject)
       event.stopImmediatePropagation()
     }

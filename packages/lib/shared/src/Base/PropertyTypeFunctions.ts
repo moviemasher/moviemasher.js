@@ -1,6 +1,6 @@
 import type { DataType, Scalar, Strings } from '@moviemasher/runtime-shared'
 
-import { isBoolean, isNumber, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
+import { isBoolean, isNumber, isNumeric, isPopulatedString, isString } from '@moviemasher/runtime-shared'
 import { colorBlack } from '../Helpers/Color/ColorConstants.js'
 import { colorValid } from '../Helpers/Color/ColorFunctions.js'
 import { DefaultContainerId } from '../Helpers/Container/ContainerConstants.js'
@@ -44,8 +44,8 @@ export const propertyTypeValid = (value: Scalar, dataType: DataType): boolean =>
     case DataTypeFrame:
     case DataTypePercent:
     case DataTypeNumber: return isNumeric(value)
-    case DataTypeString: return true
-    case DataTypeContainerId:
+    case DataTypeString: //return true
+    case DataTypeContainerId: return isString(value)
     case DataTypeContentId:
     default: return isPopulatedString(value)
   }

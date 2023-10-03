@@ -1,10 +1,10 @@
 import type { CommandFilters, CommandInputs } from '@moviemasher/runtime-server'
 import type { OutputOptions, StringDataOrError, ValueRecord, VideoOutputOptions, } from '@moviemasher/runtime-shared'
-import type { CommandOptions } from '../../encode/Encode.js'
+import type { CommandOptions } from '../../encode/MashDescriberTypes.js'
 import type { Command } from './Command.js'
 
-import { AVTypeAudio, AVTypeVideo, ColonRegex, CommaRegex, } from '@moviemasher/lib-shared'
-import { errorCaught, isNumber } from '@moviemasher/runtime-shared'
+import { AVTypeAudio, AVTypeVideo } from '@moviemasher/lib-shared'
+import { ERROR, error, errorCaught, errorPromise, isNumber } from '@moviemasher/runtime-shared'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import path from 'path'
 import { commandError } from '../../Utility/Command.js'
@@ -24,20 +24,37 @@ const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[
     const { options, ffmpegFilter, ...rest } = commandFilter
     const newOptions = Object.entries(options).map(([key, value]) => {
       if (isNumber(value)) return `${key}=${value}`
+      const commaRegex = /,/g
 
-      if (!value.length) return key.replace(CommaRegex, '\\,')
+      if (!value.length) return key.replace(commaRegex, '\\,')
 
-      const commasEscaped = value.replace(CommaRegex, '\\,')
-      const colonsEscaped = commasEscaped.replace(ColonRegex, '\\\\:')
+      const commasEscaped = value.replace(commaRegex, '\\,')
+      const colonRegex = /:/g
+      const colonsEscaped = commasEscaped.replace(colonRegex, '\\\\:')
       return `${key}=${colonsEscaped}`
     }).join(':')
     return { ...rest, options: newOptions, filter: ffmpegFilter }
   })
 }
 
+export const commandPromise = async (command: FfmpegCommand) => {
+  return await new Promise<StringDataOrError>(resolve => {
+    command.on('error', (...args: any[]) => {
+      resolve(error(ERROR.Ffmpeg, args.join(','))) 
+    })
+    command.on('end', () => { resolve({ data: 'OK' }) })
+    try {
+      // console.log('ARGUMENTS', ...command._getArguments())
+      command.run()
+    }
+    catch (err) { resolve(errorCaught(err)) }
+  }).catch(error => errorPromise(ERROR.Ffmpeg, error))
+}
+
 export const ffmpegCommand = (): FfmpegCommand => {
   const ffmpegCommandOptions: FfmpegCommandOptions = { logger: console }
   const instance: FfmpegCommand = ffmpeg(ffmpegCommandOptions)
+  instance.addOption('-hide_banner')
   return instance
 }
 

@@ -5,7 +5,6 @@
     "start": "web-dev-server --node-resolve --open --watch"
   },
   "devDependencies": {
-    "typedoc": "dependencies",
-    "markdown-magic": "2.6.1"
+    "typedoc": "dependencies"
   }
 }

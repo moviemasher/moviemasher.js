@@ -4,7 +4,7 @@ import { errorThrow } from '@moviemasher/runtime-shared'
 import { POINT_ZERO } from '@moviemasher/runtime-shared'
 import { isPoint, pointCopy, pointRound, pointsEqual, pointString } from './PointFunctions.js'
 import { assertSizeAboveZero, isSize, sizeCopy, sizeRound, sizesEqual, sizeString } from './SizeFunctions.js'
-import { SemicolonChar } from '../Setup/Constants.js'
+import { SEMICOLON } from '../Setup/Constants.js'
 import { Rect, RectTuple } from '@moviemasher/runtime-shared'
 
 
@@ -59,7 +59,7 @@ export const rectString = (dimensions: any): string => {
     bits.push(sizeString(dimensions))
   if (isPoint(dimensions))
     bits.push(pointString(dimensions))
-  return bits.join(SemicolonChar)
+  return bits.join(SEMICOLON)
 }
 
 

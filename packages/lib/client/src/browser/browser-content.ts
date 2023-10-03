@@ -1,17 +1,17 @@
-import type { AssetType, Assets, DataOrError, Size, Source } from '@moviemasher/runtime-shared'
+import type { AssetType, Assets, DataOrError, Size } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { Content, Contents, OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { sizeContain } from '@moviemasher/lib-shared'
-import { EventAssetElement, EventManagedAsset, EventTypeAssetType, EventTypeSourceType, MovieMasher, EventManagedAssets, EventImportedManagedAssets } from '@moviemasher/runtime-client'
+import { EventAssetElement, EventImportedManagedAssets, EventManagedAsset, EventManagedAssets, EventTypeAssetType, MovieMasher } from '@moviemasher/runtime-client'
 import { SIZE_ZERO, isAssetType, isDefiniteError } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
+import { Component } from '../Base/Component.js'
+import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 import { Scroller } from '../Base/Scroller.js'
 import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
-import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { Component } from '../Base/Component.js'
 import { dropRawFiles, droppingFiles } from '../utility/draganddrop.js'
 
 const BrowserContentElementName = 'movie-masher-browser-content'
@@ -22,7 +22,6 @@ export class BrowserContentElement extends WithDropTarget {
   constructor() {
     super()
     this.listeners[EventTypeAssetType] = this.handleAssetType.bind(this)
-    this.listeners[EventTypeSourceType] = this.handleSourceType.bind(this)
     this.listeners[EventImportedManagedAssets.Type] = this.assetsPromiseRefresh.bind(this)
   }
   override acceptsClip = false
@@ -127,14 +126,7 @@ export class BrowserContentElement extends WithDropTarget {
   }
 
   private handleAssetType(event: CustomEvent<AssetType>): void {
-    // console.log(this.tagName, 'handleAssetType', event.detail)
     this.assetType = event.detail
-  }
-
-  private handleSourceType(event: CustomEvent<Source>): void {
-    const { detail: sourceType } = event
-    // console.log(this.tagName, 'handleSourceType', sourceType)
-    this.sourceType = sourceType
   }
 
 
@@ -146,14 +138,12 @@ export class BrowserContentElement extends WithDropTarget {
     const ratio = this.variable('ratio-preview-selector')
     return sizeContain(size, max * ratio)
   }
-  
-  sourceType?: Source 
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('size')) {
       this.elementsById = {}
     }
-    if (changedProperties.has('assetType') || changedProperties.has('sourceType')) {
+    if (changedProperties.has('assetType')) {
       this.assetsPromiseRefresh()
     }
   }
@@ -161,8 +151,7 @@ export class BrowserContentElement extends WithDropTarget {
   static override properties: PropertyDeclarations = {
     ...ImporterComponent.properties,
     ...SizeReactiveProperties,
-    assetType: { type: String },
-    sourceType: { type: String },
+    assetType: { type: String, attribute: false },
     assets: { type: Array, attribute: false },
     cover: { type: Boolean },
   }

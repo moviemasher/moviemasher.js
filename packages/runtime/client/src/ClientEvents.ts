@@ -1,14 +1,16 @@
-import type { AssetObject, AssetObjects, AssetParams, AssetType, Assets, DataOrError, DataType, EndpointRequest, Importers, ManageType, NumberSetter, Ordered, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, StringDataOrError, TargetIds, TimeRange } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetObjects, AssetParams, AssetType, Assets, DataOrError, DataType, DecodeOptions, DecodingObject, DecodingType, EncodeArgs, EncodeOptions, EncodingObject, EncodingType, EndpointRequest, Importers, ManageType, MashAssetObject, NumberSetter, Ordered, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, StringDataOrError, TargetIds, TimeRange, TranscodeOptions, TranscodingObject, TranscodingType } from '@moviemasher/runtime-shared'
 import type { Action } from './ActionTypes.js'
 import type { ClientAsset, ClientAssetObjects, ClientAssets } from './ClientAsset.js'
 import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack } from './ClientMashTypes.js'
 import type { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientMediaRequest, ClientVideoDataOrError } from './ClientMedia.js'
-import type { MashIndex } from './Masher.js'
+import type { ClipLocation } from './Masher.js'
 import type { SelectedProperties } from './SelectedProperty.js'
 import type { Previews, SvgOrImage } from './Svg.js'
 import type { TranslateArgs } from './Translate.js'
 
-import { TypeAsset, TypeEncode } from '@moviemasher/runtime-shared'
+import { ASSET, DECODE, ENCODE, TRANSCODE, assertAsset } from '@moviemasher/runtime-shared'
+import { MovieMasher } from './MovieMasher.js'
+import { ClientRawAsset } from './ClientRawTypes.js'
 
 export class NumberEvent extends CustomEvent<number> {}
 export class StringEvent extends CustomEvent<string> {}
@@ -20,6 +22,58 @@ export interface ServerProgress {
   do: NumberSetter
   did: NumberSetter
   done: VoidFunction
+}
+
+/**
+ * Dispatch to initiate a decode request for an asset.
+ */
+
+export class EventClientDecode extends CustomEvent<EventClientDecodeDetail> {
+  static Type = DECODE
+  constructor(asset: ClientRawAsset, decodingType: DecodingType, options?: DecodeOptions, progress?: ServerProgress) {
+    super(EventClientDecode.Type, { detail: { asset, options, decodingType, progress } })
+  }
+}
+
+export interface EventClientDecodeDetail {
+  options?: DecodeOptions
+  decodingType: DecodingType
+  asset: ClientRawAsset
+  promise?: Promise<DataOrError<DecodingObject>>
+  progress?: ServerProgress
+}
+
+/**
+ * Dispatch to initiate an encode request for a mash.
+ */
+export class EventClientEncode extends CustomEvent<EventClientEncodeDetail> {
+  static Type = ENCODE
+  constructor(mashAssetObject: MashAssetObject, encodingType?: EncodingType, encodeOptions?: EncodeOptions, progress?: ServerProgress) { 
+    super(EventClientEncode.Type, { detail: { mashAssetObject, encodingType, encodeOptions, progress } }) 
+  }
+}
+
+export interface EventClientEncodeDetail extends EncodeArgs {
+  promise?: Promise<DataOrError<EncodingObject>>
+  progress?: ServerProgress
+}
+
+/**
+ * Dispatch to initiate a transcoding request for an asset.
+ */
+export class EventClientTranscode extends CustomEvent<EventClientTranscodeDetail> {
+  static Type = TRANSCODE
+  constructor(asset: ClientRawAsset, transcodingType: TranscodingType, options?: TranscodeOptions, progress?: ServerProgress) {
+    super(EventClientTranscode.Type, { detail: { asset, transcodingType, options, progress } })
+  }
+}
+
+export interface EventClientTranscodeDetail {
+  options?: TranscodeOptions
+  transcodingType: TranscodingType
+  asset: ClientRawAsset
+  promise?: Promise<DataOrError<TranscodingObject>>
+  progress?: ServerProgress
 }
 
 /**
@@ -39,22 +93,6 @@ export interface EventSaveDetail {
 }
 
 /**
- * Dispatch to initiate an encode request for a mash.
- */
-export class EventClientEncode extends CustomEvent<EventClientEncodeDetail> {
-  static Type = TypeEncode
-  constructor(asset: ClientMashAsset, progress?: ServerProgress) { 
-    super(EventClientEncode.Type, { detail: { asset, progress } }) 
-  }
-}
-
-export interface EventClientEncodeDetail {
-  asset: ClientMashAsset
-  promise?: Promise<StringDataOrError>
-  progress?: ServerProgress
-}
-
-/**
  * Dispatch to initiate an upload request, optionally replacing an existing asset.
  */
 export class EventUpload extends CustomEvent<EventUploadDetail> {
@@ -65,7 +103,7 @@ export class EventUpload extends CustomEvent<EventUploadDetail> {
 }
 
 export interface UploadResult {
-  request: EndpointRequest
+  assetRequest: EndpointRequest
   id?: string
 }
 
@@ -205,13 +243,13 @@ export class EventReleaseManagedAssets extends CustomEvent<ManageType | undefine
  */
 export class EventAddAssets extends CustomEvent<EventAddAssetsDetail> {
   static Type = 'add-assets'
-  constructor(assets: ClientAssets, mashIndex?: MashIndex) { 
+  constructor(assets: ClientAssets, mashIndex?: ClipLocation) { 
     super(EventAddAssets.Type, { detail: { assets, mashIndex } }) 
   }
 }
 
 export interface EventAddAssetsDetail {
-  mashIndex?: MashIndex
+  mashIndex?: ClipLocation
   assets: ClientAssets
 }
 
@@ -219,7 +257,7 @@ export interface EventAddAssetsDetail {
  * Dispatch to retrieve a managed asset from an asset id or object.
  */
 export class EventManagedAsset extends CustomEvent<AssetEventDetail> {
-  static Type = 'managedasset'
+  static Type = 'managed-asset'
   constructor(assetIdOrObject: string | AssetObject, manageType?: ManageType) { 
     const string = typeof assetIdOrObject === 'string' 
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
@@ -227,13 +265,28 @@ export class EventManagedAsset extends CustomEvent<AssetEventDetail> {
     const detail = { assetId, assetObject, manageType }
     super(EventManagedAsset.Type, { detail }) 
   }
+
+  static Detail(assetIdOrObject: string | AssetObject, manageType?: ManageType): AssetEventDetail {
+    const event = new EventManagedAsset(assetIdOrObject, manageType)
+    MovieMasher.eventDispatcher.dispatch(event)
+    return event.detail
+  }
+
+  static asset(assetIdOrObject: string | AssetObject, manageType?: ManageType): ClientAsset {
+    const detail = EventManagedAsset.Detail(assetIdOrObject, manageType)
+    const { asset } = detail
+    assertAsset(asset)
+
+    return asset
+  }
 }
+
 
 /**
  * Dispatch to retrieve an asset from an asset id or object.
  */
 export class EventAsset extends CustomEvent<AssetEventDetail> {
-  static Type = TypeAsset
+  static Type = ASSET
   constructor(assetIdOrObject: string | AssetObject) { 
     const string = typeof assetIdOrObject === 'string' 
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
@@ -562,14 +615,14 @@ export class EventChanged extends CustomEvent<Action | undefined> {
  * Dispatch to retrieve selected properties.
  */
 
-export class EventSelectedProperties extends CustomEvent<SelectedPropertiesEventDetail> {
+export class EventSelectedProperties extends CustomEvent<EventSelectedPropertiesDetail> {
   static Type = 'selected-properties'
   constructor(selectorTypes: SelectorTypes = [], selectedProperties: SelectedProperties = [], ) { 
     super(EventSelectedProperties.Type, { detail: { selectorTypes, selectedProperties } }) 
   }
 }
 
-export interface SelectedPropertiesEventDetail {
+export interface EventSelectedPropertiesDetail {
   selectorTypes?: SelectorTypes
   selectedProperties: SelectedProperties
 }
@@ -583,6 +636,7 @@ export class EventPreviews extends CustomEvent<EventPreviewsDetail> {
     super(EventPreviews.Type, { detail: { disabled, maxDimension } }) 
   }
 }
+
 export interface EventPreviewsDetail {
   disabled?: boolean
   maxDimension?: number
@@ -803,10 +857,8 @@ export interface Icon {
   svgString?: string
 }
 
-export type IconDataOrError = DataOrError<Icon>
-
 export interface EventIconDetail extends TranslateArgs {
-  promise?: Promise<IconDataOrError>
+  promise?: Promise<DataOrError<Icon>>
 }
 
 /**
@@ -892,6 +944,22 @@ export class EventSavableManagedAsset extends CustomEvent<{savable: boolean}> {
 }
 
 /**
+ * Dispatch to retrieve the clips for a track.
+ */
+export class EventTrackClips extends CustomEvent<TrackClipsEventDetail> {
+  static Type = 'track-clips'
+  constructor(trackIndex: number) {
+    super(EventTrackClips.Type, { detail: { trackIndex } })
+  }
+}
+
+export interface TrackClipsEventDetail {
+  trackIndex: number
+  clips?: ClientClips
+  dense?: boolean
+}
+
+/**
  * Dispatch to retrieve the savable managed assets.
  */
 export class EventSavableManagedAssets extends CustomEvent<{assets: ClientAssets}> {
@@ -911,48 +979,17 @@ export class EventImportedManagedAssets extends CustomEvent<ClientAssets> {
   }
 }
 
-export class EventImporterChange extends CustomEvent<ClientAssetObjects> {
-  static Type = 'importer-change'
-  constructor(detail: ClientAssetObjects) { 
-    super(EventImporterChange.Type, { detail }) 
+/**
+ * Dispatch to retrieve a track icon for a clip.
+ */
+export class EventTrackClipIcon extends CustomEvent<EventTrackClipIconDetail> {
+  static Type = 'track-clip-icon'
+  constructor(clipId: string, clipSize: Size, scale: number, gap?: number) {
+    super(EventTrackClipIcon.Type, { detail: { clipId, clipSize, scale, gap } })
   }
 }
 
-
-export type MashMoveClipEvent = CustomEvent<MashIndex>
-
-export interface MashRemoveTrackEventDetail {
-  track: ClientTrack
-}
-
-export type MashRemoveTrackEvent = CustomEvent<MashRemoveTrackEventDetail>
-
-export type RectEvent = CustomEvent<Rect>
-
-export interface TrackClipsEventDetail {
-  trackIndex: number
-  clips?: ClientClips
-  dense?: boolean
-}
-
-export type TrackClipsEvent = CustomEvent<TrackClipsEventDetail>
-
-export interface ScrollRootEventDetail {
-  root?: Element
-}
-
-export type ScrollRootEvent = CustomEvent<ScrollRootEventDetail>
-
-export interface ClipFromIdEventDetail {
-  clipId: string
-  clip?: ClientClip
-}
-
-export type ClipFromIdEvent = CustomEvent<ClipFromIdEventDetail>
-
-export type SvgOrImageDataOrError = DataOrError<SvgOrImage>
-
-export interface IconFromFrameEventDetail {
+export interface EventTrackClipIconDetail {
   clipSize: Size
   clipId: string
   gap?: number
@@ -961,42 +998,107 @@ export interface IconFromFrameEventDetail {
   background?: SVGElement
 }
 
-export type IconFromFrameEvent = CustomEvent<IconFromFrameEventDetail>
+/**
+ * Dispatched when an importer has finished importing.
+ */
+export class EventImporterComplete extends Event {
+  static Type = 'importer-complete'
+  constructor() { super(EventImporterComplete.Type) }
+}
+
+/**
+ * Dispatched when an importer's asset objects have changed.
+ */
+export class EventImporterChange extends CustomEvent<ClientAssetObjects> {
+  static Type = 'importer-change'
+  constructor(detail: ClientAssetObjects) { 
+    super(EventImporterChange.Type, { detail }) 
+  }
+}
+
+/**
+ * Dispatch to move the selected clip within the mash.
+ */
+export class EventMoveClip extends CustomEvent<EventMoveClipDetail> {
+  static Type = 'move-clip'
+  constructor(clipLocation: ClipLocation, clipId?: string) { 
+    super(EventMoveClip.Type, { detail: {clipLocation, clipId} }) 
+  }
+}
+
+export interface EventMoveClipDetail {
+  clipId?: string
+  clipLocation: ClipLocation
+}
+
+/**
+ * Dispatch to remove a specific clip from the mash. 
+ * Alternatively, use EventDoClientAction to remove the selected clip.
+ */
+export class EventRemoveClip extends CustomEvent<{ clipId: string }> {
+  static Type = 'remove-clip'
+  constructor(clipId: string) { 
+    super(EventRemoveClip.Type, { detail: { clipId } }) 
+  }
+}
+
+export const EventTypeMashRemoveTrack = 'mash-remove-track'
+export interface MashRemoveTrackEventDetail {
+  track: ClientTrack
+}
+export type MashRemoveTrackEvent = CustomEvent<MashRemoveTrackEventDetail>
+
+
+export type RectEvent = CustomEvent<Rect>
+
+export interface ScrollRootEventDetail {
+  root?: Element
+}
+export type ScrollRootEvent = CustomEvent<ScrollRootEventDetail>
+
+export type ClipFromIdEvent = CustomEvent<ClipFromIdEventDetail>
+export interface ClipFromIdEventDetail {
+  clipId: string
+  clip?: ClientClip
+}
+
+
+export type SvgOrImageDataOrError = DataOrError<SvgOrImage>
 
 export interface DroppedEventDetail {
   clip?: ClientClip
 }
 
-export type SelectedPropertiesEvent = CustomEvent<SelectedPropertiesEventDetail>
 
-
-
-
-
-export const EventTypeAdded = 'added'
-export const EventTypeAssetType = 'asset-type'
-export const EventTypeDragHandled = 'drag-handled'
-export const EventTypeEnded = 'ended'
+// used in components, dispatched via DOM
 export const EventTypeExportParts = 'export-parts'
-export const EventTypeFps = 'ratechange'
-export const EventTypeIconFromFrame = 'icon-from-frame'
-export const EventTypeImporterComplete = 'importer-complete'
-export const EventTypeLoaded = 'loadeddata'
-export const EventTypeMashMoveClip = 'mash-move-clip'
-export const EventTypeMashRemoveClip = 'mash-remove-clip'
-export const EventTypeMashRemoveTrack = 'mash-remove-track'
+export const EventTypeScrollRoot = 'scroll-root'
+export const EventTypeDragHandled = 'drag-handled'
+
+// used just between components 
+export const EventTypeZoom = 'zoom'
+export const EventTypeAssetType = 'asset-type'
+
+// TODO: dispatched by mash and used
+export const EventTypeTracks = 'tracks'
+
+// TODO: dispatched by mash and unused
 export const EventTypePause = 'pause'
 export const EventTypePlay = 'play'
 export const EventTypePlaying = 'playing'
-export const EventTypeRender = 'render'
-export const EventTypeScale = 'scale'
-export const EventTypeScrollRoot = 'scroll-root'
-export const EventTypeSeeked = 'seeked'
 export const EventTypeSeeking = 'seeking'
-export const EventTypeSourceType = 'source-type'
-export const EventTypeTrack = 'track'
-export const EventTypeTrackClips = 'track-clips'
-export const EventTypeTracks = 'tracks'
-export const EventTypeVolume = 'volumechange'
+export const EventTypeSeeked = 'seeked'
+export const EventTypeEnded = 'ended'
+
+// TODO: unused!
 export const EventTypeWaiting = 'waiting'
-export const EventTypeZoom = 'zoom'
+export const EventTypeTrack = 'track'
+export const EventTypeRender = 'render'
+export const EventTypeLoaded = 'loadeddata'
+
+
+// TODO: dispatched by masher but not used
+export const EventTypeFps = 'ratechange'
+export const EventTypeVolume = 'volumechange'
+export const EventTypeAdded = 'added'
+

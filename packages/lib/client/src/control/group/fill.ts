@@ -5,7 +5,7 @@ import type { ControlGroup, OptionalContent } from '../../declarations.js'
 
 import { DOT } from '@moviemasher/lib-shared'
 import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
-import { End } from '@moviemasher/runtime-shared'
+import { END } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
@@ -17,22 +17,18 @@ const WithControlGroup = ControlGroupMixin(ImporterComponent)
 export class FillControlGroupElement extends WithControlGroup implements ControlGroup {
   override connectedCallback(): void {
     const { propertyIds } = this
-    if (!propertyIds?.length) {
-      console.warn(this.tagName, 'connectedCallback', 'no propertyIds')
-      return
-    }
-    const colorId = this.namePropertyId(`color${End}`)
+    if (!propertyIds?.length) return
+    
+    const colorId = this.namePropertyId(`color${END}`)
     if (colorId) {
       const [target] = colorId.split(DOT)
       const key = `control-group-${target}-color`     
-      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleColor.bind(this)
     }
-    const opacityId = this.namePropertyId(`opacity${End}`)
+    const opacityId = this.namePropertyId(`opacity${END}`)
     if (opacityId) {
       const [target] = opacityId.split(DOT)
       const key = `control-group-${target}-opacity`     
-      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleOpacity.bind(this)
     }
     super.connectedCallback()

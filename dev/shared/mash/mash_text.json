@@ -33,7 +33,7 @@
 	"tracks": [
 		{
 			"clips": [{
-				"containerId": "com.moviemasher.font.butcherman",
+				"containerId": "com.moviemasher.font.croissant-one",
 				"container": {
 					"string": "hello world!"
 				},
@@ -42,8 +42,14 @@
 				},
 				"frame": 0,
 				"frames": 10,
-				"size": 0.2
+					"intrinsic": {
+						"x": 1.953125,
+						"y": 1239.2578125,
+						"width": 6150.87890625,
+						"height": 1361.328125
+					}
 			}]
 		}
 	]
 }
+

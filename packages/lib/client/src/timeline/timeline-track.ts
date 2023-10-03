@@ -1,11 +1,10 @@
-import type { TrackClipsEventDetail } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { Content, Contents, DropTarget, OptionalContent } from '../declarations.js'
 
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { isPositive } from '@moviemasher/lib-shared'
-import { EventChanged, EventClipElement, EventTypeScrollRoot, EventTypeTrackClips, MovieMasher, ScrollRootEventDetail } from '@moviemasher/runtime-client'
+import { EventChanged, EventClipElement, EventTypeScrollRoot, MovieMasher, ScrollRootEventDetail, EventTrackClips } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
@@ -39,10 +38,9 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
     if (!(isPositive(trackIndex) || isPositive(scale))) return 
 
     const contents: Contents = []
-    const detail: TrackClipsEventDetail = { trackIndex }
-    const event = new CustomEvent(EventTypeTrackClips, { detail })
+    const event = new EventTrackClips(trackIndex)
     MovieMasher.eventDispatcher.dispatch(event)
-    const { clips } = detail
+    const { clips } = event.detail
     const labels = true
     const icons = true
     const byId: Record<string, Element> = {}
@@ -118,6 +116,7 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
     const scrollX = root.scrollLeft ?? 0
     const { trackIndex, scale, x } = this
     const offsetDrop = scrollX + clientX - x
+    // console.log(this.tagName, 'mashIndex', { scale, offsetDrop, scrollX, clientX, x })
 
     return droppedMashIndex(dataTransfer!, trackIndex, scale, offsetDrop)
   }

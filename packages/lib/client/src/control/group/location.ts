@@ -5,7 +5,7 @@ import type { Contents, ControlGroup, OptionalContent } from '../../declarations
 
 import { AspectFlip, DIRECTIONS_SIDE } from '@moviemasher/lib-shared'
 import { ClassSelected, EventChangeScalar, EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
-import { Aspect, POINT_KEYS, End, Crop, } from '@moviemasher/runtime-shared'
+import { ASPECT, POINT_KEYS, END, CROP, } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
@@ -33,18 +33,16 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
   }
 
   override connectedCallback(): void {
-    const xId = this.namePropertyId(`x${End}`)
+    const xId = this.namePropertyId(`x${END}`)
     if (xId) {
       const [target] = xId.split(DOT)
       const key = `control-group-${target}-x`     
-      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleX.bind(this)
     }
-    const yId = this.namePropertyId(`y${End}`)
+    const yId = this.namePropertyId(`y${END}`)
     if (yId) {
       const [target] = yId.split(DOT)
       const key = `control-group-${target}-y`     
-      // console.debug(this.tagName, 'connectedCallback', key)
       this.listeners[key] = this.handleY.bind(this)
     }
     super.connectedCallback()
@@ -52,7 +50,7 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
 
   private constrainedContent(flipped: boolean): OptionalContent {
     const contents: Contents = DIRECTIONS_SIDE.flatMap(direction => {
-      const propertyName = `${direction}${Crop}`
+      const propertyName = `${direction}${CROP}`
       const propertyId = this.namePropertyId(propertyName)
       if (!propertyId) return []
 
@@ -79,7 +77,7 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
     const { propertyIds, size } = this
     if (!(size && propertyIds?.length)) return
 
-    const aspectFlip = this.propertyIdValue(`point${Aspect}`) === AspectFlip
+    const aspectFlip = this.propertyIdValue(`point${ASPECT}`) === AspectFlip
     const portrait = size.height > size.width
     const aspectIcon = portrait ? 'landscape' : 'portrait' 
     const xIcon = portrait && aspectFlip ? 'y' : 'x'
@@ -94,7 +92,7 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
         ${this.controlContent('x', xIcon)}
         ${this.controlContent('y', yIcon)}
         ${this.constrainedContent(portrait && aspectFlip)}
-        ${this.controlContent(`point${Aspect}`, aspectIcon)}
+        ${this.controlContent(`point${ASPECT}`, aspectIcon)}
       </fieldset>
     `
   }
@@ -104,9 +102,9 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
   //   if (isChangePropertyAction(action)) {
   //     const { property } = action
   //     if (!(
-  //       property.endsWith(End) 
-  //       || property.endsWith(Crop)
-  //       || property.endsWith(Aspect)
+  //       property.endsWith(END) 
+  //       || property.endsWith(CROP)
+  //       || property.endsWith(ASPECT)
   //     )) return 
 
   //     const { propertyIds } = this
@@ -118,7 +116,7 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
 
   private handleDirection(event: StringEvent) {
     const { detail: direction } = event
-    const propertyName = `${direction}${Crop}`
+    const propertyName = `${direction}${CROP}`
     const propertyId = this.namePropertyId(propertyName)
     if (!propertyId) return
     
@@ -162,9 +160,9 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
   }
 
   private static names: Strings = [
-    ...DIRECTIONS_SIDE.map(direction => `${direction}${Crop}`),
-    ...POINT_KEYS.flatMap(key => ([key, `${key}${End}`])),
-    `point${Aspect}`,
+    ...DIRECTIONS_SIDE.map(direction => `${direction}${CROP}`),
+    ...POINT_KEYS.flatMap(key => ([key, `${key}${END}`])),
+    `point${ASPECT}`,
   ]
 
   static override properties: PropertyDeclarations = {

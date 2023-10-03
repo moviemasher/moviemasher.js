@@ -1,6 +1,6 @@
 import type { MovieMasherClientRuntime } from './ClientTypes.js'
 
-import { MovieMasherImportPromise } from '@moviemasher/runtime-shared'
+import { importPromise } from '@moviemasher/runtime-shared'
 import { ClientEventDispatcher } from './ClientEventDispatcher.js'
 
 export const MovieMasher: MovieMasherClientRuntime = {
@@ -20,6 +20,6 @@ export const MovieMasher: MovieMasherClientRuntime = {
   get importPromise() { 
     const { options, eventDispatcher } = MovieMasher
     const { imports } = options
-    return MovieMasherImportPromise(imports, eventDispatcher)
+    return importPromise(imports, eventDispatcher)
   },
 }

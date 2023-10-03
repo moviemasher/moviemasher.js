@@ -1,6 +1,6 @@
-import type { Clip, ClipObject, ContainerRectArgs, DataOrError, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
+import type { Asset, AssetObject, Clip, ClipObject, ContainerRectArgs, DataOrError, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, RectTuple, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { POINT_ZERO, TypeClip, isPopulatedString, isUndefined } from '@moviemasher/runtime-shared'
+import { ERROR, POINT_ZERO, CLIP, errorThrow, isPopulatedString, isUndefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
 import { DefaultContainerId } from '../../../Helpers/Container/ContainerConstants.js'
 import { assertContainerInstance, isContainerInstance } from '../../../Helpers/Container/ContainerGuards.js'
@@ -20,18 +20,15 @@ import { promiseNumbers } from '../../../Utility/PromiseFunctions.js'
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(object: ClipObject) {
-    const { containerId, contentId, sizing, timing } = object
-    const defaultContent = isUndefined(contentId) || contentId === DefaultContentId
-    const defaultContainer = isUndefined(containerId) || containerId === DefaultContainerId
 
-    if (defaultContent && !sizing) object.sizing = SizingContainer
-    if (defaultContainer && !sizing) object.sizing = SizingPreview
-    if (defaultContent && !timing) object.timing = TimingContainer
-    if (defaultContainer && !timing) object.timing = TimingCustom
-    
     super(object)
     this.initializeProperties(object)
   }
+
+  asset(_: string | AssetObject): Asset {
+    errorThrow(ERROR.Unimplemented)
+  }
+
 
   get assetIds(): Strings {
     const ids = this.content.assetIds
@@ -78,6 +75,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     if (container) {
       object.container = container.instanceObject
     } else object.containerId = ''
+    // console.log(this.constructor.name, 'clipObject', object)
     return object
   }
 
@@ -91,7 +89,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     if (!isPopulatedString(assetId)) return undefined
 
     // console.log(this.constructor.name, 'containerInitialize', assetId, containerId)
-    const asset = this.track.mash.asset(assetId)
+    const asset = this.asset(assetId)
 
     const object: VisibleInstanceObject  = { ...containerObject, assetId, container: true }
     const instance = asset.instanceFromObject(object)
@@ -105,12 +103,12 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   declare containerId: string
 
-  containerRects(args: ContainerRectArgs): Rects {
+  containerRects(args: ContainerRectArgs): RectTuple {
     const { size, loading, editing } = args
     // console.log(this.constructor.name, 'rects rectIntrinsic', loading, editing)
 
     const intrinsicRect = this.rectIntrinsic(size, loading, editing)
-    // console.log(this.constructor.name, 'rects intrinsicRect', intrinsicRect, args)
+    // console.log(this.constructor.name, 'ClipClass.containerRects intrinsicRect', intrinsicRect, args)
     const { container } = this
     assertContainerInstance(container)
     
@@ -130,23 +128,25 @@ export class ClipClass extends PropertiedClass implements Clip {
 
     // console.log(this.constructor.name, 'contentInitialize', assetId, contentId)
 
-    const asset = this.track.mash.asset(assetId)
+    const asset = this.asset(assetId)
+
+
 
     const object: InstanceObject = { ...contentObject, assetId }
-    const instance = asset.instanceFromObject(object)
-    assertContentInstance(instance)
+    const content = asset.instanceFromObject(object)
+    assertContentInstance(content)
 
-    if (this.assureTimingAndSizing(TimingContent, SizingContent, instance)) {
+    if (this.assureTimingAndSizing(TimingContent, SizingContent, content)) {
       const { container } = this
       if (container) {
         this.assureTimingAndSizing(TimingContainer, SizingContainer, container)
       }
     }
 
-    instance.clip = this
+    content.clip = this
 
-    if (this.timing === TimingContent && this._track) this.resetTiming(instance)
-    return instance
+    if (this.timing === TimingContent && this._track) this.resetTiming(content)
+    return content
   }
 
   declare contentId: string
@@ -162,31 +162,42 @@ export class ClipClass extends PropertiedClass implements Clip {
   declare frames: number
   
   override initializeProperties(object: ClipObject): void {
+    // console.log(this.constructor.name, 'initializeProperties', object)
+    const { containerId, contentId, sizing, timing } = object
+    const defaultContent = isUndefined(contentId) || contentId === DefaultContentId
+    const defaultContainer = isUndefined(containerId) || containerId === DefaultContainerId
+
+    if (defaultContent && !sizing) object.sizing = SizingContainer
+    // if (defaultContainer && !sizing) object.sizing = SizingPreview
+    if (defaultContent && !timing) object.timing = TimingContainer
+    // if (defaultContainer && !timing) object.timing = TimingCustom
+    
+    
     this.properties.push(propertyInstance({ 
-      targetId: TypeClip, name: 'label', type: DataTypeString, order: 1,
+      targetId: CLIP, name: 'label', type: DataTypeString, order: 1,
     }))
     this.properties.push(propertyInstance({
-      targetId: TypeClip, name: 'containerId', type: DataTypeContainerId,
+      targetId: CLIP, name: 'containerId', type: DataTypeContainerId,
       defaultValue: DefaultContainerId, order: 5,
     }))
     this.properties.push(propertyInstance({
-      targetId: TypeClip, name: 'contentId', type: DataTypeContentId,
+      targetId: CLIP, name: 'contentId', type: DataTypeContentId,
       defaultValue: DefaultContentId, order: 5,
     }))
     this.properties.push(propertyInstance({ 
-      targetId: TypeClip, name: 'sizing', type: DataTypeString, 
+      targetId: CLIP, name: 'sizing', type: DataTypeString, 
       defaultValue: SizingContent, options: Sizings, order: 2,
     }))
     this.properties.push(propertyInstance({ 
-      targetId: TypeClip, name: 'timing', type: DataTypeString, 
+      targetId: CLIP, name: 'timing', type: DataTypeString, 
       defaultValue: TimingContent, options: Timings, order: 3,
     }))
     this.properties.push(propertyInstance({ 
-      targetId: TypeClip, name: 'frame', type: DataTypeFrame, 
+      targetId: CLIP, name: 'frame', type: DataTypeFrame, 
       defaultValue: DurationNone, min: 0, step: 1, 
     }))
     this.properties.push(propertyInstance({ 
-      targetId: TypeClip, name: 'frames', type: DataTypeFrame, 
+      targetId: CLIP, name: 'frames', type: DataTypeFrame, 
       defaultValue: DurationUnknown, min: 1, step: 1, 
     }))
     super.initializeProperties(object)
@@ -263,25 +274,33 @@ export class ClipClass extends PropertiedClass implements Clip {
     const track = this.track
     switch(timing) {
       case TimingCustom: {
-        
-        // console.log('resetTiming', this.frames)
         if (isAboveZero(this.frames)) break
 
         this.frames = Default.duration * (quantize || track!.mash.quantize)
+        // console.log('resetTiming SET frames from custom', this.frames, { quantize })
         break
       }
       case TimingContainer: {
         const container = isContainerInstance(instance) ? instance : this.container
         if (!container) break
-
+        if (!container.hasIntrinsicTiming) {
+          // console.log(this.constructor.name, 'resetTiming SET timing from container to content')
+          return this.setValue('timing', TimingContent)
+        }
         this.frames = container.frames(quantize || track!.mash.quantize)
+        // console.log('resetTiming SET frames from container', this.frames, { quantize })
         break
       }
       case TimingContent: {
         const content = isContentInstance(instance) ? instance : this.content
         if (!content) break
 
+        if (!content.hasIntrinsicTiming) {
+          // console.log(this.constructor.name, 'resetTiming SET timing content to custom')
+          return this.setValue('timing', TimingCustom)
+        }
         this.frames = content.frames(quantize || track!.mash.quantize)
+        // console.log('resetTiming SET frames from content', this.frames, { quantize })
         break
       }
     }

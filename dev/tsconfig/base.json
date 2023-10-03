@@ -10,10 +10,10 @@
     "checkJs": false,
     "lib": ["DOM", "ESNext", "ES2022", "ES2021", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5", "ES6"],
     "module": "ESNext",
-    "moduleResolution": "Node16",
+    "moduleResolution": "Bundler",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "resolveJsonModule": true,
+    "resolveJsonModule": false,
     "skipLibCheck": false,
     "strict": true,
     "target": "ESNext"
