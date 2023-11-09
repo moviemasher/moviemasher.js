@@ -1,6 +1,6 @@
 import type { Asset, ColorAsset, ColorInstance, ColorInstanceObject, Constrained, Instance, IntrinsicOptions, Rect } from '@moviemasher/runtime-shared'
 
-import { END, RECT_ZERO, CONTENT, IMAGE } from '@moviemasher/runtime-shared'
+import { END, RECT_ZERO, TARGET_CONTENT, IMAGE } from '@moviemasher/runtime-shared'
 import { colorGray } from '../../Helpers/Color/ColorConstants.js'
 import { DataTypeRgb } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
@@ -27,11 +27,11 @@ T & Constrained<ColorInstance> {
 
     override initializeProperties(object: ColorInstanceObject): void {
       this.properties.push(propertyInstance({
-        targetId: CONTENT, name: 'color', type: DataTypeRgb, 
+        targetId: TARGET_CONTENT, name: 'color', type: DataTypeRgb, 
         defaultValue: colorGray, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId: CONTENT, name: `color${END}`, 
+        targetId: TARGET_CONTENT, name: `color${END}`, 
         type: DataTypeRgb, undefinedAllowed: true, tweens: true,
       }))
       super.initializeProperties(object)

@@ -20,7 +20,7 @@ export class ServerActionElement extends ButtonElement {
   }
 
   protected override content(contents: Contents): Content {
-    const { currentProgress, progress } = this
+    const { currentProgress, progressInserting: progress } = this
     if (progress && isDefined<number>(currentProgress)) {
       switch(progress) {
         case 'prepend-content': {
@@ -66,40 +66,30 @@ export class ServerActionElement extends ButtonElement {
   } 
 
   protected override handleClick(clickEvent: PointerEvent): void {
-    const { detail, progress } = this
+    const { detail, progressInserting: progress } = this
     if (detail) {
       clickEvent.stopPropagation()
       const event = new EventDoServerAction(detail, progress ? detail : undefined)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
-      if (promise && progress) {
-        if (this.icon && this.progressWidth === 'icon') {
-          this.iconWidth = this.elementWidth('movie-masher-component-icon')
-        }
-        if (this.string && this.progressWidth === 'string') {
-          this.stringWidth = this.elementWidth('movie-masher-component-string')
-        }
-        this.currentProgress = 0
-        promise.then(() => { this.currentProgress = undefined })
-      }
-      console.debug(this.tagName, this.detail, 'handleClick', !!promise)
+      if (promise && progress) this.currentProgress = 0
     }
   }
 
   private handleProgress(event: EventProgress): void {
     const { progress, id } = event.detail
-    if (!this.progress || id != this.detail) return
+    // console.debug(this.tagName, this.detail, 'handleProgress', progress, id)
+    if (!this.progressInserting || id != this.detail) return
 
-    console.debug(this.tagName, this.detail, 'handleProgress', progress)
-    this.currentProgress = progress
+    this.currentProgress = progress === 1 ? undefined : progress
   }
 
-  progress?: string 
+  progressInserting?: string = 'replace-string'
 
-  progressWidth?: string 
+  progressSizing?: string = 'string'
 
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
-    const { currentProgress, progress } = this
+    const { currentProgress, progressInserting: progress } = this
     if (progress && isDefined<number>(currentProgress)) {
       switch (part) {
         case StringSlot: {
@@ -116,17 +106,34 @@ export class ServerActionElement extends ButtonElement {
   }
 
   private get partProgress(): Content {
-    const { currentProgress: progress = 0 } = this
+    const { currentProgress = 0 } = this
     return html`
-      <progress style='${ifDefined(this.progressStyle)}' value='${progress}' max='1.0'>
-        ${Math.ceil(progress * 100.0)}%
-      </progress>
+      <progress 
+        style='${ifDefined(this.progressStyle)}' 
+        value='${currentProgress}' 
+        max='1.0'
+      ></progress>
     `
   }
 
-  private iconWidth?: string
+  private _iconWidth?: string
+  private get iconWidth(): string | undefined {
+    const { icon, _iconWidth } = this
+    if (_iconWidth) return _iconWidth
+    if (!icon) return
 
-  private stringWidth?: string
+    return this._iconWidth = this.elementWidth('movie-masher-component-icon')
+  }
+
+  private _stringWidth?: string
+  private get stringWidth(): string | undefined {
+    const { string, _stringWidth } = this
+    if (_stringWidth) return _stringWidth
+
+    if (!string) return
+
+    return this._stringWidth = this.elementWidth('movie-masher-component-string')
+  }
 
   private elementWidth(selector: string): string | undefined {
     const element = this.shadowRoot?.querySelector(selector)
@@ -137,7 +144,7 @@ export class ServerActionElement extends ButtonElement {
   }
  
   private get progressStyle(): string | undefined {
-    switch(this.progressWidth) {
+    switch(this.progressSizing) {
       case 'em': return `width:${this.string.length}em;`
       case 'string': return this.stringWidth 
       case 'icon': return this.iconWidth
@@ -148,14 +155,16 @@ export class ServerActionElement extends ButtonElement {
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties)
     if (changedProperties.has('detail')) { this.handleChanged() }
+    if (changedProperties.has('icon')) { delete this._iconWidth }
+    if (changedProperties.has('string')) { delete this._stringWidth }
   }
 
 
   static override properties: PropertyDeclarations = {
     ...ButtonElement.properties,
     currentProgress: { type: Number, attribute: false },
-    progress: { type: String },
-    progressWidth: { type: String, attribute: 'progress-width' },
+    progressInserting: { type: String, attribute: 'progress-inserting' },
+    progressSizing: { type: String, attribute: 'progress-sizing' },
   }
 }
 

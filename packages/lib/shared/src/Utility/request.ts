@@ -1,6 +1,6 @@
 import type { EndpointRequest, Strings } from '@moviemasher/runtime-shared'
 
-import { isEndpoint } from '../Helpers/Endpoint/EndpointFunctions.js'
+import { isEndpoint } from '../Helpers/Endpoint.js'
 import { COLON, SLASH } from '../Setup/Constants.js'
 
 export const ProtocolBlob = 'blob'

@@ -22,14 +22,14 @@ T & Constrained<ControlGroup> {
     }
 
     addOrRemoveEnd(addOrRemove: string, propertyNamePrefix: string): void {
-      const value = this.currentValue(propertyNamePrefix, addOrRemove)
+      const value = addOrRemove ==='remove' ? undefined : this.currentValue(propertyNamePrefix)
       const endName = `${propertyNamePrefix}${END}`
       const endPropertyId = this.namePropertyId(endName)
       if (!endPropertyId) {
-        console.warn(this.tagName, 'addOrRemoveEnd', { endPropertyId, addOrRemove, value })
+        // console.warn(this.tagName, 'addOrRemoveEnd', { endPropertyId, addOrRemove, value })
         return
       }
-      console.log(this.tagName, 'addOrRemoveEnd', endPropertyId)
+      // console.log(this.tagName, 'addOrRemoveEnd', endPropertyId)
       MovieMasher.eventDispatcher.dispatch(new EventChangeScalar(endPropertyId, value))
     }
 
@@ -84,10 +84,7 @@ T & Constrained<ControlGroup> {
       `
     }
 
-    currentValue(name: string, addOrRemove: string): Scalar | undefined  {
-      if (addOrRemove === 'remove') return
-
-      // const name = `${widthOrHeight}${END}`
+    currentValue(name: string): Scalar | undefined  {
       const found = this.namePropertyId(name)
       if (!found) return
 
@@ -120,7 +117,7 @@ T & Constrained<ControlGroup> {
       MovieMasher.eventDispatcher.dispatch(propertiesEvent)
       const { selectedProperties } = propertiesEvent.detail
       if (!selectedProperties?.length) {
-        console.warn(this.tagName, 'addOrRemoveEnd', 'no selected properties')
+        // console.warn(this.tagName, 'addOrRemoveEnd', 'no selected properties')
         return
       }
       const [selectedProperty] = selectedProperties
@@ -154,12 +151,19 @@ T & Constrained<ControlGroup> {
 
 export const ControlGroupStyles: CSSResultGroup = [
   css`
+    :host {
+      --gap: var(--gap-control);
+    }
+
     fieldset {
       flex-grow: 1;
-      line-height: var(--control-size);
-      font-size: var(--control-size);
-      padding: var(--control-spacing);
+      line-height: var(--height-control);
+      font-size: var(--height-control);
+      padding: var(--gap);
       background-color: initial;
+      border-color: var(--fore);
+      border-width: var(--size-border);
+      border-radius: var(--radius-border);
     }
 
     fieldset > legend > movie-masher-component-icon,
@@ -171,9 +175,9 @@ export const ControlGroupStyles: CSSResultGroup = [
     
     fieldset > div {
       display: flex;
-      gap: var(--control-spacing);
+      gap: var(--gap);
       grid-auto-flow: column;
-      margin-bottom: var(--control-spacing);
+      margin-bottom: var(--gap);
     }
 
   `

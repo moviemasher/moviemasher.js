@@ -1,42 +1,41 @@
-import type { AssetObjects } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { EventDialog, EventImportManagedAssets, EventImporterComplete, MovieMasher, EventImporterChange } from '@moviemasher/runtime-client'
+import { EventDialog, EventImporterComplete, EventImporterAdd, EventImporterRemove } from '@moviemasher/runtime-client'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
-import { Footer } from '../Base/LeftCenterRight.js'
+import { FooterElement } from '../Base/LeftCenterRight.js'
 
-export class ImporterFooterElement extends Footer {
+export class ImporterFooterElement extends FooterElement {
   constructor() {
     super()
-    this.listeners[EventImporterChange.Type] = this.handleImporterChange.bind(this)
+    this.listeners[EventImporterAdd.Type] = this.handleImporterAdd.bind(this)
+    this.listeners[EventImporterRemove.Type] = this.handleImporterRemove.bind(this)
     this.listeners[EventImporterComplete.Type] = this.handleImporterComplete.bind(this)
   }
 
-  assetObjects: AssetObjects = []
+  count = 0
 
-  protected handleImporterComplete(): void {
-    MovieMasher.eventDispatcher.dispatch(new EventDialog())
-
-    const { assetObjects } = this
-    MovieMasher.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects))
+  private handleImporterComplete(): void { 
+    this.count = 0
   }
 
-  protected handleImporterChange(event: EventImporterChange): void {
+  private handleImporterAdd(event: EventImporterAdd): void {
     const { detail: assetObjects } = event
-    // console.log(this.tagName, 'handleImporterChange', assetObjects)
-    this.assetObjects = assetObjects
+    this.count += assetObjects.length
+  }
+
+  private handleImporterRemove(): void {
+    this.count -= 1
   }
 
   protected override rightContent(slots: Htmls): OptionalContent {
     this.importTags('movie-masher-component-button')
     const htmls = [...slots]
-    const disabled = this.assetObjects.length ? undefined : true
+    const { count } = this
     // no detail means close any current dialog
     htmls.push(html`
       <movie-masher-component-button
-        icon='remove'
         emit='${EventDialog.Type}' 
         string='Cancel'
       ></movie-masher-component-button>
@@ -44,9 +43,9 @@ export class ImporterFooterElement extends Footer {
     htmls.push(html`
       <movie-masher-component-button 
         icon='add'
-        string='Import ${this.assetObjects.length}'
+        string='Import ${count}'
         emit='${EventImporterComplete.Type}' 
-        disabled='${ifDefined(disabled ? true : undefined)}' 
+        disabled='${ifDefined(count ? undefined : true)}' 
       ></movie-masher-component-button>
     `)
     return super.rightContent(htmls)
@@ -54,8 +53,8 @@ export class ImporterFooterElement extends Footer {
 
 
   static override properties: PropertyDeclarations = {
-    ...Footer.properties,
-    assetObjects: { type: Array, attribute: false }
+    ...FooterElement.properties,
+    count: { type: Number, attribute: false }
   }
   
 }

@@ -1,11 +1,8 @@
-import type { Lock, PropertySize, Rect, RectTuple, Size, SideDirectionRecord, Rects } from '@moviemasher/runtime-shared'
+import type { Lock, Rect, RectTuple, Rects, SideDirectionRecord, Size } from '@moviemasher/runtime-shared'
 
-import { describe, test } from 'node:test'
+import { LockHeight, tweenPad, tweenRectsContainer, tweenScaleSizeToRect } from '@moviemasher/lib-shared'
 import assert from 'assert'
-
-
-import { tweenPad, tweenRectsContainer, tweenScaleSizeToRect } from '../../../packages/lib/shared/src/Shared/Utility/Tween/TweenFunctions.js'
-import { LockHeight } from '../../../packages/lib/shared/src/Setup/LockConstants.js'
+import { describe, test } from 'node:test'
 
 describe('Tween', () => {
   describe('tweenPad', () => {
@@ -78,9 +75,9 @@ describe('Tween', () => {
     ]
 
     testCases.forEach(array => {
-      const [label, tweenRects, intrinsicRect, lock, previewSize, directionRecord, pointAspect, sizeAspect, result] = array
+      const [label, testRects, intrinsicRect, lock, previewSize, directionRecord, pointAspect, sizeAspect, result] = array
       test(label, () => {
-        const tweened = tweenRectsContainer(tweenRects, intrinsicRect, lock, previewSize, directionRecord, pointAspect, sizeAspect)
+        const tweened = tweenRectsContainer(testRects, intrinsicRect, lock, previewSize, directionRecord, pointAspect, sizeAspect)
         assert.deepStrictEqual(tweened, result)
       })
     })

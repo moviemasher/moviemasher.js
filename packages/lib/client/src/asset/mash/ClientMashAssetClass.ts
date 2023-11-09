@@ -2,9 +2,9 @@ import type { Action, Actions, AudioPreview, AudioPreviewArgs, ClientClip, Clien
 import type { AVType, AssetCacheArgs, CacheOptions, ClipObject, Encodings, EventDispatcherListenerRecord, Propertied, Property, Scalar, Size, StringDataOrError, TargetId, Time, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/runtime-shared'
 import type { MashPreview, MashPreviewArgs, MashPreviewOptions } from '../../Client/Masher/MashPreview/MashPreview.js'
 
-import { DOT, Default, EmptyFunction, MashAssetMixin, assertPositive, encodingInstance, isAboveZero, isPositive, isPropertyId, isTextInstance, sizeAboveZero, sortByIndex, timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '@moviemasher/lib-shared'
+import { arrayFromOneOrMore, DOT, Default, EmptyFunction, MashAssetMixin, assertPositive, isAboveZero, isPositive, isPropertyId, isTextInstance, sizeAboveZero, sortByIndex, timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '@moviemasher/lib-shared'
 import { EventChanged, EventChangedFrame, EventChangedFrames, EventChangedPreviews, EventChangedServerAction, EventChangedSize, EventFrames, EventSize, EventTypeEnded, EventTypePause, EventTypePlay, EventTypePlaying, EventTypeSeeked, EventTypeSeeking, EventTypeTracks, MovieMasher, ServerActionSave } from '@moviemasher/runtime-client'
-import { CONTENT, MASH, arrayFromOneOrMore, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
+import { TARGET_CONTENT, MASH, isArray, isDefiniteError } from '@moviemasher/runtime-shared'
 import { ClientClipClass } from '../../Client/Mash/ClientClipClass.js'
 import { isClientClip } from '../../Client/Mash/ClientMashGuards.js'
 import { ClientTrackClass } from '../../Client/Mash/ClientTrackClass.js'
@@ -14,8 +14,8 @@ import { audioPreviewInstance } from '../../Client/Masher/MashPreview/AudioPrevi
 import { MashPreviewClass } from '../../Client/Masher/MashPreview/MashPreviewClass.js'
 import { ClientAssetClass } from '../ClientAssetClass.js'
 
-export type TrackClips = [ClientTrack, ClientClips]
-export type Interval = ReturnType<typeof setInterval>
+type TrackClips = [ClientTrack, ClientClips]
+type Interval = ReturnType<typeof setInterval>
 
 const WithMashAsset = MashAssetMixin(ClientAssetClass)
 export class ClientMashAssetClass extends WithMashAsset implements ClientMashAsset {
@@ -101,6 +101,13 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     return track
   }
 
+
+  override get assetObject(): ClientMashAssetObject {
+    const object = super.assetObject
+    const { encodings } = this
+    return { ...object, encodings }
+  }
+
   buffer = Default.mash.buffer
 
   private bufferStart() {
@@ -184,7 +191,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     if (isChangePropertyAction(action)) {
       const { property, target } = action
       switch(property) {
-        case `${CONTENT}${DOT}gain`: {
+        case `${TARGET_CONTENT}${DOT}gain`: {
           if (isClientClip(target)) {
             this.composition.adjustClipGain(target, this.quantize)
           }    
@@ -192,8 +199,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
         }
       }
     }
-
-    // this.selection = action.selection
+    
     // console.log(this.constructor.name, 'dispatchChanged', action.constructor.name)
     MovieMasher.eventDispatcher.dispatch(new EventChanged(action))
     MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
@@ -251,25 +257,6 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
 
   get frame(): number { return this.time.scale(this.quantize, 'floor').frame }
 
-  // private cacheOptions(options: CacheOptions = {}): CacheOptions {
-  //   const { time, audible, visible } = options
-  //   const definedTime = time || this.time
-  //   const { isRange } = definedTime
-  //   const definedVisible = visible || !isRange
-  //   const definedAudible = isRange && audible
-
-  //   const args: CacheOptions = {
-  //     audible: definedAudible, visible: definedVisible,
-  //     time: definedTime,
-  //     quantize: this.quantize,
-  //   }
-
-  //   const okay = definedVisible || definedAudible
-  //   // if (!okay) console.log(this.constructor.name, 'graphFileArgs', args)
-  //   assertTrue(okay, 'audible || visible')
-  //   return args
-  // }
-
   private handleDrawInterval(): void {
     // console.log(this.constructor.name, 'handleDrawInterval', this._playing)
     // what time does the audio context think it is?
@@ -299,7 +286,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
 
   private handleFrames(event: EventFrames) {
     const { totalFrames } = this
-    console.log(this.constructor.name, 'handleFrames', totalFrames)
+    // console.log(this.constructor.name, 'handleFrames', totalFrames)
     event.detail.frames = totalFrames
   }
 
@@ -310,15 +297,13 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
 
   override initializeProperties(object: ClientMashAssetObject): void {
     const { buffer } = object
-    const { encodings } = object 
-    if (isArray(encodings)) this.encodings.push(...encodings.map(encodingInstance))
-
     if (isAboveZero(buffer)) this.buffer = buffer
 
+    const { encodings } = object 
+    if (isArray(encodings)) this.encodings.push(...encodings)
     super.initializeProperties(object)  
 
     MovieMasher.eventDispatcher.listenersAdd(this.listeners)
-
     MovieMasher.eventDispatcher.dispatch(new EventChangedSize(this.size))
     MovieMasher.eventDispatcher.dispatch(new EventChangedFrames(this.totalFrames))
   }
@@ -424,17 +409,14 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   }
 
   private previewArgs(options: MashPreviewOptions = {}, selectedClip?: ClientClip): MashPreviewArgs {
-    // const clip = masher?.selection
-    // const selectedClip = isClip(clip) ? clip : undefined
     const { drawingTime, time, quantize } = this
     const svgTime = drawingTime || time
     const args: MashPreviewArgs = {
       selectedClip,
-      time: svgTime.scale(quantize),
+      time: svgTime.scale(quantize, 'floor'),
       mash: this,
       ...options,
     }
-    // console.log(this.constructor.name, 'previewArgs', args)
     return args
   }
 
@@ -485,9 +467,9 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   override savePromise(progress?: ServerProgress): Promise<StringDataOrError> { 
     const promise = this.savingPromise(progress)
     return promise.then(orError => {
-      // console.log(this.constructor.name, 'savePromise', orError)
       if (!isDefiniteError(orError)) {
         this.actions.save()
+        // console.log(this.constructor.name, 'ClientMashAssetClass savePromise calling', orError.data)
         this.saveId(orError.data)
       }
       return orError
@@ -590,6 +572,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   declare tracks: ClientTracks
 
   updateAssetId(oldId: string, newId: string): void {
+    // console.log(this.constructor.name, 'updateAssetId', oldId, newId)
     this.clips.forEach(clip => clip.updateAssetId(oldId, newId))
   }
 }

@@ -18,7 +18,7 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
     <script src='https://unpkg.com/@moviemasher/lib-shared@5.1.2/umd/moviemasher.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/theme-default@5.1.2/umd/theme-default.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/lib-client@5.1.2/umd/lib-client.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/client-react@5.1.2/umd/client-react.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/lib-client@5.1.2/umd/client-react.js' crossorigin></script>
     <link href='https://unpkg.com/@moviemasher/theme-default@5.1.2/moviemasher.css' rel='stylesheet'>
     <style> /* fit root DIV to viewport */
       body { margin: 0px; padding: 0px; font-family: sans-serif; }

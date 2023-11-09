@@ -7,7 +7,7 @@ The following shell command installs the server and core libraries to your NPM p
 saving the former to the `dependencies` array in your **package.json** file.
 
 ```shell
-npm install @moviemasher/server-express --save
+npm install @moviemasher/lib-server --save
 ```
 Alternatively, if you're wanting to build your own server you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/lib-shared) instead.
 
@@ -24,7 +24,7 @@ This does not install a client implementation that interacts with this package. 
 <!-- MAGIC:START (TRIMCODE:src=../../../../images/standalone/src/server.ts) -->
 
 ```ts
-import { Host, HostDefaultOptions } from '@moviemasher/server-express'
+import { Host, HostDefaultOptions } from '@moviemasher/lib-server'
 const host = new Host(HostDefaultOptions())
 host.start()
 ```

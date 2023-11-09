@@ -195,39 +195,40 @@ export class SelectorAssetElement extends Component {
     Component.cssBorderBoxSizing,
     css`
       :host {
+        --pad: var(--pad-label);
+        --height: var(--height-label);
+        --height-text: calc(var(--height) - (2 * var(--pad)));
+
         cursor: grab;
         display: inline-block;
-   
         border: var(--border);
-        border-radius: var(--border-radius);
-        border-color: var(--item-fore);
-        color: var(--item-fore);
-        background-color: var(--item-back);
+        border-radius: var(--radius-border);
+        border-color: var(--fore);
+        background-color: var(--fore);
+        color: var(--back);
       }
       :host > div {
         display: inline-block;
       }
       :host > label {
-        font-size: initial;
-        --padding: 2px;
+        color: var(--back);
+        height: var(--height);
+        font-size: var(--height-text);
+        line-height: var(--height-text);
+        padding: var(--pad);
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        padding: var(--padding);
       }
-      :host(:hover),
+      :host(:hover) {
+        border-color: var(--over);
+        background-color: var(--over);
+      }
       :host(.selected) {
-        border-color: var(--item-fore-selected);
-        color: var(--item-fore-selected);
-        background-color: var(--item-back-selected);
+        border-color: var(--on);
+        background-color: var(--on);
       }
-
-      :host(.selected:hover ){
-        border-color: var(--item-back-hover);
-        color: var(--item-back-hover);
-        background-color: var(--item-fore-hover);
-      }  
     `
   ]
 }
@@ -241,5 +242,7 @@ declare global {
   }
 }
 
-// listen for asset object node event
-MovieMasher.eventDispatcher.addDispatchListener(EventAssetElement.Type, SelectorAssetElement.handleAssetElement)
+// listen for asset element event
+export const ClientAssetElementListeners = () => ({
+  [EventAssetElement.Type]: SelectorAssetElement.handleAssetElement
+})

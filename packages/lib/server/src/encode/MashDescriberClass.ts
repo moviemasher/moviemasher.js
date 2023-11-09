@@ -1,13 +1,33 @@
-import type { AVType, AssetCacheArgs, DataOrError, DecodingObject, EncodingType, IntrinsicOptions, Size, Time, VideoOutputOptions } from '@moviemasher/runtime-shared'
-import type { ServerClips } from '../Types/ServerMashTypes.js'
+import type { AVType, AssetCacheArgs, DataOrError, Decoding, EncodingType, IntrinsicOptions, Size, Time, VideoOutputOptions } from '@moviemasher/runtime-shared'
+import type { ServerClips, ServerMashAsset } from '../Types/ServerMashTypes.js'
 import type { CommandDescription, MashDescription, MashDescriber, MashDescriberOptions } from './MashDescriberTypes.js'
-import type { FilterGraphs, FilterGraphsOptions } from './FilterGraphs/FilterGraphs.js'
+import type { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from './FilterGraphs/FilterGraphs.js'
 
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo, Default, JsonExtension, assertAboveZero, isAboveZero, isPositive, isRequestable, promiseNumbers, sizeAboveZero, sizeCopy, timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '@moviemasher/lib-shared'
 import { EventServerDecode, MovieMasher } from '@moviemasher/runtime-server'
 import { AUDIO, ERROR, IMAGE, PROBE, VIDEO, assertTyped, errorPromise, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
-import { KindsProbe } from '../decode/ProbeConstants.js'
-import { filterGraphsArgs, filterGraphsInstance } from './FilterGraphs/FilterGraphsFactory.js'
+import { KindsProbe } from '@moviemasher/lib-shared'
+import { FilterGraphsClass } from './FilterGraphs/FilterGraphsClass.js'
+
+const filterGraphsArgs = (mash: ServerMashAsset, options: FilterGraphsOptions = {}): FilterGraphsArgs => {
+  const { background, time, avType, size, videoRate, ...rest } = options
+  const definedTime = time || timeFromArgs()
+  const definedAVType = avType || (definedTime.isRange ? AVTypeBoth : AVTypeVideo)
+  const filterGraphsOptions: FilterGraphsArgs = {
+    ...rest,
+    times: mash.timeRanges(definedAVType, definedTime),
+    avType: definedAVType,
+    size: size || mash.size,
+    videoRate: videoRate || definedTime.fps,
+    mash,
+    background: background || mash.color,
+  }
+  return filterGraphsOptions
+}
+
+const filterGraphsInstance = (args: FilterGraphsArgs): FilterGraphs => {
+  return new FilterGraphsClass(args)
+}
 
 export class MashDescriberClass implements MashDescriber {
   constructor(public args: MashDescriberOptions) {}
@@ -30,7 +50,7 @@ export class MashDescriberClass implements MashDescriber {
       const { asset } = content
       if (!isRequestable(asset)) return []
       const { type, request } = asset
-      const event = new EventServerDecode(PROBE, type, request, JsonExtension, { types: KindsProbe })
+      const event = new EventServerDecode(PROBE, type, request, '', JsonExtension, { types: KindsProbe })
       MovieMasher.eventDispatcher.dispatch(event)
       
       const { promise } = event.detail
@@ -40,7 +60,7 @@ export class MashDescriberClass implements MashDescriber {
         if (isDefiniteError(orError)) return orError
 
         const { data: json } = orError
-        const probingData: DecodingObject = JSON.parse(json)
+        const probingData: Decoding = JSON.parse(json)
         assertTyped(probingData, 'probingData')
         // console.log(this.constructor.name, 'assureClipFrames PROBE', probingData)
         asset.decodings.push(probingData)

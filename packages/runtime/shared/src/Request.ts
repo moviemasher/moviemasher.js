@@ -6,7 +6,7 @@ export interface EndpointRequest {
   init?: RequestInit
 }
 
-export type EndpointRequests = EndpointRequest[]
+export interface EndpointRequests extends Array<EndpointRequest>{}
 
 export interface RequestInit {
   body?: any

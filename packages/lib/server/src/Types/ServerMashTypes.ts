@@ -48,11 +48,11 @@ export interface ServerClip extends Clip {
   intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles
 }
 
-export type ServerClips = ServerClip[]
+export interface ServerClips extends Array<ServerClip>{}
 
 export interface ServerTrack extends Track {
   clips: ServerClips
   mash: ServerMashAsset
 }
 
-export type ServerTracks = ServerTrack[]
+export interface ServerTracks extends Array<ServerTrack>{}

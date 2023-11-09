@@ -1,6 +1,6 @@
 import type { Asset, AssetObject, Clip, ClipObject, ContainerRectArgs, DataOrError, Instance, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Property, Rect, RectTuple, Rects, Scalar, Size, Sizing, Strings, Time, TimeRange, Timing, Track, UnknownRecord, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { ERROR, POINT_ZERO, CLIP, errorThrow, isPopulatedString, isUndefined } from '@moviemasher/runtime-shared'
+import { ERROR, POINT_ZERO, TARGET_CLIP, errorThrow, isPopulatedString, isUndefined } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../../Base/PropertiedClass.js'
 import { DefaultContainerId } from '../../../Helpers/Container/ContainerConstants.js'
 import { assertContainerInstance, isContainerInstance } from '../../../Helpers/Container/ContainerGuards.js'
@@ -174,30 +174,30 @@ export class ClipClass extends PropertiedClass implements Clip {
     
     
     this.properties.push(propertyInstance({ 
-      targetId: CLIP, name: 'label', type: DataTypeString, order: 1,
+      targetId: TARGET_CLIP, name: 'label', type: DataTypeString, order: 1,
     }))
     this.properties.push(propertyInstance({
-      targetId: CLIP, name: 'containerId', type: DataTypeContainerId,
+      targetId: TARGET_CLIP, name: 'containerId', type: DataTypeContainerId,
       defaultValue: DefaultContainerId, order: 5,
     }))
     this.properties.push(propertyInstance({
-      targetId: CLIP, name: 'contentId', type: DataTypeContentId,
+      targetId: TARGET_CLIP, name: 'contentId', type: DataTypeContentId,
       defaultValue: DefaultContentId, order: 5,
     }))
     this.properties.push(propertyInstance({ 
-      targetId: CLIP, name: 'sizing', type: DataTypeString, 
+      targetId: TARGET_CLIP, name: 'sizing', type: DataTypeString, 
       defaultValue: SizingContent, options: Sizings, order: 2,
     }))
     this.properties.push(propertyInstance({ 
-      targetId: CLIP, name: 'timing', type: DataTypeString, 
+      targetId: TARGET_CLIP, name: 'timing', type: DataTypeString, 
       defaultValue: TimingContent, options: Timings, order: 3,
     }))
     this.properties.push(propertyInstance({ 
-      targetId: CLIP, name: 'frame', type: DataTypeFrame, 
+      targetId: TARGET_CLIP, name: 'frame', type: DataTypeFrame, 
       defaultValue: DurationNone, min: 0, step: 1, 
     }))
     this.properties.push(propertyInstance({ 
-      targetId: CLIP, name: 'frames', type: DataTypeFrame, 
+      targetId: TARGET_CLIP, name: 'frames', type: DataTypeFrame, 
       defaultValue: DurationUnknown, min: 1, step: 1, 
     }))
     super.initializeProperties(object)

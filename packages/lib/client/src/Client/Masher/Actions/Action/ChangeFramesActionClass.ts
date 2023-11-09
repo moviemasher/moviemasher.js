@@ -4,9 +4,6 @@ import { assertClientInstance } from '../../../ClientGuards.js'
 import { isClientClip } from '../../../Mash/ClientMashGuards.js'
 import { ChangePropertyActionClass } from './ChangePropertyActionClass.js'
 
-/**
- * @category Action
- */
 export class ChangeFramesActionClass extends ChangePropertyActionClass {
   constructor(object : ChangePropertyActionObject) {
     super(object)

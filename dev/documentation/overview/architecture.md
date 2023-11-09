@@ -1,5 +1,3 @@
-## Architecture
-
 The Movie Masher codebase is organized as a monorepo which is made available
 in GitHub as [moviemasher/moviemasher.js](https://github.com/moviemasher/moviemasher.js).
 This repository contains and builds several packages which are made available
@@ -10,7 +8,7 @@ in NPM:
   and [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
   to composite and mix audiovisual content in a timed and controlled way.
 
-- [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express) - higher
+- [@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server) - higher
   level NPM package that uses
   [ExpressJS](https://expressjs.com),
   [SQLite](https://www.sqlite.org/index.html),
@@ -19,7 +17,7 @@ in NPM:
   [WebRTC](https://github.com/node-webrtc/node-webrtc),
   and the core package to provide server APIs that manage files, data, encoding, and streaming.
 
-- [@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) - higher
+- [@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client) - higher
   level NPM package that uses
   [ReactJS](https://reactjs.org)
   and both the core and icon packages to build a client user interface that facilitates playback and

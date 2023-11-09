@@ -3,7 +3,7 @@ export interface Point {
   y: number
 }
 
-export type Points = Point[]
+export interface Points extends Array<Point>{}
 
 export type PointTuple = [Point, Point]
 

@@ -22,13 +22,13 @@
         }
       }
     </script>
-    <script type="module">
+    <script type='module'>
       // import { MovieMasher } from '@moviemasher/runtime-client';
-      // MovieMasher.options.assetObjectsOptions = {
-      //   request: {
-      //     endpoint: 'data/asset/list',
-      //     init: { method: 'POST' }
-      //   }
+      // MovieMasher.options.assetObject =  {
+      //   id: '',
+      //   color: '#FFFF00',
+      //   type: 'video',
+      //   source: 'mash'
       // };
       import '@moviemasher/lib-client/movie-masher.js';
     </script>
@@ -44,14 +44,28 @@
       @media(prefers-color-scheme: dark) {
         body { background-color: #2d1e05; color: #fff; }
       }
+      /* 
       movie-masher {
-        --gap: 20px;
-        padding: var(--gap);
+        --fore-chrome: green;
+        --back-chrome: pink;
+        --over-chrome: magenta;
+        --on-chrome: orange;
+        --off-chrome: black;
+      } 
+      movie-masher {
+        --gap: 5px;
+        --pad: 5px;
       }
+      movie-masher::part(browser-footer) {
+        --fore-chrome: red;
+        --gap-chrome: 20px;
+      }
+      */
     </style>
   </head>
   <body>
-    <movie-masher asset-object='asset/default' asset-objects='asset/list'></movie-masher>
+    <movie-masher asset-object='asset/default' asset-objects='asset/list'>
+    </movie-masher>
   </body>
 </html>
  

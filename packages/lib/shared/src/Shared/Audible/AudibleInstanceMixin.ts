@@ -1,6 +1,6 @@
 import type { AudibleAsset, AudibleInstance, AudibleInstanceObject, Constrained, Instance, IntrinsicOptions, Numbers, Property, Scalar, Time, UnknownRecord, Value } from '@moviemasher/runtime-shared'
 
-import { CONTENT, isString } from '@moviemasher/runtime-shared'
+import { TARGET_CONTENT, isString } from '@moviemasher/runtime-shared'
 import { timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
 import { COMMA, DOT } from '../../Setup/Constants.js'
 import { DataTypeBoolean, DataTypeFrame, DataTypeNumber, DataTypePercent } from '../../Setup/DataTypeConstants.js'
@@ -101,29 +101,29 @@ T & Constrained<AudibleInstance> {
       const { asset } = this
       if (asset.audio) {
         this.properties.push(propertyInstance({ 
-          targetId: CONTENT, name: 'muted', type: DataTypeBoolean, 
+          targetId: TARGET_CONTENT, name: 'muted', type: DataTypeBoolean, 
         }))
         if (asset.loop) {
           this.properties.push(propertyInstance({ 
-            targetId: CONTENT, name: 'loops', type: DataTypeNumber, 
+            targetId: TARGET_CONTENT, name: 'loops', type: DataTypeNumber, 
             defaultValue: 1, 
           }))
         }
         this.properties.push(propertyInstance({ 
-          targetId: CONTENT, name: 'gain', type: DataTypePercent, 
+          targetId: TARGET_CONTENT, name: 'gain', type: DataTypePercent, 
           defaultValue: 1.0, min: 0, max: 2.0, step: 0.01 
         }))
       }
       this.properties.push(propertyInstance({ 
-        targetId: CONTENT, name: 'speed', type: DataTypePercent, 
+        targetId: TARGET_CONTENT, name: 'speed', type: DataTypePercent, 
         defaultValue: 1.0, min: 0.1, max: 2.0, step: 0.1, 
       }))
       this.properties.push(propertyInstance({ 
-        targetId: CONTENT, name: 'startTrim', type: DataTypeFrame,
+        targetId: TARGET_CONTENT, name: 'startTrim', type: DataTypeFrame,
         defaultValue: 0, step: 1, min: 0, 
       }))
       this.properties.push(propertyInstance({ 
-        targetId: CONTENT, name: 'endTrim', type: DataTypeFrame,
+        targetId: TARGET_CONTENT, name: 'endTrim', type: DataTypeFrame,
         defaultValue: 0, step: 1, min: 0, 
       }))
       super.initializeProperties(object)

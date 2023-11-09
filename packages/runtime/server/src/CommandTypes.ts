@@ -10,14 +10,14 @@ export interface CommandFile extends GraphFile {
   inputId: string
 }
 
-export type CommandFiles = CommandFile[]
+export interface CommandFiles extends Array<CommandFile>{}
 
 export interface CommandInput {
   source: string
   options?: ValueRecord
 }
 
-export type CommandInputs = CommandInput[]
+export interface CommandInputs extends Array<CommandInput>{}
 
 export interface CommandFilter {
   avType?: AVType
@@ -27,7 +27,7 @@ export interface CommandFilter {
   options: ValueRecord
 }
 
-export type CommandFilters = CommandFilter[]
+export interface CommandFilters extends Array<CommandFilter>{}
 
 export interface CommandFileOptions {
   streaming?: boolean

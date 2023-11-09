@@ -4,7 +4,7 @@ import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { Contents, ControlGroup, OptionalContent } from '../../declarations.js'
 
 import { AspectFlip, DIRECTIONS_SIDE } from '@moviemasher/lib-shared'
-import { ClassSelected, EventChangeScalar, EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
+import { EventChangeScalar, EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
 import { ASPECT, POINT_KEYS, END, CROP, } from '@moviemasher/runtime-shared'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 import { html } from 'lit-html/lit-html.js'
@@ -14,7 +14,7 @@ import { ImporterComponent } from '../../Base/ImporterComponent.js'
 import { SizeReactiveMixin } from '../../Base/SizeReactiveMixin.js'
 import { DOT } from '@moviemasher/lib-shared'
 
-const LocationControlGroupElementName = 'movie-masher-control-group-location'
+const LocationControlGroupTag = 'movie-masher-control-group-location'
 const EventLocationControlGroupType = 'point-control-group'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
@@ -59,7 +59,8 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
       return [html`
         <movie-masher-component-a
           emit='${EventLocationControlGroupType}' detail='${direction}'
-          icon='${icon}' class='${ifDefined(value ? ClassSelected : undefined)}'
+          icon='${icon}' 
+          selected='${ifDefined(value ? true : undefined)}'
         ></movie-masher-component-a>
       `]
     })
@@ -143,9 +144,9 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
       !groupedPropertyIds.includes(id)
     )
     const { names } = LocationControlGroupElement
-    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(name)))
-    // console.log('LocationControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
+    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(`${DOT}${name}`)))
     if (foundIds.length) {
+      // console.log('LocationControlGroupElement.handleControlGroup', foundIds, names)
       detail.order = 1
       detail.controlGroup = LocationControlGroupElement.instance(foundIds)
       detail.groupedPropertyIds.push(...foundIds)
@@ -154,7 +155,7 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
   }
 
   static instance(propertyIds: PropertyIds) {
-    const element = document.createElement(LocationControlGroupElementName)
+    const element = document.createElement(LocationControlGroupTag)
     element.propertyIds = propertyIds
     return element
   }
@@ -177,15 +178,18 @@ export class LocationControlGroupElement extends WithSizeReactive implements Con
 }
 
 // register web component as custom element
-customElements.define(LocationControlGroupElementName, LocationControlGroupElement)
+customElements.define(LocationControlGroupTag, LocationControlGroupElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [LocationControlGroupElementName]: LocationControlGroupElement
+    [LocationControlGroupTag]: LocationControlGroupElement
   }
 }
 
 // listen for control group event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControlGroup.Type, LocationControlGroupElement.handleControlGroup
-)
+export const ClientGroupLocationListeners = () => ({
+  [EventControlGroup.Type]: LocationControlGroupElement.handleControlGroup
+})
+
+
+

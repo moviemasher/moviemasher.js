@@ -1,4 +1,4 @@
-import type { AudibleInstance, AudioAsset, AudioInstance, AudioInstanceObject, ColorAsset, ColorInstance, ContainerInstance, EndpointRequest, ImageAsset, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, JsonRecord, MovieMasherOptions, MovieMasherRuntime, PropertySize, RawAsset, Rect, RequestObject, ShapeAsset, ShapeInstance, Size, TextAsset, TextAssetObject, TextInstance, Time, TimeRange, Transcoding, IMAGE, VideoAsset, VideoInstance, VideoInstanceObject, VisibleInstance } from '@moviemasher/runtime-shared'
+import type { AudibleInstance, AudioAsset, AudioInstance, AudioInstanceObject, ColorAsset, ColorInstance, ContainerInstance, EndpointRequest, ImageAsset, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, JsonRecord, MovieMasherOptions, MovieMasherRuntime, PropertySize, RawAsset, Rect, RequestObject, ShapeAsset, ShapeInstance, Size, TextAsset, TextAssetObject, TextInstance, Time, TimeRange, Transcoding, IMAGE, VideoAsset, VideoInstance, VideoInstanceObject, VisibleInstance, AssetObject, AssetObjects, StringRecord } from '@moviemasher/runtime-shared'
 import type { StartOptions } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
 import type { ClientAudibleAsset, ClientVisibleAsset } from './ClientAssetTypes.js'
@@ -79,9 +79,12 @@ export interface ClientTextAssetObject extends TextAssetObject {
 }
 
 export interface MovieMasherClientOptions extends MovieMasherOptions {
-  assetObjectOptions?: RequestObject
-  assetObjectsOptions?: RequestObject
-  iconOptions?: RequestObject
+  assetObject?: EndpointRequest | AssetObject
+  assetObjects?: EndpointRequest | AssetObjects
+  icons?: EndpointRequest | StringRecord
+  browserOptions?: {
+    
+  } 
   transcodeOptions?: {
     auto: {
       [IMAGE]: []

@@ -3,6 +3,7 @@ import type { PropertyDeclarations } from 'lit'
 
 import { EventTypeZoom, MovieMasher } from '@moviemasher/runtime-client'
 import { isNumber } from '@moviemasher/runtime-shared'
+import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
@@ -39,7 +40,22 @@ export class TimelineZoomElement extends WithDisablable {
   static override properties: PropertyDeclarations = { 
     ...DisablableProperties,
     zoom: { type: Number, attribute: false },
-   }
+  }
+
+  static override styles = [
+    css`
+      input {
+        flex-grow: 1;
+        width: 100%;
+        min-width: 50px;
+        height: var(--height-control);
+        accent-color: var(--fore);
+      }
+      input:hover {
+        accent-color: var(--over);
+      }
+    `
+  ]
 }
 
 // register web component as custom element

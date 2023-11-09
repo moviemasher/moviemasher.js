@@ -1,11 +1,12 @@
 export type TargetId = 'asset' | 'clip' | 'container' | 'content' | 'mash' 
 
-export type TargetIds = TargetId[]
+export interface TargetIds extends Array<TargetId>{}
 
 export type PropertyId = `${TargetId}.${string}`
-export type PropertyIds = PropertyId[]
+
+export interface PropertyIds extends Array<PropertyId>{}
 
 export type SelectorType = TargetId | PropertyId 
 
-export type SelectorTypes = SelectorType[]
+export interface SelectorTypes extends Array<SelectorType>{}
 

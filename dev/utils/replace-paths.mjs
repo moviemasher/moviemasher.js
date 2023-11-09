@@ -17,7 +17,7 @@ const replacements = [
   ['react-dom.development.js', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'],
   ['moviemasher.js', 'https://unpkg.com/@moviemasher/lib-shared/dist/moviemasher.js'],
   ['theme-default.js', 'https://unpkg.com/@moviemasher/theme-default/dist/theme-default.js'],
-  ['client-react.js', 'https://unpkg.com/@moviemasher/client-react/dist/client-react.js'],
+  ['client-react.js', 'https://unpkg.com/@moviemasher/lib-client/dist/client-react.js'],
   ['lib-client.js', 'https://unpkg.com/@moviemasher/lib-client/dist/lib-client.js'],
   ['moviemasher.css', 'https://unpkg.com/@moviemasher/theme-default/dist/moviemasher.css']
 ]

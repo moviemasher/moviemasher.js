@@ -2,9 +2,9 @@ import type { ChangeActionObject, ChangePropertiesActionObject, ClientClip, Clie
 import type { Asset, AssetObject, ContainerRectArgs, PropertyId, Scalar, ScalarsById, Size, TargetId, Time } from '@moviemasher/runtime-shared'
 import type { MashPreviewArgs } from '../Masher/MashPreview/MashPreview.js'
 
-import { ActionTypeChangeFrame, ActionTypeChangeMultiple, ClipClass, DOT, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, arrayOfNumbers, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate, isContainerInstance } from '@moviemasher/lib-shared'
+import { ActionTypeChangeFrame, ActionTypeChangeMultiple, ClipClass, DOT, SizingContainer, SizingContent, TimingContainer, TimingContent, TimingCustom, arrayOfNumbers, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate, timeFromArgs } from '@moviemasher/lib-shared'
 import { EventManagedAsset, Panel } from '@moviemasher/runtime-client'
-import { AUDIO, ERROR, POINT_ZERO, CLIP, errorPromise, isAudibleAssetType, isVisibleAssetType } from '@moviemasher/runtime-shared'
+import { AUDIO, POINT_ZERO, TARGET_CLIP, isAudibleAssetType, isVisibleAssetType } from '@moviemasher/runtime-shared'
 import { assertClientVisibleInstance } from '../ClientGuards.js'
 import { isChangePropertyActionObject } from '../Masher/Actions/Action/ActionFunctions.js'
 import { MashPreviewClass } from '../Masher/MashPreview/MashPreviewClass.js'
@@ -34,31 +34,24 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     return svgSvgElement(patternedSize, [defsElement, patternedPolygon])
   }
 
-  clipIcon(frameSize: Size, size: Size, scale: number, gap = 1): Promise<SvgOrImageDataOrError> {
-    const { container } = this
-    if (!isContainerInstance(container)) {
-      return errorPromise(ERROR.Type, 'clip has no container')
-    }
-    const { mash } = this.track
-    const widthAndBuffer = frameSize.width + gap
-    const cellCount = Math.ceil(size.width / widthAndBuffer)
-    const clipTime = this.timeRange
-    const { startTime } = clipTime
-    const numbers = arrayOfNumbers(cellCount)
-    // console.log(this.constructor.name, 'clipIcon', cellCount, numbers)
+  clipIcon(size: Size, totalSize: Size, scale: number, gap = 1): Promise<SvgOrImageDataOrError> {
+    const { timeRange, track } = this
+    const { startTime, fps } = timeRange
+    const { frame } = startTime
+    const { mash } = track
+    const widthAndBuffer = size.width + gap
+    const cells = arrayOfNumbers(Math.ceil(totalSize.width / widthAndBuffer))
     let pixel = 0
-    const previews = numbers.map(() => {
-      const { copy: time } = startTime
-      const previewArgs: MashPreviewArgs = {
-        mash, time, clip: this, size: frameSize
-      }
-      const preview = new MashPreviewClass(previewArgs)
-
+    const times = cells.map(() => {
+      const currentFrame = frame + pixelToFrame(pixel, scale, 'floor')
       pixel += widthAndBuffer
-      startTime.frame = clipTime.frame + pixelToFrame(pixel, scale, 'floor')
-      return preview
+      return timeFromArgs(currentFrame, fps)
     })
-
+    const validTimes = times.filter(time => timeRange.intersects(time))
+    const previews = validTimes.map(time => {
+      const previewArgs: MashPreviewArgs = { clip: this, mash, size, time }
+      return new MashPreviewClass(previewArgs)
+    })
     let svgItemsPromise = Promise.resolve([] as SvgItems)
     previews.forEach(preview => {
       svgItemsPromise = svgItemsPromise.then(items => {
@@ -67,15 +60,12 @@ export class ClientClipClass extends ClipClass implements ClientClip {
         })
       })
     })
-
     return svgItemsPromise.then(svgItems => {
-      // console.log(this.constructor.name, 'clipIcon svgItems', svgItems.length)
       const point = { ...POINT_ZERO }
-      const containerSvg = svgSvgElement(size)
-
-      svgItems.forEach(groupItem => {
-        svgSetDimensions(groupItem, point)
-        svgAppend(containerSvg, groupItem)
+      const containerSvg = svgSvgElement(totalSize)
+      svgItems.forEach(svgItem => {
+        svgSetDimensions(svgItem, point)
+        svgAppend(containerSvg, svgItem)
         point.x += widthAndBuffer
       })
       return { data: containerSvg }
@@ -90,17 +80,20 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     assertSizeAboveZero(size)
 
 
-    const { container, content } = this
-    assertContainerInstance(container)
+    const { container, content, timeRange } = this
 
+    assertTrue(timeRange.intersects(time), 'clipPreviewPromise timeRange does not intersect time')
+    assertContainerInstance(container)
     const containerRectArgs: ContainerRectArgs = {
-      size, time, timeRange: this.timeRange, editing: true,
+      size, time, timeRange: timeRange, editing: true,
     }
+  
     const containerRects = this.containerRects(containerRectArgs)
 
     const [containerRect] = containerRects
     assertClientVisibleInstance(content)
     return container.clippedPreviewPromise(content, containerRect, size, time, component)
+
   }
 
   override changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeActionObject {
@@ -171,12 +164,14 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     return true
   }
 
-  override targetId: TargetId = CLIP
+  override targetId: TargetId = TARGET_CLIP
 
   declare track: ClientTrack
 
   updateAssetId(oldId: string, newId: string): void {
-    if (this.containerId === oldId) this.containerId = newId
-    if (this.contentId === oldId) this.contentId = newId
+    const { containerId, contentId } = this
+    // console.log(this.constructor.name, 'updateAssetId', { oldId, newId, containerId, contentId })
+    if (containerId === oldId) this.containerId = newId
+    if (contentId === oldId) this.contentId = newId
   }
 }

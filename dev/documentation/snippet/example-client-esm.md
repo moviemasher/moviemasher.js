@@ -7,7 +7,7 @@ The source code is available in ESM (ECMAScript Module) format for those wanting
 The following shell command installs the client and core libraries to your NPM project, saving the former to the `dependencies` array in your **package.json** file.
 
 ```shell
-npm install @moviemasher/client-react --save
+npm install @moviemasher/lib-client --save
 ```
 
 ### Inclusion
@@ -59,7 +59,7 @@ Learn more about coloring and sizing the user interface using CSS in the
 ```tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
+import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/lib-client"
 
 const element = document.getElementById('root')!
 const options = { previewSize: { width: 480, height: 270 } }

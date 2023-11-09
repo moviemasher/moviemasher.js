@@ -1,34 +1,65 @@
-import type { Method } from '@moviemasher/lib-shared'
-import type { EndpointRequest, JsonRecordDataOrError, JsonRecordsDataOrError } from '@moviemasher/runtime-shared'
+import type { Endpoint, EndpointRequest, JsonRecordDataOrError } from '@moviemasher/runtime-shared'
 
-import { GetMethod, assertMethod, ContentTypeHeader, JsonMimetype, endpointFromUrl, assertEndpoint, assertDefined, urlForEndpoint, PostMethod, FormDataMimetype, isRequest } from '@moviemasher/lib-shared'
-import { errorCaught, isDefiniteError, isPopulatedString, isString, isUndefined } from '@moviemasher/runtime-shared'
-import { ServerProgress } from '@moviemasher/runtime-client'
+import { GET, assertMethod, ContentTypeHeader, JsonMimetype, POST, FormDataMimetype, isRequest, requestUrl, QUESTION, SLASH, assertPopulatedString, COLON, DOT, ProtocolHttp, isEndpoint } from '@moviemasher/lib-shared'
+import { ERROR, errorCaught, errorPromise, isDefiniteError, isNumeric, isUndefined } from '@moviemasher/runtime-shared'
+import { ClientImageDataOrError, ClientMediaRequest, ServerProgress } from '@moviemasher/runtime-client'
+import { isClientImage } from '../Client/ClientGuards.js'
 
-const requestMethod = (request: EndpointRequest): Method => {
-  request.init ||= {}
-  const { method = PostMethod } = request.init
-  assertMethod(method)
-
-  request.init.method = method
-  return method
+const delayPromise = (seconds: number): Promise<void> => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(), seconds * 1000)
+  })
 }
 
-const requestContentType = (request: EndpointRequest): string => {
-  request.init ||= {}
-  request.init.headers ||= {}
-  const { [ContentTypeHeader]: contentType = JsonMimetype } = request.init.headers
-  request.init.headers[ContentTypeHeader] = contentType
-  return contentType
+
+const endpointFromUrl = (url: string): Endpoint => {
+  const endpoint: Endpoint = {}
+  if (urlHasProtocol(url)) {
+    const { protocol, hostname, pathname, port, search } =  new URL(url)
+    endpoint.protocol = protocol
+    endpoint.hostname = hostname
+    endpoint.pathname = pathname
+    endpoint.search = search
+    if (isNumeric(port)) endpoint.port = Number(port)
+  } else {
+    const [pathname, search] = url.split(QUESTION)
+    endpoint.pathname = pathname
+    if (search) endpoint.search = `${QUESTION}${search}`
+  }
+  return endpoint
+}
+
+let _urlBase = ''
+
+const urlBase = (): string => {
+  if (_urlBase) return _urlBase
+  
+  const { document } = globalThis
+  if (document) {
+    const { baseURI } = document
+    return _urlBase = baseURI
+  }
+
+  return _urlBase = [
+    ProtocolHttp, COLON, SLASH, SLASH, 'localhost', SLASH
+  ].join('')
+}
+
+const pathJoin = (url: string, path: string): string => {
+  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
+  const pathStripped = path.startsWith(SLASH) ? path.slice(1) : path
+  return [urlStripped, SLASH, pathStripped].join('')
 }
 
 const requestFormData = (values: any = {}): FormData => {
   const formData = new FormData()
   Object.entries(values).forEach(([key, value]) => {
     if (isUndefined(value)) return
-    // console.log('requestFormData', key, value)
 
-    if (value instanceof Blob || value instanceof File) formData.set(key, value)
+    if (value instanceof Blob || value instanceof File) {
+      // console.log('requestFormData FILE', key, value.name)
+      formData.set(key, value)
+    }
     else formData.set(key, String(value))
   })
   return formData
@@ -38,83 +69,176 @@ const requestSearch = (values: any = {}): string => {
   return `?${new URLSearchParams(values)}`
 }
 
-export const requestPopulate = (request: EndpointRequest, params?: any): EndpointRequest => {
-  if (!params) return request
+export const endpointUrl = (endpoint: Endpoint): string => {
+  const absoluteEndpoint = endpointAbsolute(endpoint)
+  const { port, pathname, hostname, protocol, search } = absoluteEndpoint
 
-  const copy = { ...request }
-  if (requestMethod(copy) === GetMethod) {
-    const { endpoint } = copy
-    if (isPopulatedString(endpoint)) copy.endpoint = endpointFromUrl(endpoint)
-    else copy.endpoint ||= {}
-    const { endpoint: copyEndpoint } = copy
-    assertEndpoint(copyEndpoint)
+  assertPopulatedString(hostname)
+  assertPopulatedString(protocol)
+  
+  const bits = [protocol, SLASH, SLASH, hostname]
+  if (isNumeric(port)) bits.push(COLON, String(port))
+  const url = bits.join('')
+  if (!pathname) return url
 
-    copyEndpoint.search = requestSearch(params)
-  } else {
-    copy.init ||= {}
-    const contentType = requestContentType(copy)
-    if (contentType === JsonMimetype) {
-      copy.init.body = JSON.stringify(params)
-    } else {
-      const { headers } = copy.init
-      if (headers && FormDataMimetype === headers[ContentTypeHeader]) {
-        delete headers[ContentTypeHeader]
+  const combined = pathJoin(url, pathname) 
+  if (!search) return combined
+
+  return [combined, search].join('')
+}
+
+const urlHasProtocol = (url: string) => url.includes(COLON)
+
+const urlResolve = (url: string, path?: string): string => {
+  if (!path) return url
+
+  const [first, second] = path
+  if (first === SLASH) return path
+
+  if (first !== DOT || second === SLASH) return pathJoin(url, path)
+
+  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
+  const urlBits = urlStripped.split(SLASH)
+  path.split(SLASH).forEach(component => {
+    if (component === `${DOT}${DOT}`) urlBits.pop()
+    else urlBits.push(component)
+  })
+  return urlBits.join(SLASH)
+}
+
+const endpointAbsolute = (endpoint: Endpoint = {}): Endpoint => {
+  const { 
+    search, 
+    protocol: providedProtocol, 
+    hostname: providedHostname, 
+    pathname: providedPathname,
+    port: providedPort
+  } = endpoint
+
+  const url = new URL(urlBase())
+  const { 
+    protocol: baseProtocol, 
+    hostname: baseHostname, 
+    port: basePort, 
+    pathname: basePathname
+  } = url
+
+
+  const protocol = providedProtocol || baseProtocol
+  const hostname = providedHostname || baseHostname
+  const port = providedHostname ? providedPort : basePort
+  const pathname = urlResolve(basePathname, providedPathname) 
+  
+  const result: Endpoint = { search, protocol, hostname, pathname }
+  if (isNumeric(port)) result.port = Number(port)
+  return result
+}
+
+const urlPromise = (url: string, request: ClientMediaRequest) => {
+  const { init } = request 
+  if (!init) return Promise.resolve(url) 
+
+  return fetch(url, init)
+    .then(response => response.blob())
+    .then(blob => request.objectUrl = URL.createObjectURL(blob))
+}
+
+const requestUrlInit = (endpointRequest: EndpointRequest, params?: any): [string, RequestInit] => {
+  const request = { ...endpointRequest }
+
+  const { endpoint } = request
+   // make sure endpoint is a copied object
+  const object = isEndpoint(endpoint) ? { ...endpoint } : endpointFromUrl(endpoint)
+
+  // make sure init is a copied object
+  const { init: requestInit } = request
+  const init = requestInit ? { ...requestInit } : {}
+
+  // make sure init.method is a valid string
+  const { method = POST } = init
+  assertMethod(method)
+
+  init.method ||= method
+
+  if (params) {
+    if (method === GET) {
+      // populate search with params
+      if (isUndefined(object.search)) object.search = requestSearch(params)
+    } else if (isUndefined(init.body)) {
+      // make sure we have headers with content type
+      init.headers ||= {}
+      const { [ContentTypeHeader]: contentType = JsonMimetype } = init.headers
+
+      // populate body with params as JSON or FormData
+      switch (contentType) {
+        case JsonMimetype:
+          init.headers[ContentTypeHeader] ||= contentType
+          init.body = JSON.stringify(params)
+          break
+        case FormDataMimetype:
+          // not sure why this needs to be deleted?
+          delete init.headers[ContentTypeHeader]
+          init.body = requestFormData(params)
+          break
       }
-      copy.init.body = requestFormData(params)
     }
   }
-  return copy
-}
-export const delayPromise = (seconds: number): Promise<void> => {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(), seconds * 1000)
-  })
+  return [endpointUrl(object), init]
 }
 
-export const requestCallbackPromise = async (request: EndpointRequest, progress?: ServerProgress): Promise<JsonRecordDataOrError> => {
+export const requestCallbackPromise = async (request: EndpointRequest, progress?: ServerProgress, params?: any): Promise<JsonRecordDataOrError> => {
   progress?.do(1)
-  await delayPromise(10)
-  const orError = await requestJsonRecordPromise(request)
+  
+  await delayPromise(1)
+  // console.debug('requestCallbackPromise request', request)
+
+  const orError = await requestJsonRecordPromise(request, params)
+  // console.debug('requestCallbackPromise response', orError)
   if (isDefiniteError(orError)) return orError
 
   progress?.did(1)
   const { data } = orError
-  if (isRequest(data)) return requestCallbackPromise(request)
+  if (isRequest(data)) return requestCallbackPromise(data, progress)
 
   return orError
 }
 
-export const requestJsonRecordPromise = (request: EndpointRequest): Promise<JsonRecordDataOrError> => {
-  const { init = {}, endpoint } = request
-  assertDefined(endpoint)
+export const requestJsonRecordPromise = (request: EndpointRequest, params?: any): Promise<JsonRecordDataOrError> => {
+  const [url, init] = requestUrlInit(request, params)
+  try {
+    // console.debug('requestJsonRecordPromise', url, init, request, params)
+    return fetch(url, init).then(response => response.json()).then(orError => {
+      if (isDefiniteError(orError)) return orError
 
-  const url = isString(endpoint) ? endpoint : urlForEndpoint(endpoint)
-  return fetch(url, init).then(response => {
-    try {
-      return response.json()
-    }
-    catch (error) { return errorCaught(error) }
-  }).then(orError => {
-    if (isDefiniteError(orError)) return orError
+      const result = orError.data ? orError : { data: orError }
+      // console.debug('requestJsonRecordPromise response', result, orError)
+      return result
 
-    return orError.data ? orError : { data: orError }
-  }).catch(error => errorCaught(error))
+    }).catch(error => errorCaught(error))
+  }
+  catch (error) { return errorPromise(errorCaught(error).error.message) }
 }
 
-export const requestJsonRecordsPromise = (request: EndpointRequest): Promise<JsonRecordsDataOrError> => {
-  const { init = {}, endpoint } = request
-  assertDefined(endpoint)
+export const requestImagePromise = (request: ClientMediaRequest): Promise<ClientImageDataOrError> => {
+  const { response } = request
+  if (isClientImage(response)) return Promise.resolve({ data: response })
 
-  const url = isString(endpoint) ? endpoint : urlForEndpoint(endpoint)
-  return fetch(url, init).then(response => {
-    try {
-      return response.json()
-    }
-    catch (error) { return errorCaught(error) }
-  }).then(orError => {
-    if (isDefiniteError(orError)) return orError
+  const url = request.objectUrl || requestUrl(request)
+  if (!url) return errorPromise(ERROR.Url)
 
-    return orError.data ? orError : { data: orError }
-  }).catch(error => errorCaught(error))
+  const loadPromise = urlPromise(url, request).then(url => {
+    return new Promise<ClientImageDataOrError>(resolve => {
+      const data = new Image()
+      data.src = url
+      data.onerror = error => {
+        // console.error('requestImagePromise.onerror', error)
+        resolve(errorCaught(error))
+      }
+      data.onload = () => {
+        request.response = data
+        resolve({ data })
+      }
+    })
+  })
+  return loadPromise
 }
-

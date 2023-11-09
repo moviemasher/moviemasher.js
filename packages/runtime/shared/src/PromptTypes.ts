@@ -8,7 +8,7 @@ export interface PromptAsset extends Asset {
   request: EndpointRequest
 }
 
-export type PromptAssets = PromptAsset[]
+export interface PromptAssets extends Array<PromptAsset>{}
 
 export interface PromptAssetObject extends AssetObject {
   request: EndpointRequest

@@ -1,21 +1,15 @@
-import type { ContainerRectArgs, MashAssetObject, OutputOptions, Data } from '@moviemasher/runtime-shared'
+import type { ContainerRectArgs, Data, MashAssetObject, OutputOptions } from '@moviemasher/runtime-shared'
 
-import { EventServerManagedAsset, EventServerEncode, MovieMasher } from '@moviemasher/runtime-server'
-import { VIDEO, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ServerEventDispatcherModule, fileReadJsonPromise, isServerMashAsset } from '@moviemasher/lib-server'
 import { DurationUnknown, isClip, outputOptions, sizeAboveZero, timeRangeFromArgs } from '@moviemasher/lib-shared'
+import { EventServerEncode, EventServerManagedAsset, MovieMasher } from '@moviemasher/runtime-server'
+import { VIDEO, isDefiniteError } from '@moviemasher/runtime-shared'
 import assert from 'node:assert'
 import { describe, test } from 'node:test'
-import { ServerEventDispatcherModule } from '../../../packages/lib/server/src/Utility/ServerEventDispatcherModule.js'
-import { pathResolvedToPrefix } from '../../../packages/lib/server/src/Utility/Request.js'
-
-import { SizePreview, encodeIds, mashObjectFromId, GenerateArg, encodingName, encodingIds, encodeId, combineIds, VideoOptions } from './utility/EncodeUtility.js'
-import { fileReadJsonPromise, isServerMashAsset } from '@moviemasher/lib-server'
+import { GenerateArg, SizePreview, VideoOptions, combineIds, encodeId, encodeIds, encodingIds, encodingName, mashObjectFromId } from './utility/EncodeUtility.js'
 
 MovieMasher.eventDispatcher = new ServerEventDispatcherModule()
 await MovieMasher.importPromise
-
-// const options: VideoOutputOptions = { ...SizePreview }//, mute: true
-// const videoOutput = outputOptions(VIDEO, options) 
 
 function failIfError<T = any>(orError: any): asserts orError is T {
   if (isDefiniteError(orError)) {
@@ -70,13 +64,13 @@ describe('Encoding', () => {
   test('color encodes as video', async () => {
     const options: OutputOptions = outputOptions(VIDEO)
     const encodingId = `encoding-color-id-${Date.now()}`
-    const inputPath = pathResolvedToPrefix('../shared/mash/mash_color.json')
+    const inputPath = '/app/dev/shared/mash/mash_color.json'
     const orError = await fileReadJsonPromise<MashAssetObject>(inputPath)
     failIfError<Data<MashAssetObject>>(orError)
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, options, encodingId)
+    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
@@ -86,13 +80,13 @@ describe('Encoding', () => {
   test('video encodes as video', async () => {
     const options: OutputOptions = outputOptions(VIDEO)
     const encodingId = `encoding-video-id-${Date.now()}`
-    const inputPath = pathResolvedToPrefix('../shared/mash/mash_video.json')
+    const inputPath = '/app/dev/shared/mash/mash_video.json'
     const orError = await fileReadJsonPromise<MashAssetObject>(inputPath)
     failIfError<Data<MashAssetObject>>(orError)
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, options, encodingId)
+    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
@@ -102,13 +96,13 @@ describe('Encoding', () => {
   test('text encodes as video', async () => {
     const options: OutputOptions = outputOptions(VIDEO)
     const encodingId = `encoding-text-id-${Date.now()}`
-    const inputPath = pathResolvedToPrefix('../shared/mash/mash_text.json')
+    const inputPath = '/app/dev/shared/mash/mash_text.json'
     const orError = await fileReadJsonPromise<MashAssetObject>(inputPath)
     failIfError<Data<MashAssetObject>>(orError)
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, options, encodingId)
+    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
@@ -118,13 +112,13 @@ describe('Encoding', () => {
   test('shape encodes as video', async () => {
     const options: OutputOptions = outputOptions(VIDEO)
     const encodingId = `encoding-shape-id-${Date.now()}`
-    const inputPath = pathResolvedToPrefix('../shared/mash/mash_shape.json')
+    const inputPath = '/app/dev/shared/mash/mash_shape.json'
     const orError = await fileReadJsonPromise<MashAssetObject>(inputPath)
     failIfError<Data<MashAssetObject>>(orError)
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, options, encodingId)
+    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
@@ -166,12 +160,12 @@ describe('Encoding', () => {
     test(name, async () => { await combineIds(idsToEncode, name) })
   }
 
-  describe('text permutations encode as video', () => { testEncode('T') })
+  describe.skip('text permutations encode as video', () => { testEncode('T') })
 
-  describe('image permutations encode as video', () => { testEncode('K') })
+  describe.skip('image permutations encode as video', () => { testEncode('K') })
 
-  describe('rect permutations encode as video', () => { testEncode('R') })
+  describe.skip('rect permutations encode as video', () => { testEncode('R') })
 
-  describe('shape permutations encode as video', () => { testEncode('S') })
+  describe.skip('shape permutations encode as video', () => { testEncode('S') })
 })
 

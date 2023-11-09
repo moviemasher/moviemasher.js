@@ -102,6 +102,11 @@ body {
 .tsd-accordion-summary, */
 .tsd-navigation.settings { display: none; }
 
+
+pre {
+  overflow-x: auto;
+  white-space: pre;
+}
 /* 
 .tsd-anchor {
   position: initial;
@@ -391,11 +396,6 @@ header > hr {
 
 label { user-select: none; }
 
-
-pre {
-  overflow-x: scroll;
-  white-space: nowrap;
-}
 
 fieldset {
   border: var(--fore-tertiary) 1px solid;

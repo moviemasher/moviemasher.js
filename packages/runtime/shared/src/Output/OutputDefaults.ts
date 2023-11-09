@@ -63,7 +63,7 @@ export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
   },
 }
 
-export const ALPHA_OUTPUT_DETAULTS = {
+export const ALPHA_OUTPUT_DEFAULTS = {
   [IMAGE]: {
     options: {},
     width: 320,

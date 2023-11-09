@@ -5,7 +5,7 @@ import type { ExpressHandler, UploadServerArgs } from './Server.js'
 
 import { ENV, ENVIRONMENT, idUnique } from '@moviemasher/lib-server'
 import { ContentTypeHeader, FormDataMimetype, SLASH, assertAboveZero, assertPopulatedString, isLoadType, } from '@moviemasher/lib-shared'
-import { ASSET_TYPES, ERROR, VERSION, errorObject, errorObjectCaught, errorThrow, isNumber, isString } from '@moviemasher/runtime-shared'
+import { ASSET_TYPES, ERROR, VERSION, errorMessageObject, errorObjectCaught, errorThrow, isNumber, isString } from '@moviemasher/runtime-shared'
 import basicAuth from 'express-basic-auth'
 import fs from 'fs'
 import multer from 'multer'
@@ -54,7 +54,7 @@ export class UploadServerClass extends ServerClass {
 
   private request: ExpressHandler<VersionedDataOrError<UploadResponse>, UploadRequestRequest> = async (req, res) => {
     const { id: idOrUndefined, name, size, type } = req.body
-    console.log('FileServerClass.upload', { idOrUndefined, name, size, type })
+    console.log('UploadServerClass.upload', { idOrUndefined, name, size, type })
     const id = idOrUndefined || idUnique() // new definition id
     try {
       const user = this.userFromRequest(req)
@@ -68,7 +68,11 @@ export class UploadServerClass extends ServerClass {
         errorThrow(ERROR.ImportSize, `${size} > ${this.args.uploadLimits[raw]}`)
       }
       const outputRoot = ENVIRONMENT.get(ENV.OutputRoot)
-      const endpoint = path.resolve(outputRoot, user, id, `${FileServerFilename}.${extension}`)
+      const outputPath = path.resolve(outputRoot, user, id, `${FileServerFilename}.${extension}`)
+
+      const exampleRoot = ENVIRONMENT.get(ENV.ExampleRoot)
+      const endpoint = path.relative(exampleRoot, outputPath)
+      const { fileProperty } = this
       const data = {
         id,
         storeRequest: {
@@ -79,7 +83,7 @@ export class UploadServerClass extends ServerClass {
           }, 
         },
         assetRequest: { endpoint },
-        fileProperty: this.fileProperty
+        fileProperty
       }
       res.send({ version: VERSION, data })
     } catch (error) { 
@@ -100,7 +104,7 @@ export class UploadServerClass extends ServerClass {
           const { id } = req.body
           const request = req as basicAuth.IBasicAuthedRequest
           const { user } = request.auth
-          if (!user) cb(errorObject(ERROR.ServerAuthentication), '')
+          if (!user) cb(errorMessageObject(ERROR.ServerAuthentication), '')
           else {
             const filePath = path.resolve(outputRoot, `${user}/${id}`)
             fs.mkdirSync(filePath, { recursive: true })
@@ -110,7 +114,7 @@ export class UploadServerClass extends ServerClass {
         filename: function (_req, file, cb) {
           const { originalname } = file
           const ext = path.extname(originalname).slice(1).toLowerCase()
-          if (!extensions.includes(ext)) cb(errorObject(`Invalid extension ${ext}`), '')
+          if (!extensions.includes(ext)) cb(errorMessageObject(`Invalid extension ${ext}`), '')
           else cb(null, `${FileServerFilename}.${ext}`)
         }
       })

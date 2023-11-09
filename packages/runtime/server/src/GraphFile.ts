@@ -10,6 +10,6 @@ export interface GraphFile {
   definition: ServerAsset
   resolved?: string
 }
-export type GraphFiles = GraphFile[]
+export interface GraphFiles extends Array<GraphFile>{}
 
 export interface ServerPromiseArgs extends CacheOptions { }

@@ -213,7 +213,7 @@ export function expandImportsPlugin(options = {}) {
           } else {
             // console.debug('loaded module', lib, 'looking for', ...uniqueIds);
             const { exportedBindings } = info;
-            const errored = uniqueIds.some(imported => {
+            const failed = uniqueIds.some(imported => {
               const found = Object.keys(exportedBindings).find(libPath => {
                 const libImport = exportedBindings[libPath];
                 const includes = libImport.includes(imported);
@@ -223,7 +223,6 @@ export function expandImportsPlugin(options = {}) {
               if (!found) {
                 console.error('could not find', imported, 'in', lib, exportedBindings);
                 found = libPath;
-                this.error(`Could not find ${imported} in ${lib}`);
                 return true;
               }
 
@@ -231,7 +230,7 @@ export function expandImportsPlugin(options = {}) {
               byModule[found].push(imported);
               return false;
             });
-            if (errored) return [];            
+            if (failed) return [];            
           }
 
           

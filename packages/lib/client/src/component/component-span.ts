@@ -18,9 +18,9 @@ export class SpanElement extends Component {
       span {
         white-space: nowrap;
         display: flex;
-        gap: var(--section-spacing);
-        padding: var(--section-padding);
-        flex-direction: var(--flex-direction);
+        gap: var(--gap-chrome);
+        padding: var(--pad-chrome);
+        flex-direction: var(--flex-direction, row);
       }
       span > * {
         margin: auto;

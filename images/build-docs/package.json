@@ -1,16 +1,32 @@
 {
   "name": "@moviemasher/build-docs",
   "description": "Builds Movie Masher documentation",
+  "type": "module",
   "scripts": {
+    "build-docs-marked": "node ./images/build-docs/dist/index.mjs",
+    "comment2": "marked --gfm -i ./docs/modules.md -o ./docs/modules.html",
+    "comment1": "build-docs-markdown-main build-docs-markdown-packages build-docs-md build-docs-json ",
+    "build-docs-contained": "run-s build-docs-marked move-files",
+    "build-docs-markdown-main": "markdown --path './README.md'",
+    "build-docs-markdown-packages": "markdown --ignore 'node_modules' --path 'packages/**/README.md'",
+    "build-docs-md": "typedoc --options ./typedoc.md.cjs",
+    "build-docs-json": "typedoc --options ./typedoc.json.cjs",
+    "build": "rollup --config dev/rollup/package.config.mjs",
+
+    "move-files": "cp ./images/build-docs/src/documentation.css ./docs/documentation.css",
     "start": "web-dev-server --node-resolve --open --watch"
   },
+
   "devDependencies": {
-    "typedoc": "^0.25.1",
+    "typedoc": "0.24.8",
+    "typedoc-plugin-merge-modules": "5.1.0",
+    "typedoc-plugin-markdown": "3.17.0",
     "typedoc-plugin-mdn-links": "^3.1.0",
-    "typedoc-plugin-extras": "^3.0.0",
     "typedoc-plugin-coverage": "^2.2.0",
     "markdown-magic": "2.6.1",
-    "@types/markdown-magic": "^1.0.1"
+    "@types/markdown-magic": "^1.0.1",
+    "marked": "9.1.5", 
+    "shiki": "0.14.5"
   },
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"

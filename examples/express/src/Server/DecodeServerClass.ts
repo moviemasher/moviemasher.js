@@ -1,15 +1,15 @@
-import type { DecodingObject, EndpointRequest } from '@moviemasher/runtime-shared'
+import type { Decoding, EndpointRequest } from '@moviemasher/runtime-shared'
 import type { Application } from 'express'
 import type { DecodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { DecodeServerArgs, ExpressHandler } from './Server.js'
 
 import { assertProbeOptions, idUnique } from '@moviemasher/lib-server'
-import { isDecodingObject } from '@moviemasher/lib-shared'
+import { errorObjectCaught, isDecoding } from '@moviemasher/runtime-shared'
 import { EventServerDecode, EventServerDecodeStatus, MovieMasher } from '@moviemasher/runtime-server'
 import { ERROR, VERSION, VIDEO, errorCaught, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
-import path from 'path'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
+import { ContentTypeHeader, JsonMimetype } from '@moviemasher/lib-shared'
 
 export class DecodeServerClass extends ServerClass {
   constructor(public args: DecodeServerArgs) { super(args) }
@@ -23,8 +23,7 @@ export class DecodeServerClass extends ServerClass {
       assertProbeOptions(options)
 
       const id = idUnique()
-      const fragment = path.join(user, id)
-      const event = new EventServerDecode(decodingType, assetType, request, fragment, options)
+      const event = new EventServerDecode(decodingType, assetType, request, user, id, options)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecode.Type)
@@ -43,25 +42,25 @@ export class DecodeServerClass extends ServerClass {
     })
   }
 
-  status: ExpressHandler<VersionedDataOrError<EndpointRequest | DecodingObject>, StatusRequest> = async (req, res) => {
+  status: ExpressHandler<VersionedDataOrError<EndpointRequest | Decoding>, StatusRequest> = async (req, res) => {
+    console.log(this.constructor.name, 'status', req.body)
     const { id } = req.body
     try {
       const user = this.userFromRequest(req)
-      const fragment = path.join(user, id)
-      const event = new EventServerDecodeStatus(fragment)
+      const event = new EventServerDecodeStatus(id)
       MovieMasher.eventDispatcher.dispatch(event)
       const { promise } = event.detail
+      console.log(this.constructor.name, 'status', !!promise)
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecodeStatus.Type)
 
       const orError = await promise
-
       if (isDefiniteError(orError)) {
         const { error } = orError
         res.send({ version: VERSION, error })
         return
       }
       const { data } = orError
-      if (isDecodingObject(data)) {
+      if (isDecoding(data)) {
         res.send({ version: VERSION, data })
         return
       }
@@ -70,14 +69,15 @@ export class DecodeServerClass extends ServerClass {
  
       res.send({ version: VERSION, data: this.statusEndpointRequest(id) })
     } catch (error) { 
-      res.send({ version: VERSION, error: errorCaught(error).error })
+      console.error(this.constructor.name, 'status', error)
+      res.send({ version: VERSION, error: errorObjectCaught(error) })
     }
   }
 
   private statusEndpointRequest(id: string) {
     const data: EndpointRequest = {
       endpoint: { pathname: Endpoints.decode.status },
-      init: { method: 'POST', body: { id } }
+      init: { method: 'POST', headers: { [ContentTypeHeader]: JsonMimetype}, body: JSON.stringify({ id }) }
     }
     return data
   }

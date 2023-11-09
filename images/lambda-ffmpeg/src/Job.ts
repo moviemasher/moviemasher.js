@@ -1,17 +1,17 @@
-import type { IdentifiedRequest } from '@moviemasher/lib-server/src/Media/Media.js'
-import type { Input } from '@moviemasher/lib-server/src/Types/Input.js'
-import type { JobType } from '@moviemasher/lib-server/src/Types/JobTypes.js'
+import type { IdentifiedRequest } from '@moviemasher/lib-server'
+import type { Input } from '@moviemasher/lib-server'
+import type { JobType } from '@moviemasher/lib-server'
 import type { Output } from '@moviemasher/lib-shared'
 import type { AssetType, Assets, Data, Decoding, DecodingType, DefiniteError, EndpointRequest, EndpointRequests, Identified, ImportType, JsonRecord, MashAssetObject, OutputOptions, PotentialError, StringDataOrError, TranscodingType } from '@moviemasher/runtime-shared'
 
 import { isIdentifiedRequest } from '@moviemasher/lib-server'
-import { ENV, ENVIRONMENT } from '@moviemasher/lib-server/src/Environment/EnvironmentConstants.js'
-import { assertIdentifiedRequest } from '@moviemasher/lib-server/src/Media/MediaFunctions.js'
+import { ENV, ENVIRONMENT } from '@moviemasher/lib-server'
+import { assertIdentifiedRequest } from '@moviemasher/lib-server'
 import { assertFilePathExists } from '@moviemasher/lib-server/src/Utility/File.js'
 import { assertObject, assertRequest, isOutput, isTranscodingType } from '@moviemasher/lib-shared'
 import { EventServerAssetPromise, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, error, errorPromise, errorThrow, isArray, isDecodingType, isDefiniteError, isTyped } from '@moviemasher/runtime-shared'
-import { JobTypeDecoding, JobTypeEncoding, JobTypeTranscoding, assertJobType } from './JobGuards.js'
+import { ERROR, namedError, errorPromise, errorThrow, isArray, isDecodingType, isDefiniteError, isTyped } from '@moviemasher/runtime-shared'
+import { JOB_DECODING, JOB_ENCODING, JOB_TRANSCODING, assertJobType } from '@moviemasher/lib-server'
 
 
 export interface EncodeOutput extends Output {
@@ -170,23 +170,23 @@ const mediaRequestPromise = (jobType: JobType, mediaRequest: IdentifiedRequest):
 
     const { data: localPath } = inputResult
     switch(jobType) {
-      case JobTypeEncoding: {
+      case JOB_ENCODING: {
         assertEncodeRequest(mediaRequest)
         const { output } = mediaRequest
         return encode(localPath, output)
       }
-      case JobTypeDecoding: {
+      case JOB_DECODING: {
         assertDecodeRequest(mediaRequest)
         const { output } = mediaRequest
         return decode(localPath, output)
       }
-      case JobTypeTranscoding: {
+      case JOB_TRANSCODING: {
         assertTranscodeRequest(mediaRequest)
         const { output } = mediaRequest
         return transcode(localPath, output)
       }
       default: {
-        return error(ERROR.Type, `Unknown job type ${jobType}`)
+        return namedError(ERROR.Type, `Unknown job type ${jobType}`)
       }
     } 
   })

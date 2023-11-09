@@ -1,9 +1,8 @@
 import type { ServerAsset, ServerAssets } from '@moviemasher/runtime-server'
 import type { AssetObject } from '@moviemasher/runtime-shared'
 
-import { assertDefined } from '@moviemasher/lib-shared'
+import { arrayFromOneOrMore, assertDefined } from '@moviemasher/lib-shared'
 import { EventReleaseServerManagedAssets, EventServerAsset, EventServerManagedAsset, MovieMasher, isServerAsset } from '@moviemasher/runtime-server'
-import { arrayFromOneOrMore } from '@moviemasher/runtime-shared'
 
 export class ServerAssetManagerClass {
   private asset(object: string | AssetObject): ServerAsset | undefined{

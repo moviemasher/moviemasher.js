@@ -4,7 +4,7 @@ import type { Content, Contents, DropTarget, OptionalContent } from '../declarat
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { isPositive } from '@moviemasher/lib-shared'
-import { EventChanged, EventClipElement, EventTypeScrollRoot, MovieMasher, ScrollRootEventDetail, EventTrackClips } from '@moviemasher/runtime-client'
+import { EventChanged, EventClipElement, EventTypeScrollRoot, MovieMasher, ScrollRootEventDetail, EventTrackClips, ClipLocation } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
@@ -101,7 +101,7 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
 
   maxWidth = 0
 
-  override mashIndex(event: DragEvent) {
+  override mashIndex(event: DragEvent): ClipLocation | undefined {
     const { dataTransfer } = event
     const detail: ScrollRootEventDetail = {}
     const init: CustomEventInit<ScrollRootEventDetail> = { 
@@ -146,15 +146,11 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
     Component.cssHostFlex,
     css`
       :host {
-        
         position: relative;
-    
         padding: var(--padding);
-        /* --drop-size: var(--border-size); */
- 
         border: var(--border);
         overflow: hidden;
-        background-color: var(--div-back);
+        background-color: var(--back);
         white-space: nowrap;
       }
       :host > div {
@@ -165,27 +161,9 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
       :host(.dropping) {
         box-shadow: var(--dropping-shadow);
       }
-      
-      .selected {
-        background-color: var(--item-back-selected);
-      }
-
-       .selected {
-        color: var(--item-fore-selected);
-        border-color: var(--item-fore-selected);
-        background-color: var(--item-back-selected);
-      }
-
-       .selected:hover {
-        color: var(--item-fore-tertiary);
-        border-color: var(--item-fore-tertiary);
-        background-color: var(--item-back-tertiary);
-      }
-
     `,
   ]
 }
-
 
 // register web component as custom element
 customElements.define(TimelineTrackName, TimelineTrackElement)

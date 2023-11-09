@@ -11,18 +11,18 @@ import { expandImportsPlugin } from './expandImportsPlugin.mjs'
 
 const rootDir = monoDir()
 
-export const rollupClient = (args) => {
-  return rollupConfiguration({ ...args, format: 'umd' })
-}
+// const rollupClient = (args) => {
+//   return rollupConfiguration({ ...args, format: 'umd' })
+// }
 
-export const rollupPackage = (args) => {
-  return rollupConfiguration({ ...args, format: 'esm', package: true })
-}
+// const rollupPackage = (args) => {
+//   return rollupConfiguration({ ...args, format: 'esm', package: true })
+// }
 
 
-export const rollupIife = (args) => {
-  return rollupConfiguration({ ...args, format: 'iife' })
-}
+// const rollupIife = (args) => {
+//   return rollupConfiguration({ ...args, format: 'iife' })
+// }
 
 const tsconfigPath = srcPath => {
   const parent = path.dirname(srcPath)
@@ -94,7 +94,7 @@ export const rollupConfiguration = (args) => {
     globals: {
       'react': 'React',
       'react-dom/client': 'ReactDOM',
-      '@moviemasher/client-react': 'MovieMasherClient',
+      '@moviemasher/lib-client': 'MovieMasherClient',
       '@moviemasher/lib-client': 'MovieMasherClientCore',
       '@moviemasher/protocol-supabase': 'MovieMasherProtocolSupabase',
       '@moviemasher/theme-default': 'MovieMasherTheme',

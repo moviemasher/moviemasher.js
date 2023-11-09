@@ -1,6 +1,6 @@
 import type { Asset, AssetCacheArgs, AssetObject, AssetType, Assets, ClipObject, DataOrError, Decodings, Instance, InstanceArgs, InstanceObject, Source, Strings } from '@moviemasher/runtime-shared'
 
-import { ERROR, ASSET, AUDIO, errorThrow, isArray } from '@moviemasher/runtime-shared'
+import { ERROR, TARGET_ASSET, AUDIO, errorThrow, isArray } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from '../../Base/PropertiedClass.js'
 import { DataTypeString } from '../../Setup/DataTypeConstants.js'
 import { Default } from '../../Setup/Default.js'
@@ -79,7 +79,7 @@ export class AssetClass extends PropertiedClass implements Asset {
   
   override initializeProperties(object: AssetObject): void {
     this.properties.push(propertyInstance({
-      targetId: ASSET, name: `label`, type: DataTypeString, 
+      targetId: TARGET_ASSET, name: `label`, type: DataTypeString, 
       defaultValue: Default.mash.label
     }))
     super.initializeProperties(object)

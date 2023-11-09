@@ -26,4 +26,4 @@ export interface Track extends Propertied, Indexed {
   trackObject: TrackObject
 }
 
-export type Tracks = Track[]
+export interface Tracks extends Array<Track>{}

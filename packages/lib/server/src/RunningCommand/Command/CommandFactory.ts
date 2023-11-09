@@ -4,7 +4,7 @@ import type { CommandOptions } from '../../encode/MashDescriberTypes.js'
 import type { Command } from './Command.js'
 
 import { AVTypeAudio, AVTypeVideo } from '@moviemasher/lib-shared'
-import { ERROR, error, errorCaught, errorPromise, isNumber } from '@moviemasher/runtime-shared'
+import { ERROR, namedError, errorCaught, errorPromise, isNumber } from '@moviemasher/runtime-shared'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import path from 'path'
 import { commandError } from '../../Utility/Command.js'
@@ -40,7 +40,7 @@ const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[
 export const commandPromise = async (command: FfmpegCommand) => {
   return await new Promise<StringDataOrError>(resolve => {
     command.on('error', (...args: any[]) => {
-      resolve(error(ERROR.Ffmpeg, args.join(','))) 
+      resolve(namedError(ERROR.Ffmpeg, args.join(','))) 
     })
     command.on('end', () => { resolve({ data: 'OK' }) })
     try {
@@ -166,21 +166,6 @@ if (upload) {
     }
     
   }
-}
-
-const transcodeFileName = (index: number, commandOutput: RenderingCommandOutput, renderingOutput: RenderingOutput): string => {
-  const { videoRate } = commandOutput
-
-  if (!videoRate) return errorThrow(ERROR.Internal)
-
-  const { format, extension, basename = '' } = commandOutput
-  const ext = extension || format
-  const { duration } = renderingOutput
-  const framesMax = Math.floor(videoRate * duration) - 2
-  const begin = 1
-  const lastFrame = begin + (framesMax - begin)
-  const padding = String(lastFrame).length
-  return `${basename}%0${padding}d.${ext}`
 }
 
 */

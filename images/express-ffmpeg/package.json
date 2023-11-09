@@ -29,8 +29,6 @@
     "express-basic-auth": "^1.2.1",
     "pg": "8.11.3",
     "multer": "1.4.5-lts.1",
-    "sqlite": "5.0.1",
-    "sqlite3": "5.1.6",
     "tar": "^6.1.15"
   },
   "devDependencies": {

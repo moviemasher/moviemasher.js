@@ -3,7 +3,8 @@ import type { DataOrError, StringRecord } from '@moviemasher/runtime-shared'
 
 import { EventIcon, MovieMasher } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestJsonRecordPromise, requestPopulate } from '../utility/request.js'
+import { requestJsonRecordPromise } from '../utility/request.js'
+import { isStringRecord } from '@moviemasher/lib-shared'
 
 export class FetchIconHandler {
   static json?: StringRecord
@@ -14,11 +15,14 @@ export class FetchIconHandler {
     const { _jsonPromise } = FetchIconHandler
     if (_jsonPromise) return _jsonPromise
 
-    const { iconOptions = { request: { endpoint: '' } } } = MovieMasher.options
-    const { request } = iconOptions
-
-    const populated = requestPopulate(request)
-    return this._jsonPromise = requestJsonRecordPromise(populated).then(orError => {
+    const { icons } = MovieMasher.options
+    if (!icons) return this._jsonPromise = Promise.resolve({ data: {} })
+    
+    if (isStringRecord(icons)) {
+      return this._jsonPromise = Promise.resolve({ data: icons })
+    }
+    
+    return this._jsonPromise = requestJsonRecordPromise(icons).then(orError => {
       if (isDefiniteError(orError)) return orError 
 
       const iconStringRecord = orError.data as StringRecord

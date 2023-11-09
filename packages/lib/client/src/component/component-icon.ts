@@ -49,7 +49,7 @@ export class IconElement extends Component {
           this.iconContent = element
         } else {
           this.icon = ''
-          console.warn(this.constructor.name, 'iconPromiseInitialize with no icon', this.icon)
+          // console.warn(this.constructor.name, 'iconPromiseInitialize with no icon', this.icon)
         }
       } 
       return icon
@@ -88,12 +88,8 @@ export class IconElement extends Component {
   }
 
   static override styles: CSSResultGroup = [
-    
-        // vertical-align: middle;
     css`
       :host {
-        --color: inherit;
-        color: var(--color);
         display: inline-block;
         height: 1em;
         min-width: 1em;

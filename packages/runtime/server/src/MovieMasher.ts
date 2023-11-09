@@ -21,6 +21,7 @@ export const MovieMasher: MovieMasherServerRuntime = {
       ServerEncodeVideoListeners: '@moviemasher/lib-server/encode/encode.js',
       ServerEncodeStatusListeners: '@moviemasher/lib-server/encode/encode.js',
       ServerDecodeProbeListeners: '@moviemasher/lib-server/decode/probe.js',
+      ServerDecodeStatusListeners: '@moviemasher/lib-server/decode/probe.js',
       ServerTranscodeListeners: '@moviemasher/lib-server/transcode/transcode.js',
       ServerTranscodeStatusListeners: '@moviemasher/lib-server/transcode/transcode.js',
     },

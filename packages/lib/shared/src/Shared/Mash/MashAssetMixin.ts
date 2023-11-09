@@ -4,7 +4,7 @@ import { ERROR, SIZE_OUTPUT, MASH, errorThrow, isArray } from '@moviemasher/runt
 import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
 import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
 import { AVTypeAudio, AVTypeBoth, AVTypeVideo } from "../../Setup/AVTypeConstants.js"
-import { DataTypeNumber, DataTypeRgb } from "../../Setup/DataTypeConstants.js"
+import { DataTypeNumber, DataTypeRgb, DataTypeString } from "../../Setup/DataTypeConstants.js"
 import { Default } from '../../Setup/Default.js'
 import { DurationNone, DurationUnknown } from '../../Setup/DurationConstants.js'
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
@@ -139,7 +139,8 @@ T & Constrained<MashAsset> {
     
     get duration(): number { return this.endTime.seconds }
   
-  
+    declare encoding: string 
+
     get endTime(): Time { return timeFromArgs(this.totalFrames, this.quantize) }
   
     private filterIntersecting(clips: Clips, time: Time): Clip[] {
@@ -183,6 +184,10 @@ T & Constrained<MashAsset> {
       this.properties.push(propertyInstance({
         targetId: MASH, name: 'quantize', type: DataTypeNumber, 
         defaultValue: Default.mash.quantize, step: 1, options: [10, 20, 40]
+      }))
+      this.properties.push(propertyInstance({
+        targetId: MASH, name: 'encoding', type: DataTypeString, 
+        defaultValue: ''
       }))
       const { tracks } = object
 

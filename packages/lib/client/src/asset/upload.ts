@@ -1,7 +1,7 @@
 import { assertObject, assertPopulatedString, assertRequest, assertTrue } from '@moviemasher/lib-shared'
-import { EventUpload, MovieMasher } from '@moviemasher/runtime-client'
+import { EventUpload } from '@moviemasher/runtime-client'
 import { UnknownRecord, isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestJsonRecordPromise, requestPopulate } from '../utility/request.js'
+import { requestJsonRecordPromise } from '../utility/request.js'
 
 export class UploadHandler {
   static handleUpload(event: EventUpload): void {
@@ -16,17 +16,14 @@ export class UploadHandler {
 
     progress?.do(sizeMb + 1)
     const jsonRequest = {
-      endpoint: '/file/request', init: { method: 'POST' }
+      endpoint: '/upload/request', init: { method: 'POST' }
     }
-    const uploadRequest = requestPopulate(jsonRequest, { name, size, type })
-    console.debug(EventUpload.Type, 'handleUpload uploadRequest', uploadRequest)
-
-    detail.promise = requestJsonRecordPromise(uploadRequest).then(orError => {
+    detail.promise = requestJsonRecordPromise(jsonRequest, { name, size, type }).then(orError => {
       if (isDefiniteError(orError)) return orError
       progress?.did(1)
 
       const { data } = orError 
-      console.debug(EventUpload.Type, 'handleUpload response', data)
+      // console.debug(EventUpload.Type, 'handleUpload response', data)
 
       const { assetRequest, storeRequest, fileProperty, id } = data
       assertRequest(storeRequest)
@@ -42,11 +39,7 @@ export class UploadHandler {
         params[fileProperty] = file
         
       } else init.body = file
-
-      const populatedRequest = requestPopulate(storeRequest, params)
-      console.debug(EventUpload.Type, 'handleUpload populatedRequest', params, populatedRequest)
-
-      return requestJsonRecordPromise(populatedRequest).then(orError => {
+      return requestJsonRecordPromise(storeRequest, params).then(orError => {
         progress?.did(sizeMb)
         return isDefiniteError(orError) ? orError : { data: { assetRequest, id } }
       })
@@ -54,4 +47,8 @@ export class UploadHandler {
   }
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(EventUpload.Type, UploadHandler.handleUpload)
+// listen for client upload event
+export const ClientAssetUploadListeners = () => ({
+  [EventUpload.Type]: UploadHandler.handleUpload
+})
+

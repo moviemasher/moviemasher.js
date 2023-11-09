@@ -3,20 +3,19 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit-element/lit-eleme
 import type { OptionalContent } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-import { html } from 'lit-html/lit-html.js'
-
 import { DataTypeRgb } from '@moviemasher/lib-shared'
 import { EventControl, MovieMasher } from '@moviemasher/runtime-client'
+import { ifDefined } from 'lit-html/directives/if-defined.js'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { ControlMixin, ControlProperties } from '../Base/ControlMixin.js'
 import { ControlPropertyMixin } from '../Base/ControlPropertyMixin.js'
 
-const RgbControlElementName = 'movie-masher-control-rgb'
+const RgbControlTag = 'movie-masher-control-rgb'
 
-const WithControlProperty = ControlPropertyMixin(Component)
-const WithControl = ControlMixin(WithControlProperty)
-export class RgbControlElement extends WithControl {
+const RgbWithControlProperty = ControlPropertyMixin(Component)
+const RgbWithControl = ControlMixin(RgbWithControlProperty)
+export class RgbControlElement extends RgbWithControl {
   protected override get defaultContent(): OptionalContent {
     const { property, scalar: value } = this
     if (!property) {
@@ -39,7 +38,7 @@ export class RgbControlElement extends WithControl {
 
   static instance(detail: EventControlDetail) {
     const { propertyId } = detail
-    const element = document.createElement(RgbControlElementName)
+    const element = document.createElement(RgbControlTag)
     element.propertyId = propertyId
     return element
   }
@@ -66,20 +65,30 @@ export class RgbControlElement extends WithControl {
         flex-grow: 1;
         min-width: 50px;
         width: 100%;
-        height: var(--control-size);
-        accent-color: var(--control-fore);
-      }`
+        height: var(--height-control);
+        accent-color: var(--fore);
+      }
+      
+      input:hover {
+        accent-color: var(--over);
+      }
+    `
   ]
 }
 
 // register web component as custom element
-customElements.define(RgbControlElementName, RgbControlElement)
+customElements.define(RgbControlTag, RgbControlElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [RgbControlElementName]: RgbControlElement
+    [RgbControlTag]: RgbControlElement
   }
 }
 
 // listen for control event
 MovieMasher.eventDispatcher.addDispatchListener(EventControl.Type, RgbControlElement.handleNode)
+
+// listen for control rgb event
+export const ClientControlRgbListeners = () => ({
+  [EventControl.Type]: RgbControlElement.handleNode
+})

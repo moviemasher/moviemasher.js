@@ -4,14 +4,14 @@ import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { ControlGroup, OptionalContent } from '../../declarations.js'
 
 import { DOT } from '@moviemasher/lib-shared'
-import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
+import { EventControlGroup, StringEvent } from '@moviemasher/runtime-client'
 import { END } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
 
-const FillControlGroupElementName = 'movie-masher-control-group-fill'
+const FillControlGroupTag = 'movie-masher-control-group-fill'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
 export class FillControlGroupElement extends WithControlGroup implements ControlGroup {
@@ -51,13 +51,13 @@ export class FillControlGroupElement extends WithControlGroup implements Control
   }
 
   protected handleColor(event: StringEvent) {
-    console.debug(this.tagName, 'handleColor', event.detail)
+    // console.debug(this.tagName, 'handleColor', event.detail)
     this.addOrRemoveEnd(event.detail, 'color')
     event.stopImmediatePropagation()
   }
 
   protected handleOpacity(event: StringEvent) {
-    console.debug(this.tagName, 'handleOpacity', event.detail)
+    // console.debug(this.tagName, 'handleOpacity', event.detail)
     this.addOrRemoveEnd(event.detail, 'opacity')
     event.stopImmediatePropagation()
   }
@@ -69,9 +69,9 @@ export class FillControlGroupElement extends WithControlGroup implements Control
       !groupedPropertyIds.includes(id)
     )
     const { names } = FillControlGroupElement
-    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(name)))
-    // console.log('FillControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
+    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(`${DOT}${name}`)))
     if (foundIds.length) {
+      // console.log('FillControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
       detail.order = 4
       detail.controlGroup = FillControlGroupElement.instance(foundIds)
       detail.groupedPropertyIds.push(...foundIds)
@@ -80,7 +80,7 @@ export class FillControlGroupElement extends WithControlGroup implements Control
   }
 
   static instance(propertyIds: PropertyIds) {
-    const element = document.createElement(FillControlGroupElementName)
+    const element = document.createElement(FillControlGroupTag)
     element.propertyIds = propertyIds
     return element
   }
@@ -101,15 +101,17 @@ export class FillControlGroupElement extends WithControlGroup implements Control
 }
 
 // register web component as custom element
-customElements.define(FillControlGroupElementName, FillControlGroupElement)
+customElements.define(FillControlGroupTag, FillControlGroupElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [FillControlGroupElementName]: FillControlGroupElement
+    [FillControlGroupTag]: FillControlGroupElement
   }
 }
 
 // listen for control group event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControlGroup.Type, FillControlGroupElement.handleControlGroup
-)
+export const ClientGroupFillListeners = () => ({
+  [EventControlGroup.Type]: FillControlGroupElement.handleControlGroup
+})
+
+

@@ -114,7 +114,7 @@ T & Constrained<Control> {
     private get selectedPropertyInitialize(): SelectedProperty | undefined {
       const { propertyId } = this
       if (!isPropertyId(propertyId)) {
-        console.warn(this.tagName, 'selectedPropertyInitialize', 'no propertyId')
+        // console.warn(this.tagName, 'selectedPropertyInitialize', 'no propertyId')
         return
       }
       const selectedProperties: SelectedProperties = []
@@ -128,7 +128,7 @@ T & Constrained<Control> {
         }
         case 1: break
         default: {
-          console.warn(this.tagName, 'selectedPropertyInitialize', length, 'selectedProperties')
+          // console.warn(this.tagName, 'selectedPropertyInitialize', length, 'selectedProperties')
         }
       }
       const [property] = selectedProperties

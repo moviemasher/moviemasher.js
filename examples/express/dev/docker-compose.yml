@@ -22,6 +22,9 @@ services:
         condition: service_healthy
     env_file:
       - ../../../dev/local.env
+    build: 
+      context: ../../../../
+      dockerfile: images/express-ffmpeg/dev/Dockerfile.cnf
     image: moviemasher/express-ffmpeg:${MOVIEMASHER_VERSION}
     container_name: moviemasher-example-express-${MOVIEMASHER_EXAMPLE_PORT}
     # entrypoint: node_modules/pm2/bin/pm2-docker
@@ -34,6 +37,8 @@ services:
       MOVIEMASHER_DB_PORT: ${MOVIEMASHER_DB_PORT}
       MOVIEMASHER_DB_USERNAME: ${MOVIEMASHER_DB_USERNAME}
       MOVIEMASHER_EXAMPLE_PORT: ${MOVIEMASHER_EXAMPLE_PORT}
+      MOVIEMASHER_EXAMPLE_ROOT: ${MOVIEMASHER_EXAMPLE_ROOT}
+      MOVIEMASHER_SHARED_ASSETS: ${MOVIEMASHER_DIR_ROOT}/examples/express/public/json/asset-objects.json
 
     ports:
       - ${MOVIEMASHER_EXAMPLE_PORT}:${MOVIEMASHER_EXAMPLE_PORT}
@@ -45,6 +50,7 @@ services:
       - ../../../examples/express/dist:${MOVIEMASHER_DIR_ROOT}/examples/express/dist
       - ../../../examples/express/package.json:${MOVIEMASHER_DIR_ROOT}/examples/express/package.json
       - ../../../examples/express/index.html:${MOVIEMASHER_DIR_ROOT}/examples/express/public/index.html
+      - ../../../dev/documentation/public/example.html:${MOVIEMASHER_DIR_ROOT}/examples/express/public/example.html
       - ../../../examples/express/json/:${MOVIEMASHER_DIR_ROOT}/examples/express/public/json
 
       - ../../../dev/img/favicon.ico:${MOVIEMASHER_DIR_ROOT}/examples/express/public/favicon.ico

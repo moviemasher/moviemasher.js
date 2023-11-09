@@ -9,7 +9,7 @@ export interface RawAsset extends Asset {
   request: EndpointRequest
 }
 
-export type RawAssets = RawAsset[]
+export interface RawAssets extends Array<RawAsset>{}
 
 export interface RawAssetObject extends AssetObject {
   request: EndpointRequest

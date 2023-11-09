@@ -1,8 +1,8 @@
-import type { Tweening } from '@moviemasher/lib-shared'
-import type { AudibleInstance, Constrained, ValueRecord } from '@moviemasher/runtime-shared'
 import type { CommandFilter, CommandFilters, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
+import type { AudibleInstance, Constrained, ValueRecord } from '@moviemasher/runtime-shared'
 import type { ServerAudibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerAudibleInstance, ServerInstance } from '../Types/ServerInstanceTypes.js'
+import type { Tweening } from '../Types/ServerTypes.js'
 
 import { assertPopulatedString, idGenerate, timeFromArgs } from '@moviemasher/lib-shared'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
@@ -14,15 +14,10 @@ export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance 
 
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       const commandFilters: CommandFilters = []
-      const { 
-        time, quantize, commandFiles, videoRate, duration, visible
-      } = args
-
+      const { time, quantize, commandFiles, videoRate, duration, visible } = args
       if (!(visible || container)) return super.initialCommandFilters(args, tweening, container)
 
-
       const { id } = this
-      // console.log(this.constructor.name, 'initialCommandFilters calling commandFilesInput', id)
       let filterInput = commandFilesInput(commandFiles, id, true)
       assertPopulatedString(filterInput, 'filterInput')
     
@@ -32,7 +27,6 @@ export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance 
       if (duration) trimOptions.duration = duration
       const { frame } = this.assetTime(time)
       if (frame) trimOptions.start = timeFromArgs(frame, quantize).seconds
-
       const commandFilter: CommandFilter = { 
         inputs: [filterInput], 
         ffmpegFilter: trimFilter, 
@@ -52,7 +46,6 @@ export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance 
         commandFilters.push(fpsCommandFilter)
         filterInput = fpsId
       } 
-  
       const setptsFilter = 'setpts'
       const setptsId = idGenerate(setptsFilter)
       const setptsCommandFilter: CommandFilter = { 
@@ -61,7 +54,6 @@ export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance 
         inputs: [filterInput], outputs: [setptsId]
       }
       commandFilters.push(setptsCommandFilter) 
-    
       return commandFilters
     }
   }

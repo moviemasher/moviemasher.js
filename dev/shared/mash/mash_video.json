@@ -19,7 +19,7 @@
       "type": "video",
       "source": "raw",
       "request": {
-        "endpoint": "../shared/video/rgb.mp4"
+        "endpoint": "/app/dev/shared/video/rgb.mp4"
       }
     }
   ]

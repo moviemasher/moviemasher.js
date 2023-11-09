@@ -3,9 +3,7 @@ import type { AddClipsActionObject, ClientClips, ClientTrack } from '@moviemashe
 import { EventChangeClipId, MovieMasher } from '@moviemasher/runtime-client'
 import { AddTrackActionClass } from './AddTrackActionClass.js'
 
-/**
- * @category Action
- */
+
 export class AddClipsActionClass extends AddTrackActionClass {
   constructor(object: AddClipsActionObject) {
     super(object)

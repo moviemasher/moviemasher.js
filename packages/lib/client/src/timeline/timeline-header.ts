@@ -2,10 +2,10 @@ import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { ClientActionRemove } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
-import { Header } from '../Base/LeftCenterRight.js'
+import { HeaderElement } from '../Base/LeftCenterRight.js'
 
 export const TimelineHeaderName = 'movie-masher-timeline-header'
-export class TimelineHeaderElement extends Header {
+export class TimelineHeaderElement extends HeaderElement {
   protected override rightContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-action-client')
     htmls.push(html`

@@ -5,4 +5,4 @@ export type RecordsType = 'records'
 export type RecordType = 'record'
 
 export type LoadType = ImportType | RecordType | RecordsType | StringType
-export type LoadTypes = LoadType[]
+export interface LoadTypes extends Array<LoadType>{}

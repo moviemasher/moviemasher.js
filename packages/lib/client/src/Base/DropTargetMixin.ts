@@ -3,7 +3,7 @@ import type { ClipLocation } from '@moviemasher/runtime-client'
 import type { DropTarget } from '../declarations.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { CurrentIndex, ClassDropping, EventTypeDragHandled, eventStop } from '@moviemasher/runtime-client'
+import { INDEX_CURRENT, ClassDropping, EventTypeDragHandled, eventStop } from '@moviemasher/runtime-client'
 import { dragTypeValid, dropped } from '../utility/draganddrop.js'
 import { Component } from './Component.js'
 
@@ -26,8 +26,8 @@ T & Constrained<DropTarget> {
       dropped(event, this.mashIndex(event))
     }
 
-    mashIndex(_event: DragEvent): ClipLocation { 
-      return { index: CurrentIndex, frame: 0, track: -1 } 
+    mashIndex(_event: DragEvent): ClipLocation | undefined { 
+      return { index: INDEX_CURRENT, frame: 0, track: -1 } 
     }
 
     override ondragenter = (event: DragEvent): void => {
@@ -54,9 +54,11 @@ T & Constrained<DropTarget> {
     }
 
     override ondrop = (event: DragEvent): void => {
+      eventStop(event)
       this.over = false
       const { dataTransfer } = event
       if (!this.dropValid(dataTransfer)) return 
+
 
       this.handleDropped(event)
     }

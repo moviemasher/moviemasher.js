@@ -4,7 +4,7 @@ import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { Contents, ControlGroup, OptionalContent } from '../../declarations.js'
 
 import { AspectFlip, DOT } from '@moviemasher/lib-shared'
-import { EventControlGroup, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
+import { EventControlGroup, StringEvent } from '@moviemasher/runtime-client'
 import { ASPECT, END, SIZE_KEYS, } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
@@ -12,11 +12,11 @@ import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '.
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
 import { SizeReactiveMixin } from '../../Base/SizeReactiveMixin.js'
 
-const DimenstionsControlGroupElementName = 'movie-masher-control-group-dimensions'
+const DimensionsControlGroupTag = 'movie-masher-control-group-dimensions'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
 const WithSizeReactive = SizeReactiveMixin(WithControlGroup)
-export class DimenstionsControlGroupElement extends WithSizeReactive implements ControlGroup {
+export class DimensionsControlGroupElement extends WithSizeReactive implements ControlGroup {
   override connectedCallback(): void {
     const heightId = this.namePropertyId(`height${END}`)
     if (heightId) {
@@ -111,18 +111,19 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
     const remainingIds = propertyIds.filter(id => 
       !groupedPropertyIds.includes(id)
     )
-    const { names } = DimenstionsControlGroupElement
-    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(name)))
+    const { names } = DimensionsControlGroupElement
+    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(`${DOT}${name}`)))
     if (foundIds.length) {
+      // console.log('DimensionsControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
       detail.order = 2
-      detail.controlGroup = DimenstionsControlGroupElement.instance(foundIds)
+      detail.controlGroup = DimensionsControlGroupElement.instance(foundIds)
       detail.groupedPropertyIds.push(...foundIds)
       event.stopImmediatePropagation()
     }
   }
 
   static instance(propertyIds: PropertyIds) {
-    const element = document.createElement(DimenstionsControlGroupElementName)
+    const element = document.createElement(DimensionsControlGroupTag)
     element.propertyIds = propertyIds
     return element
   }
@@ -145,15 +146,15 @@ export class DimenstionsControlGroupElement extends WithSizeReactive implements 
 }
 
 // register web component as custom element
-customElements.define(DimenstionsControlGroupElementName, DimenstionsControlGroupElement)
+customElements.define(DimensionsControlGroupTag, DimensionsControlGroupElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [DimenstionsControlGroupElementName]: DimenstionsControlGroupElement
+    [DimensionsControlGroupTag]: DimensionsControlGroupElement
   }
 }
 
 // listen for control group event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControlGroup.Type, DimenstionsControlGroupElement.handleControlGroup
-)
+export const ClientGroupDimensionsListeners = () => ({
+  [EventControlGroup.Type]: DimensionsControlGroupElement.handleControlGroup
+})

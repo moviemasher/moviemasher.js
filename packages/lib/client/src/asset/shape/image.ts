@@ -36,6 +36,10 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     return Promise.resolve(svgSvgElement(size, pathElement))
   }
 
+  override get assetObject(): ShapeAssetObject {
+    const { id, type, source, label, path, pathHeight, pathWidth } = this
+    return { id, type, source, label, path, pathHeight, pathWidth }
+  }
   override instanceFromObject(object?: ShapeInstanceObject): ShapeInstance {
     const args = this.instanceArgs(object)
     return new ClientShapeInstanceClass(args)

@@ -13,7 +13,7 @@ export interface CommandDescription {
   avType: AVType
 }
 
-export type CommandDescriptions = CommandDescription[]
+export interface CommandDescriptions extends Array<CommandDescription>{}
 
 export interface MashDescription {
   audibleCommandDescription?: CommandDescription

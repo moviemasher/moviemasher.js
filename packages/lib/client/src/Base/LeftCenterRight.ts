@@ -6,9 +6,9 @@ import { html } from 'lit-html/lit-html.js'
 import { Component } from './Component.js'
 import { Slotted } from './Slotted.js'
 
-const LeftSlot = 'left'
-const RightSlot = 'right'
-const CenterSlot = 'center'
+export const LeftSlot = 'left'
+export const RightSlot = 'right'
+export const CenterSlot = 'center'
 
 export class LeftCenterRight extends Slotted {
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
@@ -38,30 +38,6 @@ export class LeftCenterRight extends Slotted {
   
   override parts = [LeftSlot, CenterSlot, RightSlot].join(Slotted.partSeparator)
 
-  static cssHeaderFooter = css`
-    header, footer {
-      padding: 0;
-      display: flex; 
-      flex-grow: 1; 
-      background-color: var(--section-back);
-      color: var(--section-fore);
-      gap: var(--section-spacing);
-      line-height: var(--icon-size);
-      font-size: var(--icon-size);
-    }
-    .center, .left, .right {
-      white-space: nowrap;
-      gap: var(--section-spacing);
-      padding: var(--section-padding);
-    }
-    .center > *, .left > *, .right > * {
-      margin-block: auto;
-    }
-    .center {
-      justify-content: right;
-    }
-  
-  `
   static cssShared = css`
     :host {
       --flex-direction: column;
@@ -81,24 +57,59 @@ export class LeftCenterRight extends Slotted {
     Component.cssBorderBoxSizing,
     Component.cssHostFlex,
     LeftCenterRight.cssShared,
-    LeftCenterRight.cssHeaderFooter,
+    css`
+      header, footer {
+        --fore: var(--fore-chrome);
+        --back: var(--back-chrome);
+        --over: var(--over-chrome);
+        --on: var(--on-chrome);
+        --off: var(--off-chrome);
+
+
+        --pad: var(--pad-chrome);
+        --gap: var(--gap-chrome);
+
+        background-color: var(--back);
+        color: var(--fore);
+        
+        padding: 0;
+        display: flex; 
+        flex-grow: 1; 
+
+        gap: var(--gap);
+        line-height: var(--height-control);
+        font-size: var(--height-control);
+      }
+      .center, .left, .right {
+        white-space: nowrap;
+        gap: var(--gap);
+        padding: var(--pad);
+      }
+      .center > *, .left > *, .right > * {
+        margin-block: auto;
+      }
+      .center {
+        justify-content: right;
+      }
+    
+    `,
   ]
 }
 
-export class Header extends LeftCenterRight {
+export class HeaderElement extends LeftCenterRight {
   icon = ''
   protected override leftContent(slots: Htmls): OptionalContent {
-    const slotsCopy = [...slots]
+    const htmls = [...slots]
     const { icon } = this
     if (icon) {
       this.importTags('movie-masher-component-icon')
-      slotsCopy.push(
+      htmls.push(
         html`<movie-masher-component-icon 
           part='icon' icon='${icon}'
         ></movie-masher-component-icon>`
       )
     }
-    return super.leftContent(slotsCopy)
+    return super.leftContent(htmls)
   }
 
   protected override content(contents: Contents): Content {
@@ -113,7 +124,7 @@ export class Header extends LeftCenterRight {
   }
 }
 
-export class Footer extends LeftCenterRight {
+export class FooterElement extends LeftCenterRight {
   protected override content(contents: Contents): Content {
     return html`<footer 
       @export-parts='${this.handleExportParts}'
@@ -122,30 +133,37 @@ export class Footer extends LeftCenterRight {
 }
 
 
-export class Div extends LeftCenterRight {
-  static cssDivHostBackground = css`
-    :host {
-      background-color: var(--div-back);
-      color: var(--div-fore);
-    }
-  `
+export class ContentElement extends LeftCenterRight {
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
-    Div.cssDivHostBackground,
     Component.cssHostFlex,
     LeftCenterRight.cssShared,
     css`
+      :host {
+        --fore: var(--fore-content);
+        --back: var(--back-content);
+        --over: var(--over-content);
+        --on: var(--on-content);
+        --off: var(--off-content);
+        --pad: var(--pad-content);
+
+        background-color: var(--back);
+        color: var(--fore);
+      }
+      .left, .right {
+        padding: var(--pad);
+      }
+
       .left {
-        border-right-width: var(--border-size);
-        border-right-color: var(--section-back);
+        border-right-width: var(--size-border);
+        border-right-color: var(--back-chrome);
         border-right-style: solid;
         align-items: flex-start;
-        flex-direction: var(--flex-direction);
+        flex-direction: var(--flex-direction, row);
       }
-    
       .right {
-        border-left-width: var(--border-size);
-        border-left-color: var(--section-back);
+        border-left-width: var(--size-border);
+        border-left-color: var(--back-chrome);
         border-left-style: solid;
       }
     ` 

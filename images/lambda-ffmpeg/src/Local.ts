@@ -4,7 +4,7 @@ import type { LoadType, PopulatedString, } from '@moviemasher/runtime-shared'
 
 import { ENV, ENVIRONMENT, hashMd5 } from '@moviemasher/lib-server'
 import { NEWLINE, assertPopulatedString, isLoadType } from '@moviemasher/lib-shared'
-import { GraphFileTypeSvgSequence } from '@moviemasher/runtime-server'
+import { SVG_SEQUENCE } from '@moviemasher/runtime-server'
 import { AUDIO, ERROR, FONT, IMAGE, VIDEO, errorThrow, } from '@moviemasher/runtime-shared'
 import path from 'path'
 
@@ -21,7 +21,7 @@ const typeExtension = (type: LoadType): string => {
 }
 
 const graphFileTypeBasename = (type: GraphFileType, content: PopulatedString) => {
-  if (type !== GraphFileTypeSvgSequence) return `${BasenameCache}.${type}`
+  if (type !== SVG_SEQUENCE) return `${BasenameCache}.${type}`
   const fileCount = content.split(NEWLINE).length
   const digits = String(fileCount).length
   return `%0${digits}.svg`
@@ -36,7 +36,7 @@ export const localPath = (username: string, graphFile: GraphFile): string => {
   assertPopulatedString(file, 'file')
 
   const cacheDirectory = ENVIRONMENT.get(ENV.ApiDirCache)
-  const filePrefix = ENVIRONMENT.get(ENV.ApiDirFilePrefix)
+  const filePrefix = ENVIRONMENT.get(ENV.ExampleRoot)
   const validDirectories = ENVIRONMENT.get(ENV.ApiDirValid)
 
   const defaultDirectory = username

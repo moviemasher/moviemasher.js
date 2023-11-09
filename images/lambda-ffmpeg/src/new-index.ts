@@ -5,7 +5,7 @@ import { COLON } from '@moviemasher/lib-shared'
 import { NUMBER, errorObjectCaught } from '@moviemasher/runtime-shared'
 import express from 'express'
 import { jobExtract } from './Job.js'
-import { JobTypeDecoding, JobTypeEncoding } from './JobGuards.js'
+import { JOB_DECODING, JOB_ENCODING } from '@moviemasher/lib-server/src/Utility/JobGuards.js'
 
 const app = express()
 app.use(express.json())
@@ -26,12 +26,12 @@ const postHandler: express.RequestHandler = (req, res) => {
   try {
     const [jobType, job] = jobExtract(request)
     switch (jobType) {
-      case JobTypeDecoding: {
+      case JOB_DECODING: {
         // assertProbingJob(job)
 
         break
       }
-      case JobTypeEncoding: {
+      case JOB_ENCODING: {
         
         break
       }
@@ -45,7 +45,7 @@ const postHandler: express.RequestHandler = (req, res) => {
 
 app.post('/', postHandler)
 
-const port = ENVIRONMENT.get(ENV.ApiPort, NUMBER)
-const suppliedHost = ENVIRONMENT.get(ENV.ApiHost)
+const port = ENVIRONMENT.get(ENV.ExamplePort, NUMBER)
+const suppliedHost = ENVIRONMENT.get(ENV.ExampleHost)
 const host = suppliedHost === 'localhost' ? '0.0.0.0' : suppliedHost
 app.listen(port, host, () => { console.log(`Listening on ${host}${COLON}${port}`) })

@@ -12,6 +12,8 @@ import { DASH } from '@moviemasher/lib-shared'
 const partFirst = (element: Element): string => element.part[0] || ''
 
 export class Component extends LitElement {
+
+
   override connectedCallback(): void {
     MovieMasher.eventDispatcher.listenersAdd(this.listeners)
     this.handleExportParts()
@@ -50,10 +52,6 @@ export class Component extends LitElement {
     return this.shadowRoot!.querySelector(selector)!
   }
 
-  protected error(msg: string) {
-    this.dispatchEvent(new ErrorEvent('error', { error: new Error(msg) }))
-  }
-
   protected get exportElements(): Element[] {
     const nestedElements = (child: Element): Elements => {
       if (partFirst(child)) return [child]
@@ -63,15 +61,21 @@ export class Component extends LitElement {
     return Array.from(this.shadowRoot?.children || []).flatMap(nestedElements)
   }
 
-  protected _exportParts?: string | undefined
+  private _exportParts?: string | undefined
 
+  /**
+   * @attr export-parts
+   * @returns comma separated list of export parts
+   */
   get exportParts(): string | undefined {
     const { _exportParts } = this
     if (!isDefined(_exportParts)) this._exportParts = this.exportPathsInitialize
     
     return this._exportParts ? this._exportParts : undefined
   }
-
+  /**
+   * @internal
+   */
   set exportParts(_: string | undefined) {}
 
   private get exportPathsInitialize(): string {
@@ -144,8 +148,8 @@ export class Component extends LitElement {
   static cssHostDropping = css`
     :host(.dropping) {
       box-shadow: var()
-        0 var(--drop-size) 0 0 var(--color-drop),
-        0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
+        0 var(--size-drop) 0 0 var(--color-drop),
+        0 calc(-1 * var(--size-drop)) 0 0 var(--color-drop)
       ;
     }
   `

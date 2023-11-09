@@ -7,6 +7,7 @@ export const ClientActionRedo: ClientAction = 'redo'
 export const ClientActionRemove: ClientAction = 'remove'
 export const ClientActionTogglePaused: ClientAction = 'toggle-paused'
 export const ClientActionUndo: ClientAction = 'undo'
+export const ClientActionView: ClientAction = 'view'
 
 export const ServerActionSave: ServerAction = 'save'
 export const ServerActionEncode: ServerAction = 'encode'

@@ -1,11 +1,10 @@
-import type { ProbeOptions } from './ProbeTypes.js'
+import type { ProbeOptions } from '@moviemasher/lib-shared'
 
-import { errorThrow, isArray, isObject } from '@moviemasher/runtime-shared'
+import { errorThrow, isObject } from '@moviemasher/runtime-shared'
 
 export const isProbeOptions = (value: any): value is ProbeOptions => {
-  return isObject(value) && 'types' in value && isArray(value.types)
+  return isObject(value) 
 }
 export function assertProbeOptions(value: any): asserts value is ProbeOptions {
-  if (!isProbeOptions(value))
-    errorThrow(value, 'ProbeOptions')
+  if (!isProbeOptions(value)) errorThrow(value, 'ProbeOptions')
 }

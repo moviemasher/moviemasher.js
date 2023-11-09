@@ -3,12 +3,9 @@ import type { PropertyIds } from '@moviemasher/runtime-shared'
 
 import { DOT } from '@moviemasher/lib-shared'
 import { EventChangeClipId, EventChangedScalars, MovieMasher } from '@moviemasher/runtime-client'
-import { CLIP } from '@moviemasher/runtime-shared'
+import { TARGET_CLIP } from '@moviemasher/runtime-shared'
 import { AddTrackActionClass } from './AddTrackActionClass.js'
 
-/**
- * @category Action
- */
 export class MoveClipActionClass extends AddTrackActionClass {
   constructor(object: MoveClipActionObject) {
     super(object)
@@ -30,7 +27,7 @@ export class MoveClipActionClass extends AddTrackActionClass {
     this.undoTrackIndex = undoTrackIndex
   }
 
-  override get affects(): PropertyIds { return [`${CLIP}${DOT}frame`] }
+  override get affects(): PropertyIds { return [`${TARGET_CLIP}${DOT}frame`] }
   
   clip: ClientClip
 

@@ -1,17 +1,18 @@
-
 import type { ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { AssetType, DataOrError, DecodeOptions, DecodingObject, DefiniteError, Numbers, ProbingData, Sizes, StringDataOrError, Strings, } from '@moviemasher/runtime-shared'
+import type { AssetType, DataOrError, DecodeOptions, Decoding, Numbers, ProbingData, Sizes, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
 
 import { DOT, JsonExtension, NEWLINE } from '@moviemasher/lib-shared'
 import { EventServerAssetPromise, EventServerDecode, EventServerDecodeStatus, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, PROBE, error, errorCaught, isDefiniteError, isObject, isPopulatedString, isProbing } from '@moviemasher/runtime-shared'
+import { ERROR, PROBE, namedError, errorCaught, isDate, isDefiniteError, isPopulatedString, isProbing } from '@moviemasher/runtime-shared'
 import { execSync } from 'child_process'
 import ffmpeg from 'fluent-ffmpeg'
 import path from 'path'
 import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
-import { fileCreatedPromise, filePathExists, fileReadPromise, fileWriteJsonPromise, fileWritePromise } from '../Utility/File.js'
-import { ProbeAudible, ProbeDuration, ProbeSize } from './ProbeConstants.js'
+import { filePathExists } from '../Utility/File.js'
+import { ProbeAudible, ProbeDuration, ProbeSize } from '@moviemasher/lib-shared'
 import { assertProbeOptions } from './ProbeFunctions.js'
+import { jobHasErrored, jobHasFinished, jobHasStarted, jobGetStatus } from '../Utility/JobFunctions.js'
+import { JOB_DECODING } from '../Utility/JobConstants.js'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 
@@ -27,30 +28,23 @@ const alphaFormatsInitialize = (): Strings => {
 }
 
 
-const writeError = async (pathFragment: string, orError: DefiniteError): Promise<DefiniteError> => {
-  const errorPath = decodeOutputPath(pathFragment, ['error', JsonExtension].join(DOT))
-  await fileWriteJsonPromise(errorPath, orError.error)
-  return orError
-}
-
-const probe = async (request: ServerMediaRequest, options: DecodeOptions, pathFragment: string, assetType: AssetType): Promise<StringDataOrError> => {
-  const orError = await probePromise(request, options, pathFragment, assetType)
-  if (isDefiniteError(orError)) writeError(pathFragment, orError)
+const probe = async (request: ServerMediaRequest, options: DecodeOptions, user: string, id: string, assetType: AssetType): Promise<StringDataOrError> => {
+  const orError = await probePromise(request, options, user, id, assetType)
+  if (isDefiniteError(orError)) await jobHasErrored(id, orError.error)
   return orError
 }
 
 
-const probePromise = async (request: ServerMediaRequest, options: DecodeOptions, pathFragment: string, assetType: AssetType): Promise<StringDataOrError> => {
-  const writingOutput = pathFragment !== JsonExtension
-
-  const probePath = decodeOutputPath(pathFragment, [PROBE, JsonExtension].join(DOT))
-  const orError = await fileWritePromise(probePath, '')
-  if (isDefiniteError(orError)) return orError
-  
+const probePromise = async (request: ServerMediaRequest, options: DecodeOptions, user: string, id: string, assetType: AssetType): Promise<StringDataOrError> => {
+  const writingOutput = id !== JsonExtension
+  if (writingOutput) {
+    const orError = await jobHasStarted(id)
+    if (isDefiniteError(orError)) return orError
+  }
   const assetEvent = new EventServerAssetPromise(request, assetType)
   MovieMasher.eventDispatcher.dispatch(assetEvent)
   const { promise: assetPromise } = assetEvent.detail
-  if (!assetPromise) return error(ERROR.Unimplemented, EventServerAssetPromise.Type)
+  if (!assetPromise) return namedError(ERROR.Unimplemented, EventServerAssetPromise.Type)
   
   const assetOrError = await assetPromise  
   if (isDefiniteError(assetOrError)) return assetOrError
@@ -59,7 +53,7 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
 
   assertProbeOptions(options)
   const { types } = options
-  if (!filePathExists(inputPath)) return error(ERROR.Internal, `inputPath ${inputPath}`)
+  if (!filePathExists(inputPath)) return namedError(ERROR.Internal, `inputPath: ${inputPath}`)
 
   const promise = new Promise<StringDataOrError>(resolve => {
     const command = ffmpeg()
@@ -128,7 +122,12 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
           }
         })
         probingData.raw = raw
-        const decoding: DecodingObject = { type: PROBE, data: probingData }
+
+        const { filename: filePath } = format
+        if (isPopulatedString(filePath)) delete format.filename
+
+
+        const decoding: Decoding = { id, type: PROBE, data: probingData }
         const json = JSON.stringify(decoding)
         resolve({ data: json }) 
       }
@@ -139,68 +138,43 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
   if (isDefiniteError(probeOrError) || !writingOutput) return probeOrError
 
   const { data: json } = probeOrError
-  const writeOrError = await fileWritePromise(probePath, json)
+
+  const decoding = JSON.parse(json)
+  if (!isProbing(decoding)) return namedError(ERROR.Syntax, { probing: decoding })
+
+  const writeOrError = await jobHasFinished(id, decoding)
   if (isDefiniteError(writeOrError)) return writeOrError
 
+  const fileName = [PROBE, JsonExtension].join(DOT)
+  const probePath = path.resolve(ENVIRONMENT.get(ENV.OutputRoot), user, id, fileName)
+  
   return { data: probePath }
 }
 
+const statusPromise = async (id: string): Promise<DataOrError<Decoding | Date>> => {
+  const orError = await jobGetStatus(id)
+  if (isDefiniteError(orError)) return orError
 
-const decodeOutputPath = (pathFragment: string, name: string) => {
-  return path.resolve(ENVIRONMENT.get(ENV.OutputRoot), pathFragment, name)
-}
+  const { data } = orError
+  if (isDate(data) || isProbing(data)) return { data }
 
-const statusPromise = async (pathFragment: string): Promise<DataOrError<DecodingObject | Date>> => {
-  const probePath = decodeOutputPath(pathFragment, [PROBE, JsonExtension].join(DOT))
-  const errorPath = decodeOutputPath(pathFragment, `error.${JsonExtension}`)
-  if (filePathExists(errorPath)) {
-    // an error was encountered while rendering
-    const errorStringOrError = await fileReadPromise(errorPath)
-    // see if there was an error reading the file
-    if (isDefiniteError(errorStringOrError)) return errorStringOrError
-
-    const { data: errorString } = errorStringOrError
-    // assume file hasn't finished writing if empty
-    if (errorString) return { data: JSON.parse(errorString) }
-  } else if (filePathExists(probePath)) {
-    // we finished encoding and at least started probing
-    const probeStringOrError = await fileReadPromise(probePath)
-    
-    // see if there was an error reading the file
-    if (isDefiniteError(probeStringOrError)) return probeStringOrError
-    
-    const { data: probeString } = probeStringOrError
-    // assume file hasn't finished writing if empty
-    if (probeString) {
-      const probe = JSON.parse(probeString)
-      if (!isProbing(probe)) return error(ERROR.Internal, 'probe')
-      const { raw } = probe.data
-      if (!isObject(raw)) return error(ERROR.Internal, 'probe raw')
-      const { format } = raw
-      if (!isObject(format)) return error(ERROR.Internal, 'raw format')
-      
-      const { filename: filePath } = format
-      if (isPopulatedString(filePath)) delete format.filename
-
-      return { data: probe }
-    }
-  }
-  return await fileCreatedPromise(probePath)
+  return namedError(ERROR.Syntax, { ...data, name: JOB_DECODING })
 }
 
 const probeHandler = (event: EventServerDecode) => {
   const { detail } = event
-  const { decodingType, request, decodeOptions, pathFragment, assetType } = detail
+  const { decodingType, request, decodeOptions, user, id, assetType } = detail
   if (decodingType !== PROBE) return
 
-  detail.promise = probe(request, decodeOptions, pathFragment, assetType)
+  detail.promise = probe(request, decodeOptions, user, id, assetType)
   event.stopImmediatePropagation()
 }
 
 const statusHandler = (event: EventServerDecodeStatus) => {
   const { detail } = event
-  const { pathFragment } = detail
-  detail.promise = statusPromise(pathFragment)
+  const { id } = detail
+  console.log('PROBE statusHandler', id)
+  detail.promise = statusPromise(id)
   event.stopImmediatePropagation()
 }
 
@@ -208,9 +182,6 @@ export const ServerDecodeProbeListeners = () => ({
   [EventServerDecode.Type]: probeHandler,
 })
 
-
 export const ServerDecodeStatusListeners = () => ({
   [EventServerDecodeStatus.Type]: statusHandler,
 })
-
-

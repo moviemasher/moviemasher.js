@@ -1,11 +1,12 @@
-import type { Tweening } from '@moviemasher/lib-shared'
 import type { CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
 import type { Constrained, ContentRectArgs, ValueRecord, VisibleInstance } from '@moviemasher/runtime-shared'
 import type { ServerVisibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../Types/ServerInstanceTypes.js'
+import type { Tweening } from '../Types/ServerTypes.js'
 
-import { arrayLast, assertDefined, assertPopulatedArray, assertPopulatedString, assertTimeRange, colorBlackOpaque, colorTransparent, idGenerate, isTimeRange, isTrueValue, sizeEven, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { arrayLast, assertDefined, assertPopulatedArray, assertPopulatedString, assertTimeRange, colorBlackOpaque, colorTransparent, idGenerate, isTimeRange, isTrueValue, sizeEven } from '@moviemasher/lib-shared'
 import { POINT_ZERO } from '@moviemasher/runtime-shared'
+import { tweenMaxSize, tweenOption, tweenPosition } from '../Utility/Command.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 import { isServerVisibleAsset } from '../guard/assets.js'
 

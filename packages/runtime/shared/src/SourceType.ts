@@ -1,6 +1,6 @@
 export type Source = string | ColorSource | MashSource | RawSource | ShapeSource | TextSource | PromptSource
 
-export type Sources = Source[]
+export interface Sources extends Array<Source>{}
 
 export type ColorSource = 'color'
 export type MashSource = 'mash'

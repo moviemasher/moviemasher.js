@@ -15,3 +15,4 @@ services:
       - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
       - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
       - ../../../examples/:${MOVIEMASHER_DIR_ROOT}/examples/
+      - ../../../images/build-docs/:${MOVIEMASHER_DIR_ROOT}/images/build-docs/

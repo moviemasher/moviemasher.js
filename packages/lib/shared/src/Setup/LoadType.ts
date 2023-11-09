@@ -15,7 +15,7 @@ export function assertLoadType(value: any, name?: string): asserts value is Load
   if (!isLoadType(value)) errorThrow(value, 'LoadType', name)
 }
 export type UploadType = AssetType | FontType
-export type UploadTypes = UploadType[]
+export interface UploadTypes extends Array<UploadType>{}
 export const TypesUpload: UploadTypes = [...ASSET_TYPES, FONT]
 export const isUploadType = (type?: any): type is UploadType => {
   return TypesUpload.includes(type)

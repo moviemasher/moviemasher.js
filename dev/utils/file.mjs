@@ -7,7 +7,6 @@ import { assertObject, assertString, assertPath, isObject, isJsonPath, isString,
 
 export const monoDir = () => path.resolve(fileURLToPath(import.meta.url), '../../../')
 
-
 export const assignSafely = (object, key, value) => {
   assertObject(object, 'object')
   assertString(key, 'key')

@@ -8,7 +8,7 @@ import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined, isMashAsset, sizeCopy } from '@moviemasher/lib-shared'
 import { DragSuffix, EventChangeClipId, EventChanged, EventClipElement, EventTrackClipIcon, EventRemoveClip, EventTypeScrollRoot, MovieMasher, eventStop } from '@moviemasher/runtime-client'
-import { SIZE_ZERO, CLIP, MASH, isDefiniteError } from '@moviemasher/runtime-shared'
+import { SIZE_ZERO, TARGET_CLIP, MASH, isDefiniteError } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { DropTargetMixin } from '../Base/DropTargetMixin.js'
@@ -24,7 +24,7 @@ const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
 const WithSizeReactiveMixin = SizeReactiveMixin(WithDropTargetMixin)
 export class ComposerClipElement extends WithSizeReactiveMixin implements DropTarget {
   constructor() {
-    console.log('ComposerClipElement')
+    // console.log('ComposerClipElement')
     super()
     this.listeners[EventChanged.Type] = this.handleChanged.bind(this)
   }
@@ -82,13 +82,13 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
   private drawBackgroundAndUpdate() {
     this.hasChanged = false 
     // console.log(this.tagName, 'drawBackground')
-    const { clipId, scale, clipSize: clipSize, gap } = this
+    const { clipId, scale, clipSize, gap } = this
     this.sizeWhenUpdated = sizeCopy(clipSize)
     const event = new EventTrackClipIcon(clipId, clipSize, scale, gap)
     MovieMasher.eventDispatcher.dispatch(event)
 
     const { promise, background } = event.detail
-    console.log('drawBackgroundAndUpdate', !!promise)
+    // console.log('drawBackgroundAndUpdate', !!promise)
     if (!(promise && background)) return 
   
     const svgElement = this.element('div.background')
@@ -166,11 +166,11 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
       // console.log(this.tagName, 'handleTimeout calling handleChange because hasChanged')
       return this.handleChange()
     }
-    const { waitingPromise: promise } = this
-    assertDefined(promise)
+    const { waitingPromise } = this
+    assertDefined(waitingPromise)
   
-    const iconPromise = promise.then(orError => {
-      console.log(this.tagName, 'iconPromise', orError)
+    const iconPromise = waitingPromise.then(orError => {
+      // console.log(this.tagName, 'iconPromise', orError)
       if (iconPromise !== this.iconFromFramePromise) {
         // console.warn(this.tagName, 'handleTimeout', 'iconPromise !== this.iconFromFramePromise')
         return
@@ -217,7 +217,7 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
   }
 
   override ondragstart = (event: DragEvent) => {
-    console.log(this.tagName, 'ondragstart', event.target)
+    // console.log(this.tagName, 'ondragstart', event.target)
     this.onpointerdown(event)
 
     const { dataTransfer, clientX } = event
@@ -232,19 +232,8 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     const data = { offset: clientX - left }
     const json = JSON.stringify(data)
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(`${CLIP}${DragSuffix}`, json)
+    dataTransfer.setData(`${TARGET_CLIP}${DragSuffix}`, json)
   }
-
-  // override mashIndex(event: DragEvent): ClipLocation {
-  //   const { dataTransfer } = event
-  //   const { clientX } = event
-  //   const scrollX = this.scrollRoot?.scrollLeft ?? 0
-  //   const { x, scale, clipId, trackIndex } = this
-  //   const offsetDrop = scrollX + clientX - x
-  //   console.log(this.tagName, 'mashIndex', { scale, offsetDrop, scrollX, clientX, x })
-   
-  //   return droppedMashIndex(dataTransfer!, trackIndex, scale, offsetDrop, clipId)
-  // }
 
   override onpointerdown = (event: Event) => {
     event.stopPropagation()
@@ -331,6 +320,10 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
     Component.cssBorderBoxSizing,
     css`
       :host {
+        --pad: var(--pad-label);
+        --height: var(--height-label);
+        --height-text: calc(var(--height) - (2 * var(--pad)));
+
         cursor: grab;
         display: flex;
         flex-direction: column;
@@ -339,13 +332,11 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
         bottom: 0px;
         overflow: hidden;
     
-        border-radius: var(--border-radius);
+        border-radius: var(--radius-border);
      
-        color: var(--item-fore-tertiary);
-        border-color: var(--item-fore-tertiary);
-        background-color: var(--item-back-tertiary);
-
+        color: var(--fore);
         border: var(--border);
+        border-color: var(--fore);
         display: inline-block;
         flex-grow: 1;
 
@@ -367,22 +358,25 @@ export class ComposerClipElement extends WithSizeReactiveMixin implements DropTa
         box-shadow: var(--dropping-shadow);
       }
 
-      :host(:hover){
-        color: var(--item-fore-hover);
-        border-color: var(--item-fore-hover);
-        background-color: var(--item-back-hover);
+      :host(:hover) {
+        color: var(--over);
+        border-color: var(--over);
       }
       
       label {
-        height: var(--icon-size);
-        --padding: 5px;
+        background-color: var(--fore);
+        color: var(--back);
+        height: var(--height);
+        font-size: var(--height-text);
+        line-height: var(--height-text);
+        padding: var(--pad);
         position: absolute;
         display: inline-block;
         overflow: hidden;
         white-space: nowrap;
+        text-overflow: ellipsis;
         width: 100%;
         opacity: 0.5;
-        padding: var(--padding);
       }
     `,
   ]
@@ -397,5 +391,9 @@ declare global {
   }
 }
 
-// listen for  clip element event
-MovieMasher.eventDispatcher.addDispatchListener(EventClipElement.Type, ComposerClipElement.handleClipElement)
+// listen for clip element event
+export const ClientClipElementListeners = () => ({
+  [EventClipElement.Type]: ComposerClipElement.handleClipElement
+})
+
+

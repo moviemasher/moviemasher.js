@@ -17,4 +17,4 @@ export interface TrackPreview {
   container: ClientInstance
 }
 
-export type TrackPreviews = TrackPreview[]
+export interface TrackPreviews extends Array<TrackPreview>{}

@@ -96,7 +96,7 @@ export class AudioPreviewClass {
           const source = asset.audibleSource()
           if (!source) {
             if (!start) {
-              console.log(this.constructor.name, 'createSources no audible source', asset.label)
+              // console.log(this.constructor.name, 'createSources no audible source', asset.label)
               // wanted to start immediately but it's not loaded
               return !asset.audio
             }
@@ -145,8 +145,7 @@ export class AudioPreviewClass {
 
   get seconds(): number {
     const ellapsed = AudibleContextInstance.currentTime - this.contextSecondsWhenStarted
-    const started = ellapsed + this.startedMashAt
-    return started
+    return ellapsed + this.startedMashAt
   }
 
   startContext(): void {

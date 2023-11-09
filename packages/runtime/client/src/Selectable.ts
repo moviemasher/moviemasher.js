@@ -6,6 +6,6 @@ export interface Selectable extends Propertied {
   changeScalars(scalars: ScalarsById): ChangeActionObject
 }
 
-export type Selectables = Selectable[]
+export interface Selectables extends Array<Selectable>{}
 
 export interface SelectorTypesObject extends Record<string, SelectorType[]> {}

@@ -15,6 +15,6 @@ export interface Property extends Typed, Ordered {
   tweens?: boolean
 }
 
-export type Properties = Property[]
+export interface Properties extends Array<Property>{}
 
 export type PropertyRecord = Record<string, Property>

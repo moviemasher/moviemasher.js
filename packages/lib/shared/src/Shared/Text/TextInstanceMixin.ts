@@ -1,6 +1,6 @@
 import type { Constrained, IntrinsicOptions, Rect, TextAsset, TextInstance, TextInstanceObject, UnknownRecord, VisibleInstance } from '@moviemasher/runtime-shared'
 
-import { END, CONTAINER } from '@moviemasher/runtime-shared'
+import { END, TARGET_CONTAINER } from '@moviemasher/runtime-shared'
 import { DataTypePercent, DataTypeString } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { isRect } from '../../Utility/RectFunctions.js'
@@ -24,24 +24,24 @@ export function TextInstanceMixin<T extends Constrained<VisibleInstance>>(Base: 
 
     override initializeProperties(object: TextInstanceObject): void {
       this.properties.push(propertyInstance({
-        targetId: CONTAINER, name: 'string', type: DataTypeString,
+        targetId: TARGET_CONTAINER, name: 'string', type: DataTypeString,
         defaultValue: this.asset.string,
       }))
       this.properties.push(propertyInstance({
-        targetId: CONTAINER, name: 'height', type: DataTypePercent,
+        targetId: TARGET_CONTAINER, name: 'height', type: DataTypePercent,
         min: 0, max: 2, step: 0.01, defaultValue: 0.3, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId: CONTAINER, name: `height${END}`,
+        targetId: TARGET_CONTAINER, name: `height${END}`,
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
       }))
       this.properties.push(propertyInstance({
-        targetId: CONTAINER, name: 'width', type: DataTypePercent,
+        targetId: TARGET_CONTAINER, name: 'width', type: DataTypePercent,
         min: 0, max: 2, step: 0.01, tweens: true,
         defaultValue: 0.8,
       }))
       this.properties.push(propertyInstance({
-        targetId: CONTAINER, name: `width${END}`,
+        targetId: TARGET_CONTAINER, name: `width${END}`,
         min: 0, max: 1, step: 0.01,
         type: DataTypePercent, undefinedAllowed: true, tweens: true,
       }))

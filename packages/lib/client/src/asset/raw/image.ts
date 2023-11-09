@@ -40,7 +40,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
       if (isDefiniteError(orError)) return orError
 
       const { data: clientImage } = orError
-      console.log(this.constructor.name, 'assetCachePromise setting loadedImage')
+      // console.log(this.constructor.name, 'assetCachePromise setting loadedImage')
       this.loadedImage = clientImage
       return { data: 1 }
     })
@@ -62,7 +62,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
       assertSizeAboveZero(clientImage)
 
       const { width, height, src } = clientImage
-      console.debug(this.constructor.name, 'assetIcon', { src })
+      // console.debug(this.constructor.name, 'assetIcon', { src })
 
       const inSize = { width, height }
       const coverSize = sizeCover(inSize, size, !cover)
@@ -116,7 +116,7 @@ export class ClientRawImageInstanceClass extends WithImageInstance implements Cl
     const { asset } = this
     const requestable = asset.preferredTranscoding(IMAGE) || asset
     if (!requestable) {
-      console.debug(this.constructor.name, 'svgItemForTimelinePromise no requestable')
+      // console.debug(this.constructor.name, 'svgItemForTimelinePromise no requestable')
       return errorThrow(`No requestable for ${IMAGE}`)
     }
     

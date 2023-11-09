@@ -4,9 +4,6 @@ import { ActionClass } from './ActionClass.js'
 import { ClientMashAsset } from '@moviemasher/runtime-client'
 import { arrayOfNumbers } from '@moviemasher/lib-shared'
 
-/**
- * @category Action
- */
 export class AddTrackActionClass extends ActionClass {
 
   constructor(object: AddTrackActionObject) {

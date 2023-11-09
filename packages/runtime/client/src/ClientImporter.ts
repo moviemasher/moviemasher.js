@@ -5,4 +5,4 @@ export interface ClientImporter extends Importer {
   ui: Node
 }
 
-export type ClientImporters = ClientImporter[]
+export interface ClientImporters extends Array<ClientImporter>{}

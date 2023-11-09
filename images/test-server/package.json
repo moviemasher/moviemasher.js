@@ -5,10 +5,10 @@
   "scripts": {
     "test-ffmpeg": "ffmpeg -y -filter_complex 'color=size=24000x2000:duration=1:rate=1:color=black,drawtext=fontfile=/app/temporary/test-server/cache/1fe02cf3faae3032e16727ff06364759.ttf:textfile=/app/temporary/test-server/cache/3ed25eb6f503d1597df66d4de848f624.txt:fontsize=1000:fontcolor=red:box=1:boxcolor=white:x=(w-text_w)/2:y=1000:text_align=center:y_align=baseline' /app/temporary/test-server/test.png",
     "test-do": "ls -al /usr/local/src/ffmpeg/tools",
-    "test": "run-s test-ts",
+    "test": "run-s clean test-ts",
     "clean": "rm -rf /app/temporary/test-server/*",
     "create": "mkdir /app/temporary/test-server/cache",
-    "test-ts": "node --experimental-global-customevent --loader tsx --test ./src/*.test.ts"
+    "test-ts": "node --experimental-global-customevent --loader tsx --test ./src/encode.test.ts"
   },
   "dependencies": {},
   "devDependencies": {

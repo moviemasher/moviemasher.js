@@ -8,7 +8,7 @@ export interface ParameterObject {
   values?: Value[]
   dataType?: DataType | string
 }
-export type ParameterObjects = ParameterObject[]
+export interface ParameterObjects extends Array<ParameterObject>{}
 
 export interface Parameter {
 
@@ -19,7 +19,7 @@ export interface Parameter {
 
 }
 
-export type Parameters = Parameter[]
+export interface Parameters extends Array<Parameter>{}
 
 
 

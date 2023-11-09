@@ -31,3 +31,5 @@ export function isArray<T = unknown>(value: any): value is T[] {
 }
 
 export const isFunction = (value: any): value is Function => typeof value === 'function'
+
+export const isDate = (value: any): value is Date => value instanceof Date

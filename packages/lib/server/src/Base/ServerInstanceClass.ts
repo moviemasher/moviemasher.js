@@ -1,11 +1,11 @@
-import type { Tweening } from '@moviemasher/lib-shared'
-import type { GraphFile, ServerAsset } from '@moviemasher/runtime-server'
-import type { IntrinsicOptions, CacheArgs, Size, Value, ValueRecord } from '@moviemasher/runtime-shared'
-import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
+import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, ServerAsset, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
+import type { CacheArgs, IntrinsicOptions, Size, Value, ValueRecord } from '@moviemasher/runtime-shared'
 import type { ServerInstance } from '../Types/ServerInstanceTypes.js'
+import type { Tweening } from '../Types/ServerTypes.js'
 
-import { InstanceClass, arrayLast, assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, assertTimeRange, colorBlackOpaque, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, idGenerate, isAboveZero, isBelowOne, isTimeRange, sizeEven, sizesEqual, timeFromArgs, tweenMaxSize, tweenOption, tweenPosition } from '@moviemasher/lib-shared'
+import { InstanceClass, arrayLast, assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, assertTimeRange, colorBlackOpaque, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, idGenerate, isAboveZero, isBelowOne, isTimeRange, sizeEven, sizesEqual, timeFromArgs } from '@moviemasher/lib-shared'
 import { ERROR, errorThrow, isDefined, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { tweenMaxSize, tweenOption, tweenPosition } from '../Utility/Command.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 
 export class ServerInstanceClass extends InstanceClass implements ServerInstance {
@@ -279,26 +279,11 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     const commandFilters: CommandFilters = []
     const { contentColors: colors = [], containerRects, videoRate, duration, track } = args
     assertArray(containerRects, 'containerRects')
-    const [rect, rectEnd] = containerRects
 
+    const [rect, rectEnd] = containerRects
     const [color = colorWhite, colorEnd = colorWhite] = colors
- 
-    // console.log(this.constructor.name, this.assetId, 'containerColorCommandFilters', {color, colorEnd})
     commandFilters.push(...this.colorCommandFilters(duration, videoRate, rect, rectEnd, color, colorEnd))
     return commandFilters
-    // const { colorMaximize } = this
-    // if (!colorMaximize) return commandFilters
-
-    // const maxSize = tweenMaxSize(rect, rectEnd) 
-    // const filterArgs: VisibleCommandFilterArgs = {
-    //   ...args, outputSize: maxSize
-    // }
-
-    // const colorInput = `content-${track}`
-    // console.log(this.constructor.name, 'ServerInstanceClass.containerColorCommandFilters calling colorBackCommandFilters', colorInput)
-    // commandFilters.push(...this.colorBackCommandFilters(filterArgs, colorInput))
-
-    // return commandFilters
   }
 
   containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {

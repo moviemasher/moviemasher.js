@@ -61,14 +61,14 @@ export class ControlRowElement extends ImporterComponent {
       :host {
         display: flex;
         /* height: min-content; */
-        line-height: var(--icon-size);
-        font-size: var(--icon-size);
+        line-height: var(--height-control);
+        font-size: var(--height-control);
         margin-bottom: var(--spacing);
       }
       div.row {
         flex-grow: 1;
         display: grid;
-        gap: var(--inspector-spacing);
+        gap: var(--gap-control);
         grid-template-columns: min-content 1fr;
       }
     `,

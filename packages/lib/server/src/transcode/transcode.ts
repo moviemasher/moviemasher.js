@@ -1,14 +1,14 @@
 
-import type { AssetType, DataOrError, DecodeOptions, DefiniteError, EncodingType, StringDataOrError, TranscodeOptions, TranscodingObject, TranscodingType } from '@moviemasher/runtime-shared'
+import type { AlphaType, AssetType, DataOrError, DecodeOptions, EncodingType, StringDataOrError, Strings, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
 
-import { assertPopulatedString, outputOptions, JsonExtension, DOT, sizeCopy, sizeAboveZero, sizeCover, sizeMax, isTranscodingObject } from '@moviemasher/lib-shared'
+import { JsonExtension, KindsProbe, ProbeAlpha, isAboveZero, isTranscoding, outputAlphaOptions, outputOptions, sizeAboveZero, sizeCopy, sizeCover, sizeMax } from '@moviemasher/lib-shared'
 import { EventServerAssetPromise, EventServerDecode, EventServerTranscode, EventServerTranscodeStatus, MovieMasher, ServerMediaRequest } from '@moviemasher/runtime-server'
-import { ERROR, IMAGE, PROBE, SEQUENCE, TRANSCODE, VIDEO, error, errorPromise, isAssetType, isDefiniteError, isObject, isPopulatedString, isProbing } from '@moviemasher/runtime-shared'
+import { ERROR, IMAGE, PROBE, SEQUENCE, VIDEO, namedError, errorPromise, errorThrow, isAssetType, isDate, isDefiniteError, isPopulatedString, isProbing } from '@moviemasher/runtime-shared'
 import path from 'path'
-import { ffmpegCommand, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../RunningCommand/Command/CommandFactory.js'
 import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
-import { fileCreatedPromise, filePathExists, fileReadPromise, fileWriteJsonPromise, fileWritePromise } from '../Utility/File.js'
-import { KindsProbe } from '../decode/ProbeConstants.js'
+import { ffmpegCommand, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../RunningCommand/Command/CommandFactory.js'
+import { JOB_TRANSCODING } from '../Utility/JobConstants.js'
+import { jobHasErrored, jobHasFinished, jobHasStarted, jobGetStatus } from '../Utility/JobFunctions.js'
 import { outputFileName } from '../Utility/OutputFunctions.js'
 
 const transcodeEncodingType = (transcodingType: TranscodingType): EncodingType | undefined  =>{
@@ -17,55 +17,55 @@ const transcodeEncodingType = (transcodingType: TranscodingType): EncodingType |
   if (transcodingType === SEQUENCE) return IMAGE
   return undefined
 }
-const writeError = async (pathFragment: string, orError: DefiniteError): Promise<DefiniteError> => {
-  const errorPath = transcodeOutputPath(pathFragment, ['error', JsonExtension].join(DOT))
-  await fileWriteJsonPromise(errorPath, orError.error)
+
+const transcode = async (transcodingType: TranscodingType, assetType: AssetType, request: ServerMediaRequest, user: string, id: string, options: TranscodeOptions, relativeRoot?: string): Promise<StringDataOrError> => {
+  const orError = await transcodePromise(transcodingType, assetType, request, user, id, options, relativeRoot)
+  if (isDefiniteError(orError)) await jobHasErrored(id, orError.error)
   return orError
 }
 
-const transcodeOutputPath = (pathFragment: string, name: string) => {
-  return path.resolve(ENVIRONMENT.get(ENV.OutputRoot), pathFragment, name)
-}
-
-const transcode = async (transcodingType: TranscodingType, assetType: AssetType, request: ServerMediaRequest, pathFragment: string, options: TranscodeOptions): Promise<StringDataOrError> => {
-  const orError = await transcodePromise(transcodingType, assetType, request, pathFragment, options)
-  if (isDefiniteError(orError)) writeError(pathFragment, orError)
-  return orError
-}
-
-
-const probePromise = async (filePath: string, assetType: AssetType, pathFragment: string): Promise<StringDataOrError> => {
+const probePromise = async (filePath: string, assetType: AssetType, user: string, id: string): Promise<StringDataOrError> => {
   const decodeOptions: DecodeOptions = { types: KindsProbe }
   const request: ServerMediaRequest = {
     endpoint: filePath,
     path: filePath,
   }
-  const event = new EventServerDecode(PROBE, assetType, request, pathFragment, decodeOptions)
+  const event = new EventServerDecode(PROBE, assetType, request, user, id, decodeOptions)
   MovieMasher.eventDispatcher.dispatch(event)
   const { promise } = event.detail
-  if (!promise) return error(ERROR.Unimplemented, EventServerDecode.Type)
+  if (!promise) return namedError(ERROR.Unimplemented, EventServerDecode.Type)
 
   return await promise
 }
 
-const writeEmptyFile = async (pathFragment: string): Promise<StringDataOrError> => {
-  const probePath = transcodeOutputPath(pathFragment, [TRANSCODE, JsonExtension].join(DOT))
-  return await fileWritePromise(probePath, '')
-}
-
-const downloadAsset = async (request: ServerMediaRequest, assetType: AssetType): Promise<StringDataOrError> => {
-  const assetEvent = new EventServerAssetPromise(request, assetType)
+const downloadAsset = async (request: ServerMediaRequest, assetType: AssetType, validDirectories?: Strings): Promise<StringDataOrError> => {
+  const assetEvent = new EventServerAssetPromise(request, assetType, validDirectories)
   MovieMasher.eventDispatcher.dispatch(assetEvent)
   const { promise } = assetEvent.detail
-  if (!promise) return error(ERROR.Unimplemented, EventServerAssetPromise.Type)
+  if (!promise) return namedError(ERROR.Unimplemented, EventServerAssetPromise.Type)
   
   return await promise
 }
 
-const transcodePromise = async (transcodingType: TranscodingType, assetType: AssetType, request: ServerMediaRequest, pathFragment: string, transcodeOptions: TranscodeOptions): Promise<StringDataOrError> => {
+const transcodeFileName = (duration: number, commandOutput: TranscodeOptions): string => {
+  const { videoRate } = commandOutput
 
-  // save out empty file to indicate we're working on it
-  const writeEmptyOrError = await writeEmptyFile(pathFragment)
+  if (!isAboveZero(videoRate)) return errorThrow(ERROR.Internal)
+
+  const { format, extension, basename = '' } = commandOutput
+  const ext = extension || format
+  // const { duration } = renderingOutput
+  const framesMax = Math.floor(videoRate * duration) - 2
+  const begin = 1
+  const lastFrame = begin + (framesMax - begin)
+  const padding = String(lastFrame).length
+  return `${basename}%0${padding}d.${ext}`
+}
+
+const transcodePromise = async (transcodingType: TranscodingType, assetType: AssetType, request: ServerMediaRequest, user: string, id: string, transcodeOptions: TranscodeOptions, relativeRoot?: string): Promise<StringDataOrError> => {
+
+  // save out job to indicate we're working on it
+  const writeEmptyOrError = await jobHasStarted(id)
   if (isDefiniteError(writeEmptyOrError)) return writeEmptyOrError
 
   // make sure input file is local
@@ -73,28 +73,33 @@ const transcodePromise = async (transcodingType: TranscodingType, assetType: Ass
   if (isDefiniteError(downloadOrError)) return downloadOrError
 
   const { data: inputPath } = downloadOrError
-  const options = outputOptions(transcodingType, transcodeOptions)
 
+  // probe the input file 
+  const inputProbeOrError = await probePromise(inputPath, assetType, '', JsonExtension)
+  if (isDefiniteError(inputProbeOrError)) return inputProbeOrError
+
+  const { data: json } = inputProbeOrError
+  const probe = JSON.parse(json)
+  if (!isProbing(probe)) return namedError(ERROR.Internal, 'input probe')
+
+  const { [ProbeAlpha]: alpha } = probe.data
+
+  const options = alpha ? outputAlphaOptions(transcodingType as AlphaType, transcodeOptions) : outputOptions(transcodingType, transcodeOptions)
   const { extension, format } = options
-  const ext = extension || format || path.extname(pathFragment).slice(1)
-  if (!isPopulatedString(ext)) return error(ERROR.Internal, 'output extension')
-
+  const ext = extension || format 
+  if (!isPopulatedString(ext)) return namedError(ERROR.Internal, 'output extension')
+  let duration = 0
   switch(transcodingType) {
     case IMAGE:
     case VIDEO:
     case SEQUENCE: {
       // make sure we have output size
-      if (!sizeAboveZero(options)) return error(ERROR.Internal, 'output size')
+      if (!sizeAboveZero(options)) return namedError(ERROR.Internal, 'output size')
 
-      // probe the input file for size
-      const inputProbeOrError = await probePromise(inputPath, assetType, JsonExtension)
-      if (isDefiniteError(inputProbeOrError)) return inputProbeOrError
-
-      const { data: json } = inputProbeOrError
-      const probe = JSON.parse(json)
-      if (!isProbing(probe)) return error(ERROR.Internal, 'input probe')
       const probeSize = sizeCopy(probe.data)
-      if (!sizeAboveZero(probeSize)) return error(ERROR.Internal, 'input probe size')
+      if (!sizeAboveZero(probeSize)) return namedError(ERROR.Internal, 'input probe size')
+
+      duration = probe.data.duration || 0
 
       // size is input size scaled to cover requested output size in either dimension
       const maxSize = sizeMax(options)
@@ -104,8 +109,10 @@ const transcodePromise = async (transcodingType: TranscodingType, assetType: Ass
     }
   }
   
-  const fileName = outputFileName(options, transcodingType)
-  const outputPath = transcodeOutputPath(pathFragment, fileName)
+  const fileName = transcodingType === SEQUENCE ? transcodeFileName(duration, options) : outputFileName(options, transcodingType)
+
+  const outputPath = path.join(ENVIRONMENT.get(ENV.OutputRoot), user, id, fileName)
+  
   const encodingType = transcodeEncodingType(transcodingType)
   if (encodingType) {
     const command = ffmpegCommand()
@@ -114,15 +121,12 @@ const transcodePromise = async (transcodingType: TranscodingType, assetType: Ass
     const saveOrError = await ffmpegSavePromise(command, outputPath)
     if (isDefiniteError(saveOrError)) return saveOrError
 
-    const filePrefix = ENVIRONMENT.get(ENV.RelativeRequestRoot)
+    const endpoint = relativeRoot ? path.relative(relativeRoot, outputPath) : outputPath
+    const data: Transcoding = { id, type: transcodingType, request: { endpoint } }
 
-    const endpoint = path.relative(filePrefix, outputPath)
-    const data: TranscodingObject = { type: transcodingType, request: { endpoint } }
-    const writeOrError = await fileWriteJsonPromise(transcodeOutputPath(pathFragment, [TRANSCODE, JsonExtension].join(DOT)), data)
-
+    const writeOrError = await jobHasFinished(id, data)
     if (isDefiniteError(writeOrError)) return writeOrError
     return { data: outputPath }
-
   } else {
     // font
 
@@ -130,48 +134,27 @@ const transcodePromise = async (transcodingType: TranscodingType, assetType: Ass
   }
 }
 
-const statusPromise = async (pathFragment: string): Promise<DataOrError<TranscodingObject | Date>> => {
-  const transcodingPath = transcodeOutputPath(pathFragment, [TRANSCODE, JsonExtension].join(DOT))
-  const errorPath = transcodeOutputPath(pathFragment, `error.${JsonExtension}`)
-  if (filePathExists(errorPath)) {
-    // an error was encountered while processing
-    const errorStringOrError = await fileReadPromise(errorPath)
-    // see if there was an error reading the file
-    if (isDefiniteError(errorStringOrError)) return errorStringOrError
+const statusPromise = async (id: string): Promise<DataOrError<Transcoding | Date>> => {
+  const orError = await jobGetStatus(id)
+  if (isDefiniteError(orError) ) return orError
 
-    const { data: errorString } = errorStringOrError
-    // assume file hasn't finished writing if empty
-    if (errorString) return { data: JSON.parse(errorString) }
-  } else if (filePathExists(transcodingPath)) {
-    // we at least started processing
-    const resultStringOrError = await fileReadPromise(transcodingPath)
-    
-    // see if there was an error reading the file
-    if (isDefiniteError(resultStringOrError)) return resultStringOrError
-    
-    const { data: resultString } = resultStringOrError
-    // assume file hasn't finished writing if empty
-    if (resultString) {
-      const transcoding = JSON.parse(resultString)
-      if (!isTranscodingObject(transcoding)) return error(ERROR.Internal, 'probe')
-      
-      return { data: transcoding }
-    }
-  }
-  return await fileCreatedPromise(transcodingPath)
+  const { data } = orError
+  if (isDate(data) || isTranscoding(data)) return { data }
+
+  return namedError(ERROR.Syntax, { ...data, name: JOB_TRANSCODING })
 }
 
 const statusHandler = (event: EventServerTranscodeStatus) => {
   const { detail } = event
-  const { pathFragment } = detail
-  detail.promise = statusPromise(pathFragment)
+  const { id } = detail
+  detail.promise = statusPromise(id)
   event.stopImmediatePropagation()
 }
 
 const transcodeHandler = (event: EventServerTranscode) => {
   const { detail } = event
-  const { pathFragment, transcodeOptions, transcodingType, assetType, request } = detail
-  detail.promise = transcode(transcodingType, assetType, request, pathFragment, transcodeOptions)
+  const { user, id, transcodeOptions, transcodingType, assetType, request, relativeRoot } = detail
+  detail.promise = transcode(transcodingType, assetType, request, user, id, transcodeOptions, relativeRoot)
 }
 
 export const ServerTranscodeListeners = () => ({

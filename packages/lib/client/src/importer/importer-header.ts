@@ -1,8 +1,8 @@
 // import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { Header } from '../Base/LeftCenterRight.js'
+import { HeaderElement } from '../Base/LeftCenterRight.js'
 
-export class ImporterHeaderElement extends Header {
+export class ImporterHeaderElement extends HeaderElement {
   
 }
 

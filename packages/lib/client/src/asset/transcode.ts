@@ -1,9 +1,10 @@
 import type { TranscodeArgs } from '@moviemasher/runtime-shared'
+import type { ClientMediaRequest } from '@moviemasher/runtime-client'
 
-import { isTranscodingObject } from '@moviemasher/lib-shared'
-import { EventClientTranscode, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, error, isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestCallbackPromise, requestPopulate } from '../utility/request.js'
+import { isTranscoding } from '@moviemasher/lib-shared'
+import { EventClientTranscode } from '@moviemasher/runtime-client'
+import { ERROR, namedError, isDefiniteError } from '@moviemasher/runtime-shared'
+import { requestCallbackPromise } from '../utility/request.js'
 
 export class TranscodeHandler {
   static handle(event: EventClientTranscode): void {
@@ -11,25 +12,31 @@ export class TranscodeHandler {
     const { detail } = event
     const { asset, progress, transcodingType, options = {} } = detail
 
-    const { request, type: assetType } = asset
+    const { request: assetRequest, type: assetType } = asset
+
+    
+    const { response, file, objectUrl, ...request } = assetRequest as ClientMediaRequest
+
     progress?.do(1)
     const jsonRequest = {
       endpoint: 'transcode/start', init: { method: 'POST' }
     }
     const transcodeArgs: TranscodeArgs = { assetType, request, transcodingType, options }
-    const populated = requestPopulate(jsonRequest, transcodeArgs)
-    console.debug(EventClientTranscode.Type, 'handle request', populated)
-
-    detail.promise = requestCallbackPromise(populated).then(orError => {
+    detail.promise = requestCallbackPromise(jsonRequest, progress, transcodeArgs).then(orError => {
+      // console.debug(EventClientTranscode.Type, 'handle response', orError)
       if (isDefiniteError(orError)) return orError
       progress?.did(1)
 
       const { data } = orError
-      if (!isTranscodingObject(data)) return error(ERROR.Internal)
+      if (!isTranscoding(data)) return namedError(ERROR.Internal)
 
       return { data }
     })
   }
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(EventClientTranscode.Type, TranscodeHandler.handle)
+// listen for client transcode event
+export const ClientAssetTranscodeListeners = () => ({
+  [EventClientTranscode.Type]: TranscodeHandler.handle
+})
+

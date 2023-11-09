@@ -6,38 +6,13 @@ import type { Content, Contents, OptionalContent } from '../declarations.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { arraySet, assertPopulatedString, sortByOrder } from '@moviemasher/lib-shared'
 import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher } from '@moviemasher/runtime-client'
-import { ASSET, MASH } from '@moviemasher/runtime-shared'
+import { TARGET_ASSET, MASH } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { ImporterComponent } from '../Base/ImporterComponent.js'
 
-export const InspectorTargetElementName = 'movie-masher-inspector-target'
+const InspectorTargetTag = 'movie-masher-inspector-target'
 export class InspectorTargetElement extends ImporterComponent {
-  private resetListeners(): void {
-    const { targetId } = this
-    assertPopulatedString(targetId)
-    // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
-
-    MovieMasher.eventDispatcher.listenersRemove(this.listeners)
-    this.listeners = {}
-    const { listeners } = this
-
-    switch (targetId) {
-      case ASSET: {
-        listeners[EventChangedAssetId.Type] = this.handleChanged.bind(this)
-        break
-      }
-      case MASH: {
-        listeners[EventChangedMashAsset.Type] = this.handleChanged.bind(this)
-        break 
-      }
-      default: {
-        listeners[EventChangedClipId.Type] = this.handleChanged.bind(this)
-      }
-    }   
-    MovieMasher.eventDispatcher.listenersAdd(listeners)
-  }
-
   protected override content(contents: Contents): Content {
     return html`<div class='content'>${contents}</div>`
   }
@@ -56,9 +31,12 @@ export class InspectorTargetElement extends ImporterComponent {
       groupedPropertyIds.length = 0
 
       // see if anyone wants to group some of the remaining selected properties
+      // console.log(this.tagName, 'defaultContent grouping', ...propertyIds)
+      
       const event = new EventControlGroup(propertyIds, groupedPropertyIds)
       MovieMasher.eventDispatcher.dispatch(event)
       if (!groupedPropertyIds.length) break
+      // console.log(this.tagName, 'defaultContent grouped', ...groupedPropertyIds)
 
       const { detail } = event
       const { controlGroup } = detail
@@ -99,18 +77,20 @@ export class InspectorTargetElement extends ImporterComponent {
     return html`${contents}`
   }
 
-  private handleChanged(_event: Event) { 
+  private handleChanged(_: Event) { 
     // console.debug(this.tagName, 'handleChanged', this.targetId, event.type)
     this.requestUpdate() 
   }
-
+  
   private get selectedPropertyIds(): PropertyIds {
     const { targetId: id } = this
     if (!id) return []
     
     const event = new EventPropertyIds([id])
     MovieMasher.eventDispatcher.dispatch(event)  
-    return event.detail.propertyIds
+    const { propertyIds } = event.detail
+    // console.log(this.tagName, 'selectedPropertyIds', { id, propertyIds })
+    return propertyIds
   }
 
   targetId?: TargetId 
@@ -118,37 +98,56 @@ export class InspectorTargetElement extends ImporterComponent {
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties)
     if (changedProperties.has('targetId')) {
-      // const { targetId } = this
-      // console.debug(this.tagName, 'willUpdate', changedProperties.get('targetId'), targetId)
-      this.resetListeners()
+      const { targetId } = this
+      assertPopulatedString(targetId)
+      // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
+
+      MovieMasher.eventDispatcher.listenersRemove(this.listeners)
+      this.listeners = {}
+      const { listeners } = this
+
+      switch (targetId) {
+        case TARGET_ASSET: {
+          listeners[EventChangedAssetId.Type] = this.handleChanged.bind(this)
+          break
+        }
+        case MASH: {
+          listeners[EventChangedMashAsset.Type] = this.handleChanged.bind(this)
+          break 
+        }
+        default: {
+          listeners[EventChangedClipId.Type] = this.handleChanged.bind(this)
+        }
+      }   
+      MovieMasher.eventDispatcher.listenersAdd(listeners)
     }
   }
+
   static override properties: PropertyDeclarations = {
     targetId: { type: String, attribute: 'target-id' },
   }
-
 
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     css`
       div.content > * {
-        margin-bottom: var(--inspector-padding);
+        margin-bottom: var(--gap-content);
       }
 
       div.content > movie-masher-control-row {
         display: block;
-        min-height: var(--control-size);
+        min-height: var(--height-control);
       }
     `
   ]
 }
 
 // register web component as custom element
-customElements.define(InspectorTargetElementName, InspectorTargetElement)
+customElements.define(InspectorTargetTag, InspectorTargetElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [InspectorTargetElementName]: InspectorTargetElement
+    [InspectorTargetTag]: InspectorTargetElement
   }
 }
 

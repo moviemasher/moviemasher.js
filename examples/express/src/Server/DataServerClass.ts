@@ -1,15 +1,17 @@
-import type { AssetObject, AssetObjects, AssetType, Identified, Labeled, MashAssetObject, Sourced, Strings, Typed } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetObjects, AssetObjectsResponse, AssetType, Identified, Labeled, MashAssetObject, Sourced, Strings, Typed } from '@moviemasher/runtime-shared'
 import type { Client } from 'pg'
 import type { DataAssetDefaultRequest, DataAssetDeleteRequest, DataAssetGetRequest, DataAssetListRequest, DataAssetPutRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { DataServerArgs, ExpressHandler } from './Server.js'
 
-import { ENVIRONMENT, idUnique } from '@moviemasher/lib-server'
-import { EmptyFunction, arrayOfNumbers, colorWhite, idIsTemporary, idTemporary } from '@moviemasher/lib-shared'
-import { ERROR, MASH, NUMBER, SIZE_OUTPUT, STRING, VERSION, VIDEO, arrayFromOneOrMore, errorObjectCaught, errorThrow, isString } from '@moviemasher/runtime-shared'
+import { ENV, ENVIRONMENT, fileReadJsonPromise, idUnique } from '@moviemasher/lib-server'
+import { EmptyFunction, arrayOfNumbers, colorWhite, idIsTemporary, arrayFromOneOrMore, idTemporary, assertTrue, CACHE_SOURCE_TYPE, CACHE_NONE, COMMA } from '@moviemasher/lib-shared'
+import { ERROR, MASH, NUMBER, SIZE_OUTPUT, STRING, VERSION, VIDEO, errorObjectCaught, errorThrow, isDefined, isDefiniteError, isString } from '@moviemasher/runtime-shared'
 import { Application } from 'express'
 import pg from 'pg'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
+
+const USER_SHARED = ENVIRONMENT.get(ENV.SharedUser)
 
 const { Client: ClientClass } = pg
 
@@ -82,7 +84,9 @@ export class DataServerClass extends ServerClass {
       aspectHeight: height, aspectWidth: width,
       aspectShortest: Math.min(width, height),
       color: colorWhite,
-      type: VIDEO, source: MASH, id: idTemporary(), assets: [] 
+      type: VIDEO, source: MASH, 
+      id: `temporary-${idUnique()}`, 
+      assets: [] 
     } 
     try {
       const user = this.userFromRequest(req)
@@ -170,11 +174,10 @@ export class DataServerClass extends ServerClass {
 
   private assetInsertPromise(user: string, asset: AssetObject): Promise<string> {
     const { assets = [] } = asset
-    const assetIds = assets.map(asset => asset.id)
     const data = RawFromAsset(user, asset)
     return this.clientPromise.then(client => {
       const { id } = data
-      const permanentId = !id || idIsTemporary(id) ? idUnique() : id
+      const permanentId = (!id || idIsTemporary(id)) ? idUnique() : id
       data.id = permanentId
       data.created ||= DataServerNow()
       const values = AssetColumns.map(column => data[column])
@@ -182,67 +185,87 @@ export class DataServerClass extends ServerClass {
       const text = `INSERT INTO assets (${AssetColumns.join(', ')}) VALUES (${subs})`
       console.log(this.constructor.name, 'assetInsertPromise', text, ...values)
       return client.query(text, values).then(() => {
-        return this.relationsUpdatePromise(permanentId, assetIds).then(() => permanentId)
+        return this.relationsUpdatePromise(permanentId, assets).then(() => permanentId)
       })
     })
   }
 
-  private assetList: ExpressHandler<VersionedDataOrError<AssetObjects>, DataAssetListRequest> = async (req, res) => {
-    console.log(this.constructor.name, 'assetList', JSON.stringify(req.body, null, 2))
-    const request = req.body
+  private assetList: ExpressHandler<VersionedDataOrError<AssetObjectsResponse>, DataAssetListRequest> = async (req, res) => {
+    console.log(this.constructor.name, 'assetList', JSON.stringify(req.query, null, 2))
+    const request = req.query as DataAssetListRequest
     try {
       const user = this.userFromRequest(req)
-      const data = await this.assetListPromise(user, request) || []
-      res.send({ version: VERSION, data })
+      const assets = await this.assetListPromise(user, request) || []
+      const cacheControl = request.terms?.length ? CACHE_NONE : CACHE_SOURCE_TYPE
+      res.send({ version: VERSION, data: { assets, cacheControl } })
     } catch (error) { 
+      console.error(this.constructor.name, 'assetList', error)
       res.send({ version: VERSION, error: errorObjectCaught(error) })
     }    
   }
 
+  private _sharedAssets?: AssetObjects
+
+  private async sharedAssets() {
+    const { _sharedAssets } = this
+    if (_sharedAssets) return _sharedAssets
+
+    const jsonPath = ENVIRONMENT.get(ENV.SharedAssets, STRING)
+    if (!(jsonPath && USER_SHARED)) return this._sharedAssets = []
+
+    const orError = await fileReadJsonPromise<AssetObjects>(jsonPath)
+
+    if (isDefiniteError(orError)) {
+      console.error(this.constructor.name, 'sharedAssets', orError)
+      return this._sharedAssets = []
+    }
+    return orError.data
+  }
+
   private assetListPromise = (user_id: string, request: DataAssetListRequest): Promise<AssetObjects | undefined> => {
     return this.clientPromise.then(client => {
-      const { partial, type = [], source = [], order = { created: 'ASC' }, terms } = request
+      const types = arrayFromOneOrMore(request.types || [])
+      const sources = arrayFromOneOrMore(request.sources || [])
+      const terms = arrayFromOneOrMore(request.terms || [])
+      console.log(this.constructor.name, 'assetListPromise', request, types, sources, terms)
+
+      const { partial, order, descending } = request
+      const ordered = order || (partial ? 'label' : 'created')
+      assertTrue(AssetOrderColumns.includes(ordered as AssetColumn), `Invalid order: ${ordered}`)
+      
+      const desc = isDefined(descending) ? descending : (ordered === 'created')
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      const types = arrayFromOneOrMore(type)
-      const sources = arrayFromOneOrMore(source)
-      const phrases = [`SELECT ${columns.join(', ')} FROM assets WHERE user_id = $1`]
-      const values = [user_id]
+      
+      console.log(this.constructor.name, 'assetListPromise', { columns, types, sources, terms })
+      const phrases = [`SELECT ${columns.join(', ')} FROM assets WHERE user_id in ($1, $2)`]
+      const subStart = 2
+      const values = [user_id, USER_SHARED]
       const { length: typeCount } = types
-      // console.log(this.constructor.name, 'assetListPromise', { columns, types, sources, typeCount, terms, order, values})
+      const { length: sourceCount } = sources
+      const { length: termCount } = terms
       if (typeCount) {
-        const subs = substitions(typeCount, 1 + phrases.length)
+        const subs = substitions(typeCount, subStart + phrases.length)
         phrases.push(`AND type IN (${subs})`)
         values.push(...types)
       }
-      const { length: sourceCount } = sources
       if (sourceCount) {
-        const subs = substitions(sourceCount, 1 + phrases.length)
+        const subs = substitions(sourceCount, subStart + phrases.length)
         phrases.push(`AND source IN (${subs})`)
         values.push(...sources)
       }
-      if (terms) {
-        const likes = terms.split(' ').map((term, index) => {
+      if (termCount) {
+        const likes = terms.map((term, index) => {
           values.push(`%${term}%`)
-          return `label LIKE $${index + 1 + phrases.length}`
+          return `label LIKE $${index + subStart + phrases.length}`
         })
         phrases.push(`AND (${likes.join(' OR ')})`)
       }
-      if (order) {
-        const orders = arrayFromOneOrMore(order).map((orRecord, index) => {
-          const record = isString(orRecord) ? { [orRecord]: 'DESC' } : orRecord
-          const [column, direction] = Object.entries(record)[0]
-          if (!AssetOrderColumns.includes(column as AssetColumn)) return ''
 
-          return `${column} ${direction}`
-        }).filter(Boolean)
-        if (orders.length) {
-          phrases.push(`ORDER BY ${orders.join(', ')}`)
-        }
-      }
+      phrases.push(`ORDER BY ${ordered} ${desc ? 'DESC' : 'ASC'}`)
       const text = phrases.join(' ')
-      // console.log(this.constructor.name, 'assetListPromise', text, ...values)
+      console.log(this.constructor.name, 'assetListPromise', text, ...values)
       // console.log(this.constructor.name, 'assetListPromise', text, values)
-      return client.query(text, values).then(result => {
+      const queryPromise: Promise<AssetObjects> = client.query(text, values).then(result => {
         const { rows } = result
         const { length } = rows
         // console.log(this.constructor.name, 'assetListPromise', { length })
@@ -256,17 +279,32 @@ export class DataServerClass extends ServerClass {
           return this.relatedAssetsPromise(id).then(assets => ({ ...asset, assets }))
         })
         return Promise.all(promises)
-      })      
+      }) 
+      return queryPromise
+      // .then(assets => {
+      //   return this.sharedAssets().then(shared => {
+      //     assets.push(...shared.filter(asset => {
+      //       const { type, source, label } = asset
+      //       if (typeCount && !types.includes(type)) return false
+      //       if (sourceCount && !sources.includes(source)) return false
+      //       if (termCount) return label && terms.some(term => label.includes(term))
+      //       return true
+      //     }))
+      //     return assets
+      //   })
+      // })     
     })
   }
 
-  private assetPut: ExpressHandler<VersionedDataOrError<string>, DataAssetPutRequest> = async (req, res) => {
-    console.log(this.constructor.name, 'assetPut', JSON.stringify(req.body, null, 2))
+  private assetPut: ExpressHandler<VersionedDataOrError<Identified>, DataAssetPutRequest> = async (req, res) => {
+    console.log(this.constructor.name, 'assetPut request', JSON.stringify(req.body, null, 2))
     const { assetObject } = req.body
     try {
       const user = this.userFromRequest(req)
-      const data = await this.assetPutPromise(user, assetObject)
-      res.send({ version: VERSION, data })
+      const id = await this.assetPutPromise(user, assetObject)
+      const result = { version: VERSION, data: { id } }
+      console.log(this.constructor.name, 'assetPut result', result)
+      res.send(result)
     } catch (error) { 
       res.send({ version: VERSION, error: errorObjectCaught(error) })
     }    
@@ -284,8 +322,7 @@ export class DataServerClass extends ServerClass {
   }
 
   private assetUpdatePromise(user: string, asset: AssetObject): Promise<void> {
-    const { assets = [], type, id, label, ...rest } = asset
-    const assetIds = assets.map(asset => asset.id)   
+    const { assets = [], id } = asset
     const data = RawFromAsset(user, asset)
     const phrases: Strings = []
     const values = AssetColumns.map(column => {
@@ -299,10 +336,11 @@ export class DataServerClass extends ServerClass {
       WHERE id = $${phrases.length + 1}
     `
     return this.clientPromise.then(client => {
-      // console.log(this.constructor.name, 'assetUpdatePromise', { text, values })
-      return client.query(text, values).then(() => (
-        this.relationsUpdatePromise(id, assetIds)
-      ))
+      console.log(this.constructor.name, 'assetUpdatePromise', { text, values })
+      return client.query(text, values).then(() => {
+        console.log(this.constructor.name, 'assetUpdatePromise', id)
+        return this.relationsUpdatePromise(id, assets)
+      })
     }).then(EmptyFunction)
   }
   
@@ -337,7 +375,7 @@ export class DataServerClass extends ServerClass {
 
   private get clientPromise() {
     const { _client, connected } = this
-    if (_client && connected) return Promise.resolve(_client)
+    if (_client) return Promise.resolve(_client)
 
     return this.client.connect().then(() => {
       this.connected = true
@@ -353,10 +391,10 @@ export class DataServerClass extends ServerClass {
         SELECT assets.* 
         FROM asset_assets 
         JOIN assets ON assets.id = asset_assets.asset_id 
-        WHERE asset_assets.owner_id = $1
+        WHERE asset_assets.owner_id IN ($1, $2)
       `
-      // console.log(this.constructor.name, 'relatedAssetsPromise', query, owner)
-      return client.query(query, [owner]).then(result => {   
+      console.log(this.constructor.name, 'relatedAssetsPromise', query, owner)
+      return client.query(query, [owner, USER_SHARED]).then(result => {   
         const { rows } = result
         // console.log(this.constructor.name, 'relatedAssetsPromise', ...rows)
         return AssetRowsFromRaw(rows)
@@ -367,7 +405,7 @@ export class DataServerClass extends ServerClass {
   private relationDeletePromise(ids: Strings): Promise<void> {
     return this.clientPromise.then(client => {
       const query = 'DELETE FROM asset_assets WHERE id IN($1)'
-      // console.log(this.constructor.name, 'relationDeletePromise', query, ...ids)
+      console.log(this.constructor.name, 'relationDeletePromise', query, ...ids)
       return client.query(query, [ids]).then(EmptyFunction) 
     })
   }
@@ -376,7 +414,7 @@ export class DataServerClass extends ServerClass {
     return this.clientPromise.then(client => {
       const id = idUnique()
       const query = 'INSERT INTO asset_assets (id, owner_id, asset_id) VALUES ($1, $2, $3)'
-      // console.log(this.constructor.name, 'relationInsertPromise', id, query, owner_id, asset_id)
+      console.log(this.constructor.name, 'relationInsertPromise', id, query, owner_id, asset_id)
       return client.query(query, [id, owner_id, asset_id]).then(EmptyFunction)
     })
   }
@@ -384,7 +422,7 @@ export class DataServerClass extends ServerClass {
   private relationsPromise(id: string, column = 'owner_id'): Promise<AssetAssets> {
     return this.clientPromise.then(client => {
       const query = `SELECT * FROM asset_assets WHERE ${column} = $1`
-      // console.log(this.constructor.name, 'relationsPromise', query, id)
+      console.log(this.constructor.name, 'relationsPromise', query, id)
 
       return client.query(query, [id]).then(result => {
         const { rows } = result
@@ -395,8 +433,10 @@ export class DataServerClass extends ServerClass {
     })
   }
 
-  private relationsUpdatePromise(owner: string, ids: Strings): Promise<void> {
+  private relationsUpdatePromise(owner: string, assets: AssetObjects): Promise<void> {
+    const ids = assets.map(asset => asset.id)
     return this.relationsPromise(owner).then(rows => {
+      console.log(this.constructor.name, 'relationsUpdatePromise', { owner, ids, rows })
       const deleting: Strings = []
       const keeping: Strings = []
       rows.forEach(row => {
@@ -417,15 +457,20 @@ export class DataServerClass extends ServerClass {
     }).then(EmptyFunction)
   }
 
-  startServer(app: Application): Promise<void> {
-    return super.startServer(app).then(() => {
-      console.debug(this.constructor.name, 'startServer')
-      app.get(Endpoints.asset.default, this.assetDefault)
-      app.post(Endpoints.asset.delete, this.assetDelete)
-      app.post(Endpoints.asset.get, this.assetGet)
-      app.get(Endpoints.asset.list, this.assetList)
-      app.post(Endpoints.asset.put, this.assetPut)
+  async startServer(app: Application): Promise<void> {
+    await super.startServer(app)
+    console.debug(this.constructor.name, 'startServer')
+      
+    const assetsShared = await this.sharedAssets()
+    assetsShared.forEach(async asset => {
+      await this.assetPutPromise(USER_SHARED, asset)
     })
+
+    app.get(Endpoints.asset.default, this.assetDefault)
+    app.post(Endpoints.asset.delete, this.assetDelete)
+    app.post(Endpoints.asset.get, this.assetGet)
+    app.get(Endpoints.asset.list, this.assetList)
+    app.post(Endpoints.asset.put, this.assetPut)
   }
 
   stopServer(): void { this._client?.end() }

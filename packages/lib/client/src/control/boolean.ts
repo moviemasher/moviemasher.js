@@ -3,18 +3,18 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit-element/lit-eleme
 import type { Control, OptionalContent } from '../declarations.js'
 
 import { DataTypeBoolean } from '@moviemasher/lib-shared'
-import { EventControl, MovieMasher } from '@moviemasher/runtime-client'
+import { EventControl } from '@moviemasher/runtime-client'
 import { Scalar } from '@moviemasher/runtime-shared'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { ControlMixin, ControlProperties } from '../Base/ControlMixin.js'
 import { ControlPropertyMixin } from '../Base/ControlPropertyMixin.js'
 
-const BooleanControlElementName = 'movie-masher-control-boolean'
+const BooleanControlTag = 'movie-masher-control-boolean'
 
-const WithControlProperty = ControlPropertyMixin(Component)
-const WithControl = ControlMixin(WithControlProperty)
-export class BooleanControlElement extends WithControl implements Control {
+const BooleanWithControlProperty = ControlPropertyMixin(Component)
+const BooleanWithControl = ControlMixin(BooleanWithControlProperty)
+export class BooleanControlElement extends BooleanWithControl implements Control {
   protected override get defaultContent(): OptionalContent {
     const { property, scalar: value } = this
     if (!property) return
@@ -38,7 +38,7 @@ export class BooleanControlElement extends WithControl implements Control {
 
   static instance(args: EventControlDetail) {
     const { propertyId } = args
-    const element = document.createElement(BooleanControlElementName)
+    const element = document.createElement(BooleanControlTag)
     element.propertyId = propertyId
     return element
   }
@@ -64,15 +64,16 @@ export class BooleanControlElement extends WithControl implements Control {
 }
 
 // register web component as custom element
-customElements.define(BooleanControlElementName, BooleanControlElement)
+customElements.define(BooleanControlTag, BooleanControlElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [BooleanControlElementName]: BooleanControlElement
+    [BooleanControlTag]: BooleanControlElement
   }
 }
 
-// listen for control event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControl.Type, BooleanControlElement.handleNode
-)
+// listen for control boolean event
+export const ClientControlBooleanListeners = () => ({
+  [EventControl.Type]: BooleanControlElement.handleNode
+})
+

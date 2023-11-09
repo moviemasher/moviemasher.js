@@ -1,6 +1,5 @@
 {
   "extends": "./dev/tsconfig/lit.json",
-
   "compilerOptions": {
     "noImplicitReturns": false,
     "noImplicitOverride": false,
@@ -14,15 +13,11 @@
   },
 
   "include": [
-    "**/src/*.ts",
-    "**/src/**/*.ts"
-
-
+    "packages/**/src/**/*.ts",
+    "examples/**/src/**/*.ts"
   ],
-  
   "exclude": [
-    "**/node_modules", 
-    "**/*.test.ts", "**/*.test.e2e.ts", 
-    "**/dist/*",
+    "packages/**/src/**/*.e2e.ts",
+    "packages/**/src/**/*.test.ts"
   ]
 }

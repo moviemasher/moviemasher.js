@@ -1,4 +1,4 @@
-import { AudioType, OutputOptions, AudioOutputOptions, FontType, FontOutputOptions, ImageType, ImageOutputOptions, SequenceType, SequenceOutputOptions, VideoType, VideoOutputOptions, WaveformType, WaveformOutputOptions, TranscodingType, OUTPUT_DEFAULTS, AlphaType, ALPHA_OUTPUT_DETAULTS } from '@moviemasher/runtime-shared'
+import { AudioType, OutputOptions, AudioOutputOptions, FontType, FontOutputOptions, ImageType, ImageOutputOptions, SequenceType, SequenceOutputOptions, VideoType, VideoOutputOptions, WaveformType, WaveformOutputOptions, TranscodingType, OUTPUT_DEFAULTS, AlphaType, ALPHA_OUTPUT_DEFAULTS } from '@moviemasher/runtime-shared'
 
 export function outputOptions(type: AudioType, overrides?: OutputOptions): AudioOutputOptions
 export function outputOptions(type: FontType, overrides?: OutputOptions): FontOutputOptions
@@ -16,5 +16,5 @@ export function outputAlphaOptions(type: SequenceType, overrides?: OutputOptions
 export function outputAlphaOptions(type: VideoType, overrides?: OutputOptions): VideoOutputOptions
 export function outputAlphaOptions(type: AlphaType, overrides?: OutputOptions): OutputOptions 
 export function outputAlphaOptions(type: AlphaType, overrides?: OutputOptions): OutputOptions {
-  return { ...ALPHA_OUTPUT_DETAULTS[type], ...overrides }
+  return { ...ALPHA_OUTPUT_DEFAULTS[type], ...overrides }
 }

@@ -15,13 +15,13 @@ import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
 import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
 import { dragData, droppingFiles, dropRawFiles, isDragDefinitionObject } from '../utility/draganddrop.js'
 
-const AssetControlElementName = 'movie-masher-control-asset'
+const AssetControlTag = 'movie-masher-control-asset'
 
-const WithControlProperty = ControlPropertyMixin(Component)
-const WithControl = ControlMixin(WithControlProperty)
-const WithSizeReactive = SizeReactiveMixin(WithControl)
-const WithDropTarget = DropTargetMixin(WithSizeReactive)
-export class AssetControlElement extends WithDropTarget implements Control {
+const AssetWithControlProperty = ControlPropertyMixin(Component)
+const AssetWithControl = ControlMixin(AssetWithControlProperty)
+const AssetWithSizeReactive = SizeReactiveMixin(AssetWithControl)
+const AssetWithDropTarget = DropTargetMixin(AssetWithSizeReactive)
+export class AssetControlElement extends AssetWithDropTarget implements Control {
   override acceptsClip = false
 
   protected override get defaultContent(): OptionalContent {
@@ -35,7 +35,6 @@ export class AssetControlElement extends WithDropTarget implements Control {
     if (options?.length) return this.inputSelectContent
 
     const { icon } = this
-    // @input='${this.handleInput}'
     return html`
       <input 
         type='hidden' 
@@ -97,17 +96,15 @@ export class AssetControlElement extends WithDropTarget implements Control {
     const { size } = this
     if (!size) return
     
-    const max = this.variable('max-dimension')
-    const ratio = this.variable('ratio-preview-inspector')
+    const max = this.variable('size-preview')
+    const ratio = this.variable('ratio-preview')
     return sizeContain(size, max * ratio)
   }
 
   private iconUpdate() {
     const { icon } = this
-    if (!icon) {
-      console.warn(this.tagName, this.propertyId, 'iconUpdate', 'no icon')
-      return
-    }
+    if (!icon) return
+    
     // console.debug(this.tagName, this.propertyId, 'iconUpdate', {timeout:!!this.timeout, _icon:!!this._icon, _iconPromise: !!this._iconPromise})
     delete this._icon 
     delete this._iconPromise 
@@ -173,7 +170,7 @@ export class AssetControlElement extends WithDropTarget implements Control {
   
   static instance(args: EventControlDetail) {
     const { propertyId } = args
-    const element = document.createElement(AssetControlElementName)
+    const element = document.createElement(AssetControlTag)
     element.propertyId = propertyId
     return element
   }
@@ -202,28 +199,25 @@ export class AssetControlElement extends WithDropTarget implements Control {
       }
       :host > div {
         border: var(--border);
-        border-radius: var(--border-radius);
+        border-radius: var(--radius-border);
         display: inline-block;
+        overflow: hidden;
         position: relative;
-      }
-
-      :host > select {
-        accent-color: var(--control-fore);
       }
     `
   ]
 }
 
 // register web component as custom element
-customElements.define(AssetControlElementName, AssetControlElement)
+customElements.define(AssetControlTag, AssetControlElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [AssetControlElementName]: AssetControlElement
+    [AssetControlTag]: AssetControlElement
   }
 }
 
-// listen for control event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControl.Type, AssetControlElement.handleNode
-)
+// listen for control asset event
+export const ClientControlAssetListeners = () => ({
+  [EventControl.Type]: AssetControlElement.handleNode
+})

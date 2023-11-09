@@ -1,22 +1,21 @@
-import type { PropertyDeclarations, CSSResultGroup } from 'lit-element/lit-element.js'
 import type { EventControlDetail } from '@moviemasher/runtime-client'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit-element/lit-element.js'
 
-import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-
-import { EventControl, MovieMasher } from '@moviemasher/runtime-client'
 import { DataTypeString } from '@moviemasher/lib-shared'
+import { EventControl } from '@moviemasher/runtime-client'
+import { ifDefined } from 'lit-html/directives/if-defined.js'
+import { html } from 'lit-html/lit-html.js'
 import { Component } from '../Base/Component.js'
 import { ControlMixin, ControlProperties } from '../Base/ControlMixin.js'
-import { OptionalContent } from '../declarations.js'
 import { ControlPropertyMixin } from '../Base/ControlPropertyMixin.js'
+import { OptionalContent } from '../declarations.js'
 
-const StringControlElementName = 'movie-masher-control-string'
+const StringControlTag = 'movie-masher-control-string'
 
-const WithControlProperty = ControlPropertyMixin(Component)
-const WithControl = ControlMixin(WithControlProperty)
-export class StringControlElement extends WithControl {
+const StringWithControlProperty = ControlPropertyMixin(Component)
+const StringWithControl = ControlMixin(StringWithControlProperty)
+export class StringControlElement extends StringWithControl {
   protected override get defaultContent(): OptionalContent {
     const { property, scalar: value } = this
     if (!property) return
@@ -39,7 +38,7 @@ export class StringControlElement extends WithControl {
 
   static instance(detail: EventControlDetail) {
     const { propertyId } = detail
-    const element = document.createElement(StringControlElementName)
+    const element = document.createElement(StringControlTag)
     element.propertyId = propertyId
     return element
 
@@ -65,19 +64,21 @@ export class StringControlElement extends WithControl {
         flex-grow: 1;
         width: 100%;
         min-width: 50px;
-        height: var(--control-size);
+        height: var(--height-control);
       }`
   ]
 }
 
 // register web component as custom element
-customElements.define(StringControlElementName, StringControlElement)
+customElements.define(StringControlTag, StringControlElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [StringControlElementName]: StringControlElement
+    [StringControlTag]: StringControlElement
   }
 }
 
-// listen for control event
-MovieMasher.eventDispatcher.addDispatchListener(EventControl.Type, StringControlElement.handleNode)
+// listen for control string event
+export const ClientControlStringListeners = () => ({
+  [EventControl.Type]: StringControlElement.handleNode
+})

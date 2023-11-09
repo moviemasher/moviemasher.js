@@ -3,13 +3,14 @@ import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup } from 'lit-element/lit-element.js'
 import type { ControlGroup, OptionalContent } from '../../declarations.js'
 
-import { ClientActionFlip, EventControlGroup, MovieMasher } from '@moviemasher/runtime-client'
+import { ClientActionFlip, EventControlGroup } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
+import { DOT } from '@moviemasher/lib-shared'
 
-const AspectControlGroupElementName = 'movie-masher-control-group-aspect'
+const AspectControlGroupTag = 'movie-masher-control-group-aspect'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
 export class AspectControlGroupElement extends WithControlGroup implements ControlGroup {
@@ -56,9 +57,9 @@ export class AspectControlGroupElement extends WithControlGroup implements Contr
       !groupedPropertyIds.includes(id)
     )
     const { names } = AspectControlGroupElement
-    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(name)))
-    // console.log('AspectControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
+    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(`${DOT}${name}`)))
     if (foundIds.length) {
+      // console.log('AspectControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
       detail.order = 1
       detail.controlGroup = AspectControlGroupElement.instance(foundIds)
       detail.groupedPropertyIds.push(...foundIds)
@@ -67,7 +68,7 @@ export class AspectControlGroupElement extends WithControlGroup implements Contr
   }
 
   static instance(propertyIds: PropertyIds) {
-    const element = document.createElement(AspectControlGroupElementName)
+    const element = document.createElement(AspectControlGroupTag)
     element.propertyIds = propertyIds
     return element
   }
@@ -88,15 +89,15 @@ export class AspectControlGroupElement extends WithControlGroup implements Contr
 }
 
 // register web component as custom element
-customElements.define(AspectControlGroupElementName, AspectControlGroupElement)
+customElements.define(AspectControlGroupTag, AspectControlGroupElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [AspectControlGroupElementName]: AspectControlGroupElement
+    [AspectControlGroupTag]: AspectControlGroupElement
   }
 }
 
 // listen for control group event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControlGroup.Type, AspectControlGroupElement.handleControlGroup
-)
+export const ClientGroupAspectListeners = () => ({
+  [EventControlGroup.Type]: AspectControlGroupElement.handleControlGroup
+})

@@ -1,7 +1,7 @@
 import type { ClientRawAsset, ClientRawAssetObject, ClientMediaRequest, ServerProgress, UploadResult } from '@moviemasher/runtime-client'
-import type { DataOrError, Size, StringDataOrError, TranscodingTypes } from '@moviemasher/runtime-shared'
+import type { DataOrError, DecodeOptions, Size, StringDataOrError, Transcoding, TranscodingTypes, Transcodings } from '@moviemasher/runtime-shared'
 
-import { assertAudibleAsset, transcodingInstance } from '@moviemasher/lib-shared'
+import { KindsProbe, assertAudibleAsset } from '@moviemasher/lib-shared'
 import { EventClientDecode, EventClientTranscode, EventUpload, MovieMasher } from '@moviemasher/runtime-client'
 import { AUDIO, PROBE, SEQUENCE, VIDEO, isDefiniteError, isProbing, isUndefined } from '@moviemasher/runtime-shared'
 import { ClientAssetClass } from '../ClientAssetClass.js'
@@ -16,27 +16,42 @@ export class ClientRawAssetClass extends ClientAssetClass implements ClientRawAs
   }
 
   override get assetObject(): ClientRawAssetObject {
-    const { request } = this
-    return { ...super.assetObject, request }
+    const { request, transcodings } = this
+    return { ...super.assetObject, request, transcodings }
   }
 
   override assetIcon(_: Size): Promise<SVGSVGElement> | undefined { return }
 
   override initializeProperties(object: ClientRawAssetObject): void {
     const { transcodings } = object
-    if (transcodings) this.transcodings.push(...transcodings.map(transcodingInstance))
+    if (transcodings) this.transcodings.push(...transcodings)
     super.initializeProperties(object)
   }
 
+
+  preferredTranscoding(...types: TranscodingTypes): Transcoding | undefined {
+    for (const type of types) {
+      const found = this.transcodings.find(object => object.type === type)
+      if (found) return found
+    }
+    return
+  }
+  
   override async savePromise(progress?: ServerProgress): Promise<StringDataOrError> {
     const uploadPromise = this.uploadPromise(progress)
     if (uploadPromise) {
       const uploadOrError = await uploadPromise
-      if (isDefiniteError(uploadOrError)) return uploadOrError
-
+      if (isDefiniteError(uploadOrError)) {
+        // console.error(this.constructor.name, 'ClientRawAssetClass savePromise', uploadOrError)
+        return uploadOrError
+      }
+      
       const { data } = uploadOrError
+      
       const { id, assetRequest } = data
       this.request = assetRequest
+      // console.log(this.constructor.name, 'ClientRawAssetClass savePromise calling saveId', uploadOrError.data)
+
       this.saveId(id)
 
 
@@ -65,7 +80,7 @@ export class ClientRawAssetClass extends ClientAssetClass implements ClientRawAs
       if (!isUndefined(data.audio)) return
     }
     const decodingType = PROBE
-    const options = {}
+    const options: DecodeOptions = { types: KindsProbe }
     const event = new EventClientDecode(this, decodingType, options, progress)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
@@ -101,10 +116,13 @@ export class ClientRawAssetClass extends ClientAssetClass implements ClientRawAs
       if (!promise) continue
 
       const orError = await promise
+      // console.log('ClientRawAssetClass.transcodePromise', { orError })
+      
       if (isDefiniteError(orError)) return orError
 
-      const { data } = orError
-      this.transcodings.push(transcodingInstance(data))
+      const { data: transcoding } = orError
+      // console.log('ClientRawAssetClass.transcodePromise', { transcoding })
+      this.transcodings.push(transcoding)
     }
     return { data: 'OK' }
   }
@@ -126,5 +144,9 @@ export class ClientRawAssetClass extends ClientAssetClass implements ClientRawAs
       return orError
     })
   }
+
   request: ClientMediaRequest
+
+
+  transcodings: Transcodings = []
 }

@@ -9,11 +9,11 @@ _JavaScript video editor and encoder_
 - **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
 <!-- MAGIC:END -->
 
-## Core Library
+## Shared Library
 
 This module is a peer dependency of both
-[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) and
-[@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express) modules, and not typically installed directly. It exports core interfaces, classes, factories, utility methods, enumerations, and types related to creating, managing and rendering video edit decision lists.
+[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client) and
+[@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server) modules, and not typically installed directly. It exports core interfaces, classes, factories, utility methods, enumerations, and types related to creating, managing and rendering video edit decision lists.
 
 <!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/documentation.md) -->
 <!-- The below content is automatically added from ../../../dev/documentation/snippet/documentation.md -->
@@ -26,10 +26,11 @@ more [extensive documentation](https://moviemasher.com/docs/index.html) availabl
 also available when using a code editor that supports TypeScript and IntelliSense.
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-core.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-shared.md&stripMagic=true) -->
 ## Core Example
 
-The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
+The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. 
+The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
 
 <fieldset>
 <legend>moviemasher.html</legend>
@@ -88,5 +89,5 @@ Further support is occassionally offered to particular projects on an hourly con
 
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed. Please review the [Contributor Guide](https://moviemasher.com/docs/Contributor.html) and [send an email](mailto:connect27@moviemasher.com) to discuss ways to work on the project.
+and the web site is also needed. Please [send an email](mailto:connect34@moviemasher.com) to discuss ways to work on the project.
 <!-- MAGIC:END -->

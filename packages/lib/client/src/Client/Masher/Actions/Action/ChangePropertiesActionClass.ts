@@ -4,9 +4,6 @@ import type { PropertyIds, ScalarsById } from '@moviemasher/runtime-shared'
 import { isPropertyId } from '@moviemasher/lib-shared'
 import { ChangeActionClass } from './ChangeActionClass.js'
 
-/**
- * @category Action
- */
 export class ChangePropertiesActionClass extends ChangeActionClass implements ChangePropertiesAction {
   constructor(object: ChangePropertiesActionObject) {
     const { redoValues, undoValues } = object

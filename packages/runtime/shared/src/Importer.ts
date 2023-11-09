@@ -3,4 +3,4 @@ import type { Identified } from './Identified.js'
 
 export interface Importer extends Identified, Labeled {}
 
-export type Importers = Importer[]
+export interface Importers extends Array<Importer>{}

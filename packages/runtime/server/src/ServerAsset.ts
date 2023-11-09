@@ -9,4 +9,4 @@ export interface ServerAsset extends Asset {
   serverPromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>>
 }
 
-export type ServerAssets = ServerAsset[]
+export interface ServerAssets extends Array<ServerAsset>{}

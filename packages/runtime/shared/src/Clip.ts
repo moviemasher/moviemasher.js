@@ -42,7 +42,7 @@ export interface Clip extends Propertied {
   visible : boolean
 }
 
-export type Clips = Clip[]
+export interface Clips extends Array<Clip>{}
 
 export interface IntrinsicOptions {
   editing?: boolean

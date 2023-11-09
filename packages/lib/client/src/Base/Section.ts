@@ -8,27 +8,27 @@ import { Slotted } from './Slotted.js'
 
 export const HeaderSlot = 'header'
 export const FooterSlot = 'footer'
-export const DivSlot = 'div'
+export const ContentSlot = 'content'
 
 export class Section extends Slotted {
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
     switch (part) {
-      case DivSlot: return this.divContent(slots)
+      case ContentSlot: return this.contentContent(slots)
       case FooterSlot: return this.footerContent(slots)
       case HeaderSlot: return this.headerContent(slots)
     }
     return super.partContent(part, slots)
   }
   
-  divContent(_htmls: Htmls): OptionalContent { return '[DIV]' }
+  contentContent(_htmls: Htmls): OptionalContent {}
 
-  footerContent(_htmls: Htmls): OptionalContent { return '[FOOTER]' }
+  footerContent(_htmls: Htmls): OptionalContent {}
 
-  headerContent(_htmls: Htmls): OptionalContent { return '[HEADER]' }
+  headerContent(_htmls: Htmls): OptionalContent {}
   
-  icon = 'app'
+  icon = ''
   
-  override parts = [HeaderSlot, DivSlot, FooterSlot].join(Slotted.partSeparator)
+  override parts = [HeaderSlot, ContentSlot, FooterSlot].join(Slotted.partSeparator)
 
   protected override content(contents: Contents): Content {
     return html`<section
@@ -48,11 +48,11 @@ export class Section extends Slotted {
       flex-grow: 1;
       overflow: hidden;
       display: grid;
-      grid-template-rows: var(--header-height) 1fr var(--footer-height);
+      grid-template-rows: var(--height-header) 1fr var(--height-footer);
       grid-template-columns: 1fr;
       border: var(--border);
-      border-color: var(--section-back);
-      border-radius: var(--border-radius);
+      border-color: var(--back-chrome);
+      border-radius: var(--radius-border);
     }
   `
 

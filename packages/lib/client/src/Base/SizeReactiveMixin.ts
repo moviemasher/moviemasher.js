@@ -21,7 +21,7 @@ T & Constrained<SizeReactive> {
       const { size } = event.detail
       if (size) this.size = size
       else {
-        const max = this.variable('max-dimension')
+        const max = this.variable('size-preview')
         this.size = size ? size : { width: max, height: max }
       }
     }

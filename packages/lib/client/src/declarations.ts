@@ -2,17 +2,15 @@ import type { EventChangedMashAsset, ClipLocation, SelectedProperty } from '@mov
 import type { AssetObject, AssetType, DataType, Identified, Property, PropertyId, PropertyIds, Rect, Scalar, Size, TargetId } from '@moviemasher/runtime-shared'
 import type { TemplateResult } from 'lit'
 
-export type Constructor<T> = new (...args: any[]) => T
-
 export type Html = TemplateResult<1> 
-export type Htmls = Html[]
+export interface Htmls extends Array<Html>{}
 
 export type Content = Html | Node | Scalar 
-export type Contents = Content[]
+export interface Contents extends Array<Content>{}
 export type OptionalContent = Content | void
 
-export type Nodes = Node[]
-export type Elements = Element[]
+export interface Nodes extends Array<Node>{}
+export interface Elements extends Array<Element>{}
 
 export interface ConnectionEventDetail {
   connected: boolean
@@ -38,7 +36,7 @@ export interface DropTarget {
   handleDragged(): void
   handleDropped(event: DragEvent): void 
   dropValid(dataTransfer: DataTransfer | null): boolean
-  mashIndex(event: DragEvent): ClipLocation
+  mashIndex(event: DragEvent): ClipLocation | undefined
   ondragenter(event: DragEvent): void 
   ondragleave(event: DragEvent): void 
   ondragover(event: DragEvent): void 
@@ -61,7 +59,7 @@ export interface ControlGroup {
   controlContent(name: string, icon?: string): OptionalContent 
   controlInputContent(propertyId?: PropertyId, dataType?: DataType): OptionalContent
   controlInputContentEnd(namePrefix: string): OptionalContent
-  currentValue(name: string, addOrRemove: string): Scalar | undefined 
+  currentValue(name: string): Scalar | undefined 
   namePropertyId(name: string): PropertyId | undefined
   propertyIds?: PropertyIds
   propertyIdValue(nameOrPropertyId: string): Scalar | undefined 

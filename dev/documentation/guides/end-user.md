@@ -1,3 +1,5 @@
+## End User
+
 The Movie Masher client application provides a powerful, simplified interface that facilitates video editing and realtime switching within a web browser. It allows you to construct video files and livestreams that are rendered remotely, even when your local device has limited connectivity. 
 
 

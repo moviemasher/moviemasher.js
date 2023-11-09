@@ -4,15 +4,16 @@ import type { Contents, ControlGroup, OptionalContent } from '../../declarations
 
 import { html } from 'lit-html/lit-html.js'
 
-import { EventControlGroup, MovieMasher } from '@moviemasher/runtime-client'
+import { EventControlGroup } from '@moviemasher/runtime-client'
 import { PropertyIds, Strings } from '@moviemasher/runtime-shared'
 
 import { Component } from '../../Base/Component.js'
 import { ControlGroupMixin, ControlGroupProperties, ControlGroupStyles } from '../../Base/ControlGroupMixin.js'
 import { ImporterComponent } from '../../Base/ImporterComponent.js'
+import { DOT } from '@moviemasher/lib-shared'
 
 
-const TimeControlGroupElementName = 'movie-masher-control-group-time'
+const TimeControlGroupTag = 'movie-masher-control-group-time'
 
 const WithControlGroup = ControlGroupMixin(ImporterComponent)
 export class TimeControlGroupElement extends WithControlGroup implements ControlGroup {
@@ -58,9 +59,9 @@ export class TimeControlGroupElement extends WithControlGroup implements Control
       !groupedPropertyIds.includes(id)
     )
     const { names } = TimeControlGroupElement
-    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(name)))
-    // console.log('TimeControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
+    const foundIds = remainingIds.filter(id => names.some(name => id.endsWith(`${DOT}${name}`)))
     if (foundIds.length) {
+      // console.log('TimeControlGroupElement.handleControlGroup', propertyIds, remainingIds, foundIds, names)
       detail.controlGroup = TimeControlGroupElement.instance(foundIds)
       detail.groupedPropertyIds.push(...foundIds)
       event.stopImmediatePropagation()
@@ -68,7 +69,7 @@ export class TimeControlGroupElement extends WithControlGroup implements Control
   }
 
   static instance(propertyIds: PropertyIds) {
-    const element = document.createElement(TimeControlGroupElementName)
+    const element = document.createElement(TimeControlGroupTag)
     element.propertyIds = propertyIds
     return element
   }
@@ -87,15 +88,15 @@ export class TimeControlGroupElement extends WithControlGroup implements Control
 }
 
 // register web component as custom element
-customElements.define(TimeControlGroupElementName, TimeControlGroupElement)
+customElements.define(TimeControlGroupTag, TimeControlGroupElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [TimeControlGroupElementName]: TimeControlGroupElement
+    [TimeControlGroupTag]: TimeControlGroupElement
   }
 }
 
 // listen for control group event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventControlGroup.Type, TimeControlGroupElement.handleControlGroup
-)
+export const ClientGroupTimeListeners = () => ({
+  [EventControlGroup.Type]: TimeControlGroupElement.handleControlGroup
+})

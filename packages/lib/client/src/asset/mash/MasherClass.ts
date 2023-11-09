@@ -2,12 +2,13 @@
 import type { Actions, AddClipsActionObject, AddTrackActionObject, ChangePropertiesActionObject, ClientAction, ClientAsset, ClientAssets, ClientClip, ClientClips, ClientMashAsset, ClipLocation, MashRemoveTrackEvent, Masher, MasherArgs, MoveClipActionObject, Previews, RemoveClipActionObject, Selectable, SelectedProperty, Timeout } from '@moviemasher/runtime-client'
 import type { AssetCacheArgs, AssetObject, AssetType, EventDispatcherListenerRecord, MashAssetObject, PropertyId, PropertyIds, ScalarsById, Size, Strings, TargetId, TargetIds, Time, TimeRange, Track } from '@moviemasher/runtime-shared'
 
-import { ActionTypeAddClip, ActionTypeAddTrack, ActionTypeChangeMultiple, ActionTypeMoveClip, ActionTypeRemoveClip, DOT, Default, assertArray, assertDefined, assertMashAsset, assertPopulatedString, assertPositive, assertSizeAboveZero, assertTrack, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate, idGenerateString, idIsTemporary, idTemporary, isAboveZero, isLoadType, isMashAsset, isPositive, isPropertyId, sizeAboveZero, sizeContain, sizeCover, sizeEven, timeFromArgs, timeFromSeconds, timeRangeFromArgs } from '@moviemasher/lib-shared'
-import { EventMoveClip, ClientActionAdd, EventTrackClips, ClientActionAddTrack, ClientActionFlip, ClientActionRedo, ClientActionRemove, ClientActionTogglePaused, ClientActionUndo, CurrentIndex, EventAddAssets, EventAssetId, EventChangeAssetId, EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalar, EventChangeScalars, EventChangedAssetId, EventChangedClientAction, EventChangedClipId, EventChangedMashAsset, EventChangedPreviews, EventChangedTargetIds, EventClipId, EventDataType, EventDoClientAction, EventDragging, EventEnabledClientAction, EventFrame, EventManagedAsset, EventMashAsset, EventPreviews, EventPropertyIds, EventReleaseManagedAssets, EventScalar, EventSelectedProperties, EventTargetIds, EventTimeRange, EventTypeAdded, EventTypeFps, EventTrackClipIcon, EventRemoveClip, EventTypeMashRemoveTrack, EventTypeVolume, LastIndex, MovieMasher, NextIndex } from '@moviemasher/runtime-client'
-import { AUDIO, END, ASSET, CLIP, CONTAINER, CONTENT, MASH, TARGET_IDS, VIDEO, assertAsset, errorThrow, isArray, isAssetType, isBoolean, isNumber } from '@moviemasher/runtime-shared'
+import { ActionTypeAddClip, ActionTypeAddTrack, ActionTypeChangeMultiple, ActionTypeMoveClip, ActionTypeRemoveClip, DOT, Default, assertArray, assertDefined, assertMashAsset, assertPopulatedString, assertPositive, assertSizeAboveZero, assertTrack, colorFromRgb, colorRgbDifference, colorToRgb, idGenerate, idGenerateString, idIsTemporary, idTemporary, isAboveZero, isEndpoint, isLoadType, isMashAsset, isPositive, isPropertyId, isRequest, sizeAboveZero, sizeContain, sizeCover, sizeEven, timeFromArgs, timeFromSeconds, timeRangeFromArgs } from '@moviemasher/lib-shared'
+import { EventMoveClip, ClientActionAdd, EventTrackClips, ClientActionAddTrack, ClientActionView, ClientActionFlip, ClientActionRedo, ClientActionRemove, ClientActionTogglePaused, ClientActionUndo, INDEX_CURRENT, EventAddAssets, EventAssetId, EventChangeAssetId, EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalar, EventChangeScalars, EventChangedAssetId, EventChangedClientAction, EventChangedClipId, EventChangedMashAsset, EventChangedPreviews, EventChangedTargetIds, EventClipId, EventDataType, EventDoClientAction, EventDragging, EventEnabledClientAction, EventMashTime, EventManagedAsset, EventMashAsset, EventPreviews, EventPropertyIds, EventReleaseManagedAssets, EventScalar, EventSelectedProperties, EventTargetIds, EventTimeRange, EventTypeFps, EventTrackClipIcon, EventRemoveClip, EventTypeMashRemoveTrack, EventTypeVolume, INDEX_LAST, MovieMasher, INDEX_NEXT } from '@moviemasher/runtime-client'
+import { AUDIO, END, TARGET_ASSET, TARGET_CLIP, TARGET_CONTAINER, TARGET_CONTENT, MASH, TARGET_IDS, VIDEO, assertAsset, errorThrow, isArray, isAssetType, isBoolean, isNumber } from '@moviemasher/runtime-shared'
 import { assertClientClip, assertClientMashAsset } from '../../Client/Mash/ClientMashGuards.js'
 import { svgDefsElement, svgPatch, svgPatternElement, svgPolygonElement, svgSvgElement, svgUrl } from '../../Client/SvgFunctions.js'
 import { isTargetId } from '../../TypeGuards.js'
+import { endpointUrl } from '../../utility/request.js'
 
 export type TargetIdPropertyNamesRecord = {
   [index in TargetId]?: Strings
@@ -32,7 +33,7 @@ export class MasherClass implements Masher {
     if (isNumber(buffer)) this._buffer = buffer
     
     this.listeners[EventDragging.Type] = this.handleDragging.bind(this)
-    this.listeners[EventFrame.Type] = this.handleFrame.bind(this)
+    this.listeners[EventMashTime.Type] = this.handleFrame.bind(this)
     this.listeners[EventChangeDragging.Type] = this.handleChangeDragging.bind(this)
     this.listeners[EventTimeRange.Type] = this.handleTimeRange.bind(this)
 
@@ -78,7 +79,7 @@ export class MasherClass implements Masher {
 
   private add() {
     const { time } = this
-    console.log(this.constructor.name, 'add', time)
+    // console.log(this.constructor.name, 'add', time)
   
 
     const { asset, mashAsset } = this
@@ -100,10 +101,6 @@ export class MasherClass implements Masher {
     // console.log(this.constructor.name, 'addAssets', mashIndex)
     const installedAssets = isArray(asset) ? asset : [asset]
     if (!installedAssets.length) return Promise.resolve([])
-   
-    const assetTypes = installedAssets.map(asset => asset.type)
-    const event = new CustomEvent(EventTypeAdded, { detail: { definitionTypes: assetTypes } })
-    MovieMasher.eventDispatcher.dispatch(event)
 
     if (!mashIndex) return Promise.resolve(installedAssets)
     
@@ -176,7 +173,7 @@ export class MasherClass implements Masher {
     if (_asset) return _asset
 
     if (!assetId) {
-      console.warn(this.constructor.name, 'assetId not set')
+      // console.warn(this.constructor.name, 'assetId not set')
       return 
     }
     const event = new EventManagedAsset(assetId)
@@ -203,7 +200,7 @@ export class MasherClass implements Masher {
     // console.log(this.constructor.name, 'assureMash', !!mashMedia)
     if (isMashAsset(mashMedia)) return Promise.resolve()
     
-    // console.log(this.constructor.name, 'assureMash NOT MASH ASSET!', mashMedia)
+    // console.log(this.constructor.name, 'assureMash NOT MASH TARGET_ASSET!', mashMedia)
     const [firstMedia] = assets
     const { label } = firstMedia
     const mash: MashAssetObject = { 
@@ -249,6 +246,7 @@ export class MasherClass implements Masher {
       case ClientActionTogglePaused:
       case ClientActionFlip:
       case ClientActionAddTrack: return !!mash
+      case ClientActionView: return !!mash?.encoding
       case ClientActionAdd: return !!(assetId && mash)
       case ClientActionUndo: return actions.canUndo
       case ClientActionRedo: return actions.canRedo
@@ -279,7 +277,7 @@ export class MasherClass implements Masher {
     assertMashAsset(mashAsset)
 
     switch (frameOrIndex) {
-      case LastIndex: {
+      case INDEX_LAST: {
         if (dense) return clips.length
         
         const lastClip = clips[clips.length - 1]
@@ -288,8 +286,8 @@ export class MasherClass implements Masher {
         const { frame, frames } = lastClip
         return frame + frames
       }
-      case NextIndex:
-      case CurrentIndex: {
+      case INDEX_NEXT:
+      case INDEX_CURRENT: {
         const { frame } = this.time.scale(mashAsset.quantize)
         if (!dense) return frame
 
@@ -298,7 +296,7 @@ export class MasherClass implements Masher {
         )
         if (!isPositive(onIndex)) return clips.length
 
-        const index = frameOrIndex === NextIndex ? onIndex + 1 : onIndex
+        const index = frameOrIndex === INDEX_NEXT ? onIndex + 1 : onIndex
         const clip = clips[index]
         if (!clip) return clips.length
 
@@ -374,6 +372,30 @@ export class MasherClass implements Masher {
 
   editing: boolean 
 
+  private encodingView() {
+    const { mashAsset } = this
+    if (!mashAsset) return
+
+    const { encoding } = mashAsset
+    if (!encoding) return
+
+    const object = mashAsset.encodings.find(object => object.id === encoding)
+
+    if (!object) return
+    const { request } = object    
+
+    if (!isRequest(request)) return 
+    
+    const { endpoint } = request
+    const url = isEndpoint(endpoint) ? endpointUrl(endpoint) : endpoint
+    if (!url) return
+
+    const { window } = globalThis
+    // console.log('encodingView', url)
+    window.open(url, '_blank')
+
+  }
+
   private get endTime(): Time {
     const { mashAsset: mash } = this
     return mash ? mash.endTime.scale(this.fps, 'floor') : timeFromArgs()
@@ -419,9 +441,14 @@ export class MasherClass implements Masher {
 
 
   private dispatchDrawLater(): void {
+    const { mashAsset } = this
+    const hasMashAsset = !!mashAsset
+    const loading = hasMashAsset 
+
+    const returning = this.drawTimeout || !loading
+    if (returning) return
     // console.log(this.constructor.name, 'dispatchDrawLater')
-    if (this.drawTimeout || !this.mashAsset?.loading) return
-  
+
     this.drawTimeout = setTimeout(() => {
       MovieMasher.eventDispatcher.dispatch(new EventChangedPreviews())
       delete this.drawTimeout
@@ -457,14 +484,14 @@ export class MasherClass implements Masher {
     const { propertyId } = event.detail
     const target = this.selectable(propertyId)
     if (!target) {
-      console.warn(this.constructor.name, 'handleDataType', 'undefined target', propertyId)
+      // console.warn(this.constructor.name, 'handleDataType', 'undefined target', propertyId)
       return
     }
     const propertyName = propertyId.split(DOT).pop()
     assertPopulatedString(propertyName)
     const property = target.propertyFind(propertyName)
     if (!property) {
-      console.warn(this.constructor.name, 'handleDataType', 'no property', propertyId)
+      // console.warn(this.constructor.name, 'handleDataType', 'no property', propertyId)
       return
     }
 
@@ -477,9 +504,14 @@ export class MasherClass implements Masher {
     event.stopImmediatePropagation()
   }
 
-  private handleFrame(event: EventFrame) {
-    event.detail.frame = this.mashAsset ? this.mashAsset.time.frame : 0
+  private handleFrame(event: EventMashTime) {
     event.stopImmediatePropagation()
+    const { mashAsset } = this
+    const { detail } = event
+
+    const frame = mashAsset?.frame || 0
+    const quantize = mashAsset?.quantize || this.fps
+    detail.time = timeFromArgs(frame, quantize)
   }
 
   private handleMashAsset(event: EventMashAsset) {
@@ -514,6 +546,8 @@ export class MasherClass implements Masher {
     const width = Math.max(frameWidth, resizeWidth)
     return  { width, height }
   }
+
+
 
   private frameWidth = (height: number) => {
     const { size } = this.mashAsset!
@@ -554,13 +588,14 @@ export class MasherClass implements Masher {
 
   private handleAction(event: EventDoClientAction) { 
     const { detail: action } = event
-    console.debug(this.constructor.name, 'handleAction', action)
+    // console.debug(this.constructor.name, 'handleAction', action)
     if (!this.actionIsHandled(action)) return
 
     event.stopImmediatePropagation()
     switch(action) {
       case ClientActionAdd: return this.add()
       case ClientActionAddTrack: return this.addTrack()
+      case ClientActionView: return this.encodingView()
       case ClientActionFlip: return this.flip()
       case ClientActionRedo: return this.redo()
       case ClientActionRemove: return this.removeClip()
@@ -574,6 +609,7 @@ export class MasherClass implements Masher {
     switch(action) {
       case ClientActionAdd: 
       case ClientActionAddTrack: 
+      case ClientActionView:
       case ClientActionFlip: 
       case ClientActionRedo: 
       case ClientActionRemove: 
@@ -610,7 +646,7 @@ export class MasherClass implements Masher {
     const { propertyId, value } = detail
     const target = this.selectable(propertyId)
     if (!target) {
-      console.error(this.constructor.name, 'handleChangeScalar', 'no target', propertyId)
+      // console.error(this.constructor.name, 'handleChangeScalar', 'no target', propertyId)
       return 
     }
     
@@ -623,12 +659,12 @@ export class MasherClass implements Masher {
     const { detail: scalars  } = event
     const [propertyId] = Object.keys(scalars)
     if (!isPropertyId(propertyId)) {
-      console.error(this.constructor.name, 'handleChangeScalars', 'invalid propertyId', propertyId)
+      // console.error(this.constructor.name, 'handleChangeScalars', 'invalid propertyId', propertyId)
       return
     }
     const target = this.selectable(propertyId)
     if (!target) {
-      console.error(this.constructor.name, 'handleChangeScalars', 'no target', propertyId)
+      // console.error(this.constructor.name, 'handleChangeScalars', 'no target', propertyId)
       return 
     }
     const actionObject = target.changeScalars(scalars)
@@ -697,7 +733,7 @@ export class MasherClass implements Masher {
           }
           return [selectedProperty]
         } else {
-          console.warn(this.constructor.name, 'handleSelectedProperties', 'property not found', propertyId)
+          // console.warn(this.constructor.name, 'handleSelectedProperties', 'property not found', propertyId)
         }
         return []
       }))
@@ -804,7 +840,7 @@ export class MasherClass implements Masher {
     MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionAddTrack))
     MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionFlip))
     MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionTogglePaused))
-
+    MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionView))
   }
 
   private mashAssetObject(assetObject: AssetObject): MashAssetObject {
@@ -874,12 +910,12 @@ export class MasherClass implements Masher {
     const undoTrack = tracks[undoTrackIndex]
     const undoDense = undoTrack.dense 
     const redoDense = redoTrack?.dense
-    const currentIndex = redoTrack ? redoTrack.clips.indexOf(clip) : LastIndex
+    const currentIndex = redoTrack ? redoTrack.clips.indexOf(clip) : INDEX_LAST
 
     if (redoDense) {
       options.insertIndex = isPositive(index) ? index : redoTrack.clips.length
     } else {
-      console.log(this.constructor.name, 'move', 'redo not dense', frame, index, !!redoTrack)
+      // console.log(this.constructor.name, 'move', 'redo not dense', frame, index, !!redoTrack)
       options.redoFrame = redoTrack ? redoTrack.frameForClipNearFrame(clip, frame) : 0
     }
 
@@ -971,7 +1007,7 @@ export class MasherClass implements Masher {
       if (target) {
         propertyIds.push(...target.propertyIds(ids))
       } else {
-        console.warn(this.constructor.name, 'selectedPropertyIds missing target', id)
+        // console.warn(this.constructor.name, 'selectedPropertyIds missing target', id)
       }
     })
     return propertyIds
@@ -1050,15 +1086,15 @@ export class MasherClass implements Masher {
     const { mashAsset, selection } = this
     const targetId = isPropertyId(id) ? id.split(DOT).shift() : id
     if (!isTargetId(targetId)) {
-      console.warn(this.constructor.name, 'selectable', 'invalid target id', id)
+      // console.warn(this.constructor.name, 'selectable', 'invalid target id', id)
       return false
     }
     switch (targetId) {
       case MASH: return mashAsset || false
-      case CLIP: return selection
-      case CONTENT: return selection && selection.content 
-      case CONTAINER: return selection && selection.container || false
-      case ASSET: return this.asset || false
+      case TARGET_CLIP: return selection
+      case TARGET_CONTENT: return selection && selection.content 
+      case TARGET_CONTAINER: return selection && selection.container || false
+      case TARGET_ASSET: return this.asset || false
     }
   }
 
@@ -1068,12 +1104,12 @@ export class MasherClass implements Masher {
     if (mashAsset) {
       ids.push(MASH)
       if (selection) {
-        ids.push(CLIP)
-        ids.push(CONTENT)
-        if (selection.container) ids.push(CONTAINER)
+        ids.push(TARGET_CLIP)
+        ids.push(TARGET_CONTENT)
+        if (selection.container) ids.push(TARGET_CONTAINER)
       }
     }
-    if (assetId) ids.push(ASSET)
+    if (assetId) ids.push(TARGET_ASSET)
     return ids
   }
 

@@ -2,11 +2,11 @@ import type { Htmls, OptionalContent } from '../declarations.js'
 
 import { ClientActionAdd, ClientActionAddTrack, EventDoClientAction } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
-import { Footer } from '../Base/LeftCenterRight.js'
+import { FooterElement } from '../Base/LeftCenterRight.js'
 
 export const TimelineFooterName = 'movie-masher-timeline-footer'
 
-export class TimelineFooterElement extends Footer {
+export class TimelineFooterElement extends FooterElement {
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     this.importTags('movie-masher-action-client')

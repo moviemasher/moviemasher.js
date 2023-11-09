@@ -23,7 +23,10 @@ export interface DataAssetPutRequest extends ApiRequest {
 
 export interface DataAssetListRequest extends ApiRequest, AssetParams {
   partial?: boolean
+  order?: string
+  descending?: boolean
 }
+
 
 export interface DataAssetDeleteRequest extends ApiRequest, Identified { }
 

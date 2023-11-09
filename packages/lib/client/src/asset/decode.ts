@@ -1,9 +1,9 @@
 import type { DecodeArgs } from '@moviemasher/runtime-shared'
 
-import { isDecodingObject } from '@moviemasher/lib-shared'
-import { EventClientDecode, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, error, isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestCallbackPromise, requestPopulate } from '../utility/request.js'
+import { isDecoding } from '@moviemasher/runtime-shared'
+import { EventClientDecode } from '@moviemasher/runtime-client'
+import { ERROR, namedError, isDefiniteError } from '@moviemasher/runtime-shared'
+import { requestCallbackPromise } from '../utility/request.js'
 
 export class DecodeHandler {
   static handle(event: EventClientDecode): void {
@@ -16,19 +16,20 @@ export class DecodeHandler {
       endpoint: 'decode/start', init: { method: 'POST' }
     }
     const decodeArgs: DecodeArgs = { assetType, request, decodingType, options }
-    const populated = requestPopulate(jsonRequest, decodeArgs)
-    console.debug(EventClientDecode.Type, 'handle request', populated)
 
-    detail.promise = requestCallbackPromise(populated).then(orError => {
+    detail.promise = requestCallbackPromise(jsonRequest, progress, decodeArgs).then(orError => {
       if (isDefiniteError(orError)) return orError
       progress?.did(1)
 
       const { data } = orError
-      if (!isDecodingObject(data)) return error(ERROR.Internal)
+      if (!isDecoding(data)) return namedError(ERROR.Internal)
 
       return { data }
     })
   }
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(EventClientDecode.Type, DecodeHandler.handle)
+// listen for client decode event
+export const ClientAssetDecodeListeners = () => ({
+  [EventClientDecode.Type]: DecodeHandler.handle
+})

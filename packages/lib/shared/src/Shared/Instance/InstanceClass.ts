@@ -1,6 +1,6 @@
-import type { Asset, AssetCacheArgs, AssetCacheOptions, CacheOptions, Clip, ContainerRectArgs, ContentRectArgs, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, Point, Points, Rect, RectTuple, Rects, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
+import type { Asset, AssetCacheArgs, Clip, ContainerRectArgs, ContentRectArgs, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, IntrinsicOptions, Lock, NumberRecord, Point, Points, PopulatedString, PropertySize, Rect, RectTuple, Scalar, SideDirectionRecord, Size, Sizes, Strings, Time, TimeRange, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { ASPECT, CROP, END, RECT_ZERO, AUDIO, isDefined, isNumber, isUndefined, } from '@moviemasher/runtime-shared'
+import { ASPECT, CROP, END, RECT_ZERO, AUDIO, isDefined, isNumber, isUndefined, isObject } from '@moviemasher/runtime-shared'
 import { PropertiedClass } from "../../Base/PropertiedClass.js"
 import { DefaultContainerId } from '../../Helpers/Container/ContainerConstants.js'
 import { DefaultContentId } from '../../Helpers/Content/ContentConstants.js'
@@ -8,36 +8,46 @@ import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
 import { DataTypeBoolean, DataTypePercent, DataTypeString } from "../../Setup/DataTypeConstants.js"
 import { Default } from '../../Setup/Default.js'
 import { DIRECTIONS, DIRECTIONS_SIDE } from '../../Setup/DirectionConstants.js'
-import { AspectFlip, Aspects, LockShortest, Locks } from '../../Setup/LockConstants.js'
+import { AspectFlip, Aspects, LockHeight, LockLongest, LockNone, LockShortest, LockWidth, Locks } from '../../Setup/LockConstants.js'
 import { propertyInstance } from "../../Setup/PropertyFunctions.js"
 import { idGenerateString } from '../../Utility/IdFunctions.js'
-import { sizeAboveZero, sizeCeil, sizeCover, sizeScale } from "../../Utility/SizeFunctions.js"
-import { assertAboveZero, assertDefined, assertNumber, assertPopulatedString } from '../SharedGuards.js'
+import { sizeAboveZero, sizeCeil, sizeCopy, sizeCover, sizeFlip, sizeScale } from "../../Utility/SizeFunctions.js"
+import { assertAboveZero, assertDefined, assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isPositive } from '../SharedGuards.js'
 import { isTimeRange } from "../TimeGuards.js"
-import { lockScaleSize, numberRecord, tweenColorStep, tweenNumberStep, tweenRectsContainer } from '../Utility/Tween/TweenFunctions.js'
-import { pointCopy } from '../../Utility/PointFunctions.js'
+import { pointCopy, pointFlip } from '../../Utility/PointFunctions.js'
 import { rectFromSize } from '../../Utility/RectFunctions.js'
+import { colorMixRbg, colorMixRbga, colorRgbToHex, colorRgbaToHex, colorToRgb, colorToRgba, colorValidHex } from '../../Helpers/Color/ColorFunctions.js'
 
+const tweenNumberStep = (number: number, numberEnd: number, frame: number, frames: number): number => {
+  const unit = (numberEnd - number) / frames
+  return number + (unit * frame)
+}
 
+const tweenColorStep = (value: PopulatedString, valueEnd: PopulatedString, frame: number, frames: number): string => {
+  assertString(value)
+  assertString(valueEnd)
+  const offset = frame / frames
+  assertTrue(colorValidHex(value), 'hex color')
+  if (value.length === 7 || value.length === 4) {
+    const result = colorRgbToHex(colorMixRbg(colorToRgb(value), colorToRgb(valueEnd), offset))
+    return result
+  }
+  return colorRgbaToHex(colorMixRbga(colorToRgba(value), colorToRgba(valueEnd), offset))
+}
+
+const numberRecord = (object: any): NumberRecord => {
+  if (!isObject(object)) return {}
+  const entries = Object.entries(object).filter(([_, value]) => isNumber(value)) 
+  return Object.fromEntries(entries) as NumberRecord
+}
 
 const tweenCoverSize = (intrinsicSize: Size, containerSize: Size, scale: Size): Size => {
-  // const [size, sizeEnd] = sizes
-  // const [scale, scaleEnd] = scales
   const unscaledSize = sizeCover(intrinsicSize, containerSize)
   const { width, height } = scale
   const scaledSize = sizeScale(unscaledSize, width, height)
   return sizeCeil(scaledSize)
-
-  // const coverSizes: Sizes = [coverSize]
-  // if (sizeEnd && scaleEnd) {
-  //   const unscaledSizeEnd = sizeCover(inSize, sizeEnd)
-  //   const { width: widthEnd, height: heightEnd } = scaleEnd
-  //   const scaledSizeEnd = sizeScale(unscaledSizeEnd, widthEnd, heightEnd)
-  //   const coverSizeEnd = sizeCeil(scaledSizeEnd)
-  //   coverSizes.push(coverSizeEnd)
-  // }
-  // return coverSizes
 }
+
 const tweenCoverPoint = (coverSize: Size, rect: Size, scale: Point): Point => {
   const { x, y } = scale
   const point: Point = {
@@ -45,8 +55,134 @@ const tweenCoverPoint = (coverSize: Size, rect: Size, scale: Point): Point => {
     y: y * (coverSize.height - rect.height),
   }
   return point
-  
 }
+
+// exported just for tests
+export const tweenPad = (outputDistance: number, scaledDistance: number, scale: number, leftCrop = false, rightCrop = false): number => {
+  assertPositive(scale)
+  assertPositive(scaledDistance)
+
+  const baseDistance = outputDistance - scaledDistance
+  const east = leftCrop ? scaledDistance: 0 
+  const west = rightCrop ? scaledDistance : 0
+  const distance = baseDistance + east + west
+  const scaled = distance * scale
+  const x = scaled - east
+  return x
+}
+
+// exported just for tests
+export const tweenScaleSizeToRect = (size: Size, scaleRect: Rect, directions: SideDirectionRecord = {}): Rect => {
+  const { width: outWidth, height: outHeight } = size
+  const { x, y, width, height } = scaleRect
+  assertPositive(x, 'x')
+  assertPositive(y, 'y')
+  assertPositive(width, 'width')
+  assertPositive(height, 'height')
+
+  const scaledSize = sizeScale(size, width, height)
+  const evenSize = sizeCeil(scaledSize)
+  const result = {
+    ...evenSize,
+    x: Math.round(tweenPad(outWidth, evenSize.width, x, directions.left, directions.right)), 
+    y: Math.round(tweenPad(outHeight, evenSize.height, y, directions.top, directions.bottom))
+  }
+  return result
+}
+
+// exported just for tests
+export const tweenRectsContainer = (rects: RectTuple, intrinsicSize: Size, lock: Lock, previewSize: Size, directions: SideDirectionRecord, pointAspect: string, sizeAspect: string): RectTuple => {
+  return rects.map(rect => 
+    tweenRectContainer(rect, intrinsicSize, lock, previewSize, directions, pointAspect, sizeAspect)
+  ) as RectTuple
+}
+
+const tweenScaleSizeRatioLock = (scale: Size, previewSize: Size, inRatio: number, lock: Lock, flipped: boolean): Size => {
+  if (lock === LockNone) return scale
+
+  const { width: outWidth, height: outHeight } = previewSize
+  const result = { ...scale }
+  const forcedScale = { ...scale }
+  forcedScale.width = ((outHeight * result.height) * inRatio) / outWidth
+  forcedScale.height = ((outWidth * result.width) / inRatio) / outHeight
+  switch(lock){
+    case LockLongest: {
+      if (flipped) result.width = forcedScale.width
+      else result.height = forcedScale.height
+      break
+    }
+    case LockShortest: {
+      if (flipped) result.height = forcedScale.height
+      else result.width = forcedScale.width 
+      break
+    }
+    case LockHeight: {
+      result.width = forcedScale.width
+      break
+    }
+    case LockWidth: {
+      result.height = forcedScale.height
+      break
+    }
+  }
+  return result
+}
+
+const lockScaleSize = (scaleSize: Size, lock: Lock, shortest: PropertySize): Size => {
+  if (lock === LockNone) return scaleSize
+
+  const copy = sizeCopy(scaleSize)
+  const longest = shortest === 'width' ? 'height' : 'width'
+  switch (lock) {
+    case LockHeight: {
+      copy.width = copy.height
+      break
+    }
+    case LockWidth: {
+      copy.height = copy.width
+      break
+    }
+    case LockShortest: {
+      copy[longest] = copy[shortest]
+      break
+    }
+    case LockLongest: {
+      copy[shortest] = copy[longest]
+      break
+    }
+  }
+  return copy
+}
+
+const tweenRectContainer = (tweenRect: Rect, intrinsicSize: Size, lock: Lock, previewSize: Size, crops: SideDirectionRecord, pointAspect: string, sizeAspect: string): Rect => {
+  const portrait = previewSize.width < previewSize.height
+  const flippedPoint = pointAspect === AspectFlip 
+  const flippedSize = sizeAspect === AspectFlip
+  const shortest = portrait ? 'width' : 'height'
+  const flipSize = portrait && flippedSize
+  const flipPoint = portrait && flippedPoint
+  const tweenPoint = flipPoint ? pointFlip(tweenRect) : pointCopy(tweenRect)
+  const tweenSize = flipSize ? sizeFlip(tweenRect) : sizeCopy(tweenRect)
+  const directions = flipPoint ? sideDirectionRecordFlip(crops) : crops
+  lockScaleSize(tweenRect, lock, shortest)
+  const ratio = intrinsicSize.width / intrinsicSize.height
+  const forcedScale = {
+    ...tweenPoint, 
+    ...tweenScaleSizeRatioLock(tweenSize, previewSize, ratio, lock, flipSize)
+  }
+  return tweenScaleSizeToRect(previewSize, forcedScale, directions)
+}
+
+const sideDirectionRecordFlip = (directions: SideDirectionRecord): SideDirectionRecord => {
+  const { top, bottom, left, right } = directions
+  return {
+    top: left,
+    bottom: right,
+    left: top,
+    right: bottom
+  }
+}
+
 export class InstanceClass extends PropertiedClass implements Instance {
   constructor(object: InstanceArgs) {
     super(object)
@@ -82,23 +218,14 @@ export class InstanceClass extends PropertiedClass implements Instance {
   containerRects(args: ContainerRectArgs, intrinsicRect: Rect): RectTuple {
     const { size: previewSize, time, timeRange } = args
     const { width: intrinsicWidth, height: intrinsicHeight } = intrinsicRect
-
     const intrinsicSize: Size = {
-      // ...intrinsicRect,
       width: intrinsicWidth || previewSize.width, 
       height: intrinsicHeight || previewSize.height
     }
-    // console.log(this.constructor.name, 'containerRects intrinsicSize', intrinsicSize)
-
     const tweenRects = this.tweenRects(time, timeRange)
     const { lock, pointAspect, sizeAspect } = this
     const { sideDirectionRecord } = this
-
-    const rects =  tweenRectsContainer(tweenRects, intrinsicSize, lock, previewSize, sideDirectionRecord, pointAspect, sizeAspect)
-    
-    // console.log(this.constructor.name, 'containerRects', sideDirectionRecord, rects)
-  
-    return rects
+    return tweenRectsContainer(tweenRects, intrinsicSize, lock, previewSize, sideDirectionRecord, pointAspect, sizeAspect)
   }
   
   contentRects(args: ContentRectArgs): RectTuple {
@@ -146,7 +273,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
 
   override initializeProperties(object: InstanceArgs): void {
     const { container, targetId } = this
-  
+    // console.log(this.constructor.name, 'initializeProperties', this.asset.label, { container, targetId })
     if (container) {
       DIRECTIONS_SIDE.forEach(direction => {
         this.properties.push(propertyInstance({
@@ -203,7 +330,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
   instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>> {
     const { time } = args
     const assetTime = this.assetTime(time)
-    const options: AssetCacheArgs = { ...args, time: assetTime }
+    const options: AssetCacheArgs = { ...args, assetTime }
     // console.log(this.constructor.name, 'InstanceClass.instanceCachePromise', options, this.assetId)
     return this.asset.assetCachePromise(options)
   }
@@ -227,7 +354,6 @@ export class InstanceClass extends PropertiedClass implements Instance {
   get label(): string { return this._label  }
   set label(value: string) { this._label = value }
 
-
   declare lock: Lock
 
   mutable() { return false }
@@ -245,9 +371,11 @@ export class InstanceClass extends PropertiedClass implements Instance {
   declare pointAspect: string
 
   get sideDirectionRecord(): SideDirectionRecord {
-    return Object.fromEntries(DIRECTIONS_SIDE.map(direction => 
-      [direction, Boolean(this.value(`${direction}CROP`))]
-    ))
+    return Object.fromEntries(DIRECTIONS_SIDE.map(direction => {
+      const key = `${direction}${CROP}`
+      const value = this.value(key)
+      return [direction, Boolean(value)]
+    }))
   }
 
   declare sizeAspect: string
@@ -282,8 +410,11 @@ export class InstanceClass extends PropertiedClass implements Instance {
   private tweenPoints(time: Time, range: TimeRange): Points {
     const [x, xEndOrNot] = this.tweenValues('x', time, range)
     const [y, yEndOrNot] = this.tweenValues('y', time, range)
-    assertNumber(x)
-    assertNumber(y)
+    if (!(isPositive(x) && isPositive(y))) {
+      console.error('InstanceClass.tweenPoints', { x, y }, time, range, this.value('x'), this.value('y'), this.value('xEnd'), this.value('yEnd'))
+    }
+    assertPositive(x, 'x')
+    assertPositive(y, 'y')
     const point: Point = { x, y } 
     const points: Points = [point]
     if (isDefined(xEndOrNot) || isDefined(yEndOrNot)) {
@@ -298,7 +429,7 @@ export class InstanceClass extends PropertiedClass implements Instance {
     const rect = { ...point , ...size }
     const rects: RectTuple = [ rect, rect ]
     if (isDefined(sizeEnd) || isDefined(pointEnd)) {
-      rects[1] = { ...(pointEnd || point) , ...(sizeEnd || size) }
+      rects[1] = { ...(pointEnd || point), ...(sizeEnd || size) }
     }
     return rects 
   }

@@ -1,4 +1,4 @@
-import type { AVType, AudioInstance, AudioInstanceObject, Clip, ClipObject, EncodingObjects, Encodings, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, MashAsset, MashAssetObject, Propertied, Size, Time, TimeRange, Track, TrackObject, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { AVType, AudioInstance, AudioInstanceObject, Clip, ClipObject, Encodings, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, MashAsset, MashAssetObject, Propertied, Size, Time, TimeRange, Track, TrackObject, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
 import type { Action, Actions } from './ActionTypes.js'
 import type { AudioPreview } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
@@ -82,7 +82,7 @@ export interface ClientClip extends Selectable, Clip {
   track: ClientTrack
   updateAssetId(oldId: string, newId: string): void
 }
-export type ClientClips = ClientClip[]
+export interface ClientClips extends Array<ClientClip>{}
 
 export interface ClientTrack extends Track {
   addClips(clip: ClientClips, insertIndex?: number): void
@@ -92,13 +92,12 @@ export interface ClientTrack extends Track {
   removeClips(clip: ClientClips): void
 }
 
-export type ClientTracks = ClientTrack[]
+export interface ClientTracks extends Array<ClientTrack>{}
 
 export interface ClientTrackArgs extends TrackObject {
   mashAsset: ClientMashAsset
 }
 
 export interface ClientMashAssetObject extends MashAssetObject {
-
-  encodings?: EncodingObjects
+  encodings?: Encodings
 }

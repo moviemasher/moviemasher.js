@@ -16,9 +16,14 @@ export interface HostOptionsDefault {
 
 export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions => {
   const {
-    publicDirectory = './examples/express/public', port, auth, host = '0.0.0.0', version 
+    publicDirectory: dirOrUndefined,
+    port: portOrUndefined, auth, host: hostOrUndefined, version: versionOrUndefined,
   } = args
-  const basePort = port || ENVIRONMENT.get('MOVIEMASHER_EXAMPLE_PORT', NUMBER)
+  const host = hostOrUndefined || ENVIRONMENT.get('MOVIEMASHER_HOST')
+  
+  const version = versionOrUndefined || ENVIRONMENT.get('MOVIEMASHER_VERSION')
+  const publicDirectory = dirOrUndefined || ENVIRONMENT.get('MOVIEMASHER_EXAMPLE_ROOT')
+  const port = portOrUndefined || ENVIRONMENT.get('MOVIEMASHER_EXAMPLE_PORT', NUMBER)
   const authentication = auth || OpenAuthentication
   const data: DataServerArgs = { authentication }
   const upload: UploadServerArgs = {
@@ -62,7 +67,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     }, authentication
   }
   const options: HostOptions = {
-    port: basePort, host, version,
+    port, host, version,
     corsOptions: { origin: '*' },
     data, upload, encode, web, decode, transcode
   }

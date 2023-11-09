@@ -1,3 +1,3 @@
-import type { ProbeType } from './Decoding.js'
+import type { ProbeType } from './JobProduct.js'
 
 export const PROBE: ProbeType = 'probe'

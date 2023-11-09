@@ -1,12 +1,22 @@
 import { expect, html, fixture } from '@open-wc/testing';
-// import { updateCompetedPromise } from '../../../../dev/utils/test.mjs';
-
 import { makeScreenshot } from 'web-test-runner-screenshot';
-
 import { setViewport } from '@web/test-runner-commands';
 
 import '../src/index.js'// { Base, FormElement } from 
 
+const updateCompetedPromise = el => {
+  return new Promise((resolve) => {
+    const id = setInterval(async () => {
+      // console.log(el, el.constructor.name)
+      const updating = await el.updateComplete
+      // console.debug('updateCompetedPromise', updating)
+      if (updating) {
+        clearInterval(id)
+        resolve(null)
+      }
+    }, 500)
+  })
+}
 
 describe('FormElement', function() {
   it('completes update', async function() {

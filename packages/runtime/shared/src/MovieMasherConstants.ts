@@ -1,7 +1,7 @@
 import type { StringRecord, StringsRecord } from './Core.js'
 import type { EventDispatcher } from './EventDispatcher.js'
 
-import { error, errorCaught, isDefiniteError } from './ErrorFunctions.js'
+import { namedError, errorCaught, isDefiniteError } from './ErrorFunctions.js'
 import { ERROR } from './ErrorName.js'
 import { isListenerRecord } from './EventDispatcher.js'
 import { isFunction } from './TypeofGuards.js'
@@ -17,10 +17,10 @@ export const importPromise = (imports: StringRecord, eventDispatcher: EventDispa
       const importers = byId[moduleId]
       const potentialErrors = importers.map(importer => {
         const { [importer]: funktion } = module
-        if (!isFunction(funktion)) return error(ERROR.Url, importer)
+        if (!isFunction(funktion)) return namedError(ERROR.Url, importer)
         
         const listeners = funktion()
-        if (!isListenerRecord(listeners)) return error(ERROR.Type, importer)
+        if (!isListenerRecord(listeners)) return namedError(ERROR.Type, importer)
         
         eventDispatcher.listenersAdd(listeners)
         return {}

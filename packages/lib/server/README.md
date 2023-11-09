@@ -9,7 +9,7 @@ _JavaScript video editor and encoder_
 - **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
 <!-- MAGIC:END -->
 
-## Server Core
+## Server Library
 This module is an
 [ExpressJS](https://expressjs.com)
 reference implementation of a server plug-in that utilizes the core
@@ -17,7 +17,7 @@ reference implementation of a server plug-in that utilizes the core
 module.
 
 It exports classes and interfaces that fulfill half a dozen APIs utilized by a client implementation like
-[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react).
+[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client).
 Its imports are all specified as peer dependencies.
 
 This server implementation utilizes
@@ -38,14 +38,14 @@ also available when using a code editor that supports TypeScript and IntelliSens
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-server.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=./dev/documentation/snippet/example-server.md&stripMagic=true) -->
 ## Server Example
 
 The following shell command installs the server and required packages to your NPM project,
 saving the former to the `dependencies` array in your **package.json** file.
 
 ```shell
-npm install @moviemasher/server-express --save
+npm install @moviemasher/lib-server --save
 ```
 
 The script below can then be included in your project and triggered in a variety of ways. The most straightfoward is to simply pass its path directly to node.
@@ -57,10 +57,12 @@ The script below can then be included in your project and triggered in a variety
 
 ```js
 // src/server.ts
-import { Host, HostDefaultOptions } from "@moviemasher/server-express";
+import { Host, HostDefaultOptions } from "@moviemasher/lib-server";
 var host = new Host(HostDefaultOptions());
 host.start();
 ```
+
+
 </fieldset>
 
 The script first requires MovieMasherServer, then destructures what's needed from it. In this example we're just grabbing the `Host` class and corresponding `HostDefaultOptions` function. We call the later with the desired port number, and then pass the options it returns as arguments to the class constructor. Finally, the `start` method of the new instance is called to start the ExpressJS server. 
@@ -81,5 +83,5 @@ Further support is occassionally offered to particular projects on an hourly con
 
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed. Please review the [Contributor Guide](https://moviemasher.com/docs/Contributor.html) and [send an email](mailto:connect27@moviemasher.com) to discuss ways to work on the project.
+and the web site is also needed. Please [send an email](mailto:connect34@moviemasher.com) to discuss ways to work on the project.
 <!-- MAGIC:END -->

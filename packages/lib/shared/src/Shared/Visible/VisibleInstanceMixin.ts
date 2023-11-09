@@ -1,6 +1,6 @@
 import type { Constrained, ContentRectArgs, Instance, IntrinsicOptions, PropertySize, Rect, Time, VisibleAsset, VisibleInstance, VisibleInstanceObject } from '@moviemasher/runtime-shared'
 
-import { END, POINT_ZERO, SIZE_ZERO, CONTAINER, CONTENT } from '@moviemasher/runtime-shared'
+import { END, POINT_ZERO, SIZE_ZERO, TARGET_CONTAINER, TARGET_CONTENT } from '@moviemasher/runtime-shared'
 import { DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { propertyInstance } from '../../Setup/PropertyFunctions.js'
 import { rectFromSize } from '../../Utility/RectFunctions.js'
@@ -25,7 +25,7 @@ T & Constrained<VisibleInstance> {
         const hasWidth = properties.some(property => property.name.endsWith('width'))
         const hasHeight = properties.some(property => property.name.endsWith('height'))
         const min = container ? 0.0 : 1.0
-        const targetId = container ? CONTAINER : CONTENT
+        const targetId = container ? TARGET_CONTAINER : TARGET_CONTENT
         if (!hasWidth) {
           this.properties.push(propertyInstance({
             targetId, name: 'width', type: DataTypePercent, 

@@ -12,6 +12,6 @@ export interface SelectedProperty {
   frame?: number
 }
 
-export type SelectedProperties = SelectedProperty[]
+export interface SelectedProperties extends Array<SelectedProperty>{}
 
 export type SelectedPropertyRecord = Record<string, SelectedProperty>

@@ -2,14 +2,18 @@ import type { ClientClip, ClientVisibleInstance, EventFunction, SvgItem, SvgItem
 import type { ContainerRectArgs, Direction, Point, Rect, ScalarsById, Size, Time, TimeRange } from '@moviemasher/runtime-shared'
 import type { TrackPreview, TrackPreviewArgs } from './TrackPreview.js'
 
-import { DASH, DOT, DirectionBottom, DirectionLeft, DirectionRight, DirectionTop, assertRect, assertSideDirection, assertSizeAboveZero, pointTranslate, pointsEqual, sizeTranslate, timeFromArgs, tweenMinMax } from '@moviemasher/lib-shared'
-import { EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalars, EventFrame, EventRect, MovieMasher, eventStop } from '@moviemasher/runtime-client'
-import { ASPECT, CROP, END, POINT_ZERO, CONTAINER, isDefined } from '@moviemasher/runtime-shared'
+import { DASH, DOT, DirectionBottom, DirectionLeft, DirectionRight, DirectionTop, assertRect, assertSideDirection, assertSizeAboveZero, assertTime, pointTranslate, pointsEqual, sizeTranslate } from '@moviemasher/lib-shared'
+import { EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalars, EventMashTime, EventRect, MovieMasher, eventStop } from '@moviemasher/runtime-client'
+import { ASPECT, CROP, END, POINT_ZERO, TARGET_CONTAINER, isDefined } from '@moviemasher/runtime-shared'
 import { svgAddClass, svgPolygonElement } from '../../../SvgFunctions.js'
 
 export const TrackPreviewHandleSize = 8
 
 export const TrackPreviewLineSize = 2
+
+export const tweenMinMax = (value: number, min: number, max: number): number => {
+  return Math.min(max, Math.max(min, value))
+}
 
 /**
  * MashPreview of a single track at a single frame, thus representing a single clip 
@@ -95,8 +99,6 @@ export class TrackPreviewClass implements TrackPreview {
       const bottomCrop = container.value(`${flipped ? 'right' : 'bottom'}${CROP}`)
       
       const totalSize = sizeTranslate(previewRect, clipRect, true)
-      
-      
    
       const zeroPoint = { ...POINT_ZERO }
       if (leftCrop) {
@@ -120,23 +122,20 @@ export class TrackPreviewClass implements TrackPreview {
         y: tweenMinMax(offset.y, 0, totalSize.height),
       }
     
-      const timeEvent = new EventFrame()
+      const timeEvent = new EventMashTime()
       MovieMasher.eventDispatcher.dispatch(timeEvent)
-      const tweening = pointTweening && timeEvent.detail.frame === range.lastTime.frame
+      const { time } = timeEvent.detail
+      assertTime(time)
+
+      const tweening = pointTweening && time.frame === range.lastTime.frame
   
-      const horzId = `${CONTAINER}${DOT}${tweening ? horzEndKey : horzPointKey}`
-      const vertId = `${CONTAINER}${DOT}${tweening ? vertEndKey : vertPointKey}`
+      const horzId = `${TARGET_CONTAINER}${DOT}${tweening ? horzEndKey : horzPointKey}`
+      const vertId = `${TARGET_CONTAINER}${DOT}${tweening ? vertEndKey : vertPointKey}`
 
       const redoValues: ScalarsById = { 
         [horzId]: totalSize.width ? limitedPoint.x / totalSize.width : container.value(horzId), 
         [vertId]: totalSize.height ? limitedPoint.y / totalSize.height : container.value(vertId), 
       }
-      const undoValues = {
-        [horzId]: container.value(horzId),
-        [vertId]: container.value(vertId),
-      }
-      console.log(this.constructor.name, 'pointerMove', pointsEqual(limitedPoint, movePoint), undoValues, '->', redoValues)
-
       MovieMasher.eventDispatcher.dispatch(new EventChangeScalars(redoValues))
     }
 
@@ -148,15 +147,16 @@ export class TrackPreviewClass implements TrackPreview {
 
       // make sure we're either not tweening, or on start/end frame
       if (pointTweening) {
-        const frameEvent = new EventFrame()
-        MovieMasher.eventDispatcher.dispatch(frameEvent)
-        const { frame = 0 } = frameEvent.detail
-        const time = timeFromArgs(frame, range.fps)
+        const timeEvent = new EventMashTime()
+        MovieMasher.eventDispatcher.dispatch(timeEvent)
+        const { time } = timeEvent.detail
+        assertTime(time)
+
         const closest = time.closest(range)
         if (!time.equalsTime(closest)) {
           removeWindowHandlers()
           const frame = closest.scaleToFps(this.preview.mash.quantize).frame
-          console.log(this.constructor.name, 'pointerMoveStart going to', frame)
+          // console.log(this.constructor.name, 'pointerMoveStart going to', frame, time, closest)
           MovieMasher.eventDispatcher.dispatch(new EventChangeFrame(frame))
           return
         }

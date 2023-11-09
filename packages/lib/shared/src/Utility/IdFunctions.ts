@@ -8,7 +8,6 @@ export const idReset = () => IdCountsByPrefix.clear()
 
 export const idGenerateString = (): string => {
   const components = [IdTemporaryPrefix]
-
   components.push(Date.now().toString(36))
   components.push(Math.random().toString(36).slice(2))
   return components.join(DASH)

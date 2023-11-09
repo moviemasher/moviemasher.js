@@ -1,9 +1,9 @@
 import type { ClientMashAsset, EventDoServerActionDetail, ServerProgress } from '@moviemasher/runtime-client'
 
-import { encodingInstance, idIsTemporary, isEncodingObject } from '@moviemasher/lib-shared'
-import { EventChangedMashAsset, EventChangedServerAction, EventClientEncode, EventDoServerAction, EventEnabledServerAction, EventMashAsset, EventProgress, MovieMasher, ServerActionEncode, ServerActionSave } from '@moviemasher/runtime-client'
-import { ERROR, EncodeArgs, EncodeOptions, VIDEO, error, isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestCallbackPromise, requestPopulate } from '../utility/request.js'
+import { EmptyFunction, idIsTemporary, isEncoding } from '@moviemasher/lib-shared'
+import { ClientActionView, EventChangeScalar, EventChangedClientAction, EventChangedMashAsset, EventChangedServerAction, EventClientEncode, EventDoServerAction, EventEnabledServerAction, EventMashAsset, EventProgress, MovieMasher, ServerActionEncode, ServerActionSave } from '@moviemasher/runtime-client'
+import { ERROR, EncodeArgs, EncodeOptions, IMAGE, VIDEO, namedError, isDefiniteError } from '@moviemasher/runtime-shared'
+import { requestCallbackPromise } from '../utility/request.js'
 
 export class EncodeHandler {
   constructor() {
@@ -31,21 +31,40 @@ export class EncodeHandler {
     const { id } = detail
     const { type, assetObject } = mashAsset
     const options: EncodeOptions = {}
+    switch (type) { 
+      case IMAGE:
+      case VIDEO: {
+        const { size } = mashAsset
+        options.width = size.width
+        options.height = size.height
+        break
+      }
+    }
     const progress = EncodeHandler.progress(id)
-    const event = new EventClientEncode(assetObject, type, options, progress)
-    MovieMasher.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return
+    // console.log('EncodeHandler doServerAction', id, type, options)
+    const encodeEvent = new EventClientEncode(assetObject, type, options, progress)
+    MovieMasher.eventDispatcher.dispatch(encodeEvent)
+    const { promise: encodePromise } = encodeEvent.detail
+    if (!encodePromise) return
 
-    detail.promise = promise.then(orError => {
+    detail.promise = encodePromise.then(orError => {
       progress?.done()
       if (isDefiniteError(orError)) return 
 
       const { data: encodingObject } = orError
-      mashAsset.encodings.push(encodingInstance(encodingObject))
+      const { id: encodingId } = encodingObject
+      mashAsset.encodings.push(encodingObject)
+      MovieMasher.eventDispatcher.dispatch(new EventChangeScalar('mash.encoding', encodingId))
+      MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionView))
+
+      const saveEvent = new EventDoServerAction(ServerActionSave, ServerActionSave)
+      MovieMasher.eventDispatcher.dispatch(saveEvent)
+      const { promise: savePromise } = saveEvent.detail
+      if (!savePromise) return 
+      
+      return savePromise.then(EmptyFunction)
     })
   }
-
 
   private get encodeEnabled(): boolean {
     if (this.saveEnabled) return false
@@ -120,19 +139,15 @@ export class EncodeHandler {
     const jsonRequest = {
       endpoint: 'encode/start', init: { method: 'POST' }
     }
-
     const args: EncodeArgs = {
       encodingType, encodeOptions, mashAssetObject
     }
-    const request = requestPopulate(jsonRequest, args)
-    console.debug(EventClientEncode.Type, 'handle request', request)
-
-    detail.promise = requestCallbackPromise(request).then(orError => {
+    detail.promise = requestCallbackPromise(jsonRequest, progress, args).then(orError => {
       if (isDefiniteError(orError)) return orError
       progress?.did(1)
 
       const { data } = orError
-      if (!isEncodingObject(data)) return error(ERROR.Internal)
+      if (!isEncoding(data)) return namedError(ERROR.Internal)
 
       return { data }
     })
@@ -151,12 +166,12 @@ export class EncodeHandler {
     return {
       do: (steps: number) => { 
         total += steps
-        console.log('EncodeHandler progress do', steps, current, total)
+        // console.log('EncodeHandler progress do', steps, current, total)
         dispatch()
       },
       did: (steps: number) => { 
         current += steps
-        console.log('EncodeHandler progress did', steps, current, total)
+        // console.log('EncodeHandler progress did', steps, current, total)
         dispatch()
        },
        done: () => {
@@ -167,9 +182,12 @@ export class EncodeHandler {
   }
 }
 
-// console.debug('EncodeHandler ADDING LISTENERS')
-MovieMasher.eventDispatcher.addDispatchListener(EventEnabledServerAction.Type, EncodeHandler.handleEnabledServerAction)
-MovieMasher.eventDispatcher.addDispatchListener(EventChangedServerAction.Type, EncodeHandler.handleChangedServerAction)
-MovieMasher.eventDispatcher.addDispatchListener(EventDoServerAction.Type, EncodeHandler.handleDoServerAction)
-MovieMasher.eventDispatcher.addDispatchListener(EventChangedMashAsset.Type, EncodeHandler.handleChangedMashAsset)
-MovieMasher.eventDispatcher.addDispatchListener(EventClientEncode.Type, EncodeHandler.handleEncode)
+// listen for client encode related events
+export const ClientAssetEncodeListeners = () => ({
+  [EventClientEncode.Type]: EncodeHandler.handleEncode,
+  [EventEnabledServerAction.Type]: EncodeHandler.handleEnabledServerAction,
+  [EventChangedServerAction.Type]: EncodeHandler.handleChangedServerAction,
+  [EventDoServerAction.Type]: EncodeHandler.handleDoServerAction,
+  [EventChangedMashAsset.Type]: EncodeHandler.handleChangedMashAsset,
+})
+

@@ -3,7 +3,7 @@ import type { PropertySize, Size, SizeOptions } from './Size.js'
 
 export interface Rect extends Size, Point { }
 
-export type Rects = Rect[]
+export interface Rects extends Array<Rect>{}
 
 export type RectTuple = [Rect, Rect]
 

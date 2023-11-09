@@ -3,6 +3,7 @@
   "description": "Builds Movie Masher library and runtime packages",
   "scripts": {
     "example-express": "npm run build -w @moviemasher/example-express",
+    "build-docs": "npm run build -w @moviemasher/build-docs",
     "lib-client": "npm run build -w @moviemasher/lib-client",
     "lib-server": "npm run build -w @moviemasher/lib-server",
     "lib-shared": "npm run build -w @moviemasher/lib-shared",

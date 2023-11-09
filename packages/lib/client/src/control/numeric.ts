@@ -6,18 +6,18 @@ import { html } from 'lit-html/lit-html.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { ifDefined } from 'lit-html/directives/if-defined.js'
 
-import { EventControl, MovieMasher } from '@moviemasher/runtime-client'
+import { EventControl } from '@moviemasher/runtime-client'
 import { Scalar } from '@moviemasher/runtime-shared'
 import { DataTypeFrame, DataTypeNumber, DataTypePercent } from '@moviemasher/lib-shared'
 import { Component } from '../Base/Component.js'
 import { ControlMixin, ControlProperties } from '../Base/ControlMixin.js'
 import { ControlPropertyMixin } from '../Base/ControlPropertyMixin.js'
 
-const NumericControlElementName = 'movie-masher-control-numeric'
+const NumericControlTag = 'movie-masher-control-numeric'
 
-const WithControlProperty = ControlPropertyMixin(Component)
-const WithControl = ControlMixin(WithControlProperty)
-export class NumericControlElement extends WithControl {
+const NumericWithControlProperty = ControlPropertyMixin(Component)
+const NumericWithControl = ControlMixin(NumericWithControlProperty)
+export class NumericControlElement extends NumericWithControl {
   protected override get defaultContent(): OptionalContent {
     const { property, scalar: value } = this
     if (!property) return
@@ -53,7 +53,7 @@ export class NumericControlElement extends WithControl {
 
   static instance(detail: EventControlDetail) {
     const { propertyId } = detail
-    const element = document.createElement(NumericControlElementName)
+    const element = document.createElement(NumericControlTag)
     element.propertyId = propertyId
     return element
   }
@@ -79,22 +79,29 @@ export class NumericControlElement extends WithControl {
         flex-grow: 1;
         width: 100%;
         min-width: 50px;
-        height: var(--control-size);
-        accent-color: var(--control-fore);
-      }`
+        height: var(--height-control);
+        accent-color: var(--fore);
+      }
+      input:hover {
+        accent-color: var(--over);
+      }
+    `
   ]
 
   private static types = [DataTypeFrame, DataTypeNumber, DataTypePercent]
 }
 
 // register web component as custom element
-customElements.define(NumericControlElementName, NumericControlElement)
+customElements.define(NumericControlTag, NumericControlElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [NumericControlElementName]: NumericControlElement
+    [NumericControlTag]: NumericControlElement
   }
 }
 
-// listen for control event
-MovieMasher.eventDispatcher.addDispatchListener(EventControl.Type, NumericControlElement.handleNode)
+// listen for control numeric event
+export const ClientControlNumericListeners = () => ({
+  [EventControl.Type]: NumericControlElement.handleNode
+})
+

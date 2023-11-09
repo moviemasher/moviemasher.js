@@ -46,7 +46,7 @@ export class DialogElement extends Slotted {
   }
 
   protected handleClose(): void {
-    console.log(this.tagName, 'handleClose', this.dialogOpened)
+    // console.log(this.tagName, 'handleClose', this.dialogOpened)
     if (!this.dialogOpened) return
 
     this.dialogOpened = false
@@ -57,7 +57,7 @@ export class DialogElement extends Slotted {
     
     const { detail: newSection = '' } = event
     const { section } = this
-    console.log(this.tagName, 'handleDialog', section, '->', newSection)
+    // console.log(this.tagName, 'handleDialog', section, '->', newSection)
     if (newSection === section) return
 
     const { dialogOpened } = this
@@ -72,15 +72,15 @@ export class DialogElement extends Slotted {
     const { dialogOpening } = this
     if (dialogOpening) {
       this.dialogOpening = false
-      this.importTags(`movie-masher-${part}-section`)
+      this.importTags(`movie-masher-${part}`)
       this.dialogOpen()
     }
     switch (part) {
       case PartImporter: {
         return html`
-          <movie-masher-importer-section 
+          <movie-masher-importer 
             part='${PartImporter}' 
-          >${slots}</movie-masher-importer-section>`
+          >${slots}</movie-masher-importer>`
       } 
     }
     return super.partContent(part, slots)
@@ -111,8 +111,8 @@ export class DialogElement extends Slotted {
         border: none;
         padding: 0;
         display: flex;
-        height: var(--dialog-height, 90vh);
-        width: var(--dialog-width, 90vw);
+        height: var(--height-dialog, 90vh);
+        width: var(--width-dialog, 90vw);
       }
 
       dialog::backdrop {

@@ -1,3 +1,5 @@
+## Styling 
+
 Movie Masher supports several powerful mechanisms to change the appearance of the editing interface without adjusting the React components themselves, as described in the [Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html). Most components render their HTML elements with a `class` attribute, so styling is fairly straightforward. Graphical elements like icons are represented as SVG elements, with their `fill` attributes set to 'currentColor' so they are rendered in its parent's text color.
 
 While Movie Masher does bundle what could be discreet SVG files into React components that instead render SVG elements, it does not attempt to do the same with CSS rules. These are currently bundled into a dedicated CSS file and imported via a LINK element in the HEAD, instead of any JavaScript-based alternative. This may change as web components are more fully supported. 
@@ -10,7 +12,7 @@ The [Default Theme](https://www.npmjs.com/package/@moviemasher/theme-default) pa
 
 ## Icons
 
-The [[MasherDefaultProps]] function in the [React Client](https://www.npmjs.com/package/@moviemasher/client-react) package supports an `icons` property in its argument object which defaults to the `Icons` object from the default theme. This is passed to similar `*DefaultProps` functions and stored in the [[MasherContext]] for use by more dynamic components. Properties in the object are optional, so uneeded if the specific components that use them aren't ultimately being included in the interface. 
+The [[MasherDefaultProps]] function in the [React Client](https://www.npmjs.com/package/@moviemasher/lib-client) package supports an `icons` property in its argument object which defaults to the `Icons` object from the default theme. This is passed to similar `*DefaultProps` functions and stored in the [[MasherContext]] for use by more dynamic components. Properties in the object are optional, so uneeded if the specific components that use them aren't ultimately being included in the interface. 
 
 Here's an example of overriding a single icon with a PNG image:
 
@@ -20,7 +22,7 @@ Here's an example of overriding a single icon with a PNG image:
 ```tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
+import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/lib-client"
 import { Icons } from "@moviemasher/theme-default"
 
 const AppIcon = () => <img src='app-icon.png'> 

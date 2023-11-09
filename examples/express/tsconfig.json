@@ -1,7 +1,18 @@
 { 
   "extends": "../../dev/tsconfig/base.json",
+
+  "compilerOptions": {
+    "rootDir": "./src",
+  },
+  "exclude": [
+    "**/dist/*",
+    "src/**/*.e2e.ts", 
+    "src/**/*.test.ts"
+  ],
   "include": [
     "./src/*.ts",
     "./src/**/*.ts"
+
+
   ]
 }

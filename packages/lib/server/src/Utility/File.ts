@@ -1,10 +1,8 @@
-import type { DataOrError, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
+import type { DataOrError, StringDataOrError } from '@moviemasher/runtime-shared'
 
-import { ERROR, error, errorCaught, errorThrow, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { ERROR, namedError, errorCaught, errorThrow, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
-import { idUnique } from './Hash.js'
 import { DOT } from '@moviemasher/lib-shared'
 
 export type FilePath = string
@@ -20,8 +18,8 @@ export const filenameAppend = (filePath: string, append: string, delimiter = DOT
 }
 
 export const fileMovePromise = async (source: string, destination: string): Promise<StringDataOrError> => {
-  if (!filePathExists(source)) return error(ERROR.Internal, `fileMovePromise source ${source}`)
-  if (filePathExists(destination)) return error(ERROR.Internal, `fileMovePromise destination ${destination}`)
+  if (!filePathExists(source)) return namedError(ERROR.Internal, `fileMovePromise source ${source}`)
+  if (filePathExists(destination)) return namedError(ERROR.Internal, `fileMovePromise destination ${destination}`)
 
   try {
     await fs.promises.rename(source, destination)
@@ -76,7 +74,7 @@ export const fileRead = (file?: string): string => {
 }
 
 export const fileReadPromise = async (file?: string): Promise<StringDataOrError> => {
-  if (!file) return error(ERROR.Url, 'file')
+  if (!file) return namedError(ERROR.Url, 'file')
   try {
     const res = await fs.promises.readFile(file)
     return { data: res.toString() }
@@ -104,7 +102,7 @@ export const fileRemovePromise = async (filePath: string) => {
 }
 
 export const fileCreatedPromise = async (filePath: string): Promise<DataOrError<Date>> => {
-  if (!filePathExists(filePath)) return error(ERROR.Internal, 'non-existent file')
+  if (!filePathExists(filePath)) return namedError(ERROR.Internal, 'non-existent file')
   try {
     const stats = await fs.promises.stat(filePath)
     const { mtime: data } = stats

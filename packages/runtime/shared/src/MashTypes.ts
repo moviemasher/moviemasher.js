@@ -1,5 +1,5 @@
 import { AVType } from './AVType.js'
-import { Asset, AssetObject, AssetObjects } from './AssetTypes.js'
+import { Asset, AssetObject } from './AssetTypes.js'
 import { AudioAssetObject } from './AudioAsset.js'
 import { Clips, Clip } from './Clip.js'
 import { ClipObject } from './ClipObject.js'
@@ -19,6 +19,7 @@ export interface MashAsset extends Asset {
   clipsInTimeOfType(time: Time, avType?: AVType): Clips
   color: string
   duration: number
+  encoding: string
   endTime: Time
   loop: boolean
   quantize: number
@@ -38,6 +39,7 @@ export interface MashAssetObject extends AssetObject {
   aspectWidth?: number
   aspectHeight?: number
   aspectShortest?: number
+  encoding?: string
 }
 
 export interface MashAudioAssetObject extends MashAssetObject, AudioAssetObject {}

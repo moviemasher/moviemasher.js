@@ -2,7 +2,7 @@ import type { ValueRecord } from './Core.js'
 import type { ErrorObject, DefiniteError } from './Error.js'
 
 import { ERROR_NAMES, ERROR } from './ErrorName.js'
-import { isObject, isString } from './TypeofGuards.js'
+import { isObject, isPopulatedString, isString } from './TypeofGuards.js'
 
 export type ErrorNameType = typeof ERROR[keyof typeof ERROR] | string
 
@@ -16,7 +16,7 @@ export const errorMessage = (name: ErrorNameType, context?: ErrorContext): strin
   isString(context) ? context : name
 )
 
-export const errorObject = (message: string, name: string = ERROR.Internal, cause?: unknown): ErrorObject => {
+export const errorMessageObject = (message: string, name: string = ERROR.Internal, cause?: unknown): ErrorObject => {
   const error = new Error(message)
   Object.assign(error, { name, cause })
   return error
@@ -24,11 +24,11 @@ export const errorObject = (message: string, name: string = ERROR.Internal, caus
 
 export const errorObjectCaught = (error: any): ErrorObject => {
   if (isErrorName(error)) return errorName(error) 
-  if (isString(error)) return errorObject(error)
+  if (isString(error)) return errorMessageObject(error)
   
   const { message: errorMessage = '', name = ERROR.Internal } = error
   const message = errorMessage || String(name)
-  return errorObject(message, name, error)
+  return errorMessageObject(message, name, error)
 }
 
 export const errorName = (name: ErrorNameType, context?: ErrorContext): ErrorObject => {
@@ -42,7 +42,7 @@ export const errorCaught = (error: any): DefiniteError => {
 }
 
 export const errorPromise = (name: ErrorNameType, context?: ErrorContext): Promise<DefiniteError & any> => (
-  Promise.resolve(error(name, context))
+  Promise.resolve(namedError(name, context))
 )
 
 const errorExpected = (value: any, expected: string, prop?: string): ErrorObject => {
@@ -53,20 +53,22 @@ const errorExpected = (value: any, expected: string, prop?: string): ErrorObject
   const words = [name, 'is']
   words.push(isObject ? value.constructor.name : type)
   if (isDefined) words.push(isObject ? JSON.stringify(value) : `'${value}'`)
-  words.push('instead of', expected)
-  return errorObject(words.join(' '), ERROR.Type)
+  if (isPopulatedString(expected)) words.push('instead of', expected)
+  return errorMessageObject(words.join(' '), ERROR.Type)
 }
 
-export const errorThrow = (value: any, type?: string, property?: string): never => {
-  const object = type ? errorExpected(value, type, property) : errorObjectCaught(value)
+export const errorThrow = (value: any, type?: ErrorContext, property?: string): never => {
+  const typeIsString = isPopulatedString(type)
+  const object = typeIsString ? errorExpected(value, type, property) : errorObjectCaught(value)
+
   const { message, name, cause } = object
-
-  const error = errorObject(message, name, cause)
-  // console.trace(error.toString())
-  throw error
+  const errorCause = typeIsString ? cause : type
+  const throwObject = errorMessageObject(message, name, errorCause)
+  // console.trace(throwObject.toString())
+  throw throwObject
 }
 
-export const error = (code: ErrorNameType, context?: ErrorContext): DefiniteError => (
+export const namedError = (code: ErrorNameType, context?: ErrorContext): DefiniteError => (
   { error: errorName(code, context)}
 )
 

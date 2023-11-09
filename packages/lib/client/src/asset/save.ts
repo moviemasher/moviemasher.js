@@ -1,9 +1,9 @@
 import type { ClientAssets, ServerProgress } from '@moviemasher/runtime-client'
 
 import { EmptyFunction, assertDefined, assertString } from '@moviemasher/lib-shared'
-import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, EventSavableManagedAsset, EventSavableManagedAssets, EventSave, MovieMasher, ServerActionSave } from '@moviemasher/runtime-client'
+import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, EventSavableManagedAsset, EventSavableManagedAssets, EventSave, MovieMasher, ServerActionEncode, ServerActionSave } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestJsonRecordPromise, requestPopulate } from '../utility/request.js'
+import { requestJsonRecordPromise } from '../utility/request.js'
 
 export class SaveHandler {
   private static get enabled(): boolean {
@@ -25,15 +25,16 @@ export class SaveHandler {
     return {
       do: (steps: number) => { 
         total += steps
-        console.log('SaveHandler progress do', steps, current, total)
+        // console.log('SaveHandler progress do', steps, current, total)
         dispatch()
        },
       did: (steps: number) => { 
         current += steps
-        console.log('SaveHandler progress did', steps, current, total)
+        // console.log('SaveHandler progress did', steps, current, total)
         dispatch()
        },
        done: () => {
+        // console.log('SaveHandler progress done', total)
         current = total
         dispatch()
        },
@@ -50,7 +51,7 @@ export class SaveHandler {
     const { length } = assets
     if (length) {
       doEvent.stopImmediatePropagation()
-      console.debug('SaveHandler handleAction', detail, length)
+      // console.debug('SaveHandler handleAction', detail, length)
    
       SaveHandler.saving = true
       const firstAsset = assets.shift()
@@ -59,10 +60,10 @@ export class SaveHandler {
 
       let promise = firstAsset.savePromise(progress)
       progress?.do(length - 1)
-      assets.forEach((asset, index) =>  {
+      assets.forEach(asset =>  {
         promise = promise.then(orError => {
           progress?.did(1)
-          console.debug('SaveHandler handleAction', index, isDefiniteError(orError))
+          // console.debug('SaveHandler handleAction', index, isDefiniteError(orError))
 
           return isDefiniteError(orError) ? orError : asset.savePromise(progress)
         })
@@ -70,7 +71,7 @@ export class SaveHandler {
       promise = promise.then(orError => {
         SaveHandler.saving = false  
         if (isDefiniteError(orError)) {
-          console.error('SaveHandler handleAction', detail, orError)
+          // console.error('SaveHandler handleAction', detail, orError)
         }
         progress?.done()
         return orError
@@ -89,7 +90,7 @@ export class SaveHandler {
   }
 
   static handleSave(event: EventSave): void {
-    console.log(EventSave.Type, 'handled', event.detail)
+    // console.log(EventSave.Type, 'handled', event.detail)
     event.stopImmediatePropagation()
 
     const { detail } = event
@@ -99,16 +100,14 @@ export class SaveHandler {
       endpoint: '/asset/put', init: { method: 'POST' }
     }
     const { assetObject } = asset
-    const putRequest = requestPopulate(request, { assetObject })
-    
-    console.log(EventSave.Type, JSON.stringify(putRequest, null, 2))
-
-    detail.promise = requestJsonRecordPromise(putRequest).then(orError => {
+  
+    detail.promise = requestJsonRecordPromise(request, { assetObject }).then(orError => {
       if (isDefiniteError(orError)) return orError
 
       const { data } = orError
       const { id: newId = '' } = data
       assertString(newId)
+
       return { data: newId }
     })
   }
@@ -119,20 +118,14 @@ export class SaveHandler {
     if (SaveHandler._saving !== value) {
       SaveHandler._saving = value
       MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
+      MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionEncode))
     }
   }
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventSave.Type, SaveHandler.handleSave
-)
-
-// listen for server action enabled event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventEnabledServerAction.Type, SaveHandler.handleEnabledServerAction
-)
-
-// listen for server do action event
-MovieMasher.eventDispatcher.addDispatchListener(
-  EventDoServerAction.Type, SaveHandler.handleDoServerAction
-)
+// listen for client save related events
+export const ClientAssetSaveListeners = () => ({
+  [EventSave.Type]: SaveHandler.handleSave,
+  [EventEnabledServerAction.Type]: SaveHandler.handleEnabledServerAction,
+  [EventDoServerAction.Type]: SaveHandler.handleDoServerAction,
+})

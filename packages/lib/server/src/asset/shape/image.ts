@@ -1,20 +1,20 @@
-import type { Tweening, } from '@moviemasher/lib-shared'
-import type { DataOrError, InstanceArgs, ShapeAssetObject, ShapeInstanceObject, Size, ValueRecord } from '@moviemasher/runtime-shared'
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
-import type { ServerShapeAsset, ServerShapeInstance } from '../../Types/ServerTypes.js'
+import type { DataOrError, InstanceArgs, ShapeAssetObject, ShapeInstanceObject, Size, ValueRecord } from '@moviemasher/runtime-shared'
+import type { ServerShapeAsset, ServerShapeInstance, Tweening } from '../../Types/ServerTypes.js'
 
-import { DOT, DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven, tweenMaxSize } from '@moviemasher/lib-shared'
-import { EventServerAsset, GraphFileTypeSvg } from '@moviemasher/runtime-server'
-import { POINT_ZERO, SHAPE, IMAGE, isAssetObject, isBoolean, isPopulatedString, isDefiniteError } from '@moviemasher/runtime-shared'
+import { DOT, DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven } from '@moviemasher/lib-shared'
+import { EventServerAsset, SVG } from '@moviemasher/runtime-server'
+import { IMAGE, POINT_ZERO, SHAPE, isAssetObject, isBoolean, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import path from 'path'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { ENV, ENVIRONMENT } from '../../Environment/EnvironmentConstants.js'
+import { tweenMaxSize } from '../../Utility/Command.js'
 import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
 import { fileWritePromise } from '../../Utility/File.js'
 import { hashMd5 } from '../../Utility/Hash.js'
-import { ENV, ENVIRONMENT } from '../../Environment/EnvironmentConstants.js'
-import path from 'path'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -54,7 +54,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
   serverPromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>> {
     const { visible } = args
     const { content, type, file } = commandFile
-    if (!(content && visible && type === GraphFileTypeSvg)) {
+    if (!(content && visible && type === SVG)) {
       return Promise.resolve({ data: 0 })
     }
 
@@ -306,7 +306,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     tags.push('</g>')
     tags.push('</svg>')
     const content = tags.join('')
-    const type = GraphFileTypeSvg
+    const type = SVG
     const fileName = hashMd5(content)
     const directory = ENVIRONMENT.get(ENV.ApiDirCache)
     const name = [fileName, DOT, type].join('')

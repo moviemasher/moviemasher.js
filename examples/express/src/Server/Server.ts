@@ -16,11 +16,11 @@ export interface Server extends Identified {
   startServer(app: Application): Promise<void>
 }
 
-export interface EncodeServerArgs extends ServerArgs { }
+export interface EncodeServerArgs extends ServerArgs {}
 
-export interface DecodeServerArgs extends ServerArgs { }
+export interface DecodeServerArgs extends ServerArgs {}
 
-export interface TranscodeServerArgs extends ServerArgs { }
+export interface TranscodeServerArgs extends ServerArgs {}
 
 export interface UploadServerArgs extends ServerArgs {
   uploadLimits: NumberRecord
@@ -31,6 +31,6 @@ export interface WebServerArgs extends ServerArgs {
   sources: StringRecord
 }
 
-export interface DataServerArgs extends ServerArgs { }
+export interface DataServerArgs extends ServerArgs {}
 
 export type ExpressHandler<T1, T2 = UnknownRecord> = RequestHandler<UnknownRecord, T1, T2, UnknownRecord, UnknownRecord>

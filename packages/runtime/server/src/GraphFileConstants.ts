@@ -1,5 +1,5 @@
 import type { GraphFileType } from './GraphFileType.js'
 
-export const GraphFileTypeSvg: GraphFileType = 'svg'
-export const GraphFileTypeSvgSequence: GraphFileType = 'svgsequence'
-export const GraphFileTypeTxt: GraphFileType = 'txt'
+export const SVG: GraphFileType = 'svg'
+export const SVG_SEQUENCE: GraphFileType = 'svgsequence'
+export const TXT: GraphFileType = 'txt'

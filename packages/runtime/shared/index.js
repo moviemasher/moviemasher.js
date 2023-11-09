@@ -1,25 +1,3 @@
-const length = (value) => !!value.length;
-const isBoolean = (value) => typeof value === 'boolean';
-const isString = (value) => (typeof value === 'string');
-const isPopulatedString = (value) => (isString(value) && length(String(value)));
-const isUndefined = (value) => typeof value === 'undefined';
-const isDefined = (value) => !isUndefined(value);
-const isObject = (value) => typeof value === 'object';
-const isNumber = (value) => (isNumberOrNaN(value) && !Number.isNaN(value));
-const isNumberOrNaN = (value) => typeof value === 'number';
-const isNan = (value) => isNumberOrNaN(value) && Number.isNaN(value);
-const isNumeric = (value) => ((isNumber(value) || isPopulatedString(value)) && !isNan(Number(value)));
-function isArray(value) {
-    return Array.isArray(value);
-}
-const isFunction = (value) => typeof value === 'function';
-
-function arrayFromOneOrMore(value) {
-    if (!isObject(value))
-        return [];
-    return isArray(value) ? value : [value];
-}
-
 const AUDIO = 'audio';
 const IMAGE = 'image';
 const VIDEO = 'video';
@@ -62,9 +40,26 @@ const ERROR = {
 };
 const ERROR_NAMES = Object.values(ERROR);
 
+const length = (value) => !!value.length;
+const isBoolean = (value) => typeof value === 'boolean';
+const isString = (value) => (typeof value === 'string');
+const isPopulatedString = (value) => (isString(value) && length(String(value)));
+const isUndefined = (value) => typeof value === 'undefined';
+const isDefined = (value) => !isUndefined(value);
+const isObject = (value) => typeof value === 'object';
+const isNumber = (value) => (isNumberOrNaN(value) && !Number.isNaN(value));
+const isNumberOrNaN = (value) => typeof value === 'number';
+const isNan = (value) => isNumberOrNaN(value) && Number.isNaN(value);
+const isNumeric = (value) => ((isNumber(value) || isPopulatedString(value)) && !isNan(Number(value)));
+function isArray(value) {
+    return Array.isArray(value);
+}
+const isFunction = (value) => typeof value === 'function';
+const isDate = (value) => value instanceof Date;
+
 const isErrorName = (value) => ((isString(value)) && ERROR_NAMES.includes(value));
 const errorMessage = (name, context) => (isString(context) ? context : name);
-const errorObject = (message, name = ERROR.Internal, cause) => {
+const errorMessageObject = (message, name = ERROR.Internal, cause) => {
     const error = new Error(message);
     Object.assign(error, { name, cause });
     return error;
@@ -73,10 +68,10 @@ const errorObjectCaught = (error) => {
     if (isErrorName(error))
         return errorName(error);
     if (isString(error))
-        return errorObject(error);
+        return errorMessageObject(error);
     const { message: errorMessage = '', name = ERROR.Internal } = error;
     const message = errorMessage || String(name);
-    return errorObject(message, name, error);
+    return errorMessageObject(message, name, error);
 };
 const errorName = (name, context) => {
     // console.log('errorName', name, context)
@@ -86,7 +81,7 @@ const errorCaught = (error) => {
     // console.error('errorCaught', error)
     return { error: errorObjectCaught(error) };
 };
-const errorPromise = (name, context) => (Promise.resolve(error(name, context)));
+const errorPromise = (name, context) => (Promise.resolve(namedError(name, context)));
 const errorExpected = (value, expected, prop) => {
     const type = typeof value;
     const isDefined = type !== 'undefined';
@@ -96,17 +91,20 @@ const errorExpected = (value, expected, prop) => {
     words.push(isObject ? value.constructor.name : type);
     if (isDefined)
         words.push(isObject ? JSON.stringify(value) : `'${value}'`);
-    words.push('instead of', expected);
-    return errorObject(words.join(' '), ERROR.Type);
+    if (isPopulatedString(expected))
+        words.push('instead of', expected);
+    return errorMessageObject(words.join(' '), ERROR.Type);
 };
 const errorThrow = (value, type, property) => {
-    const object = type ? errorExpected(value, type, property) : errorObjectCaught(value);
+    const typeIsString = isPopulatedString(type);
+    const object = typeIsString ? errorExpected(value, type, property) : errorObjectCaught(value);
     const { message, name, cause } = object;
-    const error = errorObject(message, name, cause);
-    // console.trace(error.toString())
-    throw error;
+    const errorCause = typeIsString ? cause : type;
+    const throwObject = errorMessageObject(message, name, errorCause);
+    // console.trace(throwObject.toString())
+    throw throwObject;
 };
-const error = (code, context) => ({ error: errorName(code, context) });
+const namedError = (code, context) => ({ error: errorName(code, context) });
 const isDefiniteError = (value) => {
     return isObject(value) && 'error' in value; // && isObject(value.error)
 };
@@ -117,7 +115,7 @@ function assertAssetType(type, name) {
 }
 
 const isIdentified = (value) => {
-    return isObject(value) && 'id' in value && isPopulatedString(value.id);
+    return isObject(value) && 'id' in value && isString(value.id);
 };
 function assertIdentified(value, name) {
     if (!isIdentified(value))
@@ -163,7 +161,7 @@ const STRING = 'string';
 const PROBE = 'probe';
 
 const isDecodingType = isPopulatedString;
-const isDecoding = (value) => (isObject(value) && 'type' in value && isDecodingType(value.type));
+const isDecoding = (value) => (isTyped(value) && isDecodingType(value.type));
 function assertDecoding(value) {
     if (!isDecoding(value))
         errorThrow(value, 'Decoding');
@@ -179,9 +177,9 @@ const isImporter = (value) => (isIdentified(value)
     && 'source' in value && isPopulatedString(value.source)
     && 'types' in value && isArray(value.types));
 
-const DECODE = 'decode';
-const ENCODE = 'encode';
-const TRANSCODE = 'transcode';
+const JOB_DECODE = 'decode';
+const JOB_ENCODE = 'encode';
+const JOB_TRANSCODE = 'transcode';
 
 const RECORD = 'record';
 const RECORDS = 'records';
@@ -196,10 +194,10 @@ const importPromise = (imports, eventDispatcher) => {
             const potentialErrors = importers.map(importer => {
                 const { [importer]: funktion } = module;
                 if (!isFunction(funktion))
-                    return error(ERROR.Url, importer);
+                    return namedError(ERROR.Url, importer);
                 const listeners = funktion();
                 if (!isListenerRecord(listeners))
-                    return error(ERROR.Type, importer);
+                    return namedError(ERROR.Type, importer);
                 eventDispatcher.listenersAdd(listeners);
                 return {};
             });
@@ -277,7 +275,7 @@ const OUTPUT_DEFAULTS = {
         format: 'mp4',
     },
 };
-const ALPHA_OUTPUT_DETAULTS = {
+const ALPHA_OUTPUT_DEFAULTS = {
     [IMAGE]: {
         options: {},
         width: 320,
@@ -345,12 +343,12 @@ const RAW = 'raw';
 const SHAPE = 'shape';
 const TEXT = 'text';
 
-const ASSET = 'asset';
-const CLIP = 'clip';
-const CONTAINER = 'container';
-const CONTENT = 'content';
+const TARGET_ASSET = 'asset';
+const TARGET_CLIP = 'clip';
+const TARGET_CONTAINER = 'container';
+const TARGET_CONTENT = 'content';
 const TARGET_IDS = [
-    MASH, CLIP, CONTENT, CONTAINER, ASSET
+    MASH, TARGET_CLIP, TARGET_CONTENT, TARGET_CONTAINER, TARGET_ASSET
 ];
 
-export { ALPHA_OUTPUT_DETAULTS, ASPECT, ASSET, ASSET_TYPES, AUDIBLE_TYPES, AUDIO, BOOLEAN, CLIP, COLOR, CONTAINER, CONTENT, CROP, DECODE, ENCODE, END, ERROR, ERROR_NAMES, FONT, IMAGE, IMPORT_TYPES, MASH, NUMBER, OUTPUT_DEFAULTS, POINT_KEYS, POINT_ZERO, PROBE, PROMPT, RAW, RECORD, RECORDS, RECT_KEYS, RECT_ZERO, SEQUENCE, SHAPE, SIZE_KEYS, SIZE_OUTPUT, SIZE_ZERO, STRING, TARGET_IDS, TEXT, TRANSCODE, VERSION, VIDEO, VISIBLE_TYPES, WAVEFORM, arrayFromOneOrMore, assertAsset, assertAssetType, assertDecoding, assertIdentified, assertProbing, assertTyped, error, errorCaught, errorMessage, errorName, errorObject, errorObjectCaught, errorPromise, errorThrow, importPromise, isArray, isAsset, isAssetObject, isAssetType, isAudibleAssetType, isBoolean, isDecoding, isDecodingType, isDefined, isDefiniteError, isErrorName, isFunction, isIdentified, isImportType, isImporter, isListenerRecord, isNan, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isProbing, isSourceAsset, isString, isTyped, isUndefined, isVisibleAssetType, length };
+export { ALPHA_OUTPUT_DEFAULTS, ASPECT, ASSET_TYPES, AUDIBLE_TYPES, AUDIO, BOOLEAN, COLOR, CROP, END, ERROR, ERROR_NAMES, FONT, IMAGE, IMPORT_TYPES, JOB_DECODE, JOB_ENCODE, JOB_TRANSCODE, MASH, NUMBER, OUTPUT_DEFAULTS, POINT_KEYS, POINT_ZERO, PROBE, PROMPT, RAW, RECORD, RECORDS, RECT_KEYS, RECT_ZERO, SEQUENCE, SHAPE, SIZE_KEYS, SIZE_OUTPUT, SIZE_ZERO, STRING, TARGET_ASSET, TARGET_CLIP, TARGET_CONTAINER, TARGET_CONTENT, TARGET_IDS, TEXT, VERSION, VIDEO, VISIBLE_TYPES, WAVEFORM, assertAsset, assertAssetType, assertDecoding, assertIdentified, assertProbing, assertTyped, errorCaught, errorMessage, errorMessageObject, errorName, errorObjectCaught, errorPromise, errorThrow, importPromise, isArray, isAsset, isAssetObject, isAssetType, isAudibleAssetType, isBoolean, isDate, isDecoding, isDecodingType, isDefined, isDefiniteError, isErrorName, isFunction, isIdentified, isImportType, isImporter, isListenerRecord, isNan, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isProbing, isSourceAsset, isString, isTyped, isUndefined, isVisibleAssetType, length, namedError };

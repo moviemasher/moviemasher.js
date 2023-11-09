@@ -13,14 +13,19 @@ services:
     volumes:
       # - ../../../:${MOVIEMASHER_DIR_ROOT}/
 
+      - ../../../temporary/build-docs/:${MOVIEMASHER_DIR_ROOT}/temporary/build-docs/
+
       - ../../../docs/:${MOVIEMASHER_DIR_ROOT}/docs/
       - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../examples/:${MOVIEMASHER_DIR_ROOT}/examples/
 
       - ../../../markdown.config.js:${MOVIEMASHER_DIR_ROOT}/markdown.config.js
-      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../images/build-docs/package.json:${MOVIEMASHER_DIR_ROOT}/package.json
       - ../../../tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
-      - ../../../typedoc.cjs:${MOVIEMASHER_DIR_ROOT}/typedoc.cjs
       - ../../../README.md:${MOVIEMASHER_DIR_ROOT}/README.md
-      - ../../../images/build-docs/:${MOVIEMASHER_DIR_ROOT}/images/build-docs/
       - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
+      - ../../../images/build-docs/dist:${MOVIEMASHER_DIR_ROOT}/images/build-docs/dist
+      - ../../../images/build-docs/src:${MOVIEMASHER_DIR_ROOT}/images/build-docs/src
+      - ../../../images/build-docs/dev/typedoc/json.cjs:${MOVIEMASHER_DIR_ROOT}/typedoc.json.cjs
+      - ../../../images/build-docs/dev/typedoc/md.cjs:${MOVIEMASHER_DIR_ROOT}/typedoc.md.cjs
 

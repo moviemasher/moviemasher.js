@@ -52,7 +52,10 @@ export class ImporterComponent extends Component {
 
     unloaded.forEach(name => {
       const nameComponents = name.split(DASH).slice(2)
-      const [first, second] = nameComponents
+      const first = nameComponents.shift()
+
+      const second = nameComponents.join(DASH)
+
       const lib = second ? `${first}/${first}-${second}` : first || name
       // console.debug(this.name, 'importTag', name, '->', lib)
       const libPromise = import(new URL(`../${lib}.js`, import.meta.url).href).then(() => {

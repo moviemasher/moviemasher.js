@@ -8,8 +8,8 @@ export interface ClientAsset extends Asset, Selectable {
   saveNeeded: boolean
 }
 
-export type ClientAssets = ClientAsset[]
+export interface ClientAssets extends Array<ClientAsset>{}
 
 export interface ClientAssetObject extends AssetObject {}
 
-export type ClientAssetObjects = ClientAssetObject[]
+export interface ClientAssetObjects extends Array<ClientAssetObject>{}

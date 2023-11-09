@@ -1,130 +1,197 @@
 import type { ClientAsset, ClientAssets, EventManagedAssetsDetail } from '@moviemasher/runtime-client'
-import type { AssetObject, DataOrError, ManageType } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetParams, DataOrError, ManageType, ManageTypes, Strings } from '@moviemasher/runtime-shared'
 
-import { assertDefined, idIsTemporary, sortByRequestable } from '@moviemasher/lib-shared'
-import { EventAsset, EventAssetObjects, EventChangedServerAction, EventImportManagedAssets, EventImportedManagedAssets, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetScalar, EventManagedAssets, EventReleaseManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, MovieMasher, ServerActionSave, isClientAsset } from '@moviemasher/runtime-client'
-import { arrayFromOneOrMore, assertAsset, isDefiniteError } from '@moviemasher/runtime-shared'
+import { DASH, arrayFromOneOrMore, assertDefined, idIsTemporary, sortByRequestable, CACHE_ALL, CACHE_NONE, CACHE_SOURCE_TYPE } from '@moviemasher/lib-shared'
+import { EventAsset, EventAssetObjects, REFERENCE, EventChangedServerAction, EventImportManagedAssets, EventChangedManagedAssets, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetScalar, EventManagedAssets, EventReleaseManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, MovieMasher, ServerActionSave, isClientAsset, FETCH, IMPORT } from '@moviemasher/runtime-client'
+import { assertAsset, isDefiniteError } from '@moviemasher/runtime-shared'
 import { isClientMashAsset } from '../Client/Mash/ClientMashGuards.js'
 
-export const ManageTypeFetch: ManageType = 'fetch'
-export const ManageTypeImport: ManageType = 'import'
-export const ManageTypeReference: ManageType = 'reference'
+export interface ManagedAsset {
+  asset: ClientAsset
+  manageTypes: ManageTypes
+}
+
+export interface ManagedAssets extends Array<ManagedAsset>{}
 
 export class ClientAssetManagerClass {
-  private assetArraysByType = new Map<ManageType, ClientAssets>()
+  private assetsById = new Map<string, ManagedAsset>()
 
-  private assetsById = new Map<string, ClientAsset>()
-
-  private asset(object: string | AssetObject, manageType = ManageTypeReference): ClientAsset | undefined {
-    const event = new EventAsset(object)
-    MovieMasher.eventDispatcher.dispatch(event)
-    const { asset } = event.detail
+  private asset(object: string | AssetObject, manageType = REFERENCE): ClientAsset | undefined {
+    const asset = this.assetFromObject(object)
     if (!isClientAsset(asset)) return 
-    
+
     this.install(asset, manageType)
     return asset 
   }
 
+  private assetFromObject(object: string | AssetObject): ClientAsset | undefined {
+    const event = new EventAsset(object)
+    MovieMasher.eventDispatcher.dispatch(event)
+    return event.detail.asset
+  }
+
   private get assets(): ClientAssets {
-    return Array.from(this.assetsById.values()) as ClientAssets
+    return this.managedAssets.map(({ asset }) => asset)
   }
 
-  private _assetObjectsPromise?: Promise<void>
+  private assetObjectsPromises = new Map<string, Promise<void>>()
 
-  private assetObjectsPromise(detail: EventManagedAssetsDetail): Promise<void> {
-    return this._assetObjectsPromise ||= this.assetObjectsPromiseInitialize(detail)
-  }
-  
-  private assetObjectsPromiseInitialize(detail: EventManagedAssetsDetail): Promise<void> {
-    // console.debug(this.constructor.name, 'assetObjectsPromiseInitialize...')
+  private assetObjectsPromise(params: AssetParams, ignoreCache?: boolean): Promise<void> {
+    const allCached = this.assetObjectsPromises.has(CACHE_ALL)
+    const hasTerms = params.terms?.length
+    const saveKey = !(hasTerms || ignoreCache)
+    const canCache = allCached || !hasTerms
+    const useCache = canCache && !ignoreCache 
 
-    const event = new EventAssetObjects(detail)
+    const key = allCached ? CACHE_ALL : this.assetParamsKey(params)
+    
+    if (useCache) {
+      const existing = this.assetObjectsPromises.get(key)
+      if (existing) {
+        // console.debug(this.constructor.name, 'assetObjectsPromise RETURNING cache', key)
+        return existing
+      }
+    }
+    
+    const event = new EventAssetObjects(params)
     MovieMasher.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) return Promise.resolve()
     
-    return promise.then(orError => {
-      if (!isDefiniteError(orError)) {
-        // console.debug(this.constructor.name, 'assetObjectsPromiseInitialize!')
+    
+    // console.debug(this.constructor.name, 'assetObjectsPromise', params)
 
-        const { data: assetObjects } = orError
-        assetObjects.forEach(assetObject => this.asset(assetObject, ManageTypeFetch))
+    const installPromise: Promise<void> = promise.then(orError => {
+      if (isDefiniteError(orError)) {
+        // console.error(this.constructor.name, 'assetObjectsPromise', orError, key, params)
+        return
       }
-    })
+      const { data } = orError
+      const { assets: assetObjects, cacheControl = CACHE_ALL } = data
+
+      if (this.controlCache(cacheControl, installPromise) && saveKey) {
+        // console.debug(this.constructor.name, 'assetObjectsPromise REMOVING cache', key)
+        this.assetObjectsPromises.delete(key)
+      }
+    
+      const orUndefines = assetObjects.map(assetObject => this.assetFromObject(assetObject))
+      const assets = orUndefines.filter(isClientAsset)
+      if (assets.length) this.install(assets, FETCH)
+    })         
+    if (saveKey) {
+      // console.debug(this.constructor.name, 'assetObjectsPromise ADDING cache', key)
+      this.assetObjectsPromises.set(key, installPromise)
+    }
+    return installPromise
   }
 
-  private assetsPromise(detail: EventManagedAssetsDetail): Promise<DataOrError<ClientAssets>> {
-    // console.debug(this.constructor.name, 'assetsPromise...')
-
-    const { type } = detail
-    return this.assetObjectsPromise(detail).then(() => {
-      // console.debug(this.constructor.name, 'assetsPromise!')
-
-      return { data: this.assets.filter(asset => asset.type === type) }
-    })
+  private controlCache(cacheControl: string, promise: Promise<void>): boolean {
+    switch (cacheControl) {
+      case CACHE_NONE: break
+      case CACHE_ALL: {
+        // console.debug(this.constructor.name, 'assetObjectsPromise ADDING cache', CACHE_ALL)
+        this.assetObjectsPromises.set(CACHE_ALL, promise)
+        break
+      }
+      case CACHE_SOURCE_TYPE: return false
+    }
+    return true
   }
 
-  private byType(type: ManageType): ClientAssets {
-    const array = this.assetArraysByType.get(type) 
-    if (array) return array
+  private assetParamsKey(params: AssetParams): string {
+    const types = arrayFromOneOrMore(params.types || [])
+    const sources = arrayFromOneOrMore(params.sources || [])
+    return [...types, ...sources].sort().join(DASH)
+  }
 
-    const assets: ClientAssets = []
-    this.assetArraysByType.set(type, assets)
+  private assetsFiltered(params: AssetParams, manageTypes?: ManageTypes, sorts?: Strings): ClientAssets {
+    const types = arrayFromOneOrMore(params.types || [])
+    const sources = arrayFromOneOrMore(params.sources || [])
+    const terms = arrayFromOneOrMore(params.terms || [])
+    const { managedAssets } = this
+
+    const filtered = managedAssets.filter(managedAsset => {
+      const { asset, manageTypes: managedTypes } = managedAsset
+      if (types.length && !types.includes(asset.type)) return false
+      if (sources.length && !sources.includes(asset.source)) return false
+      if (terms.length) {
+        const { label = '' } = asset
+        if (!terms.some(term => label.includes(term))) return false
+      }
+
+      if (manageTypes?.length) {
+        return manageTypes.some(manageType => managedTypes.includes(manageType))
+      }
+      return true
+    })
+    // console.debug(this.constructor.name, 'assetsPromise', filtered.length, 'out of', managedAssets.length, 'assets')
+    const assets = filtered.map(({ asset }) => asset)
+
+    if (sorts?.length) {
+      assets.sort((a, b) => {
+        for (const sort of sorts) {
+          const [key, order = 'asc'] = sort.split(DASH)
+          const valueA = String(a.value(key))
+          const valueB = String(b.value(key))
+          const result = valueA.localeCompare(valueB)
+          if (result) return result * (order === 'asc' ? 1 : -1)
+        }
+        return 0
+      })
+    }
     return assets
   }
 
+  private async assetsPromise(detail: EventManagedAssetsDetail): Promise<DataOrError<ClientAssets>> {
+    const { sorts, manageTypes, ignoreCache, promise, ...rest } = detail
+    if (!manageTypes?.length || manageTypes.includes(FETCH)) {
+      await this.assetObjectsPromise(rest, ignoreCache)
+    }
+    return { data: this.assetsFiltered(rest, manageTypes, sorts) }
+  }
+
   private fromId(id: string): ClientAsset | undefined {
-    return this.assetsById.get(id)
+    return this.assetsById.get(id)?.asset
   }
 
   private install(asset: ClientAsset | ClientAssets, manageType: ManageType): ClientAssets {
     const assets = arrayFromOneOrMore(asset) 
-    return assets.map(asset => {
-      const { id } = asset
-      const existing = this.fromId(id)
-      if (existing) return existing
-
-      this.assetsById.set(id, asset)
-      this.byType(manageType).push(asset)
-      if (idIsTemporary(id)) {
-        // console.log(this.constructor.name, 'install', id)
+    const uninstalled = assets.filter(asset => !this.assetsById.has(asset.id))
+    if (uninstalled.length) {
+      const temporary = uninstalled.filter(asset => {
+        const { id } = asset
+        this.assetsById.set(id, { manageTypes: [manageType], asset })
+        return idIsTemporary(id)
+      })
+      MovieMasher.eventDispatcher.dispatch(new EventChangedManagedAssets())
+      if (temporary.length) {
         MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
       }
-      return asset
-    })
+    }
+    return assets
   }
 
-  private undefine(manageType?: ManageType) {
-    const { assetArraysByType } = this
-    const types = manageType ? [manageType] : [...assetArraysByType.keys()]
-
-    types.forEach(type => { 
-      if (!assetArraysByType.has(type)) return
-
-      this.byType(type).forEach(asset => { this.uninstall(asset, type) })
-    })
+  private get managedAssets(): ManagedAssets {
+    return Array.from(this.assetsById.values()) as ManagedAssets
   }
 
-  private uninstall(asset: ClientAsset, manageType: ManageType): boolean {
-    const { id } = asset
-    if (!this.assetsById.delete(id)) return false
-
-    const assets = this.byType(manageType)
-    const index = assets.indexOf(asset)
-    if (index < 0) return false
-
-    assets.splice(index, 1)
-    return true
+  private undefine(type?: ManageType) {
+    const { managedAssets: managed } = this
+    const filtered = type ? managed.filter(({ manageTypes: types }) => types.includes(type)) : managed
+    filtered.forEach(({ asset }) => this.assetsById.delete(asset.id))
   }
 
   private updateDefinitionId(oldId: string, newId: string) {
-    console.log(this.constructor.name, 'updateDefinitionId', oldId, '->', newId)
-    const asset = this.assetsById.get(oldId)
-    assertAsset(asset)
+    // console.log(this.constructor.name, 'updateDefinitionId', oldId, '->', newId)
+    const managedAsset = this.assetsById.get(oldId)
+    assertAsset(managedAsset?.asset)
 
     this.assetsById.delete(oldId)
-    this.assetsById.set(newId, asset)
-    const mashAssets = Array.from(this.assetsById.values()).filter(isClientMashAsset)
+    this.assetsById.set(newId, managedAsset)
+    const { manageTypes } = managedAsset
+    managedAsset.manageTypes = manageTypes.filter(manageType => manageType !== IMPORT)
+
+    const mashAssets = this.assets.filter(isClientMashAsset)
     mashAssets.forEach(mashAsset => { mashAsset.updateAssetId(oldId, newId) })
   }
 
@@ -132,10 +199,11 @@ export class ClientAssetManagerClass {
     const { instance } = ClientAssetManagerClass
     const { detail: objects } = event
 
-    const orUndefines = objects.map(object => instance.asset(object, ManageTypeImport))
+    const orUndefines = objects.map(object => instance.assetFromObject(object))
     const assets = orUndefines.filter(isClientAsset)
     if (assets.length) {
-      MovieMasher.eventDispatcher.dispatch(new EventImportedManagedAssets(assets))
+      instance.install(assets, IMPORT)
+
     }
   }
 
@@ -190,7 +258,6 @@ export class ClientAssetManagerClass {
   }
 
   static handleManagedAssets(event: EventManagedAssets) {
-    // console.debug('ClientAssetManagerClass handleManagedAssets')
     event.stopImmediatePropagation()
     const { detail } = event
     const { instance } = ClientAssetManagerClass

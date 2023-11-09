@@ -12,8 +12,8 @@ _JavaScript video editor and encoder_
 ## Server Runtime
 
 This module is a peer dependency of both
-[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) and
-[@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express) modules, and not typically installed directly. It exports core interfaces, classes, factories, utility methods, enumerations, and types related to creating, managing and rendering video edit decision lists.
+[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client) and
+[@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server) modules, and not typically installed directly. It exports core interfaces, classes, factories, utility methods, enumerations, and types related to creating, managing and rendering video edit decision lists.
 
 <!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/documentation.md) -->
 <!-- The below content is automatically added from ../../../dev/documentation/snippet/documentation.md -->
@@ -36,5 +36,5 @@ Further support is occassionally offered to particular projects on an hourly con
 
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed. Please review the [Contributor Guide](https://moviemasher.com/docs/Contributor.html) and [send an email](mailto:connect27@moviemasher.com) to discuss ways to work on the project.
+and the web site is also needed. Please [send an email](mailto:connect34@moviemasher.com) to discuss ways to work on the project.
 <!-- MAGIC:END -->

@@ -1,34 +1,35 @@
 import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { ServerActionEncode, ServerActionSave } from '@moviemasher/runtime-client'
 import { html } from 'lit-html/lit-html.js'
-import { Header } from '../Base/LeftCenterRight.js'
+import { HeaderElement } from '../Base/LeftCenterRight.js'
 
 export const BrowserHeaderName = 'movie-masher-browser-header'
 
-export class BrowserHeaderElement extends Header {
-  protected override rightContent(htmls: Htmls): OptionalContent {
-    this.importTags('movie-masher-action-server')
+export class BrowserHeaderElement extends HeaderElement {
+  protected override leftContent(slots: Htmls): OptionalContent {
+    const htmls = [...slots]
+    this.importTags('movie-masher-browser-picker')
+
     htmls.push(html`
-      <movie-masher-action-server
-        detail='${ServerActionEncode}'
-        icon='${ServerActionEncode}'
-        string='${ServerActionEncode}'
-        progress='replace-string'
-        progress-width='string'
-      ></movie-masher-action-server>
+      <movie-masher-browser-picker
+      ></movie-masher-browser-picker>
     `)
-    htmls.push(html`
-      <movie-masher-action-server
-        detail='${ServerActionSave}'
-        icon='${ServerActionSave}'
-        string='${ServerActionSave}'
-        progress='replace-string'
-        progress-width='string'
-      ></movie-masher-action-server>
-    `)
-    return super.rightContent(htmls)
+    
+    return super.leftContent(htmls) 
   }
+
+  // protected override rightContent(htmls: Htmls): OptionalContent {
+  //   this.importTags('movie-masher-action-server')
+  //   htmls.push(html`
+  //     <movie-masher-action-server
+  //       detail='${ServerActionEncode}'
+  //       icon='${ServerActionEncode}'
+  //       string='${ServerActionEncode}'
+  //     ></movie-masher-action-server>
+  //   `)
+    
+  //   return super.rightContent(htmls)
+  // }
 }
 
 // register web component as custom element

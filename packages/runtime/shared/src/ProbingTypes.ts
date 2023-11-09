@@ -1,5 +1,5 @@
 import type { UnknownRecord } from './Core.js'
-import type { Decoding, ProbeType } from './Decoding.js'
+import type { Decoding, ProbeType } from './JobProduct.js'
 import type { RawProbeData } from './Probing.js'
 
 export interface Probing extends Decoding {

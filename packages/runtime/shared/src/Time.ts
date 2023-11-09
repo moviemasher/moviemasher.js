@@ -38,5 +38,5 @@ export interface TimeRange extends Time {
   withFrame(frame: number): TimeRange
 }
 
-export type Times = Time[]
-export type TimeRanges = TimeRange[]
+export interface Times extends Array<Time>{}
+export interface TimeRanges extends Array<TimeRange>{}

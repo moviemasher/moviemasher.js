@@ -1,6 +1,6 @@
 export * from './Color/index.js'
 export * from './Container/index.js'
 export * from './Content/index.js'
-export * from './Endpoint/index.js'
+export * from './Endpoint.js'
 export * from './Request/index.js'
 export * from './Time/index.js'

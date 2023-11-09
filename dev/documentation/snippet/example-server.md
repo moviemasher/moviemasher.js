@@ -4,7 +4,7 @@ The following shell command installs the server and required packages to your NP
 saving the former to the `dependencies` array in your **package.json** file.
 
 ```shell
-npm install @moviemasher/server-express --save
+npm install @moviemasher/lib-server --save
 ```
 
 The script below can then be included in your project and triggered in a variety of ways. The most straightfoward is to simply pass its path directly to node.
@@ -13,15 +13,15 @@ The script below can then be included in your project and triggered in a variety
 
 <legend>server.js</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../../../images/standalone/private/server.js) -->
 
 ```js
 // src/server.ts
-import { Host, HostDefaultOptions } from "@moviemasher/server-express";
+import { Host, HostDefaultOptions } from "@moviemasher/lib-server";
 var host = new Host(HostDefaultOptions());
 host.start();
 ```
-<!-- MAGIC:END -->
+
+
 </fieldset>
 
 The script first requires MovieMasherServer, then destructures what's needed from it. In this example we're just grabbing the `Host` class and corresponding `HostDefaultOptions` function. We call the later with the desired port number, and then pass the options it returns as arguments to the class constructor. Finally, the `start` method of the new instance is called to start the ExpressJS server. 

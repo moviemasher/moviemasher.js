@@ -1,8 +1,8 @@
-import { importPromise, assertAsset, ASSET, DECODE, ENCODE, TRANSCODE, isAsset } from '@moviemasher/runtime-shared';
+import { importPromise, assertAsset, TARGET_ASSET, JOB_DECODE, JOB_ENCODE, JOB_TRANSCODE, isAsset } from '@moviemasher/runtime-shared';
 
-const GraphFileTypeSvg = 'svg';
-const GraphFileTypeSvgSequence = 'svgsequence';
-const GraphFileTypeTxt = 'txt';
+const SVG = 'svg';
+const SVG_SEQUENCE = 'svgsequence';
+const TXT = 'txt';
 
 /**
  * Uses the global object as the event dispatcher.
@@ -50,6 +50,7 @@ const MovieMasher = {
             ServerEncodeVideoListeners: '@moviemasher/lib-server/encode/encode.js',
             ServerEncodeStatusListeners: '@moviemasher/lib-server/encode/encode.js',
             ServerDecodeProbeListeners: '@moviemasher/lib-server/decode/probe.js',
+            ServerDecodeStatusListeners: '@moviemasher/lib-server/decode/probe.js',
             ServerTranscodeListeners: '@moviemasher/lib-server/transcode/transcode.js',
             ServerTranscodeStatusListeners: '@moviemasher/lib-server/transcode/transcode.js',
         },
@@ -105,7 +106,7 @@ class EventServerManagedAsset extends CustomEvent$1 {
  * Dispatch to retrieve an asset from an asset id or object.
  */
 class EventServerAsset extends CustomEvent$1 {
-    static Type = ASSET;
+    static Type = TARGET_ASSET;
     constructor(assetIdOrObject) {
         const string = typeof assetIdOrObject === 'string';
         const assetId = string ? assetIdOrObject : assetIdOrObject.id;
@@ -127,9 +128,9 @@ class EventReleaseServerManagedAssets extends CustomEvent$1 {
  * Dispatch to retrieve a promise that decodes an asset.
  */
 class EventServerDecode extends CustomEvent$1 {
-    static Type = DECODE;
-    constructor(decodingType, assetType, request, pathFragment, decodeOptions) {
-        super(EventServerDecode.Type, { detail: { assetType, request, pathFragment, decodingType, decodeOptions } });
+    static Type = JOB_DECODE;
+    constructor(decodingType, assetType, request, user, id, decodeOptions) {
+        super(EventServerDecode.Type, { detail: { assetType, request, user, decodingType, id, decodeOptions } });
     }
 }
 /**
@@ -137,17 +138,17 @@ class EventServerDecode extends CustomEvent$1 {
  */
 class EventServerDecodeStatus extends CustomEvent$1 {
     static Type = 'decode-status';
-    constructor(pathFragment) {
-        super(EventServerDecodeStatus.Type, { detail: { pathFragment } });
+    constructor(id) {
+        super(EventServerDecodeStatus.Type, { detail: { id } });
     }
 }
 /**
  * Dispatch to retrieve a promise that encodes a mash asset.
  */
 class EventServerEncode extends CustomEvent$1 {
-    static Type = ENCODE;
-    constructor(encodingType, mashAssetObject, encodeOptions, pathFragment) {
-        super(EventServerEncode.Type, { detail: { encodingType, mashAssetObject, encodeOptions, pathFragment } });
+    static Type = JOB_ENCODE;
+    constructor(encodingType, mashAssetObject, user, id, encodeOptions, relativeRoot) {
+        super(EventServerEncode.Type, { detail: { encodingType, mashAssetObject, encodeOptions, user, id, relativeRoot } });
     }
 }
 /**
@@ -155,8 +156,8 @@ class EventServerEncode extends CustomEvent$1 {
  */
 class EventServerEncodeStatus extends CustomEvent$1 {
     static Type = 'encode-status';
-    constructor(pathFragment) {
-        super(EventServerEncodeStatus.Type, { detail: { pathFragment } });
+    constructor(id) {
+        super(EventServerEncodeStatus.Type, { detail: { id } });
     }
 }
 /**
@@ -172,9 +173,9 @@ class EventServerEncodeProgress extends CustomEvent$1 {
  * Dispatch to retrieve a promise that transcodes an asset.
  */
 class EventServerTranscode extends CustomEvent$1 {
-    static Type = TRANSCODE;
-    constructor(transcodingType, assetType, request, pathFragment, transcodeOptions) {
-        super(EventServerTranscode.Type, { detail: { assetType, transcodeOptions, request, transcodingType, pathFragment } });
+    static Type = JOB_TRANSCODE;
+    constructor(transcodingType, assetType, request, user, id, transcodeOptions, relativeRoot) {
+        super(EventServerTranscode.Type, { detail: { assetType, transcodeOptions, request, transcodingType, user, id, relativeRoot } });
     }
 }
 /**
@@ -182,8 +183,8 @@ class EventServerTranscode extends CustomEvent$1 {
  */
 class EventServerTranscodeStatus extends CustomEvent$1 {
     static Type = 'transcode-status';
-    constructor(pathFragment) {
-        super(EventServerTranscodeStatus.Type, { detail: { pathFragment } });
+    constructor(id) {
+        super(EventServerTranscodeStatus.Type, { detail: { id } });
     }
 }
 /**
@@ -200,4 +201,4 @@ const isServerAsset = (value) => {
     return isAsset(value) && 'assetGraphFiles' in value;
 };
 
-export { CustomEvent$1 as CustomEvent, EventReleaseServerManagedAssets, EventServerAsset, EventServerAssetPromise, EventServerDecode, EventServerDecodeStatus, EventServerEncode, EventServerEncodeProgress, EventServerEncodeStatus, EventServerManagedAsset, EventServerTextRect, EventServerTranscode, EventServerTranscodeStatus, GraphFileTypeSvg, GraphFileTypeSvgSequence, GraphFileTypeTxt, MovieMasher, ServerEventDispatcher, isServerAsset };
+export { CustomEvent$1 as CustomEvent, EventReleaseServerManagedAssets, EventServerAsset, EventServerAssetPromise, EventServerDecode, EventServerDecodeStatus, EventServerEncode, EventServerEncodeProgress, EventServerEncodeStatus, EventServerManagedAsset, EventServerTextRect, EventServerTranscode, EventServerTranscodeStatus, MovieMasher, SVG, SVG_SEQUENCE, ServerEventDispatcher, TXT, isServerAsset };

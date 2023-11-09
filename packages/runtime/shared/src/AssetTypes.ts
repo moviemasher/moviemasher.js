@@ -2,9 +2,9 @@ import type { AssetType, AssetTypes } from './AssetType.js'
 import type { Labeled } from './Base.js'
 import type { AssetCacheArgs } from './CacheTypes.js'
 import type { ClipObject } from './ClipObject.js'
-import type { StringRecord, Strings } from './Core.js'
+import type { StringRecord, Strings, Value } from './Core.js'
 import type { DataOrError } from './DataOrError.js'
-import type { DecodingObjects, Decodings } from './Decoding.js'
+import type { Decodings } from './JobProduct.js'
 import type { Identified } from './Identified.js'
 import type { Instance, InstanceArgs, InstanceObject } from './InstanceTypes.js'
 import type { Propertied } from './Propertied.js'
@@ -31,16 +31,16 @@ export interface Asset extends Propertied, Identified, Typed, Labeled {
   type: AssetType  
 }
 
-export type Assets = Asset[]
+export interface Assets extends Array<Asset>{}
 
 export interface AssetObject extends Identified, Labeled, Sourced, Typed {
   created?: string
   assets?: AssetObjects
   type: AssetType 
-  decodings?: DecodingObjects
+  decodings?: Decodings
 }
 
-export type AssetObjects = AssetObject[]
+export interface AssetObjects extends Array<AssetObject>{}
 
 export interface AudibleAsset extends Asset {
   audio: boolean
@@ -73,11 +73,15 @@ export interface SourceAsset extends Asset {
 }
 
 export type StringOrRecord = string | StringRecord
-export type StringOrRecords = StringOrRecord[]
+export interface StringOrRecords extends Array<StringOrRecord>{}
 
 export interface AssetParams {
-  type?: AssetType | AssetTypes
-  source?: Source | Sources
-  order?: StringOrRecord | StringOrRecords
-  terms?: string
+  types?: AssetTypes | AssetType
+  sources?: Sources | Source
+  terms?: Strings | string
+}
+
+export interface AssetObjectsResponse {
+  assets: AssetObject[]
+  cacheControl?: string
 }

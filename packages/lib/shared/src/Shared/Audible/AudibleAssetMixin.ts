@@ -1,6 +1,6 @@
 import type { Asset, AudibleAsset, AudibleAssetObject, Constrained, UnknownRecord } from '@moviemasher/runtime-shared'
 
-import { ASSET, PROBE, isUndefined, isProbing } from '@moviemasher/runtime-shared'
+import { TARGET_ASSET, PROBE, isUndefined, isProbing } from '@moviemasher/runtime-shared'
 import { timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
 import { DataTypeBoolean, DataTypePercent } from '../../Setup/DataTypeConstants.js'
 import { DurationUnknown } from '../../Setup/DurationConstants.js'
@@ -56,14 +56,14 @@ T & Constrained<AudibleAsset> {
       const { audio } = this
       if (audio) { 
         this.properties.push(propertyInstance({ 
-          targetId: ASSET,
+          targetId: TARGET_ASSET,
           name: 'loop', type: DataTypeBoolean,
         }))
         this.properties.push(propertyInstance({ 
-          targetId: ASSET, name: 'muted', type: DataTypeBoolean, 
+          targetId: TARGET_ASSET, name: 'muted', type: DataTypeBoolean, 
         }))
         this.properties.push(propertyInstance({ 
-          targetId: ASSET, name: 'gain', type: DataTypePercent,
+          targetId: TARGET_ASSET, name: 'gain', type: DataTypePercent,
           defaultValue: 1.0, min: 0, max: 2.0, step: 0.01 
         }))
       }

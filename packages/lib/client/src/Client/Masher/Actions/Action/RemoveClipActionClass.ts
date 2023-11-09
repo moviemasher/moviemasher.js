@@ -3,9 +3,6 @@ import type { ClientClip, ClientMashAsset, ClientTrack, RemoveClipActionObject }
 import { EventChangeClipId, MovieMasher } from '@moviemasher/runtime-client'
 import { ActionClass } from './ActionClass.js'
 
-/**
- * @category Action
- */
 export class RemoveClipActionClass extends ActionClass {
   constructor(object: RemoveClipActionObject) {
     super(object)
