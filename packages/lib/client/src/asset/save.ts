@@ -1,8 +1,8 @@
 import type { ClientAssets, ServerProgress } from '@moviemasher/runtime-client'
 
-import { EmptyFunction, assertDefined, assertString } from '@moviemasher/lib-shared'
-import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, EventSavableManagedAsset, EventSavableManagedAssets, EventSave, MovieMasher, ServerActionEncode, ServerActionSave } from '@moviemasher/runtime-client'
-import { isDefiniteError } from '@moviemasher/runtime-shared'
+import { assertDefined, assertString } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, EventSavableManagedAsset, EventSavableManagedAssets, EventSave, MOVIEMASHER, SAVE } from '@moviemasher/runtime-client'
+import { ENCODE, ListenersFunction, POST, VOID_FUNCTION, isDefiniteError } from '@moviemasher/runtime-shared'
 import { requestJsonRecordPromise } from '../utility/request.js'
 
 export class SaveHandler {
@@ -10,7 +10,7 @@ export class SaveHandler {
     if (SaveHandler.saving) return false
   
     const event = new EventSavableManagedAsset()
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     return event.detail.savable
   }
 
@@ -20,7 +20,7 @@ export class SaveHandler {
     let total = 2
     let current = 1
     const dispatch = () => {
-      MovieMasher.eventDispatcher.dispatch(new EventProgress(id, current / total))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventProgress(id, current / total))
     }
     return {
       do: (steps: number) => { 
@@ -43,10 +43,10 @@ export class SaveHandler {
 
   static handleDoServerAction(doEvent: EventDoServerAction) {
     const { detail } = doEvent
-    if (detail.serverAction !== ServerActionSave) return 
+    if (detail.serverAction !== SAVE) return 
     
     const assets: ClientAssets = []
-    MovieMasher.eventDispatcher.dispatch(new EventSavableManagedAssets(assets))
+    MOVIEMASHER.eventDispatcher.dispatch(new EventSavableManagedAssets(assets))
     
     const { length } = assets
     if (length) {
@@ -76,14 +76,14 @@ export class SaveHandler {
         progress?.done()
         return orError
       })
-      detail.promise = promise.then(EmptyFunction)
+      detail.promise = promise.then(VOID_FUNCTION)
     }
   }
 
   static handleEnabledServerAction(enabledEvent: EventEnabledServerAction) {
     const { detail } = enabledEvent
     const { serverAction } = detail
-    if (serverAction !== ServerActionSave) return 
+    if (serverAction !== SAVE) return 
   
     enabledEvent.stopImmediatePropagation()
     detail.enabled = SaveHandler.enabled
@@ -97,7 +97,7 @@ export class SaveHandler {
     const { asset } = detail
 
     const request = {
-      endpoint: '/asset/put', init: { method: 'POST' }
+      endpoint: '/asset/put', init: { method: POST }
     }
     const { assetObject } = asset
   
@@ -117,14 +117,14 @@ export class SaveHandler {
   private static set saving(value) {
     if (SaveHandler._saving !== value) {
       SaveHandler._saving = value
-      MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
-      MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionEncode))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(SAVE))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(ENCODE))
     }
   }
 }
 
 // listen for client save related events
-export const ClientAssetSaveListeners = () => ({
+export const saveClientListeners: ListenersFunction = () => ({
   [EventSave.Type]: SaveHandler.handleSave,
   [EventEnabledServerAction.Type]: SaveHandler.handleEnabledServerAction,
   [EventDoServerAction.Type]: SaveHandler.handleDoServerAction,

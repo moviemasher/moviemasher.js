@@ -1,13 +1,13 @@
 import type { MashAssetObject } from '@moviemasher/runtime-shared'
-import { namedError, ERROR, isAssetObject, isAssetType, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 
-import { MovieMasher, EventAssetObject } from '@moviemasher/runtime-client'
+import { EventAssetObject, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { ERROR, isAssetObject, isAssetType, isDefiniteError, isPopulatedString, namedError } from '@moviemasher/runtime-shared'
 import { requestJsonRecordPromise } from '../../utility/request.js'
 
-export const AssetObjectHandler = (event: EventAssetObject) => {
+const AssetObjectHandler = (event: EventAssetObject) => {
   event.stopImmediatePropagation()
   const { detail } = event
-  const { assetObject } = MovieMasher.options
+  const { assetObject } = MOVIEMASHER.options
   if (!assetObject) {
     const data: MashAssetObject = {
       id: `temporary-${crypto.randomUUID()}`,
@@ -38,4 +38,6 @@ export const AssetObjectHandler = (event: EventAssetObject) => {
   })
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(EventAssetObject.Type, AssetObjectHandler)
+MOVIEMASHER.eventDispatcher.addDispatchListener(EventAssetObject.Type, AssetObjectHandler)
+
+export {}

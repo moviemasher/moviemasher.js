@@ -1,4 +1,4 @@
-import type { Decoding } from './JobProduct.js'
+import type { Decoding } from './CodeTypes.js'
 
 import { errorThrow } from './ErrorFunctions.js'
 import { isTyped } from './TypedGuards.js'

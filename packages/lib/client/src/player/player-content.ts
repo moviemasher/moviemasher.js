@@ -1,25 +1,28 @@
 import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { CenterSlot, ContentElement } from '../Base/LeftCenterRight.js'
+import { html } from 'lit-html'
+import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
 
 const PlayerContentTag = 'movie-masher-player-content'
 
-export class PlayerContentElement extends ContentElement {
+/**
+ * @category Component
+ */
+export class PlayerContentElement extends ContentBase {
   override centerContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     this.importTags('movie-masher-player-content-center')
     htmls.push(html`<movie-masher-player-content-center
-       class='${CenterSlot}'
-       part='${CenterSlot}'
+       class='${CENTER}'
+       part='${CENTER}'
     ></movie-masher-player-content-center>`)
     return html`${htmls}`
   }
 
   static override styles: CSSResultGroup = [
-    ContentElement.styles,
+    ContentBase.styles,
     css`
       .center {
         padding: 0;

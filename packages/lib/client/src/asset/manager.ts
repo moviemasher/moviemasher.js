@@ -1,17 +1,25 @@
 import type { ClientAsset, ClientAssets, EventManagedAssetsDetail } from '@moviemasher/runtime-client'
-import type { AssetObject, AssetParams, DataOrError, ManageType, ManageTypes, Strings } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetParams, DataOrError, ListenersFunction, ManageType, ManageTypes, Strings } from '@moviemasher/runtime-shared'
 
-import { DASH, arrayFromOneOrMore, assertDefined, idIsTemporary, sortByRequestable, CACHE_ALL, CACHE_NONE, CACHE_SOURCE_TYPE } from '@moviemasher/lib-shared'
-import { EventAsset, EventAssetObjects, REFERENCE, EventChangedServerAction, EventImportManagedAssets, EventChangedManagedAssets, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetScalar, EventManagedAssets, EventReleaseManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, MovieMasher, ServerActionSave, isClientAsset, FETCH, IMPORT } from '@moviemasher/runtime-client'
-import { assertAsset, isDefiniteError } from '@moviemasher/runtime-shared'
-import { isClientMashAsset } from '../Client/Mash/ClientMashGuards.js'
+import { assertDefined, isRequestable } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventAsset, EventAssetObjects, EventChangedManagedAssets, EventChangedServerAction, EventImportManagedAssets, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetScalar, EventManagedAssets, EventReleaseManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, FETCH, IMPORT, MOVIEMASHER, REFERENCE, SAVE, isClientAsset } from '@moviemasher/runtime-client'
+import { CACHE_ALL, CACHE_NONE, CACHE_SOURCE_TYPE, DASH, arrayFromOneOrMore, assertAsset, idIsTemporary, isDefiniteError } from '@moviemasher/runtime-shared'
+import { isClientMashAsset } from '../guards/ClientMashGuards.js'
 
-export interface ManagedAsset {
+interface ManagedAsset {
   asset: ClientAsset
   manageTypes: ManageTypes
 }
 
-export interface ManagedAssets extends Array<ManagedAsset>{}
+interface ManagedAssets extends Array<ManagedAsset>{}
+
+const sortByRequestable = (a: ClientAsset, b: ClientAsset): number => {
+  const aIsRequestable = isRequestable(a)
+  const bIsRequestable = isRequestable(b)
+  if (aIsRequestable === bIsRequestable) return 0
+  if (aIsRequestable) return -1
+  return 1
+}
 
 export class ClientAssetManagerClass {
   private assetsById = new Map<string, ManagedAsset>()
@@ -26,7 +34,7 @@ export class ClientAssetManagerClass {
 
   private assetFromObject(object: string | AssetObject): ClientAsset | undefined {
     const event = new EventAsset(object)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     return event.detail.asset
   }
 
@@ -42,24 +50,15 @@ export class ClientAssetManagerClass {
     const saveKey = !(hasTerms || ignoreCache)
     const canCache = allCached || !hasTerms
     const useCache = canCache && !ignoreCache 
-
     const key = allCached ? CACHE_ALL : this.assetParamsKey(params)
-    
     if (useCache) {
       const existing = this.assetObjectsPromises.get(key)
-      if (existing) {
-        // console.debug(this.constructor.name, 'assetObjectsPromise RETURNING cache', key)
-        return existing
-      }
+      if (existing) return existing
     }
-    
     const event = new EventAssetObjects(params)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) return Promise.resolve()
-    
-    
-    // console.debug(this.constructor.name, 'assetObjectsPromise', params)
 
     const installPromise: Promise<void> = promise.then(orError => {
       if (isDefiniteError(orError)) {
@@ -163,9 +162,9 @@ export class ClientAssetManagerClass {
         this.assetsById.set(id, { manageTypes: [manageType], asset })
         return idIsTemporary(id)
       })
-      MovieMasher.eventDispatcher.dispatch(new EventChangedManagedAssets())
+      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedManagedAssets())
       if (temporary.length) {
-        MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
+        MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(SAVE))
       }
     }
     return assets
@@ -242,7 +241,7 @@ export class ClientAssetManagerClass {
 
     event.stopImmediatePropagation()
     if (idIsTemporary(previousId)) {
-      MovieMasher.eventDispatcher.dispatch(new EventChangedServerAction(ServerActionSave))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(SAVE))
     }
   }
 
@@ -288,7 +287,7 @@ export class ClientAssetManagerClass {
   private static instance = new ClientAssetManagerClass()
 }
 
-export const ClientAssetManagerListeners = () => ({
+export const ClientAssetManagerListeners: ListenersFunction = () => ({
   [EventImportManagedAssets.Type]: ClientAssetManagerClass.handleImportManagedAssets,
   [EventManagedAsset.Type]: ClientAssetManagerClass.handleManagedAsset,
   [EventManagedAssetIcon.Type]: ClientAssetManagerClass.handleManagedAssetIcon,

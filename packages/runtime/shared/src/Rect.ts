@@ -1,7 +1,7 @@
 import type { Point, PropertyPoint } from './Point.js'
 import type { PropertySize, Size, SizeOptions } from './Size.js'
 
-export interface Rect extends Size, Point { }
+export interface Rect extends Size, Point {}
 
 export interface Rects extends Array<Rect>{}
 

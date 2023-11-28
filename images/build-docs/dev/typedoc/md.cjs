@@ -1,10 +1,7 @@
 module.exports = {
   "$schema": "https://typedoc.org/schema.json",
   "cleanOutputDir": true,
-  "entryPoints": [
-    "packages/runtime/*/src/index.ts",
-    "packages/lib/*/src/index.ts",
-  ],
+  "entryPoints": ["packages/**/src/index.ts"],
   "out": "./temporary/build-docs/md",
   "name": "@moviemasher",
   "includeVersion": false,

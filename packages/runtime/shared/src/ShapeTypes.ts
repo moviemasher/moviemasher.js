@@ -1,4 +1,4 @@
-import type { Asset, AssetObject } from './AssetTypes.js'
+import type { Asset, AssetObject } from './AssetInterfaces.js'
 import type { Instance, InstanceObject } from './InstanceTypes.js'
 
 export interface ShapeAsset extends Asset {

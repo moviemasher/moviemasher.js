@@ -1,4 +1,4 @@
-import type { Asset, AssetObject } from './AssetTypes.js'
+import type { Asset, AssetObject } from './AssetInterfaces.js'
 import type { ImageInstanceObject, ImageInstance } from './ImageInstance.js'
 import type { InstanceArgs } from './InstanceTypes.js'
 

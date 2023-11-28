@@ -1,27 +1,30 @@
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
+import type { Content, Contents, Htmls, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from './Component.js'
-import { Slotted } from './Slotted.js'
+import { EventScrollRoot } from '@moviemasher/runtime-client'
+import { html } from 'lit-html'
+import { Component, ImporterComponent, Slotted } from './Component.js'
 
-export const LeftSlot = 'left'
-export const RightSlot = 'right'
-export const CenterSlot = 'center'
+const LeftSlot = 'left'
+const RightSlot = 'right'
+export const CENTER = 'center'
 
 export class LeftCenterRight extends Slotted {
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
     switch (part) {
       case LeftSlot: return this.leftContent(slots)
       case RightSlot: return this.rightContent(slots)
-      case CenterSlot: return this.centerContent(slots)
+      case CENTER: return this.centerContent(slots)
     }
     return super.partContent(part, slots)
   }
 
   protected centerContent(htmls: Htmls): OptionalContent { 
-    return html`<span part='${CenterSlot}' class='${CenterSlot}'>${htmls}</span>` 
+    return html`<span 
+      part='${CENTER}' 
+      class='${CENTER}'
+    >${htmls}</span>` 
   }
 
   protected leftContent(htmls: Htmls): OptionalContent { 
@@ -36,7 +39,7 @@ export class LeftCenterRight extends Slotted {
     return html`<span part='${RightSlot}' class='${RightSlot}'>${htmls}</span>` 
   }
   
-  override parts = [LeftSlot, CenterSlot, RightSlot].join(Slotted.partSeparator)
+  override parts = [LeftSlot, CENTER, RightSlot].join(Slotted.partSeparator)
 
   static cssShared = css`
     :host {
@@ -96,7 +99,7 @@ export class LeftCenterRight extends Slotted {
   ]
 }
 
-export class HeaderElement extends LeftCenterRight {
+export class HeaderBase extends LeftCenterRight {
   icon = ''
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
@@ -124,7 +127,7 @@ export class HeaderElement extends LeftCenterRight {
   }
 }
 
-export class FooterElement extends LeftCenterRight {
+export class FooterBase extends LeftCenterRight {
   protected override content(contents: Contents): Content {
     return html`<footer 
       @export-parts='${this.handleExportParts}'
@@ -132,8 +135,7 @@ export class FooterElement extends LeftCenterRight {
   }
 }
 
-
-export class ContentElement extends LeftCenterRight {
+export class ContentBase extends LeftCenterRight {
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     Component.cssHostFlex,
@@ -169,3 +171,102 @@ export class ContentElement extends LeftCenterRight {
     ` 
   ]
 }
+
+export class Scroller extends ImporterComponent {
+  protected override content(contents: Contents): Content {
+    return html`<div 
+      class='root'
+      @scroll-root='${this.handleScrollRoot}'
+    >${contents}</div>`
+  }
+
+  protected handleScrollRoot(event: EventScrollRoot): void {
+    event.detail.root = this.element('div.root')
+    event.stopImmediatePropagation()
+  }
+
+  static cssDivRoot = css`
+    div.root {
+      padding: 0px;
+      flex-grow: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  `;
+  static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
+    Component.cssHostFlex,
+    Scroller.cssDivRoot,
+    css`
+      :host {
+        position: relative;
+      }
+      
+    `
+  ];
+}
+export const HEADER = 'header'
+export const FOOTER = 'footer'
+export const CONTENTS = 'contents'
+
+export class Section extends Slotted {
+  protected override partContent(part: string, slots: Htmls): OptionalContent {
+    switch (part) {
+      case CONTENTS: return this.contentContent(slots)
+      case FOOTER: return this.footerContent(slots)
+      case HEADER: return this.headerContent(slots)
+    }
+    return super.partContent(part, slots)
+  }
+
+  contentContent(_htmls: Htmls): OptionalContent { }
+
+  footerContent(_htmls: Htmls): OptionalContent { }
+
+  headerContent(_htmls: Htmls): OptionalContent { }
+
+  icon = '';
+
+  override parts = [HEADER, CONTENTS, FOOTER].join(Slotted.partSeparator);
+
+  protected override content(contents: Contents): Content {
+    return html`<section
+      @export-parts='${this.handleExportParts}'
+    >${contents}</section>`
+  }
+
+  static styleHost = css`
+    :host {
+      flex-grow: 1;
+      display: flex;
+    }
+  `;
+
+  static styleSection = css`
+    section {
+      flex-grow: 1;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: var(--height-header) 1fr var(--height-footer);
+      grid-template-columns: 1fr;
+      border: var(--border);
+      border-color: var(--back-chrome);
+      border-radius: var(--radius-border);
+    }
+  `;
+
+  static override properties: PropertyDeclarations = {
+    ...Slotted.properties,
+    icon: { type: String }
+  };
+
+  static override styles: CSSResultGroup = [
+    Component.cssBorderBoxSizing,
+    this.styleHost,
+    this.styleSection,
+  ];
+}
+

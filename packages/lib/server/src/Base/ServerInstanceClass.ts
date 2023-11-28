@@ -3,8 +3,12 @@ import type { CacheArgs, IntrinsicOptions, Size, Value, ValueRecord } from '@mov
 import type { ServerInstance } from '../Types/ServerInstanceTypes.js'
 import type { Tweening } from '../Types/ServerTypes.js'
 
-import { InstanceClass, arrayLast, assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, assertTimeRange, colorBlackOpaque, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, idGenerate, isAboveZero, isBelowOne, isTimeRange, sizeEven, sizesEqual, timeFromArgs } from '@moviemasher/lib-shared'
-import { ERROR, errorThrow, isDefined, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { InstanceClass } from '@moviemasher/lib-shared/base/instance.js'
+import { colorToRgb, colorToRgba } from '@moviemasher/lib-shared/utility/color.js'
+import { assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedArray, assertPopulatedString, assertRect, assertSize, isAboveZero, isBelowOne } from '@moviemasher/lib-shared/utility/guards.js'
+import { sizeEven, sizesEqual } from '@moviemasher/lib-shared/utility/rect.js'
+import { assertTimeRange, isTimeRange, timeFromArgs } from '@moviemasher/lib-shared/utility/time.js'
+import { CONTENT, ERROR, FRAME, RGBA_BLACK, RGBA_KEYS, RGB_KEYS, RGB_WHITE, arrayLast, errorThrow, idGenerate, isDefined, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
 import { tweenMaxSize, tweenOption, tweenPosition } from '../Utility/Command.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 
@@ -103,7 +107,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     const { contentColors = [], videoRate, outputSize, duration } = args
     assertSize(outputSize)
     const evenSize = sizeEven(outputSize)
-    const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
+    const [color = RGBA_BLACK, colorEnd = RGBA_BLACK] = contentColors
   
     // console.log(this.constructor.name, 'colorBackCommandFilters', {color, colorEnd})
     const commandFilters: CommandFilters = []
@@ -194,7 +198,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       const scaleCommandFilter: CommandFilter = {
         inputs: [filterInput], ffmpegFilter: scaleFilter, 
         options: { 
-          eval: 'frame',
+          eval: FRAME,
           width: tweenOption(startSize.width, endSize.width, position),
           height: tweenOption(startSize.height, endSize.height, position),
         },
@@ -231,7 +235,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     const fromColor = alpha ? colorToRgba(color) : colorToRgb(color)
     const toColor = alpha ? colorToRgba(colorEnd) : colorToRgb(colorEnd)
 
-    const keys = alpha ? colorRgbaKeys : colorRgbKeys
+    const keys = alpha ? RGBA_KEYS : RGB_KEYS
     const options: ValueRecord = {}
 
     const position = duration ? tweenPosition(videoRate, duration, 'N') : 0
@@ -281,7 +285,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     assertArray(containerRects, 'containerRects')
 
     const [rect, rectEnd] = containerRects
-    const [color = colorWhite, colorEnd = colorWhite] = colors
+    const [color = RGB_WHITE, colorEnd = RGB_WHITE] = colors
     commandFilters.push(...this.colorCommandFilters(duration, videoRate, rect, rectEnd, color, colorEnd))
     return commandFilters
   }
@@ -344,7 +348,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
     return []//this.effectsCommandFilters(args)
   }
 
-  copyCommandFilter(input: string, track: number, id = 'content'): CommandFilter {
+  copyCommandFilter(input: string, track: number, id = CONTENT): CommandFilter {
     const output = `${id}-${track}`
     const commandFilter: CommandFilter = {
       inputs: [input], ffmpegFilter: 'copy', options: {}, outputs: [output]
@@ -447,7 +451,7 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       height: tweenOption(height, heightEnd, position, true),
       // sws_flags: 'accurate_rnd',
     }
-    if (!(isNumber(options.width) && isNumber(options.height))) options.eval = 'frame'
+    if (!(isNumber(options.width) && isNumber(options.height))) options.eval = FRAME
 
     const commandFilter: CommandFilter = {
       inputs: [filterInput], ffmpegFilter, options, 

@@ -1,13 +1,14 @@
-import type { ColorAssetObject, ColorInstanceObject, InstanceArgs } from '@moviemasher/runtime-shared'
+import type { ColorAssetObject, ColorInstanceObject, InstanceArgs, ListenersFunction } from '@moviemasher/runtime-shared'
 import type { ServerColorAsset, ServerColorInstance } from '../../Types/ServerTypes.js'
 
-import { ColorAssetMixin, ColorInstanceMixin, DefaultContentId, VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared'
 import { EventServerAsset } from '@moviemasher/runtime-server'
-import { COLOR, IMAGE, isAssetObject } from '@moviemasher/runtime-shared'
+import { COLOR, IMAGE, DEFAULT_CONTENT_ID, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { ColorAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { ColorInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -27,7 +28,7 @@ export class ServerColorAssetClass extends WithColorAsset implements ServerColor
 
   static get defaultAsset(): ServerColorAsset {
     return this._defaultAsset ||= new ServerColorAssetClass({ 
-      id: DefaultContentId, type: IMAGE, 
+      id: DEFAULT_CONTENT_ID, type: IMAGE, 
       source: COLOR, label: 'Color',
     })
   }
@@ -36,7 +37,7 @@ export class ServerColorAssetClass extends WithColorAsset implements ServerColor
     const { detail } = event
     const { assetObject, assetId } = detail
     
-    const isDefault = assetId === DefaultContentId
+    const isDefault = assetId === DEFAULT_CONTENT_ID
     if (!(isDefault || isAssetObject(assetObject, IMAGE, COLOR))) return
       
     event.stopImmediatePropagation()
@@ -46,7 +47,7 @@ export class ServerColorAssetClass extends WithColorAsset implements ServerColor
 }
 
 // listen for image/color asset event
-export const ServerColorImageListeners = () => ({
+export const colorServerListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerColorAssetClass.handleAsset
 }) 
 

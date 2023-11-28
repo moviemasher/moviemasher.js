@@ -1,8 +1,7 @@
 import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
-import type { InstanceArgs, CacheArgs, RawVideoAssetObject, VideoInstanceObject } from '@moviemasher/runtime-shared'
+import type { InstanceArgs, CacheArgs, RawVideoAssetObject, VideoInstanceObject, ListenersFunction } from '@moviemasher/runtime-shared'
 import type { ServerRawVideoAsset, ServerRawVideoInstance } from '../../Types/ServerRawTypes.js'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString } from '@moviemasher/lib-shared'
 import { EventServerAsset } from '@moviemasher/runtime-server'
 import { RAW, AUDIO, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
@@ -11,6 +10,9 @@ import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { AudibleAssetMixin, VideoAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { AudibleInstanceMixin, VideoInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
 
 const WithAudibleAsset = AudibleAssetMixin(ServerRawAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
@@ -70,7 +72,7 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
 }
 
 // listen for video/raw asset event
-export const ServerRawVideoListeners = () => ({
+export const ServerRawVideoListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerRawVideoAssetClass.handleAsset
 })
 

@@ -1,9 +1,9 @@
-import type { TranscodeArgs } from '@moviemasher/runtime-shared'
 import type { ClientMediaRequest } from '@moviemasher/runtime-client'
+import type { ListenersFunction, TranscodeArgs } from '@moviemasher/runtime-shared'
 
-import { isTranscoding } from '@moviemasher/lib-shared'
+import { isTranscoding } from '@moviemasher/lib-shared/utility/guards.js'
 import { EventClientTranscode } from '@moviemasher/runtime-client'
-import { ERROR, namedError, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, POST, isDefiniteError, namedError } from '@moviemasher/runtime-shared'
 import { requestCallbackPromise } from '../utility/request.js'
 
 export class TranscodeHandler {
@@ -19,7 +19,7 @@ export class TranscodeHandler {
 
     progress?.do(1)
     const jsonRequest = {
-      endpoint: 'transcode/start', init: { method: 'POST' }
+      endpoint: 'transcode/start', init: { method: POST }
     }
     const transcodeArgs: TranscodeArgs = { assetType, request, transcodingType, options }
     detail.promise = requestCallbackPromise(jsonRequest, progress, transcodeArgs).then(orError => {
@@ -36,7 +36,7 @@ export class TranscodeHandler {
 }
 
 // listen for client transcode event
-export const ClientAssetTranscodeListeners = () => ({
+export const transcodeClientListeners: ListenersFunction = () => ({
   [EventClientTranscode.Type]: TranscodeHandler.handle
 })
 

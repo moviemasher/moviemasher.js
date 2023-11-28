@@ -2,13 +2,13 @@ import type { Data, StringData, TranscodeOptions, Transcoding } from '@moviemash
 
 import { filePathExists, ServerEventDispatcherModule } from '@moviemasher/lib-server'
 import { isTranscoding } from '@moviemasher/lib-shared'
-import { EventServerTranscode, EventServerTranscodeStatus, MovieMasher, ServerMediaRequest } from '@moviemasher/runtime-server'
+import { EventServerTranscode, EventServerTranscodeStatus, MOVIEMASHER_SERVER, ServerMediaRequest } from '@moviemasher/runtime-server'
 import { IMAGE, isDefiniteError, SEQUENCE, VIDEO } from '@moviemasher/runtime-shared'
 import assert from 'node:assert'
 import { describe, test } from 'node:test'
 
-MovieMasher.eventDispatcher = new ServerEventDispatcherModule()
-await MovieMasher.importPromise
+MOVIEMASHER_SERVER.eventDispatcher = new ServerEventDispatcherModule()
+await MOVIEMASHER_SERVER.importPromise
 
 
 function failIfError<T = any>(orError: any): asserts orError is T {
@@ -28,7 +28,7 @@ describe('Transcoding', () => {
     const id = 'image-transcode-image'
     const options: TranscodeOptions = {}
     const transcodeEvent = new EventServerTranscode(transcodingType, assetType, request, 'shared', id, options)
-    MovieMasher.eventDispatcher.dispatch(transcodeEvent)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(transcodeEvent)
     const { promise: transcodePromise } = transcodeEvent.detail
     assert(transcodePromise)
     const transcodeOrError = await transcodePromise
@@ -38,7 +38,7 @@ describe('Transcoding', () => {
     assert(filePathExists(transcodedFilePath))
 
     const statusEvent = new EventServerTranscodeStatus(id)
-    MovieMasher.eventDispatcher.dispatch(statusEvent)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(statusEvent)
     const { promise: statusPromise } = statusEvent.detail
     assert(statusPromise)
 
@@ -56,7 +56,7 @@ describe('Transcoding', () => {
     const id = 'video-transcode-sequence'
     const options: TranscodeOptions = {}
     const transcodeEvent = new EventServerTranscode(transcodingType, assetType, request, 'shared', id, options)
-    MovieMasher.eventDispatcher.dispatch(transcodeEvent)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(transcodeEvent)
     const { promise: transcodePromise } = transcodeEvent.detail
     assert(transcodePromise)
     const transcodeOrError = await transcodePromise
@@ -66,7 +66,7 @@ describe('Transcoding', () => {
     // assert(filePathExists(transcodedFilePath))
 
     const statusEvent = new EventServerTranscodeStatus(id)
-    MovieMasher.eventDispatcher.dispatch(statusEvent)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(statusEvent)
     const { promise: statusPromise } = statusEvent.detail
     assert(statusPromise)
 

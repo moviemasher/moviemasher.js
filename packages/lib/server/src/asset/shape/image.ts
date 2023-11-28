@@ -1,20 +1,24 @@
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
-import type { DataOrError, InstanceArgs, ShapeAssetObject, ShapeInstanceObject, Size, ValueRecord } from '@moviemasher/runtime-shared'
+import type { DataOrError, InstanceArgs, ListenersFunction, ShapeAssetObject, ShapeInstanceObject, Size, ValueRecord } from '@moviemasher/runtime-shared'
 import type { ServerShapeAsset, ServerShapeInstance, Tweening } from '../../Types/ServerTypes.js'
 
-import { DOT, DefaultContainerId, NamespaceSvg, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, assertPopulatedArray, assertPopulatedString, colorBlack, colorBlackOpaque, colorWhite, idGenerate, isPopulatedArray, isTimeRange, isTrueValue, rectTransformAttribute, rectsEqual, sizeEven } from '@moviemasher/lib-shared'
-import { EventServerAsset, SVG } from '@moviemasher/runtime-server'
-import { IMAGE, POINT_ZERO, SHAPE, isAssetObject, isBoolean, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { EventServerAsset } from '@moviemasher/runtime-server'
+import { DEFAULT_CONTAINER_ID, DOT, IMAGE, NAMESPACE_SVG, NONE, POINT_ZERO, RGBA_BLACK, RGB_BLACK, RGB_WHITE, SHAPE, SVG, arrayLast, idGenerate, isAssetObject, isBoolean, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
 import path from 'path'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
-import { ENV, ENVIRONMENT } from '../../Environment/EnvironmentConstants.js'
+import { ENV_KEY, ENV } from '../../Environment/EnvironmentConstants.js'
 import { tweenMaxSize } from '../../Utility/Command.js'
 import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
 import { fileWritePromise } from '../../Utility/File.js'
-import { hashMd5 } from '../../Utility/Hash.js'
+import { fileNameFromContent } from '../../Utility/File.js'
+import { ShapeAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { ShapeInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { assertPopulatedArray, isPopulatedArray, assertPopulatedString, isTrueValue } from '@moviemasher/lib-shared/utility/guards.js'
+import { rectTransformAttribute, rectsEqual, sizeEven } from '@moviemasher/lib-shared/utility/rect.js'
+import { isTimeRange } from '@moviemasher/lib-shared/utility/time.js'
 
 const WithAsset = VisibleAssetMixin(ServerAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -34,7 +38,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
 
   private static get defaultAsset(): ServerShapeAsset {
     return this._defaultAsset ||= new ServerShapeAssetClass({ 
-      id: DefaultContainerId, type: IMAGE, 
+      id: DEFAULT_CONTAINER_ID, type: IMAGE, 
       source: SHAPE, label: 'Rectangle'
     })
   }
@@ -43,7 +47,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
     const { detail } = event
     const { assetObject, assetId } = detail
     
-    const isDefault = assetId === DefaultContainerId
+    const isDefault = assetId === DEFAULT_CONTAINER_ID
     if (!(isDefault || isAssetObject(assetObject, IMAGE, SHAPE))) return
       
     event.stopImmediatePropagation()
@@ -67,7 +71,7 @@ export class ServerShapeAssetClass extends WithShapeAsset implements ServerShape
 }
 
 // listen for image/shape asset event
-export const ServerShapeImageListeners = () => ({
+export const ServerShapeImageListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerShapeAssetClass.handleAsset
 })
 
@@ -113,7 +117,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
     // console.log(this.constructor.name, this.assetId, 'containerColorCommandFilters', {color, maxSize})
 
-    commandFilters.push(...this.colorCommandFilters(duration, videoRate, maxSize, endRect, color || colorWhite, colorEnd))
+    commandFilters.push(...this.colorCommandFilters(duration, videoRate, maxSize, endRect, color || RGB_WHITE, colorEnd))
     return commandFilters
   }
 
@@ -187,14 +191,12 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
       const { id } = this
       const fileInput = commandFilesInput(commandFiles, id, true)   
       assertPopulatedString(fileInput, 'scale input')
-      // console.log(this.constructor.name, 'initialCommandFilters ALPHA commandFilesInput', id, fileInput)
 
       const colorArgs: VisibleCommandFilterArgs = { 
         ...args, 
-        contentColors: [colorBlack, colorBlack], 
+        contentColors: [RGB_BLACK, RGB_BLACK], 
         outputSize: maxSize
       }
-      // console.log(this.constructor.name, 'initialCommandFilters maxSize', maxSize)
       commandFilters.push(...this.colorBackCommandFilters(colorArgs, `${containerInput}-back`))
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
 
@@ -271,10 +273,8 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     const { isDefault, id } = this
     const alpha = this.requiresAlpha(args)
     const tweeningColor = this.isTweeningColor(args)
-    if (isDefault && !alpha) {
-      // console.log(this.constructor.name, 'commandFiles NONE', id, isDefault, alpha, tweeningColor)
-      return []
-    }
+    if (isDefault && !alpha) return []
+    
     const { asset } = this
     const { path: assetPath } = asset
     const { contentColors: colors = [], containerRects, time, videoRate } = args
@@ -286,12 +286,12 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     const { width: maxWidth, height: maxHeight} = maxSize
 
     let [forecolor] = colors
-    if (alpha) forecolor = colorWhite
-    else if (tweeningColor) forecolor = colorBlack
+    if (alpha) forecolor = RGB_WHITE
+    else if (tweeningColor) forecolor = RGB_BLACK
    
-    let fill = 'none'
-    if (isDefault) fill = colorWhite
-    else if (alpha) fill = colorBlackOpaque
+    let fill = NONE
+    if (isDefault) fill = RGB_WHITE
+    else if (alpha) fill = RGBA_BLACK
 
     const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
@@ -299,7 +299,7 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
 
     const transformAttribute = rectTransformAttribute(intrinsicRect, { ...POINT_ZERO, ...maxSize })
     const tags: string[] = []
-    tags.push(`<svg viewBox='0 0 ${maxWidth} ${maxHeight}' xmlns='${NamespaceSvg}'>`)
+    tags.push(`<svg viewBox='0 0 ${maxWidth} ${maxHeight}' xmlns='${NAMESPACE_SVG}'>`)
     tags.push(`<g ${dimensionsString} transform='${transformAttribute}' >`)
     tags.push(`<rect ${dimensionsString} fill='${fill}'/>`)
     if (!isDefault) tags.push(`<path d='${assetPath}' fill='${forecolor}'/>`)
@@ -307,8 +307,8 @@ export class ServerShapeInstanceClass extends WithShapeInstance implements Serve
     tags.push('</svg>')
     const content = tags.join('')
     const type = SVG
-    const fileName = hashMd5(content)
-    const directory = ENVIRONMENT.get(ENV.ApiDirCache)
+    const fileName = fileNameFromContent(content)
+    const directory = ENV.get(ENV_KEY.ApiDirCache)
     const name = [fileName, DOT, type].join('')
     const file = path.resolve(directory, name)
 

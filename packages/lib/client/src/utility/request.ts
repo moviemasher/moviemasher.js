@@ -1,16 +1,22 @@
 import type { Endpoint, EndpointRequest, JsonRecordDataOrError } from '@moviemasher/runtime-shared'
 
-import { GET, assertMethod, ContentTypeHeader, JsonMimetype, POST, FormDataMimetype, isRequest, requestUrl, QUESTION, SLASH, assertPopulatedString, COLON, DOT, ProtocolHttp, isEndpoint } from '@moviemasher/lib-shared'
-import { ERROR, errorCaught, errorPromise, isDefiniteError, isNumeric, isUndefined } from '@moviemasher/runtime-shared'
+import { assertPopulatedString, assertTrue, isEndpoint } from '@moviemasher/lib-shared/utility/guards.js'
 import { ClientImageDataOrError, ClientMediaRequest, ServerProgress } from '@moviemasher/runtime-client'
-import { isClientImage } from '../Client/ClientGuards.js'
+import { HTTP, COLON, CONTENT_TYPE, ERROR, GET, LIST, MIME_JSON, MIME_MULTI, POST, PUT, QUESTION, SLASH, errorCaught, errorPromise, isDefiniteError, isNumeric, isObject, isPopulatedString, isUndefined, jsonStringify, errorThrow } from '@moviemasher/runtime-shared'
+import { isClientImage } from '../guards/ClientGuards.js'
+import { requestUrl } from '@moviemasher/lib-shared/utility/request.js'
+
+export const isRequest = (value: any): value is EndpointRequest => (
+  isObject(value)
+  && 'endpoint' in value
+  && (isPopulatedString(value.endpoint) || isEndpoint(value.endpoint))
+)
 
 const delayPromise = (seconds: number): Promise<void> => {
   return new Promise(resolve => {
     setTimeout(() => resolve(), seconds * 1000)
   })
 }
-
 
 const endpointFromUrl = (url: string): Endpoint => {
   const endpoint: Endpoint = {}
@@ -35,13 +41,10 @@ const urlBase = (): string => {
   if (_urlBase) return _urlBase
   
   const { document } = globalThis
-  if (document) {
-    const { baseURI } = document
-    return _urlBase = baseURI
-  }
-
+  if (document) return _urlBase = document.baseURI
+  
   return _urlBase = [
-    ProtocolHttp, COLON, SLASH, SLASH, 'localhost', SLASH
+    HTTP, COLON, SLASH, SLASH, 'localhost', SLASH
   ].join('')
 }
 
@@ -69,78 +72,20 @@ const requestSearch = (values: any = {}): string => {
   return `?${new URLSearchParams(values)}`
 }
 
-export const endpointUrl = (endpoint: Endpoint): string => {
-  const absoluteEndpoint = endpointAbsolute(endpoint)
-  const { port, pathname, hostname, protocol, search } = absoluteEndpoint
-
-  assertPopulatedString(hostname)
-  assertPopulatedString(protocol)
-  
-  const bits = [protocol, SLASH, SLASH, hostname]
-  if (isNumeric(port)) bits.push(COLON, String(port))
-  const url = bits.join('')
-  if (!pathname) return url
-
-  const combined = pathJoin(url, pathname) 
-  if (!search) return combined
-
-  return [combined, search].join('')
-}
-
 const urlHasProtocol = (url: string) => url.includes(COLON)
 
-const urlResolve = (url: string, path?: string): string => {
-  if (!path) return url
+const urlResolve = (baseUrl: string, path?: string): string => {
+  if (!path) return baseUrl
 
-  const [first, second] = path
-  if (first === SLASH) return path
-
-  if (first !== DOT || second === SLASH) return pathJoin(url, path)
-
-  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
-  const urlBits = urlStripped.split(SLASH)
-  path.split(SLASH).forEach(component => {
-    if (component === `${DOT}${DOT}`) urlBits.pop()
-    else urlBits.push(component)
-  })
-  return urlBits.join(SLASH)
+  try { return new URL(path, baseUrl).href }
+  catch (error) { errorThrow(error) }
 }
 
 const endpointAbsolute = (endpoint: Endpoint = {}): Endpoint => {
-  const { 
-    search, 
-    protocol: providedProtocol, 
-    hostname: providedHostname, 
-    pathname: providedPathname,
-    port: providedPort
-  } = endpoint
+  const { hostname, pathname, search = ''} = endpoint
+  if (hostname) return endpoint
 
-  const url = new URL(urlBase())
-  const { 
-    protocol: baseProtocol, 
-    hostname: baseHostname, 
-    port: basePort, 
-    pathname: basePathname
-  } = url
-
-
-  const protocol = providedProtocol || baseProtocol
-  const hostname = providedHostname || baseHostname
-  const port = providedHostname ? providedPort : basePort
-  const pathname = urlResolve(basePathname, providedPathname) 
-  
-  const result: Endpoint = { search, protocol, hostname, pathname }
-  if (isNumeric(port)) result.port = Number(port)
-  return result
-}
-
-const urlPromise = (url: string, request: ClientMediaRequest) => {
-  const { init } = request 
-  if (!init) return Promise.resolve(url) 
-
-  return fetch(url, init)
-    .then(response => response.blob())
-    .then(blob => request.objectUrl = URL.createObjectURL(blob))
+  return endpointFromUrl(urlResolve(urlBase(), [pathname, search].join('')))
 }
 
 const requestUrlInit = (endpointRequest: EndpointRequest, params?: any): [string, RequestInit] => {
@@ -156,7 +101,7 @@ const requestUrlInit = (endpointRequest: EndpointRequest, params?: any): [string
 
   // make sure init.method is a valid string
   const { method = POST } = init
-  assertMethod(method)
+  assertTrue([GET, POST, PUT, LIST].includes(method))
 
   init.method ||= method
 
@@ -167,23 +112,42 @@ const requestUrlInit = (endpointRequest: EndpointRequest, params?: any): [string
     } else if (isUndefined(init.body)) {
       // make sure we have headers with content type
       init.headers ||= {}
-      const { [ContentTypeHeader]: contentType = JsonMimetype } = init.headers
+      const { [CONTENT_TYPE]: contentType = MIME_JSON } = init.headers
 
-      // populate body with params as JSON or FormData
+      // populate body with params as json string or FormData
       switch (contentType) {
-        case JsonMimetype:
-          init.headers[ContentTypeHeader] ||= contentType
-          init.body = JSON.stringify(params)
+        case MIME_JSON:
+          init.headers[CONTENT_TYPE] ||= contentType
+          init.body = jsonStringify(params)
           break
-        case FormDataMimetype:
+        case MIME_MULTI:
           // not sure why this needs to be deleted?
-          delete init.headers[ContentTypeHeader]
+          delete init.headers[CONTENT_TYPE]
           init.body = requestFormData(params)
           break
       }
     }
   }
   return [endpointUrl(object), init]
+}
+
+export const endpointUrl = (endpoint: Endpoint): string => {
+  const absoluteEndpoint = endpointAbsolute(endpoint)
+  const { port, pathname, hostname, protocol, search } = absoluteEndpoint
+
+  assertPopulatedString(hostname)
+  assertPopulatedString(protocol)
+  
+  const bits = [protocol, SLASH, SLASH, hostname]
+  if (isNumeric(port)) bits.push(COLON, String(port))
+  const url = bits.join('')
+  if (!pathname) return url
+
+  const combined = pathJoin(url, pathname) 
+  if (!search) return combined
+
+  const joined = [combined, search].join('')
+  return joined
 }
 
 export const requestCallbackPromise = async (request: EndpointRequest, progress?: ServerProgress, params?: any): Promise<JsonRecordDataOrError> => {
@@ -206,17 +170,22 @@ export const requestCallbackPromise = async (request: EndpointRequest, progress?
 export const requestJsonRecordPromise = (request: EndpointRequest, params?: any): Promise<JsonRecordDataOrError> => {
   const [url, init] = requestUrlInit(request, params)
   try {
-    // console.debug('requestJsonRecordPromise', url, init, request, params)
     return fetch(url, init).then(response => response.json()).then(orError => {
       if (isDefiniteError(orError)) return orError
 
-      const result = orError.data ? orError : { data: orError }
-      // console.debug('requestJsonRecordPromise response', result, orError)
-      return result
-
+      return orError.data ? orError : { data: orError }
     }).catch(error => errorCaught(error))
   }
   catch (error) { return errorPromise(errorCaught(error).error.message) }
+}
+
+const objectUrlPromise = (url: string, request: ClientMediaRequest) => {
+  const { init } = request 
+  if (!init) return Promise.resolve(url) 
+
+  return fetch(url, init)
+    .then(response => response.blob())
+    .then(blob => request.objectUrl = URL.createObjectURL(blob))
 }
 
 export const requestImagePromise = (request: ClientMediaRequest): Promise<ClientImageDataOrError> => {
@@ -226,7 +195,7 @@ export const requestImagePromise = (request: ClientMediaRequest): Promise<Client
   const url = request.objectUrl || requestUrl(request)
   if (!url) return errorPromise(ERROR.Url)
 
-  const loadPromise = urlPromise(url, request).then(url => {
+  const loadPromise = objectUrlPromise(url, request).then(url => {
     return new Promise<ClientImageDataOrError>(resolve => {
       const data = new Image()
       data.src = url

@@ -3,8 +3,7 @@ import type { OutputOptions, StringDataOrError, ValueRecord, VideoOutputOptions,
 import type { CommandOptions } from '../../encode/MashDescriberTypes.js'
 import type { Command } from './Command.js'
 
-import { AVTypeAudio, AVTypeVideo } from '@moviemasher/lib-shared'
-import { ERROR, namedError, errorCaught, errorPromise, isNumber } from '@moviemasher/runtime-shared'
+import { AUDIO, ERROR, VIDEO, errorCaught, errorPromise, isNumber, namedError } from '@moviemasher/runtime-shared'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import path from 'path'
 import { commandError } from '../../Utility/Command.js'
@@ -124,8 +123,8 @@ export const commandInstance = (args: CommandOptions): Command => {
   if (inputs) ffmpegInputs(command, inputs)
 
 
-  if (avType === AVTypeVideo) command.noAudio()
-  else if (avType === AVTypeAudio) command.noVideo()
+  if (avType === VIDEO) command.noAudio()
+  else if (avType === AUDIO) command.noVideo()
   
   // console.log("commandInstance GRAPHFILTERS", commandFilters)
 
@@ -136,36 +135,3 @@ export const commandInstance = (args: CommandOptions): Command => {
 }
 
 export const commandPath = (path = 'ffmpeg') => { ffmpeg.setFfmpegPath(path) }
-
-
-/*
-from RenderingProcessClass
-
-if (upload) {
-  const [clip] = this.mashAsset.tracks[0].clips
-  const { contentId } = clip
-  
-  const definition = assets.fromId(contentId)
-  if (isContentAsset(definition)) {
-    const { source: file, loadType: type } = definition
-    const { preloader, args } = this
-    const { outputDirectory } = args
-    const graphFile: GraphFile = {
-      input: true, definition, type, file
-    }
-    assertLoadType(type)
-    
-    const url = preloader.key(graphFile)
-    const infoPath = preloader.infoPath(url)
-    
-    if (fs.existsSync(infoPath)) {
-      // console.log('url', url, 'infoPath', infoPath)
-      return fs.promises.copyFile(infoPath, path.join(outputDirectory, `upload.${ExtensionLoadedInfo}`)).then(() => {
-        return runResult
-      })
-    }
-    
-  }
-}
-
-*/

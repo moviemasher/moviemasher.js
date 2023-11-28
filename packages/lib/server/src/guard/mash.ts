@@ -1,6 +1,6 @@
 import type { ServerMashAsset } from '../Types/ServerMashTypes.js'
 
-import { isMashAsset } from '@moviemasher/lib-shared'
+import { isMashAsset } from '@moviemasher/lib-shared/utility/guards.js'
 import { isServerAsset } from '@moviemasher/runtime-server'
 import { errorThrow } from '@moviemasher/runtime-shared'
 

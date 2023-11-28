@@ -1,33 +1,40 @@
-<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/head.md) -->
-<!-- The below content is automatically added from ../../../dev/documentation/snippet/head.md -->
+<!-- MAGIC:START (FILEMD:src=md/snippet/head.md) -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor and encoder_
+_TypeScript video editor and encoder_
 - **edit** video, audio, and images in [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
 - **encode** high resolution media files using [FFmpeg](https://ffmpeg.org)
 - **customize** the editor with standard [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
-- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
+- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent) 
+
 <!-- MAGIC:END -->
 
-## Server Library
-This module is an
-[ExpressJS](https://expressjs.com)
-reference implementation of a server plug-in that utilizes the core
-[@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared)
-module.
 
-It exports classes and interfaces that fulfill half a dozen APIs utilized by a client implementation like
-[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client).
-Its imports are all specified as peer dependencies.
+<!-- MAGIC:START (FILEMD:src=md/module/lib-server.md) -->
+## lib-server
 
-This server implementation utilizes
-[SQLite](https://www.sqlite.org/index.html),
-[Fluent FFmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg),
-[Node Media Server](https://github.com/illuspas/Node-Media-Server), and
-[WebRTC](https://github.com/node-webrtc/node-webrtc) to support its data, rendering, and streaming APIs.
+The 
+[@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server)
+module can be imported directly into your project to add video encoding, decoding, 
+and transcoding functionality. It exports types, interfaces, classes, and functions
+that support responding to server events. It requires an installation of 
+[FFmpeg](https://ffmpeg.org) with font and SVG support enabled, and 
+imports 
+[Fluent FFmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg)
+to interact with it. 
 
-<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../../dev/documentation/snippet/documentation.md -->
+This module is built from code and configuration available in the
+[Movie Masher Github Repository](https://github.com/moviemasher/moviemasher.js).
+The NPM distribution includes TypeScript source code files, as well as minified 
+JavaScript files intended to be imported 
+directly. Each source file is distributed individually as a
+separate JavaScript file. The JavaScript includes source maps to the 
+TypeScript for easier debugging. Some JSON data files are also included containing 
+default icons and assets. 
+
+<!-- MAGIC:END -->
+
+<!-- MAGIC:START (FILEMD:src=md/snippet/documentation.md) -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -35,10 +42,11 @@ In addition to this README, there is a simple
 more [extensive documentation](https://moviemasher.com/docs/index.html) available on
 [MovieMasher.com](https://moviemasher.com/). Inline documentation and code completion is
 also available when using a code editor that supports TypeScript and IntelliSense.
+
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILEMD:src=./dev/documentation/snippet/example-server.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=md/examples/server.md&stripMagic=true) -->
 ## Server Example
 
 The following shell command installs the server and required packages to your NPM project,
@@ -73,8 +81,7 @@ While the server is running, requests can be made to http://localhost:8570 follo
 This example installs an FFmpeg build that has limited rendering capabilities due to lack of support of SVG files. Typically a custom build is utilized instead. Learn more about integrating your own services in the [Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html).
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../../dev/documentation/snippet/foot.md -->
+<!-- MAGIC:START (FILEMD:src=md/snippet/foot.md) -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a
@@ -84,4 +91,5 @@ Further support is occassionally offered to particular projects on an hourly con
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
 and the web site is also needed. Please [send an email](mailto:connect34@moviemasher.com) to discuss ways to work on the project.
+
 <!-- MAGIC:END -->

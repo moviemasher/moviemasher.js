@@ -1,1 +1,1 @@
-export type GraphFileType = 'svg' | 'svgsequence' | 'txt'
+export type GraphFileType = 'svg' | 'sequence' | 'txt'

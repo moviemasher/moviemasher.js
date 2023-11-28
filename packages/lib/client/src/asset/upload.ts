@@ -1,7 +1,13 @@
-import { assertObject, assertPopulatedString, assertRequest, assertTrue } from '@moviemasher/lib-shared'
+import type { EndpointRequest, ListenersFunction, UnknownRecord } from '@moviemasher/runtime-shared'
+
+import { assertObject, assertPopulatedString, assertTrue } from '@moviemasher/lib-shared/utility/guards.js'
 import { EventUpload } from '@moviemasher/runtime-client'
-import { UnknownRecord, isDefiniteError } from '@moviemasher/runtime-shared'
-import { requestJsonRecordPromise } from '../utility/request.js'
+import { POST, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
+import { isRequest, requestJsonRecordPromise } from '../utility/request.js'
+
+function assertRequest(value: any, name?: string): asserts value is EndpointRequest {
+  if (!isRequest(value)) errorThrow(value, 'Request', name)
+}
 
 export class UploadHandler {
   static handleUpload(event: EventUpload): void {
@@ -16,7 +22,7 @@ export class UploadHandler {
 
     progress?.do(sizeMb + 1)
     const jsonRequest = {
-      endpoint: '/upload/request', init: { method: 'POST' }
+      endpoint: '/upload/request', init: { method: POST }
     }
     detail.promise = requestJsonRecordPromise(jsonRequest, { name, size, type }).then(orError => {
       if (isDefiniteError(orError)) return orError
@@ -48,7 +54,6 @@ export class UploadHandler {
 }
 
 // listen for client upload event
-export const ClientAssetUploadListeners = () => ({
+export const ClientAssetUploadListeners: ListenersFunction = () => ({
   [EventUpload.Type]: UploadHandler.handleUpload
 })
-

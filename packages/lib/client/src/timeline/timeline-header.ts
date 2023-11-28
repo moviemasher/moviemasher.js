@@ -1,28 +1,38 @@
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { ClientActionRemove } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { HeaderElement } from '../Base/LeftCenterRight.js'
+import { VIEW } from '@moviemasher/runtime-client'
+import { html } from 'lit-html'
+import { HeaderBase } from '../base/LeftCenterRight.js'
+import { ENCODE } from '@moviemasher/runtime-shared'
 
-export const TimelineHeaderName = 'movie-masher-timeline-header'
-export class TimelineHeaderElement extends HeaderElement {
+const TimelineHeaderTag = 'movie-masher-timeline-header'
+/**
+ * @category Component
+ */
+export class TimelineHeaderElement extends HeaderBase {
   protected override rightContent(htmls: Htmls): OptionalContent {
+    this.importTags('movie-masher-action-server')
     this.importTags('movie-masher-action-client')
     htmls.push(html`
+      <movie-masher-action-server
+        detail='${ENCODE}'
+        icon='${ENCODE}'
+        string='${ENCODE}'
+      ></movie-masher-action-server>
       <movie-masher-action-client
-        detail='${ClientActionRemove}'
-        icon='remove'
+        icon='visible' 
+        string='${VIEW}'
+        detail='${VIEW}'
       ></movie-masher-action-client>
     `)
     return super.rightContent(htmls)
   }
 }
 
-// register web component as custom element
-customElements.define(TimelineHeaderName, TimelineHeaderElement)
+customElements.define(TimelineHeaderTag, TimelineHeaderElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [TimelineHeaderName]: TimelineHeaderElement
+    [TimelineHeaderTag]: TimelineHeaderElement
   }
 }

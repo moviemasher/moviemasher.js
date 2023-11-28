@@ -1,15 +1,21 @@
 import type { Icon } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { OptionalContent } from '../declarations.js'
+import type { OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { EventIcon, MovieMasher } from '@moviemasher/runtime-client'
+import { EventIcon, MOVIEMASHER } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from '../Base/Component.js'
+import { html } from 'lit-html'
+import { Component } from '../base/Component.js'
 
 const IconElementTimeout = 1000
 
+
+const IconTag = 'movie-masher-component-icon'
+
+/**
+ * @category Component
+ */
 export class IconElement extends Component {
   icon = 'app'
 
@@ -22,23 +28,18 @@ export class IconElement extends Component {
 
   private get iconPromiseInitialize(): Promise<Icon | void> {
     const promise = this.iconEventPromise
-    if (!promise) {
-      // console.log(this.tagName, 'iconPromiseInitialize NO PROMISE')
-      return new Promise<Icon | void>(resolve => {
-        setTimeout(() => { resolve(this.iconPromiseInitialize) }, IconElementTimeout)
-      })
-    }
-
+    // support adding in a slot
+    if (!promise) return new Promise<Icon | void>(resolve => {
+      setTimeout(() => { resolve(this.iconPromiseInitialize) }, IconElementTimeout)
+    })
     return promise.then(orError => {
       if (isDefiniteError(orError)) {
-        // console.log(this.tagName, 'iconPromiseInitialize ERROR', orError.error)
+        console.log(this.tagName, 'iconPromiseInitialize ERROR', orError.error)
         return 
       }
-
       const { data: icon } = orError
       const { imageElement, imgUrl, string, svgElement, svgString } = icon
       if (string) {
-        // console.log(this.constructor.name, 'iconPromiseInitialize STRING', string)
         this.iconContent = string
       } else if (imgUrl) this.iconContent =  html`<img src='${imgUrl}' />`
       else {
@@ -47,32 +48,25 @@ export class IconElement extends Component {
         if (element) {
           element.setAttribute('part', 'element')
           this.iconContent = element
-        } else {
-          this.icon = ''
-          // console.warn(this.constructor.name, 'iconPromiseInitialize with no icon', this.icon)
-        }
+        } else this.icon = ''
       } 
-      return icon
+      this.requestUpdate() 
     })
   }
 
   private get iconEventPromise() {
     const { icon } = this
     const event = new EventIcon(icon) 
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     return event.detail.promise
   }
 
   protected override get defaultContent(): OptionalContent {
     const { iconContent, icon } = this
-    if (!iconContent) {
-      if (icon) this.iconPromise.then(iconOrVoid => { 
-        // console.log(this.constructor.name, this.icon, 'render', !!this.content)
-        if (iconOrVoid) this.requestUpdate() 
-      })
-      return html`<div></div>`
-    }
-    return iconContent 
+    if (iconContent) return iconContent 
+    
+    if (icon) this.iconPromise
+    return html`<div></div>`
   }
 
   override willUpdate(changedProperties: PropertyValues<this>) {
@@ -82,8 +76,8 @@ export class IconElement extends Component {
       delete this._iconPromise
     }
   }
+
   static override properties: PropertyDeclarations = {
-    // ...Component.properties,
     icon: { type: String }
   }
 
@@ -102,7 +96,7 @@ export class IconElement extends Component {
   ]
 
   private static svgStringClean(svgString: string) {
-    // extract just the SVG tag
+    // extract just the svg tag
     const svgRegex = /<svg[^>]*>([\s\S]*?)<\/svg>/
     const svgMatch = svgString.match(svgRegex)
     let string = svgMatch ? svgMatch[0] : ''
@@ -145,5 +139,10 @@ export class IconElement extends Component {
   }
 }
 
-// register web component as custom element
-customElements.define('movie-masher-component-icon', IconElement)
+customElements.define(IconTag, IconElement)
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [IconTag]: IconElement
+  }
+}

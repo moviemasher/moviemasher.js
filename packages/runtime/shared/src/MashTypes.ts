@@ -1,5 +1,5 @@
 import { AVType } from './AVType.js'
-import { Asset, AssetObject } from './AssetTypes.js'
+import { Asset, AssetObject } from './AssetInterfaces.js'
 import { AudioAssetObject } from './AudioAsset.js'
 import { Clips, Clip } from './Clip.js'
 import { ClipObject } from './ClipObject.js'

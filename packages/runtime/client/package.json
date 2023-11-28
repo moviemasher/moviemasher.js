@@ -1,17 +1,17 @@
 {
   "name": "@moviemasher/runtime-client",
-  "version": "5.1.2",
-  "description": "JavaScript video editor and encoder - version 5.1.2",
+  "version": "5.2.0",
+  "description": "Movie Masher client types, constants, and functions",
 
 
   "files": ["./dist/"],
   "type": "module",
-  "main": "./index.js",
-  "module": "./index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  
+
   "dependencies": {
-    "@moviemasher/runtime-shared": "5.1.2"
+    "@moviemasher/runtime-shared": "5.2.0"
   },
   "license": "MIT",
   "author": {
@@ -35,8 +35,6 @@
   ],
   "scripts": {
     "script": "run-s",
-    "move": "mv dist/index.js index.js",
-    "build": "run-s package move",
-    "package": "rollup --config dev/rollup/package.config.mjs"
+    "build": "rollup --config dev/rollup.config.mjs"
   }
 }

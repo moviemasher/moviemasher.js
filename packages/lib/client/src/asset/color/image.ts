@@ -1,12 +1,15 @@
 import type { ClientAsset, ClientColorAsset, ClientColorInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
-import type { ColorAsset, ColorAssetObject, ColorInstance, ColorInstanceObject, InstanceArgs, PropertySize, Rect, Size, Time, Value } from '@moviemasher/runtime-shared'
+import type { ColorAsset, ColorAssetObject, ColorInstance, ColorInstanceObject, InstanceArgs, ListenersFunction, PropertySize, Rect, Size, Time, Value } from '@moviemasher/runtime-shared'
 
-import { ColorAssetMixin, ColorInstanceMixin, DefaultContentId, NamespaceSvg, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, centerPoint, sizeCover } from '@moviemasher/lib-shared'
+import { ColorAssetMixin, VisibleAssetMixin, } from '@moviemasher/lib-shared/asset/mixins.js'
+import { ColorInstanceMixin, VisibleInstanceMixin, } from '@moviemasher/lib-shared/instance/mixins.js'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
+import { centerPoint, sizeCover } from '@moviemasher/lib-shared/utility/rect.js'
 import { EventAsset } from '@moviemasher/runtime-client'
-import { COLOR, IMAGE, isAssetObject } from '@moviemasher/runtime-shared'
-import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../Client/SvgFunctions.js'
-import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
-import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { COLOR, DEFAULT_CONTENT_ID, HEIGHT, IMAGE, NAMESPACE_SVG, NONE, WIDTH, isAssetObject } from '@moviemasher/runtime-shared'
+import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../utility/svg.js'
+import { ClientVisibleAssetMixin } from '../../mixins/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../mixins/ClientVisibleInstanceMixin.js'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
 import { ClientAssetClass } from '../ClientAssetClass.js'
 
@@ -46,7 +49,7 @@ export class ClientColorAssetClass extends WithColorAsset implements ClientColor
   private static _defaultAsset?: ClientColorAsset
   private static get defaultAsset(): ClientColorAsset {
     return this._defaultAsset ||= new ClientColorAssetClass({ 
-      id: DefaultContentId, type: IMAGE, source: COLOR, label: 'Color',
+      id: DEFAULT_CONTENT_ID, type: IMAGE, source: COLOR, label: 'Color',
     })
   }
 
@@ -54,7 +57,7 @@ export class ClientColorAssetClass extends WithColorAsset implements ClientColor
     const { detail } = event
     const { assetObject, assetId } = detail
     
-    const isDefault = assetId === DefaultContentId
+    const isDefault = assetId === DEFAULT_CONTENT_ID
     if (!(isDefault || isAssetObject(assetObject, IMAGE, COLOR))) return
       
     event.stopImmediatePropagation()
@@ -64,7 +67,7 @@ export class ClientColorAssetClass extends WithColorAsset implements ClientColor
 }
 
 // listen for image/color asset event
-export const ClientColorImageListeners = () => ({ 
+export const colorClientListeners: ListenersFunction = () => ({ 
   [EventAsset.Type]: ClientColorAssetClass.handleAsset 
 })
 
@@ -87,16 +90,16 @@ export class ClientColorInstanceClass extends WithColorInstance implements Clien
     const [color] = this.tweenValues('color', time, range)
     assertPopulatedString(color)
 
-    const svg = globalThis.document.createElementNS(NamespaceSvg, 'rect')
-    svg.setAttribute('width', String(width))
-    svg.setAttribute('height', String(height))
+    const svg = globalThis.document.createElementNS(NAMESPACE_SVG, 'rect')
+    svg.setAttribute(WIDTH, String(width))
+    svg.setAttribute(HEIGHT, String(height))
     svg.setAttribute('fill', pixelColor(color))
     svg.setAttribute('x', String(x))
     svg.setAttribute('y', String(y))
     return Promise.resolve(svg)
   }
 
-  override pathElement(rect: Rect, forecolor = 'none'): SvgItem {
+  override pathElement(rect: Rect, forecolor = NONE): SvgItem {
     return svgPolygonElement(rect, '', forecolor)
   }
 }

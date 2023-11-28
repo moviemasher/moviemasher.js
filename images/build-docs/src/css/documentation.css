@@ -1,0 +1,160 @@
+
+
+article {
+  display: grid;
+  padding-inline: var(--gap-section);
+  overflow-y: auto;
+  color: var(--fore-content);
+  min-height: 0px;
+  width: fit-content;
+  max-width: var(--width-max-section);
+  min-width: var(--width-min-section);
+  scroll-padding-top: var(--gap-section);
+}
+
+:root {
+  --gap-section: 40px;
+  --pad-section: 10px;
+  --radius-section: 10px;
+  --space: 5px;
+  --width-min-section: 460px;
+  --width-max-section: 800px;
+  --width-nav: calc(100% - (var(--nav-label-size) + var(--gap-section)));
+}
+
+section {
+  border-radius: var(--radius-section);
+  border: var(--back-chrome) 1px solid;
+  margin-top: var(--gap-section);
+  text-align: left;
+  min-width: var(--width-min-section);
+  max-width: var(--width-max-section);
+}
+
+section:last-child {
+  margin-bottom: var(--gap-section);
+}
+
+section .section {
+  padding: var(--pad-section);
+}
+
+
+section .section pre > code {
+  min-width: max-content;
+}
+
+section .section > * {
+  margin: 0px;
+  margin-bottom: 0.75rem;
+}
+section .section pre {
+  overflow-x: scroll;
+  line-height: 1.3em;
+  padding: 0px;
+}
+
+section .section > *:last-child {
+  margin-bottom: 0;
+}
+
+section > a > h2 {
+  background-color: var(--back-chrome);
+  color: var(--fore-chrome);
+  border-radius: var(--radius-section) var(--radius-section) 0px 0px;
+  padding: var(--pad-section);
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.5em;
+}
+
+section h3, section h2, section h4 {
+  color: var(--fore-chrome);
+  font-size: 1rem;
+  margin: 0px;
+}
+
+section hr {
+  border: 0;
+  border-top: var(--fore-content) 1px solid;
+  height: 1px;
+}
+
+section .section svg.diagram {
+  width: 100%;
+  height: auto;
+}
+section .section svg.diagram text {
+  font-family: sans-serif;
+}
+section .section a>svg,
+section .section a:link>svg,
+section .section a:active>svg,
+section .section a:visited>svg,
+section .section a:hover>svg {
+  color: var(--on-content);
+}
+
+section hr {
+  border-top: var(--fore-chrome) 1px solid;
+}
+
+.section table {
+  width: 100%;
+  border-collapse: collapse;
+} 
+
+.section table td {
+  padding-right: var(--space);
+}
+.section table > thead {
+  border-bottom: var(--fore-chrome) 1px solid;
+}
+
+.section table > thead > tr > th:last-child {
+  padding-left: var(--space);
+  width: 100%;
+}
+
+.section table tbody tr:first-child td {
+  padding-top: var(--space);
+}
+
+/* 
+
+fieldset {
+  border: var(--fore-content) 1px solid;
+  min-width: auto;
+  overflow-x: scroll;
+  background-color: var(--code-background);
+}
+
+legend {
+  background-color: var(--back-content);
+  padding: 0px 10px;
+}
+
+fieldset pre {
+  padding: 0px;
+  margin: 0px;
+}
+ */
+
+
+a:link, a:visited {
+  text-decoration: none;
+  color: var(--on-content);
+  fill: var(--on-content);
+}
+
+a:hover, a:active {
+  text-decoration: underline;
+  color: var(--over-content);
+  fill: var(--over-content);
+}
+
+@supports (-webkit-touch-callout: none) {
+  body {
+    height: -webkit-fill-available;
+  }
+}

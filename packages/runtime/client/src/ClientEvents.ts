@@ -1,22 +1,21 @@
-import type { AssetObject, AssetObjects, AssetObjectsResponse, AssetParams, AssetType, Assets, DataOrError, DataType, DecodeOptions, Decoding, DecodingType, EncodeArgs, EncodeOptions, Encoding, EncodingType, EndpointRequest, Importers, ManageType, ManageTypes, MashAssetObject, NumberSetter, Ordered, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, StringDataOrError, Strings, TargetIds, Time, TimeRange, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
-import type { Action } from './ActionTypes.js'
+import type { AssetObject, AssetObjects, AssetObjectsResponse, AssetParams, AssetType, Assets, DataOrError, DataType, DecodeOptions, Decoding, DecodingType, EncodeArgs, EncodeOptions, Encoding, EncodingType, EndpointRequest, Importers, ManageType, ManageTypes, MashAssetObject, NumberSetter, Ordered, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, StringDataOrError, StringRecord, Strings, TargetIds, Time, TimeRange, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
 import type { ClientAsset, ClientAssetObjects, ClientAssets } from './ClientAsset.js'
-import type { ClientClip, ClientClips, ClientMashAsset, ClientTrack } from './ClientMashTypes.js'
-import type { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientMediaRequest, ClientVideoDataOrError } from './ClientMedia.js'
+import type { ClientClips, ClientMashAsset } from './ClientMashTypes.js'
+import type { ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, ClientMediaRequest, ClientVideoDataOrError, SvgOrImageDataOrError } from './ClientMedia.js'
+import type { ClientRawAsset } from './ClientRawTypes.js'
+import type { Edit } from './EditTypes.js'
 import type { ClipLocation } from './Masher.js'
 import type { SelectedProperties } from './SelectedProperty.js'
-import type { Previews, SvgOrImage } from './Svg.js'
+import type { PreviewElements } from './Svg.js'
 import type { TranslateArgs } from './Translate.js'
 
-import { TARGET_ASSET, JOB_DECODE, JOB_ENCODE, JOB_TRANSCODE, assertAsset } from '@moviemasher/runtime-shared'
-import { MovieMasher } from './MovieMasher.js'
-import { ClientRawAsset } from './ClientRawTypes.js'
+import { ASSET_TARGET, DECODE, ENCODE, TRANSCODE, isString } from '@moviemasher/runtime-shared'
 
 export class NumberEvent extends CustomEvent<number> {}
 export class StringEvent extends CustomEvent<string> {}
 
 export type ClientAction = string
-export type ServerAction = string
+export type ServerAction = string 
 
 export interface ServerProgress {
   do: NumberSetter
@@ -26,10 +25,10 @@ export interface ServerProgress {
 
 /**
  * Dispatch to initiate a decode request for an asset.
+ * @category ClientEvents
  */
-
 export class EventClientDecode extends CustomEvent<EventClientDecodeDetail> {
-  static Type = JOB_DECODE
+  static Type = DECODE
   constructor(asset: ClientRawAsset, decodingType: DecodingType, options?: DecodeOptions, progress?: ServerProgress) {
     super(EventClientDecode.Type, { detail: { asset, options, decodingType, progress } })
   }
@@ -45,9 +44,10 @@ export interface EventClientDecodeDetail {
 
 /**
  * Dispatch to initiate an encode request for a mash.
+ * @category ClientEvents
  */
 export class EventClientEncode extends CustomEvent<EventClientEncodeDetail> {
-  static Type = JOB_ENCODE
+  static Type = ENCODE
   constructor(mashAssetObject: MashAssetObject, encodingType?: EncodingType, encodeOptions?: EncodeOptions, progress?: ServerProgress) { 
     super(EventClientEncode.Type, { detail: { mashAssetObject, encodingType, encodeOptions, progress } }) 
   }
@@ -60,9 +60,10 @@ export interface EventClientEncodeDetail extends EncodeArgs {
 
 /**
  * Dispatch to initiate a transcoding request for an asset.
+ * @category ClientEvents
  */
 export class EventClientTranscode extends CustomEvent<EventClientTranscodeDetail> {
-  static Type = JOB_TRANSCODE
+  static Type = TRANSCODE
   constructor(asset: ClientRawAsset, transcodingType: TranscodingType, options?: TranscodeOptions, progress?: ServerProgress) {
     super(EventClientTranscode.Type, { detail: { asset, transcodingType, options, progress } })
   }
@@ -78,6 +79,7 @@ export interface EventClientTranscodeDetail {
 
 /**
  * Dispatch to initiate a save request for an asset.
+ * @category ClientEvents
  */
 export class EventSave extends CustomEvent<EventSaveDetail> {
   static Type = 'save'
@@ -94,6 +96,7 @@ export interface EventSaveDetail {
 
 /**
  * Dispatch to initiate an upload request, optionally replacing an existing asset.
+ * @category ClientEvents
  */
 export class EventUpload extends CustomEvent<EventUploadDetail> {
   static Type = 'upload'
@@ -116,6 +119,7 @@ export interface EventUploadDetail {
 
 /**
  * Dispatch to retrieve the time range of the mash's selected clip.
+ * @category ClientEvents
  */
 export class EventTimeRange extends CustomEvent<{ timeRange?: TimeRange}> {
   static Type = 'time-range'
@@ -124,6 +128,7 @@ export class EventTimeRange extends CustomEvent<{ timeRange?: TimeRange}> {
 
 /**
  * Dispatch to retrieve the total number of frames in the mash.
+ * @category ClientEvents
  */
 export class EventFrames extends CustomEvent<{ frames: number}> {
   static Type = 'frames'
@@ -133,6 +138,7 @@ export class EventFrames extends CustomEvent<{ frames: number}> {
 }
 /**
  * Dispatched when the total number of frames in the mash changes.
+ * @category ClientEvents
  */
 export class EventChangedFrames extends NumberEvent {
   static Type = 'changed-frames'
@@ -141,6 +147,7 @@ export class EventChangedFrames extends NumberEvent {
 
 /**
  * Dispatch to retrieve the mash's current frame. 
+ * @category ClientEvents
  */
 export class EventMashTime extends CustomEvent<{ time?: Time }> {
   static Type = 'mash-time'
@@ -149,6 +156,7 @@ export class EventMashTime extends CustomEvent<{ time?: Time }> {
 
 /**
  * Dispatch to change the mash's current frame.
+ * @category ClientEvents
  */
 export class EventChangeFrame extends NumberEvent {
   static Type = 'change-frame'
@@ -158,6 +166,7 @@ export class EventChangeFrame extends NumberEvent {
 /**
  * Dispatched when the mash's current frame has changed. 
  * Note that EventChangedFrame.Type value matches HTMLMediaElement.
+ * @category ClientEvents
  */
 export class EventChangedFrame extends NumberEvent {
   // to match HTMLMediaElement
@@ -167,6 +176,7 @@ export class EventChangedFrame extends NumberEvent {
 
 /**
  * Dispatch to retrieve data type from a property id.
+ * @category ClientEvents
  */
 export class EventDataType extends CustomEvent<EventDataTypeDetail> {
   static Type = 'data-type'
@@ -182,6 +192,7 @@ export interface EventDataTypeDetail {
 
 /**
  * Dispatch to retrieve a property value from a managed asset.  
+ * @category ClientEvents
  */
 export class EventManagedAssetScalar extends CustomEvent<EventManagedAssetScalarDetail> {
   static Type = 'managed-asset-scalar'
@@ -198,6 +209,7 @@ export interface EventManagedAssetScalarDetail {
 
 /** 
  * Dispatch to retrieve a promise that returns a managed asset's icon.
+ * @category ClientEvents
  */
 export class EventManagedAssetIcon extends CustomEvent<EventManagedAssetIconDetail> {
   static Type = 'managed-asset-icon'
@@ -215,6 +227,7 @@ export interface EventManagedAssetIconDetail {
 
 /** 
  * Dispatch when a managed asset's id has been changed.
+ * @category ClientEvents
  */
 export class EventManagedAssetId extends CustomEvent<EventManagedAssetIdDetail> {
   static Type = 'managed-asset-id'
@@ -230,6 +243,7 @@ export interface EventManagedAssetIdDetail {
 
 /**
  * Dispatch to release managed assets.
+ * @category ClientEvents
  */
 export class EventReleaseManagedAssets extends CustomEvent<ManageType | undefined> {
   static Type = 'release-managed-assets'
@@ -240,6 +254,7 @@ export class EventReleaseManagedAssets extends CustomEvent<ManageType | undefine
 
 /**
  * Dispatch to add clips to mash for assets.
+ * @category ClientEvents
  */
 export class EventAddAssets extends CustomEvent<EventAddAssetsDetail> {
   static Type = 'add-assets'
@@ -255,40 +270,28 @@ export interface EventAddAssetsDetail {
 
 /**
  * Dispatch to retrieve a managed asset from an asset id or object.
+ * @category ClientEvents
  */
 export class EventManagedAsset extends CustomEvent<AssetEventDetail> {
   static Type = 'managed-asset'
   constructor(assetIdOrObject: string | AssetObject, manageType?: ManageType) { 
-    const string = typeof assetIdOrObject === 'string' 
+    const string = isString(assetIdOrObject) 
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
     const assetObject = string ? undefined : assetIdOrObject
     const detail = { assetId, assetObject, manageType }
     super(EventManagedAsset.Type, { detail }) 
-  }
-
-  static Detail(assetIdOrObject: string | AssetObject, manageType?: ManageType): AssetEventDetail {
-    const event = new EventManagedAsset(assetIdOrObject, manageType)
-    MovieMasher.eventDispatcher.dispatch(event)
-    return event.detail
-  }
-
-  static asset(assetIdOrObject: string | AssetObject, manageType?: ManageType): ClientAsset {
-    const detail = EventManagedAsset.Detail(assetIdOrObject, manageType)
-    const { asset } = detail
-    assertAsset(asset)
-
-    return asset
   }
 }
 
 
 /**
  * Dispatch to retrieve an asset from an asset id or object.
+ * @category ClientEvents
  */
 export class EventAsset extends CustomEvent<AssetEventDetail> {
-  static Type = TARGET_ASSET
+  static Type = ASSET_TARGET
   constructor(assetIdOrObject: string | AssetObject) { 
-    const string = typeof assetIdOrObject === 'string' 
+    const string = isString(assetIdOrObject)
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
     const assetObject = string ? undefined : assetIdOrObject
     const detail = { assetId, assetObject }
@@ -305,6 +308,7 @@ export interface AssetEventDetail {
 
 /**
  * Dispatch to initiate a client action.
+ * @category ClientEvents
  */
 export class EventDoClientAction extends CustomEvent<ClientAction> {
   static Type = 'do-client-action'
@@ -315,6 +319,7 @@ export class EventDoClientAction extends CustomEvent<ClientAction> {
 
 /** 
  * Dispatched when the enabled state of a particular client action has changed.
+ * @category ClientEvents
  */
 export class EventChangedClientAction extends CustomEvent<ClientAction> {
   static Type = 'changed-client-action'
@@ -323,6 +328,7 @@ export class EventChangedClientAction extends CustomEvent<ClientAction> {
 
 /**
  * Dispatch to retrieve current enabled state of a client action.
+ * @category ClientEvents
  */
 export class EventEnabledClientAction extends CustomEvent<EventEnabledClientActionDetail> {
   static Type = 'enabled-client-action'
@@ -339,6 +345,7 @@ export interface EventEnabledClientActionDetail {
 
 /**
  * Dispatched as progress is made on a server action with provided id.
+ * @category ClientEvents
  */
 export class EventProgress extends CustomEvent<EventProgressDetail> {
   static Type = 'progress'
@@ -354,6 +361,7 @@ export interface EventProgressDetail {
 
 /**
  * Dispatch to initiate a server action, optionally dispatching progress events.
+ * @category ClientEvents
  */
 export class EventDoServerAction extends CustomEvent<EventDoServerActionDetail> {
   static Type = 'do-server-action'
@@ -370,6 +378,7 @@ export interface EventDoServerActionDetail {
 
 /** 
  * Dispatched when the enabled state of a particular server action has changed.
+ * @category ClientEvents
  */
 export class EventChangedServerAction extends CustomEvent<ServerAction> {
   static Type = 'changed-server-action'
@@ -378,6 +387,7 @@ export class EventChangedServerAction extends CustomEvent<ServerAction> {
 
 /**
  * Dispatch to retrieve current enabled state of a server action.
+ * @category ClientEvents
  */
 export class EventEnabledServerAction extends CustomEvent<EventEnabledServerActionDetail> {
   static Type = 'enabled-server-action'
@@ -393,6 +403,7 @@ export interface EventEnabledServerActionDetail {
 
 /**
  * Dispatched when there's a new mash loaded.
+ * @category ClientEvents
  */
 export class EventChangedMashAsset extends CustomEvent<ClientMashAsset | undefined> {
   static Type = 'changed-mash-asset'
@@ -401,6 +412,7 @@ export class EventChangedMashAsset extends CustomEvent<ClientMashAsset | undefin
 
 /**
  * Dispatch to retrieve the mash being edited.
+ * @category ClientEvents
  */
 export class EventMashAsset extends CustomEvent<{ mashAsset?: ClientMashAsset}> {
   static Type = 'mash-asset'
@@ -411,6 +423,7 @@ export class EventMashAsset extends CustomEvent<{ mashAsset?: ClientMashAsset}> 
 
 /**
  * Dispatch to change the dragging state.
+ * @category ClientEvents
  */
 export class EventChangeDragging extends CustomEvent<boolean> {
   static Type = 'change-dragging'
@@ -419,6 +432,7 @@ export class EventChangeDragging extends CustomEvent<boolean> {
 
 /**
  * Dispatch to retrieve current dragging state.
+ * @category ClientEvents
  */
 export class EventDragging extends CustomEvent<{ dragging?: boolean }> {
   static Type = 'dragging'
@@ -427,6 +441,7 @@ export class EventDragging extends CustomEvent<{ dragging?: boolean }> {
 
 /**
  * Dispatch to retrieve a clip element for display.
+ * @category ClientEvents
  */
 export class EventClipElement extends CustomEvent<EventClipElementDetail> {
   static Type = 'clip-element'
@@ -462,7 +477,8 @@ export interface EventClipElementDetail {
 }
 
 /** 
- * Dispatch to retrieve an asset element for display.
+ * Dispatch to retrieve an asset's element for display.
+ * @category ClientEvents
  */
 export class EventAssetElement extends CustomEvent<EventAssetElementDetail> {
   static Type = 'asset-element'
@@ -483,6 +499,7 @@ export interface EventAssetElementDetail {
 
 /**
  * Dispatch to change the mash's selected asset id.
+ * @category ClientEvents
  */
 export class EventChangeAssetId extends CustomEvent<string | undefined> {
   static Type = 'change-asset-id'
@@ -493,6 +510,7 @@ export class EventChangeAssetId extends CustomEvent<string | undefined> {
 
 /**
  * Dispatched when the mash's selected asset id has changed.
+ * @category ClientEvents
  */
 export class EventChangedAssetId extends CustomEvent<string | undefined> {
   static Type = 'changed-asset-id'
@@ -503,6 +521,7 @@ export class EventChangedAssetId extends CustomEvent<string | undefined> {
 
 /**
  * Dispatch to retrieve the mash's selected asset id.
+ * @category ClientEvents
  */
 export class EventAssetId extends CustomEvent<{ assetId?: string}> {
   static Type = 'asset-id'
@@ -513,6 +532,7 @@ export class EventAssetId extends CustomEvent<{ assetId?: string}> {
 
 /**
  * Dispatch when the preview rectangle has changed.
+ * @category ClientEvents
  */
 export class EventRect extends CustomEvent<{ rect?: Rect }> {
   static Type = 'change-rect'
@@ -521,6 +541,7 @@ export class EventRect extends CustomEvent<{ rect?: Rect }> {
 
 /**
  * Dispatced when the mash's targets have changed.
+ * @category ClientEvents
  */
 export class EventChangedTargetIds extends CustomEvent<TargetIds> {
   static Type = 'changed-target-ids'
@@ -529,6 +550,7 @@ export class EventChangedTargetIds extends CustomEvent<TargetIds> {
 
 /**
  * Dispatch to retrieve the mash's current targets.
+ * @category ClientEvents
  */
 export class EventTargetIds extends CustomEvent<TargetIds> {
   static Type = 'target-ids'
@@ -537,6 +559,7 @@ export class EventTargetIds extends CustomEvent<TargetIds> {
 
 /**
  * Dispatched when the mash's size has changed.
+ * @category ClientEvents
  */
 export class EventChangedSize extends CustomEvent<Size> {
   static Type = 'changed-size'
@@ -545,6 +568,7 @@ export class EventChangedSize extends CustomEvent<Size> {
 
 /**
  * Dispatch to retrieve the mash's current size.
+ * @category ClientEvents
  */
 export class EventSize extends CustomEvent<{ size?: Size }> {
   static Type = 'size'
@@ -552,7 +576,8 @@ export class EventSize extends CustomEvent<{ size?: Size }> {
 }
 
 /**
- * Dispatched when the mash has new Previews to display.
+ * Dispatched when the mash has new PreviewElements to display.
+ * @category ClientEvents
  */
 export class EventChangedPreviews extends Event {
   static Type = 'changed-previews'
@@ -561,6 +586,7 @@ export class EventChangedPreviews extends Event {
 
 /**
  * Dispatch to retreve the property ids of the mash's current targets.
+ * @category ClientEvents
  */
 export class EventPropertyIds extends CustomEvent<EventPropertyIdsDetail> {
   static Type = 'property-ids'
@@ -576,6 +602,7 @@ export interface EventPropertyIdsDetail {
 
 /**
  * Dispatch to retrieve the id of the mash's currently selected clip.
+ * @category ClientEvents
  */
 export class EventClipId extends CustomEvent<EventClipIdDetail> {
   static Type = 'clip-id'
@@ -588,6 +615,7 @@ export interface EventClipIdDetail {
 
 /**
  * Dispatch to set the currently selected clip.
+ * @category ClientEvents
  */
 export class EventChangeClipId extends StringEvent {
   static Type = 'change-clip-id'
@@ -596,7 +624,8 @@ export class EventChangeClipId extends StringEvent {
 
 /** 
  * Dispatched when the mash's currently selected clip changes.  
- * */
+ * * @category ClientEvents
+ */
 export class EventChangedClipId extends StringEvent {
   static Type = 'changed-clip-id'
   constructor(detail = '') { super(EventChangedClipId.Type, { detail }) }
@@ -604,17 +633,17 @@ export class EventChangedClipId extends StringEvent {
 
 /**
  * Dispatched when a mash action has been done or undone.
+ * @category ClientEvents
  */
-
-export class EventChanged extends CustomEvent<Action | undefined> {
+export class EventChanged extends CustomEvent<Edit | undefined> {
   static Type = 'changed'
-  constructor(action?: Action) { super(EventChanged.Type, { detail: action }) }
+  constructor(action?: Edit) { super(EventChanged.Type, { detail: action }) }
 }
 
 /**
  * Dispatch to retrieve selected properties.
+ * @category ClientEvents
  */
-
 export class EventSelectedProperties extends CustomEvent<EventSelectedPropertiesDetail> {
   static Type = 'selected-properties'
   constructor(selectorTypes: SelectorTypes = [], selectedProperties: SelectedProperties = [], ) { 
@@ -628,7 +657,8 @@ export interface EventSelectedPropertiesDetail {
 }
 
 /**
- * Dispatch to retrieve the mash's current Previews.
+ * Dispatch to retrieve the mash's current PreviewElements.
+ * @category ClientEvents
  */
 export class EventPreviews extends CustomEvent<EventPreviewsDetail> {
   static Type = 'previews'
@@ -640,11 +670,12 @@ export class EventPreviews extends CustomEvent<EventPreviewsDetail> {
 export interface EventPreviewsDetail {
   disabled?: boolean
   maxDimension?: number
-  promise?: Promise<Previews>
+  promise?: Promise<PreviewElements>
 }
 
 /**
  * Dispatch to retrieve the scalar that corresponds to a property id.
+ * @category ClientEvents
  */
 export class EventScalar extends CustomEvent<EventScalarDetail> {
   static Type = 'scalar'
@@ -660,6 +691,7 @@ export interface EventScalarDetail {
 
 /**
  * Dispatch to change the scalar that corresponds to a property id.
+ * @category ClientEvents
  */
 export class EventChangeScalar extends CustomEvent<EventChangeScalarDetail> {
   static Type = 'change-scalar'
@@ -675,6 +707,7 @@ export interface EventChangeScalarDetail {
 
 /**
  * Dispatch to change multiple scalars that correspond to property ids.
+ * @category ClientEvents
  */
 export class EventChangeScalars extends CustomEvent<ScalarsById> {
   static Type = 'change-scalars'
@@ -685,6 +718,7 @@ export class EventChangeScalars extends CustomEvent<ScalarsById> {
 
 /**
  * Dispatched when scalars that correspond to property ids have changed.
+ * @category ClientEvents
  */
 export class EventChangedScalars extends CustomEvent<PropertyIds> {
   static Type = 'changed-scalars'
@@ -695,6 +729,7 @@ export class EventChangedScalars extends CustomEvent<PropertyIds> {
 
 /**
  * Dispatch to retrieve a control group.
+ * @category ClientEvents
  */
 export class EventControlGroup extends CustomEvent<EventControlGroupDetail> {
   static Type = 'control-group'
@@ -715,6 +750,7 @@ export interface EventControlGroupDetail extends Ordered {
 
 /**
  * Dispatch to retrieve a control.
+ * @category ClientEvents
  */
 export class EventControl extends CustomEvent<EventControlDetail> {
   static Type = 'control'
@@ -731,6 +767,7 @@ export interface EventControlDetail {
 
 /**
  * Dispatch to retrieve the inspector's filtered selectors.
+ * @category ClientEvents
  */
 export class EventInspectorSelectors extends CustomEvent<EventInspectorSelectorsDetail> {
   static Type = 'inspector-selectors'
@@ -747,6 +784,7 @@ export interface EventInspectorSelectorsDetail {
 
 /**
  * Dispatch to set the inspector's filtered selectors.
+ * @category ClientEvents
  */
 export class EventChangedInspectorSelectors extends CustomEvent<EventInspectorSelectorsDetail> {
   static Type = 'changed-inspector-selectors'
@@ -758,6 +796,7 @@ export class EventChangedInspectorSelectors extends CustomEvent<EventInspectorSe
 
 /** 
  * Dispatch to close current dialog (no detail), or open with a supported section.
+ * @category ClientEvents
  */
 export class EventDialog extends StringEvent {
   static Type = 'dialog'
@@ -766,6 +805,7 @@ export class EventDialog extends StringEvent {
 
 /**
  * Dispatch to retrieve client audio promise for request.
+ * @category ClientEvents
  */
 export class EventClientAudioPromise extends CustomEvent<EventClientAudioPromiseDetail> {
   static Type = 'client-audio-promise'
@@ -811,6 +851,7 @@ export interface EventClientImagePromiseDetail {
 
 /**
  * Dispatch to retrieve client video promise for request.
+ * @category ClientEvents
  */
 export class EventClientVideoPromise extends CustomEvent<EventClientVideoPromiseDetail> {
   static Type = 'client-video-promise'
@@ -826,6 +867,7 @@ export interface EventClientVideoPromiseDetail {
 
 /**
  * Dispatch to import file(s) and get promise for corresponding asset objects.
+ * @category ClientEvents
  */
 export class EventImport extends CustomEvent<EventImportDetail> {
   static Type = 'import'
@@ -841,11 +883,12 @@ export interface EventImportDetail {
 
 /**
  * Dispatch to retrieve icon promise for an icon ID.
+ * @category ClientEvents
  */
 export class EventIcon extends CustomEvent<EventIconDetail> {
   static Type = 'icon'
-  constructor(id: string) {
-    super(EventIcon.Type, { detail: { id } })
+  constructor(id: string, values?: StringRecord) {
+    super(EventIcon.Type, { detail: { id, values } })
   } 
 }
 
@@ -863,6 +906,7 @@ export interface EventIconDetail extends TranslateArgs {
 
 /**
  * Dispatch to retrieve the mash asset object to edit.
+ * @category ClientEvents
  */
 export class EventAssetObject extends CustomEvent<AssetObjectEventDetail> {
   static Type = 'asset-object'
@@ -878,6 +922,7 @@ export interface AssetObjectEventDetail {
 
 /**
  * Dispatch to retrieve asset objects to display.
+ * @category ClientEvents
  */
 export class EventAssetObjects extends CustomEvent<EventAssetObjectsDetail> {
   static Type = 'asset-objects'
@@ -892,6 +937,7 @@ export interface EventAssetObjectsDetail extends AssetObjectsParams {
 
 /**
  * Dispatch to retrieve the assets to display.
+ * @category ClientEvents
  */
 export class EventManagedAssets extends CustomEvent<EventManagedAssetsDetail> {
   static Type = 'managed-assets'
@@ -912,6 +958,7 @@ export interface EventManagedAssetsDetail extends AssetObjectsParams {
 
 /**
  * Dispatch to retrieve an array of importers.
+ * @category ClientEvents
  */
 export class EventImporters extends CustomEvent<EventImportersDetail> {
   static Type = 'importers'
@@ -926,8 +973,8 @@ export interface EventImportersDetail {
 
 /**
  * Dispatch to import managed assets from client asset objects.
+ * @category ClientEvents
  */
-
 export class EventImportManagedAssets extends CustomEvent<ClientAssetObjects> {
   static Type = 'import-asset-objects'
   constructor(detail: ClientAssetObjects) {
@@ -937,6 +984,7 @@ export class EventImportManagedAssets extends CustomEvent<ClientAssetObjects> {
 
 /**
  * Dispatch to retrieve the savable state of managed assets.
+ * @category ClientEvents
  */
 export class EventSavableManagedAsset extends CustomEvent<{savable: boolean}> {
   static Type = 'savable-managed-asset'
@@ -947,6 +995,7 @@ export class EventSavableManagedAsset extends CustomEvent<{savable: boolean}> {
 
 /**
  * Dispatch to retrieve the clips for a track.
+ * @category ClientEvents
  */
 export class EventTrackClips extends CustomEvent<TrackClipsEventDetail> {
   static Type = 'track-clips'
@@ -963,6 +1012,7 @@ export interface TrackClipsEventDetail {
 
 /**
  * Dispatch to retrieve the savable managed assets.
+ * @category ClientEvents
  */
 export class EventSavableManagedAssets extends CustomEvent<{assets: ClientAssets}> {
   static Type = 'savable-managed-assets'
@@ -973,6 +1023,7 @@ export class EventSavableManagedAssets extends CustomEvent<{assets: ClientAssets
 
 /**
  * Dispatched when managed assets have been imported.
+ * @category ClientEvents
  */
 export class EventChangedManagedAssets extends StringEvent {
   static Type = 'changed-managed-assets'
@@ -983,6 +1034,7 @@ export class EventChangedManagedAssets extends StringEvent {
 
 /**
  * Dispatch to retrieve a track icon for a clip.
+ * @category ClientEvents
  */
 export class EventTrackClipIcon extends CustomEvent<EventTrackClipIconDetail> {
   static Type = 'track-clip-icon'
@@ -1002,6 +1054,7 @@ export interface EventTrackClipIconDetail {
 
 /**
  * Dispatched when an importer has finished importing.
+ * @category ClientEvents
  */
 export class EventImporterComplete extends Event {
   static Type = 'importer-complete'
@@ -1010,6 +1063,7 @@ export class EventImporterComplete extends Event {
 
 /**
  * Dispatched when an importer has added asset objects.
+ * @category ClientEvents
  */
 export class EventImporterAdd extends CustomEvent<ClientAssetObjects> {
   static Type = 'importer-add'
@@ -1020,6 +1074,7 @@ export class EventImporterAdd extends CustomEvent<ClientAssetObjects> {
 
 /**
  * Dispatched when an importer has removed asset objects.
+ * @category ClientEvents
  */
 export class EventImporterRemove extends StringEvent {
   static Type = 'importer-remove'
@@ -1030,6 +1085,7 @@ export class EventImporterRemove extends StringEvent {
 
 /**
  * Dispatch to move the selected clip within the mash.
+ * @category ClientEvents
  */
 export class EventMoveClip extends CustomEvent<EventMoveClipDetail> {
   static Type = 'move-clip'
@@ -1046,6 +1102,7 @@ export interface EventMoveClipDetail {
 /**
  * Dispatch to remove a specific clip from the mash. 
  * Alternatively, use EventDoClientAction to remove the selected clip.
+ * @category ClientEvents
  */
 export class EventRemoveClip extends CustomEvent<{ clipId: string }> {
   static Type = 'remove-clip'
@@ -1056,76 +1113,63 @@ export class EventRemoveClip extends CustomEvent<{ clipId: string }> {
 
 /**
  * Dispatch to change the browser content.
+ * @category ClientEvents
  */
-
 export class EventBrowserPick extends StringEvent {
   static Type = 'browser-pick'
   constructor(detail = '') { super(EventBrowserPick.Type, { detail }) }
 }
 /**
  * Dispatch to retrieve the browser content.
+ * @category ClientEvents
  */
 export class EventBrowserPicked extends CustomEvent<{ picked?: string }> {
   static Type = 'browser-picked'
   constructor() { super(EventBrowserPicked.Type, { detail: {} }) }
 }
 
-
-export const EventTypeMashRemoveTrack = 'mash-remove-track'
-export interface MashRemoveTrackEventDetail {
-  track: ClientTrack
-}
-export type MashRemoveTrackEvent = CustomEvent<MashRemoveTrackEventDetail>
-
-
-export type RectEvent = CustomEvent<Rect>
-
-export interface ScrollRootEventDetail {
-  root?: Element
-}
-export type ScrollRootEvent = CustomEvent<ScrollRootEventDetail>
-
-export type ClipFromIdEvent = CustomEvent<ClipFromIdEventDetail>
-export interface ClipFromIdEventDetail {
-  clipId: string
-  clip?: ClientClip
+/**
+ * Dispatch to change the mash's current zoom level.
+ * @category ClientEvents
+ */
+export class EventZoom extends NumberEvent {
+  static Type = 'zoom'
+  constructor(detail: number) { super(EventZoom.Type, { detail }) }
 }
 
-
-export type SvgOrImageDataOrError = DataOrError<SvgOrImage>
-
-export interface DroppedEventDetail {
-  clip?: ClientClip
+/**
+ * Dispatch to retrieve the root element that is scrolled.
+ * @category ClientEvents
+ */
+export class EventScrollRoot extends CustomEvent<{ root?: Element }> {
+  static Type = 'scroll-root'
+  constructor() { 
+    super(EventScrollRoot.Type, { 
+      detail: {}, composed: true, bubbles: true, cancelable: true 
+    }) 
+  }
 }
 
+/**
+ * Dispatched when the number of tracks in mash has changed.
+ * @category ClientEvents
+ */
+export class EventChangedTracks extends NumberEvent {
+  static Type = 'changed-tracks'
+  constructor(detail: number) { super(EventChangedTracks.Type, { detail }) }
+}
 
-// used in components, dispatched via DOM
-export const EventTypeExportParts = 'export-parts'
-export const EventTypeScrollRoot = 'scroll-root'
-export const EventTypeDragHandled = 'drag-handled'
+/** 
+ * Dispatch to translate a text string.
+ * @category ClientEvents
+ */
+export class EventTranslate extends CustomEvent<EventTranslateDetail> {
+  static Type = 'translate'
+  constructor(id: string, values?: StringRecord) {
+    super(EventTranslate.Type, { detail: { id, values } })
+  } 
+}
 
-// used just between components 
-export const EventTypeZoom = 'zoom'
-
-// TODO: dispatched by mash and used
-export const EventTypeTracks = 'tracks'
-
-// TODO: dispatched by mash and unused
-export const EventTypePause = 'pause'
-export const EventTypePlay = 'play'
-export const EventTypePlaying = 'playing'
-export const EventTypeSeeking = 'seeking'
-export const EventTypeSeeked = 'seeked'
-export const EventTypeEnded = 'ended'
-
-// TODO: unused!
-export const EventTypeWaiting = 'waiting'
-export const EventTypeTrack = 'track'
-export const EventTypeRender = 'render'
-export const EventTypeLoaded = 'loadeddata'
-
-
-// TODO: dispatched by masher but not used
-export const EventTypeFps = 'ratechange'
-export const EventTypeVolume = 'volumechange'
-
+export interface EventTranslateDetail extends TranslateArgs {
+  promise?: Promise<DataOrError<string>>
+}

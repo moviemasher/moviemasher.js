@@ -1,2 +1,4 @@
 
-export type EventFunction = (event: Event) => void
+export interface EventFunction {
+  (event: Event): void
+}

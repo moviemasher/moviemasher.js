@@ -1,11 +1,12 @@
-import type { DataOrError, StringDataOrError } from '@moviemasher/runtime-shared'
+import type { DataOrError, OutputOptions, StringDataOrError } from '@moviemasher/runtime-shared'
 
-import { ERROR, namedError, errorCaught, errorThrow, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
+import { DOT, ERROR, errorCaught, errorThrow, isDefiniteError, isPopulatedString, jsonParse, jsonStringify, namedError } from '@moviemasher/runtime-shared'
+import crypto from "crypto"
 import fs from 'fs'
 import path from 'path'
-import { DOT } from '@moviemasher/lib-shared'
 
-export type FilePath = string
+type FilePath = string
 
 export const filePathExists = (value: any): value is FilePath => {
   return isPopulatedString(value) && fs.existsSync(value)
@@ -66,7 +67,7 @@ export const fileWrite = (filePath: string, content: string): void => {
 }
 
 export const fileWriteJsonPromise = async (filePath: string, data: any): Promise<StringDataOrError> => {
-  return await fileWritePromise(filePath, JSON.stringify(data, null, 2))
+  return await fileWritePromise(filePath, jsonStringify(data))
 }
 
 export const fileRead = (file?: string): string => {
@@ -85,7 +86,7 @@ export const fileReadJsonPromise = async <T = any>(file?: string): Promise<DataO
   const orError = await fileReadPromise(file)
   if (isDefiniteError(orError)) return orError
   try {
-    const data: T = JSON.parse(orError.data)
+    const data = jsonParse<T>(orError.data)
     return { data }
   } catch (error) { return errorCaught(error) }
 }
@@ -108,4 +109,18 @@ export const fileCreatedPromise = async (filePath: string): Promise<DataOrError<
     const { mtime: data } = stats
     return { data }
   } catch (error) { return errorCaught(error) }
+}
+
+export const fileNameFromContent = (inputUrl: string): string => (
+  crypto.createHash('md5').update(inputUrl).digest("hex")
+)
+
+
+export const fileNameFromOptions = (outputOptions: OutputOptions, encodingType: string, extension?: string): string => {
+  const { format, extension: outputExtension } = outputOptions
+
+  const ext = extension || outputExtension || format
+  assertPopulatedString(ext, 'extension')
+
+  return [encodingType, ext].join(DOT)
 }

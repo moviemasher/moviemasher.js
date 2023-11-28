@@ -11,21 +11,43 @@ services:
       - ../../../dev/local.env
     
     volumes:
-      # - ../../../:${MOVIEMASHER_DIR_ROOT}/
-
       - ../../../temporary/build-docs/:${MOVIEMASHER_DIR_ROOT}/temporary/build-docs/
 
       - ../../../docs/:${MOVIEMASHER_DIR_ROOT}/docs/
       - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
       - ../../../examples/:${MOVIEMASHER_DIR_ROOT}/examples/
 
-      - ../../../markdown.config.js:${MOVIEMASHER_DIR_ROOT}/markdown.config.js
-      - ../../../images/build-docs/package.json:${MOVIEMASHER_DIR_ROOT}/package.json
-      - ../../../tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
+      - ../../../images/build-docs/dev/markdown.config.js:${MOVIEMASHER_DIR_ROOT}/markdown.config.js
       - ../../../README.md:${MOVIEMASHER_DIR_ROOT}/README.md
-      - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
+
       - ../../../images/build-docs/dist:${MOVIEMASHER_DIR_ROOT}/images/build-docs/dist
+      - ../../../images/build-docs/package.json:${MOVIEMASHER_DIR_ROOT}/package.json
       - ../../../images/build-docs/src:${MOVIEMASHER_DIR_ROOT}/images/build-docs/src
+
       - ../../../images/build-docs/dev/typedoc/json.cjs:${MOVIEMASHER_DIR_ROOT}/typedoc.json.cjs
       - ../../../images/build-docs/dev/typedoc/md.cjs:${MOVIEMASHER_DIR_ROOT}/typedoc.md.cjs
+      - ../../../images/build-docs/dev/root.tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
 
+      - ../../../packages/lib/client:${MOVIEMASHER_DIR_ROOT}/packages/lib/client
+      # - ../../../packages/lib/client/src:${MOVIEMASHER_DIR_ROOT}/packages/lib/client/src
+      # - ../../../packages/lib/client/package.json:${MOVIEMASHER_DIR_ROOT}/packages/lib/client/package.json
+
+      - ../../../packages/lib/shared:${MOVIEMASHER_DIR_ROOT}/packages/lib/shared
+      # # - ../../../packages/lib/shared/src:${MOVIEMASHER_DIR_ROOT}/packages/lib/shared/src
+      # # - ../../../packages/lib/shared/package.json:${MOVIEMASHER_DIR_ROOT}/packages/lib/shared/package.json
+
+      - ../../../packages/lib/server:${MOVIEMASHER_DIR_ROOT}/packages/lib/server
+      # # - ../../../packages/lib/server/src:${MOVIEMASHER_DIR_ROOT}/packages/lib/server/src
+      # # - ../../../packages/lib/server/package.json:${MOVIEMASHER_DIR_ROOT}/packages/lib/server/package.json
+
+      - ../../../packages/runtime/client:${MOVIEMASHER_DIR_ROOT}/packages/runtime/client
+      # # - ../../../packages/runtime/client/src:${MOVIEMASHER_DIR_ROOT}/packages/runtime/client/src
+      # # - ../../../packages/runtime/client/package.json:${MOVIEMASHER_DIR_ROOT}/packages/runtime/client/package.json
+
+      - ../../../packages/runtime/shared:${MOVIEMASHER_DIR_ROOT}/packages/runtime/shared
+      # # - ../../../packages/runtime/shared/src:${MOVIEMASHER_DIR_ROOT}/packages/runtime/shared/src
+      # # - ../../../packages/runtime/shared/package.json:${MOVIEMASHER_DIR_ROOT}/packages/runtime/shared/package.json
+
+      - ../../../packages/runtime/server:${MOVIEMASHER_DIR_ROOT}/packages/runtime/server
+      # # - ../../../packages/runtime/server/src:${MOVIEMASHER_DIR_ROOT}/packages/runtime/server/src
+      # # - ../../../packages/runtime/server/package.json:${MOVIEMASHER_DIR_ROOT}/packages/runtime/server/package.json

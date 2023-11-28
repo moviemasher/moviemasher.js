@@ -1,4 +1,4 @@
-import { roundWithMethod } from '@moviemasher/lib-shared'
+import { roundWithMethod } from '@moviemasher/runtime-shared'
 
 export const pixelPerFrame = (frames: number, width: number, zoom = 1): number => {
   if (!(frames && width)) return 0
@@ -18,4 +18,10 @@ export const pixelFromFrame = (frame: number, perFrame : number, rounding = 'cei
 
   const pixels = frame * perFrame
   return roundWithMethod(pixels, rounding)
+}
+
+export const pixelToFrame = (pixels: number, perFrame: number, rounding = 'round'): number => {
+  if (!(pixels && perFrame)) return 0
+
+  return roundWithMethod(pixels / perFrame, rounding)
 }

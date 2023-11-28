@@ -1,63 +1,133 @@
 import type { Numbers, StringRecord, Strings } from '@moviemasher/runtime-shared'
 
+export type LibOrRuntime = 'runtime' | 'lib'
+export type ClientServerOrShared = 'client' | 'server' | 'shared'
+
+export const LIB_OR_RUNTIMES: Array<LibOrRuntime> = ['runtime', 'lib']
+export const CLIENT_SERVER_OR_SHAREDS: Array<ClientServerOrShared> = ['client', 'server', 'shared']
+
+export const isLibOrRuntime = (value: any): value is LibOrRuntime => {
+  return LIB_OR_RUNTIMES.includes(value as LibOrRuntime)
+}
+
+export const isClientServerOrShared = (value: any): value is ClientServerOrShared => {
+  return CLIENT_SERVER_OR_SHAREDS.includes(value as ClientServerOrShared)
+}
+
 export type TypedocDirectory = 'Types' | 'Variables' | 'Classes' | 'Functions' | 'Interfaces'
 
 export type TypedocDirectories = Array<TypedocDirectory>
 
-export type DocFile = DocMarkdown | DocCategory | DocCombined | DocExport
+
+export interface Folder {
+  title: string
+  pages: Pages
+}
+
+export interface Page {
+  title?: string
+  url?: string
+  templatePath?: string
+}
+
+export interface Pages extends Array<Page>{}
+
+export interface DocMarkdown extends Page {
+  title: string
+  url: string
+  markdownPaths: string[]
+}
+
+export interface DocHtml extends Page {
+  title: string
+  url: string
+  htmlPaths: string[]
+  javascriptPaths?: string[]
+  cssPaths?: string[]
+
+}
+export type Doc = DocHtml | DocMarkdown
+
+
+export interface DocsPage extends Page {
+
+}
+
+export interface Anchor {
+  anchor: string
+  title: string
+}
+
+export interface Anchors extends Array<Anchor>{}
+
+export type DocFile = Doc | DocCategory | DocCombined | DocExport | DocModule
 export type DocFileOrFolder = DocFile | DocFolder
+
+export type DocOrFolder = Doc | DocFolder
+export interface DocsAndFolders extends Array<DocOrFolder>{}
 
 export interface DocFilesAndFolders extends Array<DocFileOrFolder>{}
 
-export interface DocFolder {
-  title: string
-  files: DocFiles
+export interface DocModule extends DocsPage {
+  libOrRuntime: LibOrRuntime
+  clientServerOrShared: ClientServerOrShared
 }
 
-export interface DocExport {
+
+export interface DocFolder {
+  title?: string
+  docFiles: DocFiles
+  excludeFromNav?: boolean
+}
+
+export interface DocExport extends DocsPage {
   exportId: string
   url?: string
 }
 
-export interface DocMarkdown {
-  title: string
-  url: string
-  markdownPath: string
-}
-
-export interface DocCategory {
+export interface DocCategory extends DocsPage {
   categoryId: string
+  title?: string
 }
 
-export interface DocCombined {
+export interface DocCombined extends DocsPage {
   directory: TypedocDirectory
 }
 
-
 export interface DocFiles extends Array<DocFile>{}
 
-export interface ConfigurationRecord {
+export interface BuilderConfiguration {
+  inputRoot: string
+  outputRoot: string
+}
+
+export interface SiteConfiguration extends BuilderConfiguration {
+  docsAndFolders: DocsAndFolders
+}
+
+export interface DocumentationConfiguration extends BuilderConfiguration {
   combineDirectories?: TypedocDirectories
-  files: DocFilesAndFolders
+  docFilesAndFolders: DocFilesAndFolders
+  inputModuleMdDirectory: string
   inputCategoryHtmlPath: string
   inputCategoryMdDirectory: string
   inputCombinedHtmlPath: string
   inputCombinedMdDirectory: string
-  inputCssPath: string
+  inputModulesMdDirectory: string
+  inputCssPaths: string[]
   inputFileHtmlPath: string
   inputFolderHtmlPath: string
-  inputOtherMdDirectory: string
   inputPageHtmlPath: string
-  inputRoot: string
   inputSectionHtmlPath: string
   inputTypedocMdDirectory: string
   outputCategoryPath: string
   outputCombinedPath: string
+  outputModulePath: string 
   outputExportPath: string
   outputOtherPath: string
-  outputRoot: string
   sortKinds: Strings
   typedocJsonPath: string
+  outputCssPath: string
 }
 
 export interface RawDeclaration {
@@ -65,7 +135,7 @@ export interface RawDeclaration {
   name: string
   kind: number
   children: RawDeclarations
-  categories: RawCategories
+  categories?: RawCategories
 }
 
 export interface RawDeclarations extends Array<RawDeclaration> {}
@@ -82,24 +152,20 @@ export interface RawProject extends RawDeclaration {}
 
 export type ExportId = string
 export type CategoryId = string
-export type CategoryIds = Array<CategoryId>
 
-export type ExportIds = Array<ExportId>
+export interface CategoryIds extends Array<CategoryId> {}
 
-export type ExportsByCategory = Record<CategoryId, ExportIds>
+export interface ExportIds extends Array<ExportId> {}
 
-export type ExportsByCombined = {
-  [index in TypedocDirectory]?: ExportIds
-}
+export interface ExportsByCategory extends Record<CategoryId, ExportIds> {}
+
+export interface ExportsByCombined extends Record<TypedocDirectory, ExportIds> {}
+//   [index in TypedocDirectory]?: ExportIds
+// }
 
 export type Kind = 'Accessor' | 'CallSignature' | 'Class' | 'Constructor' | 'ConstructorSignature' | 'Enum' | 'EnumMember' | 'Function' | 'GetSignature' | 'IndexSignature' | 'Interface' | 'Method' | 'Module' | 'Namespace' | 'Parameter' | 'Project' | 'Property' | 'Reference' | 'SetSignature' | 'TypeAlias' | 'TypeLiteral' | 'TypeParameter' | 'Variable'
 
-export type DirectoriesByKind = {
-  [index in Kind]?: TypedocDirectory
-}
-
-export type ExportRecord = Record<ExportId, string>
-
+export interface ExportRecord extends Record<ExportId, string> {}
 
 export interface Rendered extends StringRecord {}
 

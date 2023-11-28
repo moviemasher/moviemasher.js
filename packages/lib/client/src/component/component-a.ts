@@ -1,7 +1,9 @@
+import { IconString } from '../base/Component.js'
 
-import { IconString } from '../Base/IconString.js'
-
+const ATag = 'movie-masher-component-a'
+/**
+ * @category Component
+ */
 export class AElement extends IconString {}
 
-// register web component as custom element
-customElements.define('movie-masher-component-a', AElement)
+customElements.define(ATag, AElement)

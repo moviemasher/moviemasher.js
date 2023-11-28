@@ -1,18 +1,20 @@
 import type { AVType, AssetCacheArgs, DataOrError, Decoding, EncodingType, IntrinsicOptions, Size, Time, VideoOutputOptions } from '@moviemasher/runtime-shared'
 import type { ServerClips, ServerMashAsset } from '../Types/ServerMashTypes.js'
-import type { CommandDescription, MashDescription, MashDescriber, MashDescriberOptions } from './MashDescriberTypes.js'
 import type { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from './FilterGraphs/FilterGraphs.js'
+import type { CommandDescription, MashDescriber, MashDescriberOptions, MashDescription } from './MashDescriberTypes.js'
 
-import { AVTypeAudio, AVTypeBoth, AVTypeVideo, Default, JsonExtension, assertAboveZero, isAboveZero, isPositive, isRequestable, promiseNumbers, sizeAboveZero, sizeCopy, timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '@moviemasher/lib-shared'
-import { EventServerDecode, MovieMasher } from '@moviemasher/runtime-server'
-import { AUDIO, ERROR, IMAGE, PROBE, VIDEO, assertTyped, errorPromise, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
-import { KindsProbe } from '@moviemasher/lib-shared'
+import { assertAboveZero, isAboveZero, isPositive, isRequestable } from '@moviemasher/lib-shared/utility/guards.js'
+import { sizeAboveZero, sizeCopy } from '@moviemasher/lib-shared/utility/rect.js'
+import { promiseNumbers } from '@moviemasher/lib-shared/utility/request.js'
+import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '@moviemasher/lib-shared/utility/time.js'
+import { EventServerDecode, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { ASSET_DURATION, AUDIO, BOTH, ERROR, IMAGE, JSON, PROBE, PROBING_TYPES, VIDEO, assertTyped, errorPromise, errorThrow, isDefiniteError, jsonParse } from '@moviemasher/runtime-shared'
 import { FilterGraphsClass } from './FilterGraphs/FilterGraphsClass.js'
 
 const filterGraphsArgs = (mash: ServerMashAsset, options: FilterGraphsOptions = {}): FilterGraphsArgs => {
   const { background, time, avType, size, videoRate, ...rest } = options
   const definedTime = time || timeFromArgs()
-  const definedAVType = avType || (definedTime.isRange ? AVTypeBoth : AVTypeVideo)
+  const definedAVType = avType || (definedTime.isRange ? BOTH : VIDEO)
   const filterGraphsOptions: FilterGraphsArgs = {
     ...rest,
     times: mash.timeRanges(definedAVType, definedTime),
@@ -36,8 +38,8 @@ export class MashDescriberClass implements MashDescriber {
     const { quantize } = this.args.mash
     const { avType } = this
     const args: AssetCacheArgs = { quantize }
-    if (avType !== AVTypeAudio) args.visible = true
-    if (avType !== AVTypeVideo) args.audible = true
+    if (avType !== AUDIO) args.visible = true
+    if (avType !== VIDEO) args.audible = true
     return args
   }
   protected assureClipFrames(): Promise<DataOrError<number>> {
@@ -49,9 +51,10 @@ export class MashDescriberClass implements MashDescriber {
       const { content } = clip
       const { asset } = content
       if (!isRequestable(asset)) return []
+
       const { type, request } = asset
-      const event = new EventServerDecode(PROBE, type, request, '', JsonExtension, { types: KindsProbe })
-      MovieMasher.eventDispatcher.dispatch(event)
+      const event = new EventServerDecode(PROBE, type, request, '', JSON, { types: PROBING_TYPES })
+      MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
       
       const { promise } = event.detail
       if (!promise) return errorPromise(ERROR.Unimplemented, EventServerDecode.Type)
@@ -60,7 +63,7 @@ export class MashDescriberClass implements MashDescriber {
         if (isDefiniteError(orError)) return orError
 
         const { data: json } = orError
-        const probingData: Decoding = JSON.parse(json)
+        const probingData = jsonParse<Decoding>(json)
         assertTyped(probingData, 'probingData')
         // console.log(this.constructor.name, 'assureClipFrames PROBE', probingData)
         asset.decodings.push(probingData)
@@ -83,7 +86,7 @@ export class MashDescriberClass implements MashDescriber {
 
         if (isAboveZero(clip.frames)) return
   
-        clip.frames = Math.floor(Default.duration * quantize)
+        clip.frames = Math.floor(ASSET_DURATION * quantize)
         // console.log(this.constructor.name, 'assureClipFrames SET frames', clip.frames)
 
       })
@@ -93,21 +96,21 @@ export class MashDescriberClass implements MashDescriber {
 
   private get avType() { 
     switch (this.encodingType) {
-      case AUDIO: return AVTypeAudio
-      case IMAGE: return AVTypeVideo
-      case VIDEO: return AVTypeBoth 
+      case AUDIO: return AUDIO
+      case IMAGE: return VIDEO
+      case VIDEO: return BOTH 
     }
   }
 
   private get avTypeNeededForClips(): AVType {
     const { avType } = this
-    if (avType !== AVTypeBoth) return avType
+    if (avType !== BOTH) return avType
 
     const renderingClips = this.args.mash.clipsInTimeOfType(this.timeRange, this.avType)
     const types = new Set<AVType>()
     renderingClips.forEach(renderingClip => {
-      if (renderingClip.audible) types.add(AVTypeAudio)
-      if (renderingClip.visible) types.add(AVTypeVideo)
+      if (renderingClip.audible) types.add(AUDIO)
+      if (renderingClip.visible) types.add(VIDEO)
     })
     // console.log(this.constructor.name, 'avTypeNeededForClips', types)
     if (types.size === 2) return avType
@@ -149,8 +152,8 @@ export class MashDescriberClass implements MashDescriber {
   private get intrinsicOptions(): IntrinsicOptions {
     const { avType } = this
     const options: IntrinsicOptions = {}
-    if (avType !== AVTypeAudio) options.size = true
-    if (avType !== AVTypeVideo) options.duration = true
+    if (avType !== AUDIO) options.size = true
+    if (avType !== VIDEO) options.duration = true
     return options
   }
 
@@ -181,13 +184,13 @@ export class MashDescriberClass implements MashDescriber {
     return clips.filter(clip => !clip.intrinsicsKnown(this.intrinsicOptions))
   }
 
-  private get outputOptions() { return this.args.outputOptions }
+  private get options() { return this.args.outputOptions }
 
   private get outputSize(): Size {
-    const { outputOptions } = this
+    const { options: outputOptions } = this
     if (sizeAboveZero(outputOptions)) return sizeCopy(outputOptions)
 
-    if (this.avType === AVTypeAudio) return { width: 0, height: 0 }
+    if (this.avType === AUDIO) return { width: 0, height: 0 }
 
     return errorThrow(ERROR.OutputDimensions)
   }
@@ -203,7 +206,7 @@ export class MashDescriberClass implements MashDescriber {
     const { mash } = args
     const cacheArgs: AssetCacheArgs = { 
       time: this.timeRange,
-      audible: avType !== AVTypeVideo, visible: avType !== AVTypeAudio 
+      audible: avType !== VIDEO, visible: avType !== AUDIO 
     }
     const cacheOrError = await mash.assetCachePromise(cacheArgs)
     if (isDefiniteError(cacheOrError)) return cacheOrError
@@ -211,30 +214,30 @@ export class MashDescriberClass implements MashDescriber {
     const filesOrError = await this.filterGraphs(true).loadCommandFilesPromise
     if (isDefiniteError(filesOrError)) return filesOrError
     
-    const { outputOptions, encodingType } = this
+    const { options: outputOptions, encodingType } = this
     const renderingDescription: MashDescription = { 
       outputOptions, encodingType
     }
     const filterGraphs  = this.filterGraphs(false)
     // console.log(this.constructor.name, 'renderingDescriptionPromise avType', avType)
-    if (avType !== AVTypeAudio) {
+    if (avType !== AUDIO) {
       const { filterGraphsVisible } = filterGraphs
       const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
         const { commandInputs: inputs, commandFilters, duration } = filterGraph
-        const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVTypeVideo }
+        const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: VIDEO }
       // console.log(this.constructor.name, 'renderingDescriptionPromise inputs, commandFilters', inputs, commandFilters)
         return commandDescription
       })
       renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
     }
-    if (avType !== AVTypeVideo) {
+    if (avType !== VIDEO) {
       const { filterGraphAudible, duration } = filterGraphs
       if (filterGraphAudible) {
         const { commandFilters, commandInputs: inputs } = filterGraphAudible
       // console.log(this.constructor.name, 'renderingDescriptionPromise filterGraphAudible', commandFilters)
       
         const commandDescription: CommandDescription = {
-          inputs, commandFilters, duration, avType: AVTypeAudio
+          inputs, commandFilters, duration, avType: AUDIO
         }
         renderingDescription.audibleCommandDescription = commandDescription
       }
@@ -266,7 +269,7 @@ export class MashDescriberClass implements MashDescriber {
   }
 
   private get videoRate(): number { 
-    const { outputOptions } = this
+    const { options: outputOptions } = this
     const { videoRate } = outputOptions as VideoOutputOptions
 
     return isAboveZero(videoRate) ? videoRate : 0
@@ -275,7 +278,7 @@ export class MashDescriberClass implements MashDescriber {
   // private get clipsLackingSize(): ServerClips {
   //   const { timeRange, args } = this
   //   const { mash } = args
-  //   const clips = mash.clipsInTimeOfType(timeRange, AVTypeVideo)
+  //   const clips = mash.clipsInTimeOfType(timeRange, VIDEO)
   //   const options: IntrinsicOptions = { size: true }
   //   return clips.filter(clip => !clip.intrinsicsKnown(options))
   // }

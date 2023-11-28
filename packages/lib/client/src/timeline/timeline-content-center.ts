@@ -1,23 +1,26 @@
-import type { NumberEvent } from '@moviemasher/runtime-client'
+import type { DropTarget, NumberEvent } from '@moviemasher/runtime-client'
 import type { MashAsset } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { Content, Contents, DropTarget, OptionalContent } from '../declarations.js'
+import type { Content, Contents, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { arrayOfNumbers, arrayReversed, assertMashAsset, isPositive } from '@moviemasher/lib-shared'
-import { EventChangeClipId, EventChangeFrame, EventChangedFrame, EventChangedFrames, EventChangedMashAsset, EventFrames, EventTypeTracks, EventTypeZoom, MovieMasher, eventStop } from '@moviemasher/runtime-client'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-import { html } from 'lit-html/lit-html.js'
-import { DisablableMixin } from '../Base/DisablableMixin.js'
-import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { Scroller } from '../Base/Scroller.js'
-import { pixelToFrame } from '../Client/PixelFunctions.js'
+import { assertDefined, isPositive } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChangeClipId, EventChangeFrame, EventChangedFrame, EventChangedFrames, EventChangedMashAsset, EventFrames, EventChangedTracks, EventZoom, MOVIEMASHER, LAYER, eventStop } from '@moviemasher/runtime-client'
+import { FRAME, WIDTH, arrayOfNumbers } from '@moviemasher/runtime-shared'
+import { html, nothing } from 'lit-html'
+import { DisablableMixin } from '../mixins/component.js'
+import { DROP_TARGET_CSS, DropTargetMixin } from '../mixins/component.js'
+import { Scroller } from '../base/LeftCenterRight.js'
+import { pixelToFrame } from '../utility/pixel.js'
 import { pixelFromFrame, pixelPerFrame } from '../utility/pixel.js'
 
 const TimelineContentCenterTag = 'movie-masher-timeline-content-center'
 
 const TimelineContentCenterDisablable = DisablableMixin(Scroller)
 const TimelineContentCenterDropTargetMixin = DropTargetMixin(TimelineContentCenterDisablable)
+/**
+ * @category Component
+ */
 export class TimelineContentCenterElement extends TimelineContentCenterDropTargetMixin implements DropTarget {
   constructor() {
     super()
@@ -27,15 +30,15 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
     
     this.listeners[EventChangedFrame.Type] = this.handleChangedFrame.bind(this)
     this.listeners[EventChangedFrames.Type] = this.handleChangedFrames.bind(this)
-    this.listeners[EventTypeTracks] = this.handleTracks.bind(this)
-    this.listeners[EventTypeZoom] = this.handleZoom.bind(this)
+    this.listeners[EventChangedTracks.Type] = this.handleTracks.bind(this)
+    this.listeners[EventZoom.Type] = this.handleZoom.bind(this)
   }
   
   private scrubberX = -1
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -43,9 +46,10 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
   protected override content(contents: Contents): Content {
     return html`
-      <div class='root' @scroll-root='${this.handleScrollRoot}'>
-        ${contents}
-      </div>
+      <div 
+        class='root' 
+        @scroll-root='${this.handleScrollRoot}'
+      >${contents}</div>
       <div class='drop-box'></div>
     `
   }
@@ -58,12 +62,13 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
     // console.log(this.tagName, 'defaultContent', tracksLength)
     if (tracksLength) {
       const { mashAsset } = this
-      assertMashAsset(mashAsset)
+      assertDefined(mashAsset)
       const { tracks } = mashAsset
 
       this.importTags('movie-masher-timeline-icon')
       this.importTags('movie-masher-timeline-track')
-      const indices = arrayReversed<number>(arrayOfNumbers(tracksLength))
+      const numbers = arrayOfNumbers(tracksLength)
+      const indices = [...numbers].reverse() 
       const left = this.left + this.variable('width-track')
       const tracksHtml = indices.map(index => {
         const track = tracks[index]
@@ -71,12 +76,12 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
         return html`
           <movie-masher-timeline-icon 
             track-index='${index}' 
-            dense='${ifDefined(dense ? true : undefined)}'
+            dense='${dense || nothing}'
           ></movie-masher-timeline-icon>
       
           <movie-masher-timeline-track 
             track-index='${index}' 
-            class='track'
+            class='${LAYER}'
             scale='${this.scale}'
             style='width: ${width};'
             width='${framesWidth}'
@@ -181,7 +186,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
     const pixel = Math.max(0, Math.min(max, clientX - x))
     const frame = pixelToFrame(pixel, this.scale, 'floor')
-    MovieMasher.eventDispatcher.dispatch(new EventChangeFrame(frame))
+    MOVIEMASHER.eventDispatcher.dispatch(new EventChangeFrame(frame))
   }
 
   private handleScrubberPointerUp(event: MouseEvent) {
@@ -195,7 +200,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
     this.tracksLength = event.detail
   }
 
-  private handleZoom(event: NumberEvent): void {
+  private handleZoom(event: EventZoom): void {
     this.zoom = event.detail
   }
 
@@ -204,7 +209,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   private mashAsset?: MashAsset
   
   override onclick = (): void => {
-    MovieMasher.eventDispatcher.dispatch(new EventChangeClipId())
+    MOVIEMASHER.eventDispatcher.dispatch(new EventChangeClipId())
   }
 
   private recalculateLeft() {
@@ -230,8 +235,8 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     if (
       changedProperties.has('zoom') 
-      || changedProperties.has('width')
-      || changedProperties.has('frame')
+      || changedProperties.has(WIDTH)
+      || changedProperties.has(FRAME)
       || changedProperties.has('frames')
     ) this.recalculateLeft()
   }
@@ -252,7 +257,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
   static override styles: CSSResultGroup = [
     Scroller.styles,
-    DropTargetCss,
+    DROP_TARGET_CSS,
     css`
       :host {
         isolation: isolate;
@@ -363,7 +368,6 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   ]
 }
 
-// register web component as custom element
 customElements.define(TimelineContentCenterTag, TimelineContentCenterElement)
 
 declare global {

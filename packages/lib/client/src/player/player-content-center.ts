@@ -1,18 +1,18 @@
 import type { Timeout } from '@moviemasher/runtime-client'
 import type { Point } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { Content, Contents, OptionalContent } from '../declarations.js'
+import type { Content, Contents, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertSizeAboveZero, pointCopy, sizeContain } from '@moviemasher/lib-shared'
-import { EventChangeClipId, EventChangedPreviews, EventDragging, EventPreviews, EventRect, MovieMasher } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from '../Base/Component.js'
-import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
-import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { RectObserverMixin } from '../Base/RectObserverMixin.js'
-import { Scroller } from '../Base/Scroller.js'
-import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
+import { assertSizeAboveZero, pointCopy, sizeContain } from '@moviemasher/lib-shared/utility/rect.js'
+import { EventChangeClipId, EventChangedPreviews, EventDragging, EventPreviews, EventRect, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { html } from 'lit-html'
+import { Component } from '../base/Component.js'
+import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixins/component.js'
+import { DROP_TARGET_CSS, DropTargetMixin } from '../mixins/component.js'
+import { RectObserverMixin } from '../mixins/component.js'
+import { Scroller } from '../base/LeftCenterRight.js'
+import { SizeReactiveMixin, SIZE_REACTIVE_DECLARATIONS } from '../mixins/component.js'
 
 const PlayerRefreshTics = 10
 const PlayerContentCenterTag = 'movie-masher-player-content-center'
@@ -21,6 +21,9 @@ const WithDropTargetMixin = DropTargetMixin(Scroller)
 const WithDisablableMixin = DisablableMixin(WithDropTargetMixin)
 const WithRectObserver = RectObserverMixin(WithDisablableMixin)
 const WithSizeReactive = SizeReactiveMixin(WithRectObserver)
+/**
+ * @category Component
+ */
 export class PlayerContentCenterElement extends WithSizeReactive {
   constructor() {
     super()
@@ -56,7 +59,6 @@ export class PlayerContentCenterElement extends WithSizeReactive {
     return super.dropValid(data) && !this.disabled 
   }
 
-
   private handleChangedPreviews(): void { 
     // console.log(this.tagName, 'handleChangedPreviews', !!this.watchingTimeout)
     if (this.watchingTimeout) {
@@ -68,7 +70,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
   
   protected handlePointerDown(event: Event) {
     event.stopPropagation()
-    MovieMasher.eventDispatcher.dispatch(new EventChangeClipId())
+    MOVIEMASHER.eventDispatcher.dispatch(new EventChangeClipId())
   }
 
   private handleRect(event: EventRect) {
@@ -95,11 +97,11 @@ export class PlayerContentCenterElement extends WithSizeReactive {
     if (disabled) return Promise.resolve()
     
     const draggingEvent = new EventDragging()
-    MovieMasher.eventDispatcher.dispatch(draggingEvent)
+    MOVIEMASHER.eventDispatcher.dispatch(draggingEvent)
     const dragging = draggingEvent.detail.dragging
 
     const event = new EventPreviews(this.variable('size-preview'), dragging)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
       console.warn(this.tagName, 'requestItemsPromise NO PROMISE')
@@ -125,15 +127,15 @@ export class PlayerContentCenterElement extends WithSizeReactive {
   }
 
   static override properties: PropertyDeclarations = {
-    ...DisablableProperties,
-    ...SizeReactiveProperties,
+    ...DISABLABLE_DECLARATIONS,
+    ...SIZE_REACTIVE_DECLARATIONS,
     point: { type: Object, attribute: false },
   }
   
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     Component.cssHostFlex,
-    DropTargetCss,
+    DROP_TARGET_CSS,
     css`
       :host {
         position: relative;
@@ -159,12 +161,15 @@ export class PlayerContentCenterElement extends WithSizeReactive {
         pointer-events: none;
       }
 
-      div.root > svg.bounds,
       div.root > svg.background,
-      div.root > svg.track {
+      div.root > svg.layer {
         pointer-events: none;
       }
 
+      div.root > svg.bounds {
+        pointer-events: visibleFill;
+      }
+      
       div.root > svg .outline {
         cursor: move;
         pointer-events: visibleFill;
@@ -232,7 +237,6 @@ export class PlayerContentCenterElement extends WithSizeReactive {
   ]
 }
 
-// register web component as custom element
 customElements.define(PlayerContentCenterTag, PlayerContentCenterElement)
 
 declare global {

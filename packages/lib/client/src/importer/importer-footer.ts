@@ -1,12 +1,15 @@
 import type { PropertyDeclarations } from 'lit'
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
 import { EventDialog, EventImporterComplete, EventImporterAdd, EventImporterRemove } from '@moviemasher/runtime-client'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-import { html } from 'lit-html/lit-html.js'
-import { FooterElement } from '../Base/LeftCenterRight.js'
+import { html, nothing } from 'lit-html'
+import { FooterBase } from '../base/LeftCenterRight.js'
 
-export class ImporterFooterElement extends FooterElement {
+const ImporterFooterTag = 'movie-masher-importer-footer'
+/**
+ * @category Component
+ */
+export class ImporterFooterElement extends FooterBase {
   constructor() {
     super()
     this.listeners[EventImporterAdd.Type] = this.handleImporterAdd.bind(this)
@@ -45,7 +48,7 @@ export class ImporterFooterElement extends FooterElement {
         icon='add'
         string='Import ${count}'
         emit='${EventImporterComplete.Type}' 
-        disabled='${ifDefined(count ? undefined : true)}' 
+        disabled='${count ? nothing : true}' 
       ></movie-masher-component-button>
     `)
     return super.rightContent(htmls)
@@ -53,11 +56,10 @@ export class ImporterFooterElement extends FooterElement {
 
 
   static override properties: PropertyDeclarations = {
-    ...FooterElement.properties,
+    ...FooterBase.properties,
     count: { type: Number, attribute: false }
   }
   
 }
 
-// register web component as custom element
-customElements.define('movie-masher-importer-footer', ImporterFooterElement)
+customElements.define(ImporterFooterTag, ImporterFooterElement)

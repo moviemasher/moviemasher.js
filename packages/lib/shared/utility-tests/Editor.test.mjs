@@ -2,10 +2,8 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 
-import { 
-  Default, EditorClass, editorInstance, timeFromSeconds, assertMashMedia,
-  isClip, VideoType, idTemporary 
-} from "@moviemasher/lib-shared"
+import {  EditorClass, editorInstance, timeFromSeconds, assertMashMedia, isClip, VideoType } from "@moviemasher/lib-shared"
+import {  idTemporary } from "@moviemasher/runtime-shared"
 
 import visibleDefaultJson from "../DefinitionObjects/content/default.json" assert { type: "json" }
 
@@ -21,15 +19,6 @@ describe("Editor", () => {
   describe("editorInstance", () => {
     test("returns EditorClass instance", () => {
       assert(createEditor() instanceof EditorClass)
-    })
-  })
-
-  Object.entries(Default.editor).forEach(array => {
-    const [key, value] = array
-    test(`${key} getter retrieves value`, () => {
-      const editor = createEditor() 
-      if (key === 'fps') assert.equal(editor[key], Default.editor.fps)
-      else assert.equal(editor[key], value)
     })
   })
 

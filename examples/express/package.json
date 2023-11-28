@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/example-express",
-  "version": "5.1.2",
-  "description": "Movie Masher Express Example - version 5.1.2",
+  "version": "5.2.0",
+  "description": "Movie Masher Express Example - version 5.2.0",
   "files": [
     "dist"
   ],
@@ -38,8 +38,8 @@
     "tar": "^6.1.15"
   },
   "peerDependencies": {
-    "@moviemasher/lib-shared": "5.1.2",
-    "@moviemasher/runtime-server": "5.1.2",
+    "@moviemasher/lib-shared": "5.2.0",
+    "@moviemasher/runtime-server": "5.2.0",
     "child_process": "^1.0.2",
     "fluent-ffmpeg": "^2.1.2",
     "ttf2woff2": "5.0.0"

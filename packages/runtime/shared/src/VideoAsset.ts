@@ -1,4 +1,4 @@
-import type { Asset, AssetObject, VisibleAssetObject } from './AssetTypes.js'
+import type { Asset, AssetObject, VisibleAssetObject } from './AssetInterfaces.js'
 import type { InstanceArgs } from './InstanceTypes.js'
 import type { VideoInstanceObject, VideoInstance } from './VideoInstance.js'
 

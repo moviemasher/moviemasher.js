@@ -1,23 +1,24 @@
-import type { ChangeActionObject, ClientAsset, ClientClip, ClientInstance } from '@moviemasher/runtime-client'
+import type { ChangeEditObject, ClientAsset, ClientClip, ClientInstance } from '@moviemasher/runtime-client'
 import type { InstanceArgs, PropertyId, Scalar, TargetId } from '@moviemasher/runtime-shared'
 
-import { ActionTypeChangeFrame, DataTypeFrame, InstanceClass, assertPopulatedString } from '@moviemasher/lib-shared'
-import {  TARGET_CONTAINER, TARGET_CONTENT } from '@moviemasher/runtime-shared'
-import { isChangePropertyActionObject } from '../Client/Masher/Actions/Action/ActionFunctions.js'
-import { DOT } from '@moviemasher/lib-shared'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
+import { CHANGE_FRAME } from '@moviemasher/runtime-client'
+import { CONTAINER, CONTENT, DOT, FRAME } from '@moviemasher/runtime-shared'
+import { isChangePropertyEditObject } from '../guards/EditGuards.js'
+import { InstanceClass } from '@moviemasher/lib-shared/base/instance.js'
 
 export class ClientInstanceClass extends InstanceClass implements ClientInstance {
   declare asset: ClientAsset
  
 
-  override changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeActionObject {
+  override changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject {
     const object = super.changeScalar(propertyId, scalar)
-    if (!isChangePropertyActionObject(object)) return object
+    if (!isChangePropertyEditObject(object)) return object
     const name = propertyId.split(DOT).pop()
     assertPopulatedString(name)
 
     const property = this.propertyFind(name) 
-    if (property?.type === DataTypeFrame) object.type = ActionTypeChangeFrame
+    if (property?.type === FRAME) object.type = CHANGE_FRAME
     return object
   }
   override get clip(): ClientClip { return super.clip as ClientClip }
@@ -25,11 +26,11 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
 
   override initializeProperties(object: InstanceArgs): void {
     const { container } = this
-    if (container) this.targetId = TARGET_CONTAINER
+    if (container) this.targetId = CONTAINER
     super.initializeProperties(object)
   }
 
-  override targetId: TargetId = TARGET_CONTENT
+  override targetId: TargetId = CONTENT
 
   unload(): void {}
 

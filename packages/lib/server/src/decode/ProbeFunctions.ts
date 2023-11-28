@@ -1,10 +1,10 @@
-import type { ProbeOptions } from '@moviemasher/lib-shared'
+import type { ProbingOptions } from '@moviemasher/runtime-shared'
 
 import { errorThrow, isObject } from '@moviemasher/runtime-shared'
 
-export const isProbeOptions = (value: any): value is ProbeOptions => {
+export const isProbingOptions = (value: any): value is ProbingOptions => {
   return isObject(value) 
 }
-export function assertProbeOptions(value: any): asserts value is ProbeOptions {
-  if (!isProbeOptions(value)) errorThrow(value, 'ProbeOptions')
+export function assertProbingOptions(value: any): asserts value is ProbingOptions {
+  if (!isProbingOptions(value)) errorThrow(value, 'ProbingOptions')
 }

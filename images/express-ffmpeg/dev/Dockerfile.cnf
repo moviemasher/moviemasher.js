@@ -1,5 +1,5 @@
 
-FROM moviemasher/node-ffmpeg:5.1.2
+FROM moviemasher/node-ffmpeg:5.2.0
 ARG DIR_ROOT=/app
 
 COPY package.json ${DIR_ROOT}/package.json
@@ -8,7 +8,7 @@ COPY packages/lib/client/package.json ${DIR_ROOT}/packages/lib/client/package.js
 COPY packages/lib/client/dist ${DIR_ROOT}/packages/lib/client/dist
 
 COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
-COPY packages/runtime/client/index.js ${DIR_ROOT}/packages/runtime/client/index.js
+COPY packages/runtime/client/dist ${DIR_ROOT}/packages/runtime/client/dist
 
 COPY images/express-ffmpeg/package.json ${DIR_ROOT}/images/express-ffmpeg/package.json
 

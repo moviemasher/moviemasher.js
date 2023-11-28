@@ -1,24 +1,27 @@
 import { DIR_ROOT, DIR_SOURCE, DIR_TEMPORARY } from './Constants.js'
-import { ConfigurationRecord } from './Types.js'
+import { DocumentationConfiguration } from './Types.js'
 
-export const CONFIGURATION: ConfigurationRecord = {
+export const CONFIGURATION: DocumentationConfiguration = {
+  inputCombinedMdDirectory: `md/combined`,
+  inputCategoryMdDirectory: `md/category`,
+  inputModuleMdDirectory: `md/module`,
   combineDirectories: ['Types', 'Variables', 'Functions'],
   inputCategoryHtmlPath: `html/category.html`,
-  inputCategoryMdDirectory: `md/category`,
   inputCombinedHtmlPath: `html/combined.html`,
-  inputCombinedMdDirectory: `md/combined`,
-  inputCssPath: `documentation.css`,
+  inputModulesMdDirectory: `modules`,
+  inputCssPaths: ['css/page.css', 'css/documentation.css'],
   inputFileHtmlPath: `html/file.html`,
   inputFolderHtmlPath: `html/folder.html`,
-  inputOtherMdDirectory: 'md',
   inputPageHtmlPath: `html/page.html`,
   inputRoot: DIR_SOURCE,
   inputSectionHtmlPath: `html/section.html`,
   inputTypedocMdDirectory: `${DIR_TEMPORARY}/md`,
   outputCategoryPath: 'categories',
   outputCombinedPath: 'combined',
+  outputCssPath: 'media/css/documentation.css',
   outputExportPath: 'exports',
-  outputOtherPath: 'guides',
+  outputModulePath: 'modules',
+  outputOtherPath: '',
   outputRoot: `${DIR_ROOT}/docs`,
   typedocJsonPath: `${DIR_TEMPORARY}/project.json`,
   sortKinds: [
@@ -32,6 +35,7 @@ export const CONFIGURATION: ConfigurationRecord = {
     'Class',
     'Interface',
     'Constructor',
+    'Accessor',
     'Property',
     'Method',
     'CallSignature',
@@ -40,66 +44,87 @@ export const CONFIGURATION: ConfigurationRecord = {
     'Parameter',
     'TypeLiteral',
     'TypeParameter',
-    'Accessor',
     'GetSignature',
     'SetSignature',
     'TypeAlias',
     'Reference',
   ],
-  files: [
+  docFilesAndFolders: [
     //  {
-    //   title: 'Test', url: 'index.html', markdownPath: 'test.md'
-    // },
-    // {
-    //   title: 'README', url: 'index.html', markdownPath: '/app/README.md'
+    //   title: 'Test', url: 'index.html', markdownPaths: ['test.md']
     // },
     {
+      title: 'README', url: 'index.html', markdownPaths: ['/app/README.md']
+    },
+    {
+      title: 'Demo', url: 'demo/index.html', htmlPaths: ['html/demo.html'],
+      templatePath: 'html/page-demo.html',
+    },
+    {
       title: 'Guides', 
-      files: [
+      docFiles: [
         { 
           title: 'End User', url: 'EndUser.html', 
-          markdownPath: '/app/dev/documentation/guides/end-user.md' 
+          markdownPaths: ['md/guides/end-user.md']
         },
         { 
           title: 'Client Developer', url: 'ClientDeveloper.html', 
-          markdownPath: '/app/dev/documentation/guides/client-developer.md' 
+          markdownPaths: ['md/guides/client-developer.md']
         },
         { 
           title: 'Server Developer', url: 'ServerDeveloper.html', 
-          markdownPath: '/app/dev/documentation/guides/server-developer.md' 
+          markdownPaths: ['md/guides/server-developer.md']
         },
         { 
           title: 'Contributer', url: 'Contributer.html', 
-          markdownPath: '/app/dev/documentation/guides/contributor.md' 
+          markdownPaths: ['md/guides/contributor.md']
         },
       ]
     },
     {
       title: 'Overview', 
-      files: [
+      docFiles: [
         { 
           title: 'Architecture', url: 'Architecture.html', 
-          markdownPath: '/app/dev/documentation/overview/architecture.md' 
+          markdownPaths: ['md/overview/architecture.md']
         },
         { 
           title: 'Styling', url: 'Styling.html', 
-          markdownPath: '/app/dev/documentation/overview/styling.md' 
+          markdownPaths: ['md/overview/styling.md']
         },
         { 
           title: 'Rendering', url: 'Rendering.html', 
-          markdownPath: '/app/dev/documentation/overview/rendering.md' 
+          markdownPaths: ['md/overview/rendering.md']
         },
       ]
     },
-    // {
-    //   title: 'Core', 
-    //   files: [
-    //     { categoryId: 'Timings' },
-    //     { exportId: 'ClientMashAsset' },
-    //     { directory: 'Types' },
-    //     { directory: 'Variables' },
-    //     { directory: 'Functions' },
-    //   ]
-    // },
+    {
+      title: 'Other', 
+      docFiles: [
+        { categoryId: 'Component', title: 'Web Components' },
+        { categoryId: 'ClientEvents', title: 'Client Events' },
+        { categoryId: 'ServerEvents', title: 'Server Events' },
+      ]
+    },
+    {
+      title: 'Combined', 
+      docFiles: [
+        { directory: 'Types' },
+        { directory: 'Variables' },
+        { directory: 'Functions' },
+        
+      ]
+    },
+    {
+      title: '@moviemasher', 
+      docFiles: [
+        { libOrRuntime: 'lib', clientServerOrShared: 'client' },
+        { libOrRuntime: 'lib', clientServerOrShared: 'server' },
+        { libOrRuntime: 'lib', clientServerOrShared: 'shared' },
+        { libOrRuntime: 'runtime', clientServerOrShared: 'client' },
+        { libOrRuntime: 'runtime', clientServerOrShared: 'server' },
+        { libOrRuntime: 'runtime', clientServerOrShared: 'shared' },
+      ]
+    },
   ]
 }

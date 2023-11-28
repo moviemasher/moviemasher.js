@@ -1,13 +1,18 @@
 import type { ClientAsset, ServerProgress } from '@moviemasher/runtime-client'
 import type { AssetObject, InstanceArgs, InstanceObject, Size, StringDataOrError, TargetId } from '@moviemasher/runtime-shared'
 
-import { AssetClass, idIsTemporary } from '@moviemasher/lib-shared'
-import { EventManagedAsset, EventManagedAssetId, EventSave, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, TARGET_ASSET, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
+import { AssetClass } from '@moviemasher/lib-shared/base/asset.js'
+import { EventManagedAsset, EventManagedAssetId, EventSave, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { ASSET_TARGET, ERROR, assertAsset, errorPromise, idIsTemporary, isDefiniteError } from '@moviemasher/runtime-shared'
 
 export class ClientAssetClass extends AssetClass implements ClientAsset {
   override asset(assetIdOrObject: string | AssetObject): ClientAsset {
-    return EventManagedAsset.asset(assetIdOrObject)
+    const event = new EventManagedAsset(assetIdOrObject)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
+    const { asset } = event.detail
+    assertAsset(asset)
+
+    return asset
   }
   
   assetIcon(_size: Size): Promise<SVGSVGElement> | undefined { return }
@@ -25,7 +30,7 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     if (newId !== oldId) {
       this.id = newId
       // console.debug(this.constructor.name, 'saveId', oldId, newId)
-      MovieMasher.eventDispatcher.dispatch(new EventManagedAssetId(oldId, newId))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventManagedAssetId(oldId, newId))
     }
   }
   
@@ -33,7 +38,7 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
 
   protected savingPromise(progress?: ServerProgress): Promise<StringDataOrError> {
     const event = new EventSave(this, progress)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) return errorPromise(ERROR.Unimplemented)
   
@@ -55,6 +60,6 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     })
   }
 
-  override targetId: TargetId = TARGET_ASSET
+  override targetId: TargetId = ASSET_TARGET
 
 }

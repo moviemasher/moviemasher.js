@@ -4,8 +4,10 @@ import type { ServerAudibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerAudibleInstance, ServerInstance } from '../Types/ServerInstanceTypes.js'
 import type { Tweening } from '../Types/ServerTypes.js'
 
-import { assertPopulatedString, idGenerate, timeFromArgs } from '@moviemasher/lib-shared'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
+import { idGenerate } from '@moviemasher/runtime-shared'
+import { timeFromArgs } from '@moviemasher/lib-shared/utility/time.js'
 
 export function ServerAudibleInstanceMixin<T extends Constrained<ServerInstance & AudibleInstance>>(Base: T):
   T & Constrained<ServerAudibleInstance> {

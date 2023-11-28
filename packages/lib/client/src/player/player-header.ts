@@ -1,37 +1,36 @@
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { ClientActionFlip } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { HeaderElement } from '../Base/LeftCenterRight.js'
-
+import { FLIP } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html'
+import { HeaderBase } from '../base/LeftCenterRight.js'
 
 const PlayerHeaderTag = 'movie-masher-player-header'
-export class PlayerHeaderElement extends HeaderElement {
+/**
+ * @category Component
+ */
+export class PlayerHeaderElement extends HeaderBase {
 
   protected override leftContent(slots: Htmls): OptionalContent {
-    this.importTags('movie-masher-control-input')
+    this.importTag('movie-masher-control-input', 'movie-masher-controls')
     const htmls = [...slots]
     htmls.push(html`
       <movie-masher-action-client 
-        icon='${ClientActionFlip}' detail='${ClientActionFlip}'
+        icon='${FLIP}' detail='${FLIP}'
       ></movie-masher-action-client>
     `)
     return super.leftContent(htmls)
   }
   
   protected override rightContent(slots: Htmls): OptionalContent {
-    this.importTags('movie-masher-control-input')
+    this.importTag('movie-masher-control-input', 'movie-masher-controls')
     const htmls = [...slots]
-    htmls.push(html`
-      <movie-masher-control-input
-        property-id='mash.color'
-      ></movie-masher-control-input>
-    `)
+    htmls.push(html`<movie-masher-control-input
+      property-id='mash.color'
+    ></movie-masher-control-input>`)
     return super.rightContent(htmls)
   }
 }
 
-// register web component as custom element
 customElements.define(PlayerHeaderTag, PlayerHeaderElement)
 
 declare global {

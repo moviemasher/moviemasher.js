@@ -4,12 +4,13 @@ import type { ServerVisibleAsset } from '../Types/ServerAssetTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../Types/ServerInstanceTypes.js'
 import type { Tweening } from '../Types/ServerTypes.js'
 
-import { arrayLast, assertDefined, assertPopulatedArray, assertPopulatedString, assertTimeRange, colorBlackOpaque, colorTransparent, idGenerate, isTimeRange, isTrueValue, sizeEven } from '@moviemasher/lib-shared'
-import { POINT_ZERO } from '@moviemasher/runtime-shared'
+import { assertDefined, assertPopulatedArray, assertPopulatedString, isTrueValue } from '@moviemasher/lib-shared/utility/guards.js'
+import { sizeEven } from '@moviemasher/lib-shared/utility/rect.js'
+import { assertTimeRange, isTimeRange } from '@moviemasher/lib-shared/utility/time.js'
+import { HEIGHT, POINT_ZERO, RGBA_BLACK, RGBA_BLACK_ZERO, WIDTH, arrayLast, idGenerate } from '@moviemasher/runtime-shared'
 import { tweenMaxSize, tweenOption, tweenPosition } from '../Utility/Command.js'
 import { commandFilesInput } from '../Utility/CommandFilesFunctions.js'
 import { isServerVisibleAsset } from '../guard/assets.js'
-
 
 export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance & VisibleInstance>>(Base: T):
   T & Constrained<ServerVisibleInstance> {
@@ -54,7 +55,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       // add color box first
       const colorArgs: VisibleCommandFilterArgs = {
         ...args,
-        contentColors: [colorBlackOpaque, colorBlackOpaque],
+        contentColors: [RGBA_BLACK, RGBA_BLACK],
         outputSize: maxSize,
       }//, //
       const colorInput = `container-${track}-back`
@@ -124,7 +125,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       const { id } = this
       let filterInput = input || commandFilesInput(commandFiles, id, visible)
 
-      const shortest = outputSize.width < outputSize.height ? 'width' : 'height'
+      const shortest = outputSize.width < outputSize.height ? WIDTH : HEIGHT
       const contentArgs: ContentRectArgs = {
         containerRects, time, timeRange: clipTime, shortest,
       }
@@ -134,7 +135,7 @@ export function ServerVisibleInstanceMixin<T extends Constrained<ServerInstance 
       const maxContainerSize = sizeEven(tweenMaxSize(...containerRects))
 
       const colorArgs: VisibleCommandFilterArgs = {
-        ...args, contentColors: [colorTransparent, colorTransparent],
+        ...args, contentColors: [RGBA_BLACK_ZERO, RGBA_BLACK_ZERO],
         outputSize: maxContainerSize
       }
       // console.log(this.constructor.name, 'ServerVisibleInstanceMixin.contentCommandFilters calling colorBackCommandFilters',colorInput)

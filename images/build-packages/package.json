@@ -2,8 +2,8 @@
   "name": "@moviemasher/build-packages",
   "description": "Builds Movie Masher library and runtime packages",
   "scripts": {
-    "example-express": "npm run build -w @moviemasher/example-express",
     "build-docs": "npm run build -w @moviemasher/build-docs",
+    "example-express": "npm run build -w @moviemasher/example-express",
     "lib-client": "npm run build -w @moviemasher/lib-client",
     "lib-server": "npm run build -w @moviemasher/lib-server",
     "lib-shared": "npm run build -w @moviemasher/lib-shared",
@@ -13,19 +13,21 @@
     "runtime-shared": "npm run build -w @moviemasher/runtime-shared",
     "runtime": "run-s runtime-shared runtime-client runtime-server",
     "example": "run-s example-express",
-    "build": "run-s runtime lib"
+    "build": "run-s runtime lib build-docs"
   },
   "devDependencies": {
-    "@rollup/plugin-terser": "0.4.3",
+    "@rollup/plugin-terser": "0.4.4",
     "npm-run-all": "^4.1.5",
-    "rollup": "3.29.3",
-    "terser": "5.20.0",
-    "@typescript-eslint/eslint-plugin": "6.7.2",
+    "rollup": "4.4.1",
+    "terser": "5.24.0",
+    "@typescript-eslint/eslint-plugin": "6.11.0",
     "eslint-plugin-tsdoc": "0.2.17",
-    "@types/node": "20.6.5",
+    "@types/node": "20.9.0",
     "typescript": "5.1.3",
-    "rollup-plugin-typescript2": "0.35.0",
-    "esbuild": "0.18.4"
+    "rollup-plugin-typescript2": "0.36.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@rollup/plugin-json": "6.0.1",
+    "rollup-plugin-copy": "3.5.0"
   },
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"
@@ -40,5 +42,5 @@
     "type": "git",
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
-  "version": "5.1.2"
+  "version": "5.2.0"
 }

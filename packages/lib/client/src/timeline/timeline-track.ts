@@ -1,19 +1,49 @@
+import type { ClientClips, ClipLocation, DropTarget } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Content, Contents, DropTarget, OptionalContent } from '../declarations.js'
+import type { Content, Contents, OptionalContent } from '../Types.js'
 
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { isPositive } from '@moviemasher/lib-shared'
-import { EventChanged, EventClipElement, EventTypeScrollRoot, MovieMasher, ScrollRootEventDetail, EventTrackClips, ClipLocation } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from '../Base/Component.js'
-import { DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
-import { droppedMashIndex } from '../utility/draganddrop.js'
-import { pixelFromFrame } from '../utility/pixel.js'
+import { isPositive } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChanged, EventClipElement, EventTrackClips, INDEX_LAST, MOVIEMASHER, EventScrollRoot } from '@moviemasher/runtime-client'
+import { html } from 'lit-html'
+import { Component, ImporterComponent } from '../base/Component.js'
+import { DropTargetMixin } from '../mixins/component.js'
+import { dragData, droppingFiles } from '../utility/draganddrop.js'
+import { pixelFromFrame, pixelToFrame } from '../utility/pixel.js'
 
-export const TimelineTrackName = 'movie-masher-timeline-track'
+const droppedMashIndex = (dataTransfer: DataTransfer, trackIndex = INDEX_LAST, scale = 0, offsetDrop = 0, clipId = ''): ClipLocation => {
+  //  eg. offsetDrop = scrollX + clientX - viewX   
+  const files = droppingFiles(dataTransfer)
+  const clientClips: ClientClips = []
+  let isDense = false
+  if (isPositive(trackIndex)) {
+    const event = new EventTrackClips(trackIndex)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
+    const { clips, dense } = event.detail
+    if (clips) {
+      clientClips.push(...clips)
+      isDense = !!dense
+    }
+  }
+  const location: ClipLocation = { track: trackIndex }
+  if (isDense) {
+    if (clipId) {
+      location.index = clientClips.findIndex(clip => clip.id === clipId) + 1
+    } else location.index = INDEX_LAST
+  } else {
+    const data = files ? { offset: 0 } : dragData(dataTransfer)
+    location.frame = pixelToFrame(Math.max(0, offsetDrop - data.offset), scale)
+  }
+  return location
+}
+
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
+
+const TimelineTrackTag = 'movie-masher-timeline-track'
+/**
+ * @category Component
+ */
 export class TimelineTrackElement extends WithDropTargetMixin implements DropTarget {
   constructor() {
     super()
@@ -39,7 +69,7 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
 
     const contents: Contents = []
     const event = new EventTrackClips(trackIndex)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { clips } = event.detail
     const labels = true
     const icons = true
@@ -66,7 +96,7 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
           return
         } 
         const event = new EventClipElement(clip.id, maxWidth, scale, trackIndex, trackWidth, width, x, label, labels, icons)
-        MovieMasher.eventDispatcher.dispatch(event)
+        MOVIEMASHER.eventDispatcher.dispatch(event)
         const { node } = event.detail
         if (!node) return
         byId[clip.id] = node
@@ -103,13 +133,10 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
 
   override mashIndex(event: DragEvent): ClipLocation | undefined {
     const { dataTransfer } = event
-    const detail: ScrollRootEventDetail = {}
-    const init: CustomEventInit<ScrollRootEventDetail> = { 
-      detail, composed: true, bubbles: true, cancelable: true
-    }
-    const rootEvent = new CustomEvent(EventTypeScrollRoot, init)
+
+    const rootEvent = new EventScrollRoot()
     this.dispatchEvent(rootEvent)
-    const { root } = detail
+    const { root } = rootEvent.detail
     if (!root) return super.mashIndex(event)
 
     const { clientX } = event
@@ -165,11 +192,10 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
   ]
 }
 
-// register web component as custom element
-customElements.define(TimelineTrackName, TimelineTrackElement)
+customElements.define(TimelineTrackTag, TimelineTrackElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [TimelineTrackName]: TimelineTrackElement
+    [TimelineTrackTag]: TimelineTrackElement
   }
 }

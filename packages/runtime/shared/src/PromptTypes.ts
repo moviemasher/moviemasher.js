@@ -1,4 +1,4 @@
-import type { Asset, AssetObject } from './AssetTypes.js'
+import type { Asset, AssetObject } from './AssetInterfaces.js'
 import type { AudioAssetObject } from './AudioAsset.js'
 import type { ImageAssetObject } from './ImageAsset.js'
 import type { EndpointRequest } from './Request.js'

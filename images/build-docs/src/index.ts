@@ -1,7 +1,8 @@
 
+import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { CONFIGURATION  } from './Configuration.js'
 
-import { Render } from './Render.js'
+import { DocumentationBuilder } from './DocumentationBuilder.js'
 
-const renderedsOrError = await new Render().run(CONFIGURATION)
-console.log(renderedsOrError)
+const renderedsOrError = await new DocumentationBuilder().run(CONFIGURATION)
+if (isDefiniteError(renderedsOrError)) console.log(renderedsOrError)

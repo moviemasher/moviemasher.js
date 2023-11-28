@@ -1,17 +1,18 @@
-import type { LoadType, Strings } from '@moviemasher/runtime-shared'
+import type { ImportType, Strings } from '@moviemasher/runtime-shared'
 import type { Application } from 'express'
 import type { UploadFileRequest, UploadFileResponse, UploadRequestRequest, UploadResponse, VersionedDataOrError } from '../Api/Api.js'
 import type { ExpressHandler, UploadServerArgs } from './Server.js'
 
-import { ENV, ENVIRONMENT, idUnique } from '@moviemasher/lib-server'
-import { ContentTypeHeader, FormDataMimetype, SLASH, assertAboveZero, assertPopulatedString, isLoadType, } from '@moviemasher/lib-shared'
-import { ASSET_TYPES, ERROR, VERSION, errorMessageObject, errorObjectCaught, errorThrow, isNumber, isString } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV } from '@moviemasher/lib-server'
+import { assertAboveZero, assertPopulatedString, } from '@moviemasher/lib-shared'
+import { ASSET_TYPES, CONTENT_TYPE, ERROR, MIME_MULTI, POST, SLASH, VERSION, errorMessageObject, errorObjectCaught, errorThrow, isImportType, isNumber, isString } from '@moviemasher/runtime-shared'
 import basicAuth from 'express-basic-auth'
 import fs from 'fs'
 import multer from 'multer'
 import path from 'path'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
+import { idUnique } from '../Hash.js'
 
 const FileServerMeg = 1024 * 1024
 const FileServerFilename = 'original'
@@ -23,11 +24,10 @@ export class UploadServerClass extends ServerClass {
     return Object.values(this.args.extensions).flat().filter(isString)
   }
 
-  private extensionLoadType(extension: string): LoadType | undefined {
-    const found = ASSET_TYPES.find(type =>
+  private extensionImportType(extension: string): ImportType | undefined {
+    return ASSET_TYPES.find(type =>
       this.args.extensions[type].includes(extension)
     )
-    if (found) return found as LoadType
   }
 
   id = 'upload'
@@ -60,17 +60,17 @@ export class UploadServerClass extends ServerClass {
       const user = this.userFromRequest(req)
       const extension = path.extname(name).slice(1).toLowerCase()
       let raw: string | undefined = type.split(SLASH).shift() // audio, video, image, font
-      if (raw && !isLoadType(raw)) raw = ''
-      raw ||= this.extensionLoadType(extension)
+      if (raw && !isImportType(raw)) raw = ''
+      raw ||= this.extensionImportType(extension)
 
       if (!raw) errorThrow(ERROR.ImportType)
       if (!this.withinLimits(size, raw)) {
         errorThrow(ERROR.ImportSize, `${size} > ${this.args.uploadLimits[raw]}`)
       }
-      const outputRoot = ENVIRONMENT.get(ENV.OutputRoot)
+      const outputRoot = ENV.get(ENV_KEY.OutputRoot)
       const outputPath = path.resolve(outputRoot, user, id, `${FileServerFilename}.${extension}`)
 
-      const exampleRoot = ENVIRONMENT.get(ENV.ExampleRoot)
+      const exampleRoot = ENV.get(ENV_KEY.ExampleRoot)
       const endpoint = path.relative(exampleRoot, outputPath)
       const { fileProperty } = this
       const data = {
@@ -78,8 +78,8 @@ export class UploadServerClass extends ServerClass {
         storeRequest: {
           endpoint: { pathname: Endpoints.upload.file },
           init: { 
-            method: 'POST', 
-            headers: { [ContentTypeHeader]: FormDataMimetype } 
+            method: POST, 
+            headers: { [CONTENT_TYPE]: MIME_MULTI } 
           }, 
         },
         assetRequest: { endpoint },
@@ -96,7 +96,7 @@ export class UploadServerClass extends ServerClass {
       console.debug(this.constructor.name, 'startServer')
       const fileSize = FileServerMeg * Math.max(...Object.values(this.args.uploadLimits).filter(isNumber))
 
-      const outputRoot = ENVIRONMENT.get(ENV.OutputRoot)
+      const outputRoot = ENV.get(ENV_KEY.OutputRoot)
       const { extensions } = this
 
       const storage = multer.diskStorage({

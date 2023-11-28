@@ -1,4 +1,4 @@
-import type { Asset } from './AssetTypes.js'
+import type { Asset } from './AssetInterfaces.js'
 import type { VisibleInstance } from './InstanceTypes.js'
 import type { Size } from './Size.js'
 import type { Time, TimeRange } from './Time.js'

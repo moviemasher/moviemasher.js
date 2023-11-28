@@ -1,8 +1,9 @@
 import type { ErrorObject, Scalar, Size, StringTuple, Strings, Value } from '@moviemasher/runtime-shared'
 
-import { DASH, DOT, NEWLINE, SEMICOLON, SPACE, arrayLast, assertNumber, isSize, sizesEqual } from '@moviemasher/lib-shared'
-import { ERROR, isNumber, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
-import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
+import { assertNumber, isSize } from '@moviemasher/lib-shared/utility/guards.js'
+import { sizesEqual } from '@moviemasher/lib-shared/utility/rect.js'
+import { DASH, DOT, ERROR, NEWLINE, SEMICOLON, SPACE, arrayLast, isNumber, isNumeric, isPopulatedString } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV } from '../Environment/EnvironmentConstants.js'
 
 const commandExpandComplex = (trimmed: string): string => {
   if (!trimmed.includes(SEMICOLON)) return trimmed
@@ -27,7 +28,7 @@ export const commandString = (args: string[], destination: string, exapnded?: bo
   let foundYes = false
   const params: StringTuple[] = []
   
-  const rootPath = ENVIRONMENT.get(ENV.DirRoot) 
+  const rootPath = ENV.get(ENV_KEY.DirRoot) 
   args.forEach(arg => {
     if (!isPopulatedString(arg)) return
 

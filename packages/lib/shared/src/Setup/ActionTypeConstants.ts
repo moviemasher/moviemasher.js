@@ -1,7 +1,0 @@
-export const ActionTypeAddClip = 'add-clip'
-export const ActionTypeAddTrack = 'add-track'
-export const ActionTypeChange = 'change'
-export const ActionTypeChangeFrame = 'change-frame'
-export const ActionTypeChangeMultiple = 'change-multiple'
-export const ActionTypeMoveClip = 'move-clip'
-export const ActionTypeRemoveClip = 'remove-clip'

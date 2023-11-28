@@ -1,21 +1,25 @@
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, GraphFiles, ServerMediaRequest, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
-import type { AssetCacheArgs, CacheArgs, DataOrError, InstanceArgs, Rect, StringTuple, Strings, TextAssetObject, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, CacheArgs, DataOrError, InstanceArgs, ListenersFunction, Rect, StringTuple, Strings, TextAssetObject, TextInstanceObject, ValueRecord } from '@moviemasher/runtime-shared'
 import type { ServerTextAsset, ServerTextInstance, Tweening } from '../../Types/ServerTypes.js'
 
-import { DOT, EQUALS, LockNone, NEWLINE, TextAssetMixin, TextExtension, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, arrayLast, arrayOfNumbers, assertPopulatedString, assertRect, assertTrue, colorBlack, colorBlackTransparent, colorRgbKeys, colorRgbaKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent, idGenerate, isPopulatedArray, pointAboveZero, sizeAboveZero, sizeEven } from '@moviemasher/lib-shared'
-import { EventServerAsset, EventServerAssetPromise, EventServerTextRect, TXT, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, FONT, IMAGE, POINT_KEYS, POINT_ZERO, RECT_KEYS, RECT_ZERO, SIZE_KEYS, TEXT, errorPromise, isAssetObject, isDefiniteError, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
+import { TextAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { TextInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { colorToRgb, colorToRgba } from '@moviemasher/lib-shared/utility/color.js'
+import { assertPopulatedString, assertRect, assertTrue, isPopulatedArray } from '@moviemasher/lib-shared/utility/guards.js'
+import { pointAboveZero, sizeAboveZero, sizeEven } from '@moviemasher/lib-shared/utility/rect.js'
+import { EventServerAsset, EventServerAssetPromise, EventServerTextRect, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { DOT, EQUALS, ERROR, FONT, FRAME, IMAGE, NEWLINE, NONE, POINT_KEYS, POINT_ZERO, RECT_KEYS, RECT_ZERO, RGBA_BLACK_ZERO, RGBA_KEYS, RGBA_WHITE_ZERO, RGB_BLACK, RGB_KEYS, RGB_WHITE, SIZE_KEYS, TEXT, TEXT_HEIGHT, TXT, arrayLast, arrayOfNumbers, errorPromise, idGenerate, isAssetObject, isDefiniteError, isNumber, isPopulatedString } from '@moviemasher/runtime-shared'
 import { execSync } from 'child_process'
 import path from 'path'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
-import { ENV, ENVIRONMENT } from '../../Environment/EnvironmentConstants.js'
+import { ENV_KEY, ENV } from '../../Environment/EnvironmentConstants.js'
 import { tweenMaxSize, tweenOption, tweenPosition } from '../../Utility/Command.js'
 import { commandFilesInput } from '../../Utility/CommandFilesFunctions.js'
 import { filePathExists, fileWrite, fileWritePromise } from '../../Utility/File.js'
-import { hashMd5 } from '../../Utility/Hash.js'
+import { fileNameFromContent } from '../../Utility/File.js'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -30,7 +34,7 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     const { validDirectories } = args
     const { request } = this
     const event = new EventServerAssetPromise(request, FONT, validDirectories)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
    
@@ -92,7 +96,8 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
     const baseline = Math.round(height / 2) 
     const left = Math.round(width / 4) 
     filters.push(`color=size=${width}x${height}:duration=1:rate=1:color=black`)
-    filters.push(`drawtext=y_align=baseline:fontfile=${fontPath}:textfile=${textPath}:fontsize=${charHeight}:fontcolor=yellow:box=1:boxcolor=white:x=${left}:y=${baseline}`)
+    // y_align=baseline:
+    filters.push(`drawtext=fontfile=${fontPath}:textfile=${textPath}:fontsize=${charHeight}:fontcolor=yellow:box=1:boxcolor=white:x=${left}:y=${baseline}`)
     filters.push(`cropdetect=mode=black:skip=0`)
     // metadata=mode=print
     const tags = RECT_KEYS.map(key => `lavfi.cropdetect.${key[0]}`).join(',')
@@ -134,9 +139,9 @@ export class ServerTextAssetClass extends WithTextAsset implements ServerTextAss
   }
 
   private static textRect(text: string, fontPath: string, charHeight: number): Rect {
-    const fileName = hashMd5(text)
-    const directory = ENVIRONMENT.get(ENV.ApiDirCache)
-    const name = [fileName, DOT, TextExtension].join('')
+    const fileName = fileNameFromContent(text)
+    const directory = ENV.get(ENV_KEY.ApiDirCache)
+    const name = [fileName, DOT, TXT].join('')
     const textFile = path.resolve(directory, name)
     if (!filePathExists(textFile)) fileWrite(textFile, text)
     let multiplier = 2 
@@ -266,8 +271,8 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       filterInput = arrayLast(arrayLast(commandFilters).outputs)  
     }
     const { lock } = this
-    const [color = colorWhite, endColor] = colors
-    const stretch = lock === LockNone
+    const [color = RGB_WHITE, endColor] = colors
+    const stretch = lock === NONE
     const {
       width: intrinsicWidth, height: intrinsicHeight,
       x: intrinsicX, 
@@ -283,7 +288,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
 
     const x = intrinsicX * (width / intrinsicWidth)
     const y =  intrinsicY * (height / intrinsicHeight)
-    const intrinsicRatio = TextHeight / intrinsicHeight
+    const intrinsicRatio = TEXT_HEIGHT / intrinsicHeight
 
     const [textfile, fontfile] = this.findCommandFiles(commandFiles)
     assertPopulatedString(textfile)
@@ -298,11 +303,11 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     const ffmpegFilter = 'drawtext'
     const drawtextId = idGenerate(ffmpegFilter)
     
-    const fontColor = (tweeningColor || contentOutput) ? colorWhite : color
+    const fontColor = (tweeningColor || contentOutput) ? RGB_WHITE : color
 
-    let backColor = colorBlack
+    let backColor = RGB_BLACK
     if (!contentOutput) {
-      backColor = tweeningColor ? colorBlackTransparent : colorWhiteTransparent
+      backColor = tweeningColor ? RGBA_BLACK_ZERO : RGBA_WHITE_ZERO
     }
     
 
@@ -327,7 +332,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       const alpha = color.length > 7
       const fromColor = alpha ? colorToRgba(color) : colorToRgb(color)
       const toColor = alpha ? colorToRgba(colorEnd!) : colorToRgb(colorEnd!)
-      const keys = alpha ? colorRgbaKeys : colorRgbKeys
+      const keys = alpha ? RGBA_KEYS : RGB_KEYS
       const calcs = keys.map(key => {
         const from = fromColor[key]
         const to = toColor[key]
@@ -369,7 +374,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
       scaleOptions.height = tweenOption(height, fontsizeEnd, position, true)
     
       if (!(isNumber(scaleOptions.width) && isNumber(scaleOptions.height))) {
-        scaleOptions.eval = 'frame'
+        scaleOptions.eval = FRAME
       }
     
       const scaleFilter = 'scale'
@@ -394,14 +399,14 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
 
   private intrinsicRectInitialize(): Rect {
     const { asset, string } = this
-    if (!string) return { width: 0, height: TextHeight, ...POINT_ZERO }
+    if (!string) return { width: 0, height: TEXT_HEIGHT, ...POINT_ZERO }
 
     const request = asset.request as ServerMediaRequest
     const { path: file } = request
     assertPopulatedString(file)
 
-    const event = new EventServerTextRect(string, file, TextHeight)
-    MovieMasher.eventDispatcher.dispatch(event)
+    const event = new EventServerTextRect(string, file, TEXT_HEIGHT)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
     const { rect } = event.detail
     // console.log(this.constructor.name, 'intrinsicRectInitialize', rect)
 
@@ -432,8 +437,8 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
     const { string: content, asset: definition, id: inputId } = this
     // console.log(this.constructor.name, 'visibleCommandFiles', inputId)
 
-    const directory = ENVIRONMENT.get(ENV.ApiDirCache)
-    const fileName = hashMd5(content)
+    const directory = ENV.get(ENV_KEY.ApiDirCache)
+    const fileName = fileNameFromContent(content)
     const type = TXT
     const file = path.resolve(directory, [fileName, DOT, type].join(''))
     const textGraphFile: CommandFile = {
@@ -445,7 +450,7 @@ export class ServerTextInstanceClass extends WithTextInstance implements ServerT
 }
 
 // listen for image/text asset event
-export const ServerTextImageListeners = () => ({
+export const ServerTextImageListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerTextAssetClass.handleAsset,
   [EventServerTextRect.Type]: ServerTextAssetClass.handleTextRect,
 })

@@ -1,9 +1,12 @@
 {
   "name": "@moviemasher/lib-client",
-  "description": "Movie Masher Web Component Client",
+  "description": "Movie Masher Client Library",
   "license": "MIT",
-  "version": "5.1.2",
-  
+  "version": "5.2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
   "files": ["./dist/"],
   "type": "module",
   "main": "dist/index.js",
@@ -12,14 +15,12 @@
 
 
   "scripts": {
-    "package": "rollup -c dev/rollup/package.config.mjs",
-    "client": "rollup -c dev/rollup/client.config.mjs",
-    "build": "run-s package client",
+    "build": "rollup -c dev/rollup.config.mjs",
     "script": "run-s"
   },
   "peerDependencies": {
-    "@moviemasher/lib-shared": "5.1.2",
-    "@moviemasher/runtime-client": "5.1.2"
+    "@moviemasher/lib-shared": "5.2.0",
+    "@moviemasher/runtime-client": "5.2.0"
   },
   "dependencies": {
     "lit-html": "2.8.0",

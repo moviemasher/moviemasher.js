@@ -1,7 +1,3 @@
-export type Lock = HeightLock | LongestLock | NoneLock | ShortestLock | WidthLock
+import { PropertySize } from './Size.js'
 
-export type HeightLock = 'height'
-export type LongestLock = 'longest'
-export type NoneLock = 'none'
-export type ShortestLock = 'shortest'
-export type WidthLock = 'width'
+export type Lock = PropertySize | 'longest' | 'none' | 'shortest'

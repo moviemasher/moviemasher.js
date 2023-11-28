@@ -1,12 +1,12 @@
 import type { ClientMashVideoAsset, ClientMashVideoInstance, } from '@moviemasher/runtime-client'
-import type { InstanceArgs, MashAssetObject, MashInstanceObject, } from '@moviemasher/runtime-shared'
+import type { InstanceArgs, ListenersFunction, MashAssetObject, MashInstanceObject, } from '@moviemasher/runtime-shared'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, timeFromArgs, } from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, VideoAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { AudibleInstanceMixin, VideoInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
 import { EventAsset } from '@moviemasher/runtime-client'
 import { MASH, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
-import { NonePreview } from '../../Client/Masher/MashPreview/NonePreview.js'
-import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
-import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { ClientVisibleAssetMixin } from '../../mixins/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../mixins/ClientVisibleInstanceMixin.js'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
 import { ClientAudibleAssetMixin } from '../Audible/ClientAudibleAssetMixin.js'
 import { ClientAudibleInstanceMixin } from '../Audible/ClientAudibleInstanceMixin.js'
@@ -23,11 +23,6 @@ export class ClientMashVideoAssetClass extends WithVideoAsset implements ClientM
     this.initializeProperties(args)
   }
 
-  override initializeProperties(object: MashAssetObject): void {
-    this._preview = new NonePreview({ mash: this, time: timeFromArgs() })
-    super.initializeProperties(object)
-  }
-
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject } = detail
@@ -39,7 +34,7 @@ export class ClientMashVideoAssetClass extends WithVideoAsset implements ClientM
 }
 
 // listen for video/mash asset event
-export const ClientMashVideoListeners = () => ({
+export const ClientMashVideoListeners: ListenersFunction = () => ({
   [EventAsset.Type]: ClientMashVideoAssetClass.handleAsset
 })
 

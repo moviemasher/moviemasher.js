@@ -1,12 +1,18 @@
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
+import type { Content, Contents, Htmls, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { EventDialog } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { Slotted } from '../Base/Slotted.js'
+import { html } from 'lit-html'
+import { Slotted } from '../base/Component.js'
 
 const PartImporter = 'importer'
+
+const DialogTag = 'movie-masher-component-dialog'
+
+/**
+ * @category Component
+ */
 export class DialogElement extends Slotted {
   constructor() {
     super()
@@ -130,11 +136,10 @@ export class DialogElement extends Slotted {
 }
 
 
-// register web component as custom element
-customElements.define('movie-masher-component-dialog', DialogElement)
+customElements.define(DialogTag, DialogElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    'movie-masher-component-dialog': DialogElement
+    [DialogTag]: DialogElement
   }
 }

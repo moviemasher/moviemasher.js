@@ -1,22 +1,38 @@
-<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/head.md) -->
-<!-- The below content is automatically added from ../../../dev/documentation/snippet/head.md -->
+<!-- MAGIC:START (FILEMD:src=md/snippet/head.md) -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor and encoder_
+_TypeScript video editor and encoder_
 - **edit** video, audio, and images in [Web Components](https://developer.mozilla.org/en-US/docs/Web/API/Web_components) 
 - **encode** high resolution media files using [FFmpeg](https://ffmpeg.org)
 - **customize** the editor with standard [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
-- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent)
+- **extend** the system by listening for [Custom Events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent) 
+
 <!-- MAGIC:END -->
 
-## Shared Library
+<!-- MAGIC:START (FILEMD:src=md/module/lib-shared.md) -->
+## lib-shared
 
-This module is a peer dependency of both
-[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client) and
-[@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server) modules, and not typically installed directly. It exports core interfaces, classes, factories, utility methods, enumerations, and types related to creating, managing and rendering video edit decision lists.
+The 
+[@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared)
+module is imported by high-level libraries like 
+[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client) 
+and
+[@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server),
+and not typically installed directly. 
+It exports classes and functions needed both on the server and in the client.
 
-<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../../dev/documentation/snippet/documentation.md -->
+This module is built from code and configuration available in the
+[Movie Masher Github Repository](https://github.com/moviemasher/moviemasher.js).
+The NPM distribution includes TypeScript source code files, as well as minified 
+JavaScript files intended to be imported 
+directly by other modules. Each source file is distributed individually as a
+separate JavaScript file. The JavaScript includes source maps to the 
+TypeScript for easier debugging. 
+
+<!-- MAGIC:END -->
+
+
+<!-- MAGIC:START (FILEMD:src=md/snippet/documentation.md) -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -24,63 +40,10 @@ In addition to this README, there is a simple
 more [extensive documentation](https://moviemasher.com/docs/index.html) available on
 [MovieMasher.com](https://moviemasher.com/). Inline documentation and code completion is
 also available when using a code editor that supports TypeScript and IntelliSense.
-<!-- MAGIC:END -->
-
-<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-shared.md&stripMagic=true) -->
-## Core Example
-
-The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. 
-The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
-
-<fieldset>
-<legend>moviemasher.html</legend>
-
-```html
-<!DOCTYPE html>
-<html lang='en'>
-  <head>
-    <title>Movie Masher Express Example</title>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src="https://unpkg.com/@moviemasher/lib-shared@5.1.2/umd/moviemasher.js" crossorigin></script>
-    <style>
-      #root { width: 360px; height: 640px; }
-      #root > * { position: absolute; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script>
-const element = document.getElementById('root')
-const { editorInstance, TextContainerId } = MovieMasher
-const dimensions = element.getBoundingClientRect()
-const editor = editorInstance({ dimensions })
-const clip = { 
-  container: { string: 'Hello World!' }, containerId: TextContainerId
-}
-const mash = { tracks: [{ clips: [clip] }] }
-editor.load({ mash }).then(() => {
-  editor.previewItems().then(elements => element.append(...elements))
-})
-    </script>
-  </body>
-</html>
-```
-</fieldset>
-
-The SCRIPT code first stores the DIV element in the `element` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing content. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
-
-This example includes just a single text clip on a single track, but multiple tracks containing multiple clips of different types could be provided. In Movie Masher, text is a kind of container so we specify `TextContainerId` as the clip's `containerId` and populate `container` with the `string` we want to display. 
-
-This clip is then nested within a mash object which is passed to the editor's `load` method. This returns a promise that resolves once the first frame can be displayed, in this case waiting until the default font is loaded. The editor's `svgItems` method is then called which returns another promise that resolves with an array of elements. These are simply then appended to our SVG tag. 
-
-### _Please note_
-This example will only display what's on the first frame of our mash and will not update if we subsequently use the editor to make changes. More typically the client package is used, even when just displaying a mash. Learn more about how the codebase is structured in the [Architecture Overview](https://moviemasher.com/docs/Architecture.html).
-
 
 <!-- MAGIC:END -->
-<!-- MAGIC:START (FILE:src=../../../dev/documentation/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../../dev/documentation/snippet/foot.md -->
+
+<!-- MAGIC:START (FILEMD:src=md/snippet/foot.md) -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a
@@ -90,4 +53,5 @@ Further support is occassionally offered to particular projects on an hourly con
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
 and the web site is also needed. Please [send an email](mailto:connect34@moviemasher.com) to discuss ways to work on the project.
+
 <!-- MAGIC:END -->

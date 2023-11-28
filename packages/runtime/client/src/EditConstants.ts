@@ -1,0 +1,17 @@
+import type { Panel } from './PanelTypes.js'
+
+export const ADD = 'add'
+export const ADD_TRACK = 'add-track'
+export const CHANGE_FRAME = 'change-frame'
+export const MOVE_CLIP = 'move-clip'
+export const PLAY = 'play'
+export const REDO = 'redo'
+export const REMOVE = 'remove'
+export const REMOVE_CLIP = 'remove-clip'
+export const SAVE = 'save'
+export const UNDO = 'undo'
+export const VIEW = 'view'
+
+export const BROWSER: Panel = 'browser'
+export const PLAYER: Panel = 'player'
+export const TIMELINE: Panel = 'timeline'

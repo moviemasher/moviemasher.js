@@ -1,15 +1,16 @@
-import type { InstanceArgs, MashInstanceObject, MashVideoAssetObject } from '@moviemasher/runtime-shared'
+import type { InstanceArgs, ListenersFunction, MashInstanceObject, MashVideoAssetObject } from '@moviemasher/runtime-shared'
 import type { ServerMashVideoAsset, ServerMashVideoInstance } from '../../Types/ServerMashTypes.js'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, VideoAssetMixin, VideoInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared'
+import { AudibleAssetMixin, VideoAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { AudibleInstanceMixin, VideoInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
 import { EventServerAsset } from '@moviemasher/runtime-server'
 import { MASH, VIDEO, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
 import { ServerAudibleInstanceMixin } from '../../Base/ServerAudibleInstanceMixin.js'
-import { ServerMashAssetClass } from './ServerMashClasses.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { ServerMashAssetClass } from './ServerMashClasses.js'
 
 const WithAudibleAsset = AudibleAssetMixin(ServerMashAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
@@ -35,7 +36,7 @@ export class ServerMashVideoAssetClass extends WithVideoAsset implements ServerM
 }
 
 // listen for video/mash asset event
-export const ServerMashVideoListeners = () => ({
+export const ServerMashVideoListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerMashVideoAssetClass.handleAsset
 })
 

@@ -1,14 +1,17 @@
 import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { ContentElement } from '../Base/LeftCenterRight.js'
-import { Scroller } from '../Base/Scroller.js'
+import { html } from 'lit-html'
+import { ContentBase } from '../base/LeftCenterRight.js'
+import { Scroller } from '../base/LeftCenterRight.js'
 
 const TimelineContentTag = 'movie-masher-timeline-content'
 
-export class TimelineContentElement extends ContentElement {
+/**
+ * @category Component
+ */
+export class TimelineContentElement extends ContentBase {
   protected override centerContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
 
@@ -20,7 +23,7 @@ export class TimelineContentElement extends ContentElement {
   }
   
   static override styles: CSSResultGroup = [
-    ContentElement.styles,
+    ContentBase.styles,
     Scroller.cssDivRoot,
     css`
       div.root {
@@ -31,7 +34,6 @@ export class TimelineContentElement extends ContentElement {
   ]
 }
 
-// register web component as custom element
 customElements.define(TimelineContentTag, TimelineContentElement)
 
 declare global {

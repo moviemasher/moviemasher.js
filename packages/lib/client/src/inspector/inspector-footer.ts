@@ -1,20 +1,25 @@
 import type { PropertyDeclarations } from '@lit/reactive-element'
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { ClientActionRedo, ClientActionUndo, ServerActionSave } from '@moviemasher/runtime-client'
-import { FooterElement } from '../Base/LeftCenterRight.js'
+import { html } from 'lit-html'
+import { REDO, UNDO, SAVE } from '@moviemasher/runtime-client'
+import { FooterBase } from '../base/LeftCenterRight.js'
 
-export class InspectorFooterElement extends FooterElement {
+const InspectorFooterTag = 'movie-masher-inspector-footer'
+/**
+ * @category Component
+ */
+export class InspectorFooterElement extends FooterBase {
   
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
+
     this.importTags('movie-masher-action-server')
     htmls.push(html`
       <movie-masher-action-server
-        detail='${ServerActionSave}'
-        icon='${ServerActionSave}'
-        string='${ServerActionSave}'
+        detail='${SAVE}'
+        icon='${SAVE}'
+        string='${SAVE}'
       ></movie-masher-action-server>
     `)
     return super.leftContent(htmls)
@@ -24,26 +29,25 @@ export class InspectorFooterElement extends FooterElement {
     this.importTags('movie-masher-action-client')
     htmls.push(html`
       <movie-masher-action-client
-        detail='${ClientActionUndo}'
-        icon='${ClientActionUndo}'
-        string='${ClientActionUndo}'
+        detail='${UNDO}'
+        icon='${UNDO}'
+        string='${UNDO}'
       ></movie-masher-action-client>
     `)
     htmls.push(html`
       <movie-masher-action-client
-        detail='${ClientActionRedo}'
-        icon='${ClientActionRedo}'
-        string='${ClientActionRedo}'
+        detail='${REDO}'
+        icon='${REDO}'
+        string='${REDO}'
       ></movie-masher-action-client>
     `)
     return super.rightContent(htmls)
   }
   
   static override properties: PropertyDeclarations = {
-    ...FooterElement.properties,
+    ...FooterBase.properties,
   }
   
 }
 
-// register web component as custom element
-customElements.define('movie-masher-inspector-footer', InspectorFooterElement)
+customElements.define(InspectorFooterTag, InspectorFooterElement)

@@ -2,8 +2,8 @@ import type { ClientImporter } from '@moviemasher/runtime-client'
 import type { CSSResultGroup } from 'lit'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { EventImporters, EventImport } from '@moviemasher/runtime-client'
-import { AssetObject, AssetObjects } from '@moviemasher/runtime-shared'
+import { EventImport, EventImporters } from '@moviemasher/runtime-client'
+import { AssetObject, AssetObjects, ListenersFunction } from '@moviemasher/runtime-shared'
 
 const fileMedia = (_: File): Promise<AssetObject | void> => {
   return Promise.resolve()
@@ -74,7 +74,7 @@ export class TextClientImporter implements ClientImporter {
 }
 
 // listen for import related events
-export const ClientTextImportListeners = () => ({
+export const ClientTextImportListeners: ListenersFunction = () => ({
   [EventImporters.Type]: TextClientImporter.handleImporters,
   [EventImport.Type]: TextClientImporter.handleImport,
 })

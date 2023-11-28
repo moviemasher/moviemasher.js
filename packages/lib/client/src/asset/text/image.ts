@@ -1,15 +1,48 @@
 import type { ClientFont, ClientFontDataOrError, ClientTextAsset, ClientTextAssetObject, ClientTextInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
-import type { AssetCacheArgs, DataOrError, InstanceArgs, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
+import type { AssetCacheArgs, DataOrError, InstanceArgs, ListenersFunction, Property, Rect, Scalar, Size, TextInstance, TextInstanceObject, Time, Transcoding, } from '@moviemasher/runtime-shared'
 
-import { DOT, TextAssetMixin, TextHeight, TextInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, assertRequest, centerPoint, colorCurrent, isPropertyId, rectTransformAttribute, sizeContain } from '@moviemasher/lib-shared'
-import { EventAsset, EventClientFontPromise, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, IMAGE, POINT_ZERO, TEXT, FONT, errorPromise, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
-import { svgSvgElement, svgText } from '../../Client/SvgFunctions.js'
-import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
-import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { EventAsset, EventClientFontPromise, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { CURRENT_COLOR, DOT, ERROR, FONT, IMAGE, POINT_ZERO, RECT_ZERO, TEXT, TEXT_HEIGHT, errorPromise, errorThrow, isAssetObject, isDefiniteError, isPopulatedString } from '@moviemasher/runtime-shared'
+import { svgSvgElement, svgText } from '../../utility/svg.js'
+import { ClientVisibleAssetMixin } from '../../mixins/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../mixins/ClientVisibleInstanceMixin.js'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
-import { ClientRawAssetClass } from '../raw/ClientRawAssetClass.js'
-import { stringFamilySizeRect } from '../../utility/string.js'
+import { ClientRawAssetClass } from '../raw.js'
+import { assertObject, assertPopulatedString, isAboveZero, isPropertyId } from '@moviemasher/lib-shared/utility/guards.js'
+import { TextAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { TextInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { sizeContain, centerPoint, rectTransformAttribute } from '@moviemasher/lib-shared/utility/rect.js'
+
+const stringFamilySizeRect = (string: string, family: string, size: number): Rect => {
+  if (!(isPopulatedString(string) && isAboveZero(size))) return RECT_ZERO
+
+  const { document } = globalThis
+  
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  assertObject(ctx, 'ctx')
+
+  ctx.font = `${size}px ${family}`
+
+  const metrics = ctx.measureText(string)
+
+  // const font = new FontFace(family, string)
+  const { 
+    actualBoundingBoxAscent, 
+    actualBoundingBoxDescent, 
+    actualBoundingBoxLeft, 
+    actualBoundingBoxRight, 
+  } = metrics
+
+  const rect = {
+    x: actualBoundingBoxLeft, y: actualBoundingBoxAscent,
+    width: actualBoundingBoxLeft + actualBoundingBoxRight,
+    height: actualBoundingBoxAscent + actualBoundingBoxDescent,
+  } 
+  // console.log('stringFamilySizeRect', rect, ctx.textBaseline, metrics)
+  return rect
+}
+
 
 const WithAsset = VisibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -41,7 +74,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
       const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
 
       const transform = rectTransformAttribute(inSize, outRect)
-      const textElement = svgText(this.string, family, TextHeight, transform, colorCurrent)
+      const textElement = svgText(this.string, family, TEXT_HEIGHT, transform, CURRENT_COLOR)
     
       return Promise.resolve(svgSvgElement(size, textElement))
     })
@@ -82,9 +115,9 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
   private intrinsicRectInitialize(): Rect {
     const { family, string } = this
     if (!(isPopulatedString(family) && isPopulatedString(string))) {
-      return { width: 0, height: TextHeight, ...POINT_ZERO }
+      return { width: 0, height: TEXT_HEIGHT, ...POINT_ZERO }
     }
-    return stringFamilySizeRect(string, family, TextHeight)
+    return stringFamilySizeRect(string, family, TEXT_HEIGHT)
   }
   
   private loadFontPromise(transcoding?: Transcoding): Promise<ClientFontDataOrError> {
@@ -92,10 +125,9 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
     if (this.loadedFont) return Promise.resolve({ data: this.loadedFont })
     
     const { request } = transcoding || this
-    assertRequest(request)
 
     const event = new EventClientFontPromise(request)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) return errorPromise(ERROR.Unimplemented)
 
@@ -122,7 +154,7 @@ export class ClientTextAssetClass extends WithTextAsset implements ClientTextAss
 }
 
 // listen for image/text asset event
-export const ClientTextImageListeners = () => ({
+export const ClientTextImageListeners: ListenersFunction = () => ({
   [EventAsset.Type]: ClientTextAssetClass.handleAsset
 })
 
@@ -147,19 +179,19 @@ export class ClientTextInstanceClass extends WithTextInstance implements ClientT
 
   private intrinsicRectInitialize(): Rect {
     const { asset, string } = this
-    if (!string) return { width: 0, height: TextHeight, ...POINT_ZERO }
+    if (!string) return { width: 0, height: TEXT_HEIGHT, ...POINT_ZERO }
 
     const { family } = asset
     assertPopulatedString(family)
 
-    return stringFamilySizeRect(string, family, TextHeight)
+    return stringFamilySizeRect(string, family, TEXT_HEIGHT)
   }
 
   override pathElement(rect: Rect): SvgItem {
     const { string, asset: definition } = this
     const { family } = definition    
     const transform = rectTransformAttribute(this.intrinsicRect(true), rect)
-    return svgText(string, family, TextHeight, transform)
+    return svgText(string, family, TEXT_HEIGHT, transform)
   }
 
   override setValue(id: string, value?: Scalar, property?: Property): void {

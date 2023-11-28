@@ -1,24 +1,27 @@
 import type { AssetTypes, Assets, DataOrError, ManageTypes, Size, Sources } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { Content, Contents, OptionalContent } from '../declarations.js'
+import type { Content, Contents, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { DASH, arrayFromOneOrMore, isAboveZero, sizeContain } from '@moviemasher/lib-shared'
-import { AssetObjectsParams, ClipLocation, EventAssetElement, EventBrowserPick, EventBrowserPicked, EventChangedManagedAssets, EventManagedAssets, MovieMasher, StringEvent, isManageType } from '@moviemasher/runtime-client'
-import { SIZE_ZERO, isAssetType, isDefiniteError } from '@moviemasher/runtime-shared'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from '../Base/Component.js'
-import { DropTargetCss, DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
-import { Scroller } from '../Base/Scroller.js'
-import { SizeReactiveMixin, SizeReactiveProperties } from '../Base/SizeReactiveMixin.js'
+import { isAboveZero } from '@moviemasher/lib-shared/utility/guards.js'
+import { sizeContain } from '@moviemasher/lib-shared/utility/rect.js'
+import { AssetObjectsParams, ClipLocation, EventAssetElement, EventBrowserPick, EventBrowserPicked, EventChangedManagedAssets, EventManagedAssets, MOVIEMASHER, StringEvent, isManageType } from '@moviemasher/runtime-client'
+import { DASH, SIZE_ZERO, arrayFromOneOrMore, isAssetType, isDefiniteError } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html'
+import { Component } from '../base/Component.js'
+import { DROP_TARGET_CSS, DropTargetMixin } from '../mixins/component.js'
+import { ImporterComponent } from '../base/Component.js'
+import { Scroller } from '../base/LeftCenterRight.js'
+import { SizeReactiveMixin, SIZE_REACTIVE_DECLARATIONS } from '../mixins/component.js'
 import { droppingFiles } from '../utility/draganddrop.js'
-
 
 const BrowserContentCenterTag = 'movie-masher-browser-content-center'
 
 const WithSizeReactive = SizeReactiveMixin(Scroller)
 const WithDropTarget = DropTargetMixin(WithSizeReactive)
+/**
+ * @category Component
+ */
 export class BrowserContentCenterElement extends WithDropTarget {
   constructor() {
     super()
@@ -38,7 +41,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
     if (isAboveZero(types.length + sources.length)) {
       const params: AssetObjectsParams = { manageTypes, sorts, sources, types }
       const event = new EventManagedAssets(params)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (promise) {
         this.assetsPromise = promise
@@ -60,19 +63,19 @@ export class BrowserContentCenterElement extends WithDropTarget {
   override connectedCallback(): void {
     super.connectedCallback()
     const event = new EventBrowserPicked()
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     this.pick(event.detail.picked)
 
   }
   protected override content(contents: Contents): Content {
     const { size = SIZE_ZERO } = this
     const max = this.variable('size-preview')
-    const containedSize = sizeContain(size, max)
-    // console.log(this.tagName, 'content', containedSize)
+    const contained = sizeContain(size, max)
+    // console.log(this.tagName, 'content', { contained, size, max })
     return html`
       <div 
         class='root'
-        style='width:100%;height:${containedSize.height}px;' 
+        style='width:100%;height:${contained.height}px;' 
         @scroll-root='${this.handleScrollRoot}'
       >${contents}<div class='drop-box'></div></div>
     `
@@ -101,7 +104,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
           }
 
           const event = new EventAssetElement(id, iconSize, cover, label, icons, labels)
-          MovieMasher.eventDispatcher.dispatch(event)
+          MOVIEMASHER.eventDispatcher.dispatch(event)
           const { element } = event.detail
           if (element) {
             contents.push(element)
@@ -111,7 +114,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
       }
       this.elementsById = byId
     }   
-    return html`<div class='content'>${contents}</div>`
+    return html`<div class='contents'>${contents}</div>`
   }
 
   private elementsById: Record<string, Element> = {}
@@ -180,7 +183,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
 
   static override properties: PropertyDeclarations = {
     ...ImporterComponent.properties,
-    ...SizeReactiveProperties,
+    ...SIZE_REACTIVE_DECLARATIONS,
     assets: { type: Array, attribute: false },
     cover: { type: Boolean },
     sort: { type: String },
@@ -189,7 +192,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     Scroller.styles,
-    DropTargetCss,
+    DROP_TARGET_CSS,
     css`
       :host {
         --ratio-preview-selector: var(--ratio-preview, 0.25);
@@ -200,12 +203,12 @@ export class BrowserContentCenterElement extends WithDropTarget {
         overflow-y: auto;
       }
 
-      div.content {
+      div.contents {
         padding: var(--pad);
         font-size: 0;
       }
 
-      div.content > * {
+      div.contents > * {
         margin-right: var(--gap); 
         margin-bottom: var(--gap);
       }
@@ -217,7 +220,6 @@ export class BrowserContentCenterElement extends WithDropTarget {
   ]
 }
 
-// register web component as custom element
 customElements.define(BrowserContentCenterTag, BrowserContentCenterElement)
 
 declare global {

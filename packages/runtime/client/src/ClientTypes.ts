@@ -6,10 +6,9 @@ import type { ClientClip } from './ClientMashTypes.js'
 import type { ClientFont, ClientMediaRequest } from './ClientMedia.js'
 import type { Panel } from './PanelTypes.js'
 import type { Selectable } from './Selectable.js'
-import type { Preview, SvgItem } from './Svg.js'
+import type { PreviewElement, SvgItem } from './Svg.js'
 
 export type Timeout = ReturnType<typeof setTimeout>
-export type AnimationFrame = ReturnType<typeof requestAnimationFrame>
 
 export interface ClientInstance extends Instance, Selectable {
   clip: ClientClip
@@ -25,8 +24,8 @@ export interface ClientAudibleInstance extends ClientInstance, AudibleInstance {
 export interface ClientVisibleInstance extends ClientInstance, VisibleInstance {
   asset: ClientVisibleAsset
   clip: ClientClip
-  containedPreviewPromise(contentItem: SvgItem, content: ClientInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<Preview> 
-  clippedPreviewPromise(content: ClientVisibleInstance, containerRect: Rect, previewSize: Size, time: Time, component: Panel): Promise<Preview>
+  containedPreviewPromise(contentItem: SvgItem, content: ClientInstance, containerRect: Rect, size: Size, time: Time, component: Panel): Promise<PreviewElement> 
+  clippedPreviewPromise(content: ClientVisibleInstance, containerRect: Rect, previewSize: Size, time: Time, component: Panel): Promise<PreviewElement>
   containerSvgItemPromise(containerRect: Rect, time: Time, component: Panel): Promise<SvgItem>
   contentPreviewItemPromise(containerRect: Rect, shortest: PropertySize, time: Time, component: Panel): Promise<SvgItem>
   contentSvgFilter(container: ContainerInstance, contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined
@@ -94,4 +93,5 @@ export interface MovieMasherClientOptions extends MovieMasherOptions {
 
 export interface MovieMasherClientRuntime extends MovieMasherRuntime {
   options: MovieMasherClientOptions
+  
 }

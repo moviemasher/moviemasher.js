@@ -1,14 +1,14 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert'
 
-import { ENV, ENVIRONMENT } from './EnvironmentConstants.js'
+import { ENV_KEY, ENV } from './EnvironmentConstants.js'
 
 
-describe('ENVIRONMENT', () => {
+describe('ENV', () => {
   test('get MOVIEMASHER_FOO returns foo from docker-compose.yml', () => {
-    assert.equal(ENVIRONMENT.get('MOVIEMASHER_FOO'), 'foo')
+    assert.equal(ENV.get('MOVIEMASHER_FOO'), 'foo')
   })
-  test('get ENV.DirRoot returns /app/ from local.env', () => {
-    assert.equal(ENVIRONMENT.get(ENV.DirRoot), '/app/')
+  test('get ENV_KEY.DirRoot returns /app/ from local.env', () => {
+    assert.equal(ENV.get(ENV_KEY.DirRoot), '/app/')
   })
 })

@@ -1,10 +1,10 @@
 import type { Icon } from '@moviemasher/runtime-client'
-import type { DataOrError, StringRecord } from '@moviemasher/runtime-shared'
+import type { DataOrError, ListenersFunction, StringRecord } from '@moviemasher/runtime-shared'
 
-import { EventIcon, MovieMasher } from '@moviemasher/runtime-client'
+import { isStringRecord } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventIcon, MOVIEMASHER } from '@moviemasher/runtime-client'
 import { isDefiniteError } from '@moviemasher/runtime-shared'
 import { requestJsonRecordPromise } from '../utility/request.js'
-import { isStringRecord } from '@moviemasher/lib-shared'
 
 export class FetchIconHandler {
   static json?: StringRecord
@@ -15,13 +15,13 @@ export class FetchIconHandler {
     const { _jsonPromise } = FetchIconHandler
     if (_jsonPromise) return _jsonPromise
 
-    const { icons } = MovieMasher.options
+    const { icons } = MOVIEMASHER.options
     if (!icons) return this._jsonPromise = Promise.resolve({ data: {} })
     
     if (isStringRecord(icons)) {
       return this._jsonPromise = Promise.resolve({ data: icons })
     }
-    
+ 
     return this._jsonPromise = requestJsonRecordPromise(icons).then(orError => {
       if (isDefiniteError(orError)) return orError 
 
@@ -51,4 +51,6 @@ export class FetchIconHandler {
   }
 }
 
-MovieMasher.eventDispatcher.addDispatchListener(EventIcon.Type, FetchIconHandler.handle)
+export const ClientIconListeners: ListenersFunction = () => ({
+  [EventIcon.Type]: FetchIconHandler.handle,
+})

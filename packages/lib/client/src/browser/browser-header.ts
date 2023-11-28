@@ -1,11 +1,14 @@
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { HeaderElement } from '../Base/LeftCenterRight.js'
+import { html } from 'lit-html'
+import { HeaderBase } from '../base/LeftCenterRight.js'
 
-export const BrowserHeaderName = 'movie-masher-browser-header'
+const BrowserHeaderTag = 'movie-masher-browser-header'
 
-export class BrowserHeaderElement extends HeaderElement {
+/**
+ * @category Component
+ */
+export class BrowserHeaderElement extends HeaderBase {
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     this.importTags('movie-masher-browser-picker')
@@ -17,26 +20,12 @@ export class BrowserHeaderElement extends HeaderElement {
     
     return super.leftContent(htmls) 
   }
-
-  // protected override rightContent(htmls: Htmls): OptionalContent {
-  //   this.importTags('movie-masher-action-server')
-  //   htmls.push(html`
-  //     <movie-masher-action-server
-  //       detail='${ServerActionEncode}'
-  //       icon='${ServerActionEncode}'
-  //       string='${ServerActionEncode}'
-  //     ></movie-masher-action-server>
-  //   `)
-    
-  //   return super.rightContent(htmls)
-  // }
 }
 
-// register web component as custom element
-customElements.define(BrowserHeaderName, BrowserHeaderElement)
+customElements.define(BrowserHeaderTag, BrowserHeaderElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [BrowserHeaderName]: BrowserHeaderElement
+    [BrowserHeaderTag]: BrowserHeaderElement
   }
 }

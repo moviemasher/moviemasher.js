@@ -1,12 +1,20 @@
 {
   "name": "@moviemasher/lib-shared",
-  "version": "5.1.2",
-  "description": "JavaScript video editor and encoder - version 5.1.2",
+  "version": "5.2.0",
+  "description": "JavaScript video editor and encoder - version 5.2.0",
   "files": ["/dist/"],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./asset/*": "./dist/asset/*",
+    "./base/*": "./dist/base/*",
+    "./instance/*": "./dist/instance/*",
+    "./utility/*": "./dist/utility/*",
+    "./*": "./dist/*"
+  },
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -29,11 +37,9 @@
   ],
   "scripts": {
     "script": "run-s",
-    "build": "run-s client package",
-    "client": "rollup --config dev/rollup/client.config.mjs",
-    "package": "rollup --config dev/rollup/package.config.mjs"
+    "build": "rollup --config dev/rollup.config.mjs"
   },
   "dependencies": {
-    "@moviemasher/runtime-shared": "5.1.2"
+    "@moviemasher/runtime-shared": "5.2.0"
   }
 }

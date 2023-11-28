@@ -1,6 +1,7 @@
-import type { DocCategory, DocCombined, DocFolder, DocMarkdown, DocFile, TypedocDirectories, TypedocDirectory, DocExport, DirectoriesByKind, Kind } from './Types.js'
+import type { DocCategory, DocCombined, DocFolder, DocMarkdown, DocFile, TypedocDirectories, TypedocDirectory, DocExport, Kind, DocModule, DocHtml, Doc, Folder, Page } from './Types.js'
 
 import { isObject, isPopulatedString } from '@moviemasher/runtime-shared'
+import { isPopulatedArray } from '@moviemasher/lib-shared/utility/guards.js'
 
 export const DIR_ROOT = '/app'
 export const DIR_TEMPORARY = `${DIR_ROOT}/temporary/build-docs`
@@ -18,17 +19,36 @@ export const DIRECTORIES: TypedocDirectories = [
   'Variables',
 ]
 
+
+export const isFolder = (value: any): value is Folder => {
+  return isObject(value) && 'pages' in value && isPopulatedArray(value.pages)
+}
+
+export const isPage = (value: any): value is Page => !isFolder(value)
+
+
+export const isDoc = (value: any): value is Doc => {
+  return isDocMarkdown(value) || isDocHtml(value)
+}
+
 export const isTypedocDirectory = (value: any): value is TypedocDirectory => {
   return isPopulatedString(value) && DIRECTORIES.includes(value as TypedocDirectory)
 }
 
 export const isDocMarkdown = (value: any): value is DocMarkdown => {
-  return isObject(value) && 'markdownPath' in value && isPopulatedString(value.markdownPath)
+  return isObject(value) && 'markdownPaths' in value && isPopulatedArray(value.markdownPaths)
+}
+
+export const isDocHtml = (value: any): value is DocHtml => {
+  return isObject(value) && 'htmlPaths' in value && isPopulatedArray(value.htmlPaths)
 }
 
 export const isDocExport = (value: any): value is DocExport => {
   return isObject(value) && 'exportId' in value && isPopulatedString(value.exportId)
+}
 
+export const isDocModule = (value: any): value is DocModule => {
+  return isObject(value) && 'libOrRuntime' in value && 'clientServerOrShared' in value
 }
 
 export const isDocCategory = (value: any): value is DocCategory => {
@@ -42,12 +62,13 @@ export const isDocCombined = (value: any): value is DocCombined => {
 export const isDocFile = (value: any): value is DocFile => {
   return isDocCategory(value) 
     || isDocCombined(value) 
-    || isDocMarkdown(value)
     || isDocExport(value)
+    || isDocModule(value)
+    || isDoc(value)
 }
 
 export const isDocFolder = (value: any): value is DocFolder => {
-  return isObject(value) && 'files' in value && Array.isArray(value.files)
+  return isObject(value) && 'docFiles' in value && Array.isArray(value.docFiles)
 }
 
 const CODE_BY_KIND: Record<Kind, number> = {

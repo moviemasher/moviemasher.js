@@ -1,4 +1,4 @@
-import type { Asset } from './AssetTypes.js'
+import type { Asset } from './AssetInterfaces.js'
 import type { Instance } from './InstanceTypes.js'
 
 export interface ContentInstance extends Instance {}

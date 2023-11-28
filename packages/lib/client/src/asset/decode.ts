@@ -1,8 +1,7 @@
-import type { DecodeArgs } from '@moviemasher/runtime-shared'
+import type { DecodeArgs, ListenersFunction } from '@moviemasher/runtime-shared'
 
-import { isDecoding } from '@moviemasher/runtime-shared'
 import { EventClientDecode } from '@moviemasher/runtime-client'
-import { ERROR, namedError, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ERROR, POST, isDecoding, isDefiniteError, namedError } from '@moviemasher/runtime-shared'
 import { requestCallbackPromise } from '../utility/request.js'
 
 export class DecodeHandler {
@@ -13,7 +12,7 @@ export class DecodeHandler {
     const { request, type: assetType } = asset
     progress?.do(1)
     const jsonRequest = {
-      endpoint: 'decode/start', init: { method: 'POST' }
+      endpoint: 'decode/start', init: { method: POST }
     }
     const decodeArgs: DecodeArgs = { assetType, request, decodingType, options }
 
@@ -30,6 +29,6 @@ export class DecodeHandler {
 }
 
 // listen for client decode event
-export const ClientAssetDecodeListeners = () => ({
+export const ClientAssetDecodeListeners: ListenersFunction = () => ({
   [EventClientDecode.Type]: DecodeHandler.handle
 })

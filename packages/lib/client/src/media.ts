@@ -1,11 +1,11 @@
 import type { ClientAudioDataOrError, ClientFont, ClientFontDataOrError, ClientMediaRequest, ClientVideoDataOrError } from '@moviemasher/runtime-client'
-import type { DataOrError } from '@moviemasher/runtime-shared'
+import type { DataOrError, ListenersFunction } from '@moviemasher/runtime-shared'
 
-import { CssMimetype, requestUrl, urlFromCss } from '@moviemasher/lib-shared'
 import { EventClientAudioPromise, EventClientFontPromise, EventClientImagePromise, EventClientVideoPromise } from '@moviemasher/runtime-client'
-import { ERROR, namedError, errorCaught, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
-import { isClientAudio, isClientVideo } from './Client/ClientGuards.js'
+import { ERROR, MIME_CSS, errorCaught, errorPromise, isDefiniteError, namedError } from '@moviemasher/runtime-shared'
+import { isClientAudio, isClientVideo } from './guards/ClientGuards.js'
 import { requestImagePromise } from './utility/request.js'
+import { requestUrl, urlFromCss } from '@moviemasher/lib-shared/utility/request.js'
 
 let _context: AudioContext | undefined = undefined
 
@@ -80,7 +80,7 @@ const requestFontPromise = (request: ClientMediaRequest): Promise<ClientFontData
     }
 
     //  mimetype does not match load type, try to load as css
-    if (!mimetype.startsWith(CssMimetype))
+    if (!mimetype.startsWith(MIME_CSS))
       return namedError(ERROR.ImportType)
 
     return response.text().then(cssText => {
@@ -162,21 +162,21 @@ const VideoListener = (event: EventClientVideoPromise) => {
 }
 
 // listen for client audio event
-export const ClientAudioListeners = () => ({
+export const ClientAudioListeners: ListenersFunction = () => ({
   [EventClientAudioPromise.Type]: AudioListener
 })
 
 // listen for client font event
-export const ClientFontListeners = () => ({
+export const ClientFontListeners: ListenersFunction = () => ({
   [EventClientFontPromise.Type]: FontListener
 })
 
 // listen for client image event
-export const ClientImageListeners = () => ({
+export const ClientImageListeners: ListenersFunction = () => ({
   [EventClientImagePromise.Type]: ImageListener
 })
 
 // listen for client video event
-export const ClientVideoListeners = () => ({
+export const ClientVideoListeners: ListenersFunction = () => ({
   [EventClientVideoPromise.Type]: VideoListener
 })

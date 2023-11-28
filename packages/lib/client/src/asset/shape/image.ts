@@ -1,13 +1,15 @@
 
 import type { ClientShapeAsset, ClientShapeInstance, Panel, SvgItem } from '@moviemasher/runtime-client'
-import type { DataOrError, InstanceArgs, InstanceCacheArgs, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
+import type { DataOrError, InstanceArgs, InstanceCacheArgs, ListenersFunction, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/runtime-shared'
 
-import { DefaultContainerId, ShapeAssetMixin, ShapeInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, centerPoint, sizeAboveZero, sizeContain } from '@moviemasher/lib-shared'
+import { ShapeAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { ShapeInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { centerPoint, sizeAboveZero, sizeContain } from '@moviemasher/lib-shared/utility/rect.js'
 import { EventAsset } from '@moviemasher/runtime-client'
-import { SHAPE, IMAGE, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
-import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../Client/SvgFunctions.js'
-import { ClientVisibleAssetMixin } from '../../Client/Visible/ClientVisibleAssetMixin.js'
-import { ClientVisibleInstanceMixin } from '../../Client/Visible/ClientVisibleInstanceMixin.js'
+import { DEFAULT_CONTAINER_ID, IMAGE, SHAPE, isAssetObject, isPopulatedString } from '@moviemasher/runtime-shared'
+import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '../../utility/svg.js'
+import { ClientVisibleAssetMixin } from '../../mixins/ClientVisibleAssetMixin.js'
+import { ClientVisibleInstanceMixin } from '../../mixins/ClientVisibleInstanceMixin.js'
 import { ClientInstanceClass } from '../../instance/ClientInstanceClass.js'
 import { ClientAssetClass } from '../ClientAssetClass.js'
 
@@ -23,7 +25,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
 
   override assetIcon(size: Size): Promise<SVGSVGElement> | undefined {
     const { id, pathHeight: height, pathWidth: width, path } = this
-    if (id === DefaultContainerId) {
+    if (id === DEFAULT_CONTAINER_ID) {
       return Promise.resolve(svgSvgElement(size, svgPolygonElement(size, '', 'currentColor')))
     }
     const inSize = { width, height }
@@ -48,7 +50,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
   private static _defaultAsset?: ClientShapeAsset
   private static get defaultAsset(): ClientShapeAsset {
   return this._defaultAsset ||= new ClientShapeAssetClass({ 
-      id: DefaultContainerId, type: IMAGE, 
+      id: DEFAULT_CONTAINER_ID, type: IMAGE, 
       source: SHAPE, label: 'Rectangle'
     })
   }
@@ -56,7 +58,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const { detail } = event
     const { assetObject, assetId } = detail
     
-    const isDefault = assetId === DefaultContainerId
+    const isDefault = assetId === DEFAULT_CONTAINER_ID
     if (!(isDefault || isAssetObject(assetObject, IMAGE, SHAPE))) return
       
     event.stopImmediatePropagation()
@@ -66,7 +68,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
 }
 
 // listen for image/shape asset event
-export const ClientShapeImageListeners = () => ({
+export const ClientShapeImageListeners: ListenersFunction = () => ({
   [EventAsset.Type]: ClientShapeAssetClass.handleAsset
 })
 

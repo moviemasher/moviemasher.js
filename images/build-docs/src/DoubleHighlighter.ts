@@ -1,8 +1,7 @@
-import { Highlighter, Theme } from "shiki"
+import type { StringRecord, Strings } from "@moviemasher/runtime-shared"
+import type { Highlighter, Theme } from "shiki"
 
-
-import { arrayOfNumbers, assertTrue } from "@moviemasher/lib-shared"
-import { StringRecord, Strings } from "@moviemasher/runtime-shared"
+import { assertTrue } from "@moviemasher/lib-shared"
 
 function* zip<T extends Iterable<any>[]>(
   ...args: T
@@ -127,7 +126,7 @@ export class DoubleHighlighter {
       for (i = 0; i < this.schemes.size; i++) {
           style.push(`.hl-${i} { color: var(--hl-${i}); }`)
       }
-      style.push("pre, code { background: var(--code-background); }", "")
+      // style.push("pre, code { background: var(--code-background); }", "")
 
       return style.join("\n")
   }

@@ -1,13 +1,14 @@
 import type { ServerAsset, ServerAssets } from '@moviemasher/runtime-server'
-import type { AssetObject } from '@moviemasher/runtime-shared'
+import type { AssetObject, ListenersFunction } from '@moviemasher/runtime-shared'
 
-import { arrayFromOneOrMore, assertDefined } from '@moviemasher/lib-shared'
-import { EventReleaseServerManagedAssets, EventServerAsset, EventServerManagedAsset, MovieMasher, isServerAsset } from '@moviemasher/runtime-server'
+import { assertDefined } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventReleaseServerManagedAssets, EventServerAsset, EventServerManagedAsset, MOVIEMASHER_SERVER, isServerAsset } from '@moviemasher/runtime-server'
+import { arrayFromOneOrMore } from '@moviemasher/runtime-shared'
 
 export class ServerAssetManagerClass {
   private asset(object: string | AssetObject): ServerAsset | undefined{
     const event = new EventServerAsset(object)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
     const { asset } = event.detail
     if (!isServerAsset(asset)) return
     
@@ -64,7 +65,7 @@ export class ServerAssetManagerClass {
   private static instance = new ServerAssetManagerClass()
 }
 
-export const ServerAssetManagerListeners = () => ({
+export const ServerAssetManagerListeners: ListenersFunction = () => ({
   [EventServerManagedAsset.Type]: ServerAssetManagerClass.handleManagedAsset,
   [EventReleaseServerManagedAssets.Type]: ServerAssetManagerClass.handleReleaseAssets,
 })

@@ -1,3 +1,0 @@
-
-export * from './AssetClass.js'
-

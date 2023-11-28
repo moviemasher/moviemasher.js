@@ -13,4 +13,4 @@ export interface Sourced {
   source: Source
 }
 
-export type SourceRecord<T = string> = Record<Source, T | undefined>
+export interface SourceRecord<T = string> extends Record<Source, T | undefined> {}

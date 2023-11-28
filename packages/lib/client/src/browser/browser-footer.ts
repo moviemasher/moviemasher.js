@@ -1,38 +1,42 @@
 import type { PropertyDeclarations } from 'lit'
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { EventDialog } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { FooterElement } from '../Base/LeftCenterRight.js'
+import { EventDialog, IMPORT } from '@moviemasher/runtime-client'
+import { html } from 'lit-html'
+import { FooterBase } from '../base/LeftCenterRight.js'
 
-export const BrowserFooterName = 'movie-masher-browser-footer'
+const BrowserFooterTag = 'movie-masher-browser-footer'
 
-export class BrowserFooterElement extends FooterElement {
+/**
+ * @category Component
+ */
+export class BrowserFooterElement extends FooterBase {
 
 
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-    this.importTags('movie-masher-component-a')
+    this.importTags('movie-masher-component-button')
     htmls.push(html`
-      <movie-masher-component-a
-        icon='add' emit='${EventDialog.Type}' detail='importer'
-      ></movie-masher-component-a>
+      <movie-masher-component-button
+        icon='add' emit='${EventDialog.Type}' 
+        detail='importer'
+        string='${IMPORT}'
+      ></movie-masher-component-button>
     `)
     return super.leftContent(htmls)
   }
 
   static override properties: PropertyDeclarations = {
-    ...FooterElement.properties,
+    ...FooterBase.properties,
     assetType: { type: String }
   }
 }
 
-// register web component as custom element
-customElements.define(BrowserFooterName, BrowserFooterElement)
+customElements.define(BrowserFooterTag, BrowserFooterElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [BrowserFooterName]: BrowserFooterElement
+    [BrowserFooterTag]: BrowserFooterElement
   }
 }
 

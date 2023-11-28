@@ -1,9 +1,9 @@
 import type { Propertied, PropertyId, Scalar, ScalarsById, SelectorType } from '@moviemasher/runtime-shared'
-import type { ChangeActionObject } from './ActionTypes.js'
+import type { ChangeEditObject } from './EditTypes.js'
 
 export interface Selectable extends Propertied { 
-  changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeActionObject
-  changeScalars(scalars: ScalarsById): ChangeActionObject
+  changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject
+  changeScalars(scalars: ScalarsById): ChangeEditObject
 }
 
 export interface Selectables extends Array<Selectable>{}

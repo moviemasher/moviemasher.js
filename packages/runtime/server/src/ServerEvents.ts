@@ -1,10 +1,14 @@
-import type { AssetObject, AssetType, DataOrError, DecodeOptions, Decoding, DecodingType, EncodeOptions, Encoding, EncodingType, EndpointRequest, LoadType, ManageType, MashAssetObject, Rect, StringDataOrError, Strings, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
+import type { AssetObject, AssetType, DataOrError, DecodeOptions, Decoding, DecodingType, EncodeOptions, Encoding, EncodingType, EndpointRequest, ImportType, ManageType, MashAssetObject, Rect, StringDataOrError, Strings, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
 import type { ServerAsset } from './ServerAsset.js'
 import type { ServerMediaRequest } from './ServerMedia.js'
 
-import { TARGET_ASSET, JOB_DECODE, JOB_ENCODE, JOB_TRANSCODE, assertAsset } from '@moviemasher/runtime-shared'
-import { MovieMasher } from './MovieMasher.js'
+import { ASSET_TARGET, DECODE, ENCODE, TRANSCODE, assertAsset, jsonStringify } from '@moviemasher/runtime-shared'
+import { MOVIEMASHER_SERVER } from './MovieMasherRuntimeServer.js'
 
+/**
+ * 
+ * @category ServerEvents
+ */
 export class CustomEvent<T> extends Event { 
   constructor(message: string, data: EventInit & { detail: T }) {
     super(message, data)
@@ -16,16 +20,17 @@ export class CustomEvent<T> extends Event {
 
 /** 
  * Dispatch to retrieve server asset promise for request.
+ * @category ServerEvents
  */
 export class EventServerAssetPromise extends CustomEvent<EventServerAssetPromiseDetail> {
   static Type = 'server-asset-promise'
-  constructor(request: ServerMediaRequest, loadType: LoadType, validDirectories?: Strings) { 
-    super(EventServerAssetPromise.Type, { detail: { request, loadType, validDirectories } }) 
+  constructor(request: ServerMediaRequest, importType: ImportType, validDirectories?: Strings) { 
+    super(EventServerAssetPromise.Type, { detail: { request, importType, validDirectories } }) 
   }
 }
 
 export interface EventServerAssetPromiseDetail {
-  loadType: LoadType
+  importType: ImportType
   request: ServerMediaRequest
   validDirectories?: Strings
   promise?: Promise<StringDataOrError>
@@ -33,6 +38,7 @@ export interface EventServerAssetPromiseDetail {
 
 /**
  * Dispatch to retrieve a managed asset from an asset id or object.
+ * @category ServerEvents
  */
 export class EventServerManagedAsset extends CustomEvent<EventServerManagedAssetDetail> {
   static Type = 'managed-asset'
@@ -42,20 +48,6 @@ export class EventServerManagedAsset extends CustomEvent<EventServerManagedAsset
     const assetObject = string ? undefined : assetIdOrObject
     const detail = { assetId, assetObject }
     super(EventServerManagedAsset.Type, { detail }) 
-  }
-
-  static Detail(assetIdOrObject: string | AssetObject): EventServerManagedAssetDetail {
-    const event = new EventServerManagedAsset(assetIdOrObject)
-    MovieMasher.eventDispatcher.dispatch(event)
-    return event.detail
-  }
-
-  static asset(assetIdOrObject: string | AssetObject): ServerAsset {
-    const detail = EventServerManagedAsset.Detail(assetIdOrObject)
-    const { asset } = detail
-    assertAsset(asset, JSON.stringify(assetIdOrObject))
-
-    return asset
   }
 }
 
@@ -67,9 +59,10 @@ export interface EventServerManagedAssetDetail {
 
 /**
  * Dispatch to retrieve an asset from an asset id or object.
+ * @category ServerEvents
  */
 export class EventServerAsset extends CustomEvent<EventServerManagedAssetDetail> {
-  static Type = TARGET_ASSET
+  static Type = ASSET_TARGET
   constructor(assetIdOrObject: string | AssetObject) { 
     const string = typeof assetIdOrObject === 'string' 
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
@@ -81,6 +74,7 @@ export class EventServerAsset extends CustomEvent<EventServerManagedAssetDetail>
 
 /**
  * Dispatch to release managed assets.
+ * @category ServerEvents
  */
 export class EventReleaseServerManagedAssets extends CustomEvent<string | undefined> {
   static Type = 'release-assets'
@@ -91,9 +85,10 @@ export class EventReleaseServerManagedAssets extends CustomEvent<string | undefi
 
 /**
  * Dispatch to retrieve a promise that decodes an asset.
+ * @category ServerEvents
  */
 export class EventServerDecode extends CustomEvent<EventServerDecodeDetail> {
-  static Type = JOB_DECODE
+  static Type = DECODE
   constructor(decodingType: DecodingType, assetType: AssetType, request: EndpointRequest, user: string, id: string, decodeOptions: DecodeOptions) { 
     super(EventServerDecode.Type, { detail: { assetType, request, user, decodingType, id, decodeOptions } }) 
   }
@@ -111,6 +106,7 @@ export interface EventServerDecodeDetail {
 
 /** 
  * Dispatch to retrieve a promise that returns progress or decoding if finished.
+ * @category ServerEvents
  */
 export class EventServerDecodeStatus extends CustomEvent<EventServerDecodeStatusDetail> {
   static Type = 'decode-status'
@@ -126,9 +122,10 @@ export interface EventServerDecodeStatusDetail {
 
 /**
  * Dispatch to retrieve a promise that encodes a mash asset.
+ * @category ServerEvents
  */
 export class EventServerEncode extends CustomEvent<EventServerEncodeDetail> {
-  static Type = JOB_ENCODE
+  static Type = ENCODE
   constructor(encodingType: EncodingType, mashAssetObject: MashAssetObject, user: string, id: string, encodeOptions: EncodeOptions, relativeRoot?: string) { 
     super(EventServerEncode.Type, { detail: { encodingType, mashAssetObject, encodeOptions, user, id, relativeRoot } }) 
   }
@@ -146,6 +143,7 @@ export interface EventServerEncodeDetail {
 
 /** 
  * Dispatch to retrieve a promise that returns encoding if finished.
+ * @category ServerEvents
  */
 export class EventServerEncodeStatus extends CustomEvent<EventServerEncodeStatusDetail> {
   static Type = 'encode-status'
@@ -161,6 +159,7 @@ export interface EventServerEncodeStatusDetail {
 
 /**
  * Dispatched when progress is made on an encoding.
+ * @category ServerEvents
  */
 export class EventServerEncodeProgress extends CustomEvent<EventServerEncodeProgressDetail> {
   static Type = 'encode-progress'
@@ -176,9 +175,10 @@ export interface EventServerEncodeProgressDetail {
 
 /**
  * Dispatch to retrieve a promise that transcodes an asset.
+ * @category ServerEvents
  */
 export class EventServerTranscode extends CustomEvent<EventServerTranscodeDetail> {
-  static Type = JOB_TRANSCODE
+  static Type = TRANSCODE
   constructor(transcodingType: TranscodingType, assetType: AssetType, request: EndpointRequest, user: string, id: string, transcodeOptions: TranscodeOptions, relativeRoot?: string) { 
     super(EventServerTranscode.Type, { detail: { assetType, transcodeOptions, request, transcodingType, user, id, relativeRoot } }) 
   }
@@ -197,6 +197,7 @@ export interface EventServerTranscodeDetail {
 
 /** 
  * Dispatch to retrieve a promise that returns progress or transcoding if finished.
+ * @category ServerEvents
  */
 export class EventServerTranscodeStatus extends CustomEvent<EventServerTranscodeStatusDetail> {
   static Type = 'transcode-status'
@@ -212,6 +213,7 @@ export interface EventServerTranscodeStatusDetail {
 
 /**
  * Dispatch to retrieve a rect for some text in a font.
+ * @category ServerEvents
  */
 export class EventServerTextRect extends CustomEvent<EventServerTextRectDetail> {
   static Type = 'text-rect'

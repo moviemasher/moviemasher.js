@@ -1,11 +1,14 @@
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { ContentElement } from '../Base/LeftCenterRight.js'
+import { html } from 'lit-html'
+import { ContentBase } from '../base/LeftCenterRight.js'
 
 const BrowserContentTag = 'movie-masher-browser-content'
 
-export class BrowserContentElement extends ContentElement {
+/**
+ * @category Component
+ */
+export class BrowserContentElement extends ContentBase {
   override centerContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     this.importTags('movie-masher-browser-content-center')
@@ -14,7 +17,6 @@ export class BrowserContentElement extends ContentElement {
   }
 }
 
-// register web component as custom element
 customElements.define(BrowserContentTag, BrowserContentElement)
 
 declare global {

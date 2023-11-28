@@ -1,44 +1,64 @@
-import type { TranslationEventDetail } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MovieMasher } from '@moviemasher/runtime-client'
-import { Component } from '../Base/Component.js'
+import { EventTranslate, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { isDefiniteError } from '@moviemasher/runtime-shared'
+import { OptionalContent } from '../Types.js'
+import { Component } from '../base/Component.js'
 
+const StringElementTimeout = 1000
+
+const StringTag = 'movie-masher-component-string'
+
+/**
+ * @category Component
+ */
 export class StringElement extends Component {
-  private contentOrVoid?: Text | string | void 
+  private stringContent?: OptionalContent   
 
-  private get stringContent () {
-    return this.contentOrVoid ||= this.contentInitialize
+  private _stringPromise?: Promise<string | void>
+  private get stringPromise() {
+    return this._stringPromise ||= this.stringPromiseInitialize
   }
-  private get contentInitialize(): Text | string | void {
+
+  private get stringPromiseInitialize(): Promise<string | void> {
+    const promise = this.stringEventPromise
+    // support adding in a slot
+    if (!promise) return new Promise<string | void>(resolve => {
+      setTimeout(() => { resolve(this.stringPromiseInitialize) }, StringElementTimeout)
+    })
+    return promise.then(orError => {
+      const string = isDefiniteError(orError) ? this.string : orError.data
+      this.stringContent = string 
+      this.requestUpdate()
+    })
+  }
+  private get stringEventPromise() {
     const { string } = this
-    if (!string) return 
-
-    const detail: TranslationEventDetail = { id: string }
-    const init: CustomEventInit<TranslationEventDetail> = { 
-      detail, composed: true, bubbles: true, cancelable: true
-    }
-    const event = new CustomEvent<TranslationEventDetail>('string', init)
-    MovieMasher.eventDispatcher.dispatch(event)
-
-    const { id: text } = detail
-    if (text) return text
-    
-    return string
+    const event = new EventTranslate(string) 
+    MOVIEMASHER.eventDispatcher.dispatch(event)
+    return event.detail.promise
   }
 
-  override render() { return this.stringContent }
+  protected override get defaultContent(): OptionalContent {
+    const { stringContent, string } = this
+    if (stringContent) return stringContent 
+    
+    if (string) this.stringPromise
+    return ''
+  }
 
-  string = 'app'
+  string = ''
 
   override willUpdate(changedProperties: PropertyValues<this>) {
-    // console.debug(this.constructor.name, 'willUpdate', changedProperties)
-    if (changedProperties.has('string')) delete this.contentOrVoid
+    if (changedProperties.has('string') && changedProperties.get('string')) {
+      // console.debug(this.constructor.name, 'willUpdate', changedProperties)
+      delete this.stringContent
+      delete this._stringPromise
+    }
   }
 
   static override properties: PropertyDeclarations = {
-    // ...Component.properties,
     string: { type: String }
   }
 
@@ -51,5 +71,10 @@ export class StringElement extends Component {
   ]
 }
 
-// register web component as custom element
-customElements.define('movie-masher-component-string', StringElement)
+customElements.define(StringTag, StringElement)
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [StringTag]: StringElement
+  }
+}

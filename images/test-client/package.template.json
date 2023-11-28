@@ -23,6 +23,6 @@
     "web-test-runner-screenshot": "^1.2.0"
   },
   "peerDependencies": {
-    "@moviemasher/lib-client": "5.1.2"
+    "@moviemasher/lib-client": "5.2.0"
   }
 }

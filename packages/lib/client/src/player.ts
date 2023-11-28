@@ -1,31 +1,34 @@
 import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent } from './declarations.js'
+import type { Htmls, OptionalContent } from './Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { ContentSlot, FooterSlot, HeaderSlot, Section } from './Base/Section.js'
+import { html } from 'lit-html'
+import { CONTENTS, FOOTER, HEADER, Section } from './base/LeftCenterRight.js'
 
 const MovieMasherPlayerTag = 'movie-masher-player'
 
+/**
+ * @category Component
+ */
 export class PlayerElement extends Section {
   override contentContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-player-content')
     return html`<movie-masher-player-content
-      part='${ContentSlot}' 
+      part='${CONTENTS}' 
     >${htmls}</movie-masher-player-content>`
   }
 
   override footerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-player-footer')
     return html`<movie-masher-player-footer
-      part='${FooterSlot}' 
+      part='${FOOTER}' 
     >${htmls}</movie-masher-player-footer>`
   }
 
   override headerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-player-header')
     return html`<movie-masher-player-header 
-      part='${HeaderSlot}' 
+      part='${HEADER}' 
     >${htmls}</movie-masher-player-header>`
   }
 
@@ -42,7 +45,6 @@ export class PlayerElement extends Section {
   ]
 }
 
-// register web component as custom element
 customElements.define(MovieMasherPlayerTag, PlayerElement)
 
 

@@ -1,23 +1,25 @@
 import type { StringEvent } from '@moviemasher/runtime-client'
 import type { SelectorTypes, Strings } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
+import type { Content, Contents, Htmls, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { COMMA, assertPopulatedString, assertPositive } from '@moviemasher/lib-shared'
-import { EventChangedInspectorSelectors, EventInspectorSelectors, MovieMasher } from '@moviemasher/runtime-client'
-import { MASH, TARGET_IDS, isArray } from '@moviemasher/runtime-shared'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from '../Base/Component.js'
-import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
-import { Slotted } from '../Base/Slotted.js'
-import { isSelectorType } from '../TypeGuards.js'
+import { assertPopulatedString, assertPositive } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChangedInspectorSelectors, EventInspectorSelectors, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { COMMA, MASH, TARGET_IDS, isArray } from '@moviemasher/runtime-shared'
+import { html, nothing } from 'lit-html'
+import { Component } from '../base/Component.js'
+import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixins/component.js'
+import { Slotted } from '../base/Component.js'
+import { isSelectorType } from '../guards/TypeGuards.js'
 
 const EventInspectorPicker = 'inspector-footer-left'
 const InspectorPickerTag = 'movie-masher-inspector-picker'
 
 const InspectorPickerDisablable = DisablableMixin(Slotted)
+/**
+ * @category Component
+ */
 export class InspectorPickerElement extends InspectorPickerDisablable {
   constructor() {
     super()
@@ -48,7 +50,7 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
     this.selectedPart = part
     const setEvent = new EventChangedInspectorSelectors(types)
     // console.log(this.tagName, 'handleInspectorChooser dispatching EventChangedInspectorSelectors', { types })
-    MovieMasher.eventDispatcher.dispatch(setEvent)
+    MOVIEMASHER.eventDispatcher.dispatch(setEvent)
   }
 
   protected handleInspectorChooser(event: StringEvent): void {
@@ -74,7 +76,7 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
     this.importTags('movie-masher-component-a')
     const selected = selectedPart === part
     return html`<movie-masher-component-a 
-        selected='${ifDefined(selected ? true : undefined)}'
+        selected='${selected || nothing}'
         icon='${part}' emit='${EventInspectorPicker}' detail='${part}'
       >${slots}</movie-masher-component-a>`
   }
@@ -97,14 +99,13 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
   selectors: Strings = []
   
   static override properties: PropertyDeclarations = {
-    ...DisablableProperties,
+    ...DISABLABLE_DECLARATIONS,
     selectedPart: { type: String, attribute: false },
     selectors: { type: Array, converter: {
       fromAttribute: (value: string) => value ? value.split(Slotted.partSeparator) : TARGET_IDS,
       toAttribute: (value: Strings) => isArray(value) ? value.join(Slotted.partSeparator) : ''
     } },
   }
-  
 
   static override styles: CSSResultGroup = [
     Component.cssHostFlex,
@@ -119,7 +120,6 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
   ]
 }
 
-// register web component as custom element
 customElements.define(InspectorPickerTag, InspectorPickerElement)
 
 declare global {

@@ -1,15 +1,16 @@
 
-import type { AlphaType, AssetType, DataOrError, DecodeOptions, EncodingType, StringDataOrError, Strings, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
+import type { AlphaType, AssetType, DataOrError, DecodeOptions, EncodingType, ListenersFunction, StringDataOrError, Strings, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/runtime-shared'
 
-import { JsonExtension, KindsProbe, ProbeAlpha, isAboveZero, isTranscoding, outputAlphaOptions, outputOptions, sizeAboveZero, sizeCopy, sizeCover, sizeMax } from '@moviemasher/lib-shared'
-import { EventServerAssetPromise, EventServerDecode, EventServerTranscode, EventServerTranscodeStatus, MovieMasher, ServerMediaRequest } from '@moviemasher/runtime-server'
-import { ERROR, IMAGE, PROBE, SEQUENCE, VIDEO, namedError, errorPromise, errorThrow, isAssetType, isDate, isDefiniteError, isPopulatedString, isProbing } from '@moviemasher/runtime-shared'
+import { isAboveZero, isTranscoding } from '@moviemasher/lib-shared/utility/guards.js'
+import { sizeAboveZero, sizeCopy, sizeCover, sizeMax } from '@moviemasher/lib-shared/utility/rect.js'
+import { EventServerAssetPromise, EventServerDecode, EventServerTranscode, EventServerTranscodeStatus, MOVIEMASHER_SERVER, ServerMediaRequest } from '@moviemasher/runtime-server'
+import { ALPHA, ERROR, IMAGE, JSON, PROBE, PROBING_TYPES, SEQUENCE, VIDEO, errorPromise, errorThrow, isAssetType, isDate, isDefiniteError, isPopulatedString, isProbing, jsonParse, namedError, typeOutputAlphaOptions, typeOutputOptions } from '@moviemasher/runtime-shared'
 import path from 'path'
-import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
+import { ENV_KEY, ENV } from '../Environment/EnvironmentConstants.js'
 import { ffmpegCommand, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../RunningCommand/Command/CommandFactory.js'
-import { JOB_TRANSCODING } from '../Utility/JobConstants.js'
-import { jobHasErrored, jobHasFinished, jobHasStarted, jobGetStatus } from '../Utility/JobFunctions.js'
-import { outputFileName } from '../Utility/OutputFunctions.js'
+import { TRANSCODING } from '../Utility/JobConstants.js'
+import { jobGetStatus, jobHasErrored, jobHasFinished, jobHasStarted } from '../Utility/JobFunctions.js'
+import { fileNameFromOptions } from '../Utility/File.js'
 
 const transcodeEncodingType = (transcodingType: TranscodingType): EncodingType | undefined  =>{
   if (isAssetType(transcodingType)) return transcodingType
@@ -25,13 +26,13 @@ const transcode = async (transcodingType: TranscodingType, assetType: AssetType,
 }
 
 const probePromise = async (filePath: string, assetType: AssetType, user: string, id: string): Promise<StringDataOrError> => {
-  const decodeOptions: DecodeOptions = { types: KindsProbe }
+  const decodeOptions: DecodeOptions = { types: PROBING_TYPES }
   const request: ServerMediaRequest = {
     endpoint: filePath,
     path: filePath,
   }
   const event = new EventServerDecode(PROBE, assetType, request, user, id, decodeOptions)
-  MovieMasher.eventDispatcher.dispatch(event)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   if (!promise) return namedError(ERROR.Unimplemented, EventServerDecode.Type)
 
@@ -40,7 +41,7 @@ const probePromise = async (filePath: string, assetType: AssetType, user: string
 
 const downloadAsset = async (request: ServerMediaRequest, assetType: AssetType, validDirectories?: Strings): Promise<StringDataOrError> => {
   const assetEvent = new EventServerAssetPromise(request, assetType, validDirectories)
-  MovieMasher.eventDispatcher.dispatch(assetEvent)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(assetEvent)
   const { promise } = assetEvent.detail
   if (!promise) return namedError(ERROR.Unimplemented, EventServerAssetPromise.Type)
   
@@ -75,16 +76,16 @@ const transcodePromise = async (transcodingType: TranscodingType, assetType: Ass
   const { data: inputPath } = downloadOrError
 
   // probe the input file 
-  const inputProbeOrError = await probePromise(inputPath, assetType, '', JsonExtension)
+  const inputProbeOrError = await probePromise(inputPath, assetType, '', JSON)
   if (isDefiniteError(inputProbeOrError)) return inputProbeOrError
 
   const { data: json } = inputProbeOrError
-  const probe = JSON.parse(json)
+  const probe = jsonParse(json)
   if (!isProbing(probe)) return namedError(ERROR.Internal, 'input probe')
 
-  const { [ProbeAlpha]: alpha } = probe.data
+  const { [ALPHA]: alpha } = probe.data
 
-  const options = alpha ? outputAlphaOptions(transcodingType as AlphaType, transcodeOptions) : outputOptions(transcodingType, transcodeOptions)
+  const options = alpha ? typeOutputAlphaOptions(transcodingType as AlphaType, transcodeOptions) : typeOutputOptions(transcodingType, transcodeOptions)
   const { extension, format } = options
   const ext = extension || format 
   if (!isPopulatedString(ext)) return namedError(ERROR.Internal, 'output extension')
@@ -109,9 +110,9 @@ const transcodePromise = async (transcodingType: TranscodingType, assetType: Ass
     }
   }
   
-  const fileName = transcodingType === SEQUENCE ? transcodeFileName(duration, options) : outputFileName(options, transcodingType)
+  const fileName = transcodingType === SEQUENCE ? transcodeFileName(duration, options) : fileNameFromOptions(options, transcodingType)
 
-  const outputPath = path.join(ENVIRONMENT.get(ENV.OutputRoot), user, id, fileName)
+  const outputPath = path.join(ENV.get(ENV_KEY.OutputRoot), user, id, fileName)
   
   const encodingType = transcodeEncodingType(transcodingType)
   if (encodingType) {
@@ -141,7 +142,7 @@ const statusPromise = async (id: string): Promise<DataOrError<Transcoding | Date
   const { data } = orError
   if (isDate(data) || isTranscoding(data)) return { data }
 
-  return namedError(ERROR.Syntax, { ...data, name: JOB_TRANSCODING })
+  return namedError(ERROR.Syntax, { ...data, name: TRANSCODING })
 }
 
 const statusHandler = (event: EventServerTranscodeStatus) => {
@@ -157,10 +158,10 @@ const transcodeHandler = (event: EventServerTranscode) => {
   detail.promise = transcode(transcodingType, assetType, request, user, id, transcodeOptions, relativeRoot)
 }
 
-export const ServerTranscodeListeners = () => ({
+export const ServerTranscodeListeners: ListenersFunction = () => ({
   [EventServerTranscode.Type]: transcodeHandler,
 })
 
-export const ServerTranscodeStatusListeners = () => ({
+export const ServerTranscodeStatusListeners: ListenersFunction = () => ({
   [EventServerTranscodeStatus.Type]: statusHandler,
 })

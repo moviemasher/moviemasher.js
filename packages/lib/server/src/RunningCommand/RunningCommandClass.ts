@@ -1,14 +1,14 @@
-import type { Command } from './Command/Command.js'
 import type { CommandOptions } from '../encode/MashDescriberTypes.js'
-import type { CommandDestination, RunningCommand } from './RunningCommand.js'
+import type { Command } from './Command/Command.js'
+import type { RunningCommand } from './RunningCommand.js'
 
-import { AVTypeAudio, AVTypeBoth, AVTypeVideo, assertPopulatedString, isPositive } from '@moviemasher/lib-shared'
-import { ERROR, StringDataOrError, Strings, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
-import path from 'path'
-import { commandInstance } from './Command/CommandFactory.js'
-import { commandString, commandError } from '../Utility/Command.js'
-import { directoryCreatePromise } from '../Utility/File.js'
+import { assertPopulatedString, isPositive } from '@moviemasher/lib-shared/utility/guards.js'
 import { CommandInputs } from '@moviemasher/runtime-server'
+import { AUDIO, BOTH, ERROR, StringDataOrError, Strings, VIDEO, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
+import path from 'path'
+import { commandError, commandString } from '../Utility/Command.js'
+import { directoryCreatePromise } from '../Utility/File.js'
+import { commandInstance } from './Command/CommandFactory.js'
 
 export class RunningCommandClass implements RunningCommand {
   constructor(public id: string, public commandOptions: CommandOptions) {
@@ -57,15 +57,15 @@ export class RunningCommandClass implements RunningCommand {
       strings.push(`[${captured}]`)
       return strings.join('')
     })
-    if (avType === AVTypeBoth) {
+    if (avType === BOTH) {
       const complex = filterComplex.replace(';aevalsrc', '[video-out];aevalsrc')
       nullsrcs.push(`${complex}[audio-out]`)
       nullsrcs.push('[audio-out]anullsink')
-    if (avType !== AVTypeAudio) nullsrcs.push('[video-out]nullsink')
+    if (avType !== AUDIO) nullsrcs.push('[video-out]nullsink')
     } else {
       nullsrcs.push(filterComplex)
-      if (avType !== AVTypeVideo) nullsrcs.push('anullsink')
-    if (avType !== AVTypeAudio) nullsrcs.push('nullsink')
+      if (avType !== VIDEO) nullsrcs.push('anullsink')
+    if (avType !== AUDIO) nullsrcs.push('nullsink')
     }
     return nullsrcs.join(',')
   }
@@ -74,7 +74,7 @@ export class RunningCommandClass implements RunningCommand {
 
   get output() { return this.commandOptions.commandFilters || [] }
 
-  async runPromise(destination: CommandDestination): Promise<StringDataOrError> {
+  async runPromise(destination: string): Promise<StringDataOrError> {
     assertPopulatedString(destination)
   
     const orError = await directoryCreatePromise(path.dirname(destination))

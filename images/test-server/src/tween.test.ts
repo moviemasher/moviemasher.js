@@ -1,6 +1,6 @@
-import type { Lock, Rect, RectTuple, Rects, SideDirectionRecord, Size } from '@moviemasher/runtime-shared'
+import { FLIP, HEIGHT, type Lock, type Rect, type RectTuple, type Rects, type SideDirectionRecord, type Size } from '@moviemasher/runtime-shared'
 
-import { LockHeight, tweenPad, tweenRectsContainer, tweenScaleSizeToRect } from '@moviemasher/lib-shared'
+import { tweenPad, tweenRectsContainer, tweenScaleSizeToRect } from '@moviemasher/lib-shared'
 import assert from 'assert'
 import { describe, test } from 'node:test'
 
@@ -65,11 +65,11 @@ describe('Tween', () => {
         'returns properly tweened rect', 
         rects, 
         intrinsicSize,
-        LockHeight, 
+        HEIGHT, 
         { width: 200, height: 100 },
         {},
-        'flip',
-        'flip',
+        FLIP,
+        FLIP,
         expectedRects, 
       ],
     ]

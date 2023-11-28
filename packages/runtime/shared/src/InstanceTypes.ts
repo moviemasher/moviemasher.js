@@ -1,4 +1,4 @@
-import type { Asset } from './AssetTypes.js'
+import type { Asset } from './AssetInterfaces.js'
 import type { Labeled } from './Base.js'
 import type { InstanceCacheArgs } from './CacheTypes.js'
 import type { Clip, IntrinsicOptions } from './Clip.js'

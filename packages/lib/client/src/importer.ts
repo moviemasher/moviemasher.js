@@ -1,25 +1,27 @@
-import type { PropertyDeclarations } from 'lit'
-import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent } from './declarations.js'
+import type { CSSResultGroup, PropertyDeclarations } from 'lit'
+import type { Htmls, OptionalContent } from './Types.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { ContentSlot, FooterSlot, HeaderSlot, Section } from './Base/Section.js'
+import { html } from 'lit-html'
+import { CONTENTS, FOOTER, HEADER, Section } from './base/LeftCenterRight.js'
 
 const ImporterTag = 'movie-masher-importer'
 
+/**
+ * @category Component
+ */
 export class ImporterElement extends Section {
 
   override contentContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-importer-content')
     return html`<movie-masher-importer-content
-      part='${ContentSlot}' 
+      part='${CONTENTS}' 
     >${htmls}</movie-masher-importer-content>`
   }
     
   override footerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-importer-footer')
     return html`<movie-masher-importer-footer
-      part='${FooterSlot}' 
+      part='${FOOTER}' 
     >${htmls}</movie-masher-importer-footer>`
   }
 
@@ -27,7 +29,7 @@ export class ImporterElement extends Section {
   override headerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-importer-header')
     return html`<movie-masher-importer-header
-      part='${HeaderSlot}' 
+      part='${HEADER}' 
       icon='add' 
     >${htmls}</movie-masher-importer-header>`
   }
@@ -39,7 +41,6 @@ export class ImporterElement extends Section {
   ]
 }
 
-// register web component as custom element
 customElements.define(ImporterTag, ImporterElement)
 
 declare global {

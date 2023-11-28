@@ -2,6 +2,7 @@ import type { ValueRecord } from './Core.js'
 import type { ErrorObject, DefiniteError } from './Error.js'
 
 import { ERROR_NAMES, ERROR } from './ErrorName.js'
+import { jsonStringify } from './JsonFunctions.js'
 import { isObject, isPopulatedString, isString } from './TypeofGuards.js'
 
 export type ErrorNameType = typeof ERROR[keyof typeof ERROR] | string
@@ -52,7 +53,7 @@ const errorExpected = (value: any, expected: string, prop?: string): ErrorObject
   const name = prop || (isDefined ? type : 'value')
   const words = [name, 'is']
   words.push(isObject ? value.constructor.name : type)
-  if (isDefined) words.push(isObject ? JSON.stringify(value) : `'${value}'`)
+  if (isDefined) words.push(isObject ? jsonStringify(value) : `'${value}'`)
   if (isPopulatedString(expected)) words.push('instead of', expected)
   return errorMessageObject(words.join(' '), ERROR.Type)
 }

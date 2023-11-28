@@ -1,7 +1,7 @@
-import type { EventDispatcher, EventDispatcherListener, EventDispatcherListenerRecord, EventDispatcherOptionsOrBoolean } from '@moviemasher/runtime-shared'
+import type { EventDispatcher, EventDispatcherListener, EventDispatcherListeners, EventOptions } from '@moviemasher/runtime-shared'
 
 export class ClientEventDispatcher extends EventTarget implements EventDispatcher {
-  addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventDispatcherOptionsOrBoolean): EventDispatcher {
+  addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
     this.addEventListener(type, listener as EventListener, options)
     return this
   }
@@ -11,19 +11,19 @@ export class ClientEventDispatcher extends EventTarget implements EventDispatche
     return this.dispatchEvent(event)
   }
 
-  listenersAdd(record: EventDispatcherListenerRecord) {
+  listenersAdd(record: EventDispatcherListeners) {
     Object.entries(record).forEach(([type, listener]) => {
       this.addDispatchListener(type, listener)
     })
   }
 
-  listenersRemove(record: EventDispatcherListenerRecord) {
+  listenersRemove(record: EventDispatcherListeners) {
     Object.entries(record).forEach(([type, listener]) => {
       this.removeDispatchListener(type, listener)
     })
   }
   
-  removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventDispatcherOptionsOrBoolean): EventDispatcher {
+  removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
     this.removeEventListener(type, listener as EventListener, options)
     return this
   }

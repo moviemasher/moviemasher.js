@@ -1,13 +1,14 @@
-import type { AudioInstanceObject, InstanceArgs, RawAudioAssetObject } from '@moviemasher/runtime-shared'
+import type { AudioInstanceObject, InstanceArgs, ListenersFunction, RawAudioAssetObject } from '@moviemasher/runtime-shared'
 import type { ServerRawAudioAsset, ServerRawAudioInstance } from '../../Types/ServerRawTypes.js'
 
-import { AudibleAssetMixin, AudibleInstanceMixin, AudioAssetMixin, AudioInstanceMixin } from '@moviemasher/lib-shared'
-import { EventServerAsset, MovieMasher } from '@moviemasher/runtime-server'
-import { RAW, AUDIO, isAssetObject } from '@moviemasher/runtime-shared'
+import { AudibleAssetMixin, AudioAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { AudibleInstanceMixin, AudioInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { EventServerAsset } from '@moviemasher/runtime-server'
+import { AUDIO, RAW, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerAudibleAssetMixin } from '../../Base/ServerAudibleAssetMixin.js'
 import { ServerAudibleInstanceMixin } from '../../Base/ServerAudibleInstanceMixin.js'
-import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
+import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 
 const WithAudibleAsset = AudibleAssetMixin(ServerRawAssetClass)
 const WithServerAudibleAsset = ServerAudibleAssetMixin(WithAudibleAsset)
@@ -35,7 +36,7 @@ export class ServerRawAudioAssetClass extends WithAudioAsset implements ServerRa
 }
 
 // listen for audio/raw asset event
-export const ServerRawAudioListeners = () => ({
+export const ServerRawAudioListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerRawAudioAssetClass.handleAsset
 })
 

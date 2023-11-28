@@ -1,12 +1,11 @@
 import type { DataOrError, Strings } from '@moviemasher/runtime-shared'
 
 import { fileReadJsonPromise } from '@moviemasher/lib-server'
-import { isDefiniteError } from '@moviemasher/runtime-shared'
-import { CategoryId, CategoryIds, ConfigurationRecord, ExportId, ExportIds, ExportRecord, ExportsByCategory, ExportsByCombined, RawDeclaration, RawProject, TypedocDirectory } from './Types.js'
-import { DIRECTORIES, EXTENSION_MARKDOWN, declarationKind } from './Constants.js'
+import { DOT, isDefiniteError } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
-import { DOT } from '@moviemasher/lib-shared'
+import { DIRECTORIES, EXTENSION_MARKDOWN, declarationKind } from './Constants.js'
+import { CategoryId, CategoryIds, DocumentationConfiguration, ExportId, ExportIds, ExportRecord, ExportsByCategory, ExportsByCombined, RawDeclaration, RawProject, TypedocDirectory } from './Types.js'
 
 const CATEGORY_OTHER = 'Other'
 
@@ -20,7 +19,7 @@ export class ProjectInfo {
     if (!declaration) return 
 
     const { id } = declaration
-    const { categories } = this.rawProject
+    const { categories = [] } = this.rawProject
     for (const category of categories) {
       const { title } = category
       if (title !== CATEGORY_OTHER) {
@@ -34,17 +33,18 @@ export class ProjectInfo {
   get categoryIds(): CategoryIds { 
     if (this._categoryIds) return this._categoryIds
 
-    const defined = this.rawProject.categories.flatMap(category => {
+    const { categories = [] } = this.rawProject
+    const defined = categories.flatMap(category => {
       const { title } = category
       return title === CATEGORY_OTHER ? [] : [title]
     })
     return this._categoryIds = defined
   }
 
-  private _configuration?: ConfigurationRecord
+  private _configuration?: DocumentationConfiguration
   private get configuration() { return this._configuration! }
 
-  async configure(configuration: ConfigurationRecord): Promise<DataOrError<string>> { 
+  async configure(configuration: DocumentationConfiguration): Promise<DataOrError<string>> { 
     this._configuration = configuration
     const { typedocJsonPath } = configuration
     const infoOrError = await fileReadJsonPromise<RawProject>(typedocJsonPath)
@@ -80,8 +80,6 @@ export class ProjectInfo {
     return aIndex - bIndex
   }
 
-
-
   private _exportsByCategory: ExportsByCategory | undefined
   get exportsByCategory(): ExportsByCategory {
     const { _exportsByCategory } = this
@@ -89,7 +87,7 @@ export class ProjectInfo {
 
     const { rawProject } = this
 
-    const { categories } = rawProject
+    const { categories = [] } = rawProject
     const byCategory: ExportsByCategory = {}
     for (const category of categories) {
       const { title, children } = category
@@ -113,9 +111,13 @@ export class ProjectInfo {
     if (_exportsByCombined) return _exportsByCombined
 
     const { combineDirectories = [] } = this.configuration
-    const byCombined = Object.fromEntries(combineDirectories.map(directory => {
+    const byCombined: ExportsByCategory = Object.fromEntries(combineDirectories.map(directory => {
       const names = this.filesInDirectory(directory).map(nameFromFile)
-      const declarations = names.map(name => this.declarationFromName(name)!)
+      const declarations = names.map(name => {
+        const declaration = this.declarationFromName(name)
+        if (!declaration) throw new Error(`no declaration for ${name} in ${directory}`)
+        return declaration
+      })
       declarations.sort(this.sortDeclarations.bind(this))
       return [directory, declarations.map(declaration => declaration.name)]
     }))
@@ -134,23 +136,22 @@ export class ProjectInfo {
     const { configuration } = this
     const { inputTypedocMdDirectory } = configuration
 
-    const dir = path.join(inputTypedocMdDirectory, directory)
+    const dir = path.join(inputTypedocMdDirectory, directory.toLowerCase())
     if (!fs.existsSync(dir)) return []
     
     const fileNames = fs.readdirSync(dir)
     return fileNames.filter(file => path.extname(file) === EXTENSION_MARKDOWN)
-    
   }
 
-  isCategoryId(value: string): value is CategoryId {
+  isCategoryId(value: string) {
     return this.categoryIds.includes(value)
   }
 
-  isExportId(value: string): value is ExportId {
+  isExportId(value: string) {
     return this.exportIds.includes(value)
   }
 
-  isCombinedExportId(value: string): value is ExportId {
+  isCombinedExportId(value: string) {
     const { exportsByCategory } = this
     const exports = Object.values(exportsByCategory).flat()
     return exports.includes(value)
@@ -159,6 +160,4 @@ export class ProjectInfo {
   private _rawProject?: RawProject
   private get rawProject(): RawProject { return this._rawProject! }
 }
-
-
 

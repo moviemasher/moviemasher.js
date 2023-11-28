@@ -1,5 +1,5 @@
 import type { AssetType, AudibleType, VisibleType } from './AssetType.js'
-import { ASSET_TYPES, AUDIBLE_TYPES, VISIBLE_TYPES } from './AssetTypeConstants.js'
+import { ASSET_TYPES, AUDIBLE_TYPES, VISIBLE_TYPES } from './AssetConstants.js'
 
 export const isAssetType = (value?: any): value is AssetType => (
   ASSET_TYPES.includes(value)

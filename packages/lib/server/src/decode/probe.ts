@@ -1,48 +1,42 @@
 import type { ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { AssetType, DataOrError, DecodeOptions, Decoding, Numbers, ProbingData, Sizes, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
+import type { AssetType, DataOrError, Decoding, ListenersFunction, Numbers, ProbingData, ProbingOptions, Sizes, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
 
-import { DOT, JsonExtension, NEWLINE } from '@moviemasher/lib-shared'
-import { EventServerAssetPromise, EventServerDecode, EventServerDecodeStatus, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, PROBE, namedError, errorCaught, isDate, isDefiniteError, isPopulatedString, isProbing } from '@moviemasher/runtime-shared'
+import { EventServerAssetPromise, EventServerDecode, EventServerDecodeStatus, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { AUDIBLE, DOT, DURATION, ERROR, HEIGHT, JSON, NEWLINE, PROBE, SIZE_PROBING, WIDTH, errorCaught, isDate, isDefiniteError, isPopulatedString, isProbing, jsonParse, jsonStringify, namedError } from '@moviemasher/runtime-shared'
 import { execSync } from 'child_process'
 import ffmpeg from 'fluent-ffmpeg'
 import path from 'path'
-import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
+import { ENV_KEY, ENV } from '../Environment/EnvironmentConstants.js'
 import { filePathExists } from '../Utility/File.js'
-import { ProbeAudible, ProbeDuration, ProbeSize } from '@moviemasher/lib-shared'
-import { assertProbeOptions } from './ProbeFunctions.js'
-import { jobHasErrored, jobHasFinished, jobHasStarted, jobGetStatus } from '../Utility/JobFunctions.js'
-import { JOB_DECODING } from '../Utility/JobConstants.js'
+import { DECODING } from '../Utility/JobConstants.js'
+import { jobGetStatus, jobHasErrored, jobHasFinished, jobHasStarted } from '../Utility/JobFunctions.js'
+import { assertProbingOptions } from './ProbeFunctions.js'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 
 let _alphaFormats: Strings
 
-const alphaFormats = (): Strings => {
-    return _alphaFormats ||= alphaFormatsInitialize()
-  }
+const alphaFormats = (): Strings => _alphaFormats ||= alphaFormatsInitialize()
 
 const alphaFormatsInitialize = (): Strings => {
   const result = execSync(AlphaFormatsCommand).toString().trim()
   return result.split(NEWLINE)
 }
 
-
-const probe = async (request: ServerMediaRequest, options: DecodeOptions, user: string, id: string, assetType: AssetType): Promise<StringDataOrError> => {
+const probe = async (request: ServerMediaRequest, options: ProbingOptions, user: string, id: string, assetType: AssetType): Promise<StringDataOrError> => {
   const orError = await probePromise(request, options, user, id, assetType)
   if (isDefiniteError(orError)) await jobHasErrored(id, orError.error)
   return orError
 }
 
-
-const probePromise = async (request: ServerMediaRequest, options: DecodeOptions, user: string, id: string, assetType: AssetType): Promise<StringDataOrError> => {
-  const writingOutput = id !== JsonExtension
+const probePromise = async (request: ServerMediaRequest, options: ProbingOptions, user: string, id: string, assetType: AssetType): Promise<StringDataOrError> => {
+  const writingOutput = id !== JSON
   if (writingOutput) {
     const orError = await jobHasStarted(id)
     if (isDefiniteError(orError)) return orError
   }
   const assetEvent = new EventServerAssetPromise(request, assetType)
-  MovieMasher.eventDispatcher.dispatch(assetEvent)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(assetEvent)
   const { promise: assetPromise } = assetEvent.detail
   if (!assetPromise) return namedError(ERROR.Unimplemented, EventServerAssetPromise.Type)
   
@@ -51,7 +45,7 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
   
   const { path: inputPath } = request
 
-  assertProbeOptions(options)
+  assertProbingOptions(options)
   const { types } = options
   if (!filePathExists(inputPath)) return namedError(ERROR.Internal, `inputPath: ${inputPath}`)
 
@@ -73,7 +67,7 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
           const { rotation, width, height, duration, codec_type, pix_fmt } = stream
           types.forEach(type => {
             switch(type) {
-              case ProbeSize: {
+              case SIZE_PROBING: {
                 if (pix_fmt && formats.includes(pix_fmt)) {
                   probingData.alpha = true
                 }
@@ -83,13 +77,13 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
                 if (width && height) sizes.push({ width, height })
                 break
               }
-              case ProbeAudible: {
+              case AUDIBLE: {
                 if (codec_type === 'audio') {
                   probingData.audible = true
                 }
                 break
               }
-              case ProbeDuration: {
+              case DURATION: {
                 if (typeof duration !== 'undefined') {
                   durations.push(Number(duration))
                 }
@@ -100,7 +94,7 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
         }
         types.forEach(type => {
           switch(type) {
-            case ProbeDuration: {
+            case DURATION: {
               if (duration || durations.length) {
                 if (durations.length) {
                   const maxDuration = Math.max(...durations)
@@ -109,11 +103,11 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
               }  
               break
             }
-            case ProbeSize: {
+            case SIZE_PROBING: {
               if (sizes.length) {
                 const flipped = rotations.some(n => n === 90 || n === 270)
-                const widthKey = flipped ? 'height' : 'width'
-                const heightKey = flipped ? 'width' : 'height'
+                const widthKey = flipped ? HEIGHT : WIDTH
+                const heightKey = flipped ? WIDTH : HEIGHT
                 probingData[widthKey] = Math.max(...sizes.map(size => size.width))
                 probingData[heightKey] = Math.max(...sizes.map(size => size.height))
               }        
@@ -128,8 +122,7 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
 
 
         const decoding: Decoding = { id, type: PROBE, data: probingData }
-        const json = JSON.stringify(decoding)
-        resolve({ data: json }) 
+        resolve({ data: jsonStringify(decoding) }) 
       }
     })
   })
@@ -139,14 +132,14 @@ const probePromise = async (request: ServerMediaRequest, options: DecodeOptions,
 
   const { data: json } = probeOrError
 
-  const decoding = JSON.parse(json)
+  const decoding = jsonParse(json)
   if (!isProbing(decoding)) return namedError(ERROR.Syntax, { probing: decoding })
 
   const writeOrError = await jobHasFinished(id, decoding)
   if (isDefiniteError(writeOrError)) return writeOrError
 
-  const fileName = [PROBE, JsonExtension].join(DOT)
-  const probePath = path.resolve(ENVIRONMENT.get(ENV.OutputRoot), user, id, fileName)
+  const fileName = [PROBE, JSON].join(DOT)
+  const probePath = path.resolve(ENV.get(ENV_KEY.OutputRoot), user, id, fileName)
   
   return { data: probePath }
 }
@@ -158,7 +151,7 @@ const statusPromise = async (id: string): Promise<DataOrError<Decoding | Date>> 
   const { data } = orError
   if (isDate(data) || isProbing(data)) return { data }
 
-  return namedError(ERROR.Syntax, { ...data, name: JOB_DECODING })
+  return namedError(ERROR.Syntax, { ...data, name: DECODING })
 }
 
 const probeHandler = (event: EventServerDecode) => {
@@ -166,6 +159,8 @@ const probeHandler = (event: EventServerDecode) => {
   const { decodingType, request, decodeOptions, user, id, assetType } = detail
   if (decodingType !== PROBE) return
 
+  assertProbingOptions(decodeOptions)
+  
   detail.promise = probe(request, decodeOptions, user, id, assetType)
   event.stopImmediatePropagation()
 }
@@ -178,10 +173,10 @@ const statusHandler = (event: EventServerDecodeStatus) => {
   event.stopImmediatePropagation()
 }
 
-export const ServerDecodeProbeListeners = () => ({
+export const ServerDecodeProbeListeners: ListenersFunction = () => ({
   [EventServerDecode.Type]: probeHandler,
 })
 
-export const ServerDecodeStatusListeners = () => ({
+export const ServerDecodeStatusListeners: ListenersFunction = () => ({
   [EventServerDecodeStatus.Type]: statusHandler,
 })

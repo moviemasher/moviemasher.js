@@ -1,4 +1,4 @@
-import type { Asset, AssetObject } from './AssetTypes.js'
+import type { Asset, AssetObject } from './AssetInterfaces.js'
 import type { AudioInstanceObject, AudioInstance } from './AudioInstance.js'
 import type { InstanceArgs } from './InstanceTypes.js'
 

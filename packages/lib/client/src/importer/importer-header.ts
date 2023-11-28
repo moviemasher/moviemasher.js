@@ -1,10 +1,14 @@
 // import type { Htmls, OptionalContent } from '../declarations.js'
 
-import { HeaderElement } from '../Base/LeftCenterRight.js'
+import { HeaderBase } from '../base/LeftCenterRight.js'
 
-export class ImporterHeaderElement extends HeaderElement {
+const ImporterHeaderTag = 'movie-masher-importer-header'
+
+/**
+ * @category Component
+ */
+export class ImporterHeaderElement extends HeaderBase {
   
 }
 
-// register web component as custom element
-customElements.define('movie-masher-importer-header', ImporterHeaderElement)
+customElements.define(ImporterHeaderTag, ImporterHeaderElement)

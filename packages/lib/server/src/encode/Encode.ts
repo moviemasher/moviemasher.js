@@ -1,24 +1,24 @@
 
 import type { CommandFilters, CommandInput, CommandInputs, ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { AVType, AssetObject, AssetType, DataOrError, DecodeOptions, EncodeOptions, Encoding, EncodingType, MashAssetObject, Numbers, OutputOptions, Probing, StringDataOrError, Strings, VideoOutputOptions } from '@moviemasher/runtime-shared'
+import type { AVType, AssetObject, AssetType, DataOrError, DecodeOptions, EncodeOptions, Encoding, EncodingType, ListenersFunction, MashAssetObject, Numbers, OutputOptions, Probing, StringDataOrError, Strings, VideoOutputOptions } from '@moviemasher/runtime-shared'
 import type { RunningCommand } from '../RunningCommand/RunningCommand.js'
 import type { CommandDescription, CommandDescriptions, CommandOptions, MashDescriberOptions, MashDescription } from './MashDescriberTypes.js'
 
-import { AVTypeBoth, AVTypeVideo, COLON, DASH, DOT, JsonExtension, NEWLINE, TextExtension, assertTrue, isAboveZero, isEncoding, isPositive, outputOptions, sizeAboveZero } from '@moviemasher/lib-shared'
-import { EventReleaseServerManagedAssets, EventServerDecode, EventServerEncode, EventServerEncodeStatus, EventServerManagedAsset, MovieMasher } from '@moviemasher/runtime-server'
-import { AUDIO, ERROR, IMAGE, MASH, NUMBER, PROBE, RAW, VIDEO, namedError, errorCaught, isDate, isDefiniteError, isProbing } from '@moviemasher/runtime-shared'
+import { assertTrue, isAboveZero, isEncoding, isPositive } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventReleaseServerManagedAssets, EventServerDecode, EventServerEncode, EventServerEncodeStatus, EventServerManagedAsset, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { AUDIO, BOTH, COLON, DASH, DOT, ERROR, IMAGE, JSON, MASH, NEWLINE, NUMBER, PROBE, PROBING_TYPES, RAW, TXT, VIDEO, errorCaught, isDate, isDefiniteError, isProbing, jsonParse, namedError, typeOutputOptions } from '@moviemasher/runtime-shared'
 import { exec } from 'child_process'
 import path from 'path'
 import { promisify } from 'util'
-import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
-import { runningCommandInstance } from '../RunningCommand/RunningCommandFactory.js'
+import { ENV_KEY, ENV } from '../Environment/EnvironmentConstants.js'
 import { directoryCreatePromise, filePathExists, fileWriteJsonPromise, fileWritePromise } from '../Utility/File.js'
-import { KindsProbe } from '@moviemasher/lib-shared'
+import { ENCODING } from '../Utility/JobConstants.js'
+import { jobGetStatus, jobHasErrored, jobHasFinished, jobHasStarted } from '../Utility/JobFunctions.js'
+import { fileNameFromOptions } from '../Utility/File.js'
 import { isServerMashAsset } from '../guard/mash.js'
-import { outputFileName } from '../Utility/OutputFunctions.js'
 import { MashDescriberClass } from './MashDescriberClass.js'
-import { jobHasErrored, jobHasFinished, jobHasStarted, jobGetStatus } from '../Utility/JobFunctions.js'
-import { JOB_ENCODING } from '../Utility/JobConstants.js'
+import { sizeAboveZero } from '@moviemasher/lib-shared/utility/rect.js'
+import { RunningCommandClass } from '../RunningCommand/RunningCommandClass.js'
 
 type PathDurationTuple = [string, number]
 
@@ -49,7 +49,7 @@ const createDirectorAndDebugPromise = async (instance: RunningCommand, outPath: 
   const suffix = isPositive(index) ? `-${index}` : ''
   const commandsText = instance.commandString(outPath)
   const dir = path.dirname(outPath)
-  const commandPath = path.join(dir, `command${suffix}.${TextExtension}`)
+  const commandPath = path.join(dir, `command${suffix}.${TXT}`)
   const writeOrError = await fileWritePromise(commandPath, commandsText)
   if (isDefiniteError(writeOrError)) return writeOrError
 
@@ -60,7 +60,7 @@ const attemptWriteDotPromise = async (instance: RunningCommand, outDirectory: st
   const { graphString } = instance
   const suffix = isPositive(index) ? `-${index}` : ''
 
-  const graphPath = path.join(outDirectory, `graph${suffix}.${TextExtension}`)
+  const graphPath = path.join(outDirectory, `graph${suffix}.${TXT}`)
   const graphOrError = await fileWritePromise(graphPath, graphString)
   if (isDefiniteError(graphOrError)) return graphOrError
 
@@ -79,14 +79,14 @@ const probePromise = async (outPath: string, assetType: AssetType): Promise<Data
   // console.log('decodePromise', { outPath, outDirectory, index })
   // const suffix = isPositive(index) ? `-${index}` : ''
   // const decodingId = idGenerate('decoding')
-  const decodeOptions: DecodeOptions = { types: KindsProbe }
-  // const probePath = path.join(outDirectory, `${PROBE}${suffix}.${JsonExtension}`)
+  const decodeOptions: DecodeOptions = { types: PROBING_TYPES }
+  // const probePath = path.join(outDirectory, `${PROBE}${suffix}.${JSON}`)
   const request: ServerMediaRequest = {
     endpoint: outPath,
     path: outPath,
   }
-  const event = new EventServerDecode(PROBE, assetType, request, '', JsonExtension, decodeOptions)
-  MovieMasher.eventDispatcher.dispatch(event)
+  const event = new EventServerDecode(PROBE, assetType, request, '', JSON, decodeOptions)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   if (!promise) return namedError(ERROR.Unimplemented, EventServerDecode.Type)
 
@@ -94,7 +94,7 @@ const probePromise = async (outPath: string, assetType: AssetType): Promise<Data
   if (isDefiniteError(orError)) return orError
 
   const { data: json } = orError
-  const decoding = JSON.parse(json)
+  const decoding = jsonParse(json)
   if (!isProbing(decoding)) return namedError(ERROR.Internal, 'decoding')
 
   return { data: decoding }
@@ -136,9 +136,9 @@ const concatString = (fileDurations: PathDurationTuple[]): string => {
 }
 
 const commandPromise = async (pathFragment: string, outputPath: string, encodingType: EncodingType, outputOptions: OutputOptions, commandDescription: CommandDescription, index = -1) => {
-  const debug = ENVIRONMENT.get(ENV.Debug, NUMBER)
+  const debug = ENV.get(ENV_KEY.Debug, NUMBER)
   const commandOptions = encodingTypeCommandOptions(outputOptions, encodingType, commandDescription)
-  const instance = runningCommandInstance(pathFragment, commandOptions)
+  const instance =  new RunningCommandClass(pathFragment, commandOptions)
   if (debug) {
     const orError = await createDirectorAndDebugPromise(instance, outputPath, index)
     if (isDefiniteError(orError)) return orError
@@ -207,7 +207,7 @@ const combinedRenderingDescriptionPromise = async (pathFragment: string, encodin
   const duration = durations.reduce((total, duration) => total + duration, 0)
   const inputs = audibleCommandDescription?.inputs || []
   const description: CommandDescription = { 
-    inputs: [commandInput], duration, avType: AVTypeVideo
+    inputs: [commandInput], duration, avType: VIDEO
   }
   if (inputs.length) {
     description.commandFilters = [{ 
@@ -241,13 +241,13 @@ const commandDescriptionsMerged = (descriptions: CommandDescriptions): CommandDe
     types.add(avType)
 
     if (descriptionInputs?.length) {
-      if (avType === AVTypeVideo) inputs.push(...descriptionInputs)
+      if (avType === VIDEO) inputs.push(...descriptionInputs)
       else inputs.unshift(...descriptionInputs)
     }
     if (filters?.length) commandFilters.push(...filters)
     if (duration) durations.push(duration)
   })
-  const avType = types.size === 1 ? [...types.values()].pop()! : AVTypeBoth
+  const avType = types.size === 1 ? [...types.values()].pop()! : BOTH
   const commandDescription: CommandDescription = { inputs, commandFilters, avType }
   assertTrue(durations.length === descriptions.length, 'each description has duration')
   commandDescription.duration = Math.max(...durations)
@@ -275,7 +275,7 @@ const commandDescriptionMerged = (flatDescription: MashDescription): CommandDesc
 }
 
 const writeMash = async (pathFragment: string, mash: AssetObject): Promise<StringDataOrError> => {
-  const fileName = [MASH, JsonExtension].join(DOT)
+  const fileName = [MASH, JSON].join(DOT)
   const filePath = encodeOutputPath(pathFragment, fileName)
   const jsonOrError = await fileWriteJsonPromise(filePath, mash)
   if (isDefiniteError(jsonOrError)) return jsonOrError
@@ -285,10 +285,10 @@ const writeMash = async (pathFragment: string, mash: AssetObject): Promise<Strin
 
 const writeRawMash = async (pathFragment: string, raw: AssetObject): Promise<DataOrError<AssetObject>> => {
   const result = { data: raw }
-  const debug = ENVIRONMENT.get(ENV.Debug, NUMBER)
+  const debug = ENV.get(ENV_KEY.Debug, NUMBER)
   if (!debug) return result
 
-  const fileName = [MASH, DASH, RAW, DOT, JsonExtension].join('')
+  const fileName = [MASH, DASH, RAW, DOT, JSON].join('')
   const filePath = encodeOutputPath(pathFragment, fileName)
   const jsonOrError = await fileWriteJsonPromise(filePath, raw)
   if (isDefiniteError(jsonOrError)) return jsonOrError
@@ -297,7 +297,7 @@ const writeRawMash = async (pathFragment: string, raw: AssetObject): Promise<Dat
 }
 
 const encodeOutputPath = (pathFragment: string, name: string) => {
-  return path.resolve(ENVIRONMENT.get(ENV.OutputRoot), pathFragment, name)
+  return path.resolve(ENV.get(ENV_KEY.OutputRoot), pathFragment, name)
 }
 
 const encode = async (user: string, id: string, encodingType: EncodingType, mashAssetObject: MashAssetObject, encodeOptions: EncodeOptions, relativeRoot?: string): Promise<StringDataOrError> => {
@@ -314,7 +314,7 @@ const statusPromise = async (id: string): Promise<DataOrError<Encoding | Date>> 
   const { data } = orError
   if (isDate(data) || isEncoding(data)) return { data }
 
-  return namedError(ERROR.Syntax, { ...data, name: JOB_ENCODING })
+  return namedError(ERROR.Syntax, { ...data, name: ENCODING })
 }
 
 const writeEncodingPromise = async (id: string, filePath: string, type: AssetType, relativeRoot?: string) => {
@@ -325,8 +325,8 @@ const writeEncodingPromise = async (id: string, filePath: string, type: AssetTyp
 
 const encodePromise = async (user: string, id: string, encodingType: EncodingType, mashAssetObject: MashAssetObject, encodeOptions: EncodeOptions, relativeRoot?: string): Promise<StringDataOrError> => {
   const pathFragment = path.join(user, id) 
-  const options = outputOptions(encodingType, encodeOptions)
-  const fileName = outputFileName(options, encodingType)
+  const options = typeOutputOptions(encodingType, encodeOptions)
+  const fileName = fileNameFromOptions(options, encodingType)
   const outputPath = encodeOutputPath(pathFragment, fileName)
   const expectDuration = encodingType !== IMAGE
 
@@ -337,7 +337,7 @@ const encodePromise = async (user: string, id: string, encodingType: EncodingTyp
   if (isDefiniteError(writeRawOrError)) return namedError(ERROR.Internal, 'writeRawPromise')
 
   const assetEvent = new EventServerManagedAsset(mashAssetObject)
-  MovieMasher.eventDispatcher.dispatch(assetEvent)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(assetEvent)
   const { asset } = assetEvent.detail
   if (!isServerMashAsset(asset)) return namedError(ERROR.Syntax, 'invalid mash asset')
   
@@ -349,7 +349,7 @@ const encodePromise = async (user: string, id: string, encodingType: EncodingTyp
   const args: MashDescriberOptions = { encodingType, outputOptions: options, mash: asset }
   const renderingOutput = new MashDescriberClass(args)
   const descriptionOrError = await renderingOutput.mashDescriptionPromise()
-  MovieMasher.eventDispatcher.dispatch(new EventReleaseServerManagedAssets())
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(new EventReleaseServerManagedAssets())
   if (isDefiniteError(descriptionOrError)) return descriptionOrError
   
   const { data: renderingDescription } = descriptionOrError
@@ -416,18 +416,18 @@ const statusHandler = (event: EventServerEncodeStatus) => {
   event.stopImmediatePropagation()
 }
 
-export const ServerEncodeAudioListeners = () => ({
+export const ServerEncodeAudioListeners: ListenersFunction = () => ({
   [EventServerEncode.Type]: audioHandler,
 })
 
-export const ServerEncodeImageListeners = () => ({
+export const ServerEncodeImageListeners: ListenersFunction = () => ({
   [EventServerEncode.Type]: imageHandler,
 })
 
-export const ServerEncodeVideoListeners = () => ({
+export const ServerEncodeVideoListeners: ListenersFunction = () => ({
   [EventServerEncode.Type]: videoHandler,
 })
 
-export const ServerEncodeStatusListeners = () => ({
+export const ServerEncodeStatusListeners: ListenersFunction = () => ({
   [EventServerEncodeStatus.Type]: statusHandler,
 })

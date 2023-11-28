@@ -1,17 +1,17 @@
-import type { PropertyValues } from 'lit'
-import type { PropertyDeclarations } from 'lit'
+import type { PropertyDeclarations, PropertyValues } from 'lit'
+import type { Content, Contents, Htmls, OptionalContent } from '../Types.js'
 
-import { html } from 'lit-html/lit-html.js'
-import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, MovieMasher, StringEvent } from '@moviemasher/runtime-client'
+import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, MOVIEMASHER, StringEvent } from '@moviemasher/runtime-client'
+import { STRING, arraySet, isDefined } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html'
+import { ICON } from '../base/Component.js'
 import { ButtonElement } from '../component/component-button.js'
-import { isDefined } from '@moviemasher/runtime-shared'
-import { Content, Contents, Htmls, OptionalContent } from '../declarations.js'
-import { IconSlot, StringSlot } from '../Base/IconString.js'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-import { arraySet } from '@moviemasher/lib-shared'
 
-export const ServerActionName = 'movie-masher-action-server'
+const ServerActionTag = 'movie-masher-action-server'
 
+/**
+ * @category Component
+ */
 export class ServerActionElement extends ButtonElement {
   override connectedCallback(): void {
     this.listeners[EventChangedServerAction.Type] = this.handleChangedAction.bind(this)
@@ -61,7 +61,7 @@ export class ServerActionElement extends ButtonElement {
     const { enabledEvent } = this
     if (!enabledEvent) return
     
-    MovieMasher.eventDispatcher.dispatch(enabledEvent)
+    MOVIEMASHER.eventDispatcher.dispatch(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 
@@ -70,7 +70,7 @@ export class ServerActionElement extends ButtonElement {
     if (detail) {
       clickEvent.stopPropagation()
       const event = new EventDoServerAction(detail, progress ? detail : undefined)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (promise && progress) this.currentProgress = 0
     }
@@ -86,17 +86,17 @@ export class ServerActionElement extends ButtonElement {
 
   progressInserting?: string = 'replace-string'
 
-  progressSizing?: string = 'string'
+  progressSizing?: string = STRING
 
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
     const { currentProgress, progressInserting: progress } = this
     if (progress && isDefined<number>(currentProgress)) {
       switch (part) {
-        case StringSlot: {
+        case STRING: {
           if (progress === 'replace-string') return this.partProgress
           break
         }
-        case IconSlot: {
+        case ICON: {
           if (progress === 'replace-icon') return this.partProgress
           break
         }
@@ -109,7 +109,7 @@ export class ServerActionElement extends ButtonElement {
     const { currentProgress = 0 } = this
     return html`
       <progress 
-        style='${ifDefined(this.progressStyle)}' 
+        style='${this.progressStyle || ''}' 
         value='${currentProgress}' 
         max='1.0'
       ></progress>
@@ -123,6 +123,13 @@ export class ServerActionElement extends ButtonElement {
     if (!icon) return
 
     return this._iconWidth = this.elementWidth('movie-masher-component-icon')
+  }
+
+  protected override render(): unknown {
+    const { detail } = this
+    if (MOVIEMASHER.options.imports[detail]) return super.render()
+
+    return
   }
 
   private _stringWidth?: string
@@ -168,11 +175,10 @@ export class ServerActionElement extends ButtonElement {
   }
 }
 
-// register web component as custom element
-customElements.define(ServerActionName, ServerActionElement)
+customElements.define(ServerActionTag, ServerActionElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [ServerActionName]: ServerActionElement
+    [ServerActionTag]: ServerActionElement
   }
 }

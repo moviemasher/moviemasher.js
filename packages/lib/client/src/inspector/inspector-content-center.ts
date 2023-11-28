@@ -1,20 +1,24 @@
 import type { EventChangedMashAsset } from '@moviemasher/runtime-client'
 import type { SelectorTypes, Strings } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Contents, OptionalContent } from '../declarations.js'
+import type { Contents, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { COMMA, isPropertyId } from '@moviemasher/lib-shared'
-import { EventChangedInspectorSelectors, EventInspectorSelectors, MovieMasher, } from '@moviemasher/runtime-client'
-import { TARGET_IDS, isArray } from '@moviemasher/runtime-shared'
-import { html } from 'lit-html/lit-html.js'
-import { DisablableMixin, DisablableProperties } from '../Base/DisablableMixin.js'
-import { Scroller } from '../Base/Scroller.js'
-import { isTargetId } from '../TypeGuards.js'
+import { isPropertyId } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChangedInspectorSelectors, EventInspectorSelectors, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { COMMA, TARGET_IDS, isArray } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html'
+import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixins/component.js'
+import { Scroller } from '../base/LeftCenterRight.js'
+import { isTargetId } from '../guards/TypeGuards.js'
 
-export const InspectorContentCenterTag = 'movie-masher-inspector-content-center'
+const InspectorContentCenterTag = 'movie-masher-inspector-content-center'
 
 const InspectorContentCenterDisablable = DisablableMixin(Scroller)
+
+/**
+ * @category Component
+ */
 export class InspectorContentCenterElement extends InspectorContentCenterDisablable {
   constructor() {   
     super()
@@ -26,16 +30,11 @@ export class InspectorContentCenterElement extends InspectorContentCenterDisabla
     if (selectors.length) return
   
     const selectorTypes: SelectorTypes = []
-    MovieMasher.eventDispatcher.dispatch(new EventInspectorSelectors(selectorTypes))
+    MOVIEMASHER.eventDispatcher.dispatch(new EventInspectorSelectors(selectorTypes))
     this.selectors = selectorTypes
 
     super.connectedCallback()
   }
-
-  // protected override content(contents: Contents): Content {
-  //   return html`${contents}`
-  // }
-
   
   protected override get defaultContent(): OptionalContent {
     const { selectors, disabled } = this
@@ -59,7 +58,7 @@ export class InspectorContentCenterElement extends InspectorContentCenterDisabla
         <movie-masher-inspector-target target-id='${id}'></movie-masher-inspector-target>
       `))
     }
-    return html`<div class='content'>${contents}</div>`
+    return html`<div class='contents'>${contents}</div>`
   }
   
   filter = ''
@@ -80,7 +79,7 @@ export class InspectorContentCenterElement extends InspectorContentCenterDisabla
   selectors: SelectorTypes = []
 
   static override properties: PropertyDeclarations = {
-    ...DisablableProperties,
+    ...DISABLABLE_DECLARATIONS,
     selectors: { type: Array, converter: {
       fromAttribute: (value: string) => value ? value.split(COMMA) : [],
       toAttribute: (value: Strings) => isArray(value) ? value.join(COMMA) : ''
@@ -100,18 +99,17 @@ export class InspectorContentCenterElement extends InspectorContentCenterDisabla
         overflow-y: auto;
       }
 
-      div.content {
+      div.contents {
         padding: var(--pad);
       }
 
-      div.content > * {
+      div.contents > * {
         margin-bottom: var(--gap-content);
       }
     `
   ]
 }
 
-// register web component as custom element
 customElements.define(InspectorContentCenterTag, InspectorContentCenterElement)
 
 declare global {
@@ -119,4 +117,3 @@ declare global {
     [InspectorContentCenterTag]: InspectorContentCenterElement
   }
 }
-

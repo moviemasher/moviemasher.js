@@ -1,15 +1,15 @@
 import type { AVType, AudioInstance, AudioInstanceObject, Clip, ClipObject, Encodings, ImageInstance, ImageInstanceObject, Instance, InstanceArgs, InstanceObject, MashAsset, MashAssetObject, Propertied, Size, Time, TimeRange, Track, TrackObject, VideoInstance, VideoInstanceObject } from '@moviemasher/runtime-shared'
-import type { Action, Actions } from './ActionTypes.js'
+import type { Edit, Edits } from './EditTypes.js'
 import type { AudioPreview } from './AudioPreview.js'
 import type { ClientAsset } from './ClientAsset.js'
-import type { SvgOrImageDataOrError } from './ClientEvents.js'
+import type { SvgOrImageDataOrError } from './ClientMedia.js'
 import type { ClientAudioAsset, ClientImageAsset, ClientInstance, ClientVideoAsset, ClientVisibleInstance } from './ClientTypes.js'
 import type { Panel } from './PanelTypes.js'
 import type { Selectable } from './Selectable.js'
-import type { Preview, Previews } from './Svg.js'
+import type { PreviewElement, PreviewElements } from './Svg.js'
 
 export interface ClientMashAsset extends ClientAsset, MashAsset {
-  actions: Actions
+  actions: Edits
   addClipToTrack(clip : ClientClip | ClientClips, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(object?: TrackObject): Track
   buffer: number
@@ -20,7 +20,7 @@ export interface ClientMashAsset extends ClientAsset, MashAsset {
   clipsInTimeOfType(time: Time, avType?: AVType): ClientClips
   composition: AudioPreview
   destroy(): void
-  dispatchChanged(action: Action): void
+  dispatchChanged(action: Edit): void
   draw() : void
   drawnTime? : Time
   encodings: Encodings
@@ -28,7 +28,7 @@ export interface ClientMashAsset extends ClientAsset, MashAsset {
   instanceArgs(object?: InstanceObject): InstanceObject & InstanceArgs
   instanceFromObject(object?: InstanceObject): Instance
   loading: boolean
-  mashPreviewsPromise(size?: Size, selectedClip?: ClientClip): Promise<Previews>
+  mashPreviewsPromise(size?: Size, selectedClip?: ClientClip): Promise<PreviewElements>
   paused: boolean
   putPromise(): Promise<void>
   reload(): Promise<void> | undefined
@@ -76,7 +76,7 @@ export interface ClientMashVideoInstance extends VideoInstance, ClientInstance {
 
 export interface ClientClip extends Selectable, Clip {
   clipIcon(frameSize: Size, size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImageDataOrError>
-  clipPreviewPromise(size: Size, time: Time, component: Panel): Promise<Preview>
+  clipPreviewPromise(size: Size, time: Time, component: Panel): Promise<PreviewElement>
   container?: ClientVisibleInstance
   content: ClientInstance
   track: ClientTrack

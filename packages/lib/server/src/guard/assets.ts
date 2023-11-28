@@ -1,6 +1,6 @@
 import type { ServerAudibleAsset, ServerVisibleAsset } from '../Types/ServerAssetTypes.js'
 
-import { isAudibleAsset, isVisibleAsset } from '@moviemasher/lib-shared'
+import { isAudibleAsset, isVisibleAsset } from '@moviemasher/lib-shared/utility/guards.js'
 import { isServerAsset } from '@moviemasher/runtime-server'
 
 export const isServerAudibleAsset = (value: any): value is ServerAudibleAsset => {

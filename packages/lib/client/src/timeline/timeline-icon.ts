@@ -1,14 +1,18 @@
 import type { ClipLocation } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Contents, DropTarget, OptionalContent } from '../declarations.js'
+import type { DropTarget } from '@moviemasher/runtime-client'
+import type { Contents, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { DropTargetMixin } from '../Base/DropTargetMixin.js'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { html } from 'lit-html'
+import { DropTargetMixin } from '../mixins/component.js'
+import { ImporterComponent } from '../base/Component.js'
 
-export const TimelineIconName = 'movie-masher-timeline-icon'
+const TimelineIconTag = 'movie-masher-timeline-icon'
 const WithDropTargetMixin = DropTargetMixin(ImporterComponent)
+/**
+ * @category Component
+ */
 export class TimelineIconElement extends WithDropTargetMixin implements DropTarget {
   protected override get defaultContent(): OptionalContent { 
     const { dense } = this
@@ -71,11 +75,10 @@ export class TimelineIconElement extends WithDropTargetMixin implements DropTarg
   
 }
 
-// register web component as custom element
-customElements.define(TimelineIconName, TimelineIconElement)
+customElements.define(TimelineIconTag, TimelineIconElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [TimelineIconName]: TimelineIconElement
+    [TimelineIconTag]: TimelineIconElement
   }
 }

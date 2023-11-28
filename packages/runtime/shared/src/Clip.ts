@@ -1,4 +1,4 @@
-import type { Asset, AssetObject } from './AssetTypes.js'
+import type { Asset, AssetObject } from './AssetInterfaces.js'
 import type { InstanceCacheArgs } from './CacheTypes.js'
 import type { ClipObject } from './ClipObject.js'
 import type { ContainerRectArgs } from './Container.js'

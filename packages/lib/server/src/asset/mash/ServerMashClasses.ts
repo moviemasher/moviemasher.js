@@ -1,13 +1,23 @@
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFiles, ServerPromiseArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '@moviemasher/runtime-server'
-import type { AVType, Asset, AssetObject, CacheArgs, ClipObject, ContainerRectArgs, DataOrError, Instance, IntrinsicOptions, Strings, Time, TimeRange, Times, TrackArgs } from '@moviemasher/runtime-shared'
+import type { AVType, Asset, AssetObject, CacheArgs, ClipObject, ColorInstance, ContainerRectArgs, DataOrError, Instance, IntrinsicOptions, Strings, Time, TimeRange, Times, TrackArgs } from '@moviemasher/runtime-shared'
 import type { ServerInstance, ServerVisibleInstance } from '../../Types/ServerInstanceTypes.js'
 import type { ServerClip, ServerClips, ServerMashAsset, ServerTrack } from '../../Types/ServerMashTypes.js'
 import type { Tweening } from '../../Types/ServerTypes.js'
 
-import { AVTypeAudio, ClipClass, MashAssetMixin, TrackClass, arrayLast, assertContainerInstance, assertPopulatedString, assertSizeAboveZero, assertTrue, isColorInstance, isPopulatedArray, pointsEqual, sizesEqual, timeRangeFromArgs } from '@moviemasher/lib-shared'
-import { EventServerManagedAsset } from '@moviemasher/runtime-server'
-import { isPopulatedString } from '@moviemasher/runtime-shared'
+import { MashAssetMixin } from '@moviemasher/lib-shared/asset/mash.js'
+import { ClipClass } from '@moviemasher/lib-shared/base/clip.js'
+import { TrackClass } from '@moviemasher/lib-shared/base/track.js'
+import { assertContainerInstance, assertPopulatedString, assertTrue, isContentInstance, isPopulatedArray } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventServerManagedAsset, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { AUDIO, ERROR, arrayLast, assertAsset, errorThrow, isPopulatedString } from '@moviemasher/runtime-shared'
 import { ServerAssetClass } from '../../Base/ServerAssetClass.js'
+import { assertSizeAboveZero, pointsEqual, sizesEqual } from '@moviemasher/lib-shared/utility/rect.js'
+import { timeRangeFromArgs } from '@moviemasher/lib-shared/utility/time.js'
+
+
+const isColorInstance = (value: any): value is ColorInstance => {
+  return isContentInstance(value) && 'color' in value
+}
 
 const contentColors = (instance: Instance, time: Time, range: TimeRange): Strings | undefined => {
   if (!isColorInstance(instance)) return 
@@ -32,11 +42,11 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
   } 
 
   assetGraphFiles(args: CacheArgs): GraphFiles {
-    throw new Error('Method not implemented.')
+    errorThrow(ERROR.Unimplemented)
   }
 
   serverPromise(_args: ServerPromiseArgs, _commandFile: CommandFile): Promise<DataOrError<number>> {
-    throw new Error('Method not implemented.')
+    errorThrow(ERROR.Unimplemented)
   }
 
   timeRanges(avType: AVType, time: Time): Times {
@@ -50,7 +60,7 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
     const { length } = fullRangeClips
     if (!length) return []
 
-    if (length === 1 || !start.isRange || avType === AVTypeAudio ) return [time]
+    if (length === 1 || !start.isRange || avType === AUDIO ) return [time]
 
     const frames = new Set<number>()
     fullRangeClips.forEach(clip => {
@@ -74,7 +84,12 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
 
 export class ServerClipClass extends ClipClass implements ServerClip {
   override asset(assetIdOrObject: string | AssetObject): Asset {
-    return EventServerManagedAsset.asset(assetIdOrObject)
+    const event = new EventServerManagedAsset(assetIdOrObject)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+    const { asset } = event.detail
+    assertAsset(asset)
+    
+    return asset
   }
 
   clipCommandFiles(args: CommandFileArgs): CommandFiles {
@@ -156,8 +171,6 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     const containerArgs: VisibleCommandFilterArgs = { 
       ...contentArgs, contentColors: colors, outputSize, containerRects, duration
     }
-
-    //  console.log(this.constructor.name, 'clipCommandFilters', hasColorContent, tweening)
    
     if (hasColorContent) {
       if (!tweening.canColor) {

@@ -1,10 +1,13 @@
 import type { PropertyValues } from 'lit'
 
-import { EventDoClientAction, EventEnabledClientAction, EventChangedClientAction, MovieMasher } from '@moviemasher/runtime-client'
+import { EventDoClientAction, EventEnabledClientAction, EventChangedClientAction, MOVIEMASHER } from '@moviemasher/runtime-client'
 import { ButtonElement } from '../component/component-button.js'
 
-export const ClientActionName = 'movie-masher-action-client'
+const ClientActionTag = 'movie-masher-action-client'
 
+/**
+ * @category Component
+ */
 export class ClientActionElement extends ButtonElement {
   override connectedCallback(): void {
     this.emit = EventDoClientAction.Type 
@@ -25,7 +28,7 @@ export class ClientActionElement extends ButtonElement {
     const { enabledEvent } = this
     if (!enabledEvent) return
     
-    MovieMasher.eventDispatcher.dispatch(enabledEvent)
+    MOVIEMASHER.eventDispatcher.dispatch(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 
@@ -35,11 +38,10 @@ export class ClientActionElement extends ButtonElement {
   }
 }
 
-// register web component as custom element
-customElements.define(ClientActionName, ClientActionElement)
+customElements.define(ClientActionTag, ClientActionElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [ClientActionName]: ClientActionElement
+    [ClientActionTag]: ClientActionElement
   }
 }

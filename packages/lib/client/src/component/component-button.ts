@@ -1,12 +1,16 @@
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Content, Contents } from '../declarations.js'
+import type { Content, Contents } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { IconString } from '../Base/IconString.js'
-import { Component } from '../Base/Component.js'
+import { html } from 'lit-html'
+import { Component } from '../base/Component.js'
+import { IconString } from '../base/Component.js'
 
 const ButtonTag = 'movie-masher-component-button'
+
+/**
+ * @category Component
+ */
 export class ButtonElement extends IconString {
   protected override content(contents: Contents): Content {
     const title = this.string || this.icon 
@@ -22,9 +26,8 @@ export class ButtonElement extends IconString {
 
   static override properties: PropertyDeclarations = {
     ...IconString.properties,
-    disabled: { type: Boolean },//, attribute: false
+    disabled: { type: Boolean },
   }
-
     
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
@@ -54,13 +57,13 @@ export class ButtonElement extends IconString {
           color var(--color-transition);
   
         align-items: center;
-        appearance: none;
+        /* appearance: none; */
         border-radius: var(--radius-border);
         border: var(--border);
         font-size: var(--height-text);
         line-height: var(--height-text);
         font-weight: 500;
-        outline: none;
+        /* outline: none; */
       }
 
       button:hover {
@@ -80,10 +83,8 @@ export class ButtonElement extends IconString {
      
     `
   ]
-  
 }
 
-// register web component as custom element
 customElements.define(ButtonTag, ButtonElement)
 
 declare global {

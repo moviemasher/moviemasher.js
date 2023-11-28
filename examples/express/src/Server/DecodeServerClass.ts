@@ -3,13 +3,12 @@ import type { Application } from 'express'
 import type { DecodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { DecodeServerArgs, ExpressHandler } from './Server.js'
 
-import { assertProbeOptions, idUnique } from '@moviemasher/lib-server'
-import { errorObjectCaught, isDecoding } from '@moviemasher/runtime-shared'
-import { EventServerDecode, EventServerDecodeStatus, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, VERSION, VIDEO, errorCaught, errorThrow, isDefiniteError } from '@moviemasher/runtime-shared'
+import { assertProbingOptions } from '@moviemasher/lib-server'
+import { EventServerDecode, EventServerDecodeStatus, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { CONTENT_TYPE, ERROR, MIME_JSON, POST, VERSION, VIDEO, errorCaught, errorObjectCaught, errorThrow, isDecoding, isDefiniteError, jsonStringify } from '@moviemasher/runtime-shared'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
-import { ContentTypeHeader, JsonMimetype } from '@moviemasher/lib-shared'
+import { idUnique } from '../Hash.js'
 
 export class DecodeServerClass extends ServerClass {
   constructor(public args: DecodeServerArgs) { super(args) }
@@ -20,11 +19,11 @@ export class DecodeServerClass extends ServerClass {
     const { decodingType = VIDEO, request, options = {}, assetType } = req.body
     try {
       const user = this.userFromRequest(req)
-      assertProbeOptions(options)
+      assertProbingOptions(options)
 
       const id = idUnique()
       const event = new EventServerDecode(decodingType, assetType, request, user, id, options)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecode.Type)
     
@@ -48,7 +47,7 @@ export class DecodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerDecodeStatus(id)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       console.log(this.constructor.name, 'status', !!promise)
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecodeStatus.Type)
@@ -77,7 +76,10 @@ export class DecodeServerClass extends ServerClass {
   private statusEndpointRequest(id: string) {
     const data: EndpointRequest = {
       endpoint: { pathname: Endpoints.decode.status },
-      init: { method: 'POST', headers: { [ContentTypeHeader]: JsonMimetype}, body: JSON.stringify({ id }) }
+      init: { 
+        method: POST, headers: { [CONTENT_TYPE]: MIME_JSON}, 
+        body: jsonStringify({ id }) 
+      }
     }
     return data
   }

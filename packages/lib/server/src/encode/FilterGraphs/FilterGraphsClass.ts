@@ -1,13 +1,14 @@
 
-import type { ServerPromiseArgs } from '@moviemasher/runtime-server'
+import type { CommandFiles, ServerPromiseArgs } from '@moviemasher/runtime-server'
 import type { DataOrError, Numbers, Time, } from '@moviemasher/runtime-shared'
-import type { CommandFiles } from '@moviemasher/runtime-server'
 import type { FilterGraph, FilterGraphArgs } from '../FilterGraph/FilterGraph.js'
 import type { FilterGraphs, FilterGraphsArgs } from './FilterGraphs.js'
 
-import { AVTypeAudio, AVTypeVideo, assertTrue, promiseNumbers, timeFromArgs, timeRangeFromArgs } from '@moviemasher/lib-shared'
-import { ERROR, assertAsset, errorThrow } from '@moviemasher/runtime-shared'
+import { assertTrue } from '@moviemasher/lib-shared/utility/guards.js'
+import { AUDIO, ERROR, VIDEO, assertAsset, errorThrow } from '@moviemasher/runtime-shared'
 import { FilterGraphClass } from '../FilterGraph/FilterGraphClass.js'
+import { timeFromArgs, timeRangeFromArgs } from '@moviemasher/lib-shared/utility/time.js'
+import { promiseNumbers } from '@moviemasher/lib-shared/utility/request.js'
 
 export class FilterGraphsClass implements FilterGraphs {
   constructor(public args: FilterGraphsArgs) {
@@ -40,15 +41,15 @@ export class FilterGraphsClass implements FilterGraphs {
       this.time = time
     }
 
-    if (avType !== AVTypeVideo) {
-      assertTrue(length === 1 || avType !== AVTypeAudio, 'single time for avtype audio')
+    if (avType !== VIDEO) {
+      assertTrue(length === 1 || avType !== AUDIO, 'single time for avtype audio')
 
       const filterGraphArgs: FilterGraphArgs = {
         ...rest, time: this.time, mash, visible: false,
       }
       this.filterGraphAudible = new FilterGraphClass(filterGraphArgs)
     }
-    if (avType !== AVTypeAudio) {
+    if (avType !== AUDIO) {
       this.filterGraphsVisible.push(...times.map(time => {
         const filterGraphArgs: FilterGraphArgs = { 
           ...rest, time, mash, visible: true 

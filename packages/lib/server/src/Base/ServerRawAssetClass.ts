@@ -2,7 +2,7 @@ import type { AssetCacheArgs, DataOrError, RawAsset, RawAssetObject } from '@mov
 import type { CommandFile, ServerMediaRequest, ServerPromiseArgs } from '@moviemasher/runtime-server'
 
 import { ServerAssetClass } from './ServerAssetClass.js'
-import { EventServerAssetPromise, MovieMasher, } from '@moviemasher/runtime-server'
+import { EventServerAssetPromise, MOVIEMASHER_SERVER, } from '@moviemasher/runtime-server'
 import { ERROR, errorPromise, isDefiniteError } from '@moviemasher/runtime-shared'
 
 export class ServerRawAssetClass extends ServerAssetClass implements RawAsset {
@@ -17,7 +17,7 @@ export class ServerRawAssetClass extends ServerAssetClass implements RawAsset {
     const { validDirectories } = args
     const { request, type } = this
     const event = new EventServerAssetPromise(request, type, validDirectories)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
       return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
@@ -38,7 +38,7 @@ export class ServerRawAssetClass extends ServerAssetClass implements RawAsset {
     if (type !== assetType) return Promise.resolve({ data: 0 })
 
     const event = new EventServerAssetPromise(request, assetType, validDirectories)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
 

@@ -1,18 +1,41 @@
-import type { IdentifiedRequest } from '@moviemasher/lib-server'
-import type { Input } from '@moviemasher/lib-server'
-import type { JobType } from '@moviemasher/lib-server'
-import type { Output } from '@moviemasher/lib-shared'
 import type { AssetType, Assets, Data, Decoding, DecodingType, DefiniteError, EndpointRequest, EndpointRequests, Identified, ImportType, JsonRecord, MashAssetObject, OutputOptions, PotentialError, StringDataOrError, TranscodingType } from '@moviemasher/runtime-shared'
 
-import { isIdentifiedRequest } from '@moviemasher/lib-server'
-import { ENV, ENVIRONMENT } from '@moviemasher/lib-server'
-import { assertIdentifiedRequest } from '@moviemasher/lib-server'
+import { ENV_KEY, ENV } from '@moviemasher/lib-server'
 import { assertFilePathExists } from '@moviemasher/lib-server/src/Utility/File.js'
-import { assertObject, assertRequest, isOutput, isTranscodingType } from '@moviemasher/lib-shared'
-import { EventServerAssetPromise, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, namedError, errorPromise, errorThrow, isArray, isDecodingType, isDefiniteError, isTyped } from '@moviemasher/runtime-shared'
-import { JOB_DECODING, JOB_ENCODING, JOB_TRANSCODING, assertJobType } from '@moviemasher/lib-server'
+import { assertDefined, assertObject, isTranscodingType } from '@moviemasher/lib-shared'
+import { EventServerAssetPromise, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { ERROR, namedError, errorPromise, errorThrow, isArray, isDecodingType, isDefiniteError, isTyped, isIdentified, isObject } from '@moviemasher/runtime-shared'
+import { DECODING, ENCODING, TRANSCODING } from '@moviemasher/lib-server'
 
+type DecodingJobType = 'decoding'
+type EncodingJobType = 'encoding'
+type TranscodingJobType = 'transcoding'
+
+type JobType = DecodingJobType | EncodingJobType | TranscodingJobType
+
+interface Input {
+  loadType: ImportType
+  request?: EndpointRequest
+}
+
+interface Output {
+  request?: EndpointRequest
+  type: string
+}
+
+interface IdentifiedRequest extends Identified {
+  callback?: EndpointRequest | EndpointRequests
+  input: Input
+  output: Output
+}
+
+const isIdentifiedRequest = (value: any): value is IdentifiedRequest => {
+  return isIdentified(value) && 'input' in value && isObject(value.input)
+}
+
+function assertIdentifiedRequest(value: any): asserts value is IdentifiedRequest {
+  if (!isIdentifiedRequest(value)) errorThrow(value, 'IdentifiedRequest')
+}
 
 export interface EncodeOutput extends Output {
   type: AssetType
@@ -73,6 +96,10 @@ interface TranscodeRequest extends IdentifiedRequest {
 type TranscodeResponse = DefiniteError | Identified
 
 
+const isOutput = (value: any): value is Output => {
+  return isObject(value) && isTyped(value)
+}
+
 const isDecodeOutput = (value: any): value is DecodeOutput => {
   return isOutput(value) && 'type' in value && isDecodingType(value.type)
 }
@@ -111,18 +138,26 @@ const isEncodeRequest = (value: any): value is EncodeRequest => {
 function assertEncodeRequest(value: any): asserts value is EncodeRequest {
   if (!isEncodeRequest(value)) errorThrow(value, 'EncodeRequest')
 }
+const TYPES = [DECODING, ENCODING, TRANSCODING]
 
+const isJobType = (value: any): value is JobType => {
+  return TYPES.includes(value as JobType)
+}
 
-export type JobTuple = [JobType, IdentifiedRequest]
+function assertJobType(value: any, name?: string): asserts value is JobType {
+  if (!isJobType(value)) errorThrow(value, 'JobType', name)
+}
 
-export interface CallbackRequestBody extends Identified, PotentialError {
+type JobTuple = [JobType, IdentifiedRequest]
+
+interface CallbackRequestBody extends Identified, PotentialError {
   completed: number
 }
 
 export const jobExtract = (object: JsonRecord): JobTuple => {
-  const typeKeypath = ENVIRONMENT.get(ENV.ApiKeypathType)
+  const typeKeypath = ENV.get(ENV_KEY.ApiKeypathType)
         
-  const jobKeypath = ENVIRONMENT.get(ENV.ApiKeypathJob)
+  const jobKeypath = ENV.get(ENV_KEY.ApiKeypathJob)
         
   const { [typeKeypath]: jobType, [jobKeypath]: jobOrJobs } = object
   const job = isArray(jobOrJobs) ? jobOrJobs[0] : jobOrJobs
@@ -141,10 +176,10 @@ const outputPromise = (localPath: string, request: EndpointRequest): Promise<Pot
 
 const inputPromise = (input: Input): Promise<StringDataOrError> => {
   const { request, loadType } = input
-  assertRequest(request)
+  assertDefined(request)
 
   const event = new EventServerAssetPromise(request, loadType)
-  MovieMasher.eventDispatcher.dispatch(event)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
 
@@ -170,25 +205,24 @@ const mediaRequestPromise = (jobType: JobType, mediaRequest: IdentifiedRequest):
 
     const { data: localPath } = inputResult
     switch(jobType) {
-      case JOB_ENCODING: {
+      case ENCODING: {
         assertEncodeRequest(mediaRequest)
         const { output } = mediaRequest
-        return encode(localPath, output)
+        break //return encode(localPath, output)
       }
-      case JOB_DECODING: {
+      case DECODING: {
         assertDecodeRequest(mediaRequest)
         const { output } = mediaRequest
-        return decode(localPath, output)
+        break //return decode(localPath, output)
       }
-      case JOB_TRANSCODING: {
+      case TRANSCODING: {
         assertTranscodeRequest(mediaRequest)
         const { output } = mediaRequest
-        return transcode(localPath, output)
-      }
-      default: {
-        return namedError(ERROR.Type, `Unknown job type ${jobType}`)
+        break //return transcode(localPath, output)
       }
     } 
+    return namedError(ERROR.Type, `Unknown job type ${jobType}`)
+
   })
 }
 

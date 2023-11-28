@@ -1,28 +1,29 @@
 import type { ServerMediaRequest } from '@moviemasher/runtime-server'
-import type { DataOrError, EndpointRequest, LoadType, StringData, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
+import type { DataOrError, EndpointRequest, ImportType, ListenersFunction, StringData, StringDataOrError, Strings } from '@moviemasher/runtime-shared'
 
-import { DOT, ProtocolHttp, ProtocolHttps, ProtocolSuffix, TextExtension, arrayUnique, assertDefined, assertRequest, requestUrl, urlFromCss } from '@moviemasher/lib-shared'
+import { assertDefined } from '@moviemasher/lib-shared/utility/guards.js'
+import { requestUrl, urlFromCss } from '@moviemasher/lib-shared/utility/request.js'
 import { EventServerAssetPromise } from '@moviemasher/runtime-server'
-import { ERROR, FONT, namedError, errorCaught, errorPromise, isDefiniteError, isPopulatedString, isString } from '@moviemasher/runtime-shared'
+import { COLON, DOT, ERROR, FONT, HTTP, HTTPS, SLASH, TXT, arrayUnique, errorCaught, errorPromise, isDefiniteError, isPopulatedString, isString, jsonStringify, namedError } from '@moviemasher/runtime-shared'
 import fs from 'fs'
 import path from 'path'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import { ReadableStream } from 'stream/web'
-import { ENV, ENVIRONMENT } from '../Environment/EnvironmentConstants.js'
+import { ENV_KEY, ENV } from '../Environment/EnvironmentConstants.js'
 import { directoryCreatePromise, filePathExists, fileReadPromise } from '../Utility/File.js'
-import { hashMd5 } from '../Utility/Hash.js'
+import { fileNameFromContent } from '../Utility/File.js'
 
+
+const ProtocolSuffix = [COLON, SLASH, SLASH].join('')
 
 const ProtocolFile = 'file'
 const FetchPromises = new Map<string, Promise<DataOrError<FileAndMimetype>>>()
 
-const requestArgsHash = (args: any): string => (
-  hashMd5(JSON.stringify(args))
-)
+const requestArgsHash = (args: any): string => fileNameFromContent(jsonStringify(args))
 
 const pathResolvedToPrefix = (url: string, prefix?: string): string => (
-  path.resolve(prefix || ENVIRONMENT.get(ENV.ExampleRoot), url)
+  path.resolve(prefix || ENV.get(ENV_KEY.ExampleRoot), url)
 )
 
 const urlExtension = (extension: string): string => (
@@ -55,9 +56,9 @@ const requestExtension = (request: EndpointRequest): string => {
 const requestFilePath = (request: EndpointRequest): string => {
   const requestExt = requestExtension(request) 
   const extOk = isPopulatedString(requestExt) 
-  const ext = extOk ? requestExt : TextExtension 
+  const ext = extOk ? requestExt : TXT 
   const hash = requestArgsHash(request)
-  return path.resolve(ENVIRONMENT.get(ENV.ApiDirCache), urlFilename(hash, ext))
+  return path.resolve(ENV.get(ENV_KEY.ApiDirCache), urlFilename(hash, ext))
 }
 
 const fetchPromise = (url: string, filePath: string, init: RequestInit = {}): Promise<DataOrError<FileAndMimetype>> => {
@@ -84,7 +85,7 @@ const fetchPromise = (url: string, filePath: string, init: RequestInit = {}): Pr
       // console.log('fetchPromise RESPONSE', mimetype)
       
       // const mimeOk = isPopulatedString(mimetype) && mimetype.startsWith(type)
-      // const ext = (mimeOk && extOk) ? requestExt : TextExtension 
+      // const ext = (mimeOk && extOk) ? requestExt : TXT 
       const data: FileAndMimetype = { filePath, mimetype }
       if (filePathExists(filePath)) {
         // console.log('fetchPromise FOUND', filePath)
@@ -121,11 +122,11 @@ const resolvedRequest = (request: ServerMediaRequest): StringData | undefined =>
 }
 
 export const urlIsHttp = (url: string) => (
-  url.startsWith(`${ProtocolHttp}${ProtocolSuffix}`) 
-  || url.startsWith(`${ProtocolHttps}${ProtocolSuffix}`) 
+  url.startsWith(`${HTTP}${ProtocolSuffix}`) 
+  || url.startsWith(`${HTTPS}${ProtocolSuffix}`) 
 )
 
-const httpPromise = (url: string, request: ServerMediaRequest, type: LoadType): Promise<StringDataOrError> => {
+const httpPromise = (url: string, request: ServerMediaRequest, type: ImportType): Promise<StringDataOrError> => {
   return new Promise<StringDataOrError>(resolve => {
     const resolved = resolvedRequest(request)
     if (resolved) {
@@ -136,7 +137,7 @@ const httpPromise = (url: string, request: ServerMediaRequest, type: LoadType): 
     const extOk = isPopulatedString(requestExt) 
     const filePath = requestFilePath(request)
     // console.log('httpPromise', { url, filePath, type, requestExt, extOk })
-      // const ext = (mimeOk && extOk) ? requestExt : TextExtension 
+      // const ext = (mimeOk && extOk) ? requestExt : TXT 
     const fetching = fetchPromise(url, filePath, request.init).then(orError => {
       // console.log('httpPromise FETCHED', url, orError)
       if (isDefiniteError(orError)) return orError
@@ -181,7 +182,7 @@ const httpPromise = (url: string, request: ServerMediaRequest, type: LoadType): 
 }
 
 const isValidDirectory = (absolutePath: string, validDirectories: Strings = []): boolean => {
-  const dirValid = ENVIRONMENT.getArray(ENV.ApiDirValid)
+  const dirValid = ENV.getArray(ENV_KEY.ApiDirValid)
   const relative = [...dirValid, ...validDirectories]
   const absolute = relative.map(valid => pathResolvedToPrefix(valid))
   const unique = arrayUnique(absolute)
@@ -192,19 +193,14 @@ const isValidDirectory = (absolutePath: string, validDirectories: Strings = []):
 
 const handler = (event: EventServerAssetPromise) => {
   const { detail } = event
-  const { request, loadType, validDirectories } = detail
-  assertRequest(request)
-  
+  const { request, importType, validDirectories } = detail  
   const { path } = request
   if (path) {
     detail.promise = Promise.resolve({ data: path })
-    // console.log(EventServerAssetPromise.Type, 'path existed', path)
   } else {
     const url = requestUrl(request)
     if (urlIsHttp(url)) {
-      // console.log(EventServerAssetPromise.Type, 'no path for HTTP', url)
-      detail.promise = httpPromise(url, request, loadType).catch(err => {
-        // console.log('httpPromise', err)
+      detail.promise = httpPromise(url, request, importType).catch(err => {
         return errorCaught(err)
       })
     } else {
@@ -226,6 +222,6 @@ const handler = (event: EventServerAssetPromise) => {
   event.stopImmediatePropagation()
 }
 
-export const ServerAssetPromiseListeners = () => ({
+export const ServerAssetPromiseListeners: ListenersFunction = () => ({
   [EventServerAssetPromise.Type]: handler
 })

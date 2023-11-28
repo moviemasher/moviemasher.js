@@ -1,11 +1,7 @@
-export * from './ArrayFunctions.js'
-export * from './IdConstants.js'
-export * from './IdFunctions.js'
-export * from './OutputFunctions.js'
-export * from './PointFunctions.js'
-export * from './RectFunctions.js'
-export * from './RoundFunctions.js'
-export * from './SizeFunctions.js'
-export * from './SortFunctions.js'
+export * from './color.js'
+export * from './guards.js'
+export * from './rect.js'
 export * from './request.js'
-export * from './PromiseFunctions.js'
+export * from './time.js'
+
+

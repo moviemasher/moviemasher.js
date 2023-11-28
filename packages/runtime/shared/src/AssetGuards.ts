@@ -1,7 +1,7 @@
-import type { Asset, AssetObject, SourceAsset } from './AssetTypes.js'
+import type { Asset, AssetObject, SourceAsset } from './AssetInterfaces.js'
 import type { AssetType, AudioType, ImageType, VideoType } from './AssetType.js'
 import type { AudioAssetObject } from './AudioAsset.js'
-import type { ColorAssetObject } from './ColorTypes.js'
+import type { ColorAssetObject } from './ColorAssetTypes.js'
 import type { ColorSource, MashSource, PromptSource, RawSource, ShapeSource, Source, TextSource } from './SourceType.js'
 import type { ImageAssetObject } from './ImageAsset.js'
 import type { MashAudioAssetObject, MashImageAssetObject, MashVideoAssetObject } from './MashTypes.js'
@@ -11,7 +11,6 @@ import type { ShapeAssetObject } from './ShapeTypes.js'
 import type { TextAssetObject } from './TextTypes.js'
 import type { VideoAssetObject } from './VideoAsset.js'
 
-import { assertAssetType } from './AssetTypeAsserts.js'
 import { assertIdentified, isIdentified } from './IdentifiedGuards.js'
 import { assertTyped, isTyped } from './TypedGuards.js'
 import { errorThrow } from './ErrorFunctions.js'
@@ -24,6 +23,10 @@ export const isAsset = (value: any): value is Asset => (
   && isAssetType(value.type) 
   && 'isVector' in value
 )
+
+export function assertAssetType(type: any, name?: string): asserts type is AssetType {
+  if (!isAssetType(type)) errorThrow(type, 'AssetType', name)
+}
 
 export function assertAsset(value: any, name?: string): asserts value is Asset {
   assertIdentified(value, name)

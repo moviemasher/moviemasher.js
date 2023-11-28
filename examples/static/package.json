@@ -2,7 +2,7 @@
   "name": "@moviemasher/example-static",
   "description": "Movie Masher Static Example",
   "license": "MIT",
-  "version": "5.1.2",
+  "version": "5.2.0",
   
   "files": ["./dist/"],
   "type": "module",
@@ -18,8 +18,8 @@
     "script": "run-s"
   },
   "peerDependencies": {
-    "@moviemasher/lib-shared": "5.1.2",
-    "@moviemasher/runtime-client": "5.1.2"
+    "@moviemasher/lib-shared": "5.2.0",
+    "@moviemasher/runtime-client": "5.2.0"
   },
   "dependencies": {
     "lit-html": "2.8.0",

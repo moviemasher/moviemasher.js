@@ -1,20 +1,27 @@
-import type { Size, Time, } from '@moviemasher/runtime-shared'
 import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, CommandInput, CommandInputs } from '@moviemasher/runtime-server'
+import type { Size, Time, } from '@moviemasher/runtime-shared'
 import type { ServerClips, ServerMashAsset } from '../../Types/ServerMashTypes.js'
 import type { FilterGraph, FilterGraphArgs } from './FilterGraph.js'
 
-import { AVTypeAudio, AVTypeVideo, arrayLast, assertMashAsset, assertTrue, colorTransparent, idGenerate, isAboveZero, sortByTrack, timeRangeFromTime, } from '@moviemasher/lib-shared'
-import { assertAsset, errorThrow } from '@moviemasher/runtime-shared'
+import { assertDefined, assertTrue, isAboveZero } from '@moviemasher/lib-shared/utility/guards.js'
+import { AUDIO, RGBA_BLACK_ZERO, VIDEO, arrayLast, assertAsset, idGenerate, sortByTrack } from '@moviemasher/runtime-shared'
+import { timeRangeFromTime } from '@moviemasher/lib-shared/utility/time.js'
 
-
+/**
+ * @internal
+ */
 export const FilterGraphInputVisible = 'BACKCOLOR'
+
+/**
+ * @internal
+ */
 export const FilterGraphInputAudible = 'SILENCE'
 
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
     const { mash, background, size, time, streaming, videoRate, visible } = args
     // console.log('FilterGraphClass', this.id, visible, time)
-    assertMashAsset(mash)
+    assertDefined(mash)
 
     this.mash = mash
     this.time = time
@@ -32,14 +39,14 @@ export class FilterGraphClass implements FilterGraph {
 
   _id?: string
   get id() { return this._id ||= idGenerate('filtergraph')}
-  get avType() { return this.visible ? AVTypeVideo : AVTypeAudio }
+  get avType() { return this.visible ? VIDEO : AUDIO }
 
   background: string 
 
   private get commandFilterVisible(): CommandFilter {
     const { duration, videoRate: rate, background, size } = this
     // console.log(this.constructor.name, this.id, 'commandFilterVisible size', size)
-    const color = background || colorTransparent
+    const color = background || RGBA_BLACK_ZERO
     const commandFilter: CommandFilter = {
       ffmpegFilter: 'color',
       options: { color, rate, size: `${size.width}x${size.height}` },

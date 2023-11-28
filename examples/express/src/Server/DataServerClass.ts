@@ -3,21 +3,22 @@ import type { Client } from 'pg'
 import type { DataAssetDefaultRequest, DataAssetDeleteRequest, DataAssetGetRequest, DataAssetListRequest, DataAssetPutRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { DataServerArgs, ExpressHandler } from './Server.js'
 
-import { ENV, ENVIRONMENT, fileReadJsonPromise, idUnique } from '@moviemasher/lib-server'
-import { EmptyFunction, arrayOfNumbers, colorWhite, idIsTemporary, arrayFromOneOrMore, idTemporary, assertTrue, CACHE_SOURCE_TYPE, CACHE_NONE, COMMA } from '@moviemasher/lib-shared'
-import { ERROR, MASH, NUMBER, SIZE_OUTPUT, STRING, VERSION, VIDEO, errorObjectCaught, errorThrow, isDefined, isDefiniteError, isString } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV, fileReadJsonPromise } from '@moviemasher/lib-server'
+import { assertTrue } from '@moviemasher/lib-shared'
+import { arrayFromOneOrMore, arrayOfNumbers, CACHE_NONE, CACHE_SOURCE_TYPE, ERROR, MASH, NUMBER, RGB_WHITE, SIZE_OUTPUT, STRING, VERSION, VIDEO, VOID_FUNCTION, errorObjectCaught, errorThrow, idIsTemporary, isDefined, isDefiniteError } from '@moviemasher/runtime-shared'
 import { Application } from 'express'
 import pg from 'pg'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
+import { idUnique } from '../Hash.js'
 
-const USER_SHARED = ENVIRONMENT.get(ENV.SharedUser)
+const USER_SHARED = ENV.get(ENV_KEY.SharedUser)
 
 const { Client: ClientClass } = pg
 
 // TODO: use environment variables for these
-//   const columnOwner = ENVIRONMENT.get(EnvironmentKeyAppColumnOwner)
-//   const columnSource = ENVIRONMENT.get(EnvironmentKeyAppColumnSource)
+//   const columnOwner = ENV.get(EnvironmentKeyAppColumnOwner)
+//   const columnSource = ENV.get(EnvironmentKeyAppColumnSource)
 type AssetColumn = 'id' | 'label' | 'type' | 'created' | 'deleted' | 'rest' | 'source' | 'user_id'
 
 interface AssetRow extends Identified, Labeled, Sourced, Typed {
@@ -79,11 +80,10 @@ export class DataServerClass extends ServerClass {
 
   private assetDefault: ExpressHandler<VersionedDataOrError<MashAssetObject>, DataAssetDefaultRequest> = async (req, res) => {
     const { width, height } = SIZE_OUTPUT
-    // console.log(this.constructor.name, 'assetDefault', JSON.stringify(req.body, null, 2))
     const defaultData: MashAssetObject = { 
       aspectHeight: height, aspectWidth: width,
       aspectShortest: Math.min(width, height),
-      color: colorWhite,
+      color: RGB_WHITE,
       type: VIDEO, source: MASH, 
       id: `temporary-${idUnique()}`, 
       assets: [] 
@@ -142,7 +142,7 @@ export class DataServerClass extends ServerClass {
     return this.clientPromise.then(client => {
       const text = `UPDATE assets SET deleted = $1 WHERE id = $2`
       return client.query(text, [DataServerNow(), id])
-    }).then(EmptyFunction)
+    }).then(VOID_FUNCTION)
   }
 
   private assetGet: ExpressHandler<VersionedDataOrError<AssetObject>, DataAssetGetRequest> = async (req, res) => {
@@ -191,7 +191,6 @@ export class DataServerClass extends ServerClass {
   }
 
   private assetList: ExpressHandler<VersionedDataOrError<AssetObjectsResponse>, DataAssetListRequest> = async (req, res) => {
-    console.log(this.constructor.name, 'assetList', JSON.stringify(req.query, null, 2))
     const request = req.query as DataAssetListRequest
     try {
       const user = this.userFromRequest(req)
@@ -210,7 +209,7 @@ export class DataServerClass extends ServerClass {
     const { _sharedAssets } = this
     if (_sharedAssets) return _sharedAssets
 
-    const jsonPath = ENVIRONMENT.get(ENV.SharedAssets, STRING)
+    const jsonPath = ENV.get(ENV_KEY.SharedAssets, STRING)
     if (!(jsonPath && USER_SHARED)) return this._sharedAssets = []
 
     const orError = await fileReadJsonPromise<AssetObjects>(jsonPath)
@@ -297,7 +296,6 @@ export class DataServerClass extends ServerClass {
   }
 
   private assetPut: ExpressHandler<VersionedDataOrError<Identified>, DataAssetPutRequest> = async (req, res) => {
-    console.log(this.constructor.name, 'assetPut request', JSON.stringify(req.body, null, 2))
     const { assetObject } = req.body
     try {
       const user = this.userFromRequest(req)
@@ -341,7 +339,7 @@ export class DataServerClass extends ServerClass {
         console.log(this.constructor.name, 'assetUpdatePromise', id)
         return this.relationsUpdatePromise(id, assets)
       })
-    }).then(EmptyFunction)
+    }).then(VOID_FUNCTION)
   }
   
   private _client?: Client
@@ -352,11 +350,11 @@ export class DataServerClass extends ServerClass {
   }
 
   private get clientInitialize() {
-    const port = ENVIRONMENT.get('MOVIEMASHER_DB_PORT', NUMBER)
-    const host = ENVIRONMENT.get('MOVIEMASHER_DB_HOST', STRING)
-    const database = ENVIRONMENT.get('MOVIEMASHER_DB_DATABASE', STRING)
-    const user = ENVIRONMENT.get('MOVIEMASHER_DB_USERNAME', STRING)
-    const password = ENVIRONMENT.get('MOVIEMASHER_DB_PASSWORD', STRING)
+    const port = ENV.get('MOVIEMASHER_DB_PORT', NUMBER)
+    const host = ENV.get('MOVIEMASHER_DB_HOST', STRING)
+    const database = ENV.get('MOVIEMASHER_DB_DATABASE', STRING)
+    const user = ENV.get('MOVIEMASHER_DB_USERNAME', STRING)
+    const password = ENV.get('MOVIEMASHER_DB_PASSWORD', STRING)
     const client = new ClientClass({ host, database, port, user, password })
     client.on('end', () => {
       console.debug('DataServerClass', 'client end')
@@ -406,7 +404,7 @@ export class DataServerClass extends ServerClass {
     return this.clientPromise.then(client => {
       const query = 'DELETE FROM asset_assets WHERE id IN($1)'
       console.log(this.constructor.name, 'relationDeletePromise', query, ...ids)
-      return client.query(query, [ids]).then(EmptyFunction) 
+      return client.query(query, [ids]).then(VOID_FUNCTION) 
     })
   }
 
@@ -415,7 +413,7 @@ export class DataServerClass extends ServerClass {
       const id = idUnique()
       const query = 'INSERT INTO asset_assets (id, owner_id, asset_id) VALUES ($1, $2, $3)'
       console.log(this.constructor.name, 'relationInsertPromise', id, query, owner_id, asset_id)
-      return client.query(query, [id, owner_id, asset_id]).then(EmptyFunction)
+      return client.query(query, [id, owner_id, asset_id]).then(VOID_FUNCTION)
     })
   }
 
@@ -452,9 +450,9 @@ export class DataServerClass extends ServerClass {
       switch (promises.length) {
         case 0: return Promise.resolve()
         case 1: return promises[0]
-        default: return Promise.all(promises).then(EmptyFunction)
+        default: return Promise.all(promises).then(VOID_FUNCTION)
       }     
-    }).then(EmptyFunction)
+    }).then(VOID_FUNCTION)
   }
 
   async startServer(app: Application): Promise<void> {

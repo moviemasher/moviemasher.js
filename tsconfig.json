@@ -13,11 +13,13 @@
   },
 
   "include": [
-    "packages/**/src/**/*.ts",
-    "examples/**/src/**/*.ts"
+    "packages/**/*.ts",
+    "examples/**/*.ts",
+    "images/**/*.ts"
   ],
   "exclude": [
+    "**/dist/**/*",
     "packages/**/src/**/*.e2e.ts",
-    "packages/**/src/**/*.test.ts"
+    "packages/**/src/**/*.test.ts",
   ]
 }

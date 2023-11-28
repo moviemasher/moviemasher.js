@@ -1,15 +1,14 @@
 import type { Masher } from '@moviemasher/runtime-client'
 import type { AssetObject, AssetObjects } from '@moviemasher/runtime-shared'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
-import type { Htmls, OptionalContent } from './declarations.js'
+import type { Htmls, OptionalContent } from './Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { EventAssetObject, EventAssetObjects, EventIcon, EventManagedAssets, MovieMasher } from '@moviemasher/runtime-client'
-import { ERROR, namedError, isDefined, isDefiniteError } from '@moviemasher/runtime-shared'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from './Base/Component.js'
-import { Slotted } from './Base/Slotted.js'
-import { GET } from '@moviemasher/lib-shared'
+import { EventAssetObject, EventAssetObjects, EventManagedAssets, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { COMMA, GET, PIPE, isDefined, isDefiniteError } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html'
+import { Component } from './base/Component.js'
+import { Slotted } from './base/Component.js'
 
 const FormSlotPlayer = 'player'
 const FormSlotBrowser = 'browser'
@@ -19,7 +18,7 @@ const FormSlotDialog = 'dialog'
 
 const MovieMasherTag = 'movie-masher'
 /**
- * @tag movie-masher
+ * @category Component
  */
 export class MovieMasherElement extends Slotted {
   constructor() {
@@ -27,7 +26,6 @@ export class MovieMasherElement extends Slotted {
     // console.debug(this.tagName, 'constructor listening for', EventAssetObjects.Type)
     this.listeners[EventAssetObject.Type] = this.handleAssetObject.bind(this)
     this.listeners[EventAssetObjects.Type] = this.handleAssetObjects.bind(this)
-    this.listeners[EventIcon.Type] = this.handleIcon.bind(this)
     this.listeners[EventManagedAssets.Type] = this.handleManagedAssets.bind(this)
   }
   private _mashingAssetObject?: AssetObject 
@@ -62,11 +60,11 @@ export class MovieMasherElement extends Slotted {
     return import(this.url('asset/object/video')).then(() => {
       const { assetObject } = this
       if (assetObject) {
-        MovieMasher.options.assetObject ||= { endpoint: assetObject, init: { method: GET } }
+        MOVIEMASHER.options.assetObject ||= { endpoint: assetObject, init: { method: GET } }
       } 
       // console.debug(this.tagName, 'assetObjectPromise!')
       const listener = { [EventAssetObject.Type]: this.listeners[EventAssetObject.Type] }
-      MovieMasher.eventDispatcher.listenersRemove(listener)
+      MOVIEMASHER.eventDispatcher.listenersRemove(listener)
     })
   }
 
@@ -90,21 +88,33 @@ export class MovieMasherElement extends Slotted {
       const { assetObjects } = this
       // console.debug(this.tagName, 'assetObjectsPromiseInitialize', assetObjects)
       if (assetObjects) {
-        MovieMasher.options.assetObjects ||= { endpoint: assetObjects, init: { method: GET } }
+        MOVIEMASHER.options.assetObjects ||= { endpoint: assetObjects, init: { method: GET } }
       }
       // console.debug(this.tagName, 'assetObjectsPromise removing listener')
       const listener = { [EventAssetObjects.Type]: this.listeners[EventAssetObjects.Type] }
-      MovieMasher.eventDispatcher.listenersRemove(listener)
+      MOVIEMASHER.eventDispatcher.listenersRemove(listener)
     })
   }
 
   override connectedCallback(): void {
     super.connectedCallback()
-    MovieMasher.importPromise.then(() => {
+    const { icons, imports } = this
+    if (icons) {
+      MOVIEMASHER.options.icons ||= { endpoint: icons, init: { method: GET } }
+    }
+    if (imports) {
+      const importeds = imports.split(COMMA)
+      importeds.forEach(imported => {
+        const [key, value] = imported.split(PIPE)
+        MOVIEMASHER.options.imports[key] = value
+      })
+    }
+
+    MOVIEMASHER.importPromise.then(() => {
       if (this.mashingAssetObject) return  
       
       const event = new EventAssetObject()
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (!promise) return
 
@@ -124,7 +134,7 @@ export class MovieMasherElement extends Slotted {
     
     const { detail } = event
     detail.promise = this.assetObjectPromise.then(() => {
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       return detail.promise!
     })
   }
@@ -135,51 +145,22 @@ export class MovieMasherElement extends Slotted {
 
     const { detail } = event
     detail.promise = this.assetObjectsPromise.then(() => {
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       return detail.promise!
-    })
-  }
-
-  private handleIcon(event: EventIcon) {
-    const { icons } = this
-    if (!icons && isDefined(icons)) return
-    
-    const { detail } = event
-    detail.promise = this.iconPromise.then(() => {
-      delete detail.promise
-      MovieMasher.eventDispatcher.dispatch(event)
-      const { promise } = detail
-      if (promise) return promise  
-      
-      return namedError(ERROR.Unknown)
     })
   }
 
   private handleManagedAssets(event: EventManagedAssets) {
     const { detail } = event
     detail.promise = this.managedAssetsPromise.then(() => {
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       return detail.promise!
     })
   }
 
-  private _iconPromise?: Promise<void>
+  icons = 'json/icons.json'
 
-  private get iconPromise() {
-    const { _iconPromise, icons } = this
-    if (_iconPromise) return _iconPromise
-    
-    const iconHandler = icons ? 'icon/fetch' : 'icon/local'
-    return this._iconPromise = import(this.url(iconHandler)).then(() => {
-      if (icons) {
-        MovieMasher.options.icons ||= { endpoint: icons, init: { method: GET } }
-      }
-      const listener = { [EventIcon.Type]: this.listeners[EventIcon.Type] }
-      MovieMasher.eventDispatcher.listenersRemove(listener)
-    })
-  }
-
-  icons?: string
+  imports = ''
 
   private _managedAssetsPromise?: Promise<void>
 
@@ -187,7 +168,7 @@ export class MovieMasherElement extends Slotted {
     // console.debug(this.tagName, 'managedAssetsPromise')
     return this._managedAssetsPromise ||= import(this.url('asset/manager')).then(() => {
       const listener = { [EventManagedAssets.Type]: this.listeners[EventManagedAssets.Type] }
-      MovieMasher.eventDispatcher.listenersRemove(listener)
+      MOVIEMASHER.eventDispatcher.listenersRemove(listener)
     })
   }
   protected masher?: Masher | undefined
@@ -197,7 +178,7 @@ export class MovieMasherElement extends Slotted {
   }
   private get masherPromiseInitialize(): Promise<void> {
     // console.debug(this.tagName, 'masherPromiseInitialize')
-    return import('./asset/mash/MasherFactory.js').then(lib => {
+    return import('./asset/mash/MasherClass.js').then(lib => {
       const { masherInstance } = lib
       this.masher = masherInstance()
     })
@@ -270,11 +251,8 @@ export class MovieMasherElement extends Slotted {
     assetObjects: { type: String, attribute: 'asset-objects' },
     assetObject: { type: String, attribute: 'asset-object' },
     icons: { type: String },
+    imports: { type: String },
   }
-
-  /**
-   * Root styles
-   */
 
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
@@ -354,6 +332,7 @@ export class MovieMasherElement extends Slotted {
         grid-template-columns: var(--columns);
         grid-template-rows: var(--rows);
         padding: var(--pad);
+        line-height: normal;
       } 
 
       @media(prefers-color-scheme: dark) {
@@ -370,7 +349,6 @@ export class MovieMasherElement extends Slotted {
   ]
 }
 
-// register web component as custom element
 customElements.define(MovieMasherTag, MovieMasherElement)
 
 declare global {

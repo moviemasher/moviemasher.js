@@ -6,6 +6,6 @@ export interface SvgFilters extends Array<SvgFilter>{}
 export type SvgItem = SVGElement | ClientImage | ClientVideo
 export interface SvgItems extends Array<SvgItem>{}
 export type SvgItemsTuple = [SvgItems, SvgItems]
-export type Preview = SVGSVGElement | HTMLDivElement
-export interface Previews extends Array<Preview>{}
+export type PreviewElement = SVGSVGElement | HTMLDivElement
+export interface PreviewElements extends Array<PreviewElement>{}
 export type SvgOrImage = SVGSVGElement | ClientImage

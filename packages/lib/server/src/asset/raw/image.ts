@@ -1,15 +1,18 @@
 import type { GraphFile, GraphFiles } from '@moviemasher/runtime-server'
-import type { ImageInstanceObject, InstanceArgs, CacheArgs, RawImageAssetObject, ValueRecord } from '@moviemasher/runtime-shared'
+import type { ImageInstanceObject, InstanceArgs, CacheArgs, RawImageAssetObject, ValueRecord, ListenersFunction } from '@moviemasher/runtime-shared'
 import type { CommandFile, CommandFiles, VisibleCommandFileArgs } from '@moviemasher/runtime-server'
 import type { ServerRawImageAsset, ServerRawImageInstance } from '../../Types/ServerRawTypes.js'
 
-import { ImageAssetMixin, ImageInstanceMixin, VisibleAssetMixin, VisibleInstanceMixin, assertPopulatedString, isTimeRange } from '@moviemasher/lib-shared'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
 import { EventServerAsset } from '@moviemasher/runtime-server'
 import { RAW, IMAGE, isAssetObject } from '@moviemasher/runtime-shared'
 import { ServerRawAssetClass } from '../../Base/ServerRawAssetClass.js'
 import { ServerInstanceClass } from '../../Base/ServerInstanceClass.js'
 import { ServerVisibleAssetMixin } from '../../Base/ServerVisibleAssetMixin.js'
 import { ServerVisibleInstanceMixin } from '../../Base/ServerVisibleInstanceMixin.js'
+import { ImageAssetMixin, VisibleAssetMixin } from '@moviemasher/lib-shared/asset/mixins.js'
+import { ImageInstanceMixin, VisibleInstanceMixin } from '@moviemasher/lib-shared/instance/mixins.js'
+import { isTimeRange } from '@moviemasher/lib-shared/utility/time.js'
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
@@ -57,7 +60,7 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
 }
 
 // listen for image/raw asset event
-export const ServerRawImageListeners = () => ({
+export const ServerRawImageListeners: ListenersFunction = () => ({
   [EventServerAsset.Type]: ServerRawImageAssetClass.handleAsset
 })
 

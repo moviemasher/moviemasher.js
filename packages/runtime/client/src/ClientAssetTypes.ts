@@ -1,44 +1,24 @@
 
-import type { VisibleAsset, AudibleAsset, RawAssetObject, Size, Transcodings } from '@moviemasher/runtime-shared'
-
+import type { AudibleAsset, RawAssetObject, Size, Transcodings, VisibleAsset } from '@moviemasher/runtime-shared'
 import type { ClientAsset } from './ClientAsset.js'
-import type { ClientAudioNode, ClientAudio, ClientImage, ClientVideo, ClientMediaRequest } from './ClientMedia.js'
+import type { ClientImage, ClientMediaRequest, ClientVideo } from './ClientMedia.js'
 
 export interface ClientAudibleAsset extends ClientAsset, AudibleAsset {
-  audibleSource(): ClientAudioNode | undefined
-  loadedAudio?: ClientAudio
+  audibleSource(): AudioBufferSourceNode | undefined
+  loadedAudio?: AudioBuffer
 }
 
 export interface ClientVisibleAsset extends ClientAsset, VisibleAsset {
   previewSize?: Size
 }
-/* 
-
-  override get previewSize(): Size | undefined {
-    const transcoding = this.transcodings.find(transcoding => {
-      return transcoding.request.response
-    })
-    // console.log(this.constructor.name, 'previewSize transcoding', transcoding)
-    if (!transcoding) return this.sourceSize
-
-    const { response: response } = transcoding.request
-    if (sizeAboveZero(response)) {
-      const { width, height } = response
-      if (isAboveZero(width) && isAboveZero(height)) return { width, height }
-    }
-    return undefined
-  }
-*/
-
 
 export interface ClientRawAssetObject extends ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject {
   request: ClientMediaRequest
   transcodings?: Transcodings
-
 }
 
 export interface ClientRawAudioAssetObject extends RawAssetObject {
-  loadedAudio?: ClientAudio
+  loadedAudio?: AudioBuffer
 }
 
 export interface ClientRawImageAssetObject extends RawAssetObject {

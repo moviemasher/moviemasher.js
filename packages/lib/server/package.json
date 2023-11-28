@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/lib-server",
-  "version": "5.1.2",
-  "description": "Movie Masher Server Core - version 5.1.2",
+  "version": "5.2.0",
+  "description": "Movie Masher Server Library",
   
   "exports": {
     ".": "./dist/index.js",
@@ -28,14 +28,12 @@
   "homepage": "https://moviemasher.com",
   "scripts": {
     "script": "run-s",
-    "build": "run-s package",
-    "client": "rollup --config dev/rollup/client.config.mjs",
-    "package": "rollup --config dev/rollup/package.config.mjs"
+    "build": "rollup --config dev/rollup.config.mjs"
 
   },
-  "peerDependencies": {
-    "@moviemasher/lib-shared": "5.1.2",
-    "@moviemasher/runtime-server": "5.1.2",
+  "dependencies": {
+    "@moviemasher/lib-shared": "5.2.0",
+    "@moviemasher/runtime-server": "5.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "ttf2woff2": "5.0.0",
     "child_process": "^1.0.2", 

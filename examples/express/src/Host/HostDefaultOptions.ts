@@ -1,7 +1,7 @@
 import type { DataServerArgs, DecodeServerArgs, EncodeServerArgs, ServerAuthentication, TranscodeServerArgs, UploadServerArgs, WebServerArgs } from '../Server/Server.js'
 import type { HostOptions } from './Host.js'
 
-import { ENVIRONMENT } from '@moviemasher/lib-server'
+import { ENV } from '@moviemasher/lib-server'
 import { AUDIO, IMAGE, NUMBER, VIDEO } from '@moviemasher/runtime-shared'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
@@ -19,11 +19,11 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     publicDirectory: dirOrUndefined,
     port: portOrUndefined, auth, host: hostOrUndefined, version: versionOrUndefined,
   } = args
-  const host = hostOrUndefined || ENVIRONMENT.get('MOVIEMASHER_HOST')
+  const host = hostOrUndefined || ENV.get('MOVIEMASHER_HOST')
   
-  const version = versionOrUndefined || ENVIRONMENT.get('MOVIEMASHER_VERSION')
-  const publicDirectory = dirOrUndefined || ENVIRONMENT.get('MOVIEMASHER_EXAMPLE_ROOT')
-  const port = portOrUndefined || ENVIRONMENT.get('MOVIEMASHER_EXAMPLE_PORT', NUMBER)
+  const version = versionOrUndefined || ENV.get('MOVIEMASHER_VERSION')
+  const publicDirectory = dirOrUndefined || ENV.get('MOVIEMASHER_EXAMPLE_ROOT')
+  const port = portOrUndefined || ENV.get('MOVIEMASHER_EXAMPLE_PORT', NUMBER)
   const authentication = auth || OpenAuthentication
   const data: DataServerArgs = { authentication }
   const upload: UploadServerArgs = {

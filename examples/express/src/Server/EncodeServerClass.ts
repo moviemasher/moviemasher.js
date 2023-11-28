@@ -3,12 +3,13 @@ import type { Application } from 'express'
 import type { EncodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { EncodeServerArgs, ExpressHandler } from './Server.js'
 
-import { ENV, ENVIRONMENT, idUnique } from '@moviemasher/lib-server'
-import { ContentTypeHeader, JsonMimetype, isEncoding } from '@moviemasher/lib-shared'
-import { EventServerEncode, EventServerEncodeStatus, MovieMasher } from '@moviemasher/runtime-server'
-import { ERROR, MASH, VERSION, VIDEO, errorCaught, errorObjectCaught, errorThrow, isAssetObject, isDefiniteError } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV } from '@moviemasher/lib-server'
+import { isEncoding } from '@moviemasher/lib-shared'
+import { EventServerEncode, EventServerEncodeStatus, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
+import { CONTENT_TYPE, ERROR, MASH, MIME_JSON, POST, VERSION, VIDEO, errorCaught, errorObjectCaught, errorThrow, isAssetObject, isDefiniteError, jsonStringify } from '@moviemasher/runtime-shared'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
+import { idUnique } from '../Hash.js'
 
 export class EncodeServerClass extends ServerClass {
   constructor(public args: EncodeServerArgs) { super(args) }
@@ -24,9 +25,9 @@ export class EncodeServerClass extends ServerClass {
       }
       const encodingId = idUnique()
 
-      const exampleRoot = ENVIRONMENT.get(ENV.ExampleRoot)
+      const exampleRoot = ENV.get(ENV_KEY.ExampleRoot)
       const event = new EventServerEncode(encodingType, mashAssetObject, user, encodingId, options, exampleRoot)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerEncode.Type)
 
@@ -50,7 +51,7 @@ export class EncodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerEncodeStatus(id)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerEncodeStatus.Type)
 
@@ -79,7 +80,10 @@ export class EncodeServerClass extends ServerClass {
   private statusEndpointRequest(id: string) {
     const data: EndpointRequest = {
       endpoint: { pathname: Endpoints.encode.status },
-      init: { method: 'POST', headers: { [ContentTypeHeader]: JsonMimetype}, body: JSON.stringify({ id }) }
+      init: { 
+        method: POST, 
+        headers: { [CONTENT_TYPE]: MIME_JSON}, 
+        body: jsonStringify({ id }) }
     }
     return data
   }

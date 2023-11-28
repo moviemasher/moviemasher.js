@@ -20,8 +20,6 @@ export interface ServerShapeInstance extends ShapeInstance, ServerVisibleInstanc
   asset: ServerShapeAsset
 }
 
-export type ColorTuple = [string, string]
-
 export interface Tweening {
   point?: boolean;
   size?: boolean;

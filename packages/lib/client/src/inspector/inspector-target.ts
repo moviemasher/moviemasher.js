@@ -1,20 +1,23 @@
 import type { PropertyIds, TargetId } from '@moviemasher/runtime-shared'
 import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup, PropertyValues } from 'lit-element/lit-element.js'
-import type { Content, Contents, OptionalContent } from '../declarations.js'
+import type { Content, Contents, OptionalContent } from '../Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { arraySet, assertPopulatedString, sortByOrder } from '@moviemasher/lib-shared'
-import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MovieMasher } from '@moviemasher/runtime-client'
-import { TARGET_ASSET, MASH } from '@moviemasher/runtime-shared'
-import { html } from 'lit-html/lit-html.js'
-import { Component } from '../Base/Component.js'
-import { ImporterComponent } from '../Base/ImporterComponent.js'
+import { assertPopulatedString } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventControlGroupDetail, EventPropertyIds, MOVIEMASHER } from '@moviemasher/runtime-client'
+import { ASSET_TARGET, MASH, arraySet, sortByOrder } from '@moviemasher/runtime-shared'
+import { html } from 'lit-html'
+import { Component } from '../base/Component.js'
+import { ImporterComponent } from '../base/Component.js'
 
 const InspectorTargetTag = 'movie-masher-inspector-target'
+/**
+ * @category Component
+ */
 export class InspectorTargetElement extends ImporterComponent {
   protected override content(contents: Contents): Content {
-    return html`<div class='content'>${contents}</div>`
+    return html`<div class='contents'>${contents}</div>`
   }
 
   protected override get defaultContent(): OptionalContent { 
@@ -34,7 +37,7 @@ export class InspectorTargetElement extends ImporterComponent {
       // console.log(this.tagName, 'defaultContent grouping', ...propertyIds)
       
       const event = new EventControlGroup(propertyIds, groupedPropertyIds)
-      MovieMasher.eventDispatcher.dispatch(event)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
       if (!groupedPropertyIds.length) break
       // console.log(this.tagName, 'defaultContent grouped', ...groupedPropertyIds)
 
@@ -87,7 +90,7 @@ export class InspectorTargetElement extends ImporterComponent {
     if (!id) return []
     
     const event = new EventPropertyIds([id])
-    MovieMasher.eventDispatcher.dispatch(event)  
+    MOVIEMASHER.eventDispatcher.dispatch(event)  
     const { propertyIds } = event.detail
     // console.log(this.tagName, 'selectedPropertyIds', { id, propertyIds })
     return propertyIds
@@ -102,12 +105,12 @@ export class InspectorTargetElement extends ImporterComponent {
       assertPopulatedString(targetId)
       // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
 
-      MovieMasher.eventDispatcher.listenersRemove(this.listeners)
+      MOVIEMASHER.eventDispatcher.listenersRemove(this.listeners)
       this.listeners = {}
       const { listeners } = this
 
       switch (targetId) {
-        case TARGET_ASSET: {
+        case ASSET_TARGET: {
           listeners[EventChangedAssetId.Type] = this.handleChanged.bind(this)
           break
         }
@@ -119,7 +122,7 @@ export class InspectorTargetElement extends ImporterComponent {
           listeners[EventChangedClipId.Type] = this.handleChanged.bind(this)
         }
       }   
-      MovieMasher.eventDispatcher.listenersAdd(listeners)
+      MOVIEMASHER.eventDispatcher.listenersAdd(listeners)
     }
   }
 
@@ -130,11 +133,11 @@ export class InspectorTargetElement extends ImporterComponent {
   static override styles: CSSResultGroup = [
     Component.cssBorderBoxSizing,
     css`
-      div.content > * {
+      div.contents > * {
         margin-bottom: var(--gap-content);
       }
 
-      div.content > movie-masher-control-row {
+      div.contents > movie-masher-control-row {
         display: block;
         min-height: var(--height-control);
       }
@@ -142,7 +145,6 @@ export class InspectorTargetElement extends ImporterComponent {
   ]
 }
 
-// register web component as custom element
 customElements.define(InspectorTargetTag, InspectorTargetElement)
 
 declare global {

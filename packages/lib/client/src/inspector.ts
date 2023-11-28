@@ -1,31 +1,34 @@
 import type { CSSResultGroup } from 'lit'
-import type { Htmls, OptionalContent } from './declarations.js'
+import type { Htmls, OptionalContent } from './Types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { html } from 'lit-html/lit-html.js'
-import { ContentSlot, FooterSlot, HeaderSlot, Section } from './Base/Section.js'
+import { html } from 'lit-html'
+import { CONTENTS, FOOTER, HEADER, Section } from './base/LeftCenterRight.js'
 
 const InspectorTag = 'movie-masher-inspector'
 
+/**
+ * @category Component
+ */
 export class InspectorElement extends Section {
   override contentContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-inspector-content')
     return html`<movie-masher-inspector-content
-      part='${ContentSlot}' 
+      part='${CONTENTS}' 
     >${htmls}</movie-masher-inspector-content>`
   }
     
   override footerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-inspector-footer')
     return html`<movie-masher-inspector-footer
-      part='${FooterSlot}' 
+      part='${FOOTER}' 
     >${htmls}</movie-masher-inspector-footer>`
   }
 
   override headerContent(htmls: Htmls): OptionalContent {
     this.importTags('movie-masher-inspector-header')
     return html`<movie-masher-inspector-header
-      part='${HeaderSlot}' 
+      part='${HEADER}' 
     >${htmls}</movie-masher-inspector-header>`
   }
 
@@ -39,7 +42,6 @@ export class InspectorElement extends Section {
   ]
 }
 
-// register web component as custom element
 customElements.define(InspectorTag, InspectorElement)
 
 declare global {

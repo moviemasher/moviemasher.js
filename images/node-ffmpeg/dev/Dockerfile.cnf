@@ -14,10 +14,10 @@ COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.js
 COPY packages/lib/server/dist ${DIR_ROOT}/packages/lib/server/dist
 
 COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
-COPY packages/runtime/shared/index.js ${DIR_ROOT}/packages/runtime/shared/index.js
+COPY packages/runtime/shared/dist ${DIR_ROOT}/packages/runtime/shared/dist
 
 COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
-COPY packages/runtime/server/index.js ${DIR_ROOT}/packages/runtime/server/index.js
+COPY packages/runtime/server/dist ${DIR_ROOT}/packages/runtime/server/dist
 
 FROM amazonlinux:2023.1.20230825.0 
 ARG DIR_ROOT
@@ -25,17 +25,17 @@ ARG OS_INSTALL=''
 ARG OS_EXECUTE='npm install -g npm'
 
 ARG INSTALL_NODE='18.17.1'
-ARG NPM_INSTALL='--workspace=@moviemasher/node-ffmpeg'
+ARG INSTALL_NPM='--workspace=@moviemasher/node-ffmpeg'
 
 WORKDIR ${DIR_ROOT}
 COPY --from=code ${DIR_ROOT} ${DIR_ROOT}
 COPY dev/image/sh ${DIR_ROOT}/dev/image/sh
 RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-aws2023.sh \
-  -n "${NPM_INSTALL}" \
+  -n "${INSTALL_NPM}" \
+  -i "${INSTALL_NODE}" \
   -e "${OS_EXECUTE}" \
   -o "${OS_INSTALL}" \
-  -r "${DIR_ROOT}"\
-  -i "${INSTALL_NODE}"
+  -r "${DIR_ROOT}"
 
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
 

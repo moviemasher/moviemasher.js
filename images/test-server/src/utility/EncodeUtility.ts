@@ -1,19 +1,21 @@
 import type { AssetObjects, ClipObject, ColorInstanceObject, DecodeOptions, Decoding, ImageAssetObject, InstanceObject, MashAssetObject, OutputOptions, Point, ShapeAssetObject, Size, StringDataOrError, TextAssetObject, TextInstanceObject, TrackObject, VideoAssetObject, VideoOutputOptions } from '@moviemasher/runtime-shared'
 
-
-import { ENV, ENVIRONMENT, directoryCreatePromise, ffmpegCommand, filePathExists, fileWritePromise, outputFileName, commandPromise, fileReadPromise, filenameAppend, fileMovePromise, fileRemovePromise } from '@moviemasher/lib-server'
-import { DASH, DIRECTIONS_SIDE, ProbeDuration, DOT, DefaultContainerId, DefaultContentId, DurationUnknown, JsonExtension, LockLongest, LockNone, LockWidth, SizingContainer, TextExtension, TimingCustom, arrayUnique, assertDefined, assertPoint, assertPopulatedArray, assertPopulatedString, assertSize, colorBlack, colorBlue, colorRed, idReset, isPoint, isPopulatedArray, isSize, outputOptions, sizeScale, stringSeconds } from '@moviemasher/lib-shared'
-import { EventServerDecode, EventServerEncode, MovieMasher, ServerMediaRequest } from '@moviemasher/runtime-server'
-import { ERROR, IMAGE, PROBE, SIZE_OUTPUT, MASH, VIDEO, namedError, errorThrow, isArray, isDefiniteError, isPopulatedString, isString } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV, commandPromise, directoryCreatePromise, ffmpegCommand, fileMovePromise, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend, fileNameFromOptions } from '@moviemasher/lib-server'
+import { assertDefined, assertPoint, assertPopulatedArray, assertPopulatedString, assertSize, isPoint, isPopulatedArray, isSize, sizeScale, stringSeconds } from '@moviemasher/lib-shared'
+import { EventServerDecode, EventServerEncode, MOVIEMASHER_SERVER, ServerMediaRequest } from '@moviemasher/runtime-server'
+import { CONTAINER, CUSTOM, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION, DURATION_UNKNOWN, ERROR, IMAGE, JSON, LONGEST, MASH, NONE, PROBE, RGB_BLACK, SIZE_OUTPUT, TXT, VIDEO, WIDTH, arrayUnique, errorThrow, idReset, isArray, isDefiniteError, isPopulatedString, isString, namedError, typeOutputOptions } from '@moviemasher/runtime-shared'
 import path from 'path'
+
+const colorRed = '#FF0000'
+const colorBlue = '#0000FF'
 
 const ErrorSnapshot = 'error.snapshot'
 export const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
 const options: VideoOutputOptions = { ...SizePreview }//, mute: true
-export const VideoOptions = outputOptions(VIDEO, options) 
+export const VideoOptions = typeOutputOptions(VIDEO, options) 
 
-export const TestDirTemporary = ENVIRONMENT.get(ENV.OutputRoot)
-const TestDirSnapshots = path.resolve(ENVIRONMENT.get(ENV.DirRoot), 'images/test-server/snapshots')
+export const TestDirTemporary = ENV.get(ENV_KEY.OutputRoot)
+const TestDirSnapshots = path.resolve(ENV.get(ENV_KEY.DirRoot), 'images/test-server/snapshots')
 
 const SnapshotFailsBecauseTooDynamic = [
   'P_M_F_in_T_U_M_F-H_50',
@@ -89,7 +91,7 @@ export type GenerateOptions = { [index in GenerateArg]?: string | string[] }
 export type GenerateContentTest = [string, string, InstanceObject]
 export type GenerateContainerTest = [string, string, InstanceObject, string | undefined]
 export type PointTest = [string, InstanceObject]
-// export type GenerateMashTest = [string, MashAssetObject]
+
 export type SizeTest = [string, InstanceObject]
 export type BooleanTest = [string, InstanceObject]
 export type NumberTest = [string, InstanceObject]
@@ -97,7 +99,7 @@ export type NumberTest = [string, InstanceObject]
 const textOptions: TextInstanceObject = { 
   string: "Lobster Wow!",
   assetId: "text",
-  lock: LockLongest,
+  lock: LONGEST,
 } as const
 
 type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest
@@ -151,7 +153,7 @@ const MashOpacityDefault = {
   [GenerateOpacity.Z]: { opacity: 0.0 },
 }
 
-const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DurationUnknown, labels = false): ClipObject[] => {
+const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DURATION_UNKNOWN, labels = false): ClipObject[] => {
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]
@@ -177,7 +179,7 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
   const { width, height } = size
   const textHeight = 0.1
 
-  const content: ColorInstanceObject = { color: colorBlack }
+  const content: ColorInstanceObject = { color: RGB_BLACK }
 
   assertPoint(containerPoint)
   assertPoint(contentPoint)
@@ -186,10 +188,10 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
     frames, containerId, contentId, 
     content: {
       ...contentPoint, ...contentDimensions, ...contentObject,
-      lock: LockNone
+      lock: NONE
     },
-    sizing: SizingContainer,
-    timing: TimingCustom,
+    sizing: CONTAINER,
+    timing: CUSTOM,
     container: {
       ...containerPoint, ...containerDimensions, 
       ...containerObject, ...opacity, 
@@ -200,20 +202,20 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
   if (labels) {
     const labelClip: ClipObject = { 
       container: { 
-        // intrinsic: { x: 0, y: 0, width: width, height: TextHeight / textHeight },
+        // intrinsic: { x: 0, y: 0, width: width, height: TEXT_HEIGHT / textHeight },
         // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
         assetId: "font.valken",
         // height: textHeight, 
         x: 0, y: 0.5, 
-        lock: LockWidth,
+        lock: WIDTH,
         width: 1, 
         string: testId 
       } as TextInstanceObject,
       containerId: 'font.valken',
       content,
-      sizing: SizingContainer,
-      timing: TimingCustom,
-      frames//: isAboveZero(frames) ? frames : Default.duration, 
+      sizing: CONTAINER,
+      timing: CUSTOM,
+      frames
     }  
     objects.push(labelClip)
   }
@@ -237,8 +239,6 @@ const pointTest = (...mashPoints: GeneratePoint[]): PointTest => {
 
 const opacitiesContainerObject = (...opacities: InstanceObject[]): InstanceObject => {
   const [opacity, opacityEnd] = opacities
-  // assertInstanceObject(opacity)
-
   if (!opacityEnd) return { ...opacity }
 
   return { ...opacity, opacityEnd: opacityEnd.opacity }
@@ -289,9 +289,9 @@ assertPopulatedString(textAssetId)
 export const GenerateTestsDefault: GenerateTests = {
 
   [GenerateArg.Container]: [
-    ["R", DefaultContainerId, {}, 'rect'],
+    ["R", DEFAULT_CONTAINER_ID, {}, 'rect'],
     ["K", "image", {}],
-    ["A", "text-rect", {lock: LockLongest,}],
+    ["A", "text-rect", {lock: LONGEST,}],
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
     ["S", 'shape', {}],
@@ -299,14 +299,14 @@ export const GenerateTestsDefault: GenerateTests = {
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [
-    ["BL", DefaultContentId, { color: colorBlue } as InstanceObject],
+    ["BL", DEFAULT_CONTENT_ID, { color: colorBlue } as InstanceObject],
     ["P", "puppy", {}],
     ["RGB", "rgb", {}],
     ["V", "video", {}],
-    // ["BK", DefaultContentId, { color: colorBlack }],
-    // ["RE", DefaultContentId, { color: colorRed }],
-    // ["WH", DefaultContentId, { color: colorWhite }],
-    ["BL-RE", DefaultContentId, { colorEnd: colorRed, color: colorBlue } as InstanceObject],
+    // ["BK", DEFAULT_CONTENT_ID, { color: RGB_BLACK }],
+    // ["RE", DEFAULT_CONTENT_ID, { color: colorRed }],
+    // ["WH", DEFAULT_CONTENT_ID, { color: RGB_WHITE }],
+    ["BL-RE", DEFAULT_CONTENT_ID, { colorEnd: colorRed, color: colorBlue } as InstanceObject],
     // ["K", "image", {}],
   ],
   [GenerateArg.ContainerPoint]: [
@@ -399,7 +399,7 @@ export const GenerateAssetObjects: AssetObjects = [
     "type": "image",
     "source": "shape",
     "id": "text-rect",
-    "pathWidth": 5168,
+    "pathWidth": 5248,
     "pathHeight": 992,
     "path": "M0 0 L5168 0 L5168 992 L0 992 Z"
   } as ShapeAssetObject,
@@ -457,7 +457,7 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
   const limitedContents = limitedOptions(GenerateArg.Content) as GenerateContentTest[]
   assertPopulatedArray(limitedContents, 'limitedContents')
   limitedContents.forEach(([contentLabel, contentId]) => {
-    const isColor = contentId === DefaultContentId
+    const isColor = contentId === DEFAULT_CONTENT_ID
     const limitedContainers = limitedOptions(GenerateArg.Container) as GenerateContainerTest[]
     assertPopulatedArray(limitedContainers, 'limitedContainers')
     limitedContainers.forEach(([containerLabel]) => {
@@ -500,7 +500,7 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
   return mashIds
 }
 
-export const generateTest = (testId: GenerateTestId, size = SizePreview, frames = DurationUnknown, labels = false): MashAssetObject => {
+export const generateTest = (testId: GenerateTestId, size = SizePreview, frames = DURATION_UNKNOWN, labels = false): MashAssetObject => {
   const [clip, labelClip] = generateClips(testId, size, frames, labels)
   const tracks: TrackObject[] = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
@@ -515,7 +515,7 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
   return mash
 }
 
-export const mashObjectFromId = (id: string, duration = DurationUnknown, labels = false): MashAssetObject => {
+export const mashObjectFromId = (id: string, duration = DURATION_UNKNOWN, labels = false): MashAssetObject => {
   const mashObject = generateTest(id, SizePreview, duration, labels)
   const { tracks } = mashObject
   assertPopulatedArray(tracks)
@@ -527,7 +527,7 @@ export const mashObjectFromId = (id: string, duration = DurationUnknown, labels 
 }
 
 const checkSnapshot = async (id: string, outputPath: string): Promise<StringDataOrError> => {
-  const snapshotPath = path.join(TestDirSnapshots, [id, TextExtension].join(DOT))
+  const snapshotPath = path.join(TestDirSnapshots, [id, TXT].join(DOT))
   const fileOrError = await fileReadPromise(snapshotPath)
   const existingSnapshot = isDefiniteError(fileOrError) ? '' : fileOrError.data
   const command = ffmpegCommand() 
@@ -541,15 +541,14 @@ const checkSnapshot = async (id: string, outputPath: string): Promise<StringData
   const newSnapshot = isDefiniteError(writtenOrError) ? '' : writtenOrError.data
   if (!existingSnapshot || existingSnapshot === newSnapshot) return { data: 'OK' }
 
-  await fileWritePromise(path.join(TestDirSnapshots, [id, 'prev', TextExtension].join(DOT)), existingSnapshot)
+  await fileWritePromise(path.join(TestDirSnapshots, [id, 'prev', TXT].join(DOT)), existingSnapshot)
   // return { data: 'OK' }
- return namedError(ErrorSnapshot, `${id}',`)
+ return namedError(ErrorSnapshot, `${id} ${snapshotPath} ${outputPath}`)
 }
 
-export const encodeId = async (id: string, outputOptions: OutputOptions, duration = DurationUnknown, labels = false) => {
+export const encodeId = async (id: string, outputOptions: OutputOptions, duration = DURATION_UNKNOWN, labels = false) => {
   const fatMashObject = mashObjectFromId(id, duration, labels)
-  // const fatMashJson = JSON.stringify(fatMashObject)
-  const fileName = outputFileName(outputOptions, VIDEO)
+  const fileName = fileNameFromOptions(outputOptions, VIDEO)
   const outputPath = path.join(TestDirTemporary, 'shared', id, fileName) 
   const previousPath = filenameAppend(outputPath, 'prev')
   const encodedPreviously = filePathExists(outputPath)
@@ -558,7 +557,7 @@ export const encodeId = async (id: string, outputOptions: OutputOptions, duratio
     await fileMovePromise(outputPath, filenameAppend(outputPath, 'prev'))
   }
   const event = new EventServerEncode(VIDEO, fatMashObject, 'shared', id, outputOptions)
-  MovieMasher.eventDispatcher.dispatch(event)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   assertDefined(promise)
   const orError = await promise
@@ -572,13 +571,12 @@ export const encodeId = async (id: string, outputOptions: OutputOptions, duratio
 }
 
 export const encodeIds = async (ids: GenerateTestIds, force = false) => {
-  // const TestTemporary = ENVIRONMENT.get(ENV.OutputRoot) 
+  // const TestTemporary = ENV.get(ENV_KEY.OutputRoot) 
   // const renderIds = force ? ids : ids.filter(id => { 
   //   const idPath = path.join(TestTemporary, id, `video.${ExtensionLoadedInfo}`)
   //   return !filePathExists(idPath)
   // })
   for (const id of ids) {
-    // console.log('renderSpecificIds', id)
     idReset()
     const result = await encodeId(id, VideoOptions, 10)
     if (isDefiniteError(result)) return result
@@ -588,7 +586,7 @@ export const encodeIds = async (ids: GenerateTestIds, force = false) => {
 
 export const combineIds = async (ids: GenerateTestIds, id:string, force = false): Promise<StringDataOrError> => {
   // console.log('renderAndCombine', name, orError)
-  const fileName = outputFileName(VideoOptions, VIDEO)
+  const fileName = fileNameFromOptions(VideoOptions, VIDEO)
   const sources: string[] = ids.map(id => {
     return path.resolve(TestDirTemporary, id, fileName)
   })
@@ -638,12 +636,12 @@ export const combineIds = async (ids: GenerateTestIds, id:string, force = false)
   const ffmepgOrError = await commandPromise(command)
 
   if (isDefiniteError(ffmepgOrError)) return ffmepgOrError
-  const infoPath = path.join(destinationDirectory, `${PROBE}.${JsonExtension}`)
+  const infoPath = path.join(destinationDirectory, `${PROBE}.${JSON}`)
   // const decodingId = idGenerate('decoding')
   const request: ServerMediaRequest = { endpoint: destination, path: destination }
-  const decodeOptions: DecodeOptions = { types: [ProbeDuration] }
+  const decodeOptions: DecodeOptions = { types: [DURATION] }
   const event = new EventServerDecode(PROBE, VIDEO, request, 'shared', id, decodeOptions)
-  MovieMasher.eventDispatcher.dispatch(event)
+  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   assertDefined(promise)
 

@@ -4,11 +4,11 @@ import type { EventDispatcher } from './EventDispatcher.js'
 import { namedError, errorCaught, isDefiniteError } from './ErrorFunctions.js'
 import { ERROR } from './ErrorName.js'
 import { isListenerRecord } from './EventDispatcher.js'
-import { isFunction } from './TypeofGuards.js'
+import { isFunction, isPopulatedString } from './TypeofGuards.js'
 
-export const importPromise = (imports: StringRecord, eventDispatcher: EventDispatcher) => {
+export const importPromise = (imports: StringRecord, eventDispatcher: EventDispatcher, suffix: string) => {
   const functions = Object.keys(imports).sort((a, b) => b.length - a.length)
-  const moduleIds = [...new Set(Object.values(imports))]
+  const moduleIds = [...new Set(Object.values(imports).filter(isPopulatedString))]
   const byId: StringsRecord = Object.fromEntries(moduleIds.map(id => (
     [id, functions.filter(key => imports[key] === id)]
   )))
@@ -16,7 +16,9 @@ export const importPromise = (imports: StringRecord, eventDispatcher: EventDispa
     return import(moduleId).then(module => {
       const importers = byId[moduleId]
       const potentialErrors = importers.map(importer => {
-        const { [importer]: funktion } = module
+        const regex = /^[a-z]+$/
+        const key = importer.match(regex) ? `${importer}${suffix}Listeners` : importer
+        const { [key]: funktion } = module
         if (!isFunction(funktion)) return namedError(ERROR.Url, importer)
         
         const listeners = funktion()

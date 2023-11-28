@@ -1,41 +1,61 @@
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { ClientActionAdd, ClientActionAddTrack, EventDoClientAction } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { FooterElement } from '../Base/LeftCenterRight.js'
+import { ADD, ADD_TRACK, EventDoClientAction, EventZoom, REMOVE } from '@moviemasher/runtime-client'
+import { html } from 'lit-html'
+import { FooterBase } from '../base/LeftCenterRight.js'
 
-export const TimelineFooterName = 'movie-masher-timeline-footer'
+const TimelineFooterTag = 'movie-masher-timeline-footer'
 
-export class TimelineFooterElement extends FooterElement {
+/**
+ * @category Component
+ */
+export class TimelineFooterElement extends FooterBase {
+
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-    this.importTags('movie-masher-action-client')
-    htmls.push(html`
-      <movie-masher-action-client         
-        icon='add' emit='${EventDoClientAction.Type}' detail='${ClientActionAdd}'
-      ></movie-masher-action-client>
-    `)
-    htmls.push(html`
-      <movie-masher-action-client 
-        icon='track' emit='${EventDoClientAction.Type}' detail='${ClientActionAddTrack}'
-      ></movie-masher-action-client>
-    `)
+    this.importTags('movie-masher-timeline-range')
+    this.importTags('movie-masher-component-a')
+    htmls.push(html`<movie-masher-component-a
+      icon='zoomLess' emit='${EventZoom.Type}' detail='0.001'
+    ></movie-masher-component-a>`)
+    htmls.push(html`<movie-masher-timeline-range></movie-masher-timeline-range>`)
+    htmls.push(html`<movie-masher-component-a
+      icon='zoomMore' emit='${EventZoom.Type}' detail='1'
+    ></movie-masher-component-a>`)
     return super.leftContent(htmls)
   }
 
   protected override rightContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-    this.importTags('movie-masher-timeline-zoom')
-    htmls.push(html`<movie-masher-timeline-zoom></movie-masher-timeline-zoom>`)
+    this.importTags('movie-masher-action-client')
+    htmls.push(html`
+      <movie-masher-action-client         
+        icon='add' emit='${EventDoClientAction.Type}' detail='${ADD}'
+        string='clip'
+      ></movie-masher-action-client>
+    `)
+    htmls.push(html`
+      <movie-masher-action-client 
+        icon='add' emit='${EventDoClientAction.Type}' detail='${ADD_TRACK}'
+        string='track'
+      ></movie-masher-action-client>
+    `)
+
+    this.importTags('movie-masher-action-client')
+    htmls.push(html`
+      <movie-masher-action-client
+        detail='${REMOVE}'
+        icon='remove'
+      ></movie-masher-action-client>
+    `)
     return super.rightContent(htmls)
   }
 }
 
-// register web component as custom element
-customElements.define(TimelineFooterName, TimelineFooterElement)
+customElements.define(TimelineFooterTag, TimelineFooterElement)
 
 declare global {
   interface HTMLElementTagNameMap {
-    [TimelineFooterName]: TimelineFooterElement
+    [TimelineFooterTag]: TimelineFooterElement
   }
 }

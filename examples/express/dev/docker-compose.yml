@@ -51,7 +51,7 @@ services:
       - ../../../examples/express/package.json:${MOVIEMASHER_DIR_ROOT}/examples/express/package.json
       - ../../../examples/express/index.html:${MOVIEMASHER_DIR_ROOT}/examples/express/public/index.html
       - ../../../dev/documentation/public/example.html:${MOVIEMASHER_DIR_ROOT}/examples/express/public/example.html
-      - ../../../examples/express/json/:${MOVIEMASHER_DIR_ROOT}/examples/express/public/json
+      - ../../../packages/lib/client/dist/json:${MOVIEMASHER_DIR_ROOT}/examples/express/public/json
 
       - ../../../dev/img/favicon.ico:${MOVIEMASHER_DIR_ROOT}/examples/express/public/favicon.ico
 

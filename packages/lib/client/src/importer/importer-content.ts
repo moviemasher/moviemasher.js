@@ -1,19 +1,21 @@
 import type { ClientImporter, ClientImporters, StringEvent } from '@moviemasher/runtime-client'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValueMap } from 'lit'
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { EventDialog, EventImportManagedAssets, EventImporterAdd, EventImporterComplete, EventImporterRemove, EventImporters, MovieMasher } from '@moviemasher/runtime-client'
+import { EventDialog, EventImportManagedAssets, EventImporterAdd, EventImporterComplete, EventImporterRemove, EventImporters, MOVIEMASHER } from '@moviemasher/runtime-client'
 import { AssetObjects } from '@moviemasher/runtime-shared'
-import { ifDefined } from 'lit-html/directives/if-defined.js'
-import { html } from 'lit-html/lit-html.js'
-import { CenterSlot, ContentElement } from '../Base/LeftCenterRight.js'
+import { html, nothing } from 'lit-html'
+import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 
 const EventTypeImporter = 'importer'
 
 const ImporterContentTag = 'movie-masher-importer-content'
 
-export class ImporterContentElement extends ContentElement {
+/**
+ * @category Component
+ */
+export class ImporterContentElement extends ContentBase {
   constructor() {
     super()
     this.listeners[EventTypeImporter] = this.handleImporter.bind(this)
@@ -30,8 +32,8 @@ export class ImporterContentElement extends ContentElement {
       const { ui } = importer
       return html`<span 
         @export-parts='${this.handleExportParts}' 
-        class='${CenterSlot}'
-        part='${CenterSlot}'
+        class='${CENTER}'
+        part='${CENTER}'
       >${ui}</span>`
     }
     return super.centerContent(slots)
@@ -43,11 +45,11 @@ export class ImporterContentElement extends ContentElement {
   }
 
   private handleImporterComplete(): void {
-    MovieMasher.eventDispatcher.dispatch(new EventDialog())
+    MOVIEMASHER.eventDispatcher.dispatch(new EventDialog())
 
     const { assetObjects } = this
     this.assetObjects = []
-    MovieMasher.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects))
+    MOVIEMASHER.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects))
   }
 
   private handleImporterAdd(event: EventImporterAdd): void {
@@ -80,7 +82,7 @@ export class ImporterContentElement extends ContentElement {
   private get importersInitialize(): ClientImporters {
     const importers: ClientImporters = []
     const event = new EventImporters(importers)
-    MovieMasher.eventDispatcher.dispatch(event)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const [importer] = importers
     if (importer) this.importerId ||= importer.id
     return importers
@@ -105,7 +107,7 @@ export class ImporterContentElement extends ContentElement {
 
       return html`
       <movie-masher-component-a 
-        selected='${ifDefined(importerId === id ? true : undefined)}' 
+        selected='${importerId === id || nothing}' 
         emit='${EventTypeImporter}' detail='${id}'
       >${icon}</movie-masher-component-a>`  
     })
@@ -128,7 +130,7 @@ export class ImporterContentElement extends ContentElement {
 
     htmls.push(...assetObjects.map(assetObject => {
       return html`
-         <movie-masher-component-a
+        <movie-masher-component-a
           icon='remove-circle'
           emit='${EventImporterRemove.Type}'
           detail='${assetObject.id}'
@@ -149,14 +151,14 @@ export class ImporterContentElement extends ContentElement {
   }
 
   static override properties: PropertyDeclarations = {
-    ...ContentElement.properties,
+    ...ContentBase.properties,
     importerId: { type: String, attribute: 'importer-id' },
     assetObjects: { type: Array, attribute: false }
   }
 
 
   static override styles: CSSResultGroup = [
-    ContentElement.styles,
+    ContentBase.styles,
     css`
       .right {
         max-width: 33%;
@@ -181,7 +183,6 @@ export class ImporterContentElement extends ContentElement {
 
 }
 
-// register web component as custom element
 customElements.define(ImporterContentTag, ImporterContentElement)
 
 declare global {

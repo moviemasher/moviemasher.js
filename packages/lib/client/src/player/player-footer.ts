@@ -1,33 +1,30 @@
-import type { Htmls, OptionalContent } from '../declarations.js'
+import type { Htmls, OptionalContent } from '../Types.js'
 
-import { ClientActionTogglePaused, EventDoClientAction } from '@moviemasher/runtime-client'
-import { html } from 'lit-html/lit-html.js'
-import { FooterElement } from '../Base/LeftCenterRight.js'
+import { html } from 'lit-html'
+import { FooterBase } from '../base/LeftCenterRight.js'
 
 const PlayerFooterTag = 'movie-masher-player-footer'
-export class PlayerFooterElement extends FooterElement {
+/**
+ * @category Component
+ */
+export class PlayerFooterElement extends FooterBase {
   protected override leftContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-
-    
-    this.importTags('movie-masher-action-client')
-    htmls.push(html`<movie-masher-action-client
-      icon='play' emit='${EventDoClientAction.Type}' detail='${ClientActionTogglePaused}'
-    ></movie-masher-action-client>`)
-
+    this.importTags('movie-masher-player-button')
+    this.importTags('movie-masher-player-range')
+    htmls.push(html`<movie-masher-player-button></movie-masher-player-button>`)
+    htmls.push(html`<movie-masher-player-range></movie-masher-player-range>`)
     return super.leftContent(htmls)
   }
 
   protected override rightContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-    this.importTags('movie-masher-player-slider')
-    htmls.push(html`<movie-masher-player-slider></movie-masher-player-slider>`)
-
+    this.importTags('movie-masher-player-time')
+    htmls.push(html`<movie-masher-player-time></movie-masher-player-time>`)
     return super.rightContent(htmls)
   }
 }
 
-// register web component as custom element
 customElements.define(PlayerFooterTag, PlayerFooterElement)
 
 declare global {

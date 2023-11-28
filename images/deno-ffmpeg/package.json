@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/deno-ffmpeg",
-  "version": "5.1.2",
+  "version": "5.2.0",
   "description": "Movie Masher Deno Image",
   "author": {
     "name": "Movie Masher",
@@ -12,8 +12,8 @@
 
   },
   "peerDependencies": {
-    "@moviemasher/lib-shared": "5.1.2",
-    "@moviemasher/lib-server": "5.1.2"
+    "@moviemasher/lib-shared": "5.2.0",
+    "@moviemasher/lib-server": "5.2.0"
   },
   "devDependencies": {
     "@types/node": "20.5.1"

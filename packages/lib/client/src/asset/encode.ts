@@ -1,14 +1,14 @@
 import type { ClientMashAsset, EventDoServerActionDetail, ServerProgress } from '@moviemasher/runtime-client'
 
-import { EmptyFunction, idIsTemporary, isEncoding } from '@moviemasher/lib-shared'
-import { ClientActionView, EventChangeScalar, EventChangedClientAction, EventChangedMashAsset, EventChangedServerAction, EventClientEncode, EventDoServerAction, EventEnabledServerAction, EventMashAsset, EventProgress, MovieMasher, ServerActionEncode, ServerActionSave } from '@moviemasher/runtime-client'
-import { ERROR, EncodeArgs, EncodeOptions, IMAGE, VIDEO, namedError, isDefiniteError } from '@moviemasher/runtime-shared'
+import { isEncoding } from '@moviemasher/lib-shared/utility/guards.js'
+import { EventChangeScalar, EventChangedClientAction, EventChangedMashAsset, EventChangedServerAction, EventClientEncode, EventDoServerAction, EventEnabledServerAction, EventMashAsset, EventProgress, MOVIEMASHER, SAVE, VIEW } from '@moviemasher/runtime-client'
+import { ENCODE, ERROR, EncodeArgs, EncodeOptions, IMAGE, ListenersFunction, POST, VIDEO, VOID_FUNCTION, idIsTemporary, isDefiniteError, namedError } from '@moviemasher/runtime-shared'
 import { requestCallbackPromise } from '../utility/request.js'
 
 export class EncodeHandler {
   constructor() {
     const mashEvent = new EventMashAsset()
-    MovieMasher.eventDispatcher.dispatch(mashEvent)
+    MOVIEMASHER.eventDispatcher.dispatch(mashEvent)
     this.mashAsset = mashEvent.detail.mashAsset
     this.saveEnabledUpdated()
     // console.debug('EncodeHandler constructor', this.saveEnabled, this.encodeEnabled)
@@ -20,8 +20,8 @@ export class EncodeHandler {
     // console.debug('EncodeHandler dispatchEnabledIfChanged', encodeEnabled, this.encodeEnabled)
     if (encodeEnabled === this.encodeEnabled) return
 
-    const event = new EventChangedServerAction(ServerActionEncode)
-    MovieMasher.eventDispatcher.dispatch(event)
+    const event = new EventChangedServerAction(ENCODE)
+    MOVIEMASHER.eventDispatcher.dispatch(event)
   }
 
   private doServerAction(detail: EventDoServerActionDetail): void {
@@ -43,7 +43,7 @@ export class EncodeHandler {
     const progress = EncodeHandler.progress(id)
     // console.log('EncodeHandler doServerAction', id, type, options)
     const encodeEvent = new EventClientEncode(assetObject, type, options, progress)
-    MovieMasher.eventDispatcher.dispatch(encodeEvent)
+    MOVIEMASHER.eventDispatcher.dispatch(encodeEvent)
     const { promise: encodePromise } = encodeEvent.detail
     if (!encodePromise) return
 
@@ -54,15 +54,15 @@ export class EncodeHandler {
       const { data: encodingObject } = orError
       const { id: encodingId } = encodingObject
       mashAsset.encodings.push(encodingObject)
-      MovieMasher.eventDispatcher.dispatch(new EventChangeScalar('mash.encoding', encodingId))
-      MovieMasher.eventDispatcher.dispatch(new EventChangedClientAction(ClientActionView))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventChangeScalar('mash.encoding', encodingId))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(VIEW))
 
-      const saveEvent = new EventDoServerAction(ServerActionSave, ServerActionSave)
-      MovieMasher.eventDispatcher.dispatch(saveEvent)
+      const saveEvent = new EventDoServerAction(SAVE, SAVE)
+      MOVIEMASHER.eventDispatcher.dispatch(saveEvent)
       const { promise: savePromise } = saveEvent.detail
       if (!savePromise) return 
       
-      return savePromise.then(EmptyFunction)
+      return savePromise.then(VOID_FUNCTION)
     })
   }
 
@@ -93,8 +93,8 @@ export class EncodeHandler {
   }
 
   private saveEnabledUpdated() {
-    const saveEvent = new EventEnabledServerAction(ServerActionSave)
-    MovieMasher.eventDispatcher.dispatch(saveEvent)
+    const saveEvent = new EventEnabledServerAction(SAVE)
+    MOVIEMASHER.eventDispatcher.dispatch(saveEvent)
     this.saveEnabled = !!saveEvent.detail.enabled
     // console.debug('EncodeHandler saveEnabledUpdated', this.saveEnabled)
   }
@@ -106,7 +106,7 @@ export class EncodeHandler {
 
   static handleChangedServerAction(event: EventChangedServerAction): void {
     const { detail: serverAction } = event
-    if (serverAction !== ServerActionSave) return
+    if (serverAction !== SAVE) return
 
     // console.debug('EncodeHandler handleChangedServerAction')
     EncodeHandler.instance.saveEnabledUpdated()
@@ -114,7 +114,7 @@ export class EncodeHandler {
 
   static handleDoServerAction(event: EventDoServerAction): void {
     const { detail } = event
-    if (detail.serverAction !== ServerActionEncode) return
+    if (detail.serverAction !== ENCODE) return
 
     // console.debug('EncodeHandler handleChangedServerAction')
     EncodeHandler.instance.doServerAction(detail)
@@ -123,7 +123,7 @@ export class EncodeHandler {
   static handleEnabledServerAction (event: EventEnabledServerAction): void {
     const { detail } = event
     const { serverAction } = detail
-    if (serverAction !== ServerActionEncode) return
+    if (serverAction !== ENCODE) return
 
     event.stopImmediatePropagation()
     detail.enabled = EncodeHandler.instance.encodeEnabled
@@ -137,7 +137,7 @@ export class EncodeHandler {
 
     progress?.do(1)
     const jsonRequest = {
-      endpoint: 'encode/start', init: { method: 'POST' }
+      endpoint: 'encode/start', init: { method: POST }
     }
     const args: EncodeArgs = {
       encodingType, encodeOptions, mashAssetObject
@@ -161,7 +161,7 @@ export class EncodeHandler {
     let total = 2
     let current = 1
     const dispatch = () => {
-      MovieMasher.eventDispatcher.dispatch(new EventProgress(id, current / total))
+      MOVIEMASHER.eventDispatcher.dispatch(new EventProgress(id, current / total))
     }
     return {
       do: (steps: number) => { 
@@ -183,7 +183,7 @@ export class EncodeHandler {
 }
 
 // listen for client encode related events
-export const ClientAssetEncodeListeners = () => ({
+export const encodeClientListeners: ListenersFunction = () => ({
   [EventClientEncode.Type]: EncodeHandler.handleEncode,
   [EventEnabledServerAction.Type]: EncodeHandler.handleEnabledServerAction,
   [EventChangedServerAction.Type]: EncodeHandler.handleChangedServerAction,
