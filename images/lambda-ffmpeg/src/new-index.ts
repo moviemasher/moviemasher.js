@@ -1,11 +1,11 @@
-import type { JsonRecord, UnknownRecord, } from '@moviemasher/runtime-shared'
+import type { JsonRecord, UnknownRecord, } from '@moviemasher/shared-lib/types.js'
 
-import { ENV_KEY, ENV } from '@moviemasher/lib-server'
-import { COLON } from '@moviemasher/lib-shared'
-import { NUMBER, errorObjectCaught } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV } from '@moviemasher/server-lib'
+import { COLON } from '@moviemasher/shared-lib'
+import { NUMBER, errorObjectCaught } from '@moviemasher/shared-lib/runtime.js'
 import express from 'express'
 import { jobExtract } from './Job.js'
-import { DECODING, ENCODING } from '@moviemasher/lib-server/src/Utility/JobGuards.js'
+import { DECODING, ENCODING } from '@moviemasher/server-lib/src/Utility/JobGuards.js'
 
 const app = express()
 app.use(express.json())

@@ -99,31 +99,36 @@ export const CONFIGURATION: DocumentationConfiguration = {
       ]
     },
     {
-      title: 'Other', 
+      title: 'Client', 
       docFiles: [
-        { categoryId: 'Component', title: 'Web Components' },
-        { categoryId: 'ClientEvents', title: 'Client Events' },
-        { categoryId: 'ServerEvents', title: 'Server Events' },
+        { categoryId: 'Elements', title: 'Custom Elements' },
+        { categoryId: 'Components', title: 'React Components' },
+        { categoryId: 'ClientEvents', title: 'Events' },
       ]
     },
     {
-      title: 'Combined', 
+      title: 'Server', 
       docFiles: [
-        { directory: 'Types' },
-        { directory: 'Variables' },
-        { directory: 'Functions' },
-        
+        { categoryId: 'ServerEvents', title: 'Events' },
       ]
     },
     {
       title: '@moviemasher', 
       docFiles: [
         { libOrRuntime: 'lib', clientServerOrShared: 'client' },
+        { libOrRuntime: 'react', clientServerOrShared: 'client' },
+        { libOrRuntime: 'express', clientServerOrShared: 'server' },
         { libOrRuntime: 'lib', clientServerOrShared: 'server' },
         { libOrRuntime: 'lib', clientServerOrShared: 'shared' },
-        { libOrRuntime: 'runtime', clientServerOrShared: 'client' },
-        { libOrRuntime: 'runtime', clientServerOrShared: 'server' },
-        { libOrRuntime: 'runtime', clientServerOrShared: 'shared' },
+      ]
+    },
+    {
+      title: 'Combined', 
+      excludeFromNav: true,
+      docFiles: [
+        { directory: 'Types' },
+        { directory: 'Variables' },
+        { directory: 'Functions' },
       ]
     },
   ]

@@ -1,9 +1,9 @@
 ## End User
 
-The Movie Masher client application provides a powerful, simplified interface 
+The Movie Masher client application provides a powerful and simple interface 
 that facilitates video editing within a web browser. It allows you to construct 
 video files that are rendered remotely, even when your local device has 
-limited connectivity. 
+limited connectivity and capacity. 
 
 ## Key Concepts
 
@@ -37,9 +37,10 @@ content. So, the default clip is a colored rectangle.
 
 ## User Interface
 
-The Movie Masher user interface is divided into several panels that contain 
-different views, inputs, and specialized controls which help structure and 
-organize specific tasks. 
+Developers are free to customize both the appearance 
+and functionality of the editor, but the default user interface is divided into 
+several panels that contain different views, inputs, and specialized controls 
+which help structure and organize specific tasks:
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=svg/masher.svg) -->
 <svg width="640" height="360" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 360" class='diagram'>
@@ -62,12 +63,10 @@ organize specific tasks.
 </svg>
 <!-- MAGIC:END -->
 
-- *Player* - video preview, position control, playback control
-- *Timeline* - view of clips in tracks, zoom controls, scrub controls
-- *Browser* - source assets grouped by type, import controls
-- *Inspector* - timing controls, inputs that size, position, colorize, blend
-
-<!-- TODO... -->
+- *Player* - video preview, play button, time display and control
+- *Timeline* - view of clips in tracks, zoom controls, scrub control
+- *Browser* - assets grouped by type/source, import button
+- *Inspector* - inputs grouped by target, undo/redo and save button
 
 
 ## Drag and Drop
@@ -91,3 +90,4 @@ the start of the next available space that can contain the whole sequence.
 On a dense track, the start time is the end time of the track or if files are 
 dropped directly on a clip, the start time of that clip. 
 
+Blah blah <!-- MAGIC:START (ICON:id=speed) --><svg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em'><path fill='none' d='M0 0h24v24H0z'></path><path d='M20.38 8.57l-1.23 1.85a8 8 0 01-.22 7.58H5.07A8 8 0 0115.58 6.85l1.85-1.23A10 10 0 003.35 19a2 2 0 001.72 1h13.85a2 2 0 001.74-1 10 10 0 00-.27-10.44z'></path><path d='M10.59 15.41a2 2 0 002.83 0l5.66-8.49-8.49 5.66a2 2 0 000 2.83z'></path></svg><!-- MAGIC:END --> amazing!

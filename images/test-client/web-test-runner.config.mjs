@@ -7,7 +7,7 @@ export default {
     // {
     //   name: 'core',
     //   files: [
-    //     '../../../packages/lib/client/tests/*.test.mjs',
+    //     '../../../packages/@moviemasher/client-lib/tests/*.test.mjs',
     //   ],
     //   browsers: [    
     //     playwrightLauncher({ product: "firefox" }),   
@@ -16,7 +16,7 @@ export default {
     {
       name: 'client',
       files: [
-        '../../packages/lib/client/src/*.e2e.ts',
+        '../../packages/@moviemasher/client-lib/src/*.e2e.ts',
       ],
       browsers: [    
         playwrightLauncher({ product: "firefox", launchOptions: { firefoxUserPrefs: { 'layout.css.more_color_4.enabled': true } } }),    

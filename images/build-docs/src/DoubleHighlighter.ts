@@ -1,7 +1,7 @@
-import type { StringRecord, Strings } from "@moviemasher/runtime-shared"
-import type { Highlighter, Theme } from "shiki"
+import type { StringRecord, Strings } from '@moviemasher/shared-lib/types.js'
+import type { Highlighter, Theme } from 'shiki'
 
-import { assertTrue } from "@moviemasher/lib-shared"
+import { assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
 
 function* zip<T extends Iterable<any>[]>(
   ...args: T

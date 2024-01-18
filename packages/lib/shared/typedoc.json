@@ -1,5 +1,0 @@
-{
-  "entryPoints": ["dist/index.js"],
-  "name": "lib-shared",
-  "tsconfig": "tsconfig.json",
-}

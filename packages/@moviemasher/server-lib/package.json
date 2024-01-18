@@ -1,0 +1,48 @@
+{
+  "name": "@moviemasher/server-lib",
+  "version": "5.2.0",
+  "description": "Movie Masher Server Library",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "scripts": {
+    "clean": "rm -rf ./dist/*",
+    "script": "run-s",
+    "build-rollup": "rollup --config dev/rollup.config.mjs",
+    "build": "run-s clean build-rollup"
+  },
+  "dependencies": {
+    "@moviemasher/shared-lib": "5.2.0",
+    "child_process": "^1.0.2",
+    "events": "3.3.0",
+    "fluent-ffmpeg": "2.1.2",
+    "jsdom": "23.0.1",
+    "ttf2woff2": "5.0.0",
+    "util": "^0.12.5"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "2.1.21",
+    "@types/jsdom": "^21.1.6"
+  }
+}

@@ -1,9 +1,9 @@
-import type { AssetObjects, ClipObject, ColorInstanceObject, DecodeOptions, Decoding, ImageAssetObject, InstanceObject, MashAssetObject, OutputOptions, Point, ShapeAssetObject, Size, StringDataOrError, TextAssetObject, TextInstanceObject, TrackObject, VideoAssetObject, VideoOutputOptions } from '@moviemasher/runtime-shared'
+import type { AssetObjects, ClipObject, ColorInstanceObject, DecodeOptions, Decoding, ImageAssetObject, InstanceObject, MashAssetObject, OutputOptions, Point, ServerMediaRequest, ShapeAssetObject, Size, StringDataOrError, TextAssetObject, TextInstanceObject, TrackObject, VideoAssetObject, VideoOutputOptions } from '@moviemasher/shared-lib/types.js'
 
-import { ENV_KEY, ENV, commandPromise, directoryCreatePromise, ffmpegCommand, fileMovePromise, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend, fileNameFromOptions } from '@moviemasher/lib-server'
-import { assertDefined, assertPoint, assertPopulatedArray, assertPopulatedString, assertSize, isPoint, isPopulatedArray, isSize, sizeScale, stringSeconds } from '@moviemasher/lib-shared'
-import { EventServerDecode, EventServerEncode, MOVIEMASHER_SERVER, ServerMediaRequest } from '@moviemasher/runtime-server'
-import { CONTAINER, CUSTOM, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION, DURATION_UNKNOWN, ERROR, IMAGE, JSON, LONGEST, MASH, NONE, PROBE, RGB_BLACK, SIZE_OUTPUT, TXT, VIDEO, WIDTH, arrayUnique, errorThrow, idReset, isArray, isDefiniteError, isPopulatedString, isString, namedError, typeOutputOptions } from '@moviemasher/runtime-shared'
+import { ENV, ENV_KEY, commandPromise, directoryCreatePromise, ffmpegCommand, fileMovePromise, fileNameFromOptions, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend } from '@moviemasher/server-lib'
+import { EventServerDecode, EventServerEncode, assertAbsolutePath } from '@moviemasher/server-lib/runtime.js'
+import { MOVIEMASHER, assertDefined, assertPoint, assertPopulatedArray, assertPopulatedString, assertSize, isPoint, isPopulatedArray, isSize, sizeScale, stringSeconds } from '@moviemasher/shared-lib'
+import { CONTAINER, CUSTOM, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION, DURATION_UNKNOWN, ERROR, IMAGE, JSON, LONGEST, MASH, NONE, PROBE, RGB_BLACK, SIZE_OUTPUT, TXT, VIDEO, WIDTH, arrayUnique, errorThrow, idReset, isArray, isDefiniteError, isPopulatedString, isString, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import path from 'path'
 
 const colorRed = '#FF0000'
@@ -379,7 +379,7 @@ export const GenerateAssetObjects: AssetObjects = [
     type: IMAGE,
     label: "Lobster",
     request: { endpoint: "/app/dev/shared/font/lobster/lobster.ttf" },
-    // transcodings: [
+    // requestables: [
     //   { type: FONT, request: { endpoint: { pathname: "/app/dev/shared/font/lobster/lobster.woff2" } }}
     // ]
   } as TextAssetObject,
@@ -389,7 +389,7 @@ export const GenerateAssetObjects: AssetObjects = [
     type: IMAGE,
     label: "Valken",
     request: { endpoint: "/app/dev/shared/font/valken/valken.ttf" },
-    // transcodings: [
+    // requestables: [
     //   { type: FONT, request: { endpoint: { pathname: "/app/dev/shared/font/valken/valken.woff2" } }}
     // ]
   } as TextAssetObject,
@@ -430,7 +430,7 @@ export const GenerateAssetObjects: AssetObjects = [
   } as ShapeAssetObject,
   { 
     "label": "Butcherman",
-    "id": "com.moviemasher.font.butcherman",
+    "id": "com.google.fonts.butcherman",
     "type": "image",
     "source": "text",
     "request": { 
@@ -556,8 +556,8 @@ export const encodeId = async (id: string, outputOptions: OutputOptions, duratio
     if (filePathExists(previousPath)) await fileRemovePromise(previousPath)
     await fileMovePromise(outputPath, filenameAppend(outputPath, 'prev'))
   }
-  const event = new EventServerEncode(VIDEO, fatMashObject, 'shared', id, outputOptions)
-  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+  const event = new EventServerEncode(fatMashObject, id, outputOptions, VIDEO, 'shared')
+  MOVIEMASHER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   assertDefined(promise)
   const orError = await promise
@@ -638,10 +638,11 @@ export const combineIds = async (ids: GenerateTestIds, id:string, force = false)
   if (isDefiniteError(ffmepgOrError)) return ffmepgOrError
   const infoPath = path.join(destinationDirectory, `${PROBE}.${JSON}`)
   // const decodingId = idGenerate('decoding')
+  assertAbsolutePath(destination)
   const request: ServerMediaRequest = { endpoint: destination, path: destination }
   const decodeOptions: DecodeOptions = { types: [DURATION] }
   const event = new EventServerDecode(PROBE, VIDEO, request, 'shared', id, decodeOptions)
-  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+  MOVIEMASHER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
   assertDefined(promise)
 
@@ -652,7 +653,7 @@ export const combineIds = async (ids: GenerateTestIds, id:string, force = false)
 }
 
 export const encodeAndCombine = async (name: string, options?: GenerateOptions | GenerateTestIds, force = false) => {
-  const ids = (isArray(options) ? options : generateIds(options))//.slice(0, 2)
+  const ids = (isArray(options) ? options : generateIds(options))
   const orError = await encodeIds(ids, force)
   if (isDefiniteError(orError)) return orError
 

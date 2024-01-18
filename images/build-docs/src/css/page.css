@@ -77,7 +77,7 @@ header > div {
   margin: var(--gap-header) var(--gap-section);
   align-items: baseline;
 }
-header > div > label:last-child {
+header > div > div {
   display: block;
 }
 
@@ -90,7 +90,7 @@ header > div > * {
     display: grid;
     grid-auto-flow: column;
   } 
-  header > div > label {
+  header > div > div {
     text-align: right;
   }
 }

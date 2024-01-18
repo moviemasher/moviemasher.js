@@ -1,0 +1,19 @@
+{ 
+  "extends": "../../dev/tsconfig/base.json",
+  "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "rootDir": "../../",
+  },
+  "include": [
+    "../../images/test-shared/src/*.ts",
+    "../../images/test-shared/src/**/*.ts"
+
+    
+    
+  
+  ],
+  "exclude": [
+    "src/**/*.e2e.ts"
+  ]
+}

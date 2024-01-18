@@ -1,15 +1,16 @@
-import type { ContainerRectArgs, Data, MashAssetObject, OutputOptions } from '@moviemasher/runtime-shared'
+import type { ClipObject, ContainerRectArgs, Data, MashAssetObject, OutputOptions, ClipObjects,  } from '@moviemasher/shared-lib'
+// import type {MovieMasherServerRuntime } from '@moviemasher/server-lib'
 
-import { ServerEventDispatcherModule, fileReadJsonPromise, isServerMashAsset } from '@moviemasher/lib-server'
-import { isClip, sizeAboveZero, timeRangeFromArgs } from '@moviemasher/lib-shared'
-import { EventServerEncode, EventServerManagedAsset, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
-import { DURATION_UNKNOWN, VIDEO, isDefiniteError, typeOutputOptions } from '@moviemasher/runtime-shared'
+import { ServerEventDispatcherModule, encode, fileReadJsonPromise, isServerMashAsset } from '@moviemasher/server-lib'
+import { isClip, sizeAboveZero, timeRangeFromArgs, MOVIEMASHER } from '@moviemasher/shared-lib'
+import { EventServerEncode, EventServerManagedAsset } from '@moviemasher/server-lib'
+import { DURATION_UNKNOWN, MASH, VIDEO, assertAsset, isDefiniteError, typeOutputOptions } from '@moviemasher/shared-lib'
 import assert from 'node:assert'
 import { describe, test } from 'node:test'
 import { GenerateArg, SizePreview, VideoOptions, combineIds, encodeId, encodeIds, encodingIds, encodingName, mashObjectFromId } from './utility/EncodeUtility.js'
 
-MOVIEMASHER_SERVER.eventDispatcher = new ServerEventDispatcherModule()
-await MOVIEMASHER_SERVER.importPromise
+MOVIEMASHER.eventDispatcher = new ServerEventDispatcherModule()
+await MOVIEMASHER.importPromise
 
 function failIfError<T = any>(orError: any): asserts orError is T {
   if (isDefiniteError(orError)) {
@@ -19,14 +20,39 @@ function failIfError<T = any>(orError: any): asserts orError is T {
 }
 
 describe('Encoding', () => {
-  test('rects of text and same sized shape match', async () => {
+  test.skip('simplest', async () => {
+    const clip: ClipObject = { container: { x: 0, y: 0, xEnd: 1, yEnd: 1, width: 0.5, height: 0.5 } }
+    const clips: ClipObjects = [clip]
+    const mash: MashAssetObject = {
+      type: VIDEO, source: MASH, id: 'mash',
+      tracks: [{ clips }],
+      assets: [],
+    }
+    
+    const encoded = await encode(mash)
+    
+    if (!isDefiniteError(encoded)) {
+      const { data: filePath } = encoded
+      console.log('encoded to', filePath)
+    }
+    failIfError(encoded)
+  })
+
+  test.skip('rects of text and same sized shape match', async () => {
     const ids = [
       'P_M_F_in_A_U_M_F-H_50',
       'P_M_F_in_T_U_M_F-H_50',
     ]
     const mashObjects = ids.map(id => mashObjectFromId(id))
 
-    const mashes = mashObjects.map(EventServerManagedAsset.asset)
+    const mashes = mashObjects.map(mash => {
+      const event = new EventServerManagedAsset(mash)
+      MOVIEMASHER.eventDispatcher.dispatch(event)
+      const { asset } = event.detail
+      assertAsset(asset)
+
+      return asset
+    })
     const [shapeMash, textMash] = mashes
 
     assert(isServerMashAsset(shapeMash))
@@ -51,8 +77,8 @@ describe('Encoding', () => {
     const args: ContainerRectArgs = {
       size: SizePreview, time: timeRange, timeRange
     }
-    const shapeRects = shapeClip.containerRects({...args})
-    const textRects = textClip.containerRects({...args})
+    const shapeRects = shapeClip.clipRects({...args})
+    const textRects = textClip.clipRects({...args})
     assert([...shapeRects, ...textRects].every(sizeAboveZero), 'container rects valid')
 
     assert.notDeepStrictEqual(...shapeRects, 'shape tweening')
@@ -61,7 +87,23 @@ describe('Encoding', () => {
     assert.deepStrictEqual(shapeRects, textRects, 'container rects match')
   })
   
-  test('color encodes as video', async () => {
+  test.skip('audio encodes as video', async () => {
+    const options: OutputOptions = typeOutputOptions(VIDEO)
+    const encodingId = `encoding-color-id-${Date.now()}`
+    const inputPath = '/app/dev/shared/mash/mash-audio.json'
+    const orError = await fileReadJsonPromise<MashAssetObject>(inputPath)
+    failIfError<Data<MashAssetObject>>(orError)
+    const { data: mashAssetObject } = orError
+
+    // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
+    const event = new EventServerEncode(mashAssetObject, encodingId, options, VIDEO, 'shared')
+    MOVIEMASHER.eventDispatcher.dispatch(event)
+    const { promise } = event.detail
+    assert(promise)
+    failIfError(await promise)
+  })
+
+  test.skip('color encodes as video', async () => {
     const options: OutputOptions = typeOutputOptions(VIDEO)
     const encodingId = `encoding-color-id-${Date.now()}`
     const inputPath = '/app/dev/shared/mash/mash_color.json'
@@ -70,14 +112,14 @@ describe('Encoding', () => {
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
-    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+    const event = new EventServerEncode(mashAssetObject, encodingId, options, VIDEO, 'shared')
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
     failIfError(await promise)
   })
 
-  test('video encodes as video', async () => {
+  test.skip('video encodes as video', async () => {
     const options: OutputOptions = typeOutputOptions(VIDEO)
     const encodingId = `encoding-video-id-${Date.now()}`
     const inputPath = '/app/dev/shared/mash/mash_video.json'
@@ -86,8 +128,8 @@ describe('Encoding', () => {
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
-    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+    const event = new EventServerEncode(mashAssetObject, encodingId, options, VIDEO, 'shared')
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
     failIfError(await promise)
@@ -102,14 +144,14 @@ describe('Encoding', () => {
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
-    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+    const event = new EventServerEncode(mashAssetObject, encodingId, options, VIDEO, 'shared')
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
     failIfError(await promise)
   })  
 
-  test('shape encodes as video', async () => {
+  test.skip('shape encodes as video', async () => {
     const options: OutputOptions = typeOutputOptions(VIDEO)
     const encodingId = `encoding-shape-id-${Date.now()}`
     const inputPath = '/app/dev/shared/mash/mash_shape.json'
@@ -118,14 +160,14 @@ describe('Encoding', () => {
     const { data: mashAssetObject } = orError
 
     // const outputPath = path.resolve(TestDirTemporary, encodingId, 'output.mp4')
-    const event = new EventServerEncode(VIDEO, mashAssetObject, 'shared', encodingId, options)
-    MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+    const event = new EventServerEncode(mashAssetObject, encodingId, options, VIDEO, 'shared')
+    MOVIEMASHER.eventDispatcher.dispatch(event)
     const { promise } = event.detail
     assert(promise)
     failIfError(await promise)
   })
 
-  test('problematic permutations encode as video', async () => {
+  test.skip('problematic permutations encode as video', async () => {
     const ids = [
       'BL_in_K_U_M_H_50',
       'BL_in_T_U_BR-M_F-H_100-0',

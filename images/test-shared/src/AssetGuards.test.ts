@@ -1,4 +1,4 @@
-import { IMAGE, RAW, isAssetObject } from '@moviemasher/runtime-shared'
+import { IMAGE, RAW, isAssetObject } from '@moviemasher/shared-lib/runtime.js'
 import assert from 'assert'
 import { describe, test } from 'node:test'
 

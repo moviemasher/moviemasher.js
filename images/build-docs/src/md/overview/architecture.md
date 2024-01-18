@@ -3,12 +3,12 @@ in GitHub as [moviemasher/moviemasher.js](https://github.com/moviemasher/moviema
 This repository contains and builds several packages which are made available
 in NPM:
 
-- [@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared) - core
+- [@moviemasher/shared-lib](https://www.npmjs.com/package/@moviemasher/shared-lib) - core
   NPM package that uses the [SVG API](https://developer.mozilla.org/en-US/docs/Web/API/Svg_API)
   and [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
   to composite and mix audiovisual content in a timed and controlled way.
 
-- [@moviemasher/lib-server](https://www.npmjs.com/package/@moviemasher/lib-server) - higher
+- [@moviemasher/server-lib](https://www.npmjs.com/package/@moviemasher/server-lib) - higher
   level NPM package that uses
   [ExpressJS](https://expressjs.com),
   [SQLite](https://www.sqlite.org/index.html),
@@ -17,15 +17,11 @@ in NPM:
   [WebRTC](https://github.com/node-webrtc/node-webrtc),
   and the core package to provide server APIs that manage files, data, encoding, and streaming.
 
-- [@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client) - higher
+- [@moviemasher/client-lib](https://www.npmjs.com/package/@moviemasher/client-lib) - higher
   level NPM package that uses
   [ReactJS](https://reactjs.org)
   and both the core and icon packages to build a client user interface that facilitates playback and
   editing of content, as well as interactions with remote servers.
-
-- [@moviemasher/theme-default](https://www.npmjs.com/package/@moviemasher/theme-default) - add-on NPM package that uses
-  [React Icons](https://react-icons.github.io/react-icons/)
-  to bundle a variety of SVG icons used in the UI.
 
 All code is written in [TypeScript](https://www.typescriptlang.org) as strongly-typed
 [ECMAScript](https://nodejs.org/api/esm.html) modules utilizing named exports. External

@@ -1,0 +1,46 @@
+{
+  "name": "@moviemasher/shared-lib",
+  "version": "5.2.0",
+  "description": "Movie Masher Shared Library",
+  "files": [
+    "/dist/"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./asset/*": "./dist/asset/*",
+    "./base/*": "./dist/base/*",
+    "./instance/*": "./dist/instance/*",
+    "./utility/*": "./dist/utility/*",
+    "./*": "./dist/*"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "keywords": [
+    "video editor",
+    "audio editor",
+    "image editor",
+    "svg",
+    "composite"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./dist/*",
+    "script": "run-s",
+    "build-rollup": "rollup --config dev/rollup.config.mjs",  
+    "build": "run-s build-rollup"
+  }
+}

@@ -7,4 +7,4 @@ export * from './Local.js'
 
 export * from './handler.js'
 
-export * from '@moviemasher/lib-server/src/Utility/JobGuards.js'
+export * from '@moviemasher/server-lib/src/Utility/JobGuards.js'

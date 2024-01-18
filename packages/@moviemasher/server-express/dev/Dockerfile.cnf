@@ -1,0 +1,25 @@
+
+FROM moviemasher/node-ffmpeg:5.2.0
+ARG DIR_ROOT=/app
+
+COPY package.json ${DIR_ROOT}/package.json
+
+COPY packages/@moviemasher/client-lib/package.json ${DIR_ROOT}/packages/@moviemasher/client-lib/package.json
+COPY packages/@moviemasher/client-lib/dist ${DIR_ROOT}/packages/@moviemasher/client-lib/dist
+
+COPY packages/@moviemasher/shared-lib/package.json ${DIR_ROOT}/packages/@moviemasher/shared-lib/package.json
+COPY packages/@moviemasher/shared-lib/dist ${DIR_ROOT}/packages/@moviemasher/shared-lib/dist
+
+COPY packages/@moviemasher/client-react/package.json ${DIR_ROOT}/packages/@moviemasher/client-react/package.json
+COPY packages/@moviemasher/client-react/dist ${DIR_ROOT}/packages/@moviemasher/client-react/dist
+
+COPY packages/@moviemasher/server-express/package.json ${DIR_ROOT}/packages/@moviemasher/server-express/package.json
+COPY packages/@moviemasher/server-express/dist ${DIR_ROOT}/packages/@moviemasher/server-express/dist
+
+COPY packages/@moviemasher/server-lib/package.json ${DIR_ROOT}/packages/@moviemasher/server-lib/package.json
+COPY packages/@moviemasher/server-lib/dist ${DIR_ROOT}/packages/@moviemasher/server-lib/dist
+
+COPY docs ${DIR_ROOT}/docs
+
+RUN npm install 
+LABEL org.opencontainers.image.authors="support@moviemasher.com"

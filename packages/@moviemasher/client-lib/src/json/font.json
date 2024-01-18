@@ -1,0 +1,11 @@
+
+  {
+    "label": "Croissant One",
+    "id": "com.google.fonts.croissant-one",
+    "type": "image",
+    "source": "text",
+    "request": { 
+      "endpoint": "https://fonts.googleapis.com/css2?family=Croissant+One" 
+    }
+  }
+    

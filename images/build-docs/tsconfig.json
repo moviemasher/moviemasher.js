@@ -7,10 +7,13 @@
     "./src/**/*.e2e.ts", 
     "./src/**/*.test.ts",
     "./src/html/*.html",
+    "./src/ts/*.ts",
   ],
   "include": [
     "./src/*.ts",
     "./src/**/*.ts"
 
+
+    
   ]
 }

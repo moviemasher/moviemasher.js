@@ -17,10 +17,10 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build"  
+    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build"
   },
   "peerDependencies": {
-    "@moviemasher/lib-server": "5.2.0"
+    "@moviemasher/server-lib": "5.2.0"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",

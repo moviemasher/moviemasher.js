@@ -10,15 +10,13 @@ FROM base as stage
 ARG DIR_ROOT
 COPY images/build-docs/package.json ${DIR_ROOT}/images/build-docs/package.json
 
-COPY examples/express/package.json ${DIR_ROOT}/examples/express/package.json
+COPY packages/@moviemasher/server-express/package.json ${DIR_ROOT}/packages/@moviemasher/server-express/package.json
 
-COPY packages/lib/shared/package.json ${DIR_ROOT}/packages/lib/shared/package.json
-COPY packages/lib/client/package.json ${DIR_ROOT}/packages/lib/client/package.json
-COPY packages/lib/server/package.json ${DIR_ROOT}/packages/lib/server/package.json
-
-COPY packages/runtime/shared/package.json ${DIR_ROOT}/packages/runtime/shared/package.json
-COPY packages/runtime/client/package.json ${DIR_ROOT}/packages/runtime/client/package.json
-COPY packages/runtime/server/package.json ${DIR_ROOT}/packages/runtime/server/package.json
+COPY packages/@moviemasher/shared-lib/package.json ${DIR_ROOT}/packages/@moviemasher/shared-lib/package.json
+COPY packages/@moviemasher/client-lib/package.json ${DIR_ROOT}/packages/@moviemasher/client-lib/package.json
+COPY packages/@moviemasher/client-react/package.json ${DIR_ROOT}/packages/@moviemasher/client-react/package.json
+COPY packages/@moviemasher/server-lib/package.json ${DIR_ROOT}/packages/@moviemasher/server-lib/package.json
+COPY packages/@moviemasher/server-express/package.json ${DIR_ROOT}/packages/@moviemasher/server-express/package.json
 
 RUN npm install 
 

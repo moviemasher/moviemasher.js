@@ -20,7 +20,10 @@ services:
       - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
       - ../../../images/test-server:${MOVIEMASHER_DIR_ROOT}/images/test-server
       - ../../../dev/shared:${MOVIEMASHER_DIR_ROOT}/dev/shared
+      - ../../../dev/tsconfig:${MOVIEMASHER_DIR_ROOT}/dev/tsconfig
       - ../../../packages:${MOVIEMASHER_DIR_ROOT}/packages
       - ../../../temporary/test-server:${MOVIEMASHER_DIR_ROOT}/temporary/test-server
 
     
+
+

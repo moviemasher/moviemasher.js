@@ -18,8 +18,6 @@ services:
       - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
       - ../../../images/test-client:${MOVIEMASHER_DIR_ROOT}/images/test-client
       - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
-      - ../../../packages/runtime/shared:${MOVIEMASHER_DIR_ROOT}/packages/runtime/shared
-      - ../../../packages/runtime/client:${MOVIEMASHER_DIR_ROOT}/packages/runtime/client
-      - ../../../packages/lib/shared:${MOVIEMASHER_DIR_ROOT}/packages/lib/shared
-      - ../../../packages/lib/client:${MOVIEMASHER_DIR_ROOT}/packages/lib/client
+      - ../../../packages/@moviemasher/shared-lib:${MOVIEMASHER_DIR_ROOT}/packages/@moviemasher/shared-lib
+      - ../../../packages/@moviemasher/client-lib:${MOVIEMASHER_DIR_ROOT}/packages/@moviemasher/client-lib
       

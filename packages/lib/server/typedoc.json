@@ -1,4 +1,0 @@
-{
-  "entryPoints": ["dist/index.js"],
-  "name": "lib-server"
-}

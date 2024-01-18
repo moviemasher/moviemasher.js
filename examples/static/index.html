@@ -7,12 +7,11 @@
     <script type='importmap'>
       {
         "imports": {
-          "@moviemasher/lib-shared/": "./@moviemasher/lib-shared/dist/",
-          "@moviemasher/lib-client/": "./@moviemasher/lib-client/dist/",
-          "@moviemasher/runtime-shared": "./@moviemasher/runtime-shared/dist/index.js",
-          "@moviemasher/runtime-client": "./@moviemasher/runtime-client/dist/index.js",
+          "@moviemasher/shared-lib/": "./@moviemasher/shared-lib/dist/",
+          "@moviemasher/client-lib/": "./@moviemasher/client-lib/dist/",
           "@moviemasher/": "./@moviemasher/",
           "lit-html": "./lit-html/lit-html.js",
+          "lit-html/": "./lit-html/",
           "@lit-labs/": "./@lit-labs/",
           "@lit/reactive-element": "./@lit/reactive-element/reactive-element.js",
           "@lit/": "./@lit/",
@@ -22,7 +21,7 @@
       }
     </script>
     <script type="module">
-      import '@moviemasher/lib-client/movie-masher.js';
+      import '@moviemasher/client-lib/movie-masher.js';
     </script>
     <style>
       /* fit root DIV to viewport */

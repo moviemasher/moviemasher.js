@@ -12,7 +12,7 @@ The [Default Theme](https://www.npmjs.com/package/@moviemasher/theme-default) pa
 
 ## Icons
 
-The [[MasherDefaultProps]] function in the [React Client](https://www.npmjs.com/package/@moviemasher/lib-client) package supports an `icons` property in its argument object which defaults to the `Icons` object from the default theme. This is passed to similar `*DefaultProps` functions and stored in the [[MasherContext]] for use by more dynamic components. Properties in the object are optional, so uneeded if the specific components that use them aren't ultimately being included in the interface. 
+The [[MasherDefaultProps]] function in the [React Client](https://www.npmjs.com/package/@moviemasher/client-lib) package supports an `icons` property in its argument object which defaults to the `Icons` object from the default theme. This is passed to similar `*DefaultProps` functions and stored in the [[MasherContext]] for use by more dynamic components. Properties in the object are optional, so uneeded if the specific components that use them aren't ultimately being included in the interface. 
 
 Here's an example of overriding a single icon with a PNG image:
 
@@ -22,7 +22,7 @@ Here's an example of overriding a single icon with a PNG image:
 ```tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/lib-client"
+import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-lib"
 import { Icons } from "@moviemasher/theme-default"
 
 const AppIcon = () => <img src='app-icon.png'> 

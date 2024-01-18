@@ -1,0 +1,34 @@
+{
+  "name": "@moviemasher/client-lib",
+  "description": "Movie Masher Client Library",
+  "license": "MIT",
+  "version": "5.2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
+  "files": [
+    "./dist/"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf ./dist/*",
+    "script": "run-s",
+    "build-rollup": "rollup --config dev/rollup.config.mjs",
+    "build": "run-s clean build-rollup"
+  },
+  "peerDependencies": {
+    "@moviemasher/shared-lib": "5.2.0"
+  },
+  "dependencies": {
+    "lit-html": "2.8.0",
+    "lit-element": "3.3.3",
+    "tslib": "2.6.2",
+    "@lit-labs/observers": "2.0.0",
+    "@lit/reactive-element": "1.6.3",
+    "lit": "2.8.0"
+  }
+}

@@ -94,11 +94,10 @@ export const rollupConfiguration = (args) => {
     globals: {
       'react': 'React',
       'react-dom/client': 'ReactDOM',
-      '@moviemasher/lib-client': 'MovieMasherClient',
-      '@moviemasher/lib-client': 'MovieMasherClientCore',
+      '@moviemasher/client-lib': 'MovieMasherClient',
+      '@moviemasher/client-lib': 'MovieMasherClientCore',
       '@moviemasher/protocol-supabase': 'MovieMasherProtocolSupabase',
-      '@moviemasher/theme-default': 'MovieMasherTheme',
-      '@moviemasher/lib-shared': 'MovieMasher',
+      '@moviemasher/shared-lib': 'MovieMasher',
       '@supabase/supabase-js': 'supabase',
     },
   }

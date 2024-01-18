@@ -21,10 +21,8 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
     <title>Movie Masher Example</title>
     <script type='importmap'>{
       "imports": {
-        "@moviemasher/lib-client/": "https://unpkg.com/@moviemasher/lib-client@5.2.0/dist/", 
-        "@moviemasher/lib-shared/": "https://unpkg.com/@moviemasher/lib-shared@5.2.0/dist/",
-        "@moviemasher/runtime-client": "https://unpkg.com/@moviemasher/runtime-client@5.2.0/dist/index.js",
-        "@moviemasher/runtime-shared": "https://unpkg.com/@moviemasher/runtime-shared@5.2.0/dist/index.js",
+        "@moviemasher/client-lib/": "https://unpkg.com/@moviemasher/client-lib@5.2.0/dist/", 
+        "@moviemasher/shared-lib/": "https://unpkg.com/@moviemasher/shared-lib@5.2.0/dist/",
         "@lit-labs/observers/": "https://unpkg.com/@lit-labs/observers@2.0.0/",
         "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@1.6.3/reactive-element.js",
         "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@1.6.3/",
@@ -34,7 +32,7 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
       }
     }</script>
     <script type='module'>
-      import '@moviemasher/lib-client/movie-masher.js';
+      import '@moviemasher/client-lib/movie-masher.js';
     </script>
     <style>
       body {

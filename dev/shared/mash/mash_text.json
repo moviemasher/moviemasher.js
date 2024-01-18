@@ -8,7 +8,7 @@
 	"assets": [   
 		{ 
 			"label": "Butcherman",
-			"id": "com.moviemasher.font.butcherman",
+			"id": "com.google.fonts.butcherman",
 			"type": "image",
 			"source": "text",
 			"request": { 
@@ -22,7 +22,7 @@
 		},
 		{
 			"label": "Croissant One",
-			"id": "com.moviemasher.font.croissant-one",
+			"id": "com.google.fonts.croissant-one",
 			"type": "image",
 			"source": "text",
 			"request": { 
@@ -33,7 +33,7 @@
 	"tracks": [
 		{
 			"clips": [{
-				"containerId": "com.moviemasher.font.croissant-one",
+				"containerId": "com.google.fonts.croissant-one",
 				"container": {
 					"string": "hello world!"
 				},

@@ -1,11 +1,10 @@
-import type { AssetType, Assets, Data, Decoding, DecodingType, DefiniteError, EndpointRequest, EndpointRequests, Identified, ImportType, JsonRecord, MashAssetObject, OutputOptions, PotentialError, StringDataOrError, TranscodingType } from '@moviemasher/runtime-shared'
+import type { AssetType, Assets, Data, Decoding, DecodingType, DefiniteError, EndpointRequest, EndpointRequests, Identified, DropType, JsonRecord, MashAssetObject, OutputOptions, PotentialError, StringDataOrError, TranscodingType, JsonValue } from '@moviemasher/shared-lib'
 
-import { ENV_KEY, ENV } from '@moviemasher/lib-server'
-import { assertFilePathExists } from '@moviemasher/lib-server/src/Utility/File.js'
-import { assertDefined, assertObject, isTranscodingType } from '@moviemasher/lib-shared'
-import { EventServerAssetPromise, MOVIEMASHER_SERVER } from '@moviemasher/runtime-server'
-import { ERROR, namedError, errorPromise, errorThrow, isArray, isDecodingType, isDefiniteError, isTyped, isIdentified, isObject } from '@moviemasher/runtime-shared'
-import { DECODING, ENCODING, TRANSCODING } from '@moviemasher/lib-server'
+import { ENV_KEY, ENV, EventServerMediaPromise } from '@moviemasher/server-lib'
+import { assertFilePathExists } from '@moviemasher/server-lib/src/Utility/File.js'
+import { MOVIEMASHER, assertDefined, assertObject, isTranscodingType } from '@moviemasher/shared-lib'
+import { ERROR, namedError, errorPromise, errorThrow, isArray, isDecodingType, isDefiniteError, isTyped, isIdentified, isObject } from '@moviemasher/shared-lib'
+import { DECODING, ENCODING, TRANSCODING } from '@moviemasher/server-lib'
 
 type DecodingJobType = 'decoding'
 type EncodingJobType = 'encoding'
@@ -14,7 +13,7 @@ type TranscodingJobType = 'transcoding'
 type JobType = DecodingJobType | EncodingJobType | TranscodingJobType
 
 interface Input {
-  loadType: ImportType
+  loadType: DropType
   request?: EndpointRequest
 }
 
@@ -85,7 +84,7 @@ interface FontTranscoderOptions extends TranscoderOptions {}
 
 
 interface TranscodeInput extends Required<Input> {
-  type: ImportType
+  type: DropType
 }
 
 interface TranscodeRequest extends IdentifiedRequest {
@@ -160,7 +159,7 @@ export const jobExtract = (object: JsonRecord): JobTuple => {
   const jobKeypath = ENV.get(ENV_KEY.ApiKeypathJob)
         
   const { [typeKeypath]: jobType, [jobKeypath]: jobOrJobs } = object
-  const job = isArray(jobOrJobs) ? jobOrJobs[0] : jobOrJobs
+  const job = isArray<JsonValue>(jobOrJobs) ? jobOrJobs[0] : jobOrJobs
   
   assertObject(job, jobKeypath)
   assertJobType(jobType, typeKeypath)
@@ -178,10 +177,10 @@ const inputPromise = (input: Input): Promise<StringDataOrError> => {
   const { request, loadType } = input
   assertDefined(request)
 
-  const event = new EventServerAssetPromise(request, loadType)
-  MOVIEMASHER_SERVER.eventDispatcher.dispatch(event)
+  const event = new EventServerMediaPromise(request, loadType)
+  MOVIEMASHER.eventDispatcher.dispatch(event)
   const { promise } = event.detail
-  if (!promise) return errorPromise(ERROR.Unimplemented, EventServerAssetPromise.Type)
+  if (!promise) return errorPromise(ERROR.Unimplemented, EventServerMediaPromise.Type)
 
 
   return promise

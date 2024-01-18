@@ -4,12 +4,11 @@
   "scripts": {
     "test-component": "web-test-runner",
     "start": "web-dev-server --node-resolve --open --watch",
-    "test-core-client": "node --loader tsx --test ../../packages/lib/shared/src/Client/**/*.test.ts ../../packages/lib/shared/src/Client/*.test.ts",
-    "test-runtime-client": "node --loader tsx --test ../../packages/runtime/client/src/**/**/*.test.ts ../../packages/runtime/client/src/**/*.test.ts",
+    "test-core-client": "node --loader tsx --test ../../packages/@moviemasher/shared-lib/src/Client/**/*.test.ts ../../packages/@moviemasher/shared-lib/src/Client/*.test.ts",
     "test": "run-s test-component"
   },
   "dependencies": {
-    "lit": "^2.8.0",
+    "lit": "2.8.0",
     "@lit-labs/observers": "2.0.0"
   },
   "devDependencies": {
@@ -22,7 +21,7 @@
     "eslint-plugin-mocha": "^10.1.0",
     "web-test-runner-screenshot": "^1.2.0",
     "@custom-elements-manifest/analyzer": "0.8.4",
-    "tslib": "^2.3.1",
+    "tslib": "2.6.2",
     "typescript": "5.1.3",
     "@rollup/plugin-terser": "0.4.4",
     "npm-run-all": "^4.1.5",
@@ -37,7 +36,7 @@
     "rollup-plugin-copy": "3.5.0"
   },
   "peerDependencies": {
-    "@moviemasher/lib-client": "5.2.0"
+    "@moviemasher/client-lib": "5.2.0"
   },
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"

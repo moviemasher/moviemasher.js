@@ -1,6 +1,6 @@
-import type { JsonRecord } from '@moviemasher/runtime-shared'
+import type { JsonRecord } from '@moviemasher/shared-lib/types.js'
 
-import { jsonParse } from '@moviemasher/runtime-shared'
+import { jsonParse } from '@moviemasher/shared-lib/runtime.js'
 import { jobExtract, jobPromise } from './Job.js'
 
 interface MediaEvent {

@@ -4,8 +4,7 @@
   "scripts": {
     "test-component": "web-test-runner",
     "start": "web-dev-server --node-resolve --open --watch",
-    "test-core-client": "node --loader tsx --test ../../packages/lib/shared/src/Client/**/*.test.ts ../../packages/lib/shared/src/Client/*.test.ts",
-    "test-runtime-client": "node --loader tsx --test ../../packages/runtime/client/src/**/**/*.test.ts ../../packages/runtime/client/src/**/*.test.ts",
+    "test-core-client": "node --loader tsx --test ../../packages/@moviemasher/shared-lib/src/Client/**/*.test.ts ../../packages/@moviemasher/shared-lib/src/Client/*.test.ts",
     "test": "run-s test-component"
   },
   "dependencies": {
@@ -23,6 +22,6 @@
     "web-test-runner-screenshot": "^1.2.0"
   },
   "peerDependencies": {
-    "@moviemasher/lib-client": "5.2.0"
+    "@moviemasher/client-lib": "5.2.0"
   }
 }

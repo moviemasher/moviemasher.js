@@ -1,6 +1,6 @@
-import { FLIP, HEIGHT, type Lock, type Rect, type RectTuple, type Rects, type SideDirectionRecord, type Size } from '@moviemasher/runtime-shared'
+import { FLIP, HEIGHT, type Lock, type Rect, type RectTuple, type Rects, type SideDirectionRecord, type Size } from '@moviemasher/shared-lib/runtime.js'
 
-import { tweenPad, tweenRectsContainer, tweenScaleSizeToRect } from '@moviemasher/lib-shared'
+import { tweenPad, containerRects, tweenScaleSizeToRect } from '@moviemasher/shared-lib'
 import assert from 'assert'
 import { describe, test } from 'node:test'
 
@@ -52,7 +52,7 @@ describe('Tween', () => {
     })
   })
 
-  describe('tweenRectsContainer', () => {
+  describe('containerRects', () => {
     type TestCase = [string, RectTuple, Size, Lock, Size, SideDirectionRecord, string, string, Rects]
     const rect: Rect = { x: 0.5, y: 0.5, width: 1, height: 1 }
     const rects: RectTuple = [rect, rect]
@@ -75,9 +75,9 @@ describe('Tween', () => {
     ]
 
     testCases.forEach(array => {
-      const [label, testRects, intrinsicRect, lock, previewSize, directionRecord, pointAspect, sizeAspect, result] = array
+      const [label, testRects, intrinsicRect, lock, outputSize, directionRecord, pointAspect, sizeAspect, result] = array
       test(label, () => {
-        const tweened = tweenRectsContainer(testRects, intrinsicRect, lock, previewSize, directionRecord, pointAspect, sizeAspect)
+        const tweened = containerRects(testRects, intrinsicRect, lock, outputSize, directionRecord, pointAspect, sizeAspect)
         assert.deepStrictEqual(tweened, result)
       })
     })

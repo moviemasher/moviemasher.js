@@ -5,26 +5,20 @@
   "scripts": {
     "build-docs-contained-full": "run-s build-markdown build-typedoc build-documentation",
     "build-docs-contained": "run-s build-documentation",
-    
+
     "build-markdown": "run-s build-markdown-md build-markdown-main build-markdown-packages",
     "build-markdown-main": "markdown --path './README.md'",
     "build-markdown-md": "markdown --path './images/build-docs/src/md/**/*.md'",
     "build-markdown-packages": "markdown --path './packages/**/README.md' --ignore 'node_modules'",
     "build": "rollup --config dev/rollup.config.mjs",
-
     "build-typedoc": "run-s build-typedoc-md build-typedoc-json",
-    "build-typedoc-md": "typedoc --options ./typedoc.md.cjs",
-    "build-typedoc-json": "typedoc --options ./typedoc.json.cjs",
-
+    "build-typedoc-md": "typedoc --options ./md.typedoc.cjs",
+    "build-typedoc-json": "typedoc --options ./json.typedoc.cjs",
     "build-documentation": "node ./images/build-docs/dist/index.mjs",
-
     "start": "web-dev-server --node-resolve --open --watch",
-    
     "markdown-version": "markdown --version",
     "config-cat": "cat /app/markdown.config.js"
-    
   },
-
   "devDependencies": {
     "typedoc": "0.24.8",
     "typedoc-plugin-merge-modules": "5.1.0",
@@ -33,7 +27,7 @@
     "typedoc-plugin-coverage": "2.2.0",
     "markdown-magic": "2.6.1",
     "@types/markdown-magic": "1.0.3",
-    "marked": "9.1.5", 
+    "marked": "9.1.5",
     "shiki": "0.14.5"
   },
   "bugs": {

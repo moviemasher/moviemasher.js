@@ -7,15 +7,14 @@
     "email": "support@moviemasher.com"
   },
   "license": "MIT",
-  "scripts": {  
-    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build"  
-
+  "scripts": {
+    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build"
   },
   "peerDependencies": {
-    "@moviemasher/lib-shared": "5.2.0",
-    "@moviemasher/lib-server": "5.2.0"
+    "@moviemasher/shared-lib": "5.2.0",
+    "@moviemasher/server-lib": "5.2.0"
   },
   "devDependencies": {
-    "@types/node": "20.5.1"
+    "@types/node": "20.9.0"
   }
 }

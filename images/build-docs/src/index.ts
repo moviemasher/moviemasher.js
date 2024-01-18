@@ -1,5 +1,5 @@
 
-import { isDefiniteError } from '@moviemasher/runtime-shared'
+import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { CONFIGURATION  } from './Configuration.js'
 
 import { DocumentationBuilder } from './DocumentationBuilder.js'

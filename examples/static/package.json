@@ -18,8 +18,7 @@
     "script": "run-s"
   },
   "peerDependencies": {
-    "@moviemasher/lib-shared": "5.2.0",
-    "@moviemasher/runtime-client": "5.2.0"
+    "@moviemasher/client-lib": "5.2.0"
   },
   "dependencies": {
     "lit-html": "2.8.0",

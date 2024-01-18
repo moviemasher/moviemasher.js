@@ -3,11 +3,11 @@
 This module is an
 [ExpressJS](https://expressjs.com)
 reference implementation of a server plug-in that utilizes the core
-[@moviemasher/lib-shared](https://www.npmjs.com/package/@moviemasher/lib-shared)
+[@moviemasher/shared-lib](https://www.npmjs.com/package/@moviemasher/shared-lib)
 module.
 
 It exports classes and interfaces that fulfill half a dozen APIs utilized by a client implementation like
-[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client).
+[@moviemasher/client-lib](https://www.npmjs.com/package/@moviemasher/client-lib).
 Its imports are all specified as peer dependencies.
 
 This server implementation utilizes

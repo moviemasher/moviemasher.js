@@ -56,10 +56,10 @@ Changes made to source files in _/packages/*/src_ will not be reflected in runni
 npm run build-packages
 ```
 
-This triggers the `build-packages` NPM script in _/package.json_ which in turn triggers other scripts there which can be selectively run by providing their name as an additional argument to the command above. For instance, if you made changes to files in _/packages/lib/client/src/_ you could just rebundle the client files with the following command:
+This triggers the `build-packages` NPM script in _/package.json_ which in turn triggers other scripts there which can be selectively run by providing their name as an additional argument to the command above. For instance, if you made changes to files in _/packages/@moviemasher/client-lib/src/_ you could just rebundle the client files with the following command:
 
 ```shell
-npm run build-packages lib-client
+npm run build-packages client-lib
 ```
 
 

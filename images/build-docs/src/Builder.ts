@@ -1,11 +1,11 @@
-import type { DataOrError, StringRecord, Strings, StringsRecord } from '@moviemasher/runtime-shared'
+import type { DataOrError, StringRecord, Strings, StringsRecord } from '@moviemasher/shared-lib/types.js'
 import type { MarkedOptions } from 'marked'
 import type { Theme } from "shiki"
 import type { Anchor, ClientServerOrShared, DocumentationConfiguration, DocCategory, DocCombined, DocExport, DocFile, DocFileOrFolder, DocFiles, DocFilesAndFolders, DocFolder, DocHtml, DocMarkdown, DocModule, ExportId, ExportIds, ExportRecord, LibOrRuntime, Rendered, Rendereds, TypedocDirectory } from './Types.js'
 
-import { fileReadPromise, fileWritePromise, urlIsHttp } from '@moviemasher/lib-server'
-import { assertArray, assertPopulatedString } from '@moviemasher/lib-shared'
-import { DASH, DOT, ERROR, SLASH, arrayUnique, errorThrow, isDefiniteError, namedError } from '@moviemasher/runtime-shared'
+import { fileReadPromise, fileWritePromise, urlIsHttp } from '@moviemasher/server-lib'
+import { assertArray, assertPopulatedString } from '@moviemasher/shared-lib'
+import { DASH, DOT, ERROR, SLASH, arrayUnique, errorThrow, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { marked } from 'marked'
 import path from 'path'
 import { BUNDLED_LANGUAGES, BUNDLED_THEMES, getHighlighter } from "shiki"
@@ -14,7 +14,7 @@ import { DoubleHighlighter } from './DoubleHighlighter.js'
 import { ProjectInfo } from './ProjectInfo.js'
 import { isClientServerOrShared, isLibOrRuntime } from './Types.js'
 
-console.log('BUNDLED_THEMES', BUNDLED_THEMES)
+// console.log('BUNDLED_THEMES', BUNDLED_THEMES)
 const CLASS = 'CLASS'
 const CSS = 'CSS'
 const ID = 'ID'
@@ -120,10 +120,10 @@ export class Builder {
   private absoluteForModule(libOrRuntime: LibOrRuntime, clientServerOrShared: ClientServerOrShared): string {
     const { configuration } = this
     const { outputRoot, outputOtherPath } = configuration
-    const basename = [libOrRuntime, clientServerOrShared].join(DASH)
+    const basename = [clientServerOrShared, libOrRuntime].join(DASH)
     const fileName = [basename, EXTENSION_HTML].join('')
     const urlPath = path.resolve(outputRoot, outputOtherPath, fileName)
-    // console.log('absoluteForModule', { urlPath, outputRoot, outputModulePath, libOrRuntime, clientServerOrShared })
+    // console.log('absoluteForModule', { urlPath, outputRoot, outputModulePath, clientServerOrShared, libOrRuntime })
     return urlPath
   }
 
@@ -158,7 +158,7 @@ export class Builder {
     if (isDocCombined(docFile)) return docFile.directory
     if (isDocCategory(docFile)) return docFile.title || docFile.categoryId
     if (isDocExport(docFile)) return docFile.exportId
-    if (isDocModule(docFile)) return [docFile.libOrRuntime, docFile.clientServerOrShared].join(DASH)
+    if (isDocModule(docFile)) return [docFile.clientServerOrShared, docFile.libOrRuntime].join(DASH)
 
     return docFile.title
   }
@@ -252,7 +252,7 @@ export class Builder {
         const docModule = this.findDocModule(basename, docFilesAndFolders)
         if (!docModule) return false
 
-        const { libOrRuntime, clientServerOrShared } = docModule
+        const { clientServerOrShared, libOrRuntime } = docModule
         url = this.relativeForModule(libOrRuntime, clientServerOrShared)
       
       } else {
@@ -268,7 +268,7 @@ export class Builder {
         switch (length) {
           case 1: {
             // console.log('mdParseLink md', { href, text })
-            const [libOrRuntime, clientServerOrShared, src] = prefix.split('_')
+            const [clientServerOrShared, libOrRuntime, src] = prefix.split('_')
             if (
               src === 'src' 
               && isLibOrRuntime(libOrRuntime)
@@ -276,7 +276,7 @@ export class Builder {
             ) {
               url = this.relativeForModule(libOrRuntime, clientServerOrShared)
               if (name.endsWith('/src')) {
-                name = [libOrRuntime, clientServerOrShared].join(DASH)
+                name = [clientServerOrShared, libOrRuntime].join(DASH)
               }
             } else {
               // console.log('mdParseLink NOT SRC', { href, text })
@@ -321,7 +321,7 @@ export class Builder {
         this.anchorsByExportId[renderingExportId] ||= []
         this.anchorsByExportId[renderingExportId].push(text)
         return `<h${level}><a id="${renderingExportId}.${text}">${text}</a></h${level}>`
-      }
+      } 
     }
     return false
   }
@@ -532,17 +532,19 @@ export class Builder {
     const { exportId } = docPage
     const { configuration } = this
     const { outputRoot, outputExportPath } = configuration
+    this.anchorsByExportId[exportId] ||= []
     const htmlOrError = await this.renderExportIds([exportId])
     if (isDefiniteError(htmlOrError)) return htmlOrError
 
     const htmlFilename = [exportId, EXTENSION_HTML].join('')
     const htmlPath = path.resolve(outputRoot, outputExportPath, htmlFilename)
-    const exportIds = [exportId]
-    this.anchorsByExportId[exportId] ||= []
-    exportIds.push(...this.anchorsByExportId[exportId])
-    const record: StringRecord = Object.fromEntries(exportIds.map(id => 
-      [id, `${exportId}.${id}`]
-    ))
+    const exportIds = [...this.anchorsByExportId[exportId]]
+   
+    const record: StringRecord = {
+      [exportId]: exportId,
+      ...Object.fromEntries(exportIds.map(id => [id, `${exportId}.${id}`]))
+    }
+    
     return this.renderPage(htmlPath, htmlOrError.data, record)
   }
 
@@ -679,8 +681,8 @@ export class Builder {
   }
 
   private renderDocModule = async (docPage: DocModule): Promise<DataOrError<Rendered>> => {
-    const { libOrRuntime, clientServerOrShared } = docPage
-    // console.log('renderDocModule', libOrRuntime, clientServerOrShared)
+    const { clientServerOrShared, libOrRuntime } = docPage
+    // console.log('renderDocModule', clientServerOrShared, libOrRuntime)
     const { configuration } = this
     const { 
       inputModuleMdDirectory, inputRoot, outputRoot, outputOtherPath, 
@@ -688,8 +690,8 @@ export class Builder {
     } = configuration
     const sectionTemplate = await this.templateRead(inputSectionHtmlPath)
 
-    const underscoreBasename = [libOrRuntime, clientServerOrShared, 'src'].join('_')
-    const dashBasename = [libOrRuntime, clientServerOrShared].join(DASH)
+    const underscoreBasename = [clientServerOrShared, libOrRuntime, 'src'].join('_')
+    const dashBasename = [clientServerOrShared, libOrRuntime].join(DASH)
     const moduleMdFilename = [underscoreBasename, EXTENSION_MARKDOWN].join('')
     const moduleMdPath = path.resolve(inputTypedocMdDirectory, inputModulesMdDirectory, moduleMdFilename)
     const htmlFilename = [dashBasename, EXTENSION_HTML].join('')
@@ -762,10 +764,10 @@ export class Builder {
 
     if (!(isDocExport(renderingFile) && isDocModule(docFile))) return false
 
-    const { libOrRuntime, clientServerOrShared } = docFile
+    const { clientServerOrShared, libOrRuntime } = docFile
     const exportId = renderingFile.exportId 
     const exportPath =  this.projectInfo.filesByExportId[exportId] 
-    return exportPath.includes([libOrRuntime, clientServerOrShared].join('_'))
+    return exportPath.includes([clientServerOrShared, libOrRuntime].join('_'))
   }
 
   private renderNavigationFolder = async (renderFolder: DocFolder): Promise<string> => {
@@ -835,7 +837,7 @@ export class Builder {
     assertPopulatedString(absolutePath, 'absolutePath')
     const record: StringRecord = {
       [NAV_LEFT]: await this.renderNavigationLeft(),
-      [NAV_RIGHT]: ids.length ? await this.renderNavigationRight(ids) : '',
+      [NAV_RIGHT]: await this.renderNavigationRight(ids),
       [CSS]: this.relativeForCss(),
       [SECTIONS]: sections,
     }
@@ -952,8 +954,8 @@ export class Builder {
 
     const { configuration } = this
     const { inputRoot } = configuration
-    const resolved = path.resolve(inputRoot, templatePath)
-    const pageTemplateOrError = await fileReadPromise(resolved)
+    const resolvedPath = path.resolve(inputRoot, templatePath)
+    const pageTemplateOrError = await fileReadPromise(resolvedPath)
     if (isDefiniteError(pageTemplateOrError)) errorThrow(pageTemplateOrError) 
   
     return this.templates[templatePath] = pageTemplateOrError.data

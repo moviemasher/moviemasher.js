@@ -1,5 +1,0 @@
-export * from './asset.js'
-export * from './clip.js'
-export * from './instance.js'
-export * from './propertied.js'
-export * from './track.js'

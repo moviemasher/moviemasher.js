@@ -1,19 +1,17 @@
 ## Client Developer
 
 The 
-[lib-client]()
+[client-lib]()
 package provides a front-end video editing user interface, as described in the
 [End User Guide](EndUser.html). It is distributed through NPM as
-[@moviemasher/lib-client](https://www.npmjs.com/package/@moviemasher/lib-client)
+[@moviemasher/client-lib](https://www.npmjs.com/package/@moviemasher/client-lib)
 and imports the following packages:
 
-- [lib-shared]()
-- [runtime-client]()
-- [runtime-shared]()
+- [shared-lib]()
 - [Lit](https://lit.dev/) 
 
 The client library is imported from the browser to facilitate common editing tasks. 
-It's intended to be used in conjunction with the [lib-server](lib-server.html)
+It's intended to be used in conjunction with the [server-lib](server-lib.html)
 package, but this is not a requirement - it can be used independently.
 
 
@@ -58,10 +56,8 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
     <title>Movie Masher Example</title>
     <script type='importmap'>{
       "imports": {
-        "@moviemasher/lib-client/": "https://unpkg.com/@moviemasher/lib-client@5.2.0/dist/", 
-        "@moviemasher/lib-shared/": "https://unpkg.com/@moviemasher/lib-shared@5.2.0/dist/",
-        "@moviemasher/runtime-client": "https://unpkg.com/@moviemasher/runtime-client@5.2.0/dist/index.js",
-        "@moviemasher/runtime-shared": "https://unpkg.com/@moviemasher/runtime-shared@5.2.0/dist/index.js",
+        "@moviemasher/client-lib/": "https://unpkg.com/@moviemasher/client-lib@5.2.0/dist/", 
+        "@moviemasher/shared-lib/": "https://unpkg.com/@moviemasher/shared-lib@5.2.0/dist/",
         "@lit-labs/observers/": "https://unpkg.com/@lit-labs/observers@2.0.0/",
         "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@1.6.3/reactive-element.js",
         "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@1.6.3/",
@@ -71,7 +67,7 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
       }
     }</script>
     <script type='module'>
-      import '@moviemasher/lib-client/movie-masher.js';
+      import '@moviemasher/client-lib/movie-masher.js';
     </script>
     <style>
       body {
@@ -235,7 +231,7 @@ is needed or you've already got an asset object to load, you can put it in the
     type: 'video', source: 'mash',
     id: 'unique-id', color: '#FFFF00',
   };
-  import '@moviemasher/lib-client/movie-masher.js';
+  import '@moviemasher/client-lib/movie-masher.js';
 </script>
 ```
 
@@ -264,7 +260,7 @@ Alternatively, a more complex request can be made by adding a
   MovieMasher.options.assetObject = { 
     request: { endpoint: 'mash.json' } 
   };
-  import '@moviemasher/lib-client/movie-masher.js';
+  import '@moviemasher/client-lib/movie-masher.js';
 </script>
 ```
 

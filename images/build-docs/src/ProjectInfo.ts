@@ -1,7 +1,7 @@
-import type { DataOrError, Strings } from '@moviemasher/runtime-shared'
+import type { DataOrError, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { fileReadJsonPromise } from '@moviemasher/lib-server'
-import { DOT, isDefiniteError } from '@moviemasher/runtime-shared'
+import { fileReadJsonPromise } from '@moviemasher/server-lib'
+import { DOT, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import fs from 'fs'
 import path from 'path'
 import { DIRECTORIES, EXTENSION_MARKDOWN, declarationKind } from './Constants.js'

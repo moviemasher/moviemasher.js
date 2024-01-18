@@ -52,9 +52,9 @@ from the
 A fully functional standalone deployment can be easily launched from within the
 [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6)
 or [DockerHub](https://hub.docker.com/r/moviemasher/moviemasher.js/). Optimized 
-[client](https://www.npmjs.com/package/@moviemasher/lib-client) 
+[client](https://www.npmjs.com/package/@moviemasher/client-lib) 
 and 
-[server](https://www.npmjs.com/package/@moviemasher/lib-server) 
+[server](https://www.npmjs.com/package/@moviemasher/server-lib) 
 packages are available from NPM in modern ESM2020 format, allowing you to directly
 import them into your HTML from CDNs _without a build step_. 
 
@@ -81,10 +81,8 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
     <title>Movie Masher Example</title>
     <script type='importmap'>{
       "imports": {
-        "@moviemasher/lib-client/": "https://unpkg.com/@moviemasher/lib-client@5.2.0/dist/", 
-        "@moviemasher/lib-shared/": "https://unpkg.com/@moviemasher/lib-shared@5.2.0/dist/",
-        "@moviemasher/runtime-client": "https://unpkg.com/@moviemasher/runtime-client@5.2.0/dist/index.js",
-        "@moviemasher/runtime-shared": "https://unpkg.com/@moviemasher/runtime-shared@5.2.0/dist/index.js",
+        "@moviemasher/client-lib/": "https://unpkg.com/@moviemasher/client-lib@5.2.0/dist/", 
+        "@moviemasher/shared-lib/": "https://unpkg.com/@moviemasher/shared-lib@5.2.0/dist/",
         "@lit-labs/observers/": "https://unpkg.com/@lit-labs/observers@2.0.0/",
         "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@1.6.3/reactive-element.js",
         "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@1.6.3/",
@@ -94,7 +92,7 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
       }
     }</script>
     <script type='module'>
-      import '@moviemasher/lib-client/movie-masher.js';
+      import '@moviemasher/client-lib/movie-masher.js';
     </script>
     <style>
       body {
@@ -126,7 +124,7 @@ Without additional styling the `MovieMasherElement` element will fill its contai
 A fully functional demo of the system can be launched locally within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.2.0
+docker run -d -p '8570:8570' --name moviemasher moviemasher/server-express:5.2.0
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying _any_ username/password

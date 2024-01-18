@@ -5,7 +5,7 @@
 The code in `src` is compiled into `dist` by running from monorepo root:
 
 ```bash
-npm run build-packages lib-server
+npm run build-packages server-lib
 ```
 
 ## Compile Docuentation

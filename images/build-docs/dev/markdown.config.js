@@ -1,5 +1,4 @@
 const path = require('path');
-const glob = require('glob');
 const fs = require('fs');
 const srcDirectories = ['css', 'html', 'md', 'svg'];
 const appDirectory = './';
@@ -7,11 +6,13 @@ const srcDirectory = `${appDirectory}images/build-docs/src`;
 const REGEX_ATTRIBUTE = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gm;
 const REGEX_HTML_COMMENTS = /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g;
 const REGEX_JS_COMMENTS = /((["'])(?:\\[\s\S]|.)*?\2|\/(?![*\/])(?:\\.|\[(?:\\.|.)\]|.)*?\/)|\/\/.*?$|\/\*[\s\S]*?\*\//gm;
+const iconsFile = `${appDirectory}packages/@moviemasher/client-lib/dist/json/icons.json`;
+const icons = JSON.parse(fs.readFileSync(iconsFile).toString());
 
 const getPath = (src) => {
   const isSrc = srcDirectories.find(dirname => src.startsWith(dirname));
   return path.join(isSrc ? srcDirectory : appDirectory, src);
-}
+};
 
 const stripLines = (code, start, end) => {
   let inTag = false;
@@ -133,11 +134,19 @@ const fileMd = (_content, options) => {
 };
 
 const api = (_content, options) => {
+  // const apiJsonPath = path.resolve(`${appDirectory}/`)
   console.log("api", options);
   return JSON.stringify(options);
 };
 
+const icon = (_content, options) => {
+  const { id } = options;
+  if (!id) return '';
+
+  return icons[id];
+};
+
 module.exports = {
   matchWord: 'MAGIC',
-  transforms: { API: api, TRIMCODE: trimCode, COLORSVG: colorSvg, FILEMD: fileMd }
+  transforms: { ICON: icon, API: api, TRIMCODE: trimCode, COLORSVG: colorSvg, FILEMD: fileMd }
 };

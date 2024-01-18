@@ -1,0 +1,17 @@
+{ 
+  "extends": "../../../dev/tsconfig/base.json",
+  "include": [
+    "./src/*.ts",
+    "./src/**/*.ts"
+, "../../../images/test-shared/src/color.test.ts"
+, "../../../images/test-shared/src/guards.test.ts"    
+, "../../../images/test-shared/src/time.test.ts"    
+    
+
+
+  ],
+  "exclude": [
+    "src/**/*.e2e.ts", 
+    "src/**/*.test.ts"
+  ]
+}

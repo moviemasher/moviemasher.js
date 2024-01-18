@@ -15,11 +15,9 @@ const replacements = [
   ['https://unpkg.com/react-dom@18/umd/react-dom.development.js', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'],
   ['react.development.js', 'https://unpkg.com/react@18/umd/react.production.min.js'],
   ['react-dom.development.js', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'],
-  ['moviemasher.js', 'https://unpkg.com/@moviemasher/lib-shared/dist/moviemasher.js'],
-  ['theme-default.js', 'https://unpkg.com/@moviemasher/theme-default/dist/theme-default.js'],
-  ['client-react.js', 'https://unpkg.com/@moviemasher/lib-client/dist/client-react.js'],
-  ['lib-client.js', 'https://unpkg.com/@moviemasher/lib-client/dist/lib-client.js'],
-  ['moviemasher.css', 'https://unpkg.com/@moviemasher/theme-default/dist/moviemasher.css']
+  ['moviemasher.js', 'https://unpkg.com/@moviemasher/shared-lib/dist/moviemasher.js'],
+  ['client-react.js', 'https://unpkg.com/@moviemasher/client-lib/dist/client-react.js'],
+  ['client-lib.js', 'https://unpkg.com/@moviemasher/client-lib/dist/client-lib.js'],
 ]
 const outHtml = replacements.reduce((html, args) => html.replaceAll(...args), inHtml)
 

@@ -1,19 +1,16 @@
 {
   "name": "@moviemasher/build-packages",
-  "description": "Builds Movie Masher library and runtime packages",
+  "description": "Builds Movie Masher packages",
   "scripts": {
-    "build-docs": "npm run build -w @moviemasher/build-docs",
-    "example-express": "npm run build -w @moviemasher/example-express",
-    "lib-client": "npm run build -w @moviemasher/lib-client",
-    "lib-server": "npm run build -w @moviemasher/lib-server",
-    "lib-shared": "npm run build -w @moviemasher/lib-shared",
-    "lib": "run-s lib-shared lib-client lib-server",
-    "runtime-client": "npm run build -w @moviemasher/runtime-client",
-    "runtime-server": "npm run build -w @moviemasher/runtime-server",
-    "runtime-shared": "npm run build -w @moviemasher/runtime-shared",
-    "runtime": "run-s runtime-shared runtime-client runtime-server",
-    "example": "run-s example-express",
-    "build": "run-s runtime lib build-docs"
+    "docs": "npm run build -w @moviemasher/build-docs",
+    "express": "npm run build -w @moviemasher/server-express",
+    "react": "npm run build -w @moviemasher/client-react",
+    "client": "npm run build -w @moviemasher/client-lib",
+    "server": "npm run build -w @moviemasher/server-lib",
+    "shared": "npm run build -w @moviemasher/shared-lib",
+    "lib": "run-s shared client server",
+    "examples": "run-s react express",
+    "build": "run-s lib examples docs"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "0.4.4",

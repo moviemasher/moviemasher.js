@@ -1,16 +1,16 @@
 
-import type { GraphFile, GraphFileType } from '@moviemasher/runtime-server'
-import type { ImportType, PopulatedString, StringType, } from '@moviemasher/runtime-shared'
+import type { AssetFile } from '@moviemasher/server-lib'
+import type { DropType, PopulatedString, StringType, AssetFileType, TranscodingType } from '@moviemasher/shared-lib'
 
-import { ENV_KEY, ENV, fileNameFromContent } from '@moviemasher/lib-server'
-import {  assertPopulatedString } from '@moviemasher/lib-shared'
-import { SEQUENCE, NEWLINE, ASSET_TYPES, AUDIO, ERROR, FONT, IMAGE, STRING, VIDEO, errorThrow, } from '@moviemasher/runtime-shared'
+import { ENV_KEY, ENV, fileNameFromContent } from '@moviemasher/server-lib'
+import {  assertPopulatedString } from '@moviemasher/shared-lib'
+import { BITMAPS, NEWLINE, ASSET_TYPES, AUDIO, ERROR, FONT, IMAGE, STRING, VIDEO, errorThrow, } from '@moviemasher/shared-lib'
 import path from 'path'
 
 type RecordsType = 'records'
 type RecordType = 'record'
 
-type LoadType = ImportType | RecordType | RecordsType | StringType
+type LoadType = DropType | RecordType | RecordsType | StringType
 
 const RECORD: RecordType = 'record'
 const RECORDS: RecordsType = 'records'
@@ -35,19 +35,17 @@ const typeExtension = (type: LoadType): string => {
   }
 }
 
-const graphFileTypeBasename = (type: GraphFileType, content: PopulatedString) => {
-  if (type !== SEQUENCE) return `${BasenameCache}.${type}`
+const assetFileTypeBasename = (type: TranscodingType, content: PopulatedString) => {
+  if (type !== BITMAPS) return `${BasenameCache}.${type}`
   const fileCount = content.split(NEWLINE).length
   const digits = String(fileCount).length
   return `%0${digits}.svg`
 }
 
-export const localPath = (username: string, graphFile: GraphFile): string => {
-  const { type, file, content, resolved: key } = graphFile
-  if (key) {
-    // console.log(this.constructor.name, 'key RESOLVED', type, file, key)
-    return key
-  }
+export const localPath = (username: string, assetFile: AssetFile): string => {
+  const { type, file, content } = assetFile
+  if (file) return file
+  
   assertPopulatedString(file, 'file')
 
   const cacheDirectory = ENV.get(ENV_KEY.ApiDirCache)
@@ -62,21 +60,19 @@ export const localPath = (username: string, graphFile: GraphFile): string => {
     // file is clip.id, content contains text of file
     assertPopulatedString(content)
     
-    const fileName = graphFileTypeBasename(type, content) 
+    const fileName = assetFileTypeBasename(type, content) 
     return path.resolve(cacheDirectory, file, fileName) 
   }
 
 
   // file is url, if absolute then use fileNameFromContent as directory name
   if (file.includes('://')) {
-    // console.log(this.constructor.name, 'key LOADTYPE ABSOLUTE', type, file, content)
     const extname = path.extname(file)
     const ext = extname || typeExtension(type)
     return path.resolve(
       cacheDirectory, fileNameFromContent(file), `${BasenameCache}${ext}`
     )
   }
-    // console.log(this.constructor.name, 'key LOADTYPE NOT ABSOLUTE', type, file)
   const resolvedPath = path.resolve(filePrefix, defaultDirectory, file)
   const directories = [defaultDirectory, ...validDirectories]
   const prefixes = [path.resolve(cacheDirectory), 
@@ -86,6 +82,6 @@ export const localPath = (username: string, graphFile: GraphFile): string => {
 
   if (!valid) errorThrow(ERROR.Url, 'localPath') 
 
-  graphFile.resolved = resolvedPath
+  assetFile.file = resolvedPath
   return resolvedPath
 }

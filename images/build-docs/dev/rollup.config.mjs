@@ -23,7 +23,7 @@ export default {
     file: 'dist/index.mjs',
   },
   external: [
-    /@moviemasher/, 
+    /^@moviemasher/, 
     'marked',
     'path',
     'fs',

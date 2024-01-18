@@ -1,7 +1,7 @@
 import type { DocCategory, DocCombined, DocFolder, DocMarkdown, DocFile, TypedocDirectories, TypedocDirectory, DocExport, Kind, DocModule, DocHtml, Doc, Folder, Page } from './Types.js'
 
-import { isObject, isPopulatedString } from '@moviemasher/runtime-shared'
-import { isPopulatedArray } from '@moviemasher/lib-shared/utility/guards.js'
+import { isObject, isPopulatedString } from '@moviemasher/shared-lib/runtime.js'
+import { isPopulatedArray } from '@moviemasher/shared-lib/utility/guards.js'
 
 export const DIR_ROOT = '/app'
 export const DIR_TEMPORARY = `${DIR_ROOT}/temporary/build-docs`

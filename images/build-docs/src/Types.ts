@@ -1,9 +1,9 @@
-import type { Numbers, StringRecord, Strings } from '@moviemasher/runtime-shared'
+import type { Numbers, StringRecord, Strings } from '@moviemasher/shared-lib/types.js'
 
-export type LibOrRuntime = 'runtime' | 'lib'
+export type LibOrRuntime = 'express' | 'lib' | 'react'
 export type ClientServerOrShared = 'client' | 'server' | 'shared'
 
-export const LIB_OR_RUNTIMES: Array<LibOrRuntime> = ['runtime', 'lib']
+export const LIB_OR_RUNTIMES: Array<LibOrRuntime> = ['express', 'react', 'lib']
 export const CLIENT_SERVER_OR_SHAREDS: Array<ClientServerOrShared> = ['client', 'server', 'shared']
 
 export const isLibOrRuntime = (value: any): value is LibOrRuntime => {

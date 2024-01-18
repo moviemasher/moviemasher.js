@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Movie Masher Express Example</title>
+    <script type='importmap'>
+      {
+        "imports": {
+          "@moviemasher/client-lib/": "./@moviemasher/client-lib/dist/",
+          "@moviemasher/shared-lib/": "./@moviemasher/shared-lib/dist/",
+          "@moviemasher/client-react": "./@moviemasher/client-react/dist/index.js",
+          "lit-html": "./lit-html/lit-html.js",
+          "lit-html/": "./lit-html/",
+          "@lit-labs/": "./@lit-labs/",
+          "@lit/reactive-element": "./@lit/reactive-element/reactive-element.js",
+          "@lit/react": "./@lit/react/index.js",
+          "@lit/": "./@lit/",
+          "lit/": "./lit/",
+          "react": "https://esm.sh/react@18.2.0",
+          "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+          "lit-element/": "./lit-element/"
+        }
+      }
+    </script>
+    <style>
+      body {
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+      body > div#app {
+        flex: 1;
+        display: flex;
+      }
+
+      @media(prefers-color-scheme: dark) {
+        body { background-color: #2d1e05; color: #fff; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type='module'>
+      import { renderRoot } from '@moviemasher/client-react';
+      renderRoot('app', { assetObject:'/asset/default', assetObjects: '/asset/list'});
+    </script>
+  </body>
+</html>
+ 

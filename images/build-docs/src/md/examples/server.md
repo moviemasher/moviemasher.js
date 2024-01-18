@@ -4,7 +4,7 @@ The following shell command installs the server and required packages to your NP
 saving the former to the `dependencies` array in your **package.json** file.
 
 ```shell
-npm install @moviemasher/lib-server --save
+npm install @moviemasher/server-lib --save
 ```
 
 The script below can then be included in your project and triggered in a variety of ways. The most straightfoward is to simply pass its path directly to node.
@@ -16,7 +16,7 @@ The script below can then be included in your project and triggered in a variety
 
 ```js
 // src/server.ts
-import { Host, HostDefaultOptions } from "@moviemasher/lib-server";
+import { Host, HostDefaultOptions } from "@moviemasher/server-lib";
 var host = new Host(HostDefaultOptions());
 host.start();
 ```
