@@ -1,12 +1,13 @@
 import type { ClientAsset, ClientAssets, ClientMashAsset } from '../types.js'
 import type { Asset, AssetObject, AssetObjects, AssetParams, DataOrError, Identified, ListenersFunction, ManageType, ManageTypes, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { assertDefined, isPositive, isRequestable } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertDefined, isRequestable } from '@moviemasher/shared-lib/utility/guards.js'
 import { IMPORT, REFERENCE, SAVE, isClientAsset } from '../runtime.js'
 import { EventCanDestroy, EventAsset, EventAssetObjects, EventChangedManagedAssets, EventChangedMashAsset, EventChangedServerAction, EventImportManagedAssets, EventManagedAssetPromise, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, EventWillDestroy } from '../utility/events.js'
 import { EventManagedAssetsDetail } from '../types.js'
-import { MOVIEMASHER, CACHE_ALL, CACHE_NONE, CACHE_SOURCE_TYPE, DASH, arrayFromOneOrMore, arrayRemove, assertAsset, idIsTemporary, isDefiniteError, ERROR, isAssetObject, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIEMASHER, $CACHE_ALL, $CACHE_NONE, $CACHE_SOURCE_TYPE, DASH, arrayFromOneOrMore, arrayRemove, assertAsset, idIsTemporary, isDefiniteError, ERROR, isAssetObject, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { isClientMashAsset } from '../guards/ClientMashGuards.js'
+import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 
 const sortByContainedMash = (a: ClientMashAsset, b: ClientMashAsset): number => {
   const { assets: aAssets } = a
@@ -83,7 +84,7 @@ export class ClientAssetManagerClass {
 
   private assetFromObject(object: string | AssetObject): ClientAsset | undefined {
     const event = new EventAsset(object)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     return event.detail.asset
   }
 
@@ -93,12 +94,12 @@ export class ClientAssetManagerClass {
 
     // console.log('ClientAssetManagerClass.assetObjectsPromise', ignoreCache, params)
 
-    const allCached = this.assetObjectsPromises.has(CACHE_ALL)
+    const allCached = this.assetObjectsPromises.has($CACHE_ALL)
     const hasTerms = params.terms?.length
     const saveKey = !(hasTerms || ignoreCache)
     const canCache = allCached || !hasTerms
     const useCache = canCache && !ignoreCache 
-    const key = allCached ? CACHE_ALL : this.assetParamsKey(params)
+    const key = allCached ? $CACHE_ALL : this.assetParamsKey(params)
     if (useCache) {
       const existing = this.assetObjectsPromises.get(key)
       if (existing) {
@@ -107,7 +108,7 @@ export class ClientAssetManagerClass {
       }
     }
     const event = new EventAssetObjects(params)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { promise } = event.detail
     // console.log('ClientAssetManagerClass.assetObjectsPromise', !!promise)
     if (!promise) return Promise.resolve([])
@@ -118,7 +119,7 @@ export class ClientAssetManagerClass {
         return []
       }
       const { data } = orError
-      const { assets: assetObjects, cacheControl = CACHE_ALL } = data
+      const { assets: assetObjects, cacheControl = $CACHE_ALL } = data
 
       if (this.controlCache(cacheControl, installPromise) && saveKey) {
         // console.debug(this.constructor.name, 'assetObjectsPromise REMOVING cache', key)
@@ -199,13 +200,13 @@ export class ClientAssetManagerClass {
 
   private controlCache(cacheControl: string, promise: Promise<ClientAssets>): boolean {
     switch (cacheControl) {
-      case CACHE_NONE: break
-      case CACHE_ALL: {
-        // console.debug(this.constructor.name, 'assetObjectsPromise ADDING cache', CACHE_ALL)
-        this.assetObjectsPromises.set(CACHE_ALL, promise)
+      case $CACHE_NONE: break
+      case $CACHE_ALL: {
+        // console.debug(this.constructor.name, 'assetObjectsPromise ADDING cache', $CACHE_ALL)
+        this.assetObjectsPromises.set($CACHE_ALL, promise)
         break
       }
-      case CACHE_SOURCE_TYPE: return false
+      case $CACHE_SOURCE_TYPE: return false
     }
     return true
   }
@@ -227,9 +228,9 @@ export class ClientAssetManagerClass {
         // console.log(this.constructor.name, 'defining', asset.type, asset.label, asset.id)
         this.assetsById.set(asset.id, asset)
       })
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedManagedAssets())
+      MOVIEMASHER.dispatch(new EventChangedManagedAssets())
       if (assets.some(asset => idIsTemporary(asset.id))) {
-        MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(SAVE))
+        MOVIEMASHER.dispatch(new EventChangedServerAction(SAVE))
       }
     }
     return assets
@@ -247,16 +248,16 @@ export class ClientAssetManagerClass {
   }
 
   private undefine(ids?: Strings): void {
-    const allCached = this.assetObjectsPromises.has(CACHE_ALL)
+    const allCached = this.assetObjectsPromises.has($CACHE_ALL)
     if (allCached) {
-      console.debug(this.constructor.name, 'undefine allCached', CACHE_ALL) 
+      console.debug(this.constructor.name, 'undefine allCached', $CACHE_ALL) 
       return
     }
     const toRemove = ids || this.assets.map(asset => asset.id)
     if (ids) arrayRemove(toRemove, this.importingAssets.map(asset => asset.id))
     // console.log(this.constructor.name, 'undefine', toRemove.join(', '))
     const willEvent = new EventWillDestroy(toRemove)
-    MOVIEMASHER.eventDispatcher.dispatch(willEvent)
+    MOVIEMASHER.dispatch(willEvent)
     // console.log(this.constructor.name, 'undefine', toRemove.join(', '))
     toRemove.forEach(id => {
       const asset = this.assetsById.get(id)
@@ -360,7 +361,7 @@ export class ClientAssetManagerClass {
 
     event.stopImmediatePropagation()
     if (idIsTemporary(previousId)) {
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(SAVE))
+      MOVIEMASHER.dispatch(new EventChangedServerAction(SAVE))
     }
   }
 

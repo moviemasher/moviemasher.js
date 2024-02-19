@@ -1,0 +1,31 @@
+{
+  "id": "image-from-video-with-cover-json",
+  "outputs": [
+    {
+      "outputType": "image",
+      "format": "image2",
+      "extension": "png",
+      "cover": true
+    }
+  ],
+  "mash": {
+    "tracks": [
+      {
+        "trackType": "video",
+        "clips": [
+          {
+            "definitionId": "20548879-19c1-40f5-a26a-a0e0b3161d70"
+          }
+        ]
+      }
+    ]
+  },
+  "definitions": [
+    {
+      "id": "20548879-19c1-40f5-a26a-a0e0b3161d70",
+      "type": "video",
+      "source": "../shared/video.mp4",
+      "processing": 1
+    }
+  ]
+}

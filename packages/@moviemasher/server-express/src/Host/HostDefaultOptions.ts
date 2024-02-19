@@ -1,8 +1,8 @@
 import type { DataServerArgs, DecodeServerArgs, EncodeServerArgs, ServerAuthentication, TranscodeServerArgs, UploadServerArgs, WebServerArgs } from '../Server/Server.js'
 import type { HostOptions } from './Host.js'
 
-import { ENV, ENV_KEY } from '@moviemasher/server-lib'
-import { AUDIO, FONT, IMAGE, NUMBER, TEXT, VIDEO } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIO, $FONT, $IMAGE, $NUMBER, $VIDEO } from '@moviemasher/shared-lib/runtime.js'
+import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
@@ -23,34 +23,34 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   
   const version = versionOrUndefined || ENV.get(ENV_KEY.Version)
   const publicDirectory = dirOrUndefined || ENV.get(ENV_KEY.ExampleRoot)
-  const port = portOrUndefined || ENV.get(ENV_KEY.ExamplePort, NUMBER)
+  const port = portOrUndefined || ENV.get(ENV_KEY.ExamplePort, $NUMBER)
   const authentication = auth || OpenAuthentication
   const data: DataServerArgs = { authentication }
   const upload: UploadServerArgs = {
     uploadLimits: {
-      [AUDIO]: 50,
-      [FONT]: 5,
-      [IMAGE]: 5,
-      [VIDEO]: 100,
+      [$AUDIO]: 50,
+      [$FONT]: 5,
+      [$IMAGE]: 5,
+      [$VIDEO]: 100,
     },
     extensions: {
-      [AUDIO]: [
+      [$AUDIO]: [
         'aiff',
         'mp3',
         'wav',
       ],
-      [FONT]: [
+      [$FONT]: [
         'otf',
         'ttf',
         'woff',
       ],
-      [IMAGE]: [
+      [$IMAGE]: [
         'jpeg',
         'jpg',
         'png',
         'svg',
       ],
-      [VIDEO]: [
+      [$VIDEO]: [
         'mov',
         'mp4',
         'mpeg',

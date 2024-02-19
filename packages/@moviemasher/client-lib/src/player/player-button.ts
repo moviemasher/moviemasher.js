@@ -23,7 +23,7 @@ export class PlayerButtonElement extends ComponentClicker {
 
     if (detail === event.detail) {
       const enabledEvent = new EventEnabledClientAction(detail)
-      MOVIEMASHER.eventDispatcher.dispatch(enabledEvent)
+      MOVIEMASHER.dispatch(enabledEvent)
 
       this.icon = enabledEvent.detail.enabled ? PLAY : 'pause'
     }

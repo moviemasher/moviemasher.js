@@ -1,7 +1,7 @@
-import type { EventDispatcher, EventDispatcherListener, EventDispatcherListeners, EventOptions, ManageType } from '@moviemasher/shared-lib/types.js'
-import type { ClientAsset, EventFunction, Panel } from './types.js'
+import type { ManageType, Point, Size } from '@moviemasher/shared-lib/types.js'
+import type { ClientAsset, EventFunction } from './types.js'
 
-import { AUDIO, CLIP_TARGET, COLOR, DECODE, ENCODE, IMAGE, MOVIEMASHER, BITMAPS, SVG, TRANSCODE, VIDEO, WAVEFORM, errorThrow, isAsset } from '@moviemasher/shared-lib/runtime.js'
+import { $CLIP, MOVIEMASHER, errorThrow, isAsset, $COLOR, $ENCODE } from '@moviemasher/shared-lib/runtime.js'
 
 
 export const ADD = 'add'
@@ -22,11 +22,6 @@ export const REFERENCE: ManageType = 'reference'
 
 export const ICON = 'icon'
 
-export const BROWSER: Panel = 'browser'
-export const PLAYER: Panel = 'player'
-export const TIMELINE: Panel = 'timeline'
-export const IMPORTER: Panel = 'importer'
-export const EXPORTER: Panel = 'exporter'
 
 export const SELECTED = 'selected'
 export const ROW = 'row'
@@ -41,7 +36,6 @@ export const HANDLE = 'handle'
 export const FORE = 'fore'
 export const ANIMATE = 'animate'
 export const X_MOVIEMASHER = '/x-moviemasher'
-export const MIME_SVG: DOMParserSupportedType = `${IMAGE}/${SVG}+xml`
 
 export const INDEX_LAST = -1
 export const INDEX_CURRENT = -2
@@ -66,86 +60,71 @@ export function assertDatasetElement(value: any, name?: string): asserts value i
   if (!isDatasetElement(value)) errorThrow(value, 'DatasetElement', name)
 }
 
-export class ClientEventDispatcher extends EventTarget implements EventDispatcher {
-  addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
-    this.addEventListener(type, listener as EventListener, options);
-    return this;
-  }
-
-  dispatch<T>(event: CustomEvent<T> | Event): boolean {
-    return this.dispatchEvent(event);
-  }
-
-  listenersAdd(record: EventDispatcherListeners) {
-    Object.entries(record).forEach(([type, listener]) => {
-      this.addDispatchListener(type, listener);
-    });
-  }
-
-  listenersRemove(record: EventDispatcherListeners) {
-    Object.entries(record).forEach(([type, listener]) => {
-      this.removeDispatchListener(type, listener);
-    });
-  }
-
-  removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
-    this.removeEventListener(type, listener as EventListener, options);
-    return this;
-  }
-}
 
 const Lib = '@moviemasher/client-lib'
+// const SharedLib = '@moviemasher/shared-lib'
+
 const HANDLER = `${Lib}/handler`
-const Controls = `${HANDLER}/controls.js`
-const Media = `${HANDLER}/media.js`
-const Source = `${Lib}/source`
-const Raw = `${Source}/raw/raw.js`
+const CONTROLS = `${HANDLER}/controls.js`
+// const Media = `${HANDLER}/media.js`
+const SOURCE = `${Lib}/source`
+const RAW = `${SOURCE}/raw/raw.js`
 
 MOVIEMASHER.imports = {
-  [CLIP_TARGET]: `${Lib}/timeline/timeline-clip.js`,
-  [COLOR]: `${Source}/color/image-color.js`,
-  [DECODE]: `${HANDLER}/decode.js`,
-  [ENCODE]: `${HANDLER}/encode.js`,
-  [ICON]: `${HANDLER}/${ICON}.js`,
-  [SAVE]: `${HANDLER}/save.js`,
-  [TRANSCODE]: `${HANDLER}/transcode.js`,
-  [TRANSLATE]: `${HANDLER}/translate.js`,
+  [$CLIP]: `${Lib}/timeline/timeline-clip.js`,
   ClientAssetElementListeners: `${HANDLER}/element.js`,
-  ClientAssetManagerListeners: `${HANDLER}/manager.js`,
+
+  [ICON]: `${HANDLER}/${ICON}.js`,
+  [TRANSLATE]: `${HANDLER}/translate.js`,
+
+  // assetModules
+  ClientMashVideoListeners: `${SOURCE}/mash/video-mash.js`,
+  [$COLOR]: `${SOURCE}/color/image-color.js`,
+  ClientShapeImageListeners: `${SOURCE}/shape/image-shape.js`,
+  ClientTextImageListeners: `${SOURCE}/text/image-text.js`,
+  ClientRawAudioListeners: RAW,
+  ClientRawImageListeners: RAW,
+  ClientRawVideoListeners: RAW,
+
+  // importModules
+  ClientRawImportListeners: RAW,
+  ClientTextImportListeners: `${SOURCE}/text/image-text-importer.js`,
+
+  // actionModules
+  // [$DECODE]: `${HANDLER}/decode.js`,
+  [$ENCODE]: `${HANDLER}/encode.js`,
+  [SAVE]: `${HANDLER}/save.js`,
+  // [$TRANSCODE]: `${HANDLER}/transcode.js`,
   ClientAssetUploadListeners: `${HANDLER}/upload.js`,
-  ClientAudioListeners: Media,
-  ClientControlAssetListeners: Controls,
-  ClientControlBooleanListeners: Controls,
-  ClientControlNumericListeners: Controls,
-  ClientControlRgbListeners: Controls,
-  ClientControlStringListeners: Controls,
-  ClientFontListeners: Media,
-  ClientGroupAspectListeners: Controls,
-  ClientGroupDimensionsListeners: Controls,
-  ClientGroupFillListeners: Controls,
-  ClientGroupLocationListeners: Controls,
-  ClientGroupTimeListeners: Controls,
-  ClientImageListeners: Media,
-  ClientMashVideoListeners: `${Source}/mash/video-mash.js`,
-  ClientRawAudioListeners: Raw,
-  ClientRawImageListeners: Raw,
-  ClientRawImportListeners: Raw,
-  ClientRawVideoListeners: Raw,
-  ClientShapeImageListeners: `${Source}/shape/image-shape.js`,
-  ClientTextImageListeners: `${Source}/text/image-text.js`,
-  ClientTextImportListeners: `${Source}/text/image-text-importer.js`,
-  ClientVideoListeners: Media,
+
+  ClientAssetManagerListeners: `${HANDLER}/manager.js`,
+
+  // controlModules
+  ClientControlAssetListeners: CONTROLS,
+  ClientControlBooleanListeners: CONTROLS,
+  ClientControlNumericListeners: CONTROLS,
+  ClientControlRgbListeners: CONTROLS,
+  ClientControlStringListeners: CONTROLS,
+
+  // controlGroupModules
+  ClientGroupAspectListeners: CONTROLS,
+  ClientGroupDimensionsListeners: CONTROLS,
+  ClientGroupFillListeners: CONTROLS,
+  ClientGroupLocationListeners: CONTROLS,
+  ClientGroupTimeListeners: CONTROLS,
 }
-MOVIEMASHER.options = {
-  transcode: {
-    [IMAGE]: [IMAGE],
-    [VIDEO]: [BITMAPS, AUDIO, WAVEFORM],
-    [AUDIO]: [AUDIO, WAVEFORM],
-  }
-}
+
 
 export const MANAGE_TYPES = [IMPORT, REFERENCE]
 
 export const isManageType = (value: any): value is ManageType => (
   MANAGE_TYPES.includes(value as ManageType)
 )
+
+export const centerPoint = (size: Size, inSize: Size): Point => {
+  return {
+    x: Math.round((size.width - inSize.width) / 2),
+    y: Math.round((size.height - inSize.height) / 2)
+  }
+}
+

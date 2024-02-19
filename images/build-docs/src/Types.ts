@@ -1,10 +1,12 @@
-import type { Numbers, StringRecord, Strings } from '@moviemasher/shared-lib/types.js'
+import type { Numbers, StringRecord, Strings, ClientOrServer } from '@moviemasher/shared-lib/types.js'
+
+import { $CLIENT, $SERVER } from '@moviemasher/shared-lib/runtime.js'
 
 export type LibOrRuntime = 'express' | 'lib' | 'react'
-export type ClientServerOrShared = 'client' | 'server' | 'shared'
+export type ClientServerOrShared = ClientOrServer | 'shared'
 
 export const LIB_OR_RUNTIMES: Array<LibOrRuntime> = ['express', 'react', 'lib']
-export const CLIENT_SERVER_OR_SHAREDS: Array<ClientServerOrShared> = ['client', 'server', 'shared']
+export const CLIENT_SERVER_OR_SHAREDS: Array<ClientServerOrShared> = [$CLIENT, $SERVER, 'shared']
 
 export const isLibOrRuntime = (value: any): value is LibOrRuntime => {
   return LIB_OR_RUNTIMES.includes(value as LibOrRuntime)

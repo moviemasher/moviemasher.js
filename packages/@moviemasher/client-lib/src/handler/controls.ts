@@ -5,10 +5,10 @@ import type { TemplateContents, Control, ControlGroup, OptionalContent } from '.
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined, assertPopulatedString, isPropertyId } from '@moviemasher/shared-lib/utility/guards.js'
-import { sizeContain } from '@moviemasher/shared-lib/utility/rect.js'
-import { $OPACITY, MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
+import { $LOCK, $OPACITY, $SIZE, MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventManagedAssetPromise, EventAssetId, EventChangeFrame, EventChangeScalar, EventEdited, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventControl, EventControlGroup, EventManagedAssetIcon, EventMashAsset, EventScalar, EventSelectedProperties, EventTimeRange, StringEvent, EventRequestUpdate } from '../utility/events.js'
-import { ASPECT, ASSET_TARGET, BOOLEAN, BOTTOM, CLIP_TARGET, CONTAINER, CONTAINER_ID, CONTENT_ID, CROP, DIRECTIONS_SIDE, DOT, END, FLIP, FRAME, HEIGHT, LEFT, MASH, NUMBER, PERCENT, POINT_KEYS, RGB, RIGHT, SIZE_KEYS, STRING, TOP, WIDTH, isDefined, isDefiniteError, isNumber } from '@moviemasher/shared-lib/runtime.js'
+import { $ASPECT, $ASSET, $BOOLEAN, $BOTTOM, $CLIP, $CONTAINER, $CONTAINER_ID, $CONTENT_ID, $CROP, DIRECTIONS_SIDE, DOT, $END, $FLIP, $FRAME, $HEIGHT, $LEFT, $MASH, $NUMBER, $PERCENT, POINT_KEYS, $RGB, $RIGHT, SIZE_KEYS, $STRING, $TOP, $WIDTH, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
 import { Component, ComponentLoader } from '../base/Component.js'
 import { isTargetId } from '../guards/TypeGuards.js'
@@ -16,6 +16,7 @@ import { DROP_TARGET_CSS, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReact
 import { dragData, dropRawFiles, droppingFiles, isDragAssetObject } from '../utility/draganddrop.js'
 import { EventControlDetail } from '../types.js'
 import { isClientAsset } from '../runtime.js'
+import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 
 export function ControlGroupMixin
 <T extends Constrained<ComponentLoader>>(Base: T): 
@@ -28,14 +29,14 @@ T & Constrained<ControlGroup> {
 
     addOrRemoveEnd(addOrRemove: string, propertyNamePrefix: string): void {
       const value = addOrRemove ==='remove' ? undefined : this.currentValue(propertyNamePrefix)
-      const endName = `${propertyNamePrefix}${END}`
+      const endName = `${propertyNamePrefix}${$END}`
       const endPropertyId = this.namePropertyId(endName)
       if (!endPropertyId) {
         // console.warn(this.tagName, 'addOrRemoveEnd', { endPropertyId, addOrRemove, value })
         return
       }
       // console.log(this.tagName, 'addOrRemoveEnd', endPropertyId)
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangeScalar(endPropertyId, value))
+      MOVIEMASHER.dispatch(new EventChangeScalar(endPropertyId, value))
     }
 
     controlContent(name: string, icon?: string, more?: OptionalContent): OptionalContent {
@@ -67,7 +68,7 @@ T & Constrained<ControlGroup> {
 
     controlInputContentEnd(namePrefix: string): OptionalContent {
       const { propertyIds } = this
-      const endName = `${namePrefix}${END}`
+      const endName = `${namePrefix}${$END}`
       const endPropertyId = propertyIds?.find(id => id.endsWith(`${DOT}${endName}`))
       if (!endPropertyId) return
 
@@ -75,7 +76,7 @@ T & Constrained<ControlGroup> {
   
       this.loadComponent('movie-masher-link')
       const event = new EventScalar(endPropertyId)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const defined = isDefined(event.detail.value)
       const addOrRemove = defined ? 'remove' : 'add'
       const input = defined ? this.controlInputContent(endPropertyId): undefined
@@ -123,7 +124,7 @@ T & Constrained<ControlGroup> {
 
     selectedProperty(propertyId: PropertyId): SelectedProperty | undefined {
       const propertiesEvent = new EventSelectedProperties([propertyId])
-      MOVIEMASHER.eventDispatcher.dispatch(propertiesEvent)
+      MOVIEMASHER.dispatch(propertiesEvent)
       const { selectedProperties } = propertiesEvent.detail
       if (!selectedProperties?.length) {
         // console.warn(this.tagName, 'addOrRemoveEnd', 'no selected properties')
@@ -138,7 +139,7 @@ T & Constrained<ControlGroup> {
       if (!propertyId) return
 
       const event = new EventScalar(propertyId)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       return event.detail.value 
     }
 
@@ -208,8 +209,8 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       const { propertyId } = this
       if (!propertyId) return false
 
-      const event = new EventScalar(`${propertyId}${END}`)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      const event = new EventScalar(`${propertyId}${$END}`)
+      MOVIEMASHER.dispatch(event)
       return isDefined(event.detail.value)
     }
 
@@ -228,22 +229,22 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (!(selectedProperty && input && propertyId)) return
 
       const { inputValue } = this
-      const isEnd = propertyId.endsWith(END)
+      const isEnd = propertyId.endsWith($END)
       if (isEnd || this.endValueDefined) {
-        // console.debug(this.tagName, propertyId, 'handleInput END DEFINED')
+        // console.debug(this.tagName, propertyId, 'handleInput $END DEFINED')
         const event = new EventTimeRange()
-        MOVIEMASHER.eventDispatcher.dispatch(event)
+        MOVIEMASHER.dispatch(event)
         const { detail: { timeRange } } = event
         if (timeRange) {
           const frame = isEnd ? timeRange.last : timeRange.frame
           // console.debug(this.tagName, propertyId, 'handleInput GOING', frame)
-          MOVIEMASHER.eventDispatcher.dispatch(new EventChangeFrame(frame))
+          MOVIEMASHER.dispatch(new EventChangeFrame(frame))
         }
       }
       // console.debug(this.tagName, this.propertyId, 'handleInput', inputValue)
       selectedProperty.value = inputValue
 
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangeScalar(propertyId, inputValue))
+      MOVIEMASHER.dispatch(new EventChangeScalar(propertyId, inputValue))
     }
 
     get input(): ControlInput | undefined {
@@ -285,7 +286,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (!propertyId) return
 
       const event = new EventScalar(propertyId)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       return event.detail.value
     }
 
@@ -303,7 +304,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       }
       const selectedProperties: SelectedProperties = []
       const event = new EventSelectedProperties([propertyId], selectedProperties)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { length } = selectedProperties
       switch (length) {
         case 0: {
@@ -361,11 +362,11 @@ export function ControlPropertyMixin<T extends Constrained<Component>>(Base: T):
       if (isTargetId(targetId)) {
         // console.debug(this.tagName, 'connectedCallback listening for changes to', targetId)
         switch (targetId) {
-          case ASSET_TARGET: {
+          case $ASSET: {
             this.listeners[EventChangedAssetId.Type] = this.handleChangedAssetId.bind(this)
             break
           }
-          case MASH: {
+          case $MASH: {
             this.listeners[EventChangedMashAsset.Type] = this.handleChangedMashAsset.bind(this)
             break
           }
@@ -407,19 +408,19 @@ export function ControlPropertyMixin<T extends Constrained<Component>>(Base: T):
       if (!targetId) return
 
       switch (targetId) {
-        case MASH: {
+        case $MASH: {
           const event = new EventMashAsset()
-          MOVIEMASHER.eventDispatcher.dispatch(event)
+          MOVIEMASHER.dispatch(event)
           return event.detail.mashAsset?.id
         }
-        case ASSET_TARGET: {
+        case $ASSET: {
           const event = new EventAssetId()
-          MOVIEMASHER.eventDispatcher.dispatch(event)
+          MOVIEMASHER.dispatch(event)
           return event.detail.assetId
         }
         default: {
           const event = new EventClipId()
-          MOVIEMASHER.eventDispatcher.dispatch(event)
+          MOVIEMASHER.dispatch(event)
           return event.detail.clipId
         }
       }
@@ -501,7 +502,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
 
     // console.debug(this.tagName, this.propertyId, 'iconPromiseInitialize', { scalar, iconSize })
     const event = new EventManagedAssetIcon(scalar, iconSize, true)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { promise } = event.detail 
     if (!promise) return Promise.resolve()
 
@@ -523,7 +524,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
     
     const max = this.variable('size-preview')
     const ratio = this.variable('ratio-preview')
-    const contained = sizeContain(size, max * ratio)
+    const contained = containSize(size, max * ratio)
     // console.log(this.tagName, this.propertyId, 'iconSize', { contained, size, max, ratio })
     return contained
   }
@@ -557,7 +558,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
       if (!assetObject) return
 
       const assetEvent = new EventManagedAssetPromise(assetObject)
-      MOVIEMASHER.eventDispatcher.dispatch(assetEvent)
+      MOVIEMASHER.dispatch(assetEvent)
 
       const { promise } = assetEvent.detail
       if (!promise) return
@@ -594,10 +595,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
  
   override setInputValue(value?: Scalar): boolean {
     const changed = super.setInputValue(value)
-    if (changed) {
-      // console.debug(this.tagName, this.propertyId, 'setInputValue calling iconUpdate', value)
-      this.iconUpdate()
-    }
+    if (changed) this.iconUpdate()
     return changed
   }
   
@@ -621,7 +619,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
   static handleNode(event: EventControl) {
     const { detail } = event
     const { type } = detail
-    if (![CONTAINER_ID, CONTENT_ID].includes(type)) return
+    if (![$CONTAINER_ID, $CONTENT_ID].includes(type)) return
     
     detail.control = AssetControlElement.instance(detail)
     event.stopImmediatePropagation()
@@ -703,7 +701,7 @@ export class BooleanControlElement extends BooleanWithControl implements Control
   static handleNode(event: EventControl) {
     const { detail } = event
     const { type } = detail
-    if (type !== BOOLEAN) return
+    if (type !== $BOOLEAN) return
     
     detail.control = BooleanControlElement.instance(detail)
     event.stopImmediatePropagation()
@@ -754,13 +752,13 @@ export class NumericControlElement extends NumericWithControl {
     return html`
       <input 
         @input='${this.handleInput}'
-        type='${type === PERCENT ? 'range' : 'number'}'
+        type='${type === $PERCENT ? 'range' : 'number'}'
         name='${name}' 
         aria-label='${name}'
         max='${max || ''}'
-        min='${isNumber(min) ? min : ''}'
+        min='${isDefined<number>(min) ? min : ''}'
         step='${step || ''}'
-        value='${isNumber(value) ? value : ''}'
+        value='${isDefined<number>(value) ? value : ''}'
       />
     `
   }
@@ -813,7 +811,7 @@ export class NumericControlElement extends NumericWithControl {
     `
   ]
 
-  private static types = [FRAME, NUMBER, PERCENT]
+  private static types = [$FRAME, $NUMBER, $PERCENT]
 }
 
 customElements.define(NumericControlTag, NumericControlElement)
@@ -867,7 +865,7 @@ export class RgbControlElement extends RgbWithControl {
   static handleNode(event: EventControl) {
     const { detail } = event
     const { type } = detail
-    if (type !== RGB) return
+    if (type !== $RGB) return
     
     // console.log('RgbControlElement.handleNode', type) 
     detail.control = RgbControlElement.instance(detail)
@@ -906,7 +904,7 @@ declare global {
 }
 
 // listen for control event
-MOVIEMASHER.eventDispatcher.addDispatchListener(EventControl.Type, RgbControlElement.handleNode)
+MOVIEMASHER.listenersAdd({ [EventControl.Type]: RgbControlElement.handleNode })
 
 // listen for control rgb event
 export const ClientControlRgbListeners: ListenersFunction = () => ({
@@ -954,7 +952,7 @@ export class StringControlElement extends StringWithControl {
   static handleNode(event: EventControl) {
     const { detail } = event
     const { type } = detail
-    if (type !== STRING) return
+    if (type !== $STRING) return
     
     detail.control = StringControlElement.instance(detail)
     event.stopImmediatePropagation()
@@ -1022,7 +1020,7 @@ export class AspectControlGroupElement extends AspectWithControlGroup implements
           /
           ${this.controlInputContent(aspectHeightId)}
           <movie-masher-action-client 
-            icon='${FLIP}' detail='${FLIP}'
+            icon='${$FLIP}' detail='${$FLIP}'
           ></movie-masher-action-client>
         </div>
         <div>
@@ -1093,17 +1091,17 @@ const WithSizeReactive = SizeReactiveMixin(WithControlGroup)
  */
 export class DimensionsControlGroupElement extends WithSizeReactive implements ControlGroup {
   override connectedCallback(): void {
-    const heightId = this.namePropertyId(`${HEIGHT}${END}`)
+    const heightId = this.namePropertyId(`${$HEIGHT}${$END}`)
     if (heightId) {
       const [target] = heightId.split(DOT)
-      const key = `control-group-${target}-${HEIGHT}`
+      const key = `control-group-${target}-${$HEIGHT}`
       this.listeners[key] = this.handleHeight.bind(this)
     }
 
-    const widthId = this.namePropertyId(`${WIDTH}${END}`)
+    const widthId = this.namePropertyId(`${$WIDTH}${$END}`)
     if (widthId) {
       const [target] = widthId.split(DOT)
-      const key = `control-group-${target}-${WIDTH}`
+      const key = `control-group-${target}-${$WIDTH}`
       this.listeners[key] = this.handleWidth.bind(this)
     }
     super.connectedCallback()
@@ -1114,7 +1112,7 @@ export class DimensionsControlGroupElement extends WithSizeReactive implements C
     if (!(size && propertyIds?.length)) return
 
 
-    const aspectFlip = this.propertyIdValue(`size${ASPECT}`) === FLIP
+    const aspectFlip = this.propertyIdValue(`size${$ASPECT}`) === $FLIP
     const portrait = size.height > size.width
     const aspectIcon = portrait ? 'landscape' : 'portrait' 
 
@@ -1124,9 +1122,9 @@ export class DimensionsControlGroupElement extends WithSizeReactive implements C
         <legend>
           <movie-masher-icon icon='size'></movie-masher-icon>
         </legend>
-        ${this.propertyNameContent('lock')}
+        ${this.propertyNameContent($LOCK)}
         ${this.dimensionsContent(aspectFlip, portrait)}
-        ${this.controlContent(`size${ASPECT}`, aspectIcon)}
+        ${this.controlContent(`${$SIZE}${$ASPECT}`, aspectIcon)}
       </fieldset>
     `
   }
@@ -1134,43 +1132,43 @@ export class DimensionsControlGroupElement extends WithSizeReactive implements C
   private dimensionsContent(aspectFlip: boolean, portrait: boolean): TemplateContents {
     const contents: TemplateContents = []
     const flipped = aspectFlip && portrait
-    const widthIcon = flipped ? HEIGHT : WIDTH
-    const heightIcon = flipped ? WIDTH : HEIGHT
-    // const lock = this.propertyIdValue('lock')
+    const widthIcon = flipped ? $HEIGHT : $WIDTH
+    const heightIcon = flipped ? $WIDTH : $HEIGHT
+    // const lock = this.propertyIdValue($LOCK)
     const use: BooleanRecord = { width: true, height: true }
     // if (lock) {
     //   switch(lock) {
-    //     case NONE: break
-    //     case WIDTH: {
+    //     case $NONE: break
+    //     case $WIDTH: {
     //       // use.height = false
     //       break
     //     }
-    //     case HEIGHT: {
+    //     case $HEIGHT: {
     //       // use.width = false
     //       break
     //     }
     //     default: {
          
-    //       if (lock === LONGEST) {
-    //         use[flipped ? HEIGHT : WIDTH] = false
-    //       } else use[!flipped ? HEIGHT : WIDTH] = false
+    //       if (lock === $LONGEST) {
+    //         use[flipped ? $HEIGHT : $WIDTH] = false
+    //       } else use[!flipped ? $HEIGHT : $WIDTH] = false
             
     //     }
     //   }
     // }
     
     if (use.width) {
-      const widthContent = this.controlContent(WIDTH, widthIcon)
+      const widthContent = this.controlContent($WIDTH, widthIcon)
       if (widthContent) contents.push(widthContent)
     }
     if (use.height) {
-      const heightContent = this.controlContent(HEIGHT, heightIcon)
+      const heightContent = this.controlContent($HEIGHT, heightIcon)
       if (heightContent) contents.push(heightContent)
     }
     return contents
   }
 
-  override updatePropertyIds: PropertyIds = [`${CONTAINER}${DOT}lock`]
+  override updatePropertyIds: PropertyIds = [`${$CONTAINER}${DOT}lock`]
         
   static handleControlGroup(event: EventControlGroup) {
     const { detail } = event
@@ -1191,12 +1189,12 @@ export class DimensionsControlGroupElement extends WithSizeReactive implements C
 
   protected handleHeight(event: StringEvent) {
     event.stopImmediatePropagation()
-    this.addOrRemoveEnd(event.detail, HEIGHT)
+    this.addOrRemoveEnd(event.detail, $HEIGHT)
   }
  
   protected handleWidth(event: StringEvent) {
     event.stopImmediatePropagation()
-    this.addOrRemoveEnd(event.detail, WIDTH)
+    this.addOrRemoveEnd(event.detail, $WIDTH)
   }
 
   static instance(propertyIds: PropertyIds) {
@@ -1206,8 +1204,8 @@ export class DimensionsControlGroupElement extends WithSizeReactive implements C
   }
 
   private static names: Strings = [
-    ...SIZE_KEYS.flatMap(key => [key, `${key}${END}`]),
-    'lock', `size${ASPECT}`,
+    ...SIZE_KEYS.flatMap(key => [key, `${key}${$END}`]),
+    $LOCK, `size${$ASPECT}`,
   ]
 
   static override properties: PropertyDeclarations = {
@@ -1245,13 +1243,13 @@ export class FillControlGroupElement extends FillWithControlGroup implements Con
     const { propertyIds } = this
     if (!propertyIds?.length) return
     
-    const colorId = this.namePropertyId(`color${END}`)
+    const colorId = this.namePropertyId(`color${$END}`)
     if (colorId) {
       const [target] = colorId.split(DOT)
       const key = `control-group-${target}-color`     
       this.listeners[key] = this.handleColor.bind(this)
     }
-    const opacityId = this.namePropertyId(`opacity${END}`)
+    const opacityId = this.namePropertyId(`opacity${$END}`)
     if (opacityId) {
       const [target] = opacityId.split(DOT)
       const key = `control-group-${target}-opacity`     
@@ -1312,7 +1310,7 @@ export class FillControlGroupElement extends FillWithControlGroup implements Con
   }
 
   private static names: Strings = [
-    'color', 'colorEnd', 'opacity', 'opacityEnd'
+    'color', 'colorEnd', $OPACITY, [$OPACITY, $END].join('')
   ]
 
   static override properties: PropertyDeclarations = {
@@ -1345,10 +1343,10 @@ const EventLocationControlGroupType = 'point-control-group'
 const LocationWithControlGroup = ControlGroupMixin(ComponentLoader)
 const LocationWithSizeReactive = SizeReactiveMixin(LocationWithControlGroup)
 const LocationFlippedProperties = {
-  [TOP]: LEFT,
-  [BOTTOM]: RIGHT,
-  [LEFT]: TOP,
-  [RIGHT]: BOTTOM
+  [$TOP]: $LEFT,
+  [$BOTTOM]: $RIGHT,
+  [$LEFT]: $TOP,
+  [$RIGHT]: $BOTTOM
 }
 
 /**
@@ -1361,13 +1359,13 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
   }
 
   override connectedCallback(): void {
-    const xId = this.namePropertyId(`x${END}`)
+    const xId = this.namePropertyId(`x${$END}`)
     if (xId) {
       const [target] = xId.split(DOT)
       const key = `control-group-${target}-x`     
       this.listeners[key] = this.handleX.bind(this)
     }
-    const yId = this.namePropertyId(`y${END}`)
+    const yId = this.namePropertyId(`y${$END}`)
     if (yId) {
       const [target] = yId.split(DOT)
       const key = `control-group-${target}-y`     
@@ -1379,7 +1377,7 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
   private constrainedContent(flipped: boolean): OptionalContent {
     this.loadComponent('movie-masher-link')
     const contents: TemplateContents = DIRECTIONS_SIDE.flatMap(direction => {
-      const propertyName = `${direction}${CROP}`
+      const propertyName = `${direction}${$CROP}`
       const propertyId = this.namePropertyId(propertyName)
       if (!propertyId) return []
 
@@ -1408,7 +1406,7 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
     const { propertyIds, size } = this
     if (!(size && propertyIds?.length)) return
 
-    const aspectFlip = this.propertyIdValue(`point${ASPECT}`) === FLIP
+    const aspectFlip = this.propertyIdValue(`point${$ASPECT}`) === $FLIP
     const portrait = size.height > size.width
     const aspectIcon = portrait ? 'landscape' : 'portrait' 
     const xIcon = portrait && aspectFlip ? 'y' : 'x'
@@ -1423,19 +1421,19 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
         ${this.controlContent('x', xIcon)}
         ${this.controlContent('y', yIcon)}
         ${this.constrainedContent(portrait && aspectFlip)}
-        ${this.controlContent(`point${ASPECT}`, aspectIcon)}
+        ${this.controlContent(`point${$ASPECT}`, aspectIcon)}
       </fieldset>
     `
   }
   
   private handleDirection(event: StringEvent) {
     const { detail: direction } = event
-    const propertyName = `${direction}${CROP}`
+    const propertyName = `${direction}${$CROP}`
     const propertyId = this.namePropertyId(propertyName)
     if (!propertyId) return
     
     const scalar = this.propertyIdValue(propertyId)
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangeScalar(propertyId, !scalar))
+    MOVIEMASHER.dispatch(new EventChangeScalar(propertyId, !scalar))
   }
 
   protected handleX(event: StringEvent) {
@@ -1474,9 +1472,9 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
   }
 
   private static names: Strings = [
-    ...DIRECTIONS_SIDE.map(direction => `${direction}${CROP}`),
-    ...POINT_KEYS.flatMap(key => ([key, `${key}${END}`])),
-    `point${ASPECT}`,
+    ...DIRECTIONS_SIDE.map(direction => `${direction}${$CROP}`),
+    ...POINT_KEYS.flatMap(key => ([key, `${key}${$END}`])),
+    `point${$ASPECT}`,
   ]
 
   static override properties: PropertyDeclarations = {
@@ -1512,7 +1510,7 @@ const TimeWithControlGroup = ControlGroupMixin(ComponentLoader)
 export class TimeControlGroupElement extends TimeWithControlGroup implements ControlGroup {
   private get framedContent(): OptionalContent {
     const htmls: TemplateContents = []
-    const frameId = this.namePropertyId(FRAME)
+    const frameId = this.namePropertyId($FRAME)
     const frameInput = this.controlInputContent(frameId)
     if (frameInput) htmls.push(html`
       <movie-masher-icon icon='frame'></movie-masher-icon>
@@ -1568,7 +1566,7 @@ export class TimeControlGroupElement extends TimeWithControlGroup implements Con
     `
   }
 
-  override updatePropertyIds: PropertyIds = [`${CLIP_TARGET}${DOT}timing`]
+  override updatePropertyIds: PropertyIds = [`${$CLIP}${DOT}timing`]
 
 
   static handleControlGroup(event: EventControlGroup) {
@@ -1592,7 +1590,7 @@ export class TimeControlGroupElement extends TimeWithControlGroup implements Con
     return element
   }
 
-  private static names: Strings = [FRAME, 'frames', 'timing', 'startTrim', 'endTrim', 'speed']
+  private static names: Strings = [$FRAME, 'frames', 'timing', 'startTrim', 'endTrim', 'speed']
 
   static override properties: PropertyDeclarations = {
     ...CONTROL_GROUP_DECLARATIONS,

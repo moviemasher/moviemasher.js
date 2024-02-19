@@ -1,7 +1,7 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { HeaderBase } from '../base/LeftCenterRight.js'
-import { IMPORTER } from '../runtime.js'
+import { $IMPORTER } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { IMPORT_TYPES } from '@moviemasher/shared-lib/runtime.js'
 import { ComponentSlotter } from '../base/Component.js'
@@ -18,7 +18,7 @@ export class ImporterHeaderElement extends HeaderBase {
     htmls.push(html`
       <movie-masher-picker 
         parts='${IMPORT_TYPES.join(ComponentSlotter.partSeparator)}' 
-        picker='${IMPORTER}'
+        picker='${$IMPORTER}'
         selected='video-raw'
         ></movie-masher-picker>
     `)

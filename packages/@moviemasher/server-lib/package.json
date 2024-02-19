@@ -35,10 +35,9 @@
   "dependencies": {
     "@moviemasher/shared-lib": "5.2.0",
     "child_process": "^1.0.2",
-    "events": "3.3.0",
     "fluent-ffmpeg": "2.1.2",
-    "jsdom": "23.0.1",
-    "ttf2woff2": "5.0.0",
+    "jsdom": "24.0.0",
+    "canvas": "2.11.2",
     "util": "^0.12.5"
   },
   "devDependencies": {

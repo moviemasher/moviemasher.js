@@ -5,12 +5,13 @@ import type { Htmls, OptionalContent } from './client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { EventAssetObject, EventAssetObjects, EventEdited, EventChangedMashAsset, EventManagedAssets } from './utility/events.js'
-import { COMMA, GET, MASH, MOVIEMASHER, PIPE, isDefined, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { COMMA, $GET, $MASH, MOVIEMASHER, PIPE, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { Component } from './base/Component.js'
 import { ComponentSlotter } from './base/Component.js'
 import { isChangeEdit } from './guards/EditGuards.js'
 import { isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
+import { patchSvg, svgImagePromise } from '@moviemasher/shared-lib/utility/svg.js'
 
 const FormSlotPlayer = 'player'
 const FormSlotBrowser = 'browser'
@@ -19,6 +20,23 @@ const FormSlotInspector = 'inspector'
 const FormSlotDialog = 'dialog'
 
 export const MovieMasherTag = 'movie-masher'
+
+
+// test for support for load events from svg images
+const initializeSvg = () => {
+  const { window, options } = MOVIEMASHER
+  const { document } = window
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = 1
+  const context = canvas.getContext('2d')
+  if (context) {
+    context.fillRect(0, 0, 1, 1)
+    svgImagePromise(canvas.toDataURL(), true).then(() => {
+      options.supportsSvgLoad = true
+    })
+  }
+}
+
 /**
  * @category Elements
  */
@@ -65,11 +83,11 @@ export class MovieMasherElement extends ComponentSlotter {
     return import(this.url('handler/object/video')).then(() => {
       const { assetObject } = this
       if (assetObject) {
-        MOVIEMASHER.options.assetObject ||= { endpoint: assetObject, init: { method: GET } }
+        MOVIEMASHER.options.assetObject ||= { endpoint: assetObject, init: { method: $GET } }
       } 
       // console.debug(this.tagName, 'assetObjectPromise!')
       const listener = { [EventAssetObject.Type]: this.listeners[EventAssetObject.Type] }
-      MOVIEMASHER.eventDispatcher.listenersRemove(listener)
+      MOVIEMASHER.listenersRemove(listener)
     })
   }
 
@@ -93,19 +111,21 @@ export class MovieMasherElement extends ComponentSlotter {
       const { assetObjects } = this
       // console.debug(this.tagName, 'assetObjectsPromiseInitialize', assetObjects)
       if (assetObjects) {
-        MOVIEMASHER.options.assetObjects ||= { endpoint: assetObjects, init: { method: GET } }
+        MOVIEMASHER.options.assetObjects ||= { endpoint: assetObjects, init: { method: $GET } }
       }
       // console.debug(this.tagName, 'assetObjectsPromise removing listener')
       const listener = { [EventAssetObjects.Type]: this.listeners[EventAssetObjects.Type] }
-      MOVIEMASHER.eventDispatcher.listenersRemove(listener)
+      MOVIEMASHER.listenersRemove(listener)
     })
   }
 
   override connectedCallback(): void {
     super.connectedCallback()
+    patchSvg(this.selectElement(this.svgPatch))
+    initializeSvg()
     const { icons, imports } = this
     if (icons) {
-      MOVIEMASHER.options.icons ||= { endpoint: icons, init: { method: GET } }
+      MOVIEMASHER.options.icons ||= { endpoint: icons, init: { method: $GET } }
     }
     if (imports) {
       const importeds = imports.split(COMMA)
@@ -115,11 +135,12 @@ export class MovieMasherElement extends ComponentSlotter {
       })
     }
 
-    MOVIEMASHER.importPromise.then(() => {
+    MOVIEMASHER.importPromise().then(importResultOrError => {
+      if (isDefiniteError(importResultOrError)) return
       if (this.mashingAssetObject) return  
       
       const event = new EventAssetObject()
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) return
 
@@ -132,25 +153,22 @@ export class MovieMasherElement extends ComponentSlotter {
     })
   }
     
-  
   private handleAssetObject(event: EventAssetObject) {
-    const { assetObject } = this
-    if (!assetObject && isDefined(assetObject)) return
+    if (this.assetObject === '') return
     
     const { detail } = event
     detail.promise = this.assetObjectPromise.then(() => {
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       return detail.promise!
     })
   }
 
   private handleAssetObjects(event: EventAssetObjects) {
-    const { assetObjects } = this
-    if (!assetObjects && isDefined(assetObjects)) return
+    if (this.assetObjects === '') return
 
     const { detail } = event
     detail.promise = this.assetObjectsPromise.then(() => {
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       return detail.promise!
     })
   }
@@ -167,7 +185,7 @@ export class MovieMasherElement extends ComponentSlotter {
 
     const { target, affects } = action
     if (isMashAsset(target)) {
-      if (affects.includes(`${MASH}.color`)) {
+      if (affects.includes(`${$MASH}.color`)) {
         this.variableSet('mash-color', target.value('color'))
       }
     } 
@@ -177,7 +195,7 @@ export class MovieMasherElement extends ComponentSlotter {
   private handleManagedAssets(event: EventManagedAssets) {
     const { detail } = event
     detail.promise = this.managedAssetsPromise.then(() => {
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       return detail.promise!
     })
   }
@@ -189,10 +207,9 @@ export class MovieMasherElement extends ComponentSlotter {
   private _managedAssetsPromise?: Promise<void>
 
   private get managedAssetsPromise() {
-    // console.debug(this.tagName, 'managedAssetsPromise')
     return this._managedAssetsPromise ||= import(this.url('handler/manager')).then(() => {
       const listener = { [EventManagedAssets.Type]: this.listeners[EventManagedAssets.Type] }
-      MOVIEMASHER.eventDispatcher.listenersRemove(listener)
+      MOVIEMASHER.listenersRemove(listener)
     })
   }
   protected masher?: Masher | undefined
@@ -201,7 +218,6 @@ export class MovieMasherElement extends ComponentSlotter {
     return this._masherPromise ||= this.masherPromiseInitialize
   }
   private get masherPromiseInitialize(): Promise<void> {
-    // console.debug(this.tagName, 'masherPromiseInitialize')
     return import('./source/mash/masher.js').then(lib => {
       const { masherInstance } = lib
       this.masher = masherInstance()
@@ -254,6 +270,8 @@ export class MovieMasherElement extends ComponentSlotter {
     FormSlotDialog,
   ].join(ComponentSlotter.partSeparator)
 
+  svgPatch = ''
+
   private url(path: string): string {
     return new URL(`${path}.js`, import.meta.url).href
   }
@@ -264,6 +282,7 @@ export class MovieMasherElement extends ComponentSlotter {
     assetObject: { type: String, attribute: 'asset-object' },
     icons: { type: String },
     imports: { type: String },
+    svgPatch: { type: String, attribute: 'svg-patch' },
   }
 
   static override styles: CSSResultGroup = [

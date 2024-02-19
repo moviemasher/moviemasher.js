@@ -2,8 +2,9 @@ import type { AssetObject } from '@moviemasher/shared-lib/types.js'
 
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventAssetObjects } from '../../utility/events.js'
-import { ERROR, isArray, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { ERROR, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../../utility/request.js'
+import { isArray } from '@moviemasher/shared-lib/utility/guard.js'
 
 export class AssetObjectsHandler {
   static handle(event: EventAssetObjects) {
@@ -37,4 +38,4 @@ export class AssetObjectsHandler {
   }
 }
 
-MOVIEMASHER.eventDispatcher.addDispatchListener(EventAssetObjects.Type, AssetObjectsHandler.handle)
+MOVIEMASHER.listenersAdd({ [EventAssetObjects.Type]: AssetObjectsHandler.handle })

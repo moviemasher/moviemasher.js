@@ -3,17 +3,15 @@
   "compilerOptions": {
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "rootDir": "./src",
+    "rootDir": "../../",
+    "resolveJsonModule": true
   },
   "include": [
-    "./src/*.ts",
-    "./src/**/*.ts"
+    "../../images/test-server/src/*.ts",
+    "../../images/test-server/src/**/*.ts"
 
     
     
   
-  ],
-  "exclude": [
-    "src/**/*.e2e.ts"
   ]
 }

@@ -1,9 +1,9 @@
-import type { Constrained, IntrinsicOptions, Rect, ShapeAsset, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, SvgItem, SvgVector, UnknownRecord, VisibleAsset, VisibleInstance } from '../types.js'
+import type { Constrained, IntrinsicOptions, Rect, Scalar, ShapeAsset, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, SvgItem, SvgVector, UnknownRecord, VisibleAsset, VisibleInstance } from '../types.js'
 
-import { CONTAINER, END, HEIGHT, IMAGE, PERCENT, POINT_ZERO, WIDTH } from '../runtime.js'
-import { isAboveZero } from '../utility/guards.js'
-import { sizeAboveZero, sizeSvgD } from '../utility/rect.js'
-import { svgPathElement, svgPolygonElement, svgSetTransformRects } from '../utility/svg.js'
+import { $CONTAINER, $END, $HEIGHT, $IMAGE, $PERCENT, POINT_ZERO, $WIDTH } from '../runtime.js'
+import { isAboveZero } from '../utility/guard.js'
+import { sizeNotZero, sizeSvgD } from '../utility/rect.js'
+import { svgOpacity, svgPathElement, svgPolygonElement, svgSetTransformRects } from '../utility/svg.js'
 
 export function ShapeAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
   T & Constrained<ShapeAsset> {
@@ -24,6 +24,8 @@ export function ShapeAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
       this.path = path || sizeSvgD(this.pathSize)
       super.initializeProperties(object)
     }
+    
+    override hasIntrinsicSizing = true
 
     isVector = true
 
@@ -46,7 +48,7 @@ export function ShapeAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
       return object
     }
 
-    type = IMAGE
+    type = $IMAGE
   }
 }
 
@@ -55,27 +57,26 @@ export function ShapeInstanceMixin<T extends Constrained<VisibleInstance>>(Base:
   return class extends Base implements ShapeInstance {
     declare asset: ShapeAsset
 
-    override hasIntrinsicSizing = true
-
+  
     override initializeProperties(object: ShapeInstanceObject) {
       this.properties.push(this.propertyInstance({
-        targetId: CONTAINER, name: WIDTH, type: PERCENT,
+        targetId: $CONTAINER, name: $WIDTH, type: $PERCENT,
         min: 0, max: 2, step: 0.01,
         defaultValue: 1, tweens: true,
       }))
       this.properties.push(this.propertyInstance({
-        targetId: CONTAINER, name: `${WIDTH}${END}`,
-        type: PERCENT, min: 0, max: 2, step: 0.01,
+        targetId: $CONTAINER, name: `${$WIDTH}${$END}`,
+        type: $PERCENT, min: 0, max: 2, step: 0.01,
         undefinedAllowed: true, tweens: true,
       }))
       this.properties.push(this.propertyInstance({
-        targetId: CONTAINER, name: HEIGHT, type: PERCENT,
+        targetId: $CONTAINER, name: $HEIGHT, type: $PERCENT,
         min: 0, max: 2, step: 0.01, tweens: true,
         defaultValue: 1,
       }))
       this.properties.push(this.propertyInstance({
-        targetId: CONTAINER, name: `${HEIGHT}${END}`,
-        type: PERCENT, undefinedAllowed: true, tweens: true,
+        targetId: $CONTAINER, name: `${$HEIGHT}${$END}`,
+        type: $PERCENT, undefinedAllowed: true, tweens: true,
         min: 0, max: 2, step: 0.01,
       }))
       super.initializeProperties(object)
@@ -89,16 +90,16 @@ export function ShapeInstanceMixin<T extends Constrained<VisibleInstance>>(Base:
 
     override intrinsicsKnown(_: IntrinsicOptions): boolean { return true }
 
-    override pathElement(rect: Rect, forecolor = ''): SvgVector {
-      const inRect = this.intrinsicRect
-      if (!sizeAboveZero(inRect)) {
-        return svgPolygonElement(rect, '', forecolor)
+    override svgVector(rect: Rect, forecolor = '', opacity?: Scalar): SvgVector {
+      const { intrinsicRect } = this
+      if (!sizeNotZero(intrinsicRect)) {
+        return svgOpacity(svgPolygonElement(rect, '', forecolor), opacity)
       }
       const { asset } = this
       const { path } = asset
-      const svgVector = svgPathElement(path, forecolor)
-      svgSetTransformRects(svgVector, inRect, rect)
-      return svgVector
+      const vector = svgPathElement(path, forecolor)
+      svgSetTransformRects(vector, intrinsicRect, rect)
+      return svgOpacity(vector, opacity)
     }
   }
 }

@@ -1,8 +1,7 @@
 
-import { describe, test } from 'node:test'
 import assert from 'assert'
-import { isInteger, isPositive } from '../../../packages/@moviemasher/shared-lib/src/utility/guards.js'
-import { isNumber, isNumberOrNaN, isString } from "../../../packages/@moviemasher/shared-lib/src/runtime.js"
+import { describe, test } from 'node:test'
+import { isInteger, isPositive } from '../../../packages/@moviemasher/shared-lib/src/utility/guard.js'
 
 describe('Basic Guards', () => {
   describe('isInteger', () => {
@@ -26,16 +25,7 @@ describe('Basic Guards', () => {
       assert(!isInteger(false))
     })
   })
-  describe('isNumberOrNaN', () => {
-    test('returns false for string numbers', () => {
-      assert(!isNumberOrNaN('57'))
-    })
-  })
-  describe('isNumber', () => {
-    test('returns false for string numbers', () => {
-      assert(!isNumber('57'))
-    })
-  })
+  
   describe('isPositive', () => {
     test('returns true for numbers greater or equal to zero', () => {
       assert(isPositive(0.4))
@@ -46,26 +36,4 @@ describe('Basic Guards', () => {
       assert(!isPositive(-1))
     })
   })
-
-  describe('isString', () => {
-    test('returns true for strings, regardless of content', () => {
-      assert(isString(''))
-      " 1s'!".split('').forEach(character => {
-        assert(isString(character))
-      })
-    })
-
-    test('returns false for non-strings', () => {
-      assert(!isString(1))
-      assert(!isString(0))
-      assert(!isString([]))
-      assert(!isString({}))
-      assert(!isString({ foo: 'bar' }))
-      assert(!isString(['']))
-      assert(!isString(undefined))
-      assert(!isString(null))
-      assert(!isString(true))
-      assert(!isString(false))
-    })
-  })  
 })

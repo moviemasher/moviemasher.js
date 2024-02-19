@@ -1,19 +1,29 @@
-import type { Asset, AssetObject, ListenersFunction } from '@moviemasher/shared-lib/types.js'
-import type { ServerAsset, ServerAssets } from '../types.js'
+import type { AssetObject, ListenersFunction } from '@moviemasher/shared-lib/types.js'
+import type { ServerAsset, ServerAssetManager, ServerAssets } from '../types.js'
 
-import { MOVIEMASHER, arrayFromOneOrMore, assertAsset } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIEMASHER, arrayFromOneOrMore, isAsset } from '@moviemasher/shared-lib/runtime.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
-import { EventReleaseServerManagedAssets, EventServerAsset, EventServerManagedAsset, EventServerManagedAssetPromise, isServerAsset } from '../runtime.js'
+import { isServerAsset } from '../utility/guard.js'
+import { EventReleaseServerManagedAssets, EventServerAsset, EventServerManagedAsset } from '../utility/events.js'
+import { isString } from '@moviemasher/shared-lib/utility/guard.js'
 
-export class ServerAssetManagerClass {
-  private asset(object: string | AssetObject): ServerAsset | undefined{
-    const event = new EventServerAsset(object)
-    const handled = MOVIEMASHER.eventDispatcher.dispatch(event)
-    if (!handled) return
-    
+export class ServerAssetManagerClass implements ServerAssetManager {
+  asset(object: string | AssetObject): ServerAsset | undefined {
+    const id = isString(object) ? object : object.id
+    const installed = this.fromId(id)
+    if (installed) return installed
+
+    const event = new EventServerAsset(object, this)
+    const handled = MOVIEMASHER.dispatch(event)
+    if (!handled) {
+      console.log('ServerAssetManagerClass asset NOT HANDLED', EventServerAsset.Type, event.detail)
+      return
+    }
     const { asset } = event.detail
-    if (!isServerAsset(asset)) return
-    
+    if (!isServerAsset(asset)) {
+      console.log('ServerAssetManagerClass asset NOT SERVER ASSET', asset, isAsset(asset), asset && 'assetFiles' in asset)
+      return
+    }
     this.install(asset)
     return asset 
   }
@@ -31,6 +41,7 @@ export class ServerAssetManagerClass {
       const existing = this.fromId(id)
       if (existing) return existing
 
+      // console.log('ServerAssetManagerClass install', id)
       this.assetsById.set(id, asset)
       return asset
     })
@@ -59,37 +70,17 @@ export class ServerAssetManagerClass {
     event.stopImmediatePropagation()
   }
 
-  static handleManagedAssetPromise(event: EventServerManagedAssetPromise) {
-    const { instance } = ServerAssetManagerClass
-    const { detail } = event
-    const { assetObject, assetId: id } = detail
-    assertDefined(id)
-    
-    let asset: Asset | undefined = instance.fromId(id)
-    if (!asset) {
-      const idOrObject = assetObject || id 
-      assertDefined(idOrObject)
-
-      asset = instance.asset(idOrObject)
-    }
-    assertAsset(asset)
-
-    detail.promise = Promise.resolve({data: asset})
-    event.stopImmediatePropagation()
-  }
-
   static handleReleaseAssets(event: EventReleaseServerManagedAssets) {
     const { instance } = ServerAssetManagerClass
     instance.undefine()
     event.stopImmediatePropagation()
   }
   
-  private static instance = new ServerAssetManagerClass()
+  private static get instance() { return new ServerAssetManagerClass() }
 }
 
 export const ServerAssetManagerListeners: ListenersFunction = () => ({
   [EventServerManagedAsset.Type]: ServerAssetManagerClass.handleManagedAsset,
-  [EventServerManagedAssetPromise.Type]: ServerAssetManagerClass.handleManagedAssetPromise,
+  // [EventServerManagedAssetPromise.Type]: ServerAssetManagerClass.handleManagedAssetPromise,
   [EventReleaseServerManagedAssets.Type]: ServerAssetManagerClass.handleReleaseAssets,
 })
-

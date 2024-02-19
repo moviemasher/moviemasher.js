@@ -1,12 +1,13 @@
-import type { EndpointRequest, Transcoding } from '@moviemasher/shared-lib/types.js'
+import type { EndpointRequest, JobOptions, Transcoding } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { StatusRequest, TranscodeStartRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { ExpressHandler, TranscodeServerArgs } from './Server.js'
 
-import { ENV, ENV_KEY, assertProbingOptions, idUnique } from '@moviemasher/server-lib'
-import { EventServerTranscode, EventServerTranscodeStatus } from '@moviemasher/server-lib/runtime.js'
-import { MOVIEMASHER, assertPopulatedString, isTranscoding } from '@moviemasher/shared-lib'
-import { CONTENT_TYPE, ERROR, MIME_JSON, POST, VERSION, VIDEO, errorCaught, errorObjectCaught, errorThrow, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
+import { EventServerTranscodeStatus } from '@moviemasher/server-lib/utility/events.js'
+import { idUnique } from '@moviemasher/server-lib/utility/id.js'
+import { $POST, $TRANSCODE, CONTENT_TYPE, ERROR, MIME_JSON, MOVIEMASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { assertPopulatedString, isTranscoding } from '@moviemasher/shared-lib/utility/guards.js'
 import path from 'path'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
@@ -17,24 +18,20 @@ export class TranscodeServerClass extends ServerClass {
   id = 'transcode'
 
   start: ExpressHandler<VersionedDataOrError<EndpointRequest>, TranscodeStartRequest> = async (req, res) => {
-    console.error(this.constructor.name, 'start', req.body)
-    const { transcodingType = VIDEO, request, options = {}, assetType } = req.body
-
+    const { body: args } = req
+    const { version: _, ...transcodeArgs } = args
+    const { request } = transcodeArgs.resource
     try {
       const user = this.userFromRequest(req)
-      assertProbingOptions(options)
-
       const id = idUnique()
       const { endpoint } = request
       assertPopulatedString(endpoint)
 
       const outputRoot = ENV.get(ENV_KEY.RelativeRequestRoot)
       request.endpoint = path.join(outputRoot, endpoint)
-      const event = new EventServerTranscode(transcodingType, assetType, request, user, id, options, outputRoot)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) errorThrow(ERROR.Unimplemented, EventServerTranscode.Type)
-    
+
+      const jobOptions: JobOptions = { id, user }
+      const promise = MOVIEMASHER.promise($TRANSCODE, transcodeArgs, jobOptions)
       res.send({ version : VERSION, data: this.statusEndpointRequest(id) })
     } catch (error) { 
       console.error(this.constructor.name, 'start', error)
@@ -53,9 +50,8 @@ export class TranscodeServerClass extends ServerClass {
     const { id } = req.body
     try {
       const user = this.userFromRequest(req)
-      console.log('TranscodeServerClass.status', { id, user })
       const event = new EventServerTranscodeStatus(id)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerTranscodeStatus.Type)
 
@@ -86,7 +82,7 @@ export class TranscodeServerClass extends ServerClass {
     const data: EndpointRequest = {
       endpoint: { pathname: Endpoints.transcode.status },
       init: { 
-        method: POST, headers: { [CONTENT_TYPE]: MIME_JSON}, 
+        method: $POST, headers: { [CONTENT_TYPE]: MIME_JSON}, 
         body: jsonStringify({ id }) 
       }
     }

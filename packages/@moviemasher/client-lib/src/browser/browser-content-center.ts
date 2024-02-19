@@ -1,24 +1,24 @@
-import type { AssetTypes, Assets, DataOrError, ManageTypes, Size, Sources } from '@moviemasher/shared-lib/types.js'
+import type { RawTypes, Assets, DataOrError, ManageTypes, Size, Sources } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
 import type { ClipLocation } from '../types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { DASH, MOVIEMASHER, SIZE_ZERO, arrayFromOneOrMore, arrayRemove, isAssetType, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
-import { isAboveZero } from '@moviemasher/shared-lib/utility/guards.js'
-import { sizeContain } from '@moviemasher/shared-lib/utility/rect.js'
+import { $BROWSER, DASH, MOVIEMASHER, SIZE_ZERO, arrayFromOneOrMore, arrayRemove, isRawType, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { isAboveZero } from '@moviemasher/shared-lib/utility/guard.js'
+import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
 import { html } from 'lit-html'
 import { Component, ComponentLoader } from '../base/Component.js'
 import { Scroller } from '../base/LeftCenterRight.js'
-import { DROP_TARGET_CSS, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
-import { BROWSER, isManageType } from '../runtime.js'
+import { DROP_TARGET_CSS, DisablableMixin, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
+import { isManageType } from '../runtime.js'
 import { EventAssetElement, EventPick, EventPicked, EventChangedManagedAssets, EventManagedAssets, EventWillDestroy, EventCanDestroy } from '../utility/events.js'
 import { AssetObjectsParams } from '../types.js'
 import { droppingFiles } from '../utility/draganddrop.js'
 
 export const BrowserContentCenterTag = 'movie-masher-browser-content-center'
-
-const WithSizeReactive = SizeReactiveMixin(Scroller)
+const WithDisablable = DisablableMixin(Scroller)
+const WithSizeReactive = SizeReactiveMixin(WithDisablable)
 const WithDropTarget = DropTargetMixin(WithSizeReactive)
 /**
  * @category Elements
@@ -31,13 +31,15 @@ export class BrowserContentCenterElement extends WithDropTarget {
   private assetsPromise?: Promise<DataOrError<Assets>>
   
   private assetsPromiseRefresh(): void {
-    const { types, sources, manageTypes, sort } = this
+    const { types, sources, manageTypes, sort, disabled } = this
+    if (disabled) return  
+    
     const sorts = arrayFromOneOrMore(sort || [])
     // console.log(this.tagName, 'assetsPromiseRefresh', types, sources)
     if (isAboveZero(types.length + sources.length)) {
       const params: AssetObjectsParams = { manageTypes, sorts, sources, types }
       const event = new EventManagedAssets(params)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
       if (promise) {
         this.assetsPromise = promise
@@ -47,7 +49,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
             const { data } = orError
             const assetIds = this.assets.map(asset => asset.id)
             this.assets = data          
-            MOVIEMASHER.eventDispatcher.dispatch(new EventCanDestroy(assetIds))
+            MOVIEMASHER.dispatch(new EventCanDestroy(assetIds))
             this.requestUpdate()
           }
         })
@@ -55,15 +57,15 @@ export class BrowserContentCenterElement extends WithDropTarget {
     }
   }
 
-  private types: AssetTypes = []
+  private types: RawTypes = []
 
   override connectedCallback(): void {
     this.listeners[EventPick.Type] = this.handlePick.bind(this)
     this.listeners[EventPick.Type] = this.handlePick.bind(this)
     this.listeners[EventWillDestroy.Type] = this.handleWillDestroy.bind(this)
     this.listeners[EventChangedManagedAssets.Type] = this.handleChangedManagedAssets.bind(this)
-    const event = new EventPicked(BROWSER)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    const event = new EventPicked($BROWSER)
+    MOVIEMASHER.dispatch(event)
     this.pick(event.detail.picked)
     super.connectedCallback()
   }
@@ -71,7 +73,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
   protected override templateContent(contents: TemplateContents): TemplateContent {
     const { size = SIZE_ZERO } = this
     const max = this.variable('size-preview')
-    const contained = sizeContain(size, max)
+    const contained = containSize(size, max)
     // console.log(this.tagName, 'content', { contained, size, max })
     return html`
       <div 
@@ -105,7 +107,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
           }
 
           const event = new EventAssetElement(id, iconSize, cover, label, icons, labels)
-          MOVIEMASHER.eventDispatcher.dispatch(event)
+          MOVIEMASHER.dispatch(event)
           const { element } = event.detail
           if (element) {
             contents.push(element)
@@ -127,7 +129,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
 
   private handlePick(event: EventPick): void {
     const { picker } = event.detail
-    if (picker !== BROWSER) return
+    if (picker !== $BROWSER) return
 
     this.pick(event.detail.picked)
   }
@@ -149,7 +151,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
     
     const max = this.variable('size-preview')
     const ratio = this.variable('ratio-preview-selector')
-    return sizeContain(size, max * ratio)
+    return containSize(size, max * ratio)
   }
 
   private manageTypes: ManageTypes = []
@@ -168,11 +170,11 @@ export class BrowserContentCenterElement extends WithDropTarget {
 
     const components = detail.split(DASH).map(component => component.trim())
     const sources: Sources = []
-    const assetTypes: AssetTypes = []
+    const assetTypes: RawTypes = []
     const manageTypes: ManageTypes = []
 
     components.forEach(component => {
-      if (isAssetType(component)) assetTypes.push(component)
+      if (isRawType(component)) assetTypes.push(component)
       else if (isManageType(component)) manageTypes.push(component)
       else sources.push(component)
     })

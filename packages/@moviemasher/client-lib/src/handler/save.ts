@@ -1,18 +1,19 @@
-import type { ClientAssets, ServerProgress } from '../types.js'
-import type {  ListenersFunction } from '@moviemasher/shared-lib/types.js'
+import type { ClientAssets } from '../types.js'
+import type { ListenersFunction, ServerProgress } from '@moviemasher/shared-lib/types.js'
 
-import { assertDefined, assertString } from '@moviemasher/shared-lib/utility/guards.js'
-import {  SAVE } from '../runtime.js'
+import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
+import { SAVE } from '../runtime.js'
 import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, EventSavableManagedAsset, EventSavableManagedAssets, EventSave } from '../utility/events.js'
-import { MOVIEMASHER,ENCODE, POST, VOID_FUNCTION, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIEMASHER, $ENCODE, $POST, VOID_FUNCTION, isDefiniteError, namedError, ERROR } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../utility/request.js'
+import { isString } from '@moviemasher/shared-lib/utility/guard.js'
 
 export class SaveHandler {
   private static get enabled(): boolean {
     if (SaveHandler.saving) return false
   
     const event = new EventSavableManagedAsset()
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     return event.detail.savable
   }
 
@@ -22,7 +23,7 @@ export class SaveHandler {
     let total = 2
     let current = 1
     const dispatch = () => {
-      MOVIEMASHER.eventDispatcher.dispatch(new EventProgress(id, current / total))
+      MOVIEMASHER.dispatch(new EventProgress(id, current / total))
     }
     return {
       do: (steps: number) => { 
@@ -48,7 +49,7 @@ export class SaveHandler {
     if (detail.serverAction !== SAVE) return 
     
     const assets: ClientAssets = []
-    MOVIEMASHER.eventDispatcher.dispatch(new EventSavableManagedAssets(assets))
+    MOVIEMASHER.dispatch(new EventSavableManagedAssets(assets))
     
     const { length } = assets
     if (length) {
@@ -87,14 +88,14 @@ export class SaveHandler {
     event.stopImmediatePropagation()
     const { detail } = event
     const { asset } = detail
-    const request = { endpoint: '/asset/put', init: { method: POST } }
+    const request = { endpoint: '/asset/put', init: { method: $POST } }
     const { assetObject } = asset
     detail.promise = requestJsonRecordPromise(request, { assetObject }).then(orError => {
       if (isDefiniteError(orError)) return orError
 
       const { data } = orError
       const { id: newId = '' } = data
-      assertString(newId)
+      if (!isString(newId)) return namedError(ERROR.AssetId)
 
       return { data: newId }
     })
@@ -105,8 +106,8 @@ export class SaveHandler {
   private static set saving(value) {
     if (SaveHandler._saving !== value) {
       SaveHandler._saving = value
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(SAVE))
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedServerAction(ENCODE))
+      MOVIEMASHER.dispatch(new EventChangedServerAction(SAVE))
+      MOVIEMASHER.dispatch(new EventChangedServerAction($ENCODE))
     }
   }
 }

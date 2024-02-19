@@ -1,17 +1,19 @@
-import type { AssetObject, AssetObjects, AssetObjectsResponse, AssetType, Identified, Labeled, MashAssetObject, Sourced, Strings, Typed } from '@moviemasher/shared-lib/types.js'
+import type { AssetObject, AssetObjects, AssetObjectsResponse, Identified, Labeled, MashAssetObject, RawType, Sourced, Strings, Typed } from '@moviemasher/shared-lib/types.js'
 import type { DataAssetDefaultRequest, DataAssetDeleteRequest, DataAssetGetRequest, DataAssetListRequest, DataAssetPutRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { DataServerArgs, ExpressHandler } from './Server.js'
 
-import { ENV_KEY, ENV, fileReadJsonPromise, idUnique, directoryCreatePromise } from '@moviemasher/server-lib'
+import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
+import { directoryCreatePromise, fileReadJsonPromise } from '@moviemasher/server-lib/utility/file.js'
+import { idUnique } from '@moviemasher/server-lib/utility/id.js'
+import { $CACHE_NONE, $CACHE_SOURCE_TYPE, $MASH, $STRING, $VIDEO, ERROR, RGB_WHITE, SIZE_OUTPUT, VERSION, VOID_FUNCTION, arrayFromOneOrMore, arrayOfNumbers, errorObjectCaught, errorThrow, idIsTemporary, isDefiniteError, jsonParse, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
-import { arrayFromOneOrMore, arrayOfNumbers, CACHE_NONE, CACHE_SOURCE_TYPE, ERROR, MASH, RGB_WHITE, SIZE_OUTPUT, STRING, VERSION, VIDEO, VOID_FUNCTION, errorObjectCaught, errorThrow, idIsTemporary, isDefined, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { Application } from 'express'
 import path from 'path'
-// import pg from 'pg'
-import { Endpoints } from '../Api/Endpoints.js'
-import { ServerClass } from './ServerClass.js'
 import { Database, open } from 'sqlite'
 import sqlite3 from 'sqlite3'
+import { Endpoints } from '../Api/Endpoints.js'
+import { ServerClass } from './ServerClass.js'
 
 const USER_SHARED = ENV.get(ENV_KEY.SharedUser)
 
@@ -31,7 +33,7 @@ interface Row extends Partial<Record<AssetColumn, string>> {
 }
 
 interface AssetRow extends Row {
-  type: AssetType 
+  type: RawType 
   created?: string
   deleted?: string
   user_id: string
@@ -67,7 +69,7 @@ const AssetColumns: AssetColumn[] = [
 
 const AssetRowFromRaw = (row: RawAssetRow): AssetRow => {
   const { user_id: _user_id, deleted: _deleted, rest = '{}', ...others } = row
-  const parsed = JSON.parse(rest)
+  const parsed = jsonParse(rest)
   return { ...parsed, ...others }
 }
 
@@ -75,7 +77,7 @@ const AssetRowsFromRaw = (rows: RawAssetRows): AssetRows => rows.map(AssetRowFro
 
 const RawFromAsset = (user_id: string, data: AssetObject): RawAssetRow => {
   const { assets: _, type, created, source, label, id, ...unparsed } = data
-  const rest = JSON.stringify(unparsed)
+  const rest = jsonStringify(unparsed)
   const record: RawAssetRow = { 
     type, created, label, source, user_id, id, rest
   }
@@ -95,7 +97,7 @@ export class DataServerClass extends ServerClass {
       aspectHeight: height, aspectWidth: width,
       aspectShortest: Math.min(width, height),
       color: RGB_WHITE,
-      type: VIDEO, source: MASH, 
+      type: $VIDEO, source: $MASH, 
       id: `temporary-${idUnique()}`, 
       assets: [] 
     } 
@@ -118,7 +120,7 @@ export class DataServerClass extends ServerClass {
       LIMIT 1
     `
     // console.log(this.constructor.name, 'assetDefaultPromise', text, { user, text })
-    return this.queryPromise(text, [user, MASH]).then(result => {
+    return this.queryPromise(text, [user, $MASH]).then(result => {
       const [row] = result.rows
       if (!row) return 
 
@@ -198,7 +200,7 @@ export class DataServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const assets = await this.assetListPromise(user, request) || []
-      const cacheControl = request.terms?.length ? CACHE_NONE : CACHE_SOURCE_TYPE
+      const cacheControl = request.terms?.length ? $CACHE_NONE : $CACHE_SOURCE_TYPE
       res.send({ version: VERSION, data: { assets, cacheControl } })
     } catch (error) { 
       // console.error(this.constructor.name, 'assetList', error)
@@ -212,7 +214,7 @@ export class DataServerClass extends ServerClass {
     const { _sharedAssets } = this
     if (_sharedAssets) return _sharedAssets
 
-    const jsonPath = ENV.get(ENV_KEY.SharedAssets, STRING)
+    const jsonPath = ENV.get(ENV_KEY.SharedAssets, $STRING)
     if (!(jsonPath && USER_SHARED)) return this._sharedAssets = []
 
     const orError = await fileReadJsonPromise<AssetObjects>(jsonPath)
@@ -351,8 +353,8 @@ export class DataServerClass extends ServerClass {
 
     if (_clientPromise) return _clientPromise
 
-    const dbMigrationsPrefix = ENV.get(ENV_KEY.ExampleDataDir, STRING)
-    const dbPath = ENV.get(ENV_KEY.ExampleDataFile, STRING)
+    const dbMigrationsPrefix = ENV.get(ENV_KEY.ExampleDataDir, $STRING)
+    const dbPath = ENV.get(ENV_KEY.ExampleDataFile, $STRING)
     // console.debug(this.constructor.name, "startDatabase", dbPath)
     return this._clientPromise = directoryCreatePromise(path.dirname(dbPath)).then(() => {
       return open({ filename: dbPath, driver: sqlite3.Database }).then(db => {

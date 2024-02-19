@@ -147,13 +147,17 @@
 <hr>
 <h3><a id="Clip.audible">audible</a></h3><p>• <strong>audible</strong>: <code>boolean</code></p>
 <hr>
+<h3><a id="Clip.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<hr>
+<h3><a id="Clip.clipIndex">clipIndex</a></h3><p>• <strong>clipIndex</strong>: <code><a href='ClipIndex.html'>ClipIndex</a></code></p>
+<hr>
 <h3><a id="Clip.clipObject">clipObject</a></h3><p>• <strong>clipObject</strong>: <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <hr>
-<h3><a id="Clip.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code><a href='VisibleInstance.html'>VisibleInstance</a></code></p>
+<h3><a id="Clip.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <hr>
 <h3><a id="Clip.containerId">containerId</a></h3><p>• <strong>containerId</strong>: <code>string</code></p>
 <hr>
-<h3><a id="Clip.content">content</a></h3><p>• <strong>content</strong>: <code><a href='Instance.html'>Instance</a></code></p>
+<h3><a id="Clip.content">content</a></h3><p>• <strong>content</strong>: <code><a href='AudioInstance.html'>AudioInstance</a></code> | <code><a href='ContentInstance.html'>ContentInstance</a></code></p>
 <hr>
 <h3><a id="Clip.contentId">contentId</a></h3><p>• <strong>contentId</strong>: <code>string</code></p>
 <hr>
@@ -167,19 +171,13 @@
 <hr>
 <h3><a id="Clip.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
 <hr>
-<h3><a id="Clip.mutable">mutable</a></h3><p>• <strong>mutable</strong>: <code>boolean</code></p>
-<hr>
 <h3><a id="Clip.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <hr>
-<h3><a id="Clip.notMuted">notMuted</a></h3><p>• <strong>notMuted</strong>: <code>boolean</code></p>
+<h3><a id="Clip.opacity">opacity</a></h3><p>• <strong>opacity</strong>: <code>number</code></p>
 <hr>
 <h3><a id="Clip.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.properties">properties</a></p>
-<hr>
-<h3><a id="Clip.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.scalarRecord">scalarRecord</a></p>
 <hr>
 <h3><a id="Clip.sizing">sizing</a></h3><p>• <strong>sizing</strong>: <code><a href='../combined/Types.html#Sizing'>Sizing</a></code></p>
 <hr>
@@ -233,6 +231,23 @@
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <hr>
+<h3><a id="Clip.clipRects">clipRects</a></h3><p>▸ <strong>clipRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<hr>
 <h3><a id="Clip.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -255,23 +270,6 @@
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.constrainedValue">constrainedValue</a></p>
-<hr>
-<h3><a id="Clip.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
 <hr>
 <h3><a id="Clip.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -408,7 +406,7 @@
 <p>Returns
 <code>void</code></p>
 <hr>
-<h3><a id="Clip.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="Clip.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -427,15 +425,63 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.setValue">setValue</a></p>
+<hr>
+<h3><a id="Clip.sizingRect">sizingRect</a></h3><p>▸ <strong>sizingRect</strong>(<code>size</code>, <code>loading?</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>size</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>loading?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <hr>
 <h3><a id="Clip.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="Clip.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="Clip.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -466,6 +512,8 @@
         <ul><li><a class='' href='#Clip'>Clip</a></li>
 <li><a class='' href='#Clip.assetIds'>assetIds</a></li>
 <li><a class='' href='#Clip.audible'>audible</a></li>
+<li><a class='' href='#Clip.canBeMuted'>canBeMuted</a></li>
+<li><a class='' href='#Clip.clipIndex'>clipIndex</a></li>
 <li><a class='' href='#Clip.clipObject'>clipObject</a></li>
 <li><a class='' href='#Clip.container'>container</a></li>
 <li><a class='' href='#Clip.containerId'>containerId</a></li>
@@ -476,11 +524,9 @@
 <li><a class='' href='#Clip.frames'>frames</a></li>
 <li><a class='' href='#Clip.id'>id</a></li>
 <li><a class='' href='#Clip.label'>label</a></li>
-<li><a class='' href='#Clip.mutable'>mutable</a></li>
 <li><a class='' href='#Clip.muted'>muted</a></li>
-<li><a class='' href='#Clip.notMuted'>notMuted</a></li>
+<li><a class='' href='#Clip.opacity'>opacity</a></li>
 <li><a class='' href='#Clip.properties'>properties</a></li>
-<li><a class='' href='#Clip.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#Clip.sizing'>sizing</a></li>
 <li><a class='' href='#Clip.targetId'>targetId</a></li>
 <li><a class='' href='#Clip.timeRange'>timeRange</a></li>
@@ -491,8 +537,8 @@
 <li><a class='' href='#Clip.visible'>visible</a></li>
 <li><a class='' href='#Clip.asset'>asset</a></li>
 <li><a class='' href='#Clip.clipCachePromise'>clipCachePromise</a></li>
+<li><a class='' href='#Clip.clipRects'>clipRects</a></li>
 <li><a class='' href='#Clip.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#Clip.containerRects'>containerRects</a></li>
 <li><a class='' href='#Clip.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#Clip.intrinsicsKnown'>intrinsicsKnown</a></li>
 <li><a class='' href='#Clip.maxFrames'>maxFrames</a></li>
@@ -501,7 +547,9 @@
 <li><a class='' href='#Clip.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#Clip.resetTiming'>resetTiming</a></li>
 <li><a class='' href='#Clip.setValue'>setValue</a></li>
+<li><a class='' href='#Clip.sizingRect'>sizingRect</a></li>
 <li><a class='' href='#Clip.toJSON'>toJSON</a></li>
+<li><a class='' href='#Clip.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#Clip.value'>value</a></li></ul>
       </nav>
     </main>

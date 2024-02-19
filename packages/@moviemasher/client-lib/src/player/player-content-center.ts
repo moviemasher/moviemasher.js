@@ -4,7 +4,7 @@ import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { TemplateContent, TemplateContents, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertSizeAboveZero, pointCopy, sizeContain } from '@moviemasher/shared-lib/utility/rect.js'
+import { assertSizeNotZero, copyPoint, containSize } from '@moviemasher/shared-lib/utility/rect.js'
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventChangeClipId, EventChangedPreviews, EventPreviews, EventRect } from '../utility/events.js'
 import { html } from 'lit-html'
@@ -15,7 +15,7 @@ import { RectObserverMixin } from '../mixin/component.js'
 import { Scroller } from '../base/LeftCenterRight.js'
 import { SizeReactiveMixin, SIZE_REACTIVE_DECLARATIONS } from '../mixin/component.js'
 
-const PlayerRefreshTics = 10
+const PlayerRefreshTics = 1
 export const PlayerContentCenterTag = 'movie-masher-player-content-center'
 
 const WithDropTargetMixin = DropTargetMixin(Scroller)
@@ -40,9 +40,9 @@ export class PlayerContentCenterElement extends WithSizeReactive {
 
   protected override get defaultContent(): OptionalContent {
     const { size: mySize } = this
-    assertSizeAboveZero(mySize)
+    assertSizeNotZero(mySize)
     const max = this.variable('size-preview')
-    const size = sizeContain(mySize, max)
+    const size = containSize(mySize, max)
     // console.log(this.tagName, 'defaultContent', size, mySize, max)
     return html`
       <div 
@@ -66,13 +66,14 @@ export class PlayerContentCenterElement extends WithSizeReactive {
       this.watchingRedraw = true
       return
     }
+    this.watchingRedraw = false
     this.watchingTimeout = setTimeout(() => this.requestItemsPromise(), PlayerRefreshTics)
   }
   
   protected handlePointerDown(event: Event) {
     // console.log(this.tagName, 'deselecting clip')
     event.stopPropagation()
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangeClipId())
+    MOVIEMASHER.dispatch(new EventChangeClipId())
   }
 
   private handleRect(event: EventRect) {
@@ -85,13 +86,12 @@ export class PlayerContentCenterElement extends WithSizeReactive {
     const { rect } = this
     if (!rect) return
 
-    this.point = pointCopy(rect)
+    this.point = copyPoint(rect)
   }
 
   point?: Point
 
   private requestItemsPromise(): Promise<void> {
-    this.watchingRedraw = false
     delete this.watchingTimeout
 
     const { disabled } = this
@@ -99,7 +99,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
     if (disabled) return Promise.resolve()
 
     const event = new EventPreviews(this.variable('size-preview'))
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
       console.warn(this.tagName, 'requestItemsPromise NO PROMISE')
@@ -108,8 +108,10 @@ export class PlayerContentCenterElement extends WithSizeReactive {
 
     return promise.then(svgs => {
       // console.log(this.tagName, 'requestItemsPromise', svgs.length)
-      this.element().replaceChildren(...svgs)
+      
       if (this.watchingRedraw) this.handleChangedPreviews()
+      // else 
+    this.element().replaceChildren(...svgs)
     })
   }
 

@@ -1,18 +1,23 @@
-import type { AssetObjects, ClipObject, ColorInstanceObject, DecodeOptions, Decoding, ImageAssetObject, InstanceObject, MashAssetObject, OutputOptions, Point, ServerMediaRequest, ShapeAssetObject, Size, StringDataOrError, TextAssetObject, TextInstanceObject, TrackObject, VideoAssetObject, VideoOutputOptions } from '@moviemasher/shared-lib/types.js'
+import type { AssetObjects, ClipObject, ColorInstanceObject, DecodeArgs, DecodeOptions, Decoding, DropResource, EncodeArgs, EndpointRequest, ImageAssetObject, InstanceObject, JobOptions, MashAssetObject, OutputOptions, Point, ShapeAssetObject, Size, StringDataOrError, TextAssetObject, TextInstanceObject, TrackObject, VideoAssetObject, VideoOutputOptions } from '@moviemasher/shared-lib/types.js'
 
-import { ENV, ENV_KEY, commandPromise, directoryCreatePromise, ffmpegCommand, fileMovePromise, fileNameFromOptions, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend } from '@moviemasher/server-lib'
-import { EventServerDecode, EventServerEncode, assertAbsolutePath } from '@moviemasher/server-lib/runtime.js'
-import { MOVIEMASHER, assertDefined, assertPoint, assertPopulatedArray, assertPopulatedString, assertSize, isPoint, isPopulatedArray, isSize, sizeScale, stringSeconds } from '@moviemasher/shared-lib'
-import { CONTAINER, CUSTOM, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION, DURATION_UNKNOWN, ERROR, IMAGE, JSON, LONGEST, MASH, NONE, PROBE, RGB_BLACK, SIZE_OUTPUT, TXT, VIDEO, WIDTH, arrayUnique, errorThrow, idReset, isArray, isDefiniteError, isPopulatedString, isString, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIEMASHER, assertDefined, assertPoint, assertSize, isArray, isPoint, isPopulatedArray, isPopulatedString, isSize, isString, stringSeconds } from '@moviemasher/shared-lib'
+import { $CONTAINER, $CROP, $CSS, $CUSTOM, $DECODE, $DURATION, $ENCODE, $IMAGE, $LONGEST, $LUMINANCE, $MASH, $NONE, $PROBE, $TTF, $TXT, $VIDEO, $WIDTH, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION_UNKNOWN, ERROR, RGB_BLACK, SIZE_OUTPUT, arrayUnique, errorThrow, idReset, isDefiniteError, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import path from 'path'
+import { commandPromise, ffmpegCommand } from '../../../../packages/@moviemasher/server-lib/src/command/CommandFactory.js'
+import { ENV, ENV_KEY } from '../../../../packages/@moviemasher/server-lib/src/utility/env.js'
+import { directoryCreatePromise, fileMovePromise, fileNameFromOptions, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend } from '../../../../packages/@moviemasher/server-lib/src/utility/file.js'
+import { assertAbsolutePath } from '../../../../packages/@moviemasher/server-lib/src/utility/guard.js'
 
 const colorRed = '#FF0000'
 const colorBlue = '#0000FF'
 
 const ErrorSnapshot = 'error.snapshot'
-export const SizePreview = sizeScale(SIZE_OUTPUT, 0.25, 0.25)
+export const SizePreview = {
+  width: SIZE_OUTPUT.width / 4,
+  height: SIZE_OUTPUT.height / 4,
+}
 const options: VideoOutputOptions = { ...SizePreview }//, mute: true
-export const VideoOptions = typeOutputOptions(VIDEO, options) 
+export const VideoOptions = typeOutputOptions($VIDEO, options) 
 
 export const TestDirTemporary = ENV.get(ENV_KEY.OutputRoot)
 const TestDirSnapshots = path.resolve(ENV.get(ENV_KEY.DirRoot), 'images/test-server/snapshots')
@@ -83,7 +88,7 @@ export enum GenerateArg {
   ContainerSize = 'containerSize',
   ContainerPoint = 'containerPoint',
   Opacity = 'opacity',
-  CROP = 'constrain',
+  Crop = 'constrain',
 }
 export const GenerateArgs = Object.values(GenerateArg)
 
@@ -99,7 +104,7 @@ export type NumberTest = [string, InstanceObject]
 const textOptions: TextInstanceObject = { 
   string: "Lobster Wow!",
   assetId: "text",
-  lock: LONGEST,
+  lock: $LONGEST,
 } as const
 
 type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest
@@ -120,7 +125,7 @@ interface GenerateTestObject {
   [GenerateArg.Container]: GenerateContainerTest
   [GenerateArg.ContainerPoint]: PointTest
   [GenerateArg.ContainerSize]: SizeTest
-  [GenerateArg.CROP]: BooleanTest
+  [GenerateArg.Crop]: BooleanTest
   [GenerateArg.Opacity]: NumberTest
 }
 
@@ -157,7 +162,6 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DURA
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]
-    assertPopulatedString(option)
     const renderTests = GenerateTestsDefault[renderTestOption]
     const renderTest = renderTests.find(test => test[0] === option)
     assertRenderTest(renderTest)
@@ -188,10 +192,11 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DURA
     frames, containerId, contentId, 
     content: {
       ...contentPoint, ...contentDimensions, ...contentObject,
-      lock: NONE
+      lock: $NONE
     },
-    sizing: CONTAINER,
-    timing: CUSTOM,
+    sizing: $CONTAINER,
+    timing: $CUSTOM,
+    transparency: $LUMINANCE,
     container: {
       ...containerPoint, ...containerDimensions, 
       ...containerObject, ...opacity, 
@@ -207,14 +212,14 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DURA
         assetId: "font.valken",
         // height: textHeight, 
         x: 0, y: 0.5, 
-        lock: WIDTH,
+        lock: $WIDTH,
         width: 1, 
         string: testId 
       } as TextInstanceObject,
       containerId: 'font.valken',
       content,
-      sizing: CONTAINER,
-      timing: CUSTOM,
+      sizing: $CONTAINER,
+      timing: $CUSTOM,
       frames
     }  
     objects.push(labelClip)
@@ -284,14 +289,14 @@ export const GenerateOptionsDefault: GenerateOptions = {
   constrain: GenerateConstrain.C, opacity: GenerateOpacity.F,
 }
 const { assetId: textAssetId } = textOptions
-assertPopulatedString(textAssetId)
+assertDefined(textAssetId)
 
 export const GenerateTestsDefault: GenerateTests = {
 
   [GenerateArg.Container]: [
     ["R", DEFAULT_CONTAINER_ID, {}, 'rect'],
     ["K", "image", {}],
-    ["A", "text-rect", {lock: LONGEST,}],
+    ["A", "text-rect", {lock: $LONGEST,}],
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
     ["S", 'shape', {}],
@@ -338,9 +343,9 @@ export const GenerateTestsDefault: GenerateTests = {
     opacityTest(GenerateOpacity.F, GenerateOpacity.Z),
     opacityTest(GenerateOpacity.F),
   ],
-  [GenerateArg.CROP]: [
+  [GenerateArg.Crop]: [
     [GenerateConstrain.U, {}], 
-    [GenerateConstrain.C, Object.fromEntries(DIRECTIONS_SIDE.map(direction => [`${direction}CROP`, true]))]
+    [GenerateConstrain.C, Object.fromEntries(DIRECTIONS_SIDE.map(direction => [`${direction}${$CROP}`, true]))]
   ],
 }
 
@@ -356,42 +361,36 @@ export const GenerateAssetObjects: AssetObjects = [
     id: "puppy",
     source: 'raw',
     type: "image",
-    request: { endpoint: { pathname: "/app/dev/shared/image/puppy/image.jpg" } },
-    decodings: [{ id: '', type: PROBE, data: {width: 3024, height: 4032} }]
+    resources: [{ type: $IMAGE, request: { endpoint: { pathname: "/app/temporary/assets/image/puppy/image.jpg" } } }],
+    decodings: [{ id: '', type: $PROBE, data: {width: 3024, height: 4032} }]
   } as ImageAssetObject,
   {
     id: "rgb",
     source: 'raw',
     type: "video",
-    request: { endpoint: { pathname: "/app/dev/shared/video/rgb.mp4" } },
-    decodings: [{ id: '', type: PROBE, data: { width: 512, height: 288, audible: true, duration: 3 } }]
+    resources: [{ type: $VIDEO, request: { endpoint: { pathname: "/app/temporary/assets/video/rgb.mp4" } } }],
+    decodings: [{ id: '', type: $PROBE, data: { width: 512, height: 288, audible: true, duration: 3 } }]
   } as VideoAssetObject,
   {
     id: "image",
     source: 'raw',
     type: "image",
-    request: { endpoint: { pathname: "/app/dev/shared/image/kitten/image.jpg" } },
-    decodings: [{ id: '', type: PROBE, data: { width: 4592, height: 3056 } } as Decoding]
+    resources: [{ type: $IMAGE, request: { endpoint: { pathname: "/app/temporary/assets/image/kitten/image.jpg" } } }],
+    decodings: [{ id: '', type: $PROBE, data: { width: 4592, height: 3056 } } as Decoding]
   } as ImageAssetObject,
   {
     id: "text",
     source: 'text',
-    type: IMAGE,
+    type: $IMAGE,
     label: "Lobster",
-    request: { endpoint: "/app/dev/shared/font/lobster/lobster.ttf" },
-    // requestables: [
-    //   { type: FONT, request: { endpoint: { pathname: "/app/dev/shared/font/lobster/lobster.woff2" } }}
-    // ]
+    resources: [{ type: $TTF, request: { endpoint: "/app/temporary/assets/font/lobster/lobster.ttf" } }],
   } as TextAssetObject,
   {
     id: "font.valken",
     source: 'text',
-    type: IMAGE,
+    type: $IMAGE,
     label: "Valken",
-    request: { endpoint: "/app/dev/shared/font/valken/valken.ttf" },
-    // requestables: [
-    //   { type: FONT, request: { endpoint: { pathname: "/app/dev/shared/font/valken/valken.woff2" } }}
-    // ]
+    resources: [{ type: $TTF, request: { endpoint: "/app/temporary/assets/font/valken/valken.ttf" } }],
   } as TextAssetObject,
   // same size as text ^
   { 
@@ -408,7 +407,7 @@ export const GenerateAssetObjects: AssetObjects = [
     source: 'raw',
     label: "Video", 
     id: "video",
-    request: { endpoint: { pathname: "/app/dev/shared/video/dance.mp4" } },
+    resources: [{ type: $VIDEO, request: { endpoint: { pathname: "/app/temporary/assets/video/dance.mp4" } } }],
   } as VideoAssetObject,
   {
     "label": "Movie Masher Logo",
@@ -429,18 +428,18 @@ export const GenerateAssetObjects: AssetObjects = [
     "path": "M16.5 3C19.538 3 22 5.5 22 9c0 7-7.5 11-10 12.5C9.5 20 2 16 2 9c0-3.5 2.5-6 5.5-6C9.36 3 11 4 12 5c1-1 2.64-2 4.5-2z"
   } as ShapeAssetObject,
   { 
-    "label": "Butcherman",
-    "id": "com.google.fonts.butcherman",
-    "type": "image",
-    "source": "text",
-    "request": { 
-      "endpoint": { 
-        "protocol": "https:",
-        "hostname": "fonts.googleapis.com", 
-        "pathname": "/css2", 
-        "search": "?family=Butcherman" 
+    label: "Butcherman",
+    id: "com.google.fonts.butcherman",
+    type: "image",
+    source: "text",
+    resources: [{ type: $CSS, request: { 
+      endpoint: { 
+        protocol: "https:",
+        hostname: "fonts.googleapis.com", 
+        pathname: "/css2", 
+        search: "?family=Butcherman" 
       }
-    }
+    } }]
   } as TextAssetObject
 ]
 
@@ -455,39 +454,31 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
   }
   const mashIds: GenerateTestIds = []
   const limitedContents = limitedOptions(GenerateArg.Content) as GenerateContentTest[]
-  assertPopulatedArray(limitedContents, 'limitedContents')
   limitedContents.forEach(([contentLabel, contentId]) => {
     const isColor = contentId === DEFAULT_CONTENT_ID
     const limitedContainers = limitedOptions(GenerateArg.Container) as GenerateContainerTest[]
-    assertPopulatedArray(limitedContainers, 'limitedContainers')
     limitedContainers.forEach(([containerLabel]) => {
       const limitedContainerPoints = limitedOptions(GenerateArg.ContainerPoint) as PointTest[]
       const point = isColor ? GeneratePoint.M : undefined
       const limitedContentPoints = limitedOptions(GenerateArg.ContentPoint, point) as PointTest[]
-      assertPopulatedArray(limitedContentPoints, 'limitedContentPoints')
       limitedContentPoints.forEach(([contentPointName]) => {
         const size = isColor ? GenerateSize.F : undefined
         const limitedContentSizes = limitedOptions(GenerateArg.ContentSize, size) as SizeTest[]
-        assertPopulatedArray(limitedContentSizes, 'limitedContentSizes')
         limitedContentSizes.forEach(([contentDimensionName]) => {
           const limitedOpacities = limitedOptions(GenerateArg.Opacity) as NumberTest[]
-          assertPopulatedArray(limitedOpacities, 'limitedOpacities')
           limitedOpacities.forEach(([opacityLabel]) => {
             const limitedContainerSizes = limitedOptions(GenerateArg.ContainerSize) as SizeTest[]
-            assertPopulatedArray(limitedContainerSizes, 'limitedContainerSizes')
             limitedContainerSizes.forEach(([containerDimensionName]) => {
-              assertPopulatedArray(limitedContainerPoints, 'limitedContainerPoints')
               limitedContainerPoints.forEach(([containerPointName]) => {
                 const containerCentered = containerPointName === GeneratePoint.M
                 const constrain = containerCentered ? GenerateConstrain.U : undefined
-                const limitedConstrains = limitedOptions(GenerateArg.CROP, constrain) as BooleanTest[]
+                const limitedConstrains = limitedOptions(GenerateArg.Crop, constrain) as BooleanTest[]
                 limitedConstrains.forEach(([constrainedLabel]) => {
                   const names = [contentLabel]
                   if (!isColor) names.push(contentPointName, contentDimensionName)
                   names.push(GenerateDelimiter, containerLabel)
                   names.push(constrainedLabel, containerPointName, containerDimensionName, opacityLabel)
                   const testId = names.join(GenerateIdDelimiter)
-                  assertPopulatedString(testId)
                   mashIds.push(testId)
                 })
               })
@@ -507,8 +498,8 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
 
   
   const mash: MashAssetObject = { 
-    type: VIDEO,
-    source: MASH,
+    type: $VIDEO,
+    source: $MASH,
     id: testId, color: '#666666', tracks,
     assets: GenerateAssetObjects,
   }
@@ -518,16 +509,16 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
 export const mashObjectFromId = (id: string, duration = DURATION_UNKNOWN, labels = false): MashAssetObject => {
   const mashObject = generateTest(id, SizePreview, duration, labels)
   const { tracks } = mashObject
-  assertPopulatedArray(tracks)
+  assertDefined(tracks)
   const { clips } = tracks[0]
-  assertPopulatedArray(clips)  
+  assertDefined(clips)  
   
   const fatMashObject = { ...mashObject, assets: GenerateAssetObjects }
   return fatMashObject
 }
 
 const checkSnapshot = async (id: string, outputPath: string): Promise<StringDataOrError> => {
-  const snapshotPath = path.join(TestDirSnapshots, [id, TXT].join(DOT))
+  const snapshotPath = path.join(TestDirSnapshots, [id, $TXT].join(DOT))
   const fileOrError = await fileReadPromise(snapshotPath)
   const existingSnapshot = isDefiniteError(fileOrError) ? '' : fileOrError.data
   const command = ffmpegCommand() 
@@ -541,14 +532,14 @@ const checkSnapshot = async (id: string, outputPath: string): Promise<StringData
   const newSnapshot = isDefiniteError(writtenOrError) ? '' : writtenOrError.data
   if (!existingSnapshot || existingSnapshot === newSnapshot) return { data: 'OK' }
 
-  await fileWritePromise(path.join(TestDirSnapshots, [id, 'prev', TXT].join(DOT)), existingSnapshot)
+  await fileWritePromise(path.join(TestDirSnapshots, [id, 'prev', $TXT].join(DOT)), existingSnapshot)
   // return { data: 'OK' }
  return namedError(ErrorSnapshot, `${id} ${snapshotPath} ${outputPath}`)
 }
 
 export const encodeId = async (id: string, outputOptions: OutputOptions, duration = DURATION_UNKNOWN, labels = false) => {
   const fatMashObject = mashObjectFromId(id, duration, labels)
-  const fileName = fileNameFromOptions(outputOptions, VIDEO)
+  const fileName = fileNameFromOptions(outputOptions, $VIDEO)
   const outputPath = path.join(TestDirTemporary, 'shared', id, fileName) 
   const previousPath = filenameAppend(outputPath, 'prev')
   const encodedPreviously = filePathExists(outputPath)
@@ -556,10 +547,10 @@ export const encodeId = async (id: string, outputOptions: OutputOptions, duratio
     if (filePathExists(previousPath)) await fileRemovePromise(previousPath)
     await fileMovePromise(outputPath, filenameAppend(outputPath, 'prev'))
   }
-  const event = new EventServerEncode(fatMashObject, id, outputOptions, VIDEO, 'shared')
-  MOVIEMASHER.eventDispatcher.dispatch(event)
-  const { promise } = event.detail
-  assertDefined(promise)
+
+  const encodeArgs: EncodeArgs = { asset: fatMashObject, type: $VIDEO, options: outputOptions }
+  const jobOptions: JobOptions = { id, user: 'shared' }
+  const promise = MOVIEMASHER.promise($ENCODE, encodeArgs, jobOptions)
   const orError = await promise
   if (isDefiniteError(orError)) return orError
 
@@ -570,12 +561,7 @@ export const encodeId = async (id: string, outputOptions: OutputOptions, duratio
   return { data: 'OK' }
 }
 
-export const encodeIds = async (ids: GenerateTestIds, force = false) => {
-  // const TestTemporary = ENV.get(ENV_KEY.OutputRoot) 
-  // const renderIds = force ? ids : ids.filter(id => { 
-  //   const idPath = path.join(TestTemporary, id, `video.${ExtensionLoadedInfo}`)
-  //   return !filePathExists(idPath)
-  // })
+export const encodeIds = async (ids: GenerateTestIds) => {
   for (const id of ids) {
     idReset()
     const result = await encodeId(id, VideoOptions, 10)
@@ -584,11 +570,11 @@ export const encodeIds = async (ids: GenerateTestIds, force = false) => {
   return { data: 'OK' }
 }
 
-export const combineIds = async (ids: GenerateTestIds, id:string, force = false): Promise<StringDataOrError> => {
+export const combineIds = async (ids: GenerateTestIds, id:string): Promise<StringDataOrError> => {
   // console.log('renderAndCombine', name, orError)
-  const fileName = fileNameFromOptions(VideoOptions, VIDEO)
+  const fileName = fileNameFromOptions(VideoOptions, $VIDEO)
   const sources: string[] = ids.map(id => {
-    return path.resolve(TestDirTemporary, id, fileName)
+    return path.resolve(TestDirTemporary, 'shared', id, fileName)
   })
   if (!sources.length) return namedError(ERROR.Ffmpeg, 'no ids')
   const hasVideo = true
@@ -624,27 +610,27 @@ export const combineIds = async (ids: GenerateTestIds, id:string, force = false)
       options: {
         n: sources.length, v: hasVideo ? 1 : 0, a: hasAudio ? 1 : 0
       },
-      outputs: ['concat-0'],
-    },
-    {
-      inputs: ['concat-0'],
-      filter: 'subtitles',
-      options: { filename: srtPath, wrap_unicode: 0, force_style: "'Fontsize=24'" }
+    //   outputs: ['concat-0'],
+    // },
+    // {
+    //   inputs: ['concat-0'],
+    //   filter: 'subtitles',
+    //   options: { filename: srtPath, wrap_unicode: 0, force_style: "'Fontsize=24'" }
     },
   ])
 
   const ffmepgOrError = await commandPromise(command)
 
   if (isDefiniteError(ffmepgOrError)) return ffmepgOrError
-  const infoPath = path.join(destinationDirectory, `${PROBE}.${JSON}`)
+  // const infoPath = path.join(destinationDirectory, `${$PROBE}.${$JSON}`)
   // const decodingId = idGenerate('decoding')
   assertAbsolutePath(destination)
-  const request: ServerMediaRequest = { endpoint: destination, path: destination }
-  const decodeOptions: DecodeOptions = { types: [DURATION] }
-  const event = new EventServerDecode(PROBE, VIDEO, request, 'shared', id, decodeOptions)
-  MOVIEMASHER.eventDispatcher.dispatch(event)
-  const { promise } = event.detail
-  assertDefined(promise)
+  const request: EndpointRequest = { endpoint: destination, path: destination }
+  const decodeOptions: DecodeOptions = { types: [$DURATION] }
+  const resource: DropResource = { request, type: $VIDEO, id: id }
+  const args: DecodeArgs = { resource, options: decodeOptions, type: $PROBE }
+  const jobOptions: JobOptions = { id, user: 'shared' }
+  const promise = MOVIEMASHER.promise($DECODE, args, jobOptions)
 
   const decodeOrError = await promise
   if (isDefiniteError(decodeOrError)) return decodeOrError
@@ -654,10 +640,10 @@ export const combineIds = async (ids: GenerateTestIds, id:string, force = false)
 
 export const encodeAndCombine = async (name: string, options?: GenerateOptions | GenerateTestIds, force = false) => {
   const ids = (isArray(options) ? options : generateIds(options))
-  const orError = await encodeIds(ids, force)
+  const orError = await encodeIds(ids)
   if (isDefiniteError(orError)) return orError
 
-  const combineOrError = await combineIds(ids, name, force)
+  const combineOrError = await combineIds(ids, name)
   return combineOrError
 
 }
@@ -692,7 +678,7 @@ export const encodingIds = (overrides: GenerateOptions = {}) => {
     switch (arg) {
       case GenerateArg.Container:
       case GenerateArg.Content:
-      case GenerateArg.CROP: return false
+      case GenerateArg.Crop: return false
     }
     return true
   })

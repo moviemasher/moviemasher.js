@@ -1,0 +1,150 @@
+{
+	"id": "mash_pan",
+	"type": "mash",
+	"mash": {
+		"quantize": 10,
+		"backcolor": "gray",
+		"label": "Pan",
+		"media": [
+			{
+				"id": "medium-4x3",
+				"type": "image",
+				"source": "magick/md-4x3.png"
+			},
+			{
+				"id": "medium-16x9",
+				"type": "image",
+				"source": "magick/md-16x9.png"
+			},
+			{
+				"id": "medium-9x16",
+				"type": "image",
+				"source": "magick/md-9x16.png"
+			},
+			{
+				"id": "video_id",
+				"type": "video",
+				"duration": 10,
+				"source": "magick/10-FF0000.mov"
+			}
+		],
+		"video": [
+			{
+				"type": "video",
+				"clips": [{
+					"id": "medium-4x3",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.5,
+						"direction": 4
+					},
+					"frame": 0,
+					"frames": 50
+				},{
+					"id": "medium-4x3",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.5,
+						"direction": 6
+					},
+					"frame": 50,
+					"frames": 50
+				},{
+					"id": "medium-16x9",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.5,
+						"direction": 5
+					},
+					"frame": 100,
+					"frames": 50
+				},{
+					"id": "medium-16x9",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.5,
+						"direction": 7
+					},
+					"frame": 150,
+					"frames": 50
+				},{
+					"id": "medium-9x16",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.25,
+						"direction": 0
+					},
+					"frame": 200,
+					"frames": 50
+				},{
+					"id": "medium-9x16",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.25,
+						"direction": 2
+					},
+					"frame": 250,
+					"frames": 50
+				},{
+					"id": "medium-16x9",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.25,
+						"direction": 1
+					},
+					"frame": 300,
+					"frames": 50
+				},{
+					"id": "medium-16x9",
+					"scaler": {
+						"id": "com.moviemasher.scaler.pan",
+						"scale": 1.25,
+						"direction": 3
+					},
+					"frame": 350,
+					"frames": 50
+				}]
+			},
+			{
+				"type": "video",
+				"clips": [{
+					"id": "video_id",
+					"effects": [],
+					"frame": 10,
+					"frames": 20,
+					"merger": {
+						"id": "com.moviemasher.merger.constrained",
+						"left": 0.5,
+						"top": 0.5
+					},
+					"scaler": {
+						"id": "com.moviemasher.scaler.scale",
+						"scale": 0.5
+					}
+				},
+				{
+					"id": "video_id",
+					"effects": [],
+					"trim": 30,
+					"frame": 40,
+					"frames": 20,
+					"merger": {
+						"id": "com.moviemasher.merger.constrained",
+						"left": 1,
+						"top": 0
+					},
+					"scaler": {
+						"id": "com.moviemasher.scaler.scale",
+						"scale": 0.5
+					}
+				}]
+			}
+		],
+		"audio": [
+			{
+				"type": "audio",
+				"clips": []
+			}
+		]
+	}
+}

@@ -1,206 +1,34 @@
-import type { AssetCacheArgs, AssetObject, AssetObjects, AudioInstance, AudioInstanceArgs, AudioInstanceObject, ClientMediaRequest, DataOrError, DecodeOptions, Decoding, Decodings, DefiniteError, DropType, ImageElement, ImageInstance, ImageInstanceObject, InstanceArgs, ListenersFunction, Numbers, ProbingData, Rect, RectOptions, Requestable, ShapeAssetObject, Size, Sources, StringDataOrError, SvgItem, SvgItemArgs, Time, Times, TranscodeOptions, VideoInstance, VideoInstanceObject } from '@moviemasher/shared-lib/types.js'
+import type { AssetCacheArgs, AssetObject, AssetObjects, AudioInstance, AudioInstanceArgs, AudioInstanceObject, ClientImage, ClientVideo, ContainerSvgItemArgs, ContentSvgItemArgs, DataOrError, Decoding, Decodings, DefiniteError, DropType, EndpointRequest, ImageInstance, ImageInstanceObject, InstanceArgs, ListenersFunction, MaybeComplexSvgItem, Numbers, ProbingData, Rect, RectOptions, Resource, Scalar, ShapeAssetObject, Size, Sources, SvgItem, Time, Times, VideoInstance, VideoInstanceObject } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup } from 'lit'
 import type { OptionalContent } from '../../client-types.js'
-import type { ClientImageDataOrError, ClientImporter, ClientRawAsset, ClientRawAssetObject, ClientRawAudioAsset, ClientRawAudioAssetObject, ClientRawAudioInstance, ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientTextAssetObject, ClientVideo, ServerProgress, UploadResult } from '../../types.js'
+import type { ClientImageDataOrError, ClientImporter, ClientRawAssetObject, ClientRawAudioAsset, ClientRawAudioAssetObject, ClientRawAudioInstance, ClientRawImageAsset, ClientRawImageAssetObject, ClientRawImageInstance, ClientRawVideoAsset, ClientRawVideoAssetObject, ClientRawVideoInstance, ClientTextAssetObject } from '../../types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { AudibleAssetMixin, AudibleInstanceMixin } from '@moviemasher/shared-lib/mixin/audible.js'
 import { AudioAssetMixin, AudioInstanceMixin } from '@moviemasher/shared-lib/mixin/audio.js'
 import { ImageAssetMixin, ImageInstanceMixin } from '@moviemasher/shared-lib/mixin/image.js'
-import { RawAssetMixin } from '@moviemasher/shared-lib/mixin/raw.js'
 import { VideoAssetMixin, VideoInstanceMixin } from '@moviemasher/shared-lib/mixin/video.js'
 import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
-import { MOVIEMASHER, ALPHA, AUDIO, DOT, DROP_TYPES, ERROR, FONT, IMAGE, PROBE, PROBING_TYPES, QUESTION, RAW, BITMAPS, SHAPE, SIZE_ZERO, SLASH, SVG, TEMPORARY, TEXT, TRANSCODE, VIDEO, WAVEFORM, arrayRemove, errorCaught, errorPromise, errorThrow, idGenerateString, isAssetObject, isAudibleAssetType, isDefiniteError, isDropType, isPopulatedString, isProbing, isUndefined, namedError } from '@moviemasher/shared-lib/runtime.js'
-import { assertDefined, assertPopulatedString, assertTrue, isAudibleAsset } from '@moviemasher/shared-lib/utility/guards.js'
-import { assertSizeAboveZero, centerPoint, sizeAboveZero, sizeCopy, sizeCover, sizeString } from '@moviemasher/shared-lib/utility/rect.js'
-import { promiseNumbers, requestUrl } from '@moviemasher/shared-lib/utility/request.js'
-import { svgImageWithOptions, svgSvgElement } from '@moviemasher/shared-lib/utility/svg.js'
+import { promiseNumbers, $ALPHA, $AUDIO, $BITMAPS, $FONT, $IMAGE, $PROBE, $RAW, $SHAPE, $TEMPORARY, $TEXT, $VIDEO, $WAVEFORM, DOT, DROP_TYPES, ERROR, MIME_SVG, MOVIEMASHER, QUESTION, SIZE_ZERO, SLASH, errorCaught, errorPromise, idGenerateString, isAssetObject, isAudibleType, isDefiniteError, isDropType, namedError, $RETRIEVE } from '@moviemasher/shared-lib/runtime.js'
+import { isClientAudio, isClientFont, isClientImage, isClientVideo, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined, assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertSizeNotZero, copySize, coverSize, sizeNotZero, sizeString } from '@moviemasher/shared-lib/utility/rect.js'
+import { requestUrl } from '@moviemasher/shared-lib/utility/request.js'
+import { svgImagePromiseWithOptions, svgImageWithOptions, svgOpacity, svgSvgElement } from '@moviemasher/shared-lib/utility/svg.js'
 import { assertTimeRange, isTime, timeFromArgs, timeFromSeconds } from '@moviemasher/shared-lib/utility/time.js'
 import { html } from 'lit-html'
+import { ClientInstanceClass } from '../../base/ClientInstanceClass.js'
 import { Component } from '../../base/Component.js'
 import { Scroller } from '../../base/LeftCenterRight.js'
-import { isClientAudio } from '../../guards/ClientGuards.js'
-import { ClientInstanceClass } from '../../base/ClientInstanceClass.js'
+import { ClientAudibleAssetMixin, ClientAudibleInstanceMixin } from '../../mixin/audible.js'
 import { DROP_TARGET_CSS, DropTargetMixin, SizeReactiveMixin } from '../../mixin/component.js'
 import { ClientVisibleAssetMixin, ClientVisibleInstanceMixin } from '../../mixin/visible.js'
-import { MIME_SVG, eventStop } from '../../runtime.js'
+import { centerPoint, eventStop } from '../../runtime.js'
 import { dropFile, droppingFiles } from '../../utility/draganddrop.js'
-import { EventAsset, EventClientAudioPromise, EventClientDecode, EventClientFontPromise, EventClientImagePromise, EventClientTranscode, EventClientVideoPromise, EventImportFile, EventImporterAdd, EventImporterError, EventImporterNodeFunction, EventUpload } from '../../utility/events.js'
-import { svgColorMask, svgImagePromiseWithOptions, svgStringElement } from '../../utility/svg.js'
-import { ClientAudibleAssetMixin } from '../../mixin/audible.js'
-import { ClientAudibleInstanceMixin } from '../../mixin/audible.js'
-import { ClientAssetClass } from '../../base/ClientAssetClass.js'
+import { EventAsset, EventImportFile, EventImporterAdd, EventImporterError, EventImporterNodeFunction } from '../../utility/events.js'
+import { svgColorMask, svgStringElement } from '../../utility/svg.js'
+import { ClientRawAssetClass } from '../../base/ClientRawAssetClass.js'
 
-const MAX_WIDTH = 2000
-const MIN_WIDTH = 200
-
-const pixelsFromDuration = (duration: number): number => {
-  const width = Math.round(duration * 10)
-  return Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, width))
-}
-
-const WithRawAssetMixin = RawAssetMixin(ClientAssetClass)
-
-export class ClientRawAssetClass extends WithRawAssetMixin implements ClientRawAsset {
-  constructor(...args: any[]) {
-    const [object] = args as [ClientRawAssetObject]
-    super(object)
-    const { request } = object
-    this.request = request
-  }
-
-  override get assetObject(): ClientRawAssetObject {
-    const { transcodings, request } = this
-    return { ...super.assetObject, request, transcodings }
-  }
-
-  override initializeProperties(object: ClientRawAssetObject): void {
-    const { transcodings } = object
-    if (transcodings) this.transcodings.push(...transcodings)
-    super.initializeProperties(object)
-  }
-
-  override async savePromise(progress?: ServerProgress): Promise<StringDataOrError>  {
-    const uploadPromise = this.uploadPromise(progress)
-    if (uploadPromise) {
-      const uploadOrError = await uploadPromise
-      if (isDefiniteError(uploadOrError)) {
-        // console.error(this.constructor.name, 'ClientRawAssetClass savePromise', uploadOrError)
-        return uploadOrError
-      }
-      
-      const { data } = uploadOrError
-      
-      const { id, assetRequest } = data
-      this.request = assetRequest
-      // console.log(this.constructor.name, 'ClientRawAssetClass savePromise calling saveId', uploadOrError.data)
-
-      this.saveId(id)
-
-
-      const decodePromise = this.decodePromise(progress)
-      if (decodePromise) {
-        const decodeOrError = await decodePromise
-        if (isDefiniteError(decodeOrError)) return decodeOrError
-      }
-
-      const transcodeOrError = await this.transcodePromise(progress)
-      if (isDefiniteError(transcodeOrError)) return transcodeOrError
-    
-    }
-    return await super.savePromise(progress)
-  }
-
-  private decodePromise(progress?: ServerProgress): Promise<StringDataOrError> | undefined {
-    const decoding = this.decodings.find(decoding => decoding.type === PROBE)
-    if (isProbing(decoding)) {
-      // only video that doesn't know its aubible needs to be decoded
-      if (this.type !== VIDEO) return
-      
-      const { data } = decoding
-      if (!isUndefined(data.audio)) return
-    }
-    const decodingType = PROBE
-    const options: DecodeOptions = { types: PROBING_TYPES }
-    const event = new EventClientDecode(this, decodingType, options, progress)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return
-
-    return promise.then(orError => {
-      if (isDefiniteError(orError)) return orError
-
-      const { data } = orError
-      if (decoding) this.decodings.splice(this.decodings.indexOf(decoding), 1)
-      this.decodings.unshift(data)
-      return { data: 'OK' }
-    })
-  }
-
-  private async transcodePromise(progress?: ServerProgress): Promise<StringDataOrError>  {
-    const { type, request, source } = this
-    const result = { data: 'OK' }
-    if (source !== RAW) return result
-
-    const { [TRANSCODE]: transcodeOptions } = MOVIEMASHER.options
-        
-    if (transcodeOptions && transcodeOptions[type]) {
-      const types = [...transcodeOptions[type]]
-      switch(type) {
-        case VIDEO: {
-          delete this._canBeMuted
-          if (!this.canBeMuted) {
-            // don't make audio or waveform if there is no audio track
-            arrayRemove(types, AUDIO)
-            arrayRemove(types, WAVEFORM)
-          }
-          break
-        }
-        case IMAGE: {
-          const url = requestUrl(request)
-          if (url.endsWith(`${DOT}${SVG}`)) {
-            // don't make image previews for SVG files
-            arrayRemove(types, IMAGE)
-          }
-          break
-        }
-      }
-      
-      for (const transcodingType of types) {
-        const transcodeOptions: TranscodeOptions = {}
-        if (transcodingType === WAVEFORM && isAudibleAsset(this)) {
-          transcodeOptions.width = pixelsFromDuration(this.duration)
-        }
-        const event = new EventClientTranscode(this, transcodingType, transcodeOptions, progress)
-        MOVIEMASHER.eventDispatcher.dispatch(event)
-        const { promise } = event.detail
-        if (!promise) continue
-
-        const orError = await promise      
-        if (isDefiniteError(orError)) return orError
-
-        const { data: transcoding } = orError
-        this.transcodings.push(transcoding)
-      }
-    }
-    
-    return result
-  }
-  
-  override unload(): void {
-    super.unload()
-    const { request } = this
-    const { objectUrl, response, mediaPromise, urlPromise } = request
-    if (objectUrl) {
-      globalThis.window.alert(`ClientRawAssetClass revokeObjectURL ${objectUrl}`)
-      URL.revokeObjectURL(objectUrl)
-      delete request.objectUrl
-    }
-    if (response) delete request.response
-    if (mediaPromise) delete request.mediaPromise
-    if (urlPromise) delete request.urlPromise
-  }
-
-  private uploadPromise(progress?: ServerProgress): Promise<DataOrError<UploadResult>> | undefined {
-    const { request } = this
-    const { file, objectUrl } = request
-    if (!file) return
-    
-    const event = new EventUpload(request, progress)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return
-
-    return promise.then(orError => {
-      if (isDefiniteError(orError)) return orError 
-
-      if (objectUrl) URL.revokeObjectURL(objectUrl)
-      return orError
-    })
-  }
-
-  override request: ClientMediaRequest
-}
 
 const WithAsset = AudibleAssetMixin(ClientRawAssetClass)
 const WithClientAsset = ClientAudibleAssetMixin(WithAsset)
@@ -218,35 +46,31 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
     const { loadedAudio } = this
     if (loadedAudio) return Promise.resolve({ data: 0 })
 
-    const transcoding = this.preferredTranscoding(AUDIO) || this
-    if (!transcoding) {
-      return Promise.resolve({ data: 0 })
-    }
+    const resource = this.resourceOfType($AUDIO) 
+    if (!resource) return Promise.resolve({ data: 0 })
+    
+    return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
+      if (isDefiniteError(orError)) return orError
 
-    const { request } = transcoding
-    const event = new EventClientAudioPromise(request)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    return promise!.then(orError => {
-      if (isDefiniteError(orError)) return errorThrow(orError.error)
-
-      const { data: clientAudio } = orError
+      const { response: clientAudio } = resource.request
+      if (!isClientAudio(clientAudio)) return errorPromise(ERROR.Unimplemented, 'audio')
+      
       this.loadedAudio = clientAudio
       return { data: 1 }
     })
   }
 
   override assetIcon(size: Size, _cover?: boolean): Promise<DataOrError<Element>> {
-    const transcoding = this.preferredTranscoding(WAVEFORM) 
-    if (!transcoding) return errorPromise(ERROR.Unavailable, 'transcoding')
+    const resource = this.resourceOfType($WAVEFORM) 
+    if (!resource) return errorPromise(ERROR.Unavailable, 'transcoding')
     
     // console.log(this.constructor.name, 'ClientRawAudioAssetClass.assetIcon', this.label)
-    return this.assetIconPromise(transcoding, size, false).then(orError => {
+    return this.assetIconPromise(resource, size, false).then(orError => {
       // console.log(this.constructor.name, 'ClientRawAudioAssetClass.assetIcon assetIconPromise', this.label)
     
       if (isDefiniteError(orError)) return orError
       
-      const { waveformTransparency = ALPHA } = MOVIEMASHER.options
+      const { waveformTransparency = $ALPHA } = MOVIEMASHER.options
       return { data: svgColorMask(orError.data, size, waveformTransparency) }
     })
   }
@@ -271,7 +95,7 @@ export class ClientRawAudioAssetClass extends WithAudioAsset implements ClientRa
   static handleAsset(event: EventAsset): void {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, AUDIO, RAW)) {
+    if (isAssetObject(assetObject, $AUDIO, $RAW)) {
       detail.asset = new ClientRawAudioAssetClass(assetObject)
       event.stopImmediatePropagation()
     }  
@@ -310,18 +134,18 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
     const { visible } = args
     if (!visible) return Promise.resolve({ data: 0 })
 
-    const requestable = this.preferredTranscoding(IMAGE) || this
+    const requestable = this.resourceOfType($IMAGE) 
     if (!requestable) return Promise.resolve({ data: 0 })
     
-    return this.imagePromise(requestable.request).then(icon => {
+    return this.imagePromise(requestable).then(icon => {
       return { data: isDefiniteError(icon) ? 0 : 1 }
     })
   }
 
   override assetIcon(size: Size, cover?: boolean): Promise<DataOrError<Element>> {
-    // console.log(this.constructor.name, 'ClientRawImageAssetClass.assetIcon', this.label)
+    const transcoding = this.resourceOfType($IMAGE)   
+    if (!transcoding) return errorPromise(ERROR.Unavailable, 'transcoding')
 
-    const transcoding = this.preferredTranscoding(IMAGE) || this    
     return this.assetIconPromise(transcoding, size, cover).then(orError => {
       if (isDefiniteError(orError)) return orError
 
@@ -343,7 +167,7 @@ export class ClientRawImageAssetClass extends WithImageAsset implements ClientRa
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject, asset } = detail
-    if (!asset && isAssetObject(assetObject, IMAGE, RAW)) {
+    if (!asset && isAssetObject(assetObject, $IMAGE, $RAW)) {
       detail.asset = new ClientRawImageAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -367,29 +191,47 @@ export class ClientRawImageInstanceClass extends WithImageInstance implements Cl
 
   declare asset: ClientRawImageAsset
 
+  override containerSvgItemPromise(args: ContainerSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>> {
+    const { containerRect, opacity } = args
+    return this.svgItemPromise(containerRect, opacity)
+  }
 
-  override svgItemForTimelinePromise(rect: Rect, _time: Time, ): Promise<DataOrError<SvgItem>> {
+  override contentSvgItemPromise(args: ContentSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>> {
+    const { contentRect: rect, opacity } = args
+    return this.svgItemPromise(rect, opacity)
+  }
+
+  private get imagePromise() {
     const { asset } = this
-    const requestable = asset.preferredTranscoding(IMAGE) || asset
-    const { request } = requestable
-    return asset.imagePromise(request).then(orError => {
+    const resource = asset.resourceOfType($IMAGE) 
+    if (!resource) return errorPromise(ERROR.Unavailable, 'resource')
+    
+    return asset.imagePromise(resource)
+  }
+
+  private svgItemPromise(rect: Rect, opacity?: Scalar): Promise<DataOrError<MaybeComplexSvgItem>> {
+    return this.imagePromise.then(orError => {
       if (isDefiniteError(orError)) return orError
 
       const { src } = orError.data
-      return svgImagePromiseWithOptions(src, rect).then(data => ({ data }))
+      return svgImagePromiseWithOptions(src, rect).then(image => {
+        const data = svgOpacity(image, opacity)
+        return { data }
+      })
     })
   }
 }
 
 const canvasContext = (size: Size): [HTMLCanvasElement, CanvasRenderingContext2D] => {
-  const { document } = MOVIEMASHER
+  const { document } = MOVIEMASHER.window
   const canvas = document.createElement('canvas')
   const { width, height } = size
   canvas.height = height
   canvas.width = width
-  const context = canvas.getContext('2d')
-  assertTrue(context)
-  return [canvas, context]
+  const canvasContext = canvas.getContext('2d')
+  assertTrue(canvasContext)
+
+  return [canvas, canvasContext]
 }
 
 const seekingPromises = new Map<ClientVideo, Promise<ClientImageDataOrError>>()
@@ -399,8 +241,8 @@ const seek = (assetTime: Time, video:HTMLVideoElement): void => {
 }
 
 const videoImagePromise = (video: ClientVideo, outSize?: Size): Promise<ClientImageDataOrError> => {
-  const inSize = sizeCopy(video)
-  const size = sizeAboveZero(outSize) ? sizeCover(inSize, outSize) : inSize
+  const inSize = copySize(video)
+  const size = sizeNotZero(outSize) ? coverSize(inSize, outSize) : inSize
   const { width, height } = size
   const [canvas, context] = canvasContext(size)
   context.drawImage(video, 0, 0, width, height)
@@ -451,100 +293,80 @@ const imageFromVideoPromise = (video: ClientVideo, assetTime: Time, outSize?: Si
   return promise
 }
 
-const fileAssetObjectPromise = (file: File, type: DropType): Promise<DataOrError<AssetObject>> => {
+const fileAssetObjectPromise = (file: File, dropType: DropType): Promise<DataOrError<AssetObject>> => {
   const { name } = file
-  const label = (name.split(DOT).slice(0, -1)).join(DOT).replace(/[-._]/g, ' ')
-  const request: ClientMediaRequest = { file, objectUrl: URL.createObjectURL(file), endpoint: '' }
+  const nameBits = name.split(DOT)
+  const extension = nameBits.pop()
+  assertDefined(extension)
 
+  const label = nameBits.join(DOT).replace(/[-._]/g, ' ')
+  const request: EndpointRequest = { 
+    file, objectUrl: URL.createObjectURL(file), endpoint: '' 
+  }
+
+  const type = dropType === $FONT ? extension : dropType
+  const resource: Resource = { type, request }
   // we can't reliably tell if there is an audio track so we assume there is 
   // one, and catch problems if it's played before decoded
-  const info: ProbingData = { audible: isAudibleAssetType(type) }
-  const decoding: Decoding = { id: '', data: info, type: PROBE }
-  const decodings: Decodings = [decoding]
-  const id = `${TEMPORARY}-${crypto.randomUUID()}`
+  const info: ProbingData = { extension, audible: isAudibleType(dropType) }
+  const decoding: Decoding = { data: info, type: $PROBE }
+  const decodings: Decodings = []
+  if (dropType !== $FONT) { decodings.push(decoding) }
+  const id = `${$TEMPORARY}-${crypto.randomUUID()}`
   const shared: ClientRawAssetObject = { 
-    type: IMAGE, label, request, decodings, id, source: RAW,
+    type: $IMAGE, label, resources: [resource], decodings, id, source: $RAW,
   }
- 
-  switch (type) {
-    case AUDIO: {
-      const event = new EventClientAudioPromise(request)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) return errorPromise(ERROR.Unimplemented, EventClientAudioPromise.Type)
 
-      return promise.then(orError => {
-        if (isDefiniteError(orError)) return orError
+  return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
+    if (isDefiniteError(orError)) return orError
 
-        const { data: loadedAudio } = orError
-        request.response = loadedAudio
-        const { duration } = loadedAudio
+    const { response: media } = request
+    switch (dropType) {
+      case $AUDIO: {
+        if (!isClientAudio(media)) return errorPromise(ERROR.Unimplemented, 'audio')
+
+        request.response = media
+        const { duration } = media
         info.duration = duration
-        const object: ClientRawAudioAssetObject = { ...shared, type, loadedAudio }
+        const object: ClientRawAudioAssetObject = { ...shared, type: dropType, loadedAudio: media }
         return { data: object }
-      })
-    }
-    case IMAGE: {
-      const event = new EventClientImagePromise(request)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) return errorPromise(ERROR.Unimplemented, EventClientImagePromise.Type)
+      }
+      case $IMAGE: {
+        if (!isClientImage(media)) return errorPromise(ERROR.Unimplemented, 'image')
 
-      return promise.then(orError => {
-        if (isDefiniteError(orError)) return orError
-
-        const { data: image } = orError
-        request.response = image
-        const { width, height } = image
+        const { width, height } = media
         info.width = width
         info.height = height
-        const object: ClientRawImageAssetObject = { ...shared, type, loadedImage: image }
+        const object: ClientRawImageAssetObject = { ...shared, type: dropType }
         // console.log('object', object)
         return { data: object }
-      })
-    }
-    case VIDEO: {
-      const event = new EventClientVideoPromise(request)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) return errorPromise(ERROR.Unimplemented, EventClientVideoPromise.Type)
+      
+      }
+      case $VIDEO: {
+        if (!isClientVideo(media)) return errorPromise(ERROR.Unimplemented, 'video')
 
-      return promise.then(orError => {
-        if (isDefiniteError(orError)) return orError
-
-        const { data: video } = orError
-        request.response = video
-        const { duration, videoWidth, clientWidth, videoHeight, clientHeight } = video
+        request.response = media
+        const { duration, videoWidth, clientWidth, videoHeight, clientHeight } = media
         const width = videoWidth || clientWidth
         const height = videoHeight || clientHeight
         info.duration = duration
         info.width = width
         info.height = height
-        const object: ClientRawVideoAssetObject = { ...shared, type, loadedVideo: video }
+        const object: ClientRawVideoAssetObject = { ...shared, type: dropType, loadedVideo: media }
         return { data: object }
-      })
-    }
-    case FONT: {
-      const event = new EventClientFontPromise(request)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) return errorPromise(ERROR.Unimplemented, EventClientFontPromise.Type)
+      }
+      case $FONT: {
+        if (!isClientFont(media)) return errorPromise(ERROR.Unimplemented, 'font')
 
-      return promise.then(orError => {
-        if (isDefiniteError(orError)) return orError
-
-        const { data: font } = orError
-        request.response = font
-        const object: ClientTextAssetObject = { 
-          ...shared, source: TEXT, loadedFont: font 
-        }
+        request.response = media
+        const object: ClientTextAssetObject = { ...shared, source: $TEXT }
         return { data: object }
-      })
-    }
-  } 
+      }
+    } 
+  })
 }
 
-const fileMedia = (file: File): Promise<DataOrError<AssetObject>> => {
+const fileAssetObject = (file: File): Promise<DataOrError<AssetObject>> => {
   const { type: mimetype, size, name } = file
   const sizeInMeg = Math.ceil(size * 10 / 1024 / 1024) / 10
   const extension = name.split('.').pop()
@@ -604,17 +426,19 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
     // console.log(this.constructor.name, 'ClientRawVideoAssetClass.assetIcon', this.label)
 
     const { previewTranscoding: transcoding } = this
+    if (!transcoding) return errorPromise(ERROR.Unavailable, 'resource')
+
     const time = timeFromArgs(1)
-    return this.imageFromTranscodingPromise(transcoding, time, size).then(orError => {
+    return this.imageFromResourcePromise(transcoding, time, size).then(orError => {
       if (isDefiniteError(orError)) return orError
       
       const { data: image} = orError
       const { src } = image
-      assertSizeAboveZero(image)
+      assertSizeNotZero(image)
 
       const { width, height } = image
       const inSize = { width, height }
-      const containedSize = sizeCover(inSize, size, !cover)
+      const containedSize = coverSize(inSize, size, !cover)
       const outRect = { ...containedSize, ...centerPoint(size, containedSize) }
       const options: RectOptions = { ...outRect }
       return svgImagePromiseWithOptions(src, options).then(svgImage => {
@@ -637,23 +461,26 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
     return Math.floor(fps * duration) - 2 
   }
 
-  private imageFromTranscodingPromise(transcoding: Requestable | undefined, assetTime: Time, outSize?: Size): Promise<ClientImageDataOrError> {
-    const target: Requestable | ClientRawVideoAsset = transcoding || this
+  private imageFromResourcePromise(resource: Resource, assetTime: Time, outSize?: Size): Promise<ClientImageDataOrError> {
+    const target: Resource | ClientRawVideoAsset = resource || this
     const { type, request } = target
+    
     // console.log(this.constructor.name, 'imageFromTranscodingPromise', type, assetTime)
     switch (type) {
-      case IMAGE: {
-        const event = new EventClientImagePromise(request)
-        MOVIEMASHER.eventDispatcher.dispatch(event)
-        const { promise } = event.detail
-        if (!promise) return errorPromise(ERROR.Unimplemented, EventClientImagePromise.Type)
+      case $IMAGE: {
+        return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
+          if (isDefiniteError(orError)) return orError
 
-        return promise
+          const { response } = request
+          if (!isClientImage(response)) return errorPromise(ERROR.Unimplemented, 'image')
+
+          return { data: response }
+        })
       }
-      case VIDEO: {
-        return this.imageFromVideoTranscodingPromise(transcoding, assetTime, outSize)
+      case $VIDEO: {
+        return this.imageFromVideoTranscodingPromise(resource, assetTime, outSize)
       }
-      case BITMAPS: {
+      case $BITMAPS: {
         const loaded = this.loadedImageForPromise(assetTime, outSize)
         if (loaded) return Promise.resolve({ data: loaded })
 
@@ -668,7 +495,7 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
   private begin = 1
   private increment = 1
 
-  private imageFromSequencePromise(transcoding: Requestable, assetTime: Time, _?: Size): Promise<ClientImageDataOrError> {
+  private imageFromSequencePromise(transcoding: Resource, assetTime: Time, _?: Size): Promise<ClientImageDataOrError> {
     const frames = this.framesArray(assetTime)
     const frame = frames.length ? frames[0] : this.framesMax 
     const { increment, begin } = this
@@ -679,11 +506,11 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
 
     const components = urlFromRequest.split(SLASH)
     const patternAndQuery = components.pop() // eg. '%02d.jpg?..'
-    assertPopulatedString(patternAndQuery, 'pattern') 
+    assertDefined<string>(patternAndQuery, 'pattern') 
     const [pattern, query] = patternAndQuery.split(QUESTION) 
 
     const extension = pattern.split(DOT).pop() // eg. 'jpg'
-    assertPopulatedString(extension, 'extension') 
+    assertDefined(extension, 'extension') 
 
     // regular expression to extract padding from pattern
     const regExp = /%0(\d+)d/
@@ -702,33 +529,30 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
 
     const imageRequest = this.frameRequests[endpoint] ||= { ...request, endpoint }
 
-    const event = new EventClientImagePromise(imageRequest)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
+    const resource = { type: $IMAGE, request: imageRequest }
+    return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
+      if (isDefiniteError(orError)) return orError
 
-    return promise!
+      const { response } = request
+      if (!isClientImage(response)) return namedError(ERROR.Unimplemented, 'image')
+
+      return { data: response }
+    })
   }
 
-  private frameRequests: Record<string, ClientMediaRequest> = {}
+  private frameRequests: Record<string, EndpointRequest> = {}
 
 
-  private imageFromVideoTranscodingPromise(previewTranscoding: Requestable | undefined, assetTime: Time, outSize?: Size): Promise<ClientImageDataOrError> {
-    // console.log(this.constructor.name, 'imageFromVideoTranscodingPromise', assetTime, outSize)
-    
+  private imageFromVideoTranscodingPromise(resource: Resource, assetTime: Time, outSize?: Size): Promise<ClientImageDataOrError> {
     const loaded = this.loadedImageForPromise(assetTime, outSize)
     if (loaded) return Promise.resolve({ data: loaded })
     
-    const { request } = previewTranscoding || this
-
-    const event = new EventClientVideoPromise(request)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return errorPromise(ERROR.Unimplemented, EventClientVideoPromise.Type)
-
-    return promise.then(orError => {
+    return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
       if (isDefiniteError(orError)) return orError
 
-      const { data: clientVideo } = orError
+      const { response: clientVideo } = resource.request
+      if (!isClientVideo(clientVideo)) return namedError(ERROR.Unimplemented, 'video')
+
       const key = this.loadedImageKey(assetTime, outSize)
 
       return imageFromVideoPromise(clientVideo, assetTime, outSize).then(orError => {
@@ -752,16 +576,16 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
     return new ClientRawVideoInstanceClass(this.instanceArgs(object))
   }
 
-  private loadedImages = new Map<string, ImageElement>()
+  private loadedImages = new Map<string, ClientImage>()
 
-  loadedImage(assetTime: Time, size?: Size): DataOrError<ImageElement> {
+  loadedImage(assetTime: Time, size?: Size): DataOrError<ClientImage> {
     const loaded = this.loadedImageForPromise(assetTime, size)
     if (loaded) return { data: loaded }
 
     return namedError(ERROR.Unavailable, 'loadedImage')
   }
 
-  private loadedImageForPromise(assetTime: Time, outSize?: Size): ImageElement | undefined {
+  private loadedImageForPromise(assetTime: Time, outSize?: Size): ClientImage | undefined {
     const key = this.loadedImageKey(assetTime, outSize)
     return this.loadedImages.get(key)
   }
@@ -769,70 +593,62 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
   private loadedImageKey(assetTime: Time, outSize?: Size): string {
     const { frame, fps } = assetTime
     const frameFps = `${frame}@${fps}`
-    if (!sizeAboveZero(outSize)) return frameFps
+    if (!sizeNotZero(outSize)) return frameFps
 
     return `${frameFps}-${sizeString(outSize)}`
   }
 
   loadedImagePromise(assetTime: Time, outSize?: Size): Promise<ClientImageDataOrError>{
     const { previewTranscoding: transcoding } = this
-    return this.imageFromTranscodingPromise(transcoding, assetTime, outSize)
+    if (!transcoding) return errorPromise(ERROR.Unavailable, 'resource')
+
+    return this.imageFromResourcePromise(transcoding, assetTime, outSize)
   }
 
   private preloadAudiblePromise(_args: AssetCacheArgs): Promise<DataOrError<number>> {
     if (this.loadedAudio) return Promise.resolve({ data: 0 })
 
-    const transcoding = this.preferredTranscoding(AUDIO, VIDEO) || this
-    const { request } = transcoding 
+    const resource = this.resourceOfType($AUDIO, $VIDEO) 
+    if (!resource) return Promise.resolve({ data: 0 })
 
-    const event = new EventClientAudioPromise(request)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return errorPromise(ERROR.Unimplemented, EventClientAudioPromise.Type)
-
-    
-    return promise.then(orError => {
+    return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
       if (isDefiniteError(orError)) {
         // console.debug(this.constructor.name, 'preloadAudiblePromise', 'isDefiniteError', orError)
         this.canBeMuted = false
         return orError
       }
-
-      const { data } = orError
-      if (isClientAudio(data)) {
+      const { response: media } = resource.request
+     
+      if (isClientAudio(media)) {
         // console.debug(this.constructor.name, 'preloadAudiblePromise', 'isClientAudio')
-        this.loadedAudio = data
+        this.loadedAudio = media
         return { data: 1 }
       }
-
       return namedError(ERROR.Internal)
     })
   }
-  declare request: ClientMediaRequest
 
   private preloadVisiblePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
-    const promises: Promise<DataOrError<number>>[] = []
-    const requestable = this.preferredTranscoding(BITMAPS, VIDEO) || this
-    const { type, request } = requestable  
-    if (type === VIDEO) {
-      const event = new EventClientVideoPromise(request)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) return errorPromise(ERROR.Unimplemented, EventClientVideoPromise.Type)
+    const resource = this.resourceOfType($BITMAPS, $VIDEO) 
+    if (!resource) return Promise.resolve({ data: 0 })
 
-      promises.push(promise.then(orError => {
+    const { type } = resource  
+    if (type === $VIDEO) {
+      return MOVIEMASHER.promise($RETRIEVE, resource).then(orError => {
         if (isDefiniteError(orError)) return orError
 
-        const { data: clientVideo } = orError
+        const { response: clientVideo } = resource.request
+        if (!isClientVideo(clientVideo)) return namedError(ERROR.Unimplemented, 'video')
+
         this.loadedVideo = clientVideo
         return { data: 1 }
-      }))
-    } else promises.push(this.sequenceImagesPromise(args))
-    return promiseNumbers(promises)
+      })
+    } 
+    return this.sequenceImagesPromise(args)
   }
 
-  get previewTranscoding(): Requestable | undefined {
-    return this.preferredTranscoding(BITMAPS, VIDEO)
+  private get previewTranscoding(): Resource | undefined {
+    return this.resourceOfType($BITMAPS, $VIDEO)
   }
 
   private sequenceImagesPromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
@@ -862,7 +678,7 @@ export class ClientRawVideoAssetClass extends VideoWithVideoAsset implements Cli
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject, asset } = detail
-    if (!asset && isAssetObject(assetObject, VIDEO, RAW)) {
+    if (!asset && isAssetObject(assetObject, $VIDEO, $RAW)) {
       detail.asset = new ClientRawVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }
@@ -889,35 +705,50 @@ export class ClientRawVideoInstanceClass extends WithVideoInstance implements Cl
   declare asset: ClientRawVideoAsset
 
 
-  private sequenceItemPromise(rect: Rect, assetTime: Time): Promise<DataOrError<SvgItem>> {
+  private sequenceItemPromise(rect: Rect, assetTime: Time, opacity?: Scalar): Promise<DataOrError<SvgItem>> {
     const { asset } = this
     return asset.loadedImagePromise(assetTime).then(orError => {
       if (isDefiniteError(orError)) return orError
 
       const { data: loadedImage } = orError
       const { src } = loadedImage
-      return svgImagePromiseWithOptions(src, rect).then(data => ({ data }))
+      return svgImagePromiseWithOptions(src, rect).then(image => {
+        const data = svgOpacity(image, opacity) 
+        return { data }
+      })
     })
   }
 
-  private sequenceItem(rect: Rect, assetTime: Time): DataOrError<SvgItem> {
+  private sequenceItem(rect: Rect, assetTime: Time, opacity?: Scalar): DataOrError<SvgItem> {
     const { asset } = this
     const orError = asset.loadedImage(assetTime)
     if (isDefiniteError(orError)) return orError
 
     const { data: loadedImage } = orError
     const { src } = loadedImage
-    const data = svgImageWithOptions(src, rect)
+    const image = svgImageWithOptions(src, rect)
+    const data = svgOpacity(image, opacity) 
     return { data }
   }
 
-  override svgItem(args: SvgItemArgs): DataOrError<SvgItem> {
-    const { rect, time } = args
-    return this.sequenceItem(rect, this.assetTime(time))
+  override containerSvgItem(args: ContainerSvgItemArgs): DataOrError<MaybeComplexSvgItem> {
+    const { containerRect, time, opacity } = args
+    return this.sequenceItem(containerRect, this.assetTime(time), opacity)
   }
 
-  override svgItemForTimelinePromise(rect: Rect, time: Time): Promise<DataOrError<SvgItem>> {
-    return this.sequenceItemPromise(rect, this.assetTime(time))
+  override contentSvgItem(args: ContentSvgItemArgs): DataOrError<MaybeComplexSvgItem> {
+    const { contentRect, time, opacity } = args
+    return this.sequenceItem(contentRect, this.assetTime(time), opacity)
+  }
+
+  override containerSvgItemPromise(args: ContainerSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>> {
+    const { containerRect: rect, time, opacity } = args
+    return this.sequenceItemPromise(rect, this.assetTime(time), opacity)
+  }
+
+  override contentSvgItemPromise(args: ContentSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>> {
+    const { contentRect: rect, time, opacity } = args
+    return this.sequenceItemPromise(rect, this.assetTime(time), opacity)
   }
 
   override unload() {
@@ -1000,14 +831,14 @@ export class ClientRawElement extends ClientRawDropTarget {
     if (!svg) return namedError(ERROR.ImportFile, 'svg')
 
     const viewBox = svg.getAttribute('viewBox')
-    const size = sizeCopy(SIZE_ZERO)
+    const size = copySize(SIZE_ZERO)
     if (viewBox) {
       const bits = viewBox.split(' ').map(string => string.trim())
       const [width, height] = bits.slice(-2).map(Number)
       size.width = width
       size.height = height
     }
-    if (!sizeAboveZero(size))  {
+    if (size.width === 0 || size.height === 0)  {
       const width = svg.getAttribute('width')
       const height = svg.getAttribute('height')
       if (width && height) {
@@ -1015,7 +846,7 @@ export class ClientRawElement extends ClientRawDropTarget {
         size.height = Number(height.trim())
       }
     }
-    if (!sizeAboveZero(size)) return namedError(ERROR.ImportFile, 'viewBox')
+    if (!sizeNotZero(size)) return namedError(ERROR.ImportFile, 'viewBox')
 
     const paths = [...svg.querySelectorAll('path')].map(path => {
       return path.getAttribute('d') || ''
@@ -1023,7 +854,7 @@ export class ClientRawElement extends ClientRawDropTarget {
     const path = paths.filter(Boolean).join(' M 0 0 ')
     if (!path) return namedError(ERROR.ImportFile, 'path')
     const object: ShapeAssetObject = {
-      label: file.name, path, type: IMAGE, source: SHAPE, id: idGenerateString(),
+      label: file.name, path, type: $IMAGE, source: $SHAPE, id: idGenerateString(),
       pathWidth: size.width, pathHeight: size.height,
     }
     return { data: object }
@@ -1037,7 +868,7 @@ export class ClientRawElement extends ClientRawDropTarget {
     const errors: DefiniteError[] = []
 
     for (const file of fileList) {
-      if (this.sources.includes(SHAPE)) {
+      if (this.sources.includes($SHAPE)) {
         if (file.type === MIME_SVG) {
           const shapeOrError = await this.handleDroppedSvg(file)
           if (isDefiniteError(shapeOrError)) {
@@ -1048,7 +879,7 @@ export class ClientRawElement extends ClientRawDropTarget {
           continue
         }
       } else {
-        // console.log('handleFileList NO SHAPE', this.sources)
+        // console.log('handleFileList NO $SHAPE', this.sources)
       }
       const orError = await dropFile(file)
       if (isDefiniteError(orError)) {
@@ -1060,7 +891,7 @@ export class ClientRawElement extends ClientRawDropTarget {
     assetObjects.forEach(assetObject => {
       const event = new EventImporterAdd(assetObject)
 
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) return
 
@@ -1068,7 +899,7 @@ export class ClientRawElement extends ClientRawDropTarget {
     })
     // TODO something with errors
     errors.forEach(error => {
-      MOVIEMASHER.eventDispatcher.dispatch(new EventImporterError(error))
+      MOVIEMASHER.dispatch(new EventImporterError(error))
     })
   }
   
@@ -1139,7 +970,7 @@ class RawClientImporter implements ClientImporter {
 
   private _ui?: ClientRawElement
   ui(): Node {
-    const { document } = MOVIEMASHER
+    const { document } = MOVIEMASHER.window
     this._ui ||= document.createElement(ClientRawTag)
     this._ui.sources = this.sources
     // console.log(this.id, 'ui')
@@ -1151,7 +982,7 @@ class RawClientImporter implements ClientImporter {
   static handleImportFile (event: EventImportFile) {
     const { detail } = event
     const { file } = detail
-    detail.promise = fileMedia(file)
+    detail.promise = fileAssetObject(file)
     event.stopPropagation()
   }
 

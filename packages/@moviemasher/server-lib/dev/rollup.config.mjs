@@ -1,10 +1,9 @@
 import path from 'path'
 import typescript from 'rollup-plugin-typescript2'
 import resolve from '@rollup/plugin-node-resolve'
-import { monoDir } from '../../../../dev/utils/file.mjs'
-import terser from '@rollup/plugin-terser'
+import { fileURLToPath } from 'url'
 
-const projectDir = monoDir()
+const projectDir = path.resolve(fileURLToPath(import.meta.url), '../../../../../')
 const rootDir = path.resolve('src')
 const declaration = true
 
@@ -38,6 +37,7 @@ const config = {
     'jsdom',
     'stream/promises',
     'crypto',
+    'canvas',
   ],
   plugins: [ 
     resolve(), typescript(typescriptConfig), 

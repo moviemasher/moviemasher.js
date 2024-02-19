@@ -1,0 +1,44 @@
+{
+	"id": "mash_text",
+	"quantize": 10,
+	"type": "video",
+	"source": "mash",
+	"label": "Text",
+	"backcolor": "rgb(255, 255, 255)",
+	"assets": [  
+		{
+			"label": "Croissant One",
+			"id": "com.google.fonts.croissant-one",
+			"type": "image",
+			"source": "text",
+			"resources": [{
+				"type": "css",
+				"request": { 
+					"endpoint": "https://fonts.googleapis.com/css2?family=Croissant+One" 
+				}
+			}]
+		}
+	],
+	"tracks": [
+		{
+			"clips": [{
+				"containerId": "com.google.fonts.croissant-one",
+				"container": {
+					"string": "hello world!"
+				},
+				"content": {
+					"color": "#00FF00FF"
+				},
+				"frame": 0,
+				"frames": 10,
+					"intrinsic": {
+						"x": 1.953125,
+						"y": 1239.2578125,
+						"width": 6150.87890625,
+						"height": 1361.328125
+					}
+			}]
+		}
+	]
+}
+

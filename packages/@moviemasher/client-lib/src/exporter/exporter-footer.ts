@@ -34,7 +34,7 @@ export class ExporterFooterElement extends FooterBase {
   protected override rightContent(slots: Htmls): OptionalContent {
     this.loadComponent('movie-masher-button')
     const htmls = [...slots]
-    htmls.push(html`RIGHT CONTENT`)
+    htmls.push(html`$RIGHT $CONTENT`)
     // const { count } = this
     // no detail means close any current dialog
     // htmls.push(html`

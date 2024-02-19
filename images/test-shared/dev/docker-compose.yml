@@ -4,6 +4,8 @@ services:
  service:
     env_file:
       - ../../../dev/local.env
+    # environment:
+    #   -  NODE_V8_COVERAGE=${MOVIEMASHER_DIR_ROOT}/temporary/test-shared/coverage
     build: 
       context: ../../../
       dockerfile: images/test-shared/dev/Dockerfile.cnf

@@ -4,7 +4,7 @@ import type { ClientMashVideoAsset, ClientMashVideoInstance } from '../../types.
 import { AudibleAssetMixin, AudibleInstanceMixin } from '@moviemasher/shared-lib/mixin/audible.js'
 import { VideoAssetMixin, VideoInstanceMixin } from '@moviemasher/shared-lib/mixin/video.js'
 import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
-import { MASH, VIDEO, isAssetObject } from '@moviemasher/shared-lib/runtime.js'
+import { $MASH, $VIDEO, isAssetObject } from '@moviemasher/shared-lib/runtime.js'
 import { ClientInstanceClass } from '../../base/ClientInstanceClass.js'
 import { ClientAudibleAssetMixin, ClientAudibleInstanceMixin } from '../../mixin/audible.js'
 import { ClientVisibleAssetMixin, ClientVisibleInstanceMixin } from '../../mixin/visible.js'
@@ -25,7 +25,7 @@ export class ClientMashVideoAssetClass extends WithVideoAsset implements ClientM
   static handleAsset(event: EventAsset) {
     const { detail } = event
     const { assetObject } = detail
-    if (isAssetObject(assetObject, VIDEO, MASH)) {
+    if (isAssetObject(assetObject, $VIDEO, $MASH)) {
       detail.asset = new ClientMashVideoAssetClass(assetObject)
       event.stopImmediatePropagation()
     }    

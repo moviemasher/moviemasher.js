@@ -3,15 +3,16 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertPopulatedString, assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { StringEvent, EventChangedInspectorSelectors, EventInspectorSelectors } from '../utility/events.js'
-import { COMMA, MASH, TARGET_IDS, isArray } from '@moviemasher/shared-lib/runtime.js'
+import { COMMA, $MASH, TARGET_IDS } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
 import { Component } from '../base/Component.js'
 import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
 import { ComponentSlotter } from '../base/Component.js'
 import { isSelectorType } from '../guards/TypeGuards.js'
+import { isArray } from '@moviemasher/shared-lib/utility/guard.js'
 
 const EventInspectorPicker = 'inspector-footer-left'
 export const InspectorPickerTag = 'movie-masher-inspector-picker'
@@ -49,7 +50,7 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
     const types = this.partSelectorTypes(part)
     this.selectedPart = part
     const setEvent = new EventChangedInspectorSelectors(types)
-    MOVIEMASHER.eventDispatcher.dispatch(setEvent)
+    MOVIEMASHER.dispatch(setEvent)
   }
 
   protected handleInspectorChooser(event: StringEvent): void {
@@ -85,15 +86,13 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
     assertPositive(index)
 
     const selectorType = this.selectors[index]
-    assertPopulatedString(selectorType)
-
     const selectorTypes = selectorType.split(COMMA)
     return selectorTypes.filter(isSelectorType)
   }
 
   override parts = TARGET_IDS.join(ComponentSlotter.partSeparator)
 
-  protected selectedPart: string = MASH
+  protected selectedPart: string = $MASH
 
   selectors: Strings = []
   

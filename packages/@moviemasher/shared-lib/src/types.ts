@@ -1,27 +1,57 @@
-declare global { interface Window { webkitAudioContext: typeof AudioContext } }
+declare global { 
+  interface Window { webkitAudioContext: typeof AudioContext } 
+  // interface HTMLCanvasElement {
+  //   imp: {
+  //     canvasInstance(): { registerFont: (path: string, opts: { family: string }) => void }
+  //   }
+  // }
+}
+
+
+export interface DocumentWindow {
+  document: Document
+  crypto: Crypto
+  CustomEvent: typeof CustomEvent
+  EventTarget: typeof EventTarget
+  HTMLCanvasElement: typeof HTMLCanvasElement
+  FontFace: typeof FontFace
+  // fonts: typeof FontFaceSet
+}
 
 export type Constrained<T> = new (...args: any[]) => T
 
-export type Lock = PropertySize | 'longest' | 'none' | 'shortest'
+export type Lock = SizeKey | 'longest' | 'none' | 'shortest'
+
+export type Aspect = 'flip' | 'maintain'
 
 export type Rounding = 'ceil' | 'floor' | 'round'
 
 export type ManageType = 'import' | 'reference' 
 export interface ManageTypes extends Array<ManageType>{}
 
-export type AVType = AudioAVType | BothAVType | VideoAVType
+export type AVType = AudioType | VideoType | 'both'
 
-export type AudioAVType = 'audio'
-export type BothAVType = 'both'
-export type VideoAVType = 'video'
+export type Not = undefined | null | void
 
-export type Numeric = number | PopulatedString
+export type OkNumber = number
 
+export type Numeric = OkNumber | PopulatedString
 export type Value = number | string
 export type Scalar = Value | boolean
 export interface ScalarTuple extends ArrayOf2<string, ScalarOrUndefined>{}
 export type ScalarOrUndefined = Scalar | undefined
-export type PopulatedString = string & { isEmpty: never }
+
+// export type PopulatedString = string & { isEmpty: never }
+export interface PopulatedString extends String {
+  length: NumberNotZero
+}
+
+export interface PopulatedArray<T=any> extends Array<T> {
+  length: NumberNotZero
+}
+
+export interface Anys extends Array<any>{}
+
 export type Integer = number 
 
 export type AlphaProbing = 'alpha'
@@ -47,12 +77,14 @@ export interface StringRecord extends Record<string, string> {}
 export interface StringsRecord extends Record<string, Strings> {}
 export interface BooleanRecord extends Record<string, boolean> {}
 
+
 export type ArrayOf1<T=unknown> = [T]
 export type ArrayOf2<T=unknown, S=T> = [T, S]
 export type ArrayOf3<T=unknown, S=T, U=S> = [T, S, U]
 
 export interface BooleanTuple extends ArrayOf2<boolean> {}
 export interface StringTuple extends ArrayOf2<string> {}
+export interface NumberTuple extends ArrayOf2<number> {}
 
 export type IdElement = [string, Element]
 
@@ -73,26 +105,24 @@ export interface JsonRecord extends Record<string, JsonRecord | JsonValue | Json
 export interface JsonRecords extends Array<JsonRecord>{}
 
 
-export interface Point {
-  x: number
-  y: number
+export interface Point<T = number> {
+  x: T
+  y: T
 }
 
-export interface Points extends Array<Point>{}
+export interface Points<T=number> extends Array<Point<T>>{}
 
-export type PointTuple = [Point, Point]
+export interface PointTuple<T=number> extends ArrayOf2<Point<T>> {}
 
-export type PropertyPoint = 'x' | 'y'
+// export type PointKey = 'x' | 'y'
 
-export interface Rect extends Size, Point {}
+export interface Rect<T=number> extends Size<T>, Point<T> {}
 
-export interface Rects extends Array<Rect>{}
+export interface Rects<T=number> extends Array<Rect<T>>{}
 
-export type RectTuple = [Rect, Rect]
+export interface RectTuple<T=number> extends ArrayOf2<Rect<T>> {}
 
 export interface RectOptions extends SizeOptions, Partial<Point> {}
-
-export type PropertyRect = PropertySize | PropertyPoint
 
 export interface Identified {
   id: string
@@ -122,8 +152,8 @@ export type AudioType = 'audio'
 export type ImageType = 'image'
 export type VideoType = 'video'
 
-export type AssetType = AudioType | ImageType | VideoType
-export interface AssetTypes extends Array<AssetType>{}
+export type RawType = AudioType | ImageType | VideoType
+export interface RawTypes extends Array<RawType>{}
 
 export type AudibleType = AudioType | VideoType
 export type VisibleType = ImageType | VideoType
@@ -142,28 +172,23 @@ export type StringsDataOrError = DataOrError<Strings>
 export type ScalarsById = Partial<Record<PropertyId, Scalar>>
 
 export interface EndpointRequest {
-  requestType?: RequestType
   endpoint: Endpoint | string
   init?: RequestInit
-}
 
-export interface EndpointRequests extends Array<EndpointRequest>{}
-
-export type ClientMedia = AudioBuffer | FontFace | ImageElement | HTMLVideoElement 
-
-export interface ClientMediaRequest extends EndpointRequest {
   response?: ClientMedia
   objectUrl?: string
   file?: File
   urlPromise?: Promise<StringDataOrError>
   mediaPromise?: Promise<DataOrError<ClientMedia>>
-}
+  resourcePromise?: Promise<StringDataOrError>
 
-export interface ServerMediaRequest extends EndpointRequest {
   path?: AbsolutePath
-  dataUrl?: string
   type?: Mimetype | DropType
 }
+
+export interface EndpointRequests extends Array<EndpointRequest>{}
+
+export type ClientMedia = string | ClientAudio | ClientFont | ClientImage | ClientVideo 
 
 export interface RequestInit {
   body?: any
@@ -171,15 +196,52 @@ export interface RequestInit {
   method?: string
 }
 
+export interface Created {
+
+  createdAt?: string
+}
+
+export interface JobProduct extends Created, Partial<Identified>, Typed {}
+
 export interface RequestObject {
   request: EndpointRequest
 }
 
-export interface Requestable extends RequestObject, Typed, Identified {
-  createdAt?: string
+export type FetchType = 'fetch'
+
+export type ResourceType = string | DropType | TranscodingType
+export interface ResourceTypes extends Array<ResourceType> {}
+
+export interface Resource extends RequestObject, JobProduct {
+  type: ResourceType
 }
 
-export interface Requestables extends Array<Requestable>{}
+export interface Resources extends Array<Resource>{}
+
+export type DecodeType = 'decode'
+export type EncodeType = 'encode'
+export type TranscodeType = 'transcode'
+
+export type JobType = DecodeType | EncodeType | TranscodeType
+
+export interface Decoding extends JobProduct {
+  type: DecodingType
+  data: UnknownRecord
+}
+export interface Decodings extends Array<Decoding> { }
+
+
+
+export interface Encoding extends Resource {
+  type: EncodingType
+}
+export interface Encodings extends Array<Encoding> { }
+
+export interface Transcoding extends Resource {
+  type: TranscodingType
+}
+
+export interface Transcodings extends Array<Transcoding> { }
 
 export interface Property extends Typed, Ordered {
   defaultValue?: Scalar
@@ -197,7 +259,6 @@ export interface Properties extends Array<Property>{}
 
 export interface PropertyRecord extends Record<string, Property>{}
 
-
 export interface Propertied {
   constrainedValue(found: Property, value?: Scalar): Scalar | undefined
   initializeProperties(object: unknown): void
@@ -209,15 +270,17 @@ export interface Propertied {
   targetId: TargetId
   toJSON(): UnknownRecord
   value(key: string): Scalar | undefined
+  tweenValues(key: string, time: Time, range: TimeRange): Scalars 
 }
 
-export type AssetRecord<T = string> = { [key in AssetType]?: T }
+export type AssetRecord<T = string> = { [key in RawType]?: T }
 
 export interface Typed {
   type: string
 }
 
 export interface MashAsset extends Asset { 
+  // assetObject: MashAssetObject
   mashIndex: MashIndex
   mashDescription(options: MashDescriptionOptions): MashDescription
   // gain: number
@@ -236,7 +299,6 @@ export interface MashAsset extends Asset {
   trackInstance(args: TrackArgs): Track
   tracks: Track[]
 }
-
 
 /**
  * A plain object representation of a MashAsset.
@@ -264,19 +326,13 @@ export interface MashInstance extends Instance {
   asset: MashAsset
 }
 
-export interface MashInstanceObject extends InstanceObject {
-  
-}
+export interface MashInstanceObject extends InstanceObject {}
 
-export interface PromptAsset extends Asset {
-  request: EndpointRequest
-}
+export interface PromptAsset extends Asset {}
 
 export interface PromptAssets extends Array<PromptAsset>{}
 
-export interface PromptAssetObject extends AssetObject {
-  request: EndpointRequest
-}
+export interface PromptAssetObject extends AssetObject {}
 
 export interface PromptAudioAssetObject extends PromptAssetObject, AudioAssetObject {}
 
@@ -284,18 +340,13 @@ export interface PromptImageAssetObject extends PromptAssetObject, ImageAssetObj
 
 export interface PromptVideoAssetObject extends PromptAssetObject, VideoAssetObject {}
 
-
-
 export interface RawAsset extends Asset {
   assetObject: RawAssetObject
-  request: EndpointRequest
 }
 
 export interface RawAssets extends Array<RawAsset>{}
 
-export interface RawAssetObject extends AssetObject {
-  request: EndpointRequest
-}
+export interface RawAssetObject extends AssetObject {}
 
 export interface RawAudioAssetObject extends RawAssetObject, AudioAssetObject {}
 
@@ -303,17 +354,16 @@ export interface RawImageAssetObject extends RawAssetObject, ImageAssetObject {}
 
 export interface RawVideoAssetObject extends RawAssetObject, VideoAssetObject {}
 
-export interface RawInstanceObject extends InstanceObject {
-  
-}
+export interface RawInstanceObject extends InstanceObject { }
 
-export interface TextAsset extends RawAsset, ContentAsset {
+export interface TextAsset extends ContainerAsset {
   assetObject: TextAssetObject
   family: string
   string: string
+  style(prefix?: string): SvgStyleElement
 }
 
-export interface TextInstance extends ContentInstance {
+export interface TextInstance extends ContainerInstance {
   asset: TextAsset
   string: string
   intrinsic?: Rect
@@ -324,7 +374,7 @@ export interface TextInstanceObject extends VisibleInstanceObject {
   string?: string
 }
 
-export interface TextAssetObject extends RawAssetObject {
+export interface TextAssetObject extends VisibleAssetObject {
   string?: string
 }
 
@@ -341,59 +391,13 @@ export interface VideoInstanceArgs extends InstanceArgs, VideoInstanceObject {
 
 
 
-export type DecodeType = 'decode'
-export type EncodeType = 'encode'
-export type TranscodeType = 'transcode'
 
-export interface JobProduct extends Typed, Identified {
-  createdAt?: string
-}
-
-export interface Decoding extends JobProduct {
-  type: DecodingType
-  data?: UnknownRecord
-}
-
-export interface Encoding extends JobProduct, RequestObject {
-  type: EncodingType
-}
-
-export interface Transcoding extends JobProduct, Requestable {
-  type: TranscodingType
-}
-
-
-export interface Transcodings extends Array<Transcoding> { }
-
-export interface TranscodeArgs {
-  assetType: AssetType
-  request: EndpointRequest
-  transcodingType: TranscodingType
-  options: TranscodeOptions
-}
-export interface Encodings extends Array<Encoding> { }
-
-export interface EncodeArgs {
-  encodingType?: EncodingType
-  mashAssetObject: MashAssetObject
-  encodeOptions?: EncodeOptions
-}
-export interface Decodings extends Array<Decoding> { }
-
-export type DecodingType = string | ProbeType
+export type DecodingType = string 
 
 export interface DecodingTypes extends Array<DecodingType> { }
 
-export type ProbeType = 'probe'
 
-export interface DecodeOptions { }
-
-export interface DecodeArgs {
-  assetType: AssetType
-  request: EndpointRequest
-  decodingType: DecodingType
-  options: DecodeOptions
-}
+export interface DecodeOptions {}
 
 export type ColorSource = 'color'
 export type RawSource = 'raw'
@@ -411,24 +415,24 @@ export type ContentSource = 'content'
 export type ContainerSource = 'container'
 export type MashSource = 'mash'
 
-export type EncodingType = AssetType
+export type EncodingType = RawType
 export interface EncodingTypes extends Array<EncodingType>{}
 
 export type FontType = 'font'
 
 export type ShapeSource = 'shape'
-export type ImportType = AssetType | ShapeSource | TextSource
+export type ImportType = RawType | ShapeSource | TextSource
 export interface ImportTypes extends Array<ImportType>{}
 
 export type BitmapsType = 'bitmaps'
 export type AlphaType = ImageType | BitmapsType | VideoType
 export type WaveformType = 'waveform'
-export type TranscodingType = AssetType | BitmapsType | WaveformType
+export type TranscodingType = RawType | BitmapsType | WaveformType
 export interface TranscodingTypes extends Array<TranscodingType>{}
 export type SvgType = 'svg'
 export type SvgsType = 'svgs'
 export type TxtType = 'txt'
-export type DropType = AssetType | FontType
+export type DropType = RawType | FontType
 export interface DropTypes extends Array<DropType>{}
 export type AssetFileType = SvgType | SvgsType | TxtType | DropType
 export type RequestType = TranscodingType | AssetFileType
@@ -436,10 +440,11 @@ export type RequestType = TranscodingType | AssetFileType
 export interface Assets extends Array<Asset>{}
 
 export interface AssetObject extends Identified, Labeled, Sourced, Typed {
-  created?: string
   assets?: AssetObjects
-  type: AssetType 
+  created?: string
   decodings?: Decodings
+  resources?: Resources
+  type: RawType 
 }
 
 export interface AssetObjects extends Array<AssetObject>{}
@@ -453,9 +458,7 @@ export interface AudibleAssetObject extends AssetObject {
   audioUrl?: string
 }
 
-export interface VisibleAssetObject extends AssetObject {
-  probeSize?: Size
-}
+export interface VisibleAssetObject extends AssetObject {}
 
 export interface SourceAsset extends Asset {
   source: Source
@@ -466,7 +469,7 @@ export type StringOrRecord = string | StringRecord
 export interface StringOrRecords extends Array<StringOrRecord>{}
 
 export interface AssetParams {
-  types?: AssetTypes | AssetType
+  types?: RawTypes | RawType
   sources?: Sources | Source
   terms?: Strings | string
 }
@@ -513,17 +516,17 @@ export type CustomTiming = 'custom'
 export type Timing = CustomTiming | ContentTiming | ContainerTiming
 
 export interface Time {
-  add(time: Time): Time
+  // add(time: Time): Time
   closest(timeRange: TimeRange): Time
   copy: Time
-  divide(number: number, rounding?: string): Time
+  // divide(number: number, rounding?: string): Time
   equalsTime(time: Time): boolean
   fps: number
   frame: number
   durationFrames(duration: number, fps?: number): Numbers
   lengthSeconds: number
   isRange: boolean
-  min(time: Time): Time
+  // min(time: Time): Time
   scale(fps: number, rounding?: string): Time
   scaleToFps(fps: number): Time
   seconds: number
@@ -536,7 +539,6 @@ export interface TimeRange extends Time {
   copy: TimeRange
   end: number
   endTime: Time
-  equalsTimeRange(timeRange : TimeRange) : boolean
   frames: number
   frameTimes: Times
   includes(frame: number): boolean
@@ -566,21 +568,31 @@ export interface SourceRecord<T = string> extends Record<Source, T | undefined> 
 
 export interface StringIndexable { [_:string]: any }
 
-export interface Size {
-  width: number
-  height: number
+export interface Size<T=number> {
+  width: T
+  height: T
 }
 
-export interface Sizes extends Array<Size> {}
 
-export interface SizeTuple extends Array<Size> { length: 2 }
+export type NumberNotZero = Exclude<number, 0> 
+
+export interface NonZeroSize extends Size {
+  width: NumberNotZero
+  height: NumberNotZero
+}
+
+export interface RectNotZero extends NonZeroSize, Point {}
+
+export interface Sizes<T=number> extends Array<Size<T>> {}
+
+export interface SizeTuple<T=number> extends ArrayOf2<Size<T>> {}
 
 export interface SizeOptions extends Partial<Size> {
   lock?: Lock
-  shortest?: PropertySize
+  shortest?: SizeKey
 }
 
-export type PropertySize = 'width' | 'height'
+export type SizeKey = 'width' | 'height'
 
 
 export type Direction = SideDirection | CornerDirection
@@ -660,15 +672,15 @@ export interface ImageAssetObject extends AssetObject { }
 
 
 export interface CacheArgs {
-  validDirectories?: Strings
+  validDirectories?: AbsolutePaths
   audible?: boolean
   visible?: boolean
 }
 
 export interface CacheOptions extends CacheArgs {
-  quantize?: number
-  time?: Time
   size?: Size
+  time?: Time
+  quantize?: number
 }
 
 export interface InstanceCacheArgs extends CacheOptions {
@@ -729,6 +741,7 @@ export interface VisibleInstanceObject extends InstanceObject {}
 
 
 export interface Clip extends Propertied {
+  opacity: number
   sizingRect(size: Size, loading?: boolean): Rect
   asset(assetIdOrObject: string | AssetObject): Asset 
   assetIds: Strings
@@ -766,6 +779,8 @@ export interface Clips extends Array<Clip>{}
 export type Transparency = 'alpha' | 'luminance'
 
 export interface ClipObject extends Labeled {
+  opacity?: number
+  opacityEnd?: number
   containerId?: string
   contentId?: string
   content?: InstanceObject
@@ -780,9 +795,6 @@ export interface ClipObject extends Labeled {
 export interface ClipObjects extends Array<ClipObject>{}
 
 export interface IntrinsicOptions {
-
-
-
   size?: boolean
   duration?: boolean
 }
@@ -802,17 +814,16 @@ export interface ColorAssetObject extends ImageAssetObject {}
 
 
 export interface ContainerRectArgs {
-  size: Size
+  outputSize: Size
   time: Time
   timeRange: TimeRange
   loading?: boolean
 }
 
 export interface ContentRectArgs {
-  even?: boolean
+  outputSize: Size
   containerRects: RectTuple
   loading?: boolean
-  shortest: PropertySize
   time: Time
   timeRange: TimeRange
 }
@@ -821,10 +832,13 @@ export interface ContentRectArgs {
 export interface ContainerInstance extends VisibleInstance {
   asset: ContainerAsset
 }
+
 export interface ContainerAsset extends VisibleAsset {}
+
 export interface ContentInstance extends VisibleInstance {
   asset: ContentAsset
 }
+
 export interface ContentAsset extends VisibleAsset {
 }
 
@@ -901,11 +915,9 @@ export interface EventDispatcherOptions {
 export type EventOptions = EventDispatcherOptions | boolean
 
 export interface EventDispatcher {
-  addDispatchListener: <T=any>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions) => void
-  dispatch: <T>(typeOrEvent: CustomEvent<T> | Event) => boolean
+  dispatch: <T=any>(typeOrEvent: CustomEvent<T> | Event) => boolean
   listenersAdd(record: EventDispatcherListeners): void
   listenersRemove(record: EventDispatcherListeners): void
-  removeDispatchListener: <T=any>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions) => void
 }
 
 export interface Importer extends Identified, Labeled {}
@@ -918,22 +930,20 @@ export interface Exporters extends Array<Exporter>{}
 
 export type ClientOrServer = 'client' | 'server'
 
-export interface MovieMasherRuntime {
-  context: ClientOrServer
-  imports: StringRecord
-  eventDispatcher: EventDispatcher
-  options: MovieMasherOptions
-  importPromise: Promise<void>
-  document: Document
-}
+export interface ImportResult {}
+
+
+
 
 export interface  MovieMasherOptions {
   assetObject?: EndpointRequest | AssetObject
   assetObjects?: EndpointRequest | AssetObjects
   icons?: EndpointRequest | StringRecord
-  transcode?: false | Record<AssetType, TranscodingTypes>
+  transcode?: false | Record<RawType, TranscodingTypes>
   waveformTransparency?: Transparency
   timeline?: BooleanRecord
+  patchSvg?: SvgElement
+  supportsSvgLoad?: boolean
 }
 
 export interface OutputOptions {
@@ -991,6 +1001,45 @@ export interface ProbingTypes extends Array<ProbingType>{}
 export interface ProbingOptions extends DecodeOptions {
   types: ProbingTypes
 }
+export type ScanType = 'scan'
+export type ProbeType = 'probe'
+
+export interface Scanning extends Decoding {
+  type: ScanType
+  data: ScanningData
+}
+
+export interface ScanningData extends UnknownRecord {
+  family: string
+  raw?: RawScanData
+}
+
+export interface RawScanData extends UnknownRecord {
+  family?: string // "Lobster"(s)
+  familylang?: string // "en"(s)
+  style?: string // "Regular"(s)
+  stylelang?: string // "en"(s)
+  fullname?: string // "Lobster Regular"(s)
+  fullnamelang?: string // "en"(s)
+  slant?: number // 0(i)(s)
+  weight?: number // 80(f)(s)
+  width?: number // 100(f)(s)
+  foundry?: string // "IMPA"(s)
+  // file?: string // "/app/temporary/assets/font/lobster/lobster.ttf"(s)
+  index?: number // 0(i)(s)
+  outline?: number // True(s)
+  scalable?: number // True(s)
+  fontversion?: number // 137625(i)(s)
+  capability?: string // "otlayout:DFLT otlayout:cyrl otlayout:latn"(s)
+  fontformat?: string // "TrueType"(s)
+  decorative?: number // False(s)
+  postscriptname?: string // "Lobster-Regular"(s)
+  color?: number // False(s)
+  symbol?: number // False(s)
+  variable?: number // False(s)
+  fonthashint?: number // True(s)
+  order?: number // 0(i)(s)
+}
 
 export interface Probing extends Decoding {
   type: ProbeType
@@ -1000,7 +1049,6 @@ export interface Probing extends Decoding {
 export interface ProbingData extends UnknownRecord {
   audible?: boolean
   duration?: number
-  family?: string
   extension?: string
   alpha?: boolean
   fps?: number
@@ -1009,9 +1057,13 @@ export interface ProbingData extends UnknownRecord {
   raw?: RawProbeData
 }
 
+export interface RawProbeData {
+  streams: ProbingStream[]
+  format: ProbingFormat
+}
+
 export interface ProbingStream {
   [key: string]: any
-
   // avg_frame_rate?: string | undefined
   // bit_rate?: string | undefined
   // bits_per_raw_sample?: string | undefined
@@ -1072,11 +1124,6 @@ export interface ProbingFormat {
   tags?: Record<string, string | number> | undefined
 }
 
-export interface RawProbeData {
-  streams: ProbingStream[]
-  format: ProbingFormat
-}
-
 
 export interface ChangeEditObject extends EditArgs {
   target: Propertied
@@ -1097,15 +1144,11 @@ export interface EditObject extends Typed {}
 export interface EditArgs extends EditObject {}
 
 export type AbsolutePath = `/${string}`
+export interface AbsolutePaths extends Array<AbsolutePath>{}
+
 export type Mimetype = `${string}/${string}`
 
 
-export type SvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
-export interface SvgFilters extends Array<SvgFilter>{}
-export interface ImageElement extends HTMLImageElement {}
-export type SvgItem = SVGElement | ImageElement 
-export type SvgVector = SVGTextElement | SVGPolygonElement | SVGPathElement | SVGRectElement | SVGCircleElement | SVGEllipseElement
-export interface SvgItems extends Array<SvgItem>{}
 
 export interface Nodes extends Array<Node>{}
 export interface Elements extends Array<Element>{}
@@ -1122,7 +1165,7 @@ export interface MashDescriptionOptions {
   time?: Time
   frame?: number
   frames?: number
-  assetType?: AssetType
+  assetType?: RawType
 }
 
 export interface MashDescriptionArgs extends MashDescriptionOptions {
@@ -1137,18 +1180,23 @@ export interface SegmentDescriptionArgs {
 }
 
 export interface Asset extends Propertied, Identified, Typed, Labeled {
-  requests: EndpointRequests
   asset(assetIdOrObject: string | AssetObject): Asset 
   assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>>
   assetIds: Strings
   assetObject: AssetObject
   assets: Assets
+  decodingOfType(...types: Strings): Decoding | undefined
+  decoding?: Decoding
   decodings: Decodings
   instanceArgs(object?: InstanceObject): InstanceArgs
   instanceFromObject(object?: InstanceObject): Instance
   clipObject(object?: InstanceObject): ClipObject
   source: Source
-  type: AssetType  
+  type: RawType  
+  resourceOfType(...type: ResourceTypes): Resource | undefined
+  request?: EndpointRequest
+  resource?: Resource
+  resources: Resources
 }
 
 export interface AudibleAsset extends Asset {
@@ -1170,6 +1218,7 @@ export interface VisibleAsset extends Asset {
   container?: boolean
   content?: boolean
   isVector?: boolean
+  hasIntrinsicSizing?: boolean
 }
 
 export interface AudioAsset extends AudibleAsset {}
@@ -1180,40 +1229,23 @@ export interface VideoAsset extends VisibleAsset, AudibleAsset {
 }
 
 export interface Instance extends Propertied, Identified {
+
+  // all visual...
+  bottomCrop: boolean
+  height: number
+  intrinsicRect: Rect
   scaleRects(time: Time, range: TimeRange): RectTuple
-  asset: Asset
-  assetId: string
-  assetIds: Strings
-  assetTime(masherTime: Time): Time
-  bottomConstrain: boolean
-  clip: Clip
-  clipped: boolean
-  container: boolean
   containerRects(args: ContainerRectArgs, sizingSize: Size): RectTuple
   contentRects(args: ContentRectArgs): RectTuple 
-  frames(quantize: number): number 
-  hasIntrinsicSizing: boolean
-  hasIntrinsicTiming: boolean
-  height: number
-  instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
-  instanceObject: InstanceObject
-  intrinsicRect: Rect
-  intrinsicsKnown(options: IntrinsicOptions): boolean
-  isDefault: boolean
-  isDefaultOrAudio: boolean
-  leftConstrain: boolean
-  lock: Lock
-  canBeMuted: boolean
-  muted: boolean
-  opacity: number
   opacityEnd?: number
-  pointAspect: string
-  propertySize?: PropertySize
-  rightConstrain: boolean
-  sideDirectionRecord: SideDirectionRecord
-  sizeAspect: string
-  topConstrain: boolean
-  tweenValues(key: string, time: Time, range: TimeRange): Scalars 
+  leftCrop: boolean
+  lock: Lock
+  pointAspect: Aspect
+  sizeKey?: SizeKey
+  rightCrop: boolean
+  cropDirections: SideDirectionRecord
+  sizeAspect: Aspect
+  topCrop: boolean
   width: number
   x: number
   y: number
@@ -1221,6 +1253,27 @@ export interface Instance extends Propertied, Identified {
   yEnd?: number
   widthEnd?: number
   heightEnd?: number
+
+
+  // audible
+  canBeMuted: boolean
+  muted: boolean
+  hasIntrinsicTiming: boolean
+
+  // should be durationKnown, rectKnown
+  intrinsicsKnown(options: IntrinsicOptions): boolean
+  isDefault: boolean
+  asset: Asset
+  assetId: string
+  assetIds: Strings
+  assetTime(masherTime: Time): Time
+  clip: Clip
+  container: boolean
+
+  
+  frames(quantize: number): number 
+  instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
+  instanceObject: InstanceObject
 }
 
 export interface AudibleInstance extends Instance, AudibleInstanceProperties {
@@ -1228,35 +1281,78 @@ export interface AudibleInstance extends Instance, AudibleInstanceProperties {
   assetFrames(quantize: number): Numbers
 }
 
-export type ContentFill = string | SvgItem
+export type Panel = BrowserPanel | PlayerPanel | TimelinePanel | ImporterPanel | ExporterPanel
+
+export type BrowserPanel = 'browser'
+export type PlayerPanel = 'player'
+export type TimelinePanel = 'timeline'
+export type ImporterPanel = 'importer'
+export type ExporterPanel = 'exporter'
+
+export type SvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
+export interface SvgFilters extends Array<SvgFilter>{}
+
+export interface ClientImage extends HTMLImageElement {}
+
+export interface ClientAudio extends AudioBuffer {}
+export interface ClientFont extends FontFace {}
+export interface ClientVideo extends HTMLVideoElement {}
+
+export type SvgElement = SVGSVGElement 
+export type SvgItem = SVGElement | ClientImage 
+export type SvgVector = SVGTextElement | SVGPolygonElement | SVGPathElement | SVGRectElement | SVGCircleElement | SVGEllipseElement
+export type SvgStyleElement = SVGStyleElement
+export interface SvgStyleElements extends Array<SvgStyleElement>{}
+export interface SvgItems extends Array<SvgItem>{}
+
+export interface SvgItemsRecord {
+  defs: SvgItems
+  items: SvgItems
+  styles: SvgStyleElements
+}
 
 export interface ComplexSvgItem {
   svgItem: SvgItem
-  style?: SVGStyleElement
+  style?: SvgStyleElement
   defs?: SvgItems
 }
 
 export interface SvgItemArgs {
   /** The full output size. */
   size: Size
-  /** The container rect. */
-  rect: Rect
   /** The time for which an svg item is needed. */
   time: Time
   /** The clip time range. */
   timeRange: TimeRange
-  /** Potential fill color for masking. */
-  color?: string
+  /** The panel that is requesting the svg item, or undefined for server. */
+  panel?: Panel
+  /** Potential opacity that should be applied. */
+  opacity?: Scalar
 }
 
+export interface ContentSvgItemArgs extends SvgItemArgs {
+  /** Area to paint content into. */
+  contentRect: Rect
+}
+
+export interface ContainerSvgItemArgs extends SvgItemArgs {
+  /** Area to draw container within. */
+  containerRect: Rect
+  /** Potential fill color for masking. */
+  color?: string
+
+}
+
+export type MaybeComplexSvgItem = SvgItem | ComplexSvgItem
+export interface MaybeComplexSvgItems extends Array<MaybeComplexSvgItem>{}
 
 export interface VisibleInstance extends Instance {
-  containerSvgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem>
-  containerOpacityFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined
-  contentSvgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem>
-  itemContentRect(containerRect: Rect, shortest: PropertySize, time: Time): Rect
-  pathElement(rect: Rect): SvgVector
-  svgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem>
+  clippedElement(content: ContentInstance, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord>
+  containedItem(contentItem: MaybeComplexSvgItem, containerItem: MaybeComplexSvgItem, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord>
+  containerSvgItem(args: ContainerSvgItemArgs): DataOrError<MaybeComplexSvgItem>
+  contentSvgItem(args: ContentSvgItemArgs): DataOrError<MaybeComplexSvgItem>
+  contentRect(time: Time, containerRect: Rect, outputSize: Size): Rect
+  svgVector(rect: Rect, forecolor?: string, opacity?: Scalar): SvgVector
   asset: VisibleAsset
   tweening: boolean
   tweens(key: string): boolean
@@ -1279,4 +1375,187 @@ export interface TrackIndex extends ArrayOf2<number> {}
 
 export interface ClipIndex extends ArrayOf3<number> {}
 
+export interface Evaluation {
+  description: string
+  toJSON(): EvaluationObject
+  toNumber(): number
+  toString(): string
+  toValue(): Value
+  variables: NumberRecord
+}
 
+
+export type EvaluationValue = Evaluation | Value 
+
+export type EvaluationValueObject = Value | EvaluationObject
+
+export interface EvaluationObject {
+  operationId: string
+  name?: string
+  evaluations: EvaluationValueObjects
+  variables?: NumberRecord
+}
+export interface EvaluationValueObjects extends Array<EvaluationValueObject> {}
+
+export interface EvaluationValues extends Array<EvaluationValue> {}
+
+
+export interface EvaluationPoint {
+  x: EvaluationValue
+  y: EvaluationValue
+}
+export interface EvaluationSize {
+  width: EvaluationValue
+  height: EvaluationValue
+}
+
+export interface EvaluationRect extends EvaluationPoint, EvaluationSize {}
+
+export interface EvaluationPoints extends Array<EvaluationPoint> {}
+export interface EvaluationSizes extends Array<EvaluationSize> {}
+
+
+export interface EventResourcePromiseDetail {
+  resource: Resource
+  validDirectories?: AbsolutePaths
+  promise?: Promise<StringDataOrError>
+}
+
+
+export interface AssetResource extends Resource {
+  type: RawType
+}
+
+export interface DropResource extends Resource {
+  type: DropType
+}
+
+export interface JobOptions {
+  validDirectories?: AbsolutePaths
+  user?: string
+  id?: string
+  progress?: ServerProgress
+}
+
+export interface ServerProgress {
+  do: NumberSetter
+  did: NumberSetter
+  done: VoidFunction
+}
+
+export interface DecodeArgs {
+  resource: DropResource
+  type: DecodingType
+  options?: DecodeOptions
+}
+
+export interface ReturningFunction<RET = any, OPTS extends object = object> {
+  (args?: OPTS): DataOrError<RET>
+}
+
+
+export interface PromiseFunction<RET = any, OPTS extends object = object, ARGS extends Typed = Typed> {
+  (args: ARGS, options?: OPTS): Promise<DataOrError<RET>>
+}
+
+export interface DecodeFunction extends PromiseFunction<Decoding, JobOptions, DecodeArgs> {
+  // (args: DecodeArgs, options: JobOptions): Promise<DataOrError<Decoding>>
+}
+export interface TranscodeFunction extends PromiseFunction<string | Transcoding, JobOptions, TranscodeArgs> {}
+
+export interface RetrieveFunction extends PromiseFunction<string, JobOptions, Resource> {
+  // (args: Resource, options: JobOptions): Promise<DataOrError<string>>
+}
+
+export interface TextRectArgs {
+  size: number
+  family: string,
+  text: string
+  fontPath?: AbsolutePath
+}
+
+export interface EncodeArgs extends Typed {
+  type: EncodingType
+  asset: MashAssetObject
+  options?: EncodeOptions
+}
+
+export interface EncodeFunction extends PromiseFunction<string | Encoding, JobOptions, EncodeArgs> {
+  // (args: EncodeArgs, options: JobOptions): Promise<DataOrError<string | Encoding>>
+}
+
+export interface TranscodeArgs {
+  resource: AssetResource
+  type: TranscodingType
+  options: TranscodeOptions
+}
+
+export interface AssetFunction {
+  (assetIdOrObject: string | AssetObject): Asset 
+}
+
+export interface AssetManager {}
+
+export type AssetType = 'asset'
+
+export type ModuleType = string | FetchType | RawType | JobType
+
+
+
+export interface MovieMasherRuntime extends EventDispatcher {
+  context: ClientOrServer
+  imports: StringRecord
+  options: MovieMasherOptions
+  importPromise(): Promise<DataOrError<ImportResult>>
+  window: DocumentWindow
+//* Call a loaded function. */
+  call<RET = any>(moduleType: ModuleType, id: string, args?: object): DataOrError<RET> 
+
+  /** install and load a function asyncronously  */
+  load<RET=any>(moduleType: ModuleType, id: string, moduleId: string, exported?: string): Promise<DataOrError<ReturningFunction<RET>>>
+
+  /** Install a PromiseFunction for a module type, aside from asset.  */
+  install(moduleType: ModuleType, id: string, moduleId: string, exported?: string): DefiniteError | undefined
+
+  /** Call installed promise function, loading if needed. */
+  promise<RET=any, OPTS extends object = object, ARGS extends Typed=Typed>(moduleType: ModuleType, args: ARGS, opts?: OPTS): Promise<DataOrError<RET>>
+
+}
+
+export interface MovieMasherInstance extends MovieMasherRuntime {
+
+  eventDispatcher: EventDispatcher
+
+}
+
+// interface Animation {
+//   percent: number
+//   scalar: Scalar
+// }
+
+
+// interface AnimationStart extends Animation {
+//   percent: 0
+// }
+
+// interface AnimationEnd extends Animation {
+//   percent: 1
+// }
+// type One = 1 | 0
+// const one: One = 1
+// interface AnimationMiddle extends Animation {
+//   percent: NumberNotZero
+// }
+
+// type Animations = [AnimationStart, ...[AnimationMiddle], AnimationEnd]
+
+// const animationsStart: AnimationStart = { percent: 0, scalar: 0 }
+// const animationsMiddle: AnimationMiddle = { percent: one, scalar: 0.5 }
+// const { percent, scalar } = animationsMiddle
+// const animationsEnd: AnimationEnd = { percent: 1, scalar: 1 }
+
+// const animations: Animations = [
+//   animationsStart,
+//   animationsMiddle,
+//   animationsEnd
+// ]

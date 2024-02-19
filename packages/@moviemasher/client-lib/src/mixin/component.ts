@@ -21,7 +21,7 @@ T & Constrained<Disablable> {
     override connectedCallback(): void {
       super.connectedCallback()
       const event = new EventMashAsset()
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       this.disabled = !event.detail.mashAsset
     }
     
@@ -172,7 +172,7 @@ export function SizeReactiveMixin<T extends Constrained<Component>>(Base: T):
     override connectedCallback(): void {
       this.listeners[EventChangedSize.Type] = this.handleChangedSize.bind(this)
       const event = new EventSize()
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { size } = event.detail
       if (size) this.size = size
       else {

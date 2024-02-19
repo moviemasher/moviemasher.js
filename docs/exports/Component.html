@@ -136,10 +136,10 @@
 <ul>
 <li><p><code>LitElement</code></p>
 <p>↳ <strong><code><a href='#'>Component</a></code></strong></p>
-<p>↳↳ <code><a href='../categories/Elements.html#BrowserAssetElement'>BrowserAssetElement</a></code></p>
-<p>↳↳ <code><a href='ImporterComponent.html'>ImporterComponent</a></code></p>
+<p>↳↳ <code><a href='ComponentLoader.html'>ComponentLoader</a></code></p>
 <p>↳↳ <code><a href='../categories/Elements.html#IconElement'>IconElement</a></code></p>
 <p>↳↳ <code><a href='../categories/Elements.html#WordElement'>WordElement</a></code></p>
+<p>↳↳ <code><a href='../categories/Elements.html#BrowserAssetElement'>BrowserAssetElement</a></code></p>
 <p>↳↳ <code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code></p>
 </li>
 </ul>
@@ -189,23 +189,6 @@ LitElement.properties</p>
 <p>Overrides
 LitElement.connectedCallback</p>
 <hr>
-<h3><a id="Component.content">content</a></h3><p>▸ <code>Protected</code> <strong>content</strong>(<code>contents</code>): <code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>contents</code></td>
-<td align="left"><code><a href='TemplateContents.html'>TemplateContents</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
-<hr>
 <h3><a id="Component.disconnectedCallback">disconnectedCallback</a></h3><p>▸ <strong>disconnectedCallback</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
@@ -216,7 +199,20 @@ LitElement.disconnectedCallback</p>
 <p>Returns
 <code>void</code></p>
 <hr>
-<h3><a id="Component.element">element</a></h3><p>▸ <code>Protected</code> <strong>element</strong>(<code>selector?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></p>
+<h3><a id="Component.element">element</a></h3><p>▸ <code>Protected</code> <strong>element</strong>&lt;<code>T</code>&gt;(<code>selector?</code>): <code>T</code></p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&lt;<code>T</code>&gt; = <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></td>
+</tr>
+</tbody></table>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -233,7 +229,7 @@ LitElement.disconnectedCallback</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></p>
+<code>T</code></p>
 <hr>
 <h3><a id="Component.handleExportParts">handleExportParts</a></h3><p>▸ <code>Protected</code> <strong>handleExportParts</strong>(): <code>void</code></p>
 <p>Returns
@@ -244,6 +240,53 @@ LitElement.disconnectedCallback</p>
 <code>unknown</code></p>
 <p>Overrides
 LitElement.render</p>
+<hr>
+<h3><a id="Component.selectElement">selectElement</a></h3><p>▸ <code>Protected</code> <strong>selectElement</strong>&lt;<code>T</code>&gt;(<code>selector?</code>): <code>T</code></p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&lt;<code>T</code>&gt; = <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></td>
+</tr>
+</tbody></table>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>selector?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>T</code></p>
+<hr>
+<h3><a id="Component.templateContent">templateContent</a></h3><p>▸ <code>Protected</code> <strong>templateContent</strong>(<code>contents</code>): <code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>contents</code></td>
+<td align="left"><code><a href='TemplateContents.html'>TemplateContents</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
 <hr>
 <h3><a id="Component.variable">variable</a></h3><p>▸ <code>Protected</code> <strong>variable</strong>(<code>name</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -322,12 +365,13 @@ LitElement.willUpdate</p>
 <li><a class='' href='#Component.exportParts'>exportParts</a></li>
 <li><a class='' href='#Component.unslottedNodes'>unslottedNodes</a></li>
 <li><a class='' href='#Component.connectedCallback'>connectedCallback</a></li>
-<li><a class='' href='#Component.content'>content</a></li>
 <li><a class='' href='#Component.disconnectedCallback'>disconnectedCallback</a></li>
 <li><a class='' href='#Component.dispatchExportParts'>dispatchExportParts</a></li>
 <li><a class='' href='#Component.element'>element</a></li>
 <li><a class='' href='#Component.handleExportParts'>handleExportParts</a></li>
 <li><a class='' href='#Component.render'>render</a></li>
+<li><a class='' href='#Component.selectElement'>selectElement</a></li>
+<li><a class='' href='#Component.templateContent'>templateContent</a></li>
 <li><a class='' href='#Component.variable'>variable</a></li>
 <li><a class='' href='#Component.variableSet'>variableSet</a></li>
 <li><a class='' href='#Component.willUpdate'>willUpdate</a></li></ul>

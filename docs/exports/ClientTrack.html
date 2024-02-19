@@ -171,13 +171,13 @@ Track.mash</p>
 <p>Inherited from
 Track.properties</p>
 <hr>
-<h3><a id="ClientTrack.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-Track.scalarRecord</p>
-<hr>
 <h3><a id="ClientTrack.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 Track.targetId</p>
+<hr>
+<h3><a id="ClientTrack.trackIndex">trackIndex</a></h3><p>• <strong>trackIndex</strong>: <code><a href='TrackIndex.html'>TrackIndex</a></code></p>
+<p>Inherited from
+Track.trackIndex</p>
 <hr>
 <h3><a id="ClientTrack.trackObject">trackObject</a></h3><p>• <strong>trackObject</strong>: <code><a href='TrackObject.html'>TrackObject</a></code></p>
 <p>Inherited from
@@ -364,7 +364,7 @@ Track.propertyInstance</p>
 <p>Returns
 <code>void</code></p>
 <hr>
-<h3><a id="ClientTrack.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ClientTrack.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -383,7 +383,7 @@ Track.propertyInstance</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 Track.setValue</p>
 <hr>
@@ -411,6 +411,33 @@ Track.sortClips</p>
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 Track.toJSON</p>
+<hr>
+<h3><a id="ClientTrack.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+Track.tweenValues</p>
 <hr>
 <h3><a id="ClientTrack.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -446,8 +473,8 @@ Track.value</p>
 <li><a class='' href='#ClientTrack.index'>index</a></li>
 <li><a class='' href='#ClientTrack.mash'>mash</a></li>
 <li><a class='' href='#ClientTrack.properties'>properties</a></li>
-<li><a class='' href='#ClientTrack.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientTrack.targetId'>targetId</a></li>
+<li><a class='' href='#ClientTrack.trackIndex'>trackIndex</a></li>
 <li><a class='' href='#ClientTrack.trackObject'>trackObject</a></li>
 <li><a class='' href='#ClientTrack.addClips'>addClips</a></li>
 <li><a class='' href='#ClientTrack.assureFrames'>assureFrames</a></li>
@@ -461,6 +488,7 @@ Track.value</p>
 <li><a class='' href='#ClientTrack.setValue'>setValue</a></li>
 <li><a class='' href='#ClientTrack.sortClips'>sortClips</a></li>
 <li><a class='' href='#ClientTrack.toJSON'>toJSON</a></li>
+<li><a class='' href='#ClientTrack.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientTrack.value'>value</a></li></ul>
       </nav>
     </main>

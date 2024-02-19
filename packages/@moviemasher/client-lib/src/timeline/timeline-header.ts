@@ -3,7 +3,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 import { VIEW } from '../runtime.js'
 import { html } from 'lit-html'
 import { HeaderBase } from '../base/LeftCenterRight.js'
-import { ENCODE } from '@moviemasher/shared-lib/runtime.js'
+import { $ENCODE } from '@moviemasher/shared-lib/runtime.js'
 
 export const TimelineHeaderTag = 'movie-masher-timeline-header'
 /**
@@ -15,9 +15,9 @@ export class TimelineHeaderElement extends HeaderBase {
     this.loadComponent('movie-masher-action-client')
     htmls.push(html`
       <movie-masher-action-server
-        detail='${ENCODE}'
-        icon='${ENCODE}'
-        string='${ENCODE}'
+        detail='${$ENCODE}'
+        icon='${$ENCODE}'
+        string='${$ENCODE}'
       ></movie-masher-action-server>
       <movie-masher-action-client
         icon='visible' 

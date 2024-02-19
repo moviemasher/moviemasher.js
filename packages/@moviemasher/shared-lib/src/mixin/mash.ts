@@ -1,9 +1,10 @@
-import type { Asset, AssetCacheArgs, Clip, ClipObject, Clips, Constrained, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, MashDescription, MashDescriptionOptions, MashIndex, MashInstance, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '../types.js'
+import type { AVType, Asset, AssetCacheArgs, Clip, ClipObject, Clips, Constrained, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, MashDescription, MashDescriptionOptions, MashIndex, MashInstance, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '../types.js'
 
-import { AUDIO, BOTH, DURATION_NONE, DURATION_UNKNOWN, ERROR, MASH, NUMBER, RGB, RGB_BLACK, SIZE_OUTPUT, VIDEO, arrayUnique, errorThrow, isArray, sortByIndex } from '../runtime.js'
-import { assertTrue, isPositive } from '../utility/guards.js'
-import { sizeAspect } from '../utility/rect.js'
-import { promiseNumbers } from '../utility/request.js'
+import { $AUDIO, $BOTH, DURATION_NONE, DURATION_UNKNOWN, ERROR, $HEIGHT, $MASH, $NUMBER, $RGB, RGB_BLACK, SIZE_OUTPUT, $VIDEO, $WIDTH, arrayUnique, errorThrow, sortByIndex } from '../runtime.js'
+import { isAboveZero, isArray } from '../utility/guard.js'
+import { assertTrue } from '../utility/guards.js'
+import { isPositive } from '../utility/guard.js'
+import { promiseNumbers } from '../runtime.js'
 import { assertTime, timeFromArgs } from '../utility/time.js'
 
 const DefaultQuantize = 10
@@ -23,7 +24,7 @@ T & Constrained<MashAsset> {
       assertTime(time)
 
       const scaled = time.scale(this.quantize)
-      const type = (audible && visible) ? BOTH : (audible ? AUDIO : VIDEO)
+      const type = (audible && visible) ? $BOTH : (audible ? $AUDIO : $VIDEO)
       const clips = this.clipsInTimeOfType(scaled, type)
       // console.log(this.constructor.name, 'assetCachePromise', type, clips.length)
       const promises = clips.map(clip => {
@@ -83,7 +84,7 @@ T & Constrained<MashAsset> {
     }
   
     private clipIntersects(clip: Clip, range: Time): boolean {
-      if (!clip.frames) return true
+      if (!isAboveZero(clip.frames)) return true
   
       return clip.timeRange.intersects(range)
     }
@@ -102,13 +103,12 @@ T & Constrained<MashAsset> {
       return this.filterIntersecting(this.clips, time)
     }
   
-    clipsInTimeOfType(time: Time, avType = BOTH): Clip[] {
+    clipsInTimeOfType(time: Time, avType: AVType = $BOTH): Clip[] {
       switch (avType) {
-        case BOTH: return this.clipsInTime(time)
-        case AUDIO: return this.clipsAudibleInTime(time)
-        case VIDEO: return this.clipsVisibleInTime(time)
+        case $BOTH: return this.clipsInTime(time)
+        case $AUDIO: return this.clipsAudibleInTime(time)
+        case $VIDEO: return this.clipsVisibleInTime(time)
       }
-      return errorThrow(ERROR.Internal)
     }
   
     private clipsVisibleInTime(time: Time): Clip[] {
@@ -141,27 +141,28 @@ T & Constrained<MashAsset> {
     //   }
     // }
   
+
     override initializeProperties(object: MashAssetObject): void {
       this.tracks = []
   
       this.properties.push(this.propertyInstance({
-        targetId: MASH, name: 'aspectHeight', type: NUMBER, 
+        targetId: $MASH, name: 'aspectHeight', type: $NUMBER, 
         defaultValue: 9, min: 1, step: 1, order: 2
       }))
       this.properties.push(this.propertyInstance({
-        targetId: MASH, name: 'aspectWidth', type: NUMBER, 
+        targetId: $MASH, name: 'aspectWidth', type: $NUMBER, 
         defaultValue: 16, min: 1, step: 1, order: 1
       }))
       this.properties.push(this.propertyInstance({
-        targetId: MASH, name: 'aspectShortest', type: NUMBER, 
+        targetId: $MASH, name: 'aspectShortest', type: $NUMBER, 
         defaultValue: SIZE_OUTPUT.height, min: 1, step: 1, order: 3
       }))
       this.properties.push(this.propertyInstance({
-        targetId: MASH, name: 'color', type: RGB, 
+        targetId: $MASH, name: 'color', type: $RGB, 
         defaultValue: RGB_BLACK, 
       }))
       this.properties.push(this.propertyInstance({
-        targetId: MASH, name: 'quantize', type: NUMBER, 
+        targetId: $MASH, name: 'quantize', type: $NUMBER, 
         
         defaultValue: DefaultQuantize, step: 1, options: [10, 20, 40]
       }))
@@ -203,7 +204,7 @@ T & Constrained<MashAsset> {
       return size
     }
     
-    source = MASH
+    source = $MASH
   
     toJSON(): UnknownRecord {
       console.debug(this.constructor.name, 'toJSON')
@@ -236,4 +237,17 @@ export function MashInstanceMixin<T extends Constrained<Instance>>(Base: T):
   return class extends Base implements MashInstance {
     declare asset: MashAsset
   }
+}
+
+
+const sizeAspect = (aspectWidth: number, aspectHeight: number, shortest: number): Size => {
+  const shortestKey = aspectHeight > aspectWidth ? $WIDTH : $HEIGHT
+  const longestKey = shortestKey === $WIDTH ? $HEIGHT : $WIDTH
+  const max = Math.max(aspectWidth, aspectHeight)
+  const min = Math.min(aspectWidth, aspectHeight)
+  const ratio = max / min
+  const size: Size = { width: 0, height: 0 }
+  size[shortestKey] = shortest
+  size[longestKey] = shortest * ratio
+  return size
 }

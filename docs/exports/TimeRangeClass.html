@@ -172,19 +172,19 @@
 <p>Overrides
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="TimeRangeClass.fps">fps</a></h3><p>• <strong>fps</strong>: <code>number</code></p>
+<h3><a id="TimeRangeClass.fps">fps</a></h3><p>• <strong>fps</strong>: <code>number</code> = <code>1</code></p>
 <h4>Implementation of</h4>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.fps">fps</a></p>
 <p>Inherited from
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.fps">fps</a></p>
 <hr>
-<h3><a id="TimeRangeClass.frame">frame</a></h3><p>• <strong>frame</strong>: <code>number</code></p>
+<h3><a id="TimeRangeClass.frame">frame</a></h3><p>• <strong>frame</strong>: <code>number</code> = <code>0</code></p>
 <h4>Implementation of</h4>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.frame">frame</a></p>
 <p>Inherited from
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.frame">frame</a></p>
 <hr>
-<h3><a id="TimeRangeClass.frames">frames</a></h3><p>• <strong>frames</strong>: <code>number</code></p>
+<h3><a id="TimeRangeClass.frames">frames</a></h3><p>• <strong>frames</strong>: <code>number</code> = <code>1</code></p>
 <h4>Implementation of</h4>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.frames">frames</a></p>
 <hr>
@@ -279,66 +279,10 @@ TimeClass.timeRange</p>
 <h3><a id="TimeRangeClass.times">times</a></h3><p>• <code>get</code> <strong>times</strong>(): <code><a href='Times.html'>Times</a></code></p>
 <p>Returns
 <code><a href='Times.html'>Times</a></code></p>
+<p>Array with start Time, and end Time if longer than a frame.</p>
 <h4>Implementation of</h4>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.times">times</a></p>
 <h2>Methods</h2>
-<h3><a id="TimeRangeClass.add">add</a></h3><p>▸ <strong>add</strong>(<code>time</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.add">add</a></p>
-<p>Inherited from
-<a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.add">add</a></p>
-<hr>
-<h3><a id="TimeRangeClass.addFrame">addFrame</a></h3><p>▸ <strong>addFrame</strong>(<code>frames</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>frames</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<p>Inherited from
-<a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.addFrame">addFrame</a></p>
-<hr>
-<h3><a id="TimeRangeClass.addFrames">addFrames</a></h3><p>▸ <strong>addFrames</strong>(<code>frames</code>): <code><a href='TimeRange.html'>TimeRange</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>frames</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='TimeRange.html'>TimeRange</a></code></p>
-<hr>
 <h3><a id="TimeRangeClass.closest">closest</a></h3><p>▸ <strong>closest</strong>(<code>timeRange</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -359,34 +303,6 @@ TimeClass.timeRange</p>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.closest">closest</a></p>
 <p>Inherited from
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.closest">closest</a></p>
-<hr>
-<h3><a id="TimeRangeClass.divide">divide</a></h3><p>▸ <strong>divide</strong>(<code>number</code>, <code>rounding?</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-<th align="left">Default value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>number</code></td>
-<td align="left"><code>number</code></td>
-<td align="left"><code>undefined</code></td>
-</tr>
-<tr>
-<td align="left"><code>rounding</code></td>
-<td align="left"><code>string</code></td>
-<td align="left"><code>&#39;&#39;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.divide">divide</a></p>
-<p>Inherited from
-<a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.divide">divide</a></p>
 <hr>
 <h3><a id="TimeRangeClass.durationFrames">durationFrames</a></h3><p>▸ <strong>durationFrames</strong>(<code>duration</code>, <code>fps?</code>): <code><a href='Numbers.html'>Numbers</a></code></p>
 <h4>Parameters</h4>
@@ -437,23 +353,6 @@ TimeClass.timeRange</p>
 <p>Inherited from
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.equalsTime">equalsTime</a></p>
 <hr>
-<h3><a id="TimeRangeClass.equalsTimeRange">equalsTimeRange</a></h3><p>▸ <strong>equalsTimeRange</strong>(<code>timeRange</code>): <code>boolean</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>timeRange</code></td>
-<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>boolean</code></p>
-<hr>
 <h3><a id="TimeRangeClass.includes">includes</a></h3><p>▸ <strong>includes</strong>(<code>frame</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
 <table>
@@ -473,23 +372,6 @@ TimeClass.timeRange</p>
 <h4>Implementation of</h4>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.includes">includes</a></p>
 <hr>
-<h3><a id="TimeRangeClass.includesTime">includesTime</a></h3><p>▸ <strong>includesTime</strong>(<code>time</code>): <code>boolean</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>boolean</code></p>
-<hr>
 <h3><a id="TimeRangeClass.intersection">intersection</a></h3><p>▸ <strong>intersection</strong>(<code>time</code>): <code><a href='TimeRange.html'>TimeRange</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -506,6 +388,7 @@ TimeClass.timeRange</p>
 </tbody></table>
 <p>Returns
 <code><a href='TimeRange.html'>TimeRange</a></code></p>
+<p>TimeRange that intersects two others.</p>
 <h4>Implementation of</h4>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.intersection">intersection</a></p>
 <hr>
@@ -544,8 +427,6 @@ TimeClass.timeRange</p>
 </tbody></table>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.min">min</a></p>
 <p>Inherited from
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.min">min</a></p>
 <hr>
@@ -573,18 +454,15 @@ TimeClass.timeRange</p>
 <tr>
 <th align="left">Name</th>
 <th align="left">Type</th>
-<th align="left">Default value</th>
 </tr>
 </thead>
 <tbody><tr>
 <td align="left"><code>position</code></td>
 <td align="left"><code>number</code></td>
-<td align="left"><code>undefined</code></td>
 </tr>
 <tr>
-<td align="left"><code>rounding</code></td>
-<td align="left"><code>string</code></td>
-<td align="left"><code>&#39;&#39;</code></td>
+<td align="left"><code>rounding?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Rounding'>Rounding</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -608,9 +486,9 @@ TimeClass.timeRange</p>
 <td align="left"><code>1</code></td>
 </tr>
 <tr>
-<td align="left"><code>rounding</code></td>
-<td align="left"><code>string</code></td>
-<td align="left"><code>&#39;&#39;</code></td>
+<td align="left"><code>rounding?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Rounding'>Rounding</a></code></td>
+<td align="left"><code>undefined</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -640,63 +518,6 @@ TimeClass.timeRange</p>
 <p><a href="TimeRange.html">TimeRange</a>.<a href="TimeRange.html#TimeRange.scaleToFps">scaleToFps</a></p>
 <p>Inherited from
 <a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.scaleToFps">scaleToFps</a></p>
-<hr>
-<h3><a id="TimeRangeClass.scaleToTime">scaleToTime</a></h3><p>▸ <strong>scaleToTime</strong>(<code>time</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<p>Inherited from
-<a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.scaleToTime">scaleToTime</a></p>
-<hr>
-<h3><a id="TimeRangeClass.subtract">subtract</a></h3><p>▸ <strong>subtract</strong>(<code>time</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<p>Inherited from
-<a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.subtract">subtract</a></p>
-<hr>
-<h3><a id="TimeRangeClass.subtractFrames">subtractFrames</a></h3><p>▸ <strong>subtractFrames</strong>(<code>frames</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>frames</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<p>Inherited from
-<a href="TimeClass.html">TimeClass</a>.<a href="TimeClass.html#TimeClass.subtractFrames">subtractFrames</a></p>
 <hr>
 <h3><a id="TimeRangeClass.toString">toString</a></h3><p>▸ <strong>toString</strong>(): <code>string</code></p>
 <p>Returns
@@ -768,16 +589,10 @@ TimeClass.timeRange</p>
 <li><a class='' href='#TimeRangeClass.startTime'>startTime</a></li>
 <li><a class='' href='#TimeRangeClass.timeRange'>timeRange</a></li>
 <li><a class='' href='#TimeRangeClass.times'>times</a></li>
-<li><a class='' href='#TimeRangeClass.add'>add</a></li>
-<li><a class='' href='#TimeRangeClass.addFrame'>addFrame</a></li>
-<li><a class='' href='#TimeRangeClass.addFrames'>addFrames</a></li>
 <li><a class='' href='#TimeRangeClass.closest'>closest</a></li>
-<li><a class='' href='#TimeRangeClass.divide'>divide</a></li>
 <li><a class='' href='#TimeRangeClass.durationFrames'>durationFrames</a></li>
 <li><a class='' href='#TimeRangeClass.equalsTime'>equalsTime</a></li>
-<li><a class='' href='#TimeRangeClass.equalsTimeRange'>equalsTimeRange</a></li>
 <li><a class='' href='#TimeRangeClass.includes'>includes</a></li>
-<li><a class='' href='#TimeRangeClass.includesTime'>includesTime</a></li>
 <li><a class='' href='#TimeRangeClass.intersection'>intersection</a></li>
 <li><a class='' href='#TimeRangeClass.intersects'>intersects</a></li>
 <li><a class='' href='#TimeRangeClass.min'>min</a></li>
@@ -785,9 +600,6 @@ TimeClass.timeRange</p>
 <li><a class='' href='#TimeRangeClass.positionTime'>positionTime</a></li>
 <li><a class='' href='#TimeRangeClass.scale'>scale</a></li>
 <li><a class='' href='#TimeRangeClass.scaleToFps'>scaleToFps</a></li>
-<li><a class='' href='#TimeRangeClass.scaleToTime'>scaleToTime</a></li>
-<li><a class='' href='#TimeRangeClass.subtract'>subtract</a></li>
-<li><a class='' href='#TimeRangeClass.subtractFrames'>subtractFrames</a></li>
 <li><a class='' href='#TimeRangeClass.toString'>toString</a></li>
 <li><a class='' href='#TimeRangeClass.withFrame'>withFrame</a></li>
 <li><a class='' href='#TimeRangeClass.withFrames'>withFrames</a></li></ul>

@@ -18,12 +18,10 @@
   "homepage": "https://moviemasher.com",
   "scripts": {
     "test-core-lib": "node --loader tsx --test ../../packages/@moviemasher/shared-lib/src/*.test.ts ../../packages/@moviemasher/shared-lib/src/**/*.test.ts ../../packages/@moviemasher/shared-lib/src/**/**/*.test.ts",
-
     "test-ts": "run-s clean test-ts",
-    
     "clean": "rm -rf /app/temporary/test-shared/*",
     "create": "mkdir /app/temporary/test-shared/cache",
-    "test": "node --experimental-global-customevent --loader tsx --test ./src/*.test.ts"
+    "test": "node --experimental-global-customevent  --experimental-test-coverage --loader tsx --test ./src/request.test.ts"
   },
   "dependencies": {
     "@moviemasher/shared-lib": "5.2.0"

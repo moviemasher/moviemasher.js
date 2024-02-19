@@ -132,10 +132,16 @@
   <div class="section">
     <h1>Interface: EventDispatcher</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.EventDispatcher</p>
+<h2>Hierarchy</h2>
+<ul>
+<li><p><strong><code><a href='#'>EventDispatcher</a></code></strong></p>
+<p>↳ <code><a href='MovieMasherRuntime.html'>MovieMasherRuntime</a></code></p>
+</li>
+</ul>
 <h2>Properties</h2>
-<h3><a id="EventDispatcher.addDispatchListener">addDispatchListener</a></h3><p>• <strong>addDispatchListener</strong>: &lt;T&gt;(<code>type</code>: <code>string</code>, <code>listener</code>: <code><a href='EventDispatcherListener.html'>EventDispatcherListener</a></code>&lt;<code>T</code>&gt;, <code>options?</code>: <code><a href='../combined/Types.html#EventOptions'>EventOptions</a></code>) =&gt; <code>void</code></p>
+<h3><a id="EventDispatcher.dispatch">dispatch</a></h3><p>• <strong>dispatch</strong>: &lt;T&gt;(<code>typeOrEvent</code>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code>T</code>&gt;) =&gt; <code>boolean</code></p>
 <h4>Type declaration</h4>
-<p>▸ &lt;<code>T</code>&gt;(<code>type</code>, <code>listener</code>, <code>options?</code>): <code>void</code></p>
+<p>▸ &lt;<code>T</code>&gt;(<code>typeOrEvent</code>): <code>boolean</code></p>
 <h5>Type parameters</h5>
 <table>
 <thead>
@@ -147,44 +153,6 @@
 <tbody><tr>
 <td align="left"><code>T</code></td>
 <td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<h5>Parameters</h5>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>type</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>listener</code></td>
-<td align="left"><code><a href='EventDispatcherListener.html'>EventDispatcherListener</a></code>&lt;<code>T</code>&gt;</td>
-</tr>
-<tr>
-<td align="left"><code>options?</code></td>
-<td align="left"><code><a href='../combined/Types.html#EventOptions'>EventOptions</a></code></td>
-</tr>
-</tbody></table>
-<h5>Returns</h5>
-<p><code>void</code></p>
-<hr>
-<h3><a id="EventDispatcher.dispatch">dispatch</a></h3><p>• <strong>dispatch</strong>: &lt;T&gt;(<code>typeOrEvent</code>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code><a href='../categories/ServerEvents.html#CustomEvent'>CustomEvent</a></code></a>&lt;<code>T</code>&gt;) =&gt; <code>boolean</code></p>
-<h4>Type declaration</h4>
-<p>▸ &lt;<code>T</code>&gt;(<code>typeOrEvent</code>): <code>boolean</code></p>
-<h5>Type parameters</h5>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>T</code></td>
 </tr>
 </tbody></table>
 <h5>Parameters</h5>
@@ -197,51 +165,11 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>typeOrEvent</code></td>
-<td align="left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code><a href='../categories/ServerEvents.html#CustomEvent'>CustomEvent</a></code></a>&lt;<code>T</code>&gt;</td>
+<td align="left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code>T</code>&gt;</td>
 </tr>
 </tbody></table>
 <h5>Returns</h5>
 <p><code>boolean</code></p>
-<hr>
-<h3><a id="EventDispatcher.removeDispatchListener">removeDispatchListener</a></h3><p>• <strong>removeDispatchListener</strong>: &lt;T&gt;(<code>type</code>: <code>string</code>, <code>listener</code>: <code><a href='EventDispatcherListener.html'>EventDispatcherListener</a></code>&lt;<code>T</code>&gt;, <code>options?</code>: <code><a href='../combined/Types.html#EventOptions'>EventOptions</a></code>) =&gt; <code>void</code></p>
-<h4>Type declaration</h4>
-<p>▸ &lt;<code>T</code>&gt;(<code>type</code>, <code>listener</code>, <code>options?</code>): <code>void</code></p>
-<h5>Type parameters</h5>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>T</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<h5>Parameters</h5>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>type</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>listener</code></td>
-<td align="left"><code><a href='EventDispatcherListener.html'>EventDispatcherListener</a></code>&lt;<code>T</code>&gt;</td>
-</tr>
-<tr>
-<td align="left"><code>options?</code></td>
-<td align="left"><code><a href='../combined/Types.html#EventOptions'>EventOptions</a></code></td>
-</tr>
-</tbody></table>
-<h5>Returns</h5>
-<p><code>void</code></p>
 <h2>Methods</h2>
 <h3><a id="EventDispatcher.listenersAdd">listenersAdd</a></h3><p>▸ <strong>listenersAdd</strong>(<code>record</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -285,9 +213,7 @@
         <input type='checkbox' id='nav-input-last'>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#EventDispatcher'>EventDispatcher</a></li>
-<li><a class='' href='#EventDispatcher.addDispatchListener'>addDispatchListener</a></li>
 <li><a class='' href='#EventDispatcher.dispatch'>dispatch</a></li>
-<li><a class='' href='#EventDispatcher.removeDispatchListener'>removeDispatchListener</a></li>
 <li><a class='' href='#EventDispatcher.listenersAdd'>listenersAdd</a></li>
 <li><a class='' href='#EventDispatcher.listenersRemove'>listenersRemove</a></li></ul>
       </nav>

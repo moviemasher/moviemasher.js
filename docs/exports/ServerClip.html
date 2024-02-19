@@ -151,11 +151,19 @@ Clip.assetIds</p>
 <p>Inherited from
 Clip.audible</p>
 <hr>
+<h3><a id="ServerClip.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<p>Inherited from
+Clip.canBeMuted</p>
+<hr>
+<h3><a id="ServerClip.clipIndex">clipIndex</a></h3><p>• <strong>clipIndex</strong>: <code><a href='ClipIndex.html'>ClipIndex</a></code></p>
+<p>Inherited from
+Clip.clipIndex</p>
+<hr>
 <h3><a id="ServerClip.clipObject">clipObject</a></h3><p>• <strong>clipObject</strong>: <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <p>Inherited from
 Clip.clipObject</p>
 <hr>
-<h3><a id="ServerClip.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code></p>
+<h3><a id="ServerClip.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code> &amp; <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <p>Overrides
 Clip.container</p>
 <hr>
@@ -163,7 +171,7 @@ Clip.container</p>
 <p>Inherited from
 Clip.containerId</p>
 <hr>
-<h3><a id="ServerClip.content">content</a></h3><p>• <strong>content</strong>: <code><a href='ServerInstance.html'>ServerInstance</a></code></p>
+<h3><a id="ServerClip.content">content</a></h3><p>• <strong>content</strong>: <code><a href='ServerInstance.html'>ServerInstance</a></code> &amp; <code><a href='ContentInstance.html'>ContentInstance</a></code> | <code><a href='ServerAudioInstance.html'>ServerAudioInstance</a></code></p>
 <p>Overrides
 Clip.content</p>
 <hr>
@@ -191,25 +199,21 @@ Clip.id</p>
 <p>Inherited from
 Clip.label</p>
 <hr>
-<h3><a id="ServerClip.mutable">mutable</a></h3><p>• <strong>mutable</strong>: <code>boolean</code></p>
-<p>Inherited from
-Clip.mutable</p>
-<hr>
 <h3><a id="ServerClip.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
 Clip.muted</p>
 <hr>
-<h3><a id="ServerClip.notMuted">notMuted</a></h3><p>• <strong>notMuted</strong>: <code>boolean</code></p>
+<h3><a id="ServerClip.opacity">opacity</a></h3><p>• <strong>opacity</strong>: <code>number</code></p>
 <p>Inherited from
-Clip.notMuted</p>
+Clip.opacity</p>
+<hr>
+<h3><a id="ServerClip.precoding">precoding</a></h3><p>• <code>Optional</code> <strong>precoding</strong>: `/${string}`</p>
 <hr>
 <h3><a id="ServerClip.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 Clip.properties</p>
 <hr>
-<h3><a id="ServerClip.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-Clip.scalarRecord</p>
+<h3><a id="ServerClip.requiresPrecoding">requiresPrecoding</a></h3><p>• <strong>requiresPrecoding</strong>: <code>boolean</code></p>
 <hr>
 <h3><a id="ServerClip.sizing">sizing</a></h3><p>• <strong>sizing</strong>: <code><a href='../combined/Types.html#Sizing'>Sizing</a></code></p>
 <p>Inherited from
@@ -273,7 +277,7 @@ Clip.asset</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='AudioCommandFileArgs.html'>AudioCommandFileArgs</a></code></td>
+<td align="left"><code><a href='AudioCommandFileOptions.html'>AudioCommandFileOptions</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -290,7 +294,7 @@ Clip.asset</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='AudioCommandFilterArgs.html'>AudioCommandFilterArgs</a></code></td>
+<td align="left"><code><a href='AudibleCommandFilterArgs.html'>AudibleCommandFilterArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -315,6 +319,25 @@ Clip.asset</p>
 <p>Inherited from
 Clip.clipCachePromise</p>
 <hr>
+<h3><a id="ServerClip.clipRects">clipRects</a></h3><p>▸ <strong>clipRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+Clip.clipRects</p>
+<hr>
 <h3><a id="ServerClip.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -338,25 +361,6 @@ Clip.clipCachePromise</p>
 <p>Inherited from
 Clip.constrainedValue</p>
 <hr>
-<h3><a id="ServerClip.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
-<p>Inherited from
-Clip.containerRects</p>
-<hr>
 <h3><a id="ServerClip.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -375,23 +379,6 @@ Clip.containerRects</p>
 <code>void</code></p>
 <p>Inherited from
 Clip.initializeProperties</p>
-<hr>
-<h3><a id="ServerClip.intrinsicGraphFiles">intrinsicGraphFiles</a></h3><p>▸ <strong>intrinsicGraphFiles</strong>(<code>options</code>): <code><a href='GraphFiles.html'>GraphFiles</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>options</code></td>
-<td align="left"><code><a href='IntrinsicOptions.html'>IntrinsicOptions</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='GraphFiles.html'>GraphFiles</a></code></p>
 <hr>
 <h3><a id="ServerClip.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>options</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -515,7 +502,7 @@ Clip.propertyInstance</p>
 <p>Inherited from
 Clip.resetTiming</p>
 <hr>
-<h3><a id="ServerClip.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ServerClip.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -534,15 +521,65 @@ Clip.resetTiming</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 Clip.setValue</p>
+<hr>
+<h3><a id="ServerClip.sizingRect">sizingRect</a></h3><p>▸ <strong>sizingRect</strong>(<code>size</code>, <code>loading?</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>size</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>loading?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+Clip.sizingRect</p>
 <hr>
 <h3><a id="ServerClip.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 Clip.toJSON</p>
+<hr>
+<h3><a id="ServerClip.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+Clip.tweenValues</p>
 <hr>
 <h3><a id="ServerClip.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -574,7 +611,7 @@ Clip.value</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='VideoCommandFileArgs.html'>VideoCommandFileArgs</a></code></td>
+<td align="left"><code><a href='VideoCommandFileOptions.html'>VideoCommandFileOptions</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -607,6 +644,8 @@ Clip.value</p>
         <ul><li><a class='' href='#ServerClip'>ServerClip</a></li>
 <li><a class='' href='#ServerClip.assetIds'>assetIds</a></li>
 <li><a class='' href='#ServerClip.audible'>audible</a></li>
+<li><a class='' href='#ServerClip.canBeMuted'>canBeMuted</a></li>
+<li><a class='' href='#ServerClip.clipIndex'>clipIndex</a></li>
 <li><a class='' href='#ServerClip.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerClip.container'>container</a></li>
 <li><a class='' href='#ServerClip.containerId'>containerId</a></li>
@@ -617,11 +656,11 @@ Clip.value</p>
 <li><a class='' href='#ServerClip.frames'>frames</a></li>
 <li><a class='' href='#ServerClip.id'>id</a></li>
 <li><a class='' href='#ServerClip.label'>label</a></li>
-<li><a class='' href='#ServerClip.mutable'>mutable</a></li>
 <li><a class='' href='#ServerClip.muted'>muted</a></li>
-<li><a class='' href='#ServerClip.notMuted'>notMuted</a></li>
+<li><a class='' href='#ServerClip.opacity'>opacity</a></li>
+<li><a class='' href='#ServerClip.precoding'>precoding</a></li>
 <li><a class='' href='#ServerClip.properties'>properties</a></li>
-<li><a class='' href='#ServerClip.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#ServerClip.requiresPrecoding'>requiresPrecoding</a></li>
 <li><a class='' href='#ServerClip.sizing'>sizing</a></li>
 <li><a class='' href='#ServerClip.targetId'>targetId</a></li>
 <li><a class='' href='#ServerClip.timeRange'>timeRange</a></li>
@@ -634,10 +673,9 @@ Clip.value</p>
 <li><a class='' href='#ServerClip.audioCommandFiles'>audioCommandFiles</a></li>
 <li><a class='' href='#ServerClip.audioCommandFilters'>audioCommandFilters</a></li>
 <li><a class='' href='#ServerClip.clipCachePromise'>clipCachePromise</a></li>
+<li><a class='' href='#ServerClip.clipRects'>clipRects</a></li>
 <li><a class='' href='#ServerClip.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ServerClip.containerRects'>containerRects</a></li>
 <li><a class='' href='#ServerClip.initializeProperties'>initializeProperties</a></li>
-<li><a class='' href='#ServerClip.intrinsicGraphFiles'>intrinsicGraphFiles</a></li>
 <li><a class='' href='#ServerClip.intrinsicsKnown'>intrinsicsKnown</a></li>
 <li><a class='' href='#ServerClip.maxFrames'>maxFrames</a></li>
 <li><a class='' href='#ServerClip.propertyFind'>propertyFind</a></li>
@@ -645,7 +683,9 @@ Clip.value</p>
 <li><a class='' href='#ServerClip.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerClip.resetTiming'>resetTiming</a></li>
 <li><a class='' href='#ServerClip.setValue'>setValue</a></li>
+<li><a class='' href='#ServerClip.sizingRect'>sizingRect</a></li>
 <li><a class='' href='#ServerClip.toJSON'>toJSON</a></li>
+<li><a class='' href='#ServerClip.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerClip.value'>value</a></li>
 <li><a class='' href='#ServerClip.videoCommandFiles'>videoCommandFiles</a></li>
 <li><a class='' href='#ServerClip.videoCommandFilters'>videoCommandFilters</a></li></ul>

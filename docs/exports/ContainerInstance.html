@@ -136,11 +136,12 @@
 <ul>
 <li><p><code><a href='VisibleInstance.html'>VisibleInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ContainerInstance</a></code></strong></p>
+<p>↳↳ <code><a href='TextInstance.html'>TextInstance</a></code></p>
 </li>
 </ul>
 <h2>Properties</h2>
-<h3><a id="ContainerInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='Asset.html'>Asset</a></code></p>
-<p>Inherited from
+<h3><a id="ContainerInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ContainerAsset.html'>ContainerAsset</a></code></p>
+<p>Overrides
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.asset">asset</a></p>
 <hr>
 <h3><a id="ContainerInstance.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
@@ -151,25 +152,25 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ContainerInstance.bottomConstrain">bottomConstrain</a></h3><p>• <strong>bottomConstrain</strong>: <code>boolean</code></p>
+<h3><a id="ContainerInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.bottomConstrain">bottomConstrain</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.bottomCrop">bottomCrop</a></p>
+<hr>
+<h3><a id="ContainerInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.canBeMuted">canBeMuted</a></p>
 <hr>
 <h3><a id="ContainerInstance.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.clip">clip</a></p>
 <hr>
-<h3><a id="ContainerInstance.clipped">clipped</a></h3><p>• <strong>clipped</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.clipped">clipped</a></p>
-<hr>
 <h3><a id="ContainerInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.container">container</a></p>
 <hr>
-<h3><a id="ContainerInstance.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h3><a id="ContainerInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.cropDirections">cropDirections</a></p>
 <hr>
 <h3><a id="ContainerInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
 <p>Inherited from
@@ -179,6 +180,10 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.height">height</a></p>
 <hr>
+<h3><a id="ContainerInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.heightEnd">heightEnd</a></p>
+<hr>
 <h3><a id="ContainerInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.id">id</a></p>
@@ -187,17 +192,17 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.instanceObject">instanceObject</a></p>
 <hr>
+<h3><a id="ContainerInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.intrinsicRect">intrinsicRect</a></p>
+<hr>
 <h3><a id="ContainerInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.isDefault">isDefault</a></p>
 <hr>
-<h3><a id="ContainerInstance.isDefaultOrAudio">isDefaultOrAudio</a></h3><p>• <strong>isDefaultOrAudio</strong>: <code>boolean</code></p>
+<h3><a id="ContainerInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.isDefaultOrAudio">isDefaultOrAudio</a></p>
-<hr>
-<h3><a id="ContainerInstance.leftConstrain">leftConstrain</a></h3><p>• <strong>leftConstrain</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.leftConstrain">leftConstrain</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.leftCrop">leftCrop</a></p>
 <hr>
 <h3><a id="ContainerInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
 <p>Inherited from
@@ -207,15 +212,11 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.muted">muted</a></p>
 <hr>
-<h3><a id="ContainerInstance.opacity">opacity</a></h3><p>• <strong>opacity</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.opacity">opacity</a></p>
-<hr>
 <h3><a id="ContainerInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.opacityEnd">opacityEnd</a></p>
 <hr>
-<h3><a id="ContainerInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code>string</code></p>
+<h3><a id="ContainerInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.pointAspect">pointAspect</a></p>
 <hr>
@@ -223,43 +224,55 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.properties">properties</a></p>
 <hr>
-<h3><a id="ContainerInstance.rightConstrain">rightConstrain</a></h3><p>• <strong>rightConstrain</strong>: <code>boolean</code></p>
+<h3><a id="ContainerInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.rightConstrain">rightConstrain</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.rightCrop">rightCrop</a></p>
 <hr>
-<h3><a id="ContainerInstance.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="ContainerInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.scalarRecord">scalarRecord</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.sizeAspect">sizeAspect</a></p>
 <hr>
-<h3><a id="ContainerInstance.sideDirectionRecord">sideDirectionRecord</a></h3><p>• <strong>sideDirectionRecord</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
+<h3><a id="ContainerInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.sideDirectionRecord">sideDirectionRecord</a></p>
-<hr>
-<h3><a id="ContainerInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="../combined/Functions.html#sizeAspect">sizeAspect</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.sizeKey">sizeKey</a></p>
 <hr>
 <h3><a id="ContainerInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.targetId">targetId</a></p>
 <hr>
-<h3><a id="ContainerInstance.topConstrain">topConstrain</a></h3><p>• <strong>topConstrain</strong>: <code>boolean</code></p>
+<h3><a id="ContainerInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.topConstrain">topConstrain</a></p>
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.topCrop">topCrop</a></p>
+<hr>
+<h3><a id="ContainerInstance.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.tweening">tweening</a></p>
 <hr>
 <h3><a id="ContainerInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.width">width</a></p>
 <hr>
+<h3><a id="ContainerInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.widthEnd">widthEnd</a></p>
+<hr>
 <h3><a id="ContainerInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.x">x</a></p>
 <hr>
+<h3><a id="ContainerInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.xEnd">xEnd</a></p>
+<hr>
 <h3><a id="ContainerInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.y">y</a></p>
+<hr>
+<h3><a id="ContainerInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.yEnd">yEnd</a></p>
 <h2>Methods</h2>
-<h3><a id="ContainerInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>, <code>unbounded?</code>): <code><a href='Time.html'>Time</a></code></p>
+<h3><a id="ContainerInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -272,15 +285,34 @@
 <td align="left"><code>masherTime</code></td>
 <td align="left"><code><a href='Time.html'>Time</a></code></td>
 </tr>
-<tr>
-<td align="left"><code>unbounded?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
 </tbody></table>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.assetTime">assetTime</a></p>
+<hr>
+<h3><a id="ContainerInstance.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>content</code></td>
+<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ContainerSvgItemArgs.html'>ContainerSvgItemArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.clippedElement">clippedElement</a></p>
 <hr>
 <h3><a id="ContainerInstance.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -305,7 +337,34 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.constrainedValue">constrainedValue</a></p>
 <hr>
-<h3><a id="ContainerInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>inRect</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<h3><a id="ContainerInstance.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>contentItem</code></td>
+<td align="left"><code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>containerItem</code></td>
+<td align="left"><code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ContainerSvgItemArgs.html'>ContainerSvgItemArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.containedItem">containedItem</a></p>
+<hr>
+<h3><a id="ContainerInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -319,16 +378,62 @@
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>inRect</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code></td>
+<td align="left"><code>sizingSize</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.containerRects">containerRects</a></p>
 <hr>
-<h3><a id="ContainerInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<h3><a id="ContainerInstance.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ContainerSvgItemArgs.html'>ContainerSvgItemArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.containerSvgItem">containerSvgItem</a></p>
+<hr>
+<h3><a id="ContainerInstance.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>containerRect</code></td>
+<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>outputSize</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.contentRect">contentRect</a></p>
+<hr>
+<h3><a id="ContainerInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -343,9 +448,28 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.contentRects">contentRects</a></p>
+<hr>
+<h3><a id="ContainerInstance.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ContentSvgItemArgs.html'>ContentSvgItemArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.contentSvgItem">contentSvgItem</a></p>
 <hr>
 <h3><a id="ContainerInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -404,25 +528,6 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.instanceCachePromise">instanceCachePromise</a></p>
 <hr>
-<h3><a id="ContainerInstance.intrinsicRect">intrinsicRect</a></h3><p>▸ <strong>intrinsicRect</strong>(<code>editing?</code>): <code><a href='Rect.html'>Rect</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>editing?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Rect.html'>Rect</a></code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.intrinsicRect">intrinsicRect</a></p>
-<hr>
 <h3><a id="ContainerInstance.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>options</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
 <table>
@@ -441,39 +546,6 @@
 <code>boolean</code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.intrinsicsKnown">intrinsicsKnown</a></p>
-<hr>
-<h3><a id="ContainerInstance.itemContentRect">itemContentRect</a></h3><p>▸ <strong>itemContentRect</strong>(<code>containerRect</code>, <code>shortest</code>, <code>time</code>): <code><a href='Rect.html'>Rect</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>containerRect</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>shortest</code></td>
-<td align="left"><code><a href='../combined/Types.html#PropertySize'>PropertySize</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Rect.html'>Rect</a></code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.itemContentRect">itemContentRect</a></p>
-<hr>
-<h3><a id="ContainerInstance.mutable">mutable</a></h3><p>▸ <strong>mutable</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.mutable">mutable</a></p>
 <hr>
 <h3><a id="ContainerInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -532,7 +604,30 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ContainerInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ContainerInstance.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.scaleRects">scaleRects</a></p>
+<hr>
+<h3><a id="ContainerInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -551,9 +646,36 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.setValue">setValue</a></p>
+<hr>
+<h3><a id="ContainerInstance.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>rect</code></td>
+<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>forecolor?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>opacity?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.svgVector">svgVector</a></p>
 <hr>
 <h3><a id="ContainerInstance.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -588,6 +710,25 @@
 <p>Inherited from
 <a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.tweenValues">tweenValues</a></p>
 <hr>
+<h3><a id="ContainerInstance.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="VisibleInstance.html">VisibleInstance</a>.<a href="VisibleInstance.html#VisibleInstance.tweens">tweens</a></p>
+<hr>
 <h3><a id="ContainerInstance.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -618,50 +759,58 @@
 <li><a class='' href='#ContainerInstance.asset'>asset</a></li>
 <li><a class='' href='#ContainerInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ContainerInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ContainerInstance.bottomConstrain'>bottomConstrain</a></li>
+<li><a class='' href='#ContainerInstance.bottomCrop'>bottomCrop</a></li>
+<li><a class='' href='#ContainerInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ContainerInstance.clip'>clip</a></li>
-<li><a class='' href='#ContainerInstance.clipped'>clipped</a></li>
 <li><a class='' href='#ContainerInstance.container'>container</a></li>
-<li><a class='' href='#ContainerInstance.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ContainerInstance.cropDirections'>cropDirections</a></li>
 <li><a class='' href='#ContainerInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ContainerInstance.height'>height</a></li>
+<li><a class='' href='#ContainerInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ContainerInstance.id'>id</a></li>
 <li><a class='' href='#ContainerInstance.instanceObject'>instanceObject</a></li>
+<li><a class='' href='#ContainerInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ContainerInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ContainerInstance.isDefaultOrAudio'>isDefaultOrAudio</a></li>
-<li><a class='' href='#ContainerInstance.leftConstrain'>leftConstrain</a></li>
+<li><a class='' href='#ContainerInstance.leftCrop'>leftCrop</a></li>
 <li><a class='' href='#ContainerInstance.lock'>lock</a></li>
 <li><a class='' href='#ContainerInstance.muted'>muted</a></li>
-<li><a class='' href='#ContainerInstance.opacity'>opacity</a></li>
 <li><a class='' href='#ContainerInstance.opacityEnd'>opacityEnd</a></li>
 <li><a class='' href='#ContainerInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ContainerInstance.properties'>properties</a></li>
-<li><a class='' href='#ContainerInstance.rightConstrain'>rightConstrain</a></li>
-<li><a class='' href='#ContainerInstance.scalarRecord'>scalarRecord</a></li>
-<li><a class='' href='#ContainerInstance.sideDirectionRecord'>sideDirectionRecord</a></li>
+<li><a class='' href='#ContainerInstance.rightCrop'>rightCrop</a></li>
 <li><a class='' href='#ContainerInstance.sizeAspect'>sizeAspect</a></li>
+<li><a class='' href='#ContainerInstance.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ContainerInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ContainerInstance.topConstrain'>topConstrain</a></li>
+<li><a class='' href='#ContainerInstance.topCrop'>topCrop</a></li>
+<li><a class='' href='#ContainerInstance.tweening'>tweening</a></li>
 <li><a class='' href='#ContainerInstance.width'>width</a></li>
+<li><a class='' href='#ContainerInstance.widthEnd'>widthEnd</a></li>
 <li><a class='' href='#ContainerInstance.x'>x</a></li>
+<li><a class='' href='#ContainerInstance.xEnd'>xEnd</a></li>
 <li><a class='' href='#ContainerInstance.y'>y</a></li>
+<li><a class='' href='#ContainerInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ContainerInstance.assetTime'>assetTime</a></li>
+<li><a class='' href='#ContainerInstance.clippedElement'>clippedElement</a></li>
 <li><a class='' href='#ContainerInstance.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#ContainerInstance.containedItem'>containedItem</a></li>
 <li><a class='' href='#ContainerInstance.containerRects'>containerRects</a></li>
+<li><a class='' href='#ContainerInstance.containerSvgItem'>containerSvgItem</a></li>
+<li><a class='' href='#ContainerInstance.contentRect'>contentRect</a></li>
 <li><a class='' href='#ContainerInstance.contentRects'>contentRects</a></li>
+<li><a class='' href='#ContainerInstance.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ContainerInstance.frames'>frames</a></li>
 <li><a class='' href='#ContainerInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ContainerInstance.instanceCachePromise'>instanceCachePromise</a></li>
-<li><a class='' href='#ContainerInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ContainerInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ContainerInstance.itemContentRect'>itemContentRect</a></li>
-<li><a class='' href='#ContainerInstance.mutable'>mutable</a></li>
 <li><a class='' href='#ContainerInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ContainerInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ContainerInstance.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#ContainerInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ContainerInstance.setValue'>setValue</a></li>
+<li><a class='' href='#ContainerInstance.svgVector'>svgVector</a></li>
 <li><a class='' href='#ContainerInstance.toJSON'>toJSON</a></li>
 <li><a class='' href='#ContainerInstance.tweenValues'>tweenValues</a></li>
+<li><a class='' href='#ContainerInstance.tweens'>tweens</a></li>
 <li><a class='' href='#ContainerInstance.value'>value</a></li></ul>
       </nav>
     </main>

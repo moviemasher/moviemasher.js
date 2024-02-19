@@ -133,7 +133,7 @@
     <p>At the lowest level, <a href="https://www.ffmpeg.org">FFmpeg</a> is used server-side through the
 <a href="https://www.npmjs.com/package/fluent-ffmpeg">fluent-ffmpeg</a> library to render
 a Mash into files of various types. To run FFmpeg commands Movie Masher wraps an instance from this library with an instance of the <a href="exports/Command.html">Command</a> class, that itself is wrapped by a <a href="exports/RunningCommand.html">RunningCommand</a> instance which allows the FFmpeg process to be monitored and potentially stopped.</p>
-<p>At the highest level, the RenderingServer receives a request to render a MashObject into one or more output files, represented by CommandOutputs. It validates the request and passes it to a new RenderingProcess instance. This creates a specific type of RenderingOutput instance for each CommandOutput provided, which is responsible for converting the Mash into a corresponding <a href="exports/MashDescription.html">MashDescription</a> object. The RenderingProcess then converts each of them to a <a href="exports/CommandDescription.html">CommandDescription</a> that it creates a <a href="exports/RunningCommand.html">RunningCommand</a> with:</p>
+<p>At the highest level, the RenderingServer receives a request to render a MashObject into one or more output files, represented by CommandOutputs. It validates the request and passes it to a new RenderingProcess instance. This creates a specific type of RenderingOutput instance for each CommandOutput provided, which is responsible for converting the Mash into a corresponding <a href="exports/MashDescription.html">MashDescription</a> object. The RenderingProcess then converts each of them to a CommandDescription that it creates a <a href="exports/RunningCommand.html">RunningCommand</a> with:</p>
 <!-- MAGIC:START (COLORSVG:replacements=black&src=svg/ffmpeg-abstraction.svg) -->
 <svg width="640" height="190" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 190" class='diagram'>
 <path d="M 380.00 0.00 L 640.00 0.00 L 640.00 190.00 L 380.00 190.00 Z M 380.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
@@ -178,11 +178,11 @@ Mash into the <a href="exports/MashDescription.html">MashDescription</a> that wi
 <p>Each RenderingOutput will return a different <a href="exports/MashDescription.html">MashDescription</a> for the same Mash
 content. For instance, one returned by an AudioOutput will only describe a range of its audible content while one from an ImageOutput will only describe its visible content at a single point in time. A VideoOutput will return one describing a range of both, with the visible content potentially broken up into smaller chunks. To accommodate all these cases, the <a href="exports/MashDescription.html">MashDescription</a> can contain:</p>
 <ul>
-<li>a single <a href="exports/CommandDescription.html">CommandDescription</a> object, describing the audible content</li>
-<li>multiple <a href="exports/CommandDescriptions.html">CommandDescriptions</a> object, describing the visual content</li>
+<li>a single CommandDescription object, describing the audible content</li>
+<li>multiple CommandDescriptions object, describing the visual content</li>
 <li>a single <a href="exports/OutputOptions.html">OutputOptions</a> object that specifies output options</li>
 </ul>
-<p>The <a href="exports/CommandDescription.html">CommandDescription</a> object structure closely matches FFmpeg&#39;s command line options and as such can contain:</p>
+<p>The CommandDescription object structure closely matches FFmpeg&#39;s command line options and as such can contain:</p>
 <ul>
 <li>multiple <a href="exports/CommandInputs.html">CommandInputs</a>, each describing a raw media <code>source</code> file plus related input <code>options</code> like start time or duration</li>
 <li>a single CommandOutput object describing the output file&#39;s AV codecs, bitrates, and dimensions as well as its file extension and format plus related output <code>options</code></li>
@@ -195,12 +195,12 @@ content. For instance, one returned by an AudioOutput will only describe a range
 <section>
   <a id="Descriptions"><h2>Descriptions</h2></a>
   <div class="section">
-    <p>To generate an appropriate <a href="exports/MashDescription.html">MashDescription</a>, a RenderingOutput will have its Mash create a new <a href="exports/FilterGraphs.html">FilterGraphs</a> instance - a specialized collection of <a href="exports/FilterGraph.html">FilterGraph</a> objects:</p>
+    <p>To generate an appropriate <a href="exports/MashDescription.html">MashDescription</a>, a RenderingOutput will have its Mash create a new FilterGraphs instance - a specialized collection of FilterGraph objects:</p>
 <ul>
-<li>a single <a href="exports/FilterGraph.html">FilterGraph</a> instance, describing audible content</li>
-<li>multiple <a href="exports/FilterGraph.html">FilterGraph</a> instances, describing visible content</li>
+<li>a single FilterGraph instance, describing audible content</li>
+<li>multiple FilterGraph instances, describing visible content</li>
 </ul>
-<p>Each <a href="exports/FilterGraph.html">FilterGraph</a> describes a section of the Mash that can be conveniently
+<p>Each FilterGraph describes a section of the Mash that can be conveniently
 cached and rendered together, including just the <a href="exports/Clips.html">Clips</a> in that section relevant to the RendingOutput.
 Together that are used to build the remaining <a href="exports/MashDescription.html">MashDescription</a> data:</p>
 <ul>
@@ -209,7 +209,7 @@ Together that are used to build the remaining <a href="exports/MashDescription.h
 </ul>
 <p>In keeping with FFmpeg, the RenderingOutput will supply input files and/or filters. For instance, the default <a href="exports/Clip.html">Clip</a> is a simple colored rectangle which is adequately described by just the <a href="https://ffmpeg.org/ffmpeg-filters.html#color">color</a>
 filter. A <a href="exports/Clip.html">Clip</a> with a ShapeContainer is adequately described by just an SVG input file. A <a href="exports/Clip.html">Clip</a> with an Image or Video will typically be described both by an input file and multiple filters that size, position and crop it. </p>
-<p>The <a href="exports/CommandInput.html">CommandInput</a> interface extends <a href="exports/GraphFile.html">GraphFile</a>, which ultimately describes a file on disk that is made available to FFmpeg during <a href="exports/Command.html">Command</a> execution. Typically this is the raw asset associated with Video, Image, or Audio clips but other resources are also supported. FFmpeg requires files to be specified either as a <a href="exports/CommandInput.html">CommandInput</a> or GraphFilter option value.</p>
+<p>The <a href="exports/CommandInput.html">CommandInput</a> interface extends GraphFile, which ultimately describes a file on disk that is made available to FFmpeg during <a href="exports/Command.html">Command</a> execution. Typically this is the raw asset associated with Video, Image, or Audio clips but other resources are also supported. FFmpeg requires files to be specified either as a <a href="exports/CommandInput.html">CommandInput</a> or GraphFilter option value.</p>
 
   </div>
 </section>
@@ -217,18 +217,18 @@ filter. A <a href="exports/Clip.html">Clip</a> with a ShapeContainer is adequate
 <section>
   <a id="File Caching"><h2>File Caching</h2></a>
   <div class="section">
-    <p>Internally, a RenderingOutput will build its <a href="exports/CommandInputs.html">CommandInputs</a> from a set of <a href="exports/GraphFiles.html">GraphFiles</a> provided by the <a href="exports/FilterGraphs.html">FilterGraphs</a>. 
-A single <a href="exports/Clip.html">Clip</a> may require multiple <a href="exports/GraphFiles.html">GraphFiles</a> which may or may not all be converted to <a href="exports/CommandInputs.html">CommandInputs</a>. They will all be cached locally though, and their paths ultimately utilized either as direct input, or as filter options. </p>
+    <p>Internally, a RenderingOutput will build its <a href="exports/CommandInputs.html">CommandInputs</a> from a set of GraphFiles provided by the FilterGraphs. 
+A single <a href="exports/Clip.html">Clip</a> may require multiple GraphFiles which may or may not all be converted to <a href="exports/CommandInputs.html">CommandInputs</a>. They will all be cached locally though, and their paths ultimately utilized either as direct input, or as filter options. </p>
 <p>For instance, a <a href="exports/Clip.html">Clip</a> with a TextContainer and ColorContent will require two Graphfiles - one for the Font and another containing the text itself. Neither of these
 are converted to <a href="exports/CommandInputs.html">CommandInputs</a> because FFmpeg&#39;s underlying
 <a href="https://ffmpeg.org/ffmpeg-filters.html#drawtext">drawtext</a>
 filter expects paths to these files to be specified as option values. The font file is cached though, and the text is written to disk. </p>
-<p>To assure that all files in a <a href="exports/MashDescription.html">MashDescription</a> are available locally, a RenderingOutput will retrieve a promise from its Mash to cache them. In some cases, it will retrieve one directly from its Loader to load specific <a href="exports/GraphFiles.html">GraphFiles</a> from the <a href="exports/FilterGraphs.html">FilterGraphs</a> which are required to determine output duration or dimensions, if it can&#39;t be calculated from information supplied in the DefinitionObjects.</p>
-<p>The NodeLoader handles all the complexity of caching each <a href="exports/GraphFile.html">GraphFile</a>
+<p>To assure that all files in a <a href="exports/MashDescription.html">MashDescription</a> are available locally, a RenderingOutput will retrieve a promise from its Mash to cache them. In some cases, it will retrieve one directly from its Loader to load specific GraphFiles from the FilterGraphs which are required to determine output duration or dimensions, if it can&#39;t be calculated from information supplied in the DefinitionObjects.</p>
+<p>The NodeLoader handles all the complexity of caching each GraphFile
 locally and correctly providing its file path to GraphFilters.
-Caching a <a href="exports/GraphFile.html">GraphFile</a> triggers different postprocessing, depending on its <code>type</code> property
-which can be either a <a href="combined/Types.html#GraphFileType">GraphFileType</a> or LoadType.</p>
-<p>In the simplest case, the <code>type</code> property is a <a href="combined/Types.html#GraphFileType">GraphFileType</a> which implies the <code>file</code>
+Caching a GraphFile triggers different postprocessing, depending on its <code>type</code> property
+which can be either a GraphFileType or LoadType.</p>
+<p>In the simplest case, the <code>type</code> property is a GraphFileType which implies the <code>file</code>
 property will be the actual file content. This is simply saved to the <code>cacheDirectory</code> of
 the RenderingOutput as, for instance, a TEXT, SVG or PNG file. Binary files must be
 Base64 encoded.</p>

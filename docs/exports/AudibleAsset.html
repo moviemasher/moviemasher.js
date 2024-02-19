@@ -136,6 +136,8 @@
 <ul>
 <li><p><code><a href='Asset.html'>Asset</a></code></p>
 <p>↳ <strong><code><a href='#'>AudibleAsset</a></code></strong></p>
+<p>↳↳ <code><a href='AudioAsset.html'>AudioAsset</a></code></p>
+<p>↳↳ <code><a href='VideoAsset.html'>VideoAsset</a></code></p>
 </li>
 </ul>
 <h2>Properties</h2>
@@ -143,33 +145,21 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="AudibleAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
-<p>Inherited from
+<h3><a id="AudibleAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AudibleAssetObject.html'>AudibleAssetObject</a></code></p>
+<p>Overrides
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="AudibleAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assets">assets</a></p>
 <hr>
-<h3><a id="AudibleAsset.audio">audio</a></h3><p>• <strong>audio</strong>: <code>boolean</code></p>
-<hr>
 <h3><a id="AudibleAsset.audioUrl">audioUrl</a></h3><p>• <strong>audioUrl</strong>: <code>string</code></p>
 <hr>
-<h3><a id="AudibleAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContainer">canBeContainer</a></p>
+<h3><a id="AudibleAsset.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <hr>
-<h3><a id="AudibleAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
+<h3><a id="AudibleAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContent">canBeContent</a></p>
-<hr>
-<h3><a id="AudibleAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.container">container</a></p>
-<hr>
-<h3><a id="AudibleAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.content">content</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decoding">decoding</a></p>
 <hr>
 <h3><a id="AudibleAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
@@ -181,10 +171,6 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.id">id</a></p>
 <hr>
-<h3><a id="AudibleAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.isVector">isVector</a></p>
-<hr>
 <h3><a id="AudibleAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.label">label</a></p>
@@ -195,9 +181,17 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.properties">properties</a></p>
 <hr>
-<h3><a id="AudibleAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="AudibleAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.scalarRecord">scalarRecord</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.request">request</a></p>
+<hr>
+<h3><a id="AudibleAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resource">resource</a></p>
+<hr>
+<h3><a id="AudibleAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resources">resources</a></p>
 <hr>
 <h3><a id="AudibleAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
@@ -207,7 +201,7 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.targetId">targetId</a></p>
 <hr>
-<h3><a id="AudibleAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="AudibleAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.type">type</a></p>
 <h2>Methods</h2>
@@ -290,6 +284,25 @@
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.constrainedValue">constrainedValue</a></p>
+<hr>
+<h3><a id="AudibleAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodingOfType">decodingOfType</a></p>
 <hr>
 <h3><a id="AudibleAsset.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -422,7 +435,26 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="AudibleAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="AudibleAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resourceOfType">resourceOfType</a></p>
+<hr>
+<h3><a id="AudibleAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -441,7 +473,7 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.setValue">setValue</a></p>
 <hr>
@@ -450,6 +482,33 @@
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="AudibleAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="AudibleAsset.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -481,20 +540,18 @@
 <li><a class='' href='#AudibleAsset.assetIds'>assetIds</a></li>
 <li><a class='' href='#AudibleAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#AudibleAsset.assets'>assets</a></li>
-<li><a class='' href='#AudibleAsset.audio'>audio</a></li>
 <li><a class='' href='#AudibleAsset.audioUrl'>audioUrl</a></li>
-<li><a class='' href='#AudibleAsset.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#AudibleAsset.canBeContent'>canBeContent</a></li>
-<li><a class='' href='#AudibleAsset.container'>container</a></li>
-<li><a class='' href='#AudibleAsset.content'>content</a></li>
+<li><a class='' href='#AudibleAsset.canBeMuted'>canBeMuted</a></li>
+<li><a class='' href='#AudibleAsset.decoding'>decoding</a></li>
 <li><a class='' href='#AudibleAsset.decodings'>decodings</a></li>
 <li><a class='' href='#AudibleAsset.duration'>duration</a></li>
 <li><a class='' href='#AudibleAsset.id'>id</a></li>
-<li><a class='' href='#AudibleAsset.isVector'>isVector</a></li>
 <li><a class='' href='#AudibleAsset.label'>label</a></li>
 <li><a class='' href='#AudibleAsset.loop'>loop</a></li>
 <li><a class='' href='#AudibleAsset.properties'>properties</a></li>
-<li><a class='' href='#AudibleAsset.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#AudibleAsset.request'>request</a></li>
+<li><a class='' href='#AudibleAsset.resource'>resource</a></li>
+<li><a class='' href='#AudibleAsset.resources'>resources</a></li>
 <li><a class='' href='#AudibleAsset.source'>source</a></li>
 <li><a class='' href='#AudibleAsset.targetId'>targetId</a></li>
 <li><a class='' href='#AudibleAsset.type'>type</a></li>
@@ -502,6 +559,7 @@
 <li><a class='' href='#AudibleAsset.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#AudibleAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#AudibleAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#AudibleAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#AudibleAsset.frames'>frames</a></li>
 <li><a class='' href='#AudibleAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#AudibleAsset.instanceArgs'>instanceArgs</a></li>
@@ -509,8 +567,10 @@
 <li><a class='' href='#AudibleAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#AudibleAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#AudibleAsset.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#AudibleAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#AudibleAsset.setValue'>setValue</a></li>
 <li><a class='' href='#AudibleAsset.toJSON'>toJSON</a></li>
+<li><a class='' href='#AudibleAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#AudibleAsset.value'>value</a></li></ul>
       </nav>
     </main>

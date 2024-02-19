@@ -17,17 +17,18 @@ ARG DIR_ROOT
 ARG OS_INSTALL=''
 ARG OS_EXECUTE='npm install -g npm'
 
-ARG INSTALL_NODE='18.17.1'
-ARG INSTALL_NPM='--workspace=@moviemasher/node-ffmpeg'
+ARG INSTALL_NODE='20.11.0'
+ARG NPM_INSTALL='--workspace=@moviemasher/node-ffmpeg'
+ARG NPM_BUILD='canvas@2.11.2'
 
 WORKDIR ${DIR_ROOT}
+LABEL org.opencontainers.image.authors="support@moviemasher.com"
 COPY --from=code ${DIR_ROOT} ${DIR_ROOT}
 COPY dev/image/sh ${DIR_ROOT}/dev/image/sh
 RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-aws2023.sh \
-  -n "${INSTALL_NPM}" \
+  -n "${NPM_INSTALL}" \
+  -m "${NPM_BUILD}" \
   -i "${INSTALL_NODE}" \
   -e "${OS_EXECUTE}" \
   -o "${OS_INSTALL}" \
   -r "${DIR_ROOT}"
-
-LABEL org.opencontainers.image.authors="support@moviemasher.com"

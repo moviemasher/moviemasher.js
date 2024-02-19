@@ -1,15 +1,16 @@
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { Htmls, OptionalContent } from '../client-types.js'
-import type { AssetObjects, AssetTypes, Nodes, Sources } from '@moviemasher/shared-lib/types.js'
+import type { AssetObjects, RawTypes, Nodes, Sources } from '@moviemasher/shared-lib/types.js'
 import type { NodeFunction } from '../types.js'
 
-import { ICON, IMPORTER, assertDatasetElement } from '../runtime.js'
+import { ICON, assertDatasetElement } from '../runtime.js'
 import { EventDialog, EventImporterNodeFunction, EventImportManagedAssets, EventImporterAdd, EventImporterComplete, EventImporterRemove, EventPick, EventPicked, StringEvent } from '../utility/events.js'
 import { html, nothing } from 'lit-html'
 import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIEMASHER, DASH, isAssetType } from '@moviemasher/shared-lib/runtime.js'
-import { assertPositive, isPositive } from '@moviemasher/shared-lib/utility/guards.js'
+import { MOVIEMASHER, DASH, $IMPORTER, isRawType } from '@moviemasher/shared-lib/runtime.js'
+import { assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
+import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 
 const EventTypeImporter = 'importer'
 
@@ -38,8 +39,8 @@ export class ImporterContentElement extends ContentBase {
     this.listeners[EventImporterRemove.Type] = this.handleImporterRemove.bind(this)
     this.listeners[EventImporterComplete.Type] = this.handleImporterComplete.bind(this)
     this.listeners[EventPick.Type] = this.handlePick.bind(this)
-    const event = new EventPicked(IMPORTER)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    const event = new EventPicked($IMPORTER)
+    MOVIEMASHER.dispatch(event)
     this.pick(event.detail.picked)
     super.connectedCallback()
   }
@@ -55,11 +56,11 @@ export class ImporterContentElement extends ContentBase {
   }
 
   private handleImporterComplete(): void {
-    MOVIEMASHER.eventDispatcher.dispatch(new EventDialog())
+    MOVIEMASHER.dispatch(new EventDialog())
 
     const { assetObjects } = this
     this.assetObjects = []
-    MOVIEMASHER.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects))
+    MOVIEMASHER.dispatch(new EventImportManagedAssets(assetObjects))
   }
 
   private handleImporterAdd(event: EventImporterAdd): void {
@@ -76,7 +77,7 @@ export class ImporterContentElement extends ContentBase {
 
   private handlePick(event: EventPick): void {
     const { picker } = event.detail
-    if (picker !== IMPORTER) return
+    if (picker !== $IMPORTER) return
 
     this.pick(event.detail.picked)
   }
@@ -112,14 +113,14 @@ export class ImporterContentElement extends ContentBase {
   private pick(detail = '') {
     const components = detail.split(DASH).map(component => component.trim())
     const sources: Sources = []
-    const types: AssetTypes = []
+    const types: RawTypes = []
     components.forEach(component => {
-      if (isAssetType(component)) types.push(component)
+      if (isRawType(component)) types.push(component)
       else sources.push(component)
     })
     // console.log(this.tagName, 'pick', sources, types)
     const event = new EventImporterNodeFunction(types, sources)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { map } = event.detail
     const icons = [...map.keys()]
     const uis = [...map.values()]

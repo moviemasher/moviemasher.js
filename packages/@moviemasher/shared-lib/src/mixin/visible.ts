@@ -1,9 +1,10 @@
-import type { Asset, ClipObject, ComplexSvgItem, Constrained, ContentFill, ContentRectArgs, DataOrError, Instance, InstanceObject, IntrinsicOptions, PropertySize, Rect, Size, SvgItem, SvgItemArgs, SvgItems, SvgVector, Time, TimeRange, Transparency, VisibleAsset, VisibleInstance, VisibleInstanceObject } from '../types.js'
+import type { Asset, ClipObject, Constrained, ContainerSvgItemArgs, ContentInstance, ContentRectArgs, ContentSvgItemArgs, DataOrError, Instance, InstanceObject, IntrinsicOptions, MaybeComplexSvgItem, Rect, Scalar, Size, SvgItemsRecord, SvgVector, Time, Transparency, VisibleAsset, VisibleInstance, VisibleInstanceObject } from '../types.js'
 
-import { $OPACITY, $POINT, $SIZE, AUDIO, CONTAINER, CONTENT, DASH, DEFAULT_CONTAINER_ID, END, ERROR, HEIGHT, NONE, PERCENT, POINT_KEYS, POINT_ZERO, PROBE, SIZE_KEYS, SIZE_ZERO, WIDTH, isDefined, isDefiniteError, isProbing, isUndefined, namedError } from '../runtime.js'
-import { assertPositive, isAboveZero, isBelowOne, isComplexSvgItem, isPositive, isScalar } from '../utility/guards.js'
-import { sizeAboveZero } from '../utility/rect.js'
-import { svgClipPathElement, svgColorMatrix, svgFilterElement, svgMaskElement, svgPolygonElement } from '../utility/svg.js'
+import { $OPACITY, $POINT, $SIZE, $AUDIO, $CONTAINER, $CONTENT, DEFAULT_CONTAINER_ID, $END, $HEIGHT, $LUMINANCE, $PERCENT, $PLAYER, POINT_KEYS, POINT_ZERO, $PROBE, RGB_WHITE, SIZE_KEYS, SIZE_ZERO, $WIDTH, idGenerateString, isDefiniteError, isProbing } from '../runtime.js'
+import { isAboveZero } from '../utility/guard.js'
+import { isUndefined } from '../utility/guard.js'
+import { sizeNotZero } from '../utility/rect.js'
+import { complexifySvgItem, recordFromItems, svgAddClass, svgAppend, svgClipPathElement, svgGroupElement, svgMaskElement, svgOpacity, svgPolygonElement, svgSet } from '../utility/svg.js'
 
 
 export function VisibleAssetMixin<T extends Constrained<Asset>>(Base: T):
@@ -12,42 +13,47 @@ export function VisibleAssetMixin<T extends Constrained<Asset>>(Base: T):
     alpha?: boolean
 
     canBeFill?: boolean
+    
     canBeContainer?: boolean
 
     canBeContent?: boolean
-
-    container?: boolean
-
-    content?: boolean
-
-    isVector?: boolean
-
-    get probeSize(): Size | undefined {
-      const decoding = this.decodings.find(decoding => decoding.type === PROBE)
-      if (isProbing(decoding)) {
-        const { data } = decoding
-        if (data) {
-          const { width, height } = data
-          if (isAboveZero(width) && isAboveZero(height)) return { width, height }
-        }
-      }
-      return undefined
-    }
 
     override clipObject(object: InstanceObject = {}): ClipObject {
       const clipObject: ClipObject = {}
       const { id, type, canBeContainer, canBeContent } = this
       if (canBeContainer && !canBeContent) {
-        clipObject.sizing = CONTAINER
+        clipObject.sizing = $CONTAINER
         clipObject.containerId = id
         clipObject.container = object
       } else {
-        clipObject.sizing = CONTENT
+        clipObject.sizing = $CONTENT
         clipObject.contentId = id
         clipObject.content = object
-        if (type !== AUDIO) clipObject.containerId = DEFAULT_CONTAINER_ID
+        if (type !== $AUDIO) clipObject.containerId = DEFAULT_CONTAINER_ID
       }
       return clipObject
+    }
+
+    container?: boolean
+
+    content?: boolean
+
+    hasIntrinsicSizing?: boolean
+
+    isVector?: boolean
+
+    get probeSize(): Size | undefined {
+      const probing = this.decodingOfType($PROBE)
+      if (isProbing(probing)) {
+        const { data } = probing
+        if (data) {
+          const { width, height } = data
+          if (isAboveZero(width) && isAboveZero(height)) return { width, height }
+        }
+      } else {
+        console.warn(this.constructor.name, 'probeSize not probing', probing)
+      }
+      return undefined
     }
   }
 }
@@ -58,73 +64,110 @@ export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
   return class extends Base implements VisibleInstance {
     declare asset: VisibleAsset
 
-    containerSvgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem> {
-      // console.log(this.constructor.name, 'VisibleInstanceMixin,containerSvgItem', args)
-      const orError = this.svgItem(args)
-      if (isDefiniteError(orError)) return orError
+    clippedElement(content: ContentInstance, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord> {
+      // opacity is applied to content during clipping
+      const { containerRect, ...rest } = args
+      const containerArgs: ContainerSvgItemArgs = { ...rest, containerRect }
+      const containerOrError = this.containerSvgItem(containerArgs)
+      if (isDefiniteError(containerOrError)) return containerOrError
 
-      const { data: item } = orError
-      const { time, timeRange, size, rect } = args
-      const complex = isComplexSvgItem(item) ? item : { svgItem: item }
-      const { svgItem } = complex
-      const filter = this.containerOpacityFilter(svgItem, size, rect, time, timeRange)
-      if (filter) {
-        complex.defs ||= []
-        const { defs } = complex
-        defs.push(filter)
+      const { data: containerItem } = containerOrError
+      const { time, size } = args
+      const contentRect = content.contentRect(time, containerRect, size)
+      const contentArgs: ContentSvgItemArgs = { ...rest, contentRect }
+      const contentOrError = content.contentSvgItem(contentArgs)
+      if (isDefiniteError(contentOrError)) return contentOrError
+
+      const { data: contentItem } = contentOrError
+      return this.containedItem(contentItem, containerItem, args)
+    }
+
+    containedItem(contentItem: MaybeComplexSvgItem, containerItem: MaybeComplexSvgItem, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord> {
+      const { panel, containerRect, size } = args
+ 
+      const complexContainer = complexifySvgItem(containerItem) 
+      complexContainer.defs ||= []
+      const { svgItem: containerSvgItem } = complexContainer
+
+      const complexContent = complexifySvgItem(contentItem) 
+      const { svgItem: contentSvgItem } = complexContent
+
+      // combine defs and styles, but don't include items themselves
+      const record: SvgItemsRecord = recordFromItems([complexContainer, complexContent], true)
+      const { defs, items } = record
+
+      let containerId = idGenerateString()
+      const containerIsVector = this.asset.isVector
+      if (panel === $PLAYER && !containerIsVector) {
+        // container is image/video so we need to add a polygon for hover
+        const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
+        svgSet(polygonElement, 'non-scaling-stroke', 'vector-effect')
+        defs.push(polygonElement)
+        containerId = idGenerateString()
       }
-      return { data: complex }
+      svgSet(containerSvgItem, containerId)
+
+      const group = svgGroupElement()
+      items.push(group)
+
+      svgAddClass(group, 'contained')
+      
+      // TODO: see if this is really needed, since we added one above
+      if (!containerIsVector) svgAppend(group, svgPolygonElement(containerRect, '', 'transparent'))
+      svgAppend(group, contentSvgItem)
+
+      const { transparency } = this.clip
+      const maskElement = this.maskingElement(group, transparency)
+      defs.push(maskElement)
+
+      if (!containerIsVector && transparency === $LUMINANCE) {
+        maskElement.appendChild(svgPolygonElement(size, '', 'black'))
+      }
+      maskElement.appendChild(containerSvgItem)
+      if (!containerIsVector) {
+        svgSet(containerSvgItem, 'non-scaling-stroke', 'vector-effect')
+        svgSet(containerSvgItem, RGB_WHITE, 'fill')
+      }
+      return { data: record }
     }
 
-    containerOpacityFilter(svgItem: SvgItem, _outputSize: Size, _containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
-      const [opacity] = this.tweenValues($OPACITY, time, clipTime)
-      if (!isBelowOne(opacity)) return
-
-      assertPositive(opacity)
-
-      const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`
-      const filterElement = svgColorMatrix(values)
-      const id =  [$OPACITY, this.asset.id].join(DASH)
-      return svgFilterElement([filterElement], svgItem, id)
+    containerSvgItem(args: ContainerSvgItemArgs): DataOrError<MaybeComplexSvgItem> {
+      const { containerRect, color, opacity } = args
+      const data = this.svgVector(containerRect, color, opacity)
+      return { data }
     }
 
-    colorMaximize = true
-
-    contentSvgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem> {
-      const { rect: containerRect, time, size } = args
-      const shortest = size.width < size.height ? WIDTH : HEIGHT
-      const rect = this.itemContentRect(containerRect, shortest, time)
-      return this.svgItem({...args, rect })
+    contentSvgItem(args: ContentSvgItemArgs): DataOrError<MaybeComplexSvgItem> {
+      const { contentRect, opacity } = args
+      return { data: this.svgVector(contentRect, '', opacity) }
     }
-
-    hasIntrinsicSizing = true
 
     override initializeProperties(object: VisibleInstanceObject): void {
       const { container } = this
-      const hasDimensions = container || !this.isDefault
+      const hasDimensions = container || this.asset.hasIntrinsicSizing //!this.isDefault
       if (hasDimensions) {
         const { properties } = this
-        const hasWidth = properties.some(property => property.name.endsWith(WIDTH))
-        const hasHeight = properties.some(property => property.name.endsWith(HEIGHT))
+        const hasWidth = properties.some(property => property.name.endsWith($WIDTH))
+        const hasHeight = properties.some(property => property.name.endsWith($HEIGHT))
         const min = container ? 0 : 1
-        const targetId = container ? CONTAINER : CONTENT
+        const targetId = container ? $CONTAINER : $CONTENT
         if (!hasWidth) {
           this.properties.push(this.propertyInstance({
-            targetId, name: WIDTH, type: PERCENT,
+            targetId, name: $WIDTH, type: $PERCENT,
             defaultValue: 1, min, max: 2, step: 0.01, tweens: true,
           }))
           this.properties.push(this.propertyInstance({
-            targetId, name: `${WIDTH}${END}`, type: PERCENT,
+            targetId, name: `${$WIDTH}${$END}`, type: $PERCENT,
             step: 0.01, max: 2, min, undefinedAllowed: true, tweens: true,
           }))
         }
         if (!hasHeight) {
           this.properties.push(this.propertyInstance({
-            targetId, name: HEIGHT, type: PERCENT,
+            targetId, name: $HEIGHT, type: $PERCENT,
             defaultValue: 1, max: 2, min, step: 0.01, tweens: true,
           }))
           this.properties.push(this.propertyInstance({
-            targetId, name: `${HEIGHT}${END}`, type: PERCENT,
+            targetId, name: `${$HEIGHT}${$END}`, type: $PERCENT,
             step: 0.01, max: 2, min, undefinedAllowed: true, tweens: true,
           }))
         }
@@ -138,28 +181,29 @@ export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
     }
 
     override intrinsicsKnown(options: IntrinsicOptions): boolean {
-      if (options.size) return sizeAboveZero(this.asset.probeSize)
+      if (options.size) return sizeNotZero(this.asset.probeSize)
 
       return super.intrinsicsKnown(options)
     }
 
-    itemContentRect(containerRect: Rect, shortest: PropertySize, time: Time): Rect {
+    contentRect(time: Time, containerRect: Rect, outputSize: Size): Rect {
       const contentRectArgs: ContentRectArgs = {
         containerRects: [containerRect, containerRect], 
-        shortest, time, timeRange: this.clip.timeRange
+        outputSize, time, timeRange: this.clip.timeRange
       }
       const [contentRect] = this.contentRects(contentRectArgs)
-
       return contentRect
     }
 
-    pathElement(rect: Rect, forecolor = NONE): SvgVector {
-      return svgPolygonElement(rect, '', forecolor)
+    private maskingElement(group: SVGGElement, transparency: Transparency): SVGClipPathElement | SVGMaskElement {
+      if (this.asset.isVector) return svgClipPathElement(group)
+
+      return svgMaskElement(group, transparency)
     }
 
-    svgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem> {
-      const { rect, color } = args
-      return { data: this.pathElement(rect, color) }
+    svgVector(rect: Rect, forecolor?: string, opacity?: Scalar): SvgVector {
+      // console.log(this.constructor.name, 'svgVector', rect, forecolor, opacity)
+      return svgOpacity(svgPolygonElement(rect, '', forecolor), opacity)
     }
 
     get tweening(): boolean {
@@ -178,11 +222,11 @@ export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
     }
 
     private tweensProperty(key: string): boolean {
-      const endValue = this.value([key, END].join(''))
-      if (!isScalar(endValue)) return false
+      const endValue = this.value([key, $END].join(''))
+      if (isUndefined(endValue)) return false
 
       const startValue = this.value(key)
-      if (!isScalar(startValue)) return false
+      if (isUndefined(startValue)) return false
 
       return startValue !== endValue
     }

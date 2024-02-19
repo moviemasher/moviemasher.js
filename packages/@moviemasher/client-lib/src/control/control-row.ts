@@ -3,7 +3,7 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit-element/lit-eleme
 import type { TemplateContent, TemplateContents, OptionalContent } from '../client-types.js';
 import { css } from '@lit/reactive-element/css-tag.js';
 import { ROW } from '../runtime.js';
-import { DOT, END } from '@moviemasher/shared-lib/runtime.js';
+import { DOT, $END } from '@moviemasher/shared-lib/runtime.js';
 import { html, nothing } from 'lit-html';
 import { Component, ComponentLoader } from '../base/Component.js';
 import { ControlInputElement } from './control-input.js';
@@ -30,7 +30,7 @@ export class ControlRowElement extends ComponentLoader {
     const name = propertyId.split(DOT).pop();
     if (!name) return;
 
-    if (name.endsWith(END)) return name.slice(0, -END.length);
+    if (name.endsWith($END)) return name.slice(0, -$END.length);
 
     if (name.endsWith('Id')) return name.slice(0, -2);
 

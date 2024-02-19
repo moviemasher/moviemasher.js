@@ -1,5 +1,5 @@
 import type { AVType, AbsolutePath, AudioInstance, Clip, ContainerInstance, ContentInstance, ImageInstance, MashAsset, MashAudioAssetObject, MashImageAssetObject, MashInstance, MashVideoAssetObject, Time, Track, VideoInstance } from '@moviemasher/shared-lib/types.js'
-import type { AudibleCommandFilterArgs, AudioCommandFileOptions, CommandFiles, CommandFilters, ServerAsset, ServerAudioInstance, ServerInstance, ServerMashDescription, ServerMashDescriptionOptions, ServerVisibleInstance, VideoCommandFileOptions, VideoCommandFilterArgs } from '../types.js'
+import type { AudibleCommandFilterArgs, AudioCommandFileOptions, CommandFiles, CommandFilters, ServerAsset, ServerAssetManager, ServerAudioInstance, ServerInstance, ServerMashDescription, ServerMashDescriptionOptions, ServerVisibleInstance, VideoCommandFileOptions, VideoCommandFilterArgs } from '../types.js'
 import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset } from './ServerAssetTypes.js'
 
 export interface ServerMashAsset extends MashAsset, ServerAsset {

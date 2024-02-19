@@ -1,12 +1,11 @@
-import type { Encoding, EndpointRequest } from '@moviemasher/shared-lib/types.js'
+import type { Encoding, EndpointRequest, JobOptions } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { EncodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { EncodeServerArgs, ExpressHandler } from './Server.js'
 
-import { EventServerEncode, EventServerEncodeStatus } from '@moviemasher/server-lib/runtime.js'
-import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/EnvironmentConstants.js'
-import { idUnique } from '@moviemasher/server-lib/utility/Id.js'
-import { CONTENT_TYPE, ERROR, MASH, MIME_JSON, MOVIEMASHER, POST, VERSION, VIDEO, errorCaught, errorObjectCaught, errorThrow, isAssetObject, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { EventServerEncodeStatus } from '@moviemasher/server-lib/utility/events.js'
+import { idUnique } from '@moviemasher/server-lib/utility/id.js'
+import { $ENCODE, $MASH, $POST, CONTENT_TYPE, ERROR, MIME_JSON, MOVIEMASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isAssetObject, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { isEncoding } from '@moviemasher/shared-lib/utility/guards.js'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
@@ -17,21 +16,19 @@ export class EncodeServerClass extends ServerClass {
   id = 'encode'
 
   start: ExpressHandler<VersionedDataOrError<EndpointRequest>, EncodeStartRequest> = async (req, res) => {
-    const { encodingType = VIDEO, mashAssetObject, encodeOptions: options = {} } = req.body
+    const { body: args } = req
+    const { version: _, ...encodeArgs } = args
     try {
       const user = this.userFromRequest(req)
-      if (!isAssetObject(mashAssetObject, encodingType, MASH)) {
-        errorThrow(ERROR.Syntax, { mashAssetObject })
+      const { type, asset } = encodeArgs
+      if (!isAssetObject(asset, type, $MASH)) {
+        console.log(this.constructor.name, 'start', req)
+        errorThrow(ERROR.Syntax, asset)
       }
-      const encodingId = idUnique()
-
-      const outputRoot = ENV.get(ENV_KEY.RelativeRequestRoot)
-      const event = new EventServerEncode(mashAssetObject, encodingId, options, encodingType, user, outputRoot)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) errorThrow(ERROR.Unimplemented, EventServerEncode.Type)
-
-      res.send({ version : VERSION, data: this.statusEndpointRequest(encodingId) })
+      const id = idUnique()
+      const jobOptions: JobOptions = { id, user }
+      const promise = MOVIEMASHER.promise($ENCODE, encodeArgs, jobOptions)
+      res.send({ version: VERSION, data: this.statusEndpointRequest(id) })
     } catch (error) { 
       console.error(this.constructor.name, 'start', error)
       res.send({ version: VERSION, error: errorCaught(error).error })
@@ -51,7 +48,7 @@ export class EncodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerEncodeStatus(id)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerEncodeStatus.Type)
 
@@ -81,7 +78,7 @@ export class EncodeServerClass extends ServerClass {
     const data: EndpointRequest = {
       endpoint: { pathname: Endpoints.encode.status },
       init: { 
-        method: POST, 
+        method: $POST, 
         headers: { [CONTENT_TYPE]: MIME_JSON}, 
         body: jsonStringify({ id }) }
     }

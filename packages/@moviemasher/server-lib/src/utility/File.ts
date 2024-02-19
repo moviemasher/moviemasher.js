@@ -1,10 +1,11 @@
 import type { DataOrError, OutputOptions, StringDataOrError } from '@moviemasher/shared-lib/types.js'
 
 import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
-import { DOT, ERROR, errorCaught, errorThrow, isDefiniteError, isPopulatedString, jsonParse, jsonStringify, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { DOT, ERROR, errorCaught, errorThrow, isDefiniteError, jsonParse, jsonStringify, namedError } from '@moviemasher/shared-lib/runtime.js'
 import crypto from "crypto"
 import fs from 'fs'
 import path from 'path'
+import { isPopulatedString, isString } from '@moviemasher/shared-lib/utility/guard.js'
 
 type FilePath = string
 
@@ -12,6 +13,9 @@ export const fileLinkPromise = async (source: string, destination: string): Prom
   if (!filePathExists(source)) return namedError(ERROR.Internal, `fileLinkPromise source ${source}`)
   
   if (!filePathExists(destination)) {
+    const orError = await directoryCreatePromise(path.dirname(destination))
+    if (isDefiniteError(orError)) return orError
+
     try {
       await fs.promises.symlink(source, destination)
       console.log('fileLinkPromise linked', { source, destination })
@@ -28,7 +32,7 @@ export const fileLinkPromise = async (source: string, destination: string): Prom
 }
 
 export const filePathExists = (value: any): value is FilePath => {
-  return isPopulatedString(value) && fs.existsSync(value)
+  return isString(value) && fs.existsSync(value)
 }
 
 export const filenameAppend = (filePath: string, append: string, delimiter = DOT): string => {
@@ -66,11 +70,27 @@ export const directoryCreatePromise = async (directoryPath: string): Promise<Str
   return { data: directoryPath }
 }
 
+export const fileCopy = (source: string, destination: string, dontReplace?: boolean): StringDataOrError => {
+  if (!filePathExists(source)) return namedError(ERROR.Internal, `fileCopyPromise source ${source}`)
+  const result = { data: destination }
+
+  if (filePathExists(destination) && dontReplace) return result
+
+  const dir = path.dirname(destination)
+  directoryCreate(dir)
+  
+  fs.copyFileSync(source, destination)
+  return result
+}
+
 export const fileCopyPromise = async (source: string, destination: string, dontReplace?: boolean): Promise<StringDataOrError> => {
   if (!filePathExists(source)) return namedError(ERROR.Internal, `fileCopyPromise source ${source}`)
   const result = { data: destination }
   if (filePathExists(destination) && dontReplace) return result
 
+  const orError = await directoryCreatePromise(path.dirname(destination))
+  if (isDefiniteError(orError)) return orError
+  
   try {
     await fs.promises.copyFile(source, destination)
   } catch (error) { return errorCaught(error) }
@@ -136,7 +156,7 @@ export const fileRemovePromise = async (filePath: string) => {
 }
 
 export const fileCreatedPromise = async (filePath: string): Promise<DataOrError<Date>> => {
-  if (!filePathExists(filePath)) return namedError(ERROR.Internal, 'non-existent file')
+  if (!filePathExists(filePath)) return namedError(ERROR.Internal, filePath)
   try {
     const stats = await fs.promises.stat(filePath)
     const { mtime: data } = stats
@@ -147,7 +167,6 @@ export const fileCreatedPromise = async (filePath: string): Promise<DataOrError<
 export const fileNameFromContent = (content: string): string => (
   crypto.createHash('md5').update(content).digest("hex")
 )
-
 
 export const fileNameFromOptions = (outputOptions: OutputOptions, encodingType: string, extension?: string): string => {
   const { format, extension: outputExtension } = outputOptions

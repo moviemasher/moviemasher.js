@@ -1,16 +1,27 @@
 import type { DataOrError, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { fileReadJsonPromise } from '@moviemasher/server-lib'
+import { fileReadJsonPromise } from '@moviemasher/server-lib/utility/file.js'
 import { DOT, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import fs from 'fs'
 import path from 'path'
 import { DIRECTORIES, EXTENSION_MARKDOWN, declarationKind } from './Constants.js'
-import { CategoryId, CategoryIds, DocumentationConfiguration, ExportId, ExportIds, ExportRecord, ExportsByCategory, ExportsByCombined, RawDeclaration, RawProject, TypedocDirectory } from './Types.js'
+import { CategoryIds, DocumentationConfiguration, ExportId, ExportIds, ExportRecord, ExportsByCategory, ExportsByCombined, RawDeclaration, RawProject, TypedocDirectory } from './Types.js'
 
 const CATEGORY_OTHER = 'Other'
 
+// const exportIdToFilename = (exportId: ExportId): string => {
+//   return exportId.startsWith('?') ? '_' + exportId.slice(1) : exportId
+// }
+
+const filenameToExportId = (exportId: ExportId): string => {
+  return exportId.startsWith('_') ? '$' + exportId.slice(1) : exportId
+}
+
+
+
 const nameFromFile = (file: string): string => {  
-  return path.basename(file, EXTENSION_MARKDOWN).split(DOT)[1]
+  const exportBit = path.basename(file, EXTENSION_MARKDOWN).split(DOT)[1]
+  return filenameToExportId(exportBit)
 }
 
 export class ProjectInfo {
@@ -63,7 +74,8 @@ export class ProjectInfo {
   
   declarationFromName(name: string): RawDeclaration | undefined {
     const { children } = this.rawProject
-    return children.find(declaration => declaration.name === name)
+    const declarationName = name.startsWith('_') ? '$' + name.slice(1) : name
+    return children.find(declaration => declaration.name === declarationName)
   }
 
   declarationFromId(id: number): RawDeclaration | undefined {

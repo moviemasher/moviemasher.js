@@ -160,9 +160,15 @@
 <p>Overrides
 WithTextAsset.constructor</p>
 <h2>Properties</h2>
-<h3><a id="ClientTextAssetClass._intrinsicRect">_intrinsicRect</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code></p>
+<h3><a id="ClientTextAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<p>Inherited from
+WithTextAsset._assets</p>
+<hr>
+<h3><a id="ClientTextAssetClass._textRect">_textRect</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_textRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <hr>
 <h3><a id="ClientTextAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.alpha">alpha</a></p>
 <p>Inherited from
 WithTextAsset.alpha</p>
 <hr>
@@ -172,7 +178,7 @@ WithTextAsset.alpha</p>
 <p>Inherited from
 WithTextAsset.assetIds</p>
 <hr>
-<h3><a id="ClientTextAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='ClientRawAssetObject.html'>ClientRawAssetObject</a></code> &amp; <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<h3><a id="ClientTextAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='RawAssetObject.html'>RawAssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code> &amp; <code><a href='TextAssetObject.html'>TextAssetObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.assetObject">assetObject</a></p>
 <p>Inherited from
@@ -184,29 +190,41 @@ WithTextAsset.assetObject</p>
 <p>Inherited from
 WithTextAsset.assets</p>
 <hr>
-<h3><a id="ClientTextAssetClass.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
+<h3><a id="ClientTextAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.canBeContainer">canBeContainer</a></p>
 <p>Inherited from
 WithTextAsset.canBeContainer</p>
 <hr>
-<h3><a id="ClientTextAssetClass.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
+<h3><a id="ClientTextAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.canBeContent">canBeContent</a></p>
 <p>Inherited from
 WithTextAsset.canBeContent</p>
 <hr>
-<h3><a id="ClientTextAssetClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
+<h3><a id="ClientTextAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.canBeFill">canBeFill</a></p>
+<p>Inherited from
+WithTextAsset.canBeFill</p>
+<hr>
+<h3><a id="ClientTextAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.container">container</a></p>
 <p>Inherited from
 WithTextAsset.container</p>
 <hr>
-<h3><a id="ClientTextAssetClass.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
+<h3><a id="ClientTextAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.content">content</a></p>
 <p>Inherited from
 WithTextAsset.content</p>
+<hr>
+<h3><a id="ClientTextAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.decoding">decoding</a></p>
+<p>Inherited from
+WithTextAsset.decoding</p>
 <hr>
 <h3><a id="ClientTextAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <h4>Implementation of</h4>
@@ -214,13 +232,25 @@ WithTextAsset.content</p>
 <p>Inherited from
 WithTextAsset.decodings</p>
 <hr>
+<h3><a id="ClientTextAssetClass.family">family</a></h3><p>• <strong>family</strong>: <code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.family">family</a></p>
+<p>Inherited from
+WithTextAsset.family</p>
+<hr>
+<h3><a id="ClientTextAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>Inherited from
+WithTextAsset.hasIntrinsicSizing</p>
+<hr>
 <h3><a id="ClientTextAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.id">id</a></p>
 <p>Inherited from
 WithTextAsset.id</p>
 <hr>
-<h3><a id="ClientTextAssetClass.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
+<h3><a id="ClientTextAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.isVector">isVector</a></p>
 <p>Inherited from
@@ -232,9 +262,11 @@ WithTextAsset.isVector</p>
 <p>Inherited from
 WithTextAsset.label</p>
 <hr>
-<h3><a id="ClientTextAssetClass.previewSize">previewSize</a></h3><p>• <code>Optional</code> <strong>previewSize</strong>: <code><a href='Size.html'>Size</a></code></p>
+<h3><a id="ClientTextAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.probeSize">probeSize</a></p>
 <p>Inherited from
-WithTextAsset.previewSize</p>
+WithTextAsset.probeSize</p>
 <hr>
 <h3><a id="ClientTextAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <h4>Implementation of</h4>
@@ -242,11 +274,23 @@ WithTextAsset.previewSize</p>
 <p>Inherited from
 WithTextAsset.properties</p>
 <hr>
-<h3><a id="ClientTextAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='ClientMediaRequest.html'>ClientMediaRequest</a></code> &amp; <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
+<h3><a id="ClientTextAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.request">request</a></p>
 <p>Inherited from
 WithTextAsset.request</p>
+<hr>
+<h3><a id="ClientTextAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.resource">resource</a></p>
+<p>Inherited from
+WithTextAsset.resource</p>
+<hr>
+<h3><a id="ClientTextAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.resources">resources</a></p>
+<p>Inherited from
+WithTextAsset.resources</p>
 <hr>
 <h3><a id="ClientTextAssetClass.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
@@ -254,21 +298,11 @@ WithTextAsset.request</p>
 <p>Inherited from
 WithTextAsset.saveNeeded</p>
 <hr>
-<h3><a id="ClientTextAssetClass.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.scalarRecord">scalarRecord</a></p>
-<p>Inherited from
-WithTextAsset.scalarRecord</p>
-<hr>
 <h3><a id="ClientTextAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.source">source</a></p>
 <p>Inherited from
 WithTextAsset.source</p>
-<hr>
-<h3><a id="ClientTextAssetClass.sourceSize">sourceSize</a></h3><p>• <code>Optional</code> <strong>sourceSize</strong>: <code><a href='Size.html'>Size</a></code></p>
-<p>Inherited from
-WithTextAsset.sourceSize</p>
 <hr>
 <h3><a id="ClientTextAssetClass.string">string</a></h3><p>• <strong>string</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
@@ -276,51 +310,23 @@ WithTextAsset.sourceSize</p>
 <p>Inherited from
 WithTextAsset.string</p>
 <hr>
-<h3><a id="ClientTextAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#ASSET_TARGET'>ASSET_TARGET</a></code></p>
+<h3><a id="ClientTextAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$ASSET'>$ASSET</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.targetId">targetId</a></p>
 <p>Inherited from
 WithTextAsset.targetId</p>
 <hr>
-<h3><a id="ClientTextAssetClass.transcodings">transcodings</a></h3><p>• <strong>transcodings</strong>: <code><a href='Transcodings.html'>Transcodings</a></code> = <code>[]</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.transcodings">transcodings</a></p>
-<p>Inherited from
-WithTextAsset.transcodings</p>
-<hr>
-<h3><a id="ClientTextAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="ClientTextAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.type">type</a></p>
 <p>Inherited from
 WithTextAsset.type</p>
 <h2>Accessors</h2>
-<h3><a id="ClientTextAssetClass.family">family</a></h3><p>• <code>get</code> <strong>family</strong>(): <code>string</code></p>
+<h3><a id="ClientTextAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
-<code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.family">family</a></p>
-<p>Overrides
-WithTextAsset.family</p>
-<p>• <code>set</code> <strong>family</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.family">family</a></p>
-<p>Overrides
-WithTextAsset.family</p>
+<code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<p>Inherited from
+WithTextAsset.scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ClientTextAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
 <h4>Parameters</h4>
@@ -363,7 +369,7 @@ WithTextAsset.asset</p>
 <p>Inherited from
 WithTextAsset.asset</p>
 <hr>
-<h3><a id="ClientTextAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<h3><a id="ClientTextAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -373,7 +379,7 @@ WithTextAsset.asset</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>_args</code></td>
 <td align="left"><code><a href='AssetCacheArgs.html'>AssetCacheArgs</a></code></td>
 </tr>
 </tbody></table>
@@ -381,7 +387,7 @@ WithTextAsset.asset</p>
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.assetCachePromise">assetCachePromise</a></p>
-<p>Overrides
+<p>Inherited from
 WithTextAsset.assetCachePromise</p>
 <hr>
 <h3><a id="ClientTextAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>size</code>, <code>_cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
@@ -395,7 +401,7 @@ WithTextAsset.assetCachePromise</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>_cover?</code></td>
@@ -409,7 +415,7 @@ WithTextAsset.assetCachePromise</p>
 <p>Overrides
 WithTextAsset.assetIcon</p>
 <hr>
-<h3><a id="ClientTextAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>requestable</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
+<h3><a id="ClientTextAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -419,12 +425,12 @@ WithTextAsset.assetIcon</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>requestable</code></td>
-<td align="left"><code><a href='Requestable.html'>Requestable</a></code></td>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code> | <code><a href='Rect.html'>Rect</a></code></td>
+<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -437,7 +443,7 @@ WithTextAsset.assetIcon</p>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.assetIconPromise">assetIconPromise</a></p>
 <p>Inherited from
 WithTextAsset.assetIconPromise</p>
-<p>▸ <strong>assetIconPromise</strong>(<code>requestable</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
+<p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -447,12 +453,12 @@ WithTextAsset.assetIconPromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>requestable</code></td>
-<td align="left"><code><a href='Requestable.html'>Requestable</a></code></td>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code> | <code><a href='Rect.html'>Rect</a></code></td>
+<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -558,7 +564,7 @@ WithTextAsset.clipObject</p>
 <p>Inherited from
 WithTextAsset.constrainedValue</p>
 <hr>
-<h3><a id="ClientTextAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>request</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientTextAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -568,8 +574,29 @@ WithTextAsset.constrainedValue</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>request</code></td>
-<td align="left"><code><a href='ClientMediaRequest.html'>ClientMediaRequest</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.decodingOfType">decodingOfType</a></p>
+<p>Inherited from
+WithTextAsset.decodingOfType</p>
+<hr>
+<h3><a id="ClientTextAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -590,14 +617,34 @@ WithTextAsset.imagePromise</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>object</code></td>
-<td align="left"><code><a href='ClientTextAssetObject.html'>ClientTextAssetObject</a></code></td>
+<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.initializeProperties">initializeProperties</a></p>
-<p>Overrides
+<p>Inherited from
+WithTextAsset.initializeProperties</p>
+<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>object</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
+<h4>Implementation of</h4>
+<p>ClientTextAsset.initializeProperties</p>
+<p>Inherited from
 WithTextAsset.initializeProperties</p>
 <hr>
 <h3><a id="ClientTextAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
@@ -641,27 +688,6 @@ WithTextAsset.instanceArgs</p>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Overrides
 WithTextAsset.instanceFromObject</p>
-<hr>
-<h3><a id="ClientTextAssetClass.preferredTranscoding">preferredTranscoding</a></h3><p>▸ <strong>preferredTranscoding</strong>(<code>...types</code>): <code><a href='Transcoding.html'>Transcoding</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>...types</code></td>
-<td align="left"><code><a href='TranscodingTypes.html'>TranscodingTypes</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Transcoding.html'>Transcoding</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.preferredTranscoding">preferredTranscoding</a></p>
-<p>Inherited from
-WithTextAsset.preferredTranscoding</p>
 <hr>
 <h3><a id="ClientTextAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -745,6 +771,27 @@ WithTextAsset.propertyIds</p>
 <p>Inherited from
 WithTextAsset.propertyInstance</p>
 <hr>
+<h3><a id="ClientTextAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.resourceOfType">resourceOfType</a></p>
+<p>Inherited from
+WithTextAsset.resourceOfType</p>
+<hr>
 <h3><a id="ClientTextAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -804,49 +851,7 @@ WithTextAsset.savePromise</p>
 <p>Inherited from
 WithTextAsset.savingPromise</p>
 <hr>
-<h3><a id="ClientTextAssetClass.scalar">scalar</a></h3><p>▸ <code>Protected</code> <strong>scalar</strong>(<code>propertyId</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>propertyId</code></td>
-<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
-<p>Inherited from
-WithTextAsset.scalar</p>
-<hr>
-<h3><a id="ClientTextAssetClass.selectorTypesPropertyNames">selectorTypesPropertyNames</a></h3><p>▸ <code>Protected</code> <strong>selectorTypesPropertyNames</strong>(<code>selectorTypes</code>, <code>targetId</code>): <code><a href='Strings.html'>Strings</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>selectorTypes</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>targetId</code></td>
-<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Strings.html'>Strings</a></code></p>
-<p>Inherited from
-WithTextAsset.selectorTypesPropertyNames</p>
-<hr>
-<h3><a id="ClientTextAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ClientTextAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -865,7 +870,7 @@ WithTextAsset.selectorTypesPropertyNames</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.setValue">setValue</a></p>
 <p>Inherited from
@@ -894,6 +899,27 @@ WithTextAsset.setValue</p>
 <p>Inherited from
 WithTextAsset.shouldSelectProperty</p>
 <hr>
+<h3><a id="ClientTextAssetClass.style">style</a></h3><p>▸ <strong>style</strong>(<code>prefix?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGStyleElement"><code>SVGStyleElement</code></a></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>prefix?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGStyleElement"><code>SVGStyleElement</code></a></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.style">style</a></p>
+<p>Inherited from
+WithTextAsset.style</p>
+<hr>
 <h3><a id="ClientTextAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
@@ -902,12 +928,41 @@ WithTextAsset.shouldSelectProperty</p>
 <p>Inherited from
 WithTextAsset.toJSON</p>
 <hr>
+<h3><a id="ClientTextAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.tweenValues">tweenValues</a></p>
+<p>Inherited from
+WithTextAsset.tweenValues</p>
+<hr>
 <h3><a id="ClientTextAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextAsset.html">ClientTextAsset</a>.<a href="ClientTextAsset.html#ClientTextAsset.unload">unload</a></p>
-<p>Overrides
+<p>Inherited from
 WithTextAsset.unload</p>
 <hr>
 <h3><a id="ClientTextAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
@@ -957,31 +1012,35 @@ WithTextAsset.value</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ClientTextAssetClass'>ClientTextAssetClass</a></li>
 <li><a class='' href='#ClientTextAssetClass.constructor'>constructor</a></li>
-<li><a class='' href='#ClientTextAssetClass._intrinsicRect'>_intrinsicRect</a></li>
+<li><a class='' href='#ClientTextAssetClass._assets'>_assets</a></li>
+<li><a class='' href='#ClientTextAssetClass._textRect'>_textRect</a></li>
 <li><a class='' href='#ClientTextAssetClass.alpha'>alpha</a></li>
 <li><a class='' href='#ClientTextAssetClass.assetIds'>assetIds</a></li>
 <li><a class='' href='#ClientTextAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientTextAssetClass.assets'>assets</a></li>
 <li><a class='' href='#ClientTextAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ClientTextAssetClass.canBeContent'>canBeContent</a></li>
+<li><a class='' href='#ClientTextAssetClass.canBeFill'>canBeFill</a></li>
 <li><a class='' href='#ClientTextAssetClass.container'>container</a></li>
 <li><a class='' href='#ClientTextAssetClass.content'>content</a></li>
+<li><a class='' href='#ClientTextAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ClientTextAssetClass.decodings'>decodings</a></li>
+<li><a class='' href='#ClientTextAssetClass.family'>family</a></li>
+<li><a class='' href='#ClientTextAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
 <li><a class='' href='#ClientTextAssetClass.id'>id</a></li>
 <li><a class='' href='#ClientTextAssetClass.isVector'>isVector</a></li>
 <li><a class='' href='#ClientTextAssetClass.label'>label</a></li>
-<li><a class='' href='#ClientTextAssetClass.previewSize'>previewSize</a></li>
+<li><a class='' href='#ClientTextAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ClientTextAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ClientTextAssetClass.request'>request</a></li>
+<li><a class='' href='#ClientTextAssetClass.resource'>resource</a></li>
+<li><a class='' href='#ClientTextAssetClass.resources'>resources</a></li>
 <li><a class='' href='#ClientTextAssetClass.saveNeeded'>saveNeeded</a></li>
-<li><a class='' href='#ClientTextAssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientTextAssetClass.source'>source</a></li>
-<li><a class='' href='#ClientTextAssetClass.sourceSize'>sourceSize</a></li>
 <li><a class='' href='#ClientTextAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientTextAssetClass.targetId'>targetId</a></li>
-<li><a class='' href='#ClientTextAssetClass.transcodings'>transcodings</a></li>
 <li><a class='' href='#ClientTextAssetClass.type'>type</a></li>
-<li><a class='' href='#ClientTextAssetClass.family'>family</a></li>
+<li><a class='' href='#ClientTextAssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientTextAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ClientTextAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ClientTextAssetClass.assetIcon'>assetIcon</a></li>
@@ -990,23 +1049,24 @@ WithTextAsset.value</p>
 <li><a class='' href='#ClientTextAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientTextAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientTextAssetClass.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#ClientTextAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientTextAssetClass.imagePromise'>imagePromise</a></li>
 <li><a class='' href='#ClientTextAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientTextAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientTextAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientTextAssetClass.preferredTranscoding'>preferredTranscoding</a></li>
 <li><a class='' href='#ClientTextAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
 <li><a class='' href='#ClientTextAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientTextAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientTextAssetClass.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#ClientTextAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ClientTextAssetClass.saveId'>saveId</a></li>
 <li><a class='' href='#ClientTextAssetClass.savePromise'>savePromise</a></li>
 <li><a class='' href='#ClientTextAssetClass.savingPromise'>savingPromise</a></li>
-<li><a class='' href='#ClientTextAssetClass.scalar'>scalar</a></li>
-<li><a class='' href='#ClientTextAssetClass.selectorTypesPropertyNames'>selectorTypesPropertyNames</a></li>
 <li><a class='' href='#ClientTextAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientTextAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientTextAssetClass.style'>style</a></li>
 <li><a class='' href='#ClientTextAssetClass.toJSON'>toJSON</a></li>
+<li><a class='' href='#ClientTextAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientTextAssetClass.unload'>unload</a></li>
 <li><a class='' href='#ClientTextAssetClass.value'>value</a></li>
 <li><a class='' href='#ClientTextAssetClass.handleAsset'>handleAsset</a></li></ul>

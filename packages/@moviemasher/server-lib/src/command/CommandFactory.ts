@@ -3,12 +3,13 @@ import type { OutputOptions, StringDataOrError, ValueRecord, VideoOutputOptions,
 import type { CommandOptions } from '../types.js'
 import type { Command } from '../type/Command.js'
 
-import { AUDIO, ERROR, VIDEO, errorCaught, errorPromise, isNumber, isString, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIO, ERROR, $VIDEO, errorCaught, errorPromise, namedError } from '@moviemasher/shared-lib/runtime.js'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import path from 'path'
-import { commandError, sizeValueString } from '../utility/Command.js'
-import { directoryCreate } from '../utility/File.js'
-import { sizeAboveZero } from '@moviemasher/shared-lib/utility/rect.js'
+import { commandError, sizeValueString } from '../utility/command.js'
+import { directoryCreate } from '../utility/file.js'
+import { sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
+import { isNumber, isString } from '@moviemasher/shared-lib/utility/guard.js'
 
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(
   ([key, value]) => {
@@ -55,7 +56,7 @@ export const commandPromise = async (command: FfmpegCommand) => {
 export const ffmpegCommand = (): FfmpegCommand => {
   const ffmpegCommandOptions: FfmpegCommandOptions = { logger: console }
   const instance: FfmpegCommand = ffmpeg(ffmpegCommandOptions)
-  instance.addOption('-hide_banner')
+  // instance.addOption('-hide_banner')
   return instance
 }
 
@@ -68,7 +69,7 @@ export const ffmpegOptions = (command: FfmpegCommand, outputOptions: OutputOptio
   if (videoCodec) command.addOutputOption(`-c:v ${videoCodec}`)
   if (videoRate) command.addOutputOption(`-r:v ${videoRate}`)
 
-  if (sizeAboveZero(outputOptions)) {
+  if (sizeNotZero(outputOptions)) {
     command.addOutputOption(`-s ${sizeValueString(outputOptions)}`)
   }
 
@@ -130,8 +131,8 @@ export const commandInstance = (args: CommandOptions): Command => {
   const { inputsById, output, commandFilters, avType } = args
   if (inputsById) ffmpegInputs(command, inputsById)
 
-  if (avType === VIDEO) command.noAudio()
-  else if (avType === AUDIO) command.noVideo()
+  if (avType === $VIDEO) command.noAudio()
+  else if (avType === $AUDIO) command.noVideo()
   
   if (commandFilters?.length) ffmpegFilters(command, commandFilters)
   

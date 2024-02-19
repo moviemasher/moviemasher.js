@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ClientMediaRequest"><h2>ClientMediaRequest</h2></a>
   <div class="section">
     <h1>Interface: ClientMediaRequest</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMediaRequest</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientMediaRequest</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
@@ -141,17 +141,21 @@
 <h2>Properties</h2>
 <h3><a id="ClientMediaRequest.endpoint">endpoint</a></h3><p>• <strong>endpoint</strong>: <code>string</code> | <code><a href='Endpoint.html'>Endpoint</a></code></p>
 <p>Inherited from
-EndpointRequest.endpoint</p>
+<a href="EndpointRequest.html">EndpointRequest</a>.<a href="EndpointRequest.html#EndpointRequest.endpoint">endpoint</a></p>
 <hr>
 <h3><a id="ClientMediaRequest.file">file</a></h3><p>• <code>Optional</code> <strong>file</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/File"><code>File</code></a></p>
 <hr>
 <h3><a id="ClientMediaRequest.init">init</a></h3><p>• <code>Optional</code> <strong>init</strong>: <code><a href='RequestInit.html'>RequestInit</a></code></p>
 <p>Inherited from
-EndpointRequest.init</p>
+<a href="EndpointRequest.html">EndpointRequest</a>.<a href="EndpointRequest.html#EndpointRequest.init">init</a></p>
 <hr>
 <h3><a id="ClientMediaRequest.mediaPromise">mediaPromise</a></h3><p>• <code>Optional</code> <strong>mediaPromise</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#ClientMedia'>ClientMedia</a></code>&gt;&gt;</p>
 <hr>
 <h3><a id="ClientMediaRequest.objectUrl">objectUrl</a></h3><p>• <code>Optional</code> <strong>objectUrl</strong>: <code>string</code></p>
+<hr>
+<h3><a id="ClientMediaRequest.requestType">requestType</a></h3><p>• <code>Optional</code> <strong>requestType</strong>: <code><a href='../combined/Types.html#RequestType'>RequestType</a></code></p>
+<p>Inherited from
+<a href="EndpointRequest.html">EndpointRequest</a>.<a href="EndpointRequest.html#EndpointRequest.requestType">requestType</a></p>
 <hr>
 <h3><a id="ClientMediaRequest.response">response</a></h3><p>• <code>Optional</code> <strong>response</strong>: <code><a href='../combined/Types.html#ClientMedia'>ClientMedia</a></code></p>
 <hr>
@@ -170,6 +174,7 @@ EndpointRequest.init</p>
 <li><a class='' href='#ClientMediaRequest.init'>init</a></li>
 <li><a class='' href='#ClientMediaRequest.mediaPromise'>mediaPromise</a></li>
 <li><a class='' href='#ClientMediaRequest.objectUrl'>objectUrl</a></li>
+<li><a class='' href='#ClientMediaRequest.requestType'>requestType</a></li>
 <li><a class='' href='#ClientMediaRequest.response'>response</a></li>
 <li><a class='' href='#ClientMediaRequest.urlPromise'>urlPromise</a></li></ul>
       </nav>

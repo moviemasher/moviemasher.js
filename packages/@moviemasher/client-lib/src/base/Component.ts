@@ -5,11 +5,12 @@ import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '
 import { css } from '@lit/reactive-element/css-tag.js'
 import { SELECTED } from '../runtime.js'
 import { StringEvent } from '../utility/events.js'
-import { MOVIEMASHER, DASH, PIPE, SLASH, STRING, arrayUnique, isDefined } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIEMASHER, DASH, PIPE, SLASH, $STRING, arrayUnique } from '@moviemasher/shared-lib/runtime.js'
 import { LitElement } from 'lit-element/lit-element.js'
 import { html, nothing } from 'lit-html'
 import { ICON } from '../runtime.js'
-import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
+import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 
 const EventTypeExportParts = 'export-parts'
 
@@ -18,7 +19,7 @@ const partFirst = (element: Element): string => element.part[0] || ''
 export class Component extends LitElement {
   override connectedCallback(): void {
     // console.log(this.tagName, 'connectedCallback')
-    MOVIEMASHER.eventDispatcher.listenersAdd(this.listeners)
+    MOVIEMASHER.listenersAdd(this.listeners)
     this.handleExportParts()
     this.dispatchExportParts()
     super.connectedCallback()
@@ -40,7 +41,7 @@ export class Component extends LitElement {
 
   override disconnectedCallback(): void {
     this.dispatchExportParts()
-    MOVIEMASHER.eventDispatcher.listenersRemove(this.listeners)
+    MOVIEMASHER.listenersRemove(this.listeners)
     super.disconnectedCallback()
   }
 
@@ -50,8 +51,15 @@ export class Component extends LitElement {
     this.dispatchEvent(new CustomEvent(EventTypeExportParts, init))
   }
 
-  protected element<T=Element>(selector = 'div.root'): T & Element {
-    return this.shadowRoot!.querySelector(selector)!
+
+  protected element<T extends Element = Element>(selector: string = 'div.root'): T {
+    return this.selectElement(selector)!
+  }
+  protected selectElement<T extends Element = Element>(selector?: string): T | undefined {
+    if (!selector) return 
+    
+    const { shadowRoot } = this
+    return shadowRoot?.querySelector(selector) || undefined
   }
 
   protected get exportElements(): Element[] {
@@ -202,7 +210,7 @@ export class ComponentLoader extends Component {
 
     const idComponents = name.split(DASH).slice(2) // remove 'movie-masher'
     const first = idComponents.shift() 
-    assertPopulatedString(first)
+    assertDefined(first)
 
     const second = idComponents.join(DASH)
     const known = ['browser', 'timeline', 'inspector', 'player', 'exporter', 'importer']
@@ -300,7 +308,7 @@ export class ComponentClicker extends ComponentSlotter {
   private dispatchStringEvent() {
     const { emit, detail } = this
     const stringEvent: StringEvent = new CustomEvent(emit, { detail })
-    MOVIEMASHER.eventDispatcher.dispatch(stringEvent)
+    MOVIEMASHER.dispatch(stringEvent)
   }
 
   protected handleClick(event: PointerEvent): void {
@@ -336,13 +344,13 @@ export class ComponentClicker extends ComponentSlotter {
 
   protected override partContent(part: string, slots: Htmls): OptionalContent {
     switch (part) {
-      case STRING: return this.stringContent(slots)
+      case $STRING: return this.stringContent(slots)
       case ICON: return this.iconContent(slots)
     }
     return super.partContent(part, slots)
   }
 
-  override parts = [STRING, ICON].join(ComponentSlotter.partSeparator)
+  override parts = [$STRING, ICON].join(ComponentSlotter.partSeparator)
 
   selected = false
 
@@ -354,7 +362,7 @@ export class ComponentClicker extends ComponentSlotter {
 
     this.loadComponent('movie-masher-word')
     return html`<movie-masher-word 
-      part='${STRING}' string='${string}'
+      part='${$STRING}' string='${string}'
     ></movie-masher-word>`
   }
 

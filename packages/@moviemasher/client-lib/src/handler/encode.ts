@@ -1,17 +1,16 @@
-import type { ClientMashAsset, ServerProgress } from '../types.js'
-import type { EncodeArgs, EncodeOptions,  ListenersFunction,  } from '@moviemasher/shared-lib/types.js'
+import type { ClientMashAsset } from '../types.js'
+import type { EncodeArgs, ServerProgress, EncodeOptions, ListenersFunction } from '@moviemasher/shared-lib/types.js'
 
 import { isEncoding } from '@moviemasher/shared-lib/utility/guards.js'
 import { SAVE, VIEW } from '../runtime.js'
-import { EventChangeScalar, EventChangedClientAction, EventChangedMashAsset, EventChangedServerAction, EventClientEncode, EventDoServerAction, EventEnabledServerAction, EventMashAsset, EventProgress } from '../utility/events.js'
+import { EventChangeScalar, EventChangedClientAction, EventChangedMashAsset, EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventMashAsset, EventProgress } from '../utility/events.js'
 import { EventDoServerActionDetail } from '../types.js'
-import { MOVIEMASHER, ENCODE, ERROR, IMAGE,  POST, VIDEO, VOID_FUNCTION, idIsTemporary, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
-import { requestCallbackPromise } from '../utility/request.js'
+import { MOVIEMASHER, $ENCODE, $IMAGE, $VIDEO, VOID_FUNCTION, idIsTemporary, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 
 export class EncodeHandler {
   constructor() {
     const mashEvent = new EventMashAsset()
-    MOVIEMASHER.eventDispatcher.dispatch(mashEvent)
+    MOVIEMASHER.dispatch(mashEvent)
     this.mashAsset = mashEvent.detail.mashAsset
     this.saveEnabledUpdated()
     // console.debug('EncodeHandler constructor', this.saveEnabled, this.encodeEnabled)
@@ -23,8 +22,8 @@ export class EncodeHandler {
     // console.debug('EncodeHandler dispatchEnabledIfChanged', encodeEnabled, this.encodeEnabled)
     if (encodeEnabled === this.encodeEnabled) return
 
-    const event = new EventChangedServerAction(ENCODE)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    const event = new EventChangedServerAction($ENCODE)
+    MOVIEMASHER.dispatch(event)
   }
 
   private doServerAction(detail: EventDoServerActionDetail): void {
@@ -35,36 +34,43 @@ export class EncodeHandler {
     const { type, assetObject } = mashAsset
     const options: EncodeOptions = {}
     switch (type) { 
-      case IMAGE:
-      case VIDEO: {
+      case $IMAGE:
+      case $VIDEO: {
         const { size } = mashAsset
-        options.width = size.width
-        options.height = size.height
+        options.width = size.width // 4
+        options.height = size.height // 4
         break
       }
     }
     const progress = EncodeHandler.progress(id)
     // console.log('EncodeHandler doServerAction', id, type, options)
-    const encodeEvent = new EventClientEncode(assetObject, type, options, progress)
-    MOVIEMASHER.eventDispatcher.dispatch(encodeEvent)
-    const { promise: encodePromise } = encodeEvent.detail
-    if (!encodePromise) return
+    // const encodeEvent = new EventClientEncode(assetObject, type, options, progress)
+    // MOVIEMASHER.dispatch(encodeEvent)
+    // const { promise: encodePromise } = encodeEvent.detail
+    // if (!encodePromise) return
+    const encodeArgs: EncodeArgs = {
+      type, options, asset: assetObject
+    }
+    const encodePromise = MOVIEMASHER.promise($ENCODE, encodeArgs, { progress })
 
     detail.promise = encodePromise.then(orError => {
       progress?.done()
       if (isDefiniteError(orError)) return 
 
       const { data: encodingObject } = orError
+      if (!isEncoding(encodingObject)) return //namedError(ERROR.Syntax, $ENCODE)
+
+
       const { id: encodingId } = encodingObject
       mashAsset.encodings.push(encodingObject)
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangeScalar('mash.encoding', encodingId))
+      MOVIEMASHER.dispatch(new EventChangeScalar('mash.encoding', encodingId))
 
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(VIEW))
+      MOVIEMASHER.dispatch(new EventChangedClientAction(VIEW))
 
       const saveEvent = new EventDoServerAction(SAVE, SAVE)
-      MOVIEMASHER.eventDispatcher.dispatch(saveEvent)
+      MOVIEMASHER.dispatch(saveEvent)
       const { promise: savePromise } = saveEvent.detail
-      if (!savePromise) return 
+      if (!savePromise) return //orError
       
       return savePromise.then(VOID_FUNCTION)
     })
@@ -98,7 +104,7 @@ export class EncodeHandler {
 
   private saveEnabledUpdated() {
     const saveEvent = new EventEnabledServerAction(SAVE)
-    MOVIEMASHER.eventDispatcher.dispatch(saveEvent)
+    MOVIEMASHER.dispatch(saveEvent)
     this.saveEnabled = !!saveEvent.detail.enabled
     // console.debug('EncodeHandler saveEnabledUpdated', this.saveEnabled)
   }
@@ -118,7 +124,7 @@ export class EncodeHandler {
 
   static handleDoServerAction(event: EventDoServerAction): void {
     const { detail } = event
-    if (detail.serverAction !== ENCODE) return
+    if (detail.serverAction !== $ENCODE) return
 
     // console.debug('EncodeHandler handleChangedServerAction')
     EncodeHandler.instance.doServerAction(detail)
@@ -127,34 +133,32 @@ export class EncodeHandler {
   static handleEnabledServerAction (event: EventEnabledServerAction): void {
     const { detail } = event
     const { serverAction } = detail
-    if (serverAction !== ENCODE) return
+    if (serverAction !== $ENCODE) return
 
     event.stopImmediatePropagation()
     detail.enabled = EncodeHandler.instance.encodeEnabled
   }
 
-  static handleEncode(event: EventClientEncode): void {
-    event.stopImmediatePropagation()
-    const { detail } = event
-    const { progress, encodingType = VIDEO, encodeOptions = {}, mashAssetObject } = detail
+  // static handleEncode(event: EventClientEncode): void {
+  //   event.stopImmediatePropagation()
+  //   const { detail } = event
+  //   const { progress, type = $VIDEO, options = {}, asset } = detail
 
-    progress?.do(1)
-    const jsonRequest = {
-      endpoint: 'encode/start', init: { method: POST }
-    }
-    const args: EncodeArgs = {
-      encodingType, encodeOptions, mashAssetObject
-    }
-    detail.promise = requestCallbackPromise(jsonRequest, progress, args).then(orError => {
-      if (isDefiniteError(orError)) return orError
-      progress?.did(1)
+  //   progress?.do(1)
+  //   const jsonRequest = {
+  //     endpoint: 'encode/start', init: { method: $POST }
+  //   }
+  //   const args: EncodeArgs = { type, options, asset }
+  //   detail.promise = requestCallbackPromise(jsonRequest, progress, args).then(orError => {
+  //     if (isDefiniteError(orError)) return orError
+  //     progress?.did(1)
 
-      const { data } = orError
-      if (!isEncoding(data)) return namedError(ERROR.Internal)
+  //     const { data } = orError
+  //     if (!isEncoding(data)) return namedError(ERROR.Internal)
 
-      return { data }
-    })
-  }
+  //     return { data }
+  //   })
+  // }
 
   private static instance = new EncodeHandler()
 
@@ -164,7 +168,7 @@ export class EncodeHandler {
     let total = 2
     let current = 1
     const dispatch = () => {
-      MOVIEMASHER.eventDispatcher.dispatch(new EventProgress(id, current / total))
+      MOVIEMASHER.dispatch(new EventProgress(id, current / total))
     }
     return {
       do: (steps: number) => { 
@@ -187,7 +191,7 @@ export class EncodeHandler {
 
 // listen for client encode related events
 export const encodeClientListeners: ListenersFunction = () => ({
-  [EventClientEncode.Type]: EncodeHandler.handleEncode,
+  // [EventClientEncode.Type]: EncodeHandler.handleEncode,
   [EventEnabledServerAction.Type]: EncodeHandler.handleEnabledServerAction,
   [EventChangedServerAction.Type]: EncodeHandler.handleChangedServerAction,
   [EventDoServerAction.Type]: EncodeHandler.handleDoServerAction,

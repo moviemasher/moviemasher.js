@@ -153,11 +153,19 @@ Clip.assetIds</p>
 <p>Inherited from
 Clip.audible</p>
 <hr>
+<h3><a id="ClientClip.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<p>Inherited from
+Clip.canBeMuted</p>
+<hr>
+<h3><a id="ClientClip.clipIndex">clipIndex</a></h3><p>• <strong>clipIndex</strong>: <code><a href='ClipIndex.html'>ClipIndex</a></code></p>
+<p>Inherited from
+Clip.clipIndex</p>
+<hr>
 <h3><a id="ClientClip.clipObject">clipObject</a></h3><p>• <strong>clipObject</strong>: <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <p>Inherited from
 Clip.clipObject</p>
 <hr>
-<h3><a id="ClientClip.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code></p>
+<h3><a id="ClientClip.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <p>Overrides
 Clip.container</p>
 <hr>
@@ -165,7 +173,7 @@ Clip.container</p>
 <p>Inherited from
 Clip.containerId</p>
 <hr>
-<h3><a id="ClientClip.content">content</a></h3><p>• <strong>content</strong>: <code><a href='ClientInstance.html'>ClientInstance</a></code></p>
+<h3><a id="ClientClip.content">content</a></h3><p>• <strong>content</strong>: <code><a href='ClientInstance.html'>ClientInstance</a></code> &amp; <code><a href='ContentInstance.html'>ContentInstance</a></code> | <code><a href='ClientAudioInstance.html'>ClientAudioInstance</a></code></p>
 <p>Overrides
 Clip.content</p>
 <hr>
@@ -193,25 +201,17 @@ Clip.id</p>
 <p>Inherited from
 Clip.label</p>
 <hr>
-<h3><a id="ClientClip.mutable">mutable</a></h3><p>• <strong>mutable</strong>: <code>boolean</code></p>
-<p>Inherited from
-Clip.mutable</p>
-<hr>
 <h3><a id="ClientClip.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
 Clip.muted</p>
 <hr>
-<h3><a id="ClientClip.notMuted">notMuted</a></h3><p>• <strong>notMuted</strong>: <code>boolean</code></p>
+<h3><a id="ClientClip.opacity">opacity</a></h3><p>• <strong>opacity</strong>: <code>number</code></p>
 <p>Inherited from
-Clip.notMuted</p>
+Clip.opacity</p>
 <hr>
 <h3><a id="ClientClip.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.properties">properties</a></p>
-<hr>
-<h3><a id="ClientClip.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-<a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.scalarRecord">scalarRecord</a></p>
 <hr>
 <h3><a id="ClientClip.sizing">sizing</a></h3><p>• <strong>sizing</strong>: <code><a href='../combined/Types.html#Sizing'>Sizing</a></code></p>
 <p>Inherited from
@@ -325,7 +325,7 @@ Clip.asset</p>
 <p>Inherited from
 Clip.clipCachePromise</p>
 <hr>
-<h3><a id="ClientClip.clipIcon">clipIcon</a></h3><p>▸ <strong>clipIcon</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
+<h3><a id="ClientClip.clipRects">clipRects</a></h3><p>▸ <strong>clipRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -336,40 +336,13 @@ Clip.clipCachePromise</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='ClipIconArgs.html'>ClipIconArgs</a></code></td>
+<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
-<hr>
-<h3><a id="ClientClip.clipPreviewPromise">clipPreviewPromise</a></h3><p>▸ <strong>clipPreviewPromise</strong>(<code>size</code>, <code>time</code>, <code>component</code>, <code>scale?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>component</code></td>
-<td align="left"><code><a href='../combined/Types.html#Panel'>Panel</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>scale?</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+Clip.clipRects</p>
 <hr>
 <h3><a id="ClientClip.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -394,7 +367,7 @@ Clip.clipCachePromise</p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.constrainedValue">constrainedValue</a></p>
 <hr>
-<h3><a id="ClientClip.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<h3><a id="ClientClip.elementPromise">elementPromise</a></h3><p>▸ <strong>elementPromise</strong>(<code>size</code>, <code>time</code>, <code>component</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -404,14 +377,20 @@ Clip.clipCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
+<td align="left"><code>size</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>component</code></td>
+<td align="left"><code><a href='../combined/Types.html#Panel'>Panel</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
-<p>Inherited from
-Clip.containerRects</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <hr>
 <h3><a id="ClientClip.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -554,7 +533,7 @@ Clip.maxFrames</p>
 <p>Inherited from
 Clip.resetTiming</p>
 <hr>
-<h3><a id="ClientClip.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ClientClip.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -573,15 +552,82 @@ Clip.resetTiming</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.setValue">setValue</a></p>
+<hr>
+<h3><a id="ClientClip.sizingRect">sizingRect</a></h3><p>▸ <strong>sizingRect</strong>(<code>size</code>, <code>loading?</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>size</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>loading?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+Clip.sizingRect</p>
+<hr>
+<h3><a id="ClientClip.svgItemPromise">svgItemPromise</a></h3><p>▸ <strong>svgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ClipIconArgs.html'>ClipIconArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
 <hr>
 <h3><a id="ClientClip.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="ClientClip.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ClientClip.updateAssetId">updateAssetId</a></h3><p>▸ <strong>updateAssetId</strong>(<code>oldId</code>, <code>newId</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -633,6 +679,8 @@ Clip.resetTiming</p>
         <ul><li><a class='' href='#ClientClip'>ClientClip</a></li>
 <li><a class='' href='#ClientClip.assetIds'>assetIds</a></li>
 <li><a class='' href='#ClientClip.audible'>audible</a></li>
+<li><a class='' href='#ClientClip.canBeMuted'>canBeMuted</a></li>
+<li><a class='' href='#ClientClip.clipIndex'>clipIndex</a></li>
 <li><a class='' href='#ClientClip.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientClip.container'>container</a></li>
 <li><a class='' href='#ClientClip.containerId'>containerId</a></li>
@@ -643,11 +691,9 @@ Clip.resetTiming</p>
 <li><a class='' href='#ClientClip.frames'>frames</a></li>
 <li><a class='' href='#ClientClip.id'>id</a></li>
 <li><a class='' href='#ClientClip.label'>label</a></li>
-<li><a class='' href='#ClientClip.mutable'>mutable</a></li>
 <li><a class='' href='#ClientClip.muted'>muted</a></li>
-<li><a class='' href='#ClientClip.notMuted'>notMuted</a></li>
+<li><a class='' href='#ClientClip.opacity'>opacity</a></li>
 <li><a class='' href='#ClientClip.properties'>properties</a></li>
-<li><a class='' href='#ClientClip.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientClip.sizing'>sizing</a></li>
 <li><a class='' href='#ClientClip.targetId'>targetId</a></li>
 <li><a class='' href='#ClientClip.timeRange'>timeRange</a></li>
@@ -660,10 +706,9 @@ Clip.resetTiming</p>
 <li><a class='' href='#ClientClip.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientClip.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientClip.clipCachePromise'>clipCachePromise</a></li>
-<li><a class='' href='#ClientClip.clipIcon'>clipIcon</a></li>
-<li><a class='' href='#ClientClip.clipPreviewPromise'>clipPreviewPromise</a></li>
+<li><a class='' href='#ClientClip.clipRects'>clipRects</a></li>
 <li><a class='' href='#ClientClip.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ClientClip.containerRects'>containerRects</a></li>
+<li><a class='' href='#ClientClip.elementPromise'>elementPromise</a></li>
 <li><a class='' href='#ClientClip.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientClip.intrinsicsKnown'>intrinsicsKnown</a></li>
 <li><a class='' href='#ClientClip.maxFrames'>maxFrames</a></li>
@@ -672,7 +717,10 @@ Clip.resetTiming</p>
 <li><a class='' href='#ClientClip.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientClip.resetTiming'>resetTiming</a></li>
 <li><a class='' href='#ClientClip.setValue'>setValue</a></li>
+<li><a class='' href='#ClientClip.sizingRect'>sizingRect</a></li>
+<li><a class='' href='#ClientClip.svgItemPromise'>svgItemPromise</a></li>
 <li><a class='' href='#ClientClip.toJSON'>toJSON</a></li>
+<li><a class='' href='#ClientClip.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientClip.updateAssetId'>updateAssetId</a></li>
 <li><a class='' href='#ClientClip.value'>value</a></li></ul>
       </nav>

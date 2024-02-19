@@ -1,6 +1,6 @@
 import type { TimeRanges, Times } from '../../../packages/@moviemasher/shared-lib/src/types.js'
 
-import { FRAME } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
+import { $FRAME } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
 import assert from 'assert'
 import { describe, test } from 'node:test'
 import { TimeRangeClass, stringSeconds, timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTimes } from '../../../packages/@moviemasher/shared-lib/src/utility/time.js'
@@ -9,7 +9,7 @@ describe('TimeRange', () => {
   const range = new TimeRangeClass()
   const rangeOneSecond = new TimeRangeClass(0, 1, 1)
   test('constructor', () => assert.deepStrictEqual(range, rangeOneSecond))
-  test(FRAME, () => assert.equal(range.frame, 0))
+  test($FRAME, () => assert.equal(range.frame, 0))
   test('frames', () => assert.equal(range.frames, 1))
   test('fps', () => assert.equal(range.fps, 1))
   test('copy', () => {
@@ -120,25 +120,8 @@ describe('Time', () => {
       assert.equal(time.fps, fps)
     })
   })
-  describe('equalsTime', () => {
-    const mins: StringTimes[] = [
-      ['equal', [times1[0], times10[0], times30[0]]],
-      ['equal', [times1[1], times10[10], times30[30]]],
-      ['callee is earlier', [times10[0], times10[1], times10[0]]],
-      ['callee is earlier', [times10[1], times1[1], times10[1]]],
-      ['callee is later', [times10[1], times10[0], times10[0]]],
-      ['callee is later', [times1[1], times10[1], times10[1]]],
-    ]
-    type StringTimes = [string, Times]
-    mins.forEach((array: StringTimes) => {
-      const [name, examples] = array
-      const [time1, time2, expected] = examples 
-        test(`${time1}.min(${time2}) returns ${expected} when ${name}`, () => {
-          assert(time1.min(time2).equalsTime(expected))
-        })
-
-    })
-  })
+  
+  
   describe('scale', () => {
     test('returns scaled time', () => {
       const time = timeFromArgs(1, 30)
@@ -152,6 +135,7 @@ describe('Time', () => {
 
 describe('stringSeconds', () => {
   test('returns expected response', () => {
+    assert.equal(stringSeconds(0, 10, 0), '0')
     assert.equal(stringSeconds(0.5, 30, 3), '00.50')
     assert.equal(stringSeconds(0.9, 30, 3), '00.90')
     assert.equal(stringSeconds(0.12324, 30, 3), '00.12')

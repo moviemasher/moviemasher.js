@@ -37,7 +37,7 @@ export class WordElement extends Component {
   private get stringEventPromise() {
     const { string } = this
     const event = new EventTranslate(string) 
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     return event.detail.promise
   }
 

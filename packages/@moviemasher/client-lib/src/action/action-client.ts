@@ -29,7 +29,7 @@ export class ClientActionElement extends ButtonElement {
     const { enabledEvent } = this
     if (!enabledEvent) return
     
-    MOVIEMASHER.eventDispatcher.dispatch(enabledEvent)
+    MOVIEMASHER.dispatch(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 

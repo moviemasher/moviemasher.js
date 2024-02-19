@@ -4,16 +4,13 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "rootDir": "../../",
+    "resolveJsonModule": true
   },
   "include": [
     "../../images/test-shared/src/*.ts",
     "../../images/test-shared/src/**/*.ts"
+    
 
-    
-    
   
-  ],
-  "exclude": [
-    "src/**/*.e2e.ts"
   ]
 }

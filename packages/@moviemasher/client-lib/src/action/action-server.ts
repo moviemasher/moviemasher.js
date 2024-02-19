@@ -3,10 +3,11 @@ import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '
 
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, StringEvent } from '../utility/events.js'
-import { STRING, arraySet, isDefined } from '@moviemasher/shared-lib/runtime.js'
+import { $STRING, arraySet } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { ICON } from '../runtime.js'
 import { ButtonElement } from '../component/button.js'
+import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 
 export const ServerActionTag = 'movie-masher-action-server'
 
@@ -21,9 +22,9 @@ export class ServerActionElement extends ButtonElement {
   }
 
   protected override templateContent(contents: TemplateContents): TemplateContent {
-    const { currentProgress, progressInserting: progress } = this
-    if (progress && isDefined<number>(currentProgress)) {
-      switch(progress) {
+    const { currentProgress, progressInserting } = this
+    if (progressInserting && isDefined<number>(currentProgress)) {
+      switch(progressInserting) {
         case 'prepend-content': {
           contents.unshift(this.partProgress)
           break
@@ -62,7 +63,7 @@ export class ServerActionElement extends ButtonElement {
     const { enabledEvent } = this
     if (!enabledEvent) return
     
-    MOVIEMASHER.eventDispatcher.dispatch(enabledEvent)
+    MOVIEMASHER.dispatch(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 
@@ -71,7 +72,7 @@ export class ServerActionElement extends ButtonElement {
     if (detail) {
       clickEvent.stopPropagation()
       const event = new EventDoServerAction(detail, progress ? detail : undefined)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
       if (promise && progress) this.currentProgress = 0
     }
@@ -87,18 +88,18 @@ export class ServerActionElement extends ButtonElement {
 
   progressInserting?: string = 'replace-string'
 
-  progressSizing?: string = STRING
+  progressSizing?: string = $STRING
 
   protected override partContent(part: string, slots: Htmls): OptionalContent { 
-    const { currentProgress, progressInserting: progress } = this
-    if (progress && isDefined<number>(currentProgress)) {
+    const { currentProgress, progressInserting } = this
+    if (progressInserting && isDefined<number>(currentProgress)) {
       switch (part) {
-        case STRING: {
-          if (progress === 'replace-string') return this.partProgress
+        case $STRING: {
+          if (progressInserting === 'replace-string') return this.partProgress
           break
         }
         case ICON: {
-          if (progress === 'replace-icon') return this.partProgress
+          if (progressInserting === 'replace-icon') return this.partProgress
           break
         }
       }   

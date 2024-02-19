@@ -1,8 +1,9 @@
-import type { ColorAsset, ColorInstance, ColorInstanceObject, ComplexSvgItem, Constrained, ContentFill, DataOrError, IdElement, IntrinsicOptions, PropertySize, Rect, StringTuple, SvgItem, SvgItemArgs, SvgVector, Time, Value, VisibleAsset, VisibleInstance } from '../types.js'
+import type { MaybeComplexSvgItem, ColorAsset, ColorInstance, ColorInstanceObject, Constrained, ContentSvgItemArgs, DataOrError, IntrinsicOptions, Rect, Value, VisibleAsset, VisibleInstance } from '../types.js'
 
-import { CONTENT, END, ERROR, IMAGE, NONE, RECT_ZERO, RGB, RGB_GRAY, isDefined, isPopulatedString, namedError } from '../runtime.js'
-import { assertPopulatedString, assertStringTuple, isPositive } from '../utility/guards.js'
-import { svgPolygonElement } from '../utility/svg.js'
+import { $CONTENT, $END, $IMAGE, RECT_ZERO, $RGB, RGB_GRAY } from '../runtime.js'
+import { isDefined } from '../utility/guard.js'
+import { assertPopulatedString } from '../utility/guards.js'
+import { svgOpacity, svgPolygonElement } from '../utility/svg.js'
 
 export function ColorAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
   T & Constrained<ColorAsset> {
@@ -10,8 +11,8 @@ export function ColorAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
     canBeContainer = false
     canBeContent = true
     canBeFill = true
-
-    type = IMAGE
+    hasIntrinsicSizing = false
+    type = $IMAGE
   }
 }
 
@@ -34,42 +35,30 @@ export function ColorInstanceMixin<T extends Constrained<VisibleInstance>>(Base:
 
     declare colorEnd?: string
 
-    override contentSvgItem(args: SvgItemArgs): DataOrError<SvgItem | ComplexSvgItem> {
-      const { rect: containerRect, time, timeRange } = args
+    override contentSvgItem(args: ContentSvgItemArgs): DataOrError<MaybeComplexSvgItem> {
+      const { time, timeRange, opacity, contentRect } = args
       const [color] = this.tweenValues('color', time, timeRange)
-      // console.log('ColorInstanceMixin.contentSvgItem', { color, time, timeRange })
       assertPopulatedString(color)
-  
-      return { data: svgPolygonElement(containerRect, '', pixelColor(color)) }
+      
+      const polygon = svgPolygonElement(contentRect, '', pixelColor(color))
+      const data = svgOpacity(polygon, opacity)
+      return { data }
     }
-
-    // override fill(_containerRect: Rect, time: Time, _shortest: PropertySize): DataOrError<ContentFill> {
-    //   const values = this.tweenValues('color', time, this.clip.timeRange)
-    //   const [data] = values
-    //   if (!isPopulatedString(data)) return namedError(ERROR.Unavailable, 'color')
-
-    //   return { data }
-    // }
-
+    
     override initializeProperties(object: ColorInstanceObject): void {
       this.properties.push(this.propertyInstance({
-        targetId: CONTENT, name: 'color', type: RGB,
+        targetId: $CONTENT, name: 'color', type: $RGB,
         defaultValue: RGB_GRAY, tweens: true,
       }))
       this.properties.push(this.propertyInstance({
-        targetId: CONTENT, name: `color${END}`,
-        type: RGB, undefinedAllowed: true, tweens: true,
+        targetId: $CONTENT, name: `color${$END}`,
+        type: $RGB, undefinedAllowed: true, tweens: true,
       }))
       super.initializeProperties(object)
     }
     override get intrinsicRect(): Rect { return RECT_ZERO }
 
     intrinsicsKnown(options: IntrinsicOptions): boolean { return true }
-
-  
-    override pathElement(rect: Rect, forecolor = NONE): SvgVector {
-      return svgPolygonElement(rect, '', forecolor)
-    }
 
     override get tweening(): boolean { 
       let tweening = super.tweening

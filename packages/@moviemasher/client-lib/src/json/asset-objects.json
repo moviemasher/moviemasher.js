@@ -4,32 +4,47 @@
     "id": "com.google.fonts.butcherman",
     "type": "image",
     "source": "text",
-    "request": { 
-      "endpoint": { 
-        "protocol": "https:",
-        "hostname": "fonts.googleapis.com", 
-        "pathname": "/css2", 
-        "search": "?family=Butcherman" 
-      } 
-    }
+    "resources": [
+      {
+        "type": "css",
+        "request": {
+          "endpoint": {
+            "protocol": "https:",
+            "hostname": "fonts.googleapis.com",
+            "pathname": "/css2",
+            "search": "?family=Butcherman"
+          }
+        }
+      }
+    ]
   },
   {
     "label": "TTF Pacifico",
     "id": "com.google.fonts.pacifico",
     "type": "image",
     "source": "text",
-    "request": { 
-      "endpoint": "https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ96A.ttf"
-    }
+    "resources": [
+      {
+        "type": "ttf",
+        "request": {
+          "endpoint": "https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ96A.ttf"
+        }
+      }
+    ]
   },
   {
     "label": "Croissant One",
     "id": "com.google.fonts.croissant-one",
     "type": "image",
     "source": "text",
-    "request": { 
-      "endpoint": "https://fonts.googleapis.com/css2?family=Croissant+One" 
-    }
+    "resources": [
+      {
+        "type": "css",
+        "request": {
+          "endpoint": "https://fonts.googleapis.com/css2?family=Croissant+One"
+        }
+      }
+    ]
   },
   {
     "label": "Fire: Ant Design",

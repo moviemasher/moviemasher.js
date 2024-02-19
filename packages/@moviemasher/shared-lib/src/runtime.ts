@@ -1,133 +1,182 @@
-import type { Rounding, AVType, AlphaProbing, AlphaType, Asset, AssetObject, AssetType, AssetTypes, AudibleProbing, AudibleType, AudioAssetObject, AudioOutputOptions, AudioType, BooleanDataType, ColorAssetObject, ColorSource, CornerDirection, DataType, DecodeType, Decoding, DefiniteError, Directions, DurationProbing, EncodeType, ErrorObject, EventDispatcher, EventDispatcherListeners, FontType, Framed, Identified, ImageAssetObject, ImageOutputOptions, ImageType, DropType, DropTypes, Importer, Indexed, Lock, MashAudioAssetObject, MashImageAssetObject, MashSource, MashVideoAssetObject, NumberDataType, Numbers, Ordered, OutputOptions, Point, PopulatedString, ProbeType, Probing, ProbingTypes, PromptAudioAssetObject, PromptImageAssetObject, PromptSource, PromptVideoAssetObject, RawAudioAssetObject, RawImageAssetObject, RawSource, RawVideoAssetObject, Rect, SequenceOutputOptions, BitmapsType, ShapeAssetObject, ShapeSource, SideDirection, Size, SizeProbing, Source, SourceAsset, StringDataType, StringRecord, Strings, StringsRecord, TargetIds, TextAssetObject, TextSource, Timing, Tracked, TranscodeType, TranscodingType, Transparency, Typed, Unknowns, ValueRecord, VideoAssetObject, VideoOutputOptions, VideoType, VisibleType, WaveformOutputOptions, WaveformType, ImportTypes, Mimetype, AbsolutePath, MovieMasherRuntime, EventDispatcherListener, EventOptions, AssetPromiseEventDetail, Value, Numeric } from './types.js'
+import type { AbsolutePath, AlphaType, ArrayOf2, Aspect, Asset, AssetObject, AudibleType, AudioAssetObject, AudioOutputOptions, AudioType, BitmapsType, BooleanDataType, ClientOrServer, ColorAssetObject, ColorSource, CornerDirection, DataOrError, DataType, DecodeType, Decoding, DefiniteError, Directions, DocumentWindow, DropType, DropTypes, EncodeType, EndpointRequest, ErrorObject, EventDispatcher, EventDispatcherListener, EventDispatcherListeners, EventOptions, FontType, Framed, Identified, ImageAssetObject, ImageOutputOptions, ImageType, ImportResult, ImportTypes, Importer, Indexed, JobType, Lock, MashAudioAssetObject, MashImageAssetObject, MashSource, MashVideoAssetObject, Mimetype, ModuleType, MovieMasherInstance, MovieMasherOptions, MovieMasherRuntime, NumberDataType, Numbers, Ordered, OutputOptions, Panel, Point, Probing, ProbingTypes, PromiseFunction, PromptAudioAssetObject, PromptImageAssetObject, PromptSource, PromptVideoAssetObject, RawAudioAssetObject, RawImageAssetObject, RawSource, RawType, RawTypes, RawVideoAssetObject, Rect, RectTuple, Resource, ReturningFunction, Rounding, Scanning, SequenceOutputOptions, ShapeAssetObject, ShapeSource, SideDirection, Size, Source, SourceAsset, StringDataType, StringRecord, StringTuple, Strings, StringsRecord, TargetIds, TextAssetObject, TextSource, Timing, Tracked, TranscodeType, TranscodingType, Typed, ValueRecord, VideoAssetObject, VideoOutputOptions, VideoType, VisibleType, WaveformOutputOptions, WaveformType } from './types.js'
 
+import { isArray, isFunction, isObject, isPopulatedString, isString } from './utility/guard.js'
 
 type ErrorNameType = typeof ERROR[keyof typeof ERROR] | string
 
 type ErrorContext = ValueRecord | string | undefined
 
-const IdPrefix = 'com.moviemasher.'
-const IdSuffix = '.default'
+export const $AUDIO: AudioType = 'audio' as const
+export const $IMAGE: ImageType = 'image' as const
+export const $VIDEO: VideoType = 'video' as const
 
-export const GET = 'GET'
-export const POST = 'POST'
-export const PUT = 'PUT'
-export const LIST = 'LIST'
+export const $COLOR: ColorSource = 'color' as const
+export const $FONT: FontType = 'font' as const
+export const $MASH: MashSource = 'mash' as const
+export const $PROMPT: PromptSource = 'prompt' as const
+export const $RAW: RawSource = 'raw' as const
+export const $SHAPE: ShapeSource = 'shape' as const
+export const $TEXT: TextSource = 'text' as const
+export const $DOM = 'dom' as const
+export const $WINDOW = 'window' as const
+export const $BROWSER: Panel = 'browser' as const
+export const $PLAYER: Panel = 'player' as const
+export const $TIMELINE: Panel = 'timeline' as const
+export const $IMPORTER: Panel = 'importer' as const
+export const $EXPORTER: Panel = 'exporter' as const
+export const $RETRIEVE = 'retrieve' as const
+export const $JSON = 'json' as const
+export const $WOFF2 = 'woff2' as const
+export const $CSS = 'css' as const
+export const $TTF = 'ttf' as const
+export const $TXT = 'txt' as const
+export const $SVG = 'svg' as const
+export const $CUSTOM = 'custom' as const
+export const $ASSET = 'asset' as const
+export const $CLIP = 'clip' as const
+export const $CONTAINER = 'container' as const
+export const $CONTENT = 'content' as const
+export const $URL = 'url' as const
+export const $BITMAPS = 'bitmaps' as const
+export const $SVGS = 'svgs' as const
+export const $WAVEFORM = 'waveform' as const
+export const $FLIP = 'flip' as const
+export const $MAINTAIN = 'maintain' as const
+export const $LONGEST = 'longest' as const
+export const $NONE = 'none' as const
+export const $SHORTEST = 'shortest' as const
 
-export const HTTP = 'http'
-export const HTTPS = 'https'
+export const $OPACITY = 'opacity' as const
+export const $POINT = 'point' as const
+export const $SIZE = 'size' as const
+export const $RECT = 'rect' as const
 
-export const AUDIO: AudioType = 'audio'
-export const COLOR: ColorSource = 'color'
-export const FONT: FontType = 'font'
-export const IMAGE: ImageType = 'image'
-export const MASH: MashSource = 'mash'
-export const PROMPT: PromptSource = 'prompt'
-export const RAW: RawSource = 'raw'
-export const SHAPE: ShapeSource = 'shape'
-export const TEXT: TextSource = 'text'
-export const VIDEO: VideoType = 'video'
+export const $DEFAULT = 'default' as const
 
-export const ASTERISK = '*'
-export const COLON = ':'
-export const COMMA = ','
-export const EQUALS = '='
-export const NEWLINE = '\n'
-export const QUESTION = '?'
-export const SEMICOLON = ';'
-export const SLASH = '/'
-export const DOT = '.';
-export const DASH = '-'
-export const PIPE = '|'
-export const SPACE = ' '
+export const $ALPHA = 'alpha' as const
+export const $AUDIBLE = 'audible' as const
+export const $DURATION = 'duration' as const
+export const $LUMINANCE = 'luminance' as const
+export const $FAMILY = 'family' as const  
 
-export const JSON = 'json'
-export const TXT = 'txt'
-export const SVG = 'svg'
+export const $LEFT: SideDirection = 'left' as const
+export const $TOP: SideDirection = 'top' as const
+export const $BOTTOM: SideDirection = 'bottom' as const
+export const $RIGHT: SideDirection = 'right' as const
 
-export const MIME_JSON = `application/${JSON}`
-export const MIME_CSS = `${TEXT}/css`
+export const $TEMPORARY = 'temporary' as const
+
+export const $DECODE: DecodeType = 'decode' as const
+export const $ENCODE: EncodeType = 'encode' as const
+export const $TRANSCODE: TranscodeType = 'transcode' as const
+
+export const $PROBE = 'probe' as const
+export const $SCAN = 'scan' as const
+
+export const $CLIENT = 'client' as const
+export const $SERVER = 'server' as const
+
+export const $CHANGE = 'change' as const
+export const $CHANGES = 'changes' as const
+
+export const $BOTH = 'both' as const
+
+export const $CEIL = 'ceil' as const
+export const $FLOOR = 'floor' as const
+export const $ROUND = 'round' as const
+
+export const $X: string & 'x' = 'x' as const 
+export const $Y: string & 'y' = 'y' as const 
+
+export const $HEIGHT: string & 'height' = 'height' as const
+export const $WIDTH: string & 'width' = 'width' as const
+
+export const $BOOLEAN: BooleanDataType = 'boolean' as const
+export const $NUMBER: NumberDataType = 'number' as const
+export const $STRING: StringDataType = 'string' as const
+export const $FRAME = 'frame' as const
+export const $PERCENT: DataType = 'percent' as const
+export const $RGB: DataType = 'rgb' as const
+
+// can these just be CONTAINER and CONTENT?
+export const $CONTAINER_ID: DataType = 'container-id' as const
+export const $CONTENT_ID: DataType = 'content-id' as const
+
+export const $HTTP = 'http' as const
+export const $HTTPS = 'https' as const
+
+export const $GTE = 'gte' as const
+export const $LT = 'lt' as const
+export const $LTE = 'lte' as const
+export const $GT = 'gt' as const
+export const $EQ = 'eq' as const
+export const $NE = 'ne' as const
+
+export const $IF = 'if' as const
+export const $IFNOT = 'ifnot' as const
+
+export const $MIN = 'min' as const
+export const $MAX = 'max' as const
+
+export const $DIVIDE = '/' as const
+export const $MULTIPLY = '*' as const
+export const $ADD = '+' as const
+export const $SUBTRACT = '-' as const
+
+export const $VARIABLE = 'variable' as const
+export const $LOCK = 'lock' as const
+
+// Note: these are all capitalized since they are suffixes
+export const $END = 'End' as const
+export const $CROP = 'Crop' as const
+export const $ASPECT = 'Aspect' as const
+
+export const $GET = 'GET' as const
+export const $POST = 'POST' as const
+export const $PUT = 'PUT' as const
+export const $LIST = 'LIST' as const
+
+export const $TOP_RIGHT: CornerDirection = 'top-right' as const
+export const $TOP_LEFT: CornerDirection = 'top-left' as const
+export const $BOTTOM_RIGHT: CornerDirection = 'bottom-right' as const
+export const $BOTTOM_LEFT: CornerDirection = 'bottom-left' as const
+
+export const $CACHE_ALL = 'cache-all' as const
+export const $CACHE_NONE = 'cache-none' as const
+export const $CACHE_SOURCE_TYPE = 'cache-source-type' as const
+
+export const VERSION = '5.2.0' as const
+
+export const ASTERISK = '*' as const
+export const COLON = ':' as const
+export const COMMA = ',' as const
+export const EQUALS = '=' as const
+export const NEWLINE = '\n' as const
+export const QUESTION = '?' as const
+export const SEMICOLON = ';' as const
+export const SLASH = '/' as const
+export const DOT = '.' as const
+export const DASH = '-' as const
+export const PIPE = '|' as const
+export const SPACE = ' ' as const
+
+export const MIME_JSON = ['application', $JSON].join(SLASH)
+export const MIME_CSS = [$TEXT, $CSS].join(SLASH)
 export const MIME_MULTI = 'multipart/form-data'
 export const CONTENT_TYPE = 'Content-Type'
+export const MIME_SVG: DOMParserSupportedType = `${$IMAGE}${SLASH}${$SVG}+xml`
 
 export const NAMESPACE_SVG = 'http://www.w3.org/2000/svg'
 export const NAMESPACE_XLINK = 'http://www.w3.org/1999/xlink'
 
-export const CUSTOM = 'custom'
-export const ASSET_TARGET = 'asset'
-export const CLIP_TARGET = 'clip'
-export const CONTAINER = 'container'
-export const CONTENT = 'content'
-export const CHANGE = 'change'
-export const CHANGE_MULTIPLE = 'change-multiple'
+const IdPrefix = 'com.moviemasher'
+const IdSuffix = 'image.default'
 
-export const BOTH: AVType = 'both'
+export const DEFAULT_CONTENT_ID = [IdPrefix, 'content', IdSuffix].join(DOT)
+export const DEFAULT_CONTAINER_ID = [IdPrefix, 'container', IdSuffix].join(DOT)
 
-export const VERSION = '5.2.0'
+export const CURRENT_COLOR = 'currentColor' as const
 
-export const PROBE: ProbeType = 'probe'
-export const BITMAPS = 'bitmaps'
-export const SVGS = 'svgs'
-export const WAVEFORM = 'waveform'
-
-export const FLIP = 'flip'
-export const MAINTAIN = 'maintain'
-export const LONGEST = 'longest'
-export const NONE = 'none'
-export const SHORTEST = 'shortest'
-
-
-export const $OPACITY = 'opacity'
-export const $POINT = 'point'
-export const $SIZE = 'size'
-
-
-export const ALPHA: AlphaProbing = 'alpha'
-export const AUDIBLE: AudibleProbing = 'audible'
-export const DURATION: DurationProbing = 'duration'
-export const SIZE_PROBING: SizeProbing = 'size'
-export const LUMINANCE: Transparency = 'luminance'
-
-// Note: these are all capitalized since they are suffixes
-export const END = 'End'
-export const CROP = 'Crop'
-export const ASPECT = 'Aspect'
-
-
-export const LEFT: SideDirection = 'left';
-export const TOP: SideDirection = 'top';
-export const BOTTOM: SideDirection = 'bottom';
-export const RIGHT: SideDirection = 'right';
-
-
-export const TOP_RIGHT: CornerDirection = 'top-right'
-export const TOP_LEFT: CornerDirection = 'top-left'
-export const BOTTOM_RIGHT: CornerDirection = 'bottom-right'
-export const BOTTOM_LEFT: CornerDirection = 'bottom-left'
-
-
-export const BOOLEAN: BooleanDataType = 'boolean'
-export const NUMBER: NumberDataType = 'number'
-export const STRING: StringDataType = 'string'
-export const CONTAINER_ID: DataType = 'containerid'
-export const CONTENT_ID: DataType = 'contentid'
-export const FRAME = 'frame'
-export const PERCENT: DataType = 'percent'
-export const RGB: DataType = 'rgb'
-export const CACHE_ALL = 'cache_all'
-export const CACHE_NONE = 'cache_none'
-export const CACHE_SOURCE_TYPE = 'cache_source_type'
-
-
-export const DEFAULT_CONTENT_ID = `${IdPrefix}content.image${IdSuffix}`
-export const DEFAULT_CONTAINER_ID = `${IdPrefix}container.image${IdSuffix}`
-
-export const TEMPORARY = 'temporary'
-export const TEXT_HEIGHT = 1000
-
-export const DECODE: DecodeType = 'decode'
-export const ENCODE: EncodeType = 'encode'
-export const TRANSCODE: TranscodeType = 'transcode'
-export const CURRENT_COLOR = 'currentColor'
 export const RGB_BLACK = '#000000'
 export const RGB_GRAY = '#808080'
 export const RGB_WHITE = '#FFFFFF'
@@ -135,6 +184,7 @@ export const RGBA_BLACK = '#000000FF'
 export const RGBA_BLACK_ZERO = '#00000000'
 export const RGBA_WHITE_ZERO = '#FFFFFF00'
 
+export const TEXT_HEIGHT = 1000
 
 export const ASSET_DURATION = 3
 export const DURATION_UNKNOWN = -1
@@ -142,43 +192,37 @@ export const DURATION_UNLIMITED = -2
 export const DURATION_NONE = 0
 export const FRAMES_MINIMUM = 2
 
-export const ASSET_TYPES: AssetTypes = [VIDEO, AUDIO, IMAGE]
-export const AUDIBLE_TYPES: AudibleType[] = [AUDIO, VIDEO]
-export const VISIBLE_TYPES: AssetTypes = [IMAGE, VIDEO]
-export const DROP_TYPES: DropTypes = [FONT, ...ASSET_TYPES]
-export const IMPORT_TYPES: ImportTypes = [...ASSET_TYPES, TEXT, SHAPE]
-export const PROBING_TYPES: ProbingTypes = [ALPHA, AUDIBLE, DURATION, SIZE_PROBING]
+export const RAW_TYPES: RawTypes = [$VIDEO, $AUDIO, $IMAGE]
+export const AUDIBLE_TYPES: AudibleType[] = [$AUDIO, $VIDEO]
+export const VISIBLE_TYPES: RawTypes = [$IMAGE, $VIDEO]
+export const DROP_TYPES: DropTypes = [$FONT, ...RAW_TYPES]
+export const IMPORT_TYPES: ImportTypes = [...RAW_TYPES, $TEXT, $SHAPE]
+export const PROBING_TYPES: ProbingTypes = [$ALPHA, $AUDIBLE, $DURATION, $SIZE]
 
 
-export const ASPECTS = [FLIP, MAINTAIN] 
+export const ASPECTS: Aspect[] = [$FLIP, $MAINTAIN] 
 
 export const RGB_KEYS = ['r', 'g', 'b'] as const
 export const RGBA_KEYS = [...RGB_KEYS, 'a'] as const
-export const $X: string & 'x' = 'x' 
-export const $Y: string & 'y' = 'y' 
-
-export const HEIGHT: string & 'height' = 'height'
-export const WIDTH: string & 'width' = 'width'
-
 export const POINT_KEYS = [$X, $Y] as const
-export const SIZE_KEYS = [WIDTH, HEIGHT] as const
+export const SIZE_KEYS = [$WIDTH, $HEIGHT] as const
 export const RECT_KEYS = [...POINT_KEYS, ...SIZE_KEYS] as const
 
-export const LOCKS: Lock[] = [HEIGHT, LONGEST, NONE, SHORTEST, WIDTH]
+export const LOCKS: Lock[] = [$HEIGHT, $LONGEST, $NONE, $SHORTEST, $WIDTH]
 
 
 export const DIRECTIONS_SIDE: SideDirection[] = [
-  LEFT,
-  RIGHT,
-  TOP,
-  BOTTOM,
+  $LEFT,
+  $RIGHT,
+  $TOP,
+  $BOTTOM,
 ]
 
 export const DIRECTIONS_CORNER = [
-  BOTTOM_LEFT,
-  BOTTOM_RIGHT,
-  TOP_LEFT,
-  TOP_RIGHT,
+  $BOTTOM_LEFT,
+  $BOTTOM_RIGHT,
+  $TOP_LEFT,
+  $TOP_RIGHT,
 ]
 
 export const DIRECTIONS_ALL: Directions = [
@@ -187,18 +231,19 @@ export const DIRECTIONS_ALL: Directions = [
 ]
 
 export const TARGET_IDS: TargetIds = [
-  MASH, CLIP_TARGET, CONTENT, CONTAINER, ASSET_TARGET
+  $MASH, $CLIP, $CONTENT, $CONTAINER, $ASSET
 ]
 
-export const SIZINGS = [MASH, CONTENT, CONTAINER]
-export const TIMINGS = [CUSTOM, CONTENT, CONTAINER]
-export const TRANSPARENCIES = [ALPHA, LUMINANCE]
+export const SIZINGS = [$MASH, $CONTENT, $CONTAINER]
+export const TIMINGS = [$CUSTOM, $CONTENT, $CONTAINER]
+export const TRANSPARENCIES = [$ALPHA, $LUMINANCE]
 
 
 export const POINT_ZERO: Point = { x: 0, y: 0 } as const
-export const SIZE_ZERO = { width: 0, height: 0 } as const
+export const SIZE_ZERO: Size = { width: 0, height: 0 } as const
 export const SIZE_OUTPUT: Size = { width: 1920, height: 1080 } as const
 export const RECT_ZERO: Rect = { ...POINT_ZERO, ...SIZE_ZERO } as const
+export const RECTS_ZERO: RectTuple = [RECT_ZERO, RECT_ZERO] 
 
 export const ERROR = {
   ClientDisabledDelete: 'client.disabled.delete',
@@ -235,7 +280,7 @@ export const ERROR = {
 export const ERROR_NAMES: Strings = Object.values(ERROR)
 
 export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
-  [AUDIO]:  {
+  [$AUDIO]:  {
     options: {},
     audioBitrate: 160,
     audioCodec: 'libmp3lame',
@@ -243,7 +288,7 @@ export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
     audioRate: 44100,
     extension: 'mp3',
   }, 
-  [BITMAPS]: {
+  [$BITMAPS]: {
     options: {},
     format: 'image2',
     width: 320,
@@ -251,7 +296,7 @@ export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
     videoRate: 10,
     extension: 'jpg',
   },
-  [WAVEFORM]: {
+  [$WAVEFORM]: {
     options: {},
     width: 320,
     height: 100,
@@ -263,13 +308,13 @@ export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
     audioRate: 44100,
     extension: 'png',
   },
-  [IMAGE]: {
+  [$IMAGE]: {
     options: {},
     width: 320,
     height: 240,
     extension: 'jpg',
   },
-  [VIDEO]: {
+  [$VIDEO]: {
     options: {
       // g: 60,
       level: 41,
@@ -290,7 +335,7 @@ export const OUTPUT_DEFAULTS: Record<TranscodingType, OutputOptions> = {
 }
 
 export const ALPHA_OUTPUT_DEFAULTS = {
-  [IMAGE]: {
+  [$IMAGE]: {
     options: {},
     width: 320,
     height: 240,
@@ -298,7 +343,7 @@ export const ALPHA_OUTPUT_DEFAULTS = {
     format: 'image2',
     offset: 0
   },
-  [BITMAPS]: {
+  [$BITMAPS]: {
     options: {},
     format: 'image2',
     width: 320,
@@ -306,7 +351,7 @@ export const ALPHA_OUTPUT_DEFAULTS = {
     videoRate: 10,
     extension: 'png',
   },
-  [VIDEO]: {
+  [$VIDEO]: {
     options: {
       g: 60,
       level: 41,
@@ -329,54 +374,40 @@ export const ALPHA_OUTPUT_DEFAULTS = {
 
 export const VOID_FUNCTION = () => {}
 
-export const length = (value: string | Unknowns): boolean => !!value.length
-export const isBoolean = (value: any): value is boolean => typeof value === 'boolean'
-export const isString = (value: any): value is string => (
-  typeof value === 'string'
-)
-export const isPopulatedString = (value: any): value is PopulatedString => (
-  isString(value) && length(String(value))
+export const isTuple = <T=unknown>(value: any): value is ArrayOf2<T> => (
+  isArray(value) && value.length === 2
 )
 
-export const isUndefined = (value: any): boolean => typeof value === 'undefined'
-export const isDefined = <T = any>(value: any): value is T => !isUndefined(value)
-
-export const isObject = (value: any): value is object => typeof value === 'object'
-
-export const isNumber = (value: any): value is number => (
-  isNumberOrNaN(value) && !Number.isNaN(value)
-)
-
-export const isNumberOrNaN = (value: any): value is number => typeof value === 'number'
-
-export const isNan = (value: any): boolean => isNumberOrNaN(value) && Number.isNaN(value)
-
-export const isNumeric = (value: any): value is Numeric => (
-  (isNumber(value) || isPopulatedString(value)) && !isNan(Number(value))
-)
-
-export function isArray<T = unknown>(value: any): value is T[] {
-  return Array.isArray(value)
+export function assertTuple<T=unknown>(value: any, name?: string): asserts value is ArrayOf2<T> {
+  if (!isTuple<T>(value)) errorThrow(value, 'Tuple', name)
 }
 
-export const isFunction = (value: any): value is Function => typeof value === 'function'
-
-export const isDate = (value: any): value is Date => value instanceof Date
 export const isTyped = (value: any): value is Typed => {
   return isObject(value) &&
     'type' in value &&
     isPopulatedString(value.type)
 }
+
 export function assertTyped(value: any, name?: string): asserts value is Typed {
   if (!isTyped(value))
     errorThrow(value, 'Typed', name)
 }
 
 export const isProbing = (value: any): value is Probing => {
-  return isDecoding(value) && value.type === PROBE
+  return isDecoding(value) && value.type === $PROBE //&& isPopulatedString(value.data.extension)
 }
+
+
 export function assertProbing(value: any): asserts value is Probing {
   if (!isProbing(value)) errorThrow(value, 'Probing') 
+}
+
+export const isScanning = (value: any): value is Scanning => {
+  return isDecoding(value) && value.type === $SCAN && isPopulatedString(value.data.family)
+}
+
+export function assertScanning(value: any): asserts value is Scanning {
+  if (!isScanning(value)) errorThrow(value, 'Scanning') 
 }
 
 export function typeOutputOptions(type: AudioType, overrides?: OutputOptions): AudioOutputOptions
@@ -416,30 +447,30 @@ export const mimeDropType = (mimetype: string): DropType | undefined => {
   if (isDropType(type)) return type
 }
 
-const Counts = new Map<string, number> ()
+const ID_COUNTS = new Map<string, number> ()
 
-export const idReset = () => Counts.clear()
+export const idReset = () => ID_COUNTS.clear()
 
-export const idGenerateString = (): string => {
+export const idGenerateString = (prefix: string = $TEMPORARY): string => {
   return [
-    TEMPORARY, Date.now().toString(36), Math.random().toString(36).slice(2)
+    prefix, Date.now().toString(36), Math.random().toString(36).slice(2)
   ].join(DASH)
 }
 
-export const idGenerate = (prefix: string): string => {
-  const count = Counts.get(prefix) || 0
-  Counts.set(prefix, count + 1)
-  return [prefix, String(count)].join(DASH)
+export const idGenerate = (prefix: string, delimiter: string = DASH): string => {
+  const count = ID_COUNTS.get(prefix) || 0
+  ID_COUNTS.set(prefix, count + 1)
+  return [prefix, String(count)].join(delimiter)
 }
 
-export const idTemporary = () => idGenerate(TEMPORARY)
+export const idTemporary = () => idGenerate($TEMPORARY)
 
-export const idIsTemporary = (id: string) => id.startsWith(TEMPORARY)
-
+export const idIsTemporary = (id: string) => id.startsWith($TEMPORARY)
 
 export const isIdentified = (value: any): value is Identified => {
   return isObject(value) && 'id' in value && isString(value.id)
 }
+
 export function assertIdentified(value: any, name?: string): asserts value is Identified {
   if (!isIdentified(value))
     errorThrow(value, 'Identified', name)
@@ -449,21 +480,31 @@ export const isListenerRecord = (value: any): value is EventDispatcherListeners 
   isObject(value) && Object.values(value).every(isFunction)
 )
 
-export const isErrorName = (value: any): value is ErrorNameType => (
+const isErrorName = (value: any): value is ErrorNameType => (
   (isString(value)) && ERROR_NAMES.includes(value)
 )
 
-export const errorMessage = (name: ErrorNameType, context?: ErrorContext): string => (
+const errorMessage = (name: ErrorNameType, context?: ErrorContext): string => (
   isString(context) ? context : name
 )
 
 export const errorMessageObject = (message: string, name: string = ERROR.Internal, cause?: unknown): ErrorObject => {
+  if (cause instanceof Error) return cause
+
   const error = new Error(message)
   Object.assign(error, { name, cause })
   return error
 }
-
+export const isErrorObject = (value: any): value is ErrorObject => (
+  isObject(value) && 'name' in value  
+  && isPopulatedString(value.name) 
+  && 'message' in value
+  && isPopulatedString(value.message) 
+)
 export const errorObjectCaught = (error: any): ErrorObject => {
+  console.log('errorObjectCaught', typeof error, error?.constructor.name)
+  if (isErrorObject(error)) return error
+  
   if (isErrorName(error)) return errorName(error) 
   if (isString(error)) return errorMessageObject(error)
   
@@ -478,11 +519,13 @@ export const errorName = (name: ErrorNameType, context?: ErrorContext): ErrorObj
 }
 
 export const errorCaught = (error: any): DefiniteError => {
-  // console.error('errorCaught', error)
+  if (isDefiniteError(error)) return error
+
+  console.error('errorCaught', error, typeof error)
   return { error: errorObjectCaught(error) }
 }
 
-export const errorPromise = (name: ErrorNameType, context?: ErrorContext): Promise<DefiniteError & any> => (
+export const errorPromise = (name: ErrorNameType, context?: ErrorContext): Promise<DefiniteError> => (
   Promise.resolve(namedError(name, context))
 )
 
@@ -505,13 +548,13 @@ export const errorThrow = (value: any, type?: ErrorContext, property?: string): 
   const { message, name, cause } = object
   const errorCause = typeIsString ? cause : type
   const throwObject = errorMessageObject(message, name, errorCause)
-  // console.trace(throwObject.toString())
   throw throwObject
 }
 
-export const namedError = (code: ErrorNameType, context?: ErrorContext): DefiniteError => (
-  { error: errorName(code, context)}
-)
+export const namedError = (code: ErrorNameType, context?: ErrorContext): DefiniteError => {
+  console.trace('namedError', code, context)
+  return { error: errorName(code, context) }
+}
 
 export const isDefiniteError = (value: any): value is DefiniteError => {
   return isObject(value) && 'error' in value // && isObject(value.error)
@@ -520,42 +563,37 @@ export const isDefiniteError = (value: any): value is DefiniteError => {
 export const isDecodingType = isPopulatedString
 
 export const isDecoding = (value: any): value is Decoding => (
-  isTyped(value) && isDecodingType(value.type)
+  isTyped(value) && isDecodingType(value.type) && 'data' in value && isObject(value.data)
 )
+
 export function assertDecoding(value: any): asserts value is Decoding {
   if (!isDecoding(value)) errorThrow(value, 'Decoding') 
 }
 
-export const isAssetType = (value?: any): value is AssetType => (
-  ASSET_TYPES.includes(value)
+export const isRawType = (value?: any): value is RawType => (
+  RAW_TYPES.includes(value)
 )
 
-export const isAudibleAssetType = (value?: any): value is AudibleType => (
+export const isAudibleType = (value?: any): value is AudibleType => (
   AUDIBLE_TYPES.includes(value)
 )
 
-export const isVisibleAssetType = (value?: any): value is VisibleType => (
+export const isVisibleType = (value?: any): value is VisibleType => (
   VISIBLE_TYPES.includes(value)
 )
-
 
 export const isAsset = (value: any): value is Asset => (
   isIdentified(value) 
   && isTyped(value) 
-  && isAssetType(value.type) 
-  && 'isVector' in value
+  && isRawType(value.type) 
+  && 'instanceFromObject' in value
 )
 
-export function assertAssetType(type: any, name?: string): asserts type is AssetType {
-  if (!isAssetType(type)) errorThrow(type, 'AssetType', name)
-}
-
 export function assertAsset(value: any, name?: string): asserts value is Asset {
-  assertIdentified(value, name)
-  assertTyped(value, name)
-  assertAssetType(value.type, name)
   if (!isAsset(value)) errorThrow(value, 'Asset', name)
 }
+
+
 export const isSourceAsset = (value: any): value is SourceAsset => (
   isAsset(value) && isPopulatedString(value.source)
 )
@@ -582,11 +620,11 @@ export function isAssetObject(value: any, type?: ImageType, source?: TextSource)
 export function isAssetObject(value: any, type?: ImageType, source?: ColorSource): value is ColorAssetObject 
 export function isAssetObject(value: any, type?: ImageType, source?: ShapeSource): value is ShapeAssetObject 
 
-export function isAssetObject(value: any, type?: AssetType, source?: Source): value is AssetObject 
-export function isAssetObject(value: any, type: undefined | AssetType = undefined, source: undefined | Source = undefined): value is AssetObject {
+export function isAssetObject(value: any, type?: RawType, source?: Source): value is AssetObject 
+export function isAssetObject(value: any, type: undefined | RawType = undefined, source: undefined | Source = undefined): value is AssetObject {
   return (
     value && isIdentified(value) 
-    && isTyped(value) && isAssetType(value.type) 
+    && isTyped(value) && isRawType(value.type) 
     && (!type || type === value.type)
     && 'source' in value && isPopulatedString(value.source)
     && (!source || source === value.source)
@@ -595,6 +633,12 @@ export function isAssetObject(value: any, type: undefined | AssetType = undefine
 
 export const arrayLast = <T=unknown>(array: T[]): T => array[array.length - 1]
 
+/**
+ * Replaces the contents of an array with the contents of another array.
+ * @param array 
+ * @param items 
+ * @returns 
+ */
 export const arraySet = <T=unknown>(array: T[], items: T[]): T[] => {
   array.splice(0, array.length, ...items)
   return array
@@ -628,15 +672,14 @@ export const arrayRemove = <T=unknown>(array: T[], item: T | T[]) => {
 }
 
 export const jsonParse = <T = any>(json: string): T => globalThis.JSON.parse(json)
+
 export const jsonStringify = (value: any): string => globalThis.JSON.stringify(value, null, 2)
-export const CEIL = 'ceil'
-export const FLOOR = 'floor'
-export const ROUND = 'round'
+
 
 const roundMethod = (rounding?: Rounding): (value: number) => number => {
   switch (rounding) {
-    case CEIL: return Math.ceil
-    case FLOOR: return Math.floor
+    case $CEIL: return Math.ceil
+    case $FLOOR: return Math.floor
     default: return Math.round
   }
 }
@@ -706,84 +749,370 @@ export const isAbsolutePath = (value: any): value is AbsolutePath => {
   return isString(value) && value.startsWith('/')
 }
 
+export const pathExtension = (url: string): string => {
+  const parts = url.split(DOT)
+  return arrayLast(parts)
+}
 
-export const CLIENT = 'client'
-export const SERVER = 'server'
+export const pathJoin = (url: string, path: string): string => {
+  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
+  const pathStripped = path.startsWith(SLASH) ? path.slice(1) : path
+  return [urlStripped, SLASH, pathStripped].join('')
+}
+
+export const pathFilename = (url: string): string => arrayLast(url.split(SLASH))
 
 
-class DefaultEventDispatcher extends EventTarget implements EventDispatcher {
-  addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
-    this.addEventListener(type, listener as EventListener, options);
-    return this;
+
+export const promiseNumbers = (promises: Promise<DataOrError<number>>[]) => {
+  const { length } = promises
+  const result = { data: 0 }
+
+  switch (length) {
+    case 0: return Promise.resolve(result)
+    case 1: return promises[0]
   }
 
-  dispatch<T>(event: CustomEvent<T> | Event): boolean {
-    return this.dispatchEvent(event);
-  }
+  const promise = promises.reduce((promise, next) => promise.then(orError => {
+    if (isDefiniteError(orError)) return orError
 
-  listenersAdd(record: EventDispatcherListeners) {
-    Object.entries(record).forEach(([type, listener]) => {
-      this.addDispatchListener(type, listener);
-    });
-  }
+    result.data += orError.data
+    return next
+  }), Promise.resolve(result))
 
-  listenersRemove(record: EventDispatcherListeners) {
-    Object.entries(record).forEach(([type, listener]) => {
-      this.removeDispatchListener(type, listener);
-    });
-  }
+  return promise.then(orError => {
+    if (isDefiniteError(orError)) return orError
 
-  removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
-    this.removeEventListener(type, listener as EventListener, options);
-    return this;
+    return result
+  })
+}
+
+const JOB_TYPES = [$DECODE, $ENCODE, $TRANSCODE]
+
+const isJobType = (value: any): value is JobType => (
+  JOB_TYPES.includes(value)
+)
+
+export const copyEndpointRequest = (request: EndpointRequest): EndpointRequest => {
+  const { endpoint, init } = request
+  return { endpoint, init }
+}
+
+export const copyResource = (resourse: Resource) => {
+  return {
+    ...resourse,
+    request: copyEndpointRequest(resourse.request)
   }
 }
 
+export const customEventClass = <T>() => MOVIEMASHER.window.CustomEvent<T> 
 
 
+type Ids = Record<string, StringTuple>
 
-export const MOVIEMASHER: MovieMasherRuntime = {
-  context: CLIENT,
-  document: globalThis.document,
-  eventDispatcher: new DefaultEventDispatcher(),
-  imports: {},
-  options: {},
-  get importPromise() { 
-    const { imports, eventDispatcher, context } = MOVIEMASHER
+class FunctionLoader <RET = any, OPTS extends object = object, ARGS extends Typed = Typed> {
+  constructor(private ids: Ids = {}) {}
+
+  getReturningFunction(id: string): ReturningFunction<RET, OPTS> | undefined {
+    return this.returningFunctions[id]
+  }
+
+  private async promisingFunctionImportPromise(tuple: StringTuple): Promise<DataOrError<PromiseFunction<RET, OPTS, ARGS>>> {
+    const [moduleId, exportedAs] = tuple
+    const module = await import(moduleId)
+    const data = module[exportedAs]
+    if (isFunction(data)) return { data }
+    
+    return namedError(ERROR.Url, moduleId)
+  }
+
+  private async returningFunctionImportPromise(tuple: StringTuple): Promise<DataOrError<ReturningFunction<RET, OPTS>>> {
+    const [moduleId, exportedAs] = tuple
+
+    // console.log('returningFunctionImportPromise', moduleId, exportedAs)
+    const module = await import(moduleId)
+    const data = module[exportedAs]
+    if (isFunction(data)) return { data }
+    
+    return namedError(ERROR.Url, moduleId)
+  }
+  private promisingFunctions: Record<string, PromiseFunction<RET, OPTS, ARGS>>= {}
+  private returningFunctions: Record<string, ReturningFunction<RET, OPTS>>= {}
+
+  install(id: string, moduleId: string, exportedAs: string = $DEFAULT): DefiniteError | undefined{
+    this.ids[id] = [moduleId, exportedAs]
+    return
+  }
+
+  async importPromise(): Promise<DataOrError<ImportResult>> {
+    const { ids } = this
+    const keys = Object.keys(ids)
+    for (const id of keys) {
+      const orError = await this.returningFunctionPromise(id)
+      if (isDefiniteError(orError)) return orError
+    }
+    return {data: {}}
+  }
+  private async promiseFunctionPromise(id: string): Promise<DataOrError<PromiseFunction<RET, OPTS, ARGS>>> {
+    const { promisingFunctions: functions, ids, promisingFunctionPromises: promises } = this
+    const { [id]: loadingPromise } = promises
+    if (loadingPromise) return loadingPromise
+
+    const { [id]: tuple } = ids
+    if (!tuple) return errorPromise(ERROR.Unimplemented, id)  
+
+    return promises[id] = this.promisingFunctionImportPromise(tuple).then(orError => {
+      if (!isDefiniteError(orError)) {
+        functions[id] = orError.data
+        delete promises[id]
+      }
+      return orError
+    })
+  }
+
+  returningFunctionPromise(id: string): Promise<DataOrError<ReturningFunction<RET, OPTS>>>{
+    const { [id]: loaded } = this.returningFunctions 
+    if (loaded) return Promise.resolve({data: loaded}) 
+ 
+    return this.returnFunctionPromise(id) 
+  }
+
+  private async returnFunctionPromise(id: string): Promise<DataOrError<ReturningFunction<RET, OPTS>>> {
+    const { returningFunctions: functions, ids, returningFunctionPromises: promises } = this
+    const { [id]: loadingPromise } = promises
+    if (loadingPromise) return loadingPromise
+
+    const { [id]: tuple } = ids
+    if (!tuple) return errorPromise(ERROR.Unimplemented, id)  
+
+    return promises[id] = this.returningFunctionImportPromise(tuple).then(orError => {
+      if (!isDefiniteError(orError)) {
+        functions[id] = orError.data
+        delete promises[id]
+      }
+      return orError
+    })
+  }
+
+  promisingFunctionPromise(id: string): Promise<DataOrError<PromiseFunction<RET, OPTS, ARGS>>>{
+    const { [id]: loaded } = this.promisingFunctions 
+    if (loaded) return Promise.resolve({data: loaded}) 
+ 
+    return this.promiseFunctionPromise(id) 
+  }
+
+  
+  promise(args: ARGS, options: OPTS): Promise<DataOrError<RET>>{
+    const { type: id } = args
+    const { [id]: loaded } = this.promisingFunctions 
+    if (loaded) return loaded(args, options)
+ 
+    return this.promiseFunctionPromise(id).then(functionOrError => {
+      if (isDefiniteError(functionOrError)) return functionOrError
+
+      return functionOrError.data(args, options)
+    })
+  }
+  private returningFunctionPromises: Record<string, Promise<DataOrError<ReturningFunction<RET, OPTS>>>> = {}
+
+  private promisingFunctionPromises: Record<string, Promise<DataOrError<PromiseFunction<RET, OPTS, ARGS>>>> = {}
+}
+
+
+class MovieMasherClass implements MovieMasherInstance {
+  constructor() {
+    this.loaders = {
+      [$AUDIO]: new FunctionLoader({  
+        [$RAW]: ['@moviemasher/client-lib/source/raw/raw.js', 'ClientRawAudioListeners'],
+      }),
+      [$DECODE]: new FunctionLoader({
+        [$PROBE]: ['@moviemasher/client-lib/module/decode.js', 'decodeFunction'],
+        [$SCAN]: ['@moviemasher/client-lib/module/decode.js', 'decodeFunction'],
+      }),
+      [$ENCODE]: new FunctionLoader({
+        [$AUDIO]: ['@moviemasher/client-lib/module/encode.js', 'encodeFunction'],
+        [$IMAGE]: ['@moviemasher/client-lib/module/encode.js', 'encodeFunction'],
+        [$VIDEO]: ['@moviemasher/client-lib/module/encode.js', 'encodeFunction'],
+      }),
+      [$IMAGE]: new FunctionLoader({
+        [$RAW]: ['@moviemasher/client-lib/source/raw/raw.js', 'ClientRawImageListeners'],
+        [$SHAPE]: ['@moviemasher/client-lib/source/shape/image-shape.js', 'ClientShapeImageListeners'],
+        [$TEXT]: ['@moviemasher/client-lib/source/text/image-text.js', 'ClientTextImageListeners'],
+        [$COLOR]: ['@moviemasher/client-lib/source/color/image-color.js', 'colorClientListeners'],
+      }),
+      [$RETRIEVE]: new FunctionLoader({
+        [$AUDIO]: ['@moviemasher/client-lib/module/retrieve.js', 'audioRetrieveFunction'],
+        [$CSS]: ['@moviemasher/shared-lib/module/retrieve.js', 'cssRetrieveFunction'],
+        [$TTF]: ['@moviemasher/shared-lib/module/retrieve.js', 'fontRetrieveFunction'],
+        [$WOFF2]: ['@moviemasher/shared-lib/module/retrieve.js', 'fontRetrieveFunction'],
+        [$IMAGE]: ['@moviemasher/client-lib/module/retrieve.js', 'imageRetrieveFunction'],
+        [$URL]: ['@moviemasher/client-lib/module/retrieve.js', 'urlRetrieveFunction'],
+        [$VIDEO]: ['@moviemasher/client-lib/module/retrieve.js', 'videoRetrieveFunction'],
+      }),
+      [$TRANSCODE]: new FunctionLoader({  
+        [$BITMAPS]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
+        [$WAVEFORM]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
+        [$AUDIO]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
+        [$IMAGE]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
+        [$VIDEO]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
+      }),
+      [$VIDEO]: new FunctionLoader({
+        [$RAW]: ['@moviemasher/client-lib/source/raw/raw.js', 'ClientRawVideoListeners'],
+        [$MASH]: ['@moviemasher/client-lib/source/mash/video-mash.js', 'ClientMashVideoListeners'],
+      }),
+      [$TEXT]: new FunctionLoader({
+        [$RECT]: ['@moviemasher/shared-lib/module/text-rect.js', 'textRect'],
+      })
+    }
+  }
+  dispatch<T = any>(typeOrEvent: Event | CustomEvent<T>): boolean {
+    return MOVIE_MASHER_INSTANCE.eventDispatcher.dispatch(typeOrEvent)
+  }
+
+  listenersAdd(record: EventDispatcherListeners): void {
+    MOVIE_MASHER_INSTANCE.eventDispatcher.listenersAdd(record)
+  }
+
+  listenersRemove(record: EventDispatcherListeners): void {
+    MOVIE_MASHER_INSTANCE.eventDispatcher.listenersRemove(record)
+  }
+
+  call<RET = any>(moduleType: ModuleType, id: string, args?: object): DataOrError<RET> {
+    const { [moduleType]: loader} = this.loaders
+    if (!loader) return namedError(ERROR.Unimplemented, moduleType)
+
+    const returningFunction = loader.getReturningFunction(id)
+    if (!returningFunction) return namedError(ERROR.Unimplemented, id)
+
+    return returningFunction(args)    
+  }
+
+  private _context?: ClientOrServer
+
+  get context(): ClientOrServer {
+    return this._context ||= globalThis.Window ? $CLIENT : $SERVER
+  }
+
+  private _eventDispatcher?: EventDispatcher
+
+  get eventDispatcher() {
+    return this._eventDispatcher ||= this.eventDispatcherInitialize
+  }
+
+  private get eventDispatcherInitialize(): EventDispatcher {
+    class DefaultEventDispatcher extends MOVIEMASHER.window.EventTarget implements EventDispatcher {
+      private addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
+        this.addEventListener(type, listener as EventListener, options)
+        return this
+      }
+  
+      dispatch<T>(event: CustomEvent<T> | Event): boolean {
+        return this.dispatchEvent(event)
+      }
+  
+      listenersAdd(record: EventDispatcherListeners) {
+        Object.entries(record).forEach(([type, listener]) => {
+          this.addDispatchListener(type, listener)
+        })
+      }
+  
+      listenersRemove(record: EventDispatcherListeners) {
+        Object.entries(record).forEach(([type, listener]) => {
+          this.removeDispatchListener(type, listener)
+        })
+      }
+  
+      private removeDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
+        this.removeEventListener(type, listener as EventListener, options)
+        return this
+      }
+    }
+    return new DefaultEventDispatcher()
+  } 
+
+
+  async importPromise(): Promise<DataOrError<ImportResult>> { 
+    const { imports, context, loaders } = this
+    const keys = Object.keys(loaders).filter(key => (
+      !(isRawType(key) || isJobType(key) || key === $RETRIEVE)
+    ))
+    for (const key of keys) {
+
+      const { [key]: loader } = loaders
+      const orError = await loader.importPromise()
+      if (isDefiniteError(orError)) return orError
+    }
     const suffix = context[0].toUpperCase() + context.slice(1)
     const functions = Object.keys(imports).sort((a, b) => b.length - a.length)
-    const moduleIds = [...new Set(Object.values(imports).filter(isPopulatedString))]
+    const moduleIds = [...new Set(Object.values(imports).filter(isPopulatedString))].sort()
+    // console.log('importPromise', moduleIds)
     const byId: StringsRecord = Object.fromEntries(moduleIds.map(id => (
       [id, functions.filter(key => imports[key] === id)]
     )))
-    const promises = moduleIds.map(moduleId => {
-      return import(moduleId).then(module => {
-        const importers = byId[moduleId]
-        const potentialErrors = importers.map(importer => {
-          const regex = /^[a-z]+$/
-          const key = importer.match(regex) ? `${importer}${suffix}Listeners` : importer
-          const { [key]: funktion } = module
-          if (!isFunction(funktion)) return namedError(ERROR.Url, importer)
-          
-          const listeners = funktion()
-          if (!isListenerRecord(listeners)) return namedError(ERROR.Type, importer)
-          
-          // console.log('importPromise', moduleId, key, Object.keys(listeners))
-          eventDispatcher.listenersAdd(listeners)
-          return {}
-        })
-        const definiteErrors = potentialErrors.filter(isDefiniteError)
-        if (definiteErrors.length) return definiteErrors[0]
+    for (const moduleId of moduleIds) {
+      const module = await import(moduleId)
+      const importers = byId[moduleId]
+      for (const importer of importers) {
+        const regex = /^[a-z]+$/
+        const key = importer.match(regex) ? `${importer}${suffix}Listeners` : importer
+        const { [key]: funktion } = module
+        if (!isFunction(funktion)) return namedError(ERROR.Url, importer)
         
-        return {}
-      }).catch(error => errorCaught(error))
-    })
-    return Promise.all(promises).then(results => {
-      results.filter(isDefiniteError).forEach(error => {
-        console.error('importPromise', error)
-      })
-    })   
-  },
-} as const
+        const listeners = funktion()
+        if (!isListenerRecord(listeners)) return namedError(ERROR.Type, importer)
+        
+        // console.log('importPromise', moduleId, key, Object.keys(listeners))
+        this.listenersAdd(listeners)
+      }
+    }
+    return { data: {} }
+  }
 
+  imports: StringRecord = {}
 
+  install(moduleType: ModuleType, id: string, moduleId: string, exportedAs: string = $DEFAULT): DefiniteError | undefined {
+    this.loaders[moduleType] ||= new FunctionLoader()
+    return this.loaders[moduleType].install(id, moduleId, exportedAs)
+  }
+
+  load<RET = any>(moduleType: ModuleType, id: string, moduleId: string, exported?: string | undefined): Promise<DataOrError<ReturningFunction<RET>>> {
+    const error = this.install(moduleType, id, moduleId, exported)
+    if (error) return Promise.resolve(error)
+
+    return this.loaders[moduleType].returningFunctionPromise(id)
+  }
+
+  private loaders: Record<ModuleType, FunctionLoader>
+
+  options: MovieMasherOptions = {
+    transcode: {
+      [$IMAGE]: [$IMAGE],
+      [$VIDEO]: [$BITMAPS, $AUDIO, $WAVEFORM],
+      [$AUDIO]: [$AUDIO, $WAVEFORM],
+    }
+  }
+
+  promise<RET = any, OPTS extends object = object, ARGS extends Typed = Typed>(moduleType: ModuleType, args: ARGS, opts?: OPTS): Promise<DataOrError<RET>> {
+    const { [moduleType]: loader} = this.loaders
+    if (!loader) return Promise.resolve(namedError(ERROR.Unimplemented, moduleType))
+
+    // console.log('promise', moduleType, args, opts)
+    return loader.promise(args, opts || {})
+  }
+  
+  private _window?: DocumentWindow
+  get window(): DocumentWindow {
+    const { _window } = this
+    if (_window) return _window
+
+    const orError = this.call<DocumentWindow>($DOM, $WINDOW)
+    const window = isDefiniteError(orError) ? globalThis.window : orError.data
+    return this._window = window
+  }
+}
+
+const MOVIE_MASHER_INSTANCE: MovieMasherInstance = new MovieMasherClass()
+
+export const MOVIEMASHER: MovieMasherRuntime = MOVIE_MASHER_INSTANCE
+
+globalThis.window.document.fonts

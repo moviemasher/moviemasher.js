@@ -1,6 +1,6 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
-import { FLIP } from '@moviemasher/shared-lib/runtime.js'
+import { $FLIP } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { HeaderBase } from '../base/LeftCenterRight.js'
 
@@ -15,7 +15,7 @@ export class PlayerHeaderElement extends HeaderBase {
     const htmls = [...slots]
     htmls.push(html`
       <movie-masher-action-client 
-        icon='${FLIP}' detail='${FLIP}'
+        icon='${$FLIP}' detail='${$FLIP}'
       ></movie-masher-action-client>
     `)
     return super.leftContent(htmls)

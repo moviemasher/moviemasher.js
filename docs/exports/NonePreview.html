@@ -135,7 +135,7 @@
 <p>MashPreview of a single mash at a single frame</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code><a href='MashPreviewClass.html'>MashPreviewClass</a></code></p>
+<li><p><code><a href='ClientMashDescriptionClass.html'>ClientMashDescriptionClass</a></code></p>
 <p>↳ <strong><code><a href='#'>NonePreview</a></code></strong></p>
 </li>
 </ul>
@@ -151,63 +151,85 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='MashPreviewArgs.html'>MashPreviewArgs</a></code></td>
+<td align="left"><code><a href='ClientMashDescriptionArgs.html'>ClientMashDescriptionArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Inherited from
-<a href="MashPreviewClass.html">MashPreviewClass</a>.<a href="MashPreviewClass.html#MashPreviewClass.constructor">constructor</a></p>
+<a href="ClientMashDescriptionClass.html">ClientMashDescriptionClass</a>.<a href="ClientMashDescriptionClass.html#ClientMashDescriptionClass.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="NonePreview.args">args</a></h3><p>• <strong>args</strong>: <code><a href='MashPreviewArgs.html'>MashPreviewArgs</a></code></p>
+<h3><a id="NonePreview._clips">_clips</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_clips</strong>: <code><a href='Clips.html'>Clips</a></code></p>
 <p>Inherited from
-<a href="MashPreviewClass.html">MashPreviewClass</a>.<a href="MashPreviewClass.html#MashPreviewClass.args">args</a></p>
+<a href="ClientMashDescriptionClass.html">ClientMashDescriptionClass</a>.<a href="ClientMashDescriptionClass.html#ClientMashDescriptionClass._clips">_clips</a></p>
+<hr>
+<h3><a id="NonePreview.args">args</a></h3><p>• <code>Protected</code> <strong>args</strong>: <code><a href='ClientMashDescriptionArgs.html'>ClientMashDescriptionArgs</a></code></p>
+<p>Inherited from
+<a href="ClientMashDescriptionClass.html">ClientMashDescriptionClass</a>.<a href="ClientMashDescriptionClass.html#ClientMashDescriptionClass.args">args</a></p>
 <h2>Accessors</h2>
+<h3><a id="NonePreview.assetType">assetType</a></h3><p>• <code>Protected</code> <code>get</code> <strong>assetType</strong>(): <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
+<p>Returns
+<code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
+<p>Inherited from
+ClientMashDescriptionClass.assetType</p>
+<hr>
+<h3><a id="NonePreview.avType">avType</a></h3><p>• <code>Protected</code> <code>get</code> <strong>avType</strong>(): <code><a href='../combined/Types.html#AVType'>AVType</a></code></p>
+<p>Returns
+<code><a href='../combined/Types.html#AVType'>AVType</a></code></p>
+<p>Inherited from
+ClientMashDescriptionClass.avType</p>
+<hr>
+<h3><a id="NonePreview.clip">clip</a></h3><p>• <code>Protected</code> <code>get</code> <strong>clip</strong>(): <code><a href='ClientClip.html'>ClientClip</a></code></p>
+<p>Returns
+<code><a href='ClientClip.html'>ClientClip</a></code></p>
+<p>Inherited from
+ClientMashDescriptionClass.clip</p>
+<hr>
 <h3><a id="NonePreview.clips">clips</a></h3><p>• <code>Protected</code> <code>get</code> <strong>clips</strong>(): <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <p>Returns
 <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <p>Overrides
-MashPreviewClass.clips</p>
+ClientMashDescriptionClass.clips</p>
 <hr>
-<h3><a id="NonePreview.elementsPromise">elementsPromise</a></h3><p>• <code>get</code> <strong>elementsPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../categories/Elements.html'>Elements</a></code>&gt;</p>
+<h3><a id="NonePreview.elementsPromise">elementsPromise</a></h3><p>• <code>get</code> <strong>elementsPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../categories/Elements.html'>Elements</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
 <p>Inherited from
-MashPreviewClass.elementsPromise</p>
+ClientMashDescriptionClass.elementsPromise</p>
+<hr>
+<h3><a id="NonePreview.mash">mash</a></h3><p>• <code>get</code> <strong>mash</strong>(): <code><a href='ClientMashAsset.html'>ClientMashAsset</a></code></p>
+<p>Returns
+<code><a href='ClientMashAsset.html'>ClientMashAsset</a></code></p>
+<p>Inherited from
+ClientMashDescriptionClass.mash</p>
 <hr>
 <h3><a id="NonePreview.quantize">quantize</a></h3><p>• <code>get</code> <strong>quantize</strong>(): <code>number</code></p>
 <p>Returns
 <code>number</code></p>
 <p>Inherited from
-MashPreviewClass.quantize</p>
-<hr>
-<h3><a id="NonePreview.scale">scale</a></h3><p>• <code>get</code> <strong>scale</strong>(): <code>number</code></p>
-<p>Returns
-<code>number</code></p>
-<p>Inherited from
-MashPreviewClass.scale</p>
+ClientMashDescriptionClass.quantize</p>
 <hr>
 <h3><a id="NonePreview.selectedClip">selectedClip</a></h3><p>• <code>get</code> <strong>selectedClip</strong>(): <code><a href='ClientClip.html'>ClientClip</a></code></p>
 <p>Returns
 <code><a href='ClientClip.html'>ClientClip</a></code></p>
 <p>Inherited from
-MashPreviewClass.selectedClip</p>
+ClientMashDescriptionClass.selectedClip</p>
 <hr>
-<h3><a id="NonePreview.size">size</a></h3><p>• <code>get</code> <strong>size</strong>(): <code><a href='Size.html'>Size</a></code></p>
+<h3><a id="NonePreview.size">size</a></h3><p>• <code>get</code> <strong>size</strong>(): <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <p>Returns
-<code><a href='Size.html'>Size</a></code></p>
+<code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-MashPreviewClass.size</p>
+ClientMashDescriptionClass.size</p>
 <hr>
 <h3><a id="NonePreview.svgItemsPromise">svgItemsPromise</a></h3><p>• <code>get</code> <strong>svgItemsPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
 <p>Inherited from
-MashPreviewClass.svgItemsPromise</p>
+ClientMashDescriptionClass.svgItemsPromise</p>
 <hr>
 <h3><a id="NonePreview.time">time</a></h3><p>• <code>get</code> <strong>time</strong>(): <code><a href='Time.html'>Time</a></code></p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
-MashPreviewClass.time</p>
+ClientMashDescriptionClass.time</p>
 
   </div>
 </section>
@@ -218,11 +240,15 @@ MashPreviewClass.time</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#NonePreview'>NonePreview</a></li>
 <li><a class='' href='#NonePreview.constructor'>constructor</a></li>
+<li><a class='' href='#NonePreview._clips'>_clips</a></li>
 <li><a class='' href='#NonePreview.args'>args</a></li>
+<li><a class='' href='#NonePreview.assetType'>assetType</a></li>
+<li><a class='' href='#NonePreview.avType'>avType</a></li>
+<li><a class='' href='#NonePreview.clip'>clip</a></li>
 <li><a class='' href='#NonePreview.clips'>clips</a></li>
 <li><a class='' href='#NonePreview.elementsPromise'>elementsPromise</a></li>
+<li><a class='' href='#NonePreview.mash'>mash</a></li>
 <li><a class='' href='#NonePreview.quantize'>quantize</a></li>
-<li><a class='' href='#NonePreview.scale'>scale</a></li>
 <li><a class='' href='#NonePreview.selectedClip'>selectedClip</a></li>
 <li><a class='' href='#NonePreview.size'>size</a></li>
 <li><a class='' href='#NonePreview.svgItemsPromise'>svgItemsPromise</a></li>

@@ -1,21 +1,21 @@
-import type { AVType, AssetType, Clip, Clips, DataOrError, Elements, MashAsset, MashDescription, MashDescriptionArgs, Size, Time } from '../types.js'
+import type { AVType, RawType, Clip, Clips, DataOrError, Elements, MashAsset, MashDescription, MashDescriptionArgs, Size, Time } from '../types.js'
 
-import { AUDIO, BOTH, ERROR, IMAGE, VIDEO, errorThrow, isDefiniteError, sortByTrack } from '../runtime.js'
+import { $AUDIO, $BOTH, ERROR, $IMAGE, $VIDEO, errorThrow, isDefiniteError, sortByTrack } from '../runtime.js'
 import { timeFromArgs, timeRangeFromArgs } from '../utility/time.js'
-import { isBelowOne } from '../utility/guards.js'
+import { isBelowOne } from '../utility/guard.js'
 
 export class MashDescriptionClass implements MashDescription {
   constructor(protected args: MashDescriptionArgs) {}
 
-  protected get assetType(): AssetType { 
+  protected get assetType(): RawType { 
     return this.args.assetType || this.mash.type 
   }
 
   protected get avType(): AVType { 
     switch (this.assetType) {
-      case AUDIO: return AUDIO
-      case IMAGE: return VIDEO
-      case VIDEO: return BOTH 
+      case $AUDIO: return $AUDIO
+      case $IMAGE: return $VIDEO
+      case $VIDEO: return $BOTH 
     }
   }
 
@@ -43,23 +43,23 @@ export class MashDescriptionClass implements MashDescription {
   get size(): Size { return this.args.size || this.mash.size }
 
   private _time?: Time
+
   get time(): Time {
     const { _time } = this
     if (_time) return _time
-
+    
     const { args, assetType } = this
-    const isImage = assetType === IMAGE
+    const isImage = assetType === $IMAGE
     const { time } = args
     if (time) return this._time = isImage ? time.startTime : time
     
     const { frame, quantize } = this
-
     const frameTime = timeFromArgs(frame, quantize)
     if (isImage) return this._time = frameTime
 
     const { frames } = this
     if (isBelowOne(frames)) return frameTime // do not set until duration known
-    
+
     return this._time = timeRangeFromArgs(frame, quantize, frames)
   }
 }

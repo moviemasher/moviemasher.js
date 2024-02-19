@@ -1,20 +1,20 @@
 
-import type { AssetCacheArgs, AssetObject, AssetType, ChangePropertiesEditObject, EventDispatcherListeners, MashAssetObject, PropertyId, PropertyIds, ScalarsById, Size, Strings, Elements, TargetId, TargetIds, Time, ClipObjects } from '@moviemasher/shared-lib/types.js'
+import type { AssetCacheArgs, AssetObject, RawType, ChangePropertiesEditObject, ClipObjects, EventDispatcherListeners, MashAssetObject, PropertyId, PropertyIds, ScalarsById, Size, Strings, SvgItems, TargetId, TargetIds, Time } from '@moviemasher/shared-lib/types.js'
 import type { AddClipsEditObject, AddTrackEditObject, ClientAction, ClientAsset, ClientAssets, ClientClip, ClientClips, ClientMashAsset, ClipIconArgs, ClipLocation, Edits, Masher, MasherArgs, MasherOptions, MoveClipEditObject, RemoveClipEditObject, Selectable, SelectedProperty, Timeout } from '../../types.js'
 
-import { ASSET_TARGET, AUDIO, CHANGE_MULTIPLE, CLIP_TARGET, CONTAINER, CONTENT, DOT, END, FLIP, MASH, MOVIEMASHER, TARGET_IDS, VIDEO, arrayRemove, errorThrow, idGenerate, idGenerateString, idTemporary, isArray, isBoolean, isDefiniteError, isNumber } from '@moviemasher/shared-lib/runtime.js'
+import { $ASSET, $AUDIO, $CHANGES, $CLIP, $CONTAINER, $CONTENT, $END, $FLIP, $MASH, $ROUND, $VIDEO, DOT, MOVIEMASHER, TARGET_IDS, arrayRemove, idGenerate, idGenerateString, idTemporary, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { colorFromRgb, colorRgbDifference, colorToRgb } from '@moviemasher/shared-lib/utility/color.js'
-import { assertArray, assertDefined, assertPopulatedString, assertPositive, isEndpoint, isMashAsset, isPositive, isPropertyId } from '@moviemasher/shared-lib/utility/guards.js'
-import { assertSizeAboveZero, sizeAboveZero, sizeContain, sizeEven } from '@moviemasher/shared-lib/utility/rect.js'
-import { svgSet, svgDefsElement, svgPolygonElement, svgPatternElement, svgSvgElement, svgUrl } from '@moviemasher/shared-lib/utility/svg.js'
+import { isArray, isPositive, isDefined } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined, assertPositive, isEndpoint, isMashAsset, isPropertyId } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertSizeNotZero, containSize, evenSize, sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
+import { svgDefsElement, svgPatternElement, svgPolygonElement, svgSet, svgSvgElement, svgUrl } from '@moviemasher/shared-lib/utility/svg.js'
 import { timeFromArgs, timeFromSeconds } from '@moviemasher/shared-lib/utility/time.js'
 import { isClientAudibleInstance, isClientVisibleInstance } from '../../guards/ClientGuards.js'
 import { assertClientClip, assertClientMashAsset, isClientMashAsset } from '../../guards/ClientMashGuards.js'
 import { isTargetId } from '../../guards/TypeGuards.js'
 import { ADD, ADD_TRACK, INDEX_CURRENT, INDEX_LAST, INDEX_NEXT, MOVE_CLIP, PLAY, REDO, REMOVE, REMOVE_CLIP, UNDO, VIEW, isClientAsset } from '../../runtime.js'
-import { EventAddAssets, EventAssetId, EventManagedAssetPromise, EventChangeAssetId, EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalar, EventChangeScalars, EventChangedAssetId, EventChangedClientAction, EventChangedClipId, EventChangedMashAsset, EventChangedPreviews, EventChangedTargetIds, EventClip, EventClipId, EventDataType, EventDoClientAction, EventDragging, EventEnabledClientAction, EventManagedAsset, EventMashAsset, EventMashTime, EventMoveClip, EventPreviews, EventPropertyIds, EventRemoveClip, EventScalar, EventSelectable, EventSelectedProperties, EventTargetIds, EventTimeRange, EventTrackClipIcon, EventTrackClips, EventWillDestroy, EventChangedSize, EventChangedFrames } from '../../utility/events.js'
+import { EventAddAssets, EventAssetId, EventChangeAssetId, EventChangeClipId, EventChangeDragging, EventChangeFrame, EventChangeScalar, EventChangeScalars, EventChangedAssetId, EventChangedClientAction, EventChangedClipId, EventChangedFrames, EventChangedMashAsset, EventChangedPreviews, EventChangedSize, EventChangedTargetIds, EventClip, EventClipId, EventDataType, EventDoClientAction, EventDragging, EventEnabledClientAction, EventManagedAsset, EventManagedAssetPromise, EventMashAsset, EventMashTime, EventMoveClip, EventPreviews, EventPropertyIds, EventRemoveClip, EventScalar, EventSelectable, EventSelectedProperties, EventTargetIds, EventTimeRange, EventTrackClipIcon, EventTrackClips, EventWillDestroy } from '../../utility/events.js'
 import { endpointUrl } from '../../utility/request.js'
-import { svgPatch } from '../../utility/svg.js'
 
 const Defaults: MasherArgs = { buffer: 10, fps: 30, loop: true }
 
@@ -24,10 +24,10 @@ type TargetIdPropertyNamesRecord = {
 
 export class MasherClass implements Masher {
   constructor(args: MasherArgs) {
-    const { buffer, fps, loop, mash, patchSvg } = args
-    if (isNumber(fps)) this._fps = fps
-    if (isNumber(buffer)) this._buffer = buffer
-    if (isBoolean(loop)) this._loop = loop
+    const { buffer, fps, loop, mash } = args
+    if (isDefined(fps)) this._fps = fps
+    if (isDefined(buffer)) this._buffer = buffer
+    if (isDefined(loop)) this._loop = loop
     this.listeners = {
       [EventAddAssets.Type]: this.handleAddAssets.bind(this),
       [EventAssetId.Type]: this.handleAssetId.bind(this),
@@ -58,8 +58,7 @@ export class MasherClass implements Masher {
       [EventTrackClips.Type]: this.handleTrackClips.bind(this),
       [EventWillDestroy.Type]: this.handleWillDestroy.bind(this),
     }
-    MOVIEMASHER.eventDispatcher.listenersAdd(this.listeners)
-    if (patchSvg) svgPatch(patchSvg)
+    MOVIEMASHER.listenersAdd(this.listeners)
     if (mash) this.load(mash)
   }
   
@@ -68,7 +67,7 @@ export class MasherClass implements Masher {
       case ADD: 
       case ADD_TRACK: 
       case VIEW:
-      case FLIP: 
+      case $FLIP: 
       case REDO: 
       case REMOVE: 
       case PLAY: 
@@ -79,16 +78,13 @@ export class MasherClass implements Masher {
 
   private get actions(): Edits {
     const { mashAsset } = this
-    if (!mashAsset) return errorThrow('Mash asset not loaded')
-
+    assertClientMashAsset(mashAsset)
+    
     return mashAsset.actions
   }
 
   private add() {
     const { time } = this
-    // console.log(this.constructor.name, 'add', time)
-  
-
     const { asset, mashAsset } = this
     if (!(asset && mashAsset)) return 
 
@@ -105,7 +101,7 @@ export class MasherClass implements Masher {
   }
 
   private addAssets(asset: ClientAsset | ClientAssets, mashIndex?: ClipLocation): Promise<ClientAssets> {
-    // console.log(this.constructor.name, 'addAssets', mashIndex)
+    console.log(this.constructor.name, 'addAssets', mashIndex)
     const installedAssets = isArray(asset) ? asset : [asset]
     if (!installedAssets.length) return Promise.resolve([])
 
@@ -145,7 +141,6 @@ export class MasherClass implements Masher {
       }
       const definedIndex = dense ? index : frame 
       assertDefined(definedIndex, 'definedIndex')
-      // isDefined<number>(frame) ? frame : frameOrIndex
       
       const clipIndex = this.clipIndex(definedIndex, trackClips, dense)
       if (dense) options.insertIndex = clipIndex
@@ -183,7 +178,7 @@ export class MasherClass implements Masher {
       return 
     }
     const event = new EventManagedAsset(assetId)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { asset } = event.detail
     return this._asset = asset
   }
@@ -197,8 +192,8 @@ export class MasherClass implements Masher {
 
     delete this._asset
     this._assetId = id
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedAssetId(id))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedTargetIds(this.selectedTargetIds))
+    MOVIEMASHER.dispatch(new EventChangedAssetId(id))
+    MOVIEMASHER.dispatch(new EventChangedTargetIds(this.selectedTargetIds))
   }
 
   private assureMash(assets: ClientAssets) {
@@ -206,11 +201,11 @@ export class MasherClass implements Masher {
     // console.log(this.constructor.name, 'assureMash', !!mashMedia)
     if (isMashAsset(mashMedia)) return Promise.resolve()
     
-    // console.log(this.constructor.name, 'assureMash NOT MASH ASSET_TARGET!', mashMedia)
+    // console.log(this.constructor.name, 'assureMash NOT $MASH $ASSET!', mashMedia)
     const [firstMedia] = assets
     const { label } = firstMedia
     const mash: MashAssetObject = { 
-      label, assets: [], id: idTemporary(), type, source: MASH
+      label, assets: [], id: idTemporary(), type, source: $MASH
     }
     return this.load(mash)
   }
@@ -230,7 +225,7 @@ export class MasherClass implements Masher {
     const { selection: clip, mashAsset: mash, assetId, actions } = this    
     switch (clientAction) {
       case PLAY: return !!mash?.paused
-      case FLIP:
+      case $FLIP:
       case ADD_TRACK: return !!mash
       case VIEW: return !!mash?.encoding
       case ADD: return !!(assetId && mash)
@@ -299,9 +294,9 @@ export class MasherClass implements Masher {
 
   private drawTimeout?: Timeout
 
-  private _mashingType?: AssetType
-  private get mashingType(): AssetType {
-    return this._mashingType ||= VIDEO
+  private _mashingType?: RawType
+  private get mashingType(): RawType {
+    return this._mashingType ||= $VIDEO
   }
 
   private encodingView() {
@@ -334,13 +329,13 @@ export class MasherClass implements Masher {
     const aspectWidth = mashAsset.value('aspectWidth') || 0
     const aspectHeight = mashAsset.value('aspectHeight') || 0
     const size = { width: aspectWidth, height: aspectHeight }
-    const widthId = `${MASH}${DOT}aspectWidth`
-    const heightId = `${MASH}${DOT}aspectHeight`
+    const widthId = `${$MASH}${DOT}aspectWidth`
+    const heightId = `${$MASH}${DOT}aspectHeight`
     const { width, height } = size
     const redoValues: ScalarsById = { [widthId]: height, [heightId]: width }
     const undoValues: ScalarsById = { [widthId]: width, [heightId]: height }
     const actionObject: ChangePropertiesEditObject = {
-      type: CHANGE_MULTIPLE, target: mashAsset, redoValues, undoValues
+      type: $CHANGES, target: mashAsset, redoValues, undoValues
     }
     actions.create(actionObject)
   }
@@ -360,8 +355,7 @@ export class MasherClass implements Masher {
 
   private goToTime(value: Time): Promise<void> {
     const { fps, time } = this
-    const goTime = timeFromSeconds(value.seconds, fps) // value.scaleToFps(fps) 
-    // console.log(this.constructor.name, 'goToTime', fps, value, '->', goTime)
+    const goTime = timeFromSeconds(value.seconds, fps) 
     const { frame: currentFrame } = time
     const { frame: attemptFrame } = goTime
     const { frame: endFrame } = this.endTime
@@ -380,7 +374,7 @@ export class MasherClass implements Masher {
     if (this.drawTimeout || !this.mashAsset) return
 
     this.drawTimeout = setTimeout(() => {
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedPreviews())
+      MOVIEMASHER.dispatch(new EventChangedPreviews())
       delete this.drawTimeout
     }, 10)
   }
@@ -423,7 +417,8 @@ export class MasherClass implements Masher {
       return
     }
     const propertyName = propertyId.split(DOT).pop()
-    assertPopulatedString(propertyName)
+    assertDefined(propertyName)
+    
     const property = target.propertyFind(propertyName)
     if (!property) {
       // console.warn(this.constructor.name, 'handleDataType', 'no property', propertyId)
@@ -510,15 +505,15 @@ export class MasherClass implements Masher {
     }    
     if (visible) {
       const { size: mashSize } = this.mashAsset!
-      assertSizeAboveZero(mashSize, 'size')
+      assertSizeNotZero(mashSize, 'size')
 
       const atLeastAFrameSize = this.clipSize(mashSize, clipSize.width, visibleHeight)
-      const frameSize = sizeEven(sizeContain(mashSize, atLeastAFrameSize))
+      const frameSize = evenSize(containSize(mashSize, atLeastAFrameSize), $ROUND)
       const { width, height } = frameSize
       args.width = width
       const { color: mashColor } = this.mashAsset!
       const reversedColor = colorFromRgb(colorRgbDifference(colorToRgb(mashColor)))
-      const framePolygon = svgPolygonElement({ width, height }, '', mashColor)
+      const framePolygon = svgPolygonElement(frameSize, '', mashColor)
       const spaceRect = { x: width, y: 0, width: gap, height }
       const spacePolygon = svgPolygonElement(spaceRect, '', reversedColor)
       const patternSize = { width: width + gap, height: clipHeight }
@@ -556,7 +551,7 @@ export class MasherClass implements Masher {
       case ADD: return this.add()
       case ADD_TRACK: return this.addTrack()
       case VIEW: return this.encodingView()
-      case FLIP: return this.flip()
+      case $FLIP: return this.flip()
       case REDO: return this.redo()
       case REMOVE: return this.removeClip()
       case PLAY: return this.togglePaused()
@@ -572,7 +567,7 @@ export class MasherClass implements Masher {
   private handleChangeAssetId(event: EventChangeAssetId) {
     event.stopImmediatePropagation()
     this.assetId = event.detail
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(ADD))
+    MOVIEMASHER.dispatch(new EventChangedClientAction(ADD))
 
   }
 
@@ -658,7 +653,7 @@ export class MasherClass implements Masher {
       if (isTargetId(selector)) return
 
       const types = propertyNamesByTarget[target]
-      assertArray(types)
+      assertDefined(types)
   
       types.push(property)
     })
@@ -694,7 +689,7 @@ export class MasherClass implements Masher {
     
     const { frame, last } = selection.timeRange
     tweens.forEach(tween => {
-      tween.frame = tween.property.name.endsWith(END) ? last : frame
+      tween.frame = tween.property.name.endsWith($END) ? last : frame
     })
   }
 
@@ -749,7 +744,7 @@ export class MasherClass implements Masher {
       ...mashMediaObject, buffer, loop, 
     }
     const event = new EventManagedAssetPromise(assetObject)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { promise } = event.detail
     if (!promise) return
   
@@ -766,7 +761,7 @@ export class MasherClass implements Masher {
     const { type } = mashMediaObject
     const { size } = asset
     const { fps } = this
-    if (!(sizeAboveZero(size) || type === AUDIO)) return 
+    if (!(sizeNotZero(size) || type === $AUDIO)) return 
     
     await this.goToTime(timeFromArgs(0, fps))
     asset.clearPreview()
@@ -809,32 +804,32 @@ export class MasherClass implements Masher {
     }
     this._mashAsset = asset
     if (asset) {
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedSize(asset.size))
-      MOVIEMASHER.eventDispatcher.dispatch(new EventChangedFrames(asset.totalFrames))
+      MOVIEMASHER.dispatch(new EventChangedSize(asset.size))
+      MOVIEMASHER.dispatch(new EventChangedFrames(asset.totalFrames))
     }
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedMashAsset(asset))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(ADD))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(ADD_TRACK))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(FLIP))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(PLAY))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(VIEW))
+    MOVIEMASHER.dispatch(new EventChangedMashAsset(asset))
+    MOVIEMASHER.dispatch(new EventChangedClientAction(ADD))
+    MOVIEMASHER.dispatch(new EventChangedClientAction(ADD_TRACK))
+    MOVIEMASHER.dispatch(new EventChangedClientAction($FLIP))
+    MOVIEMASHER.dispatch(new EventChangedClientAction(PLAY))
+    MOVIEMASHER.dispatch(new EventChangedClientAction(VIEW))
   }
 
   private mashAssetObject = async (assetObject: AssetObject): Promise<MashAssetObject> => {
     const { source, label, type } = assetObject
     // simply return object promise if it is already a mash
-    if (source === MASH) return assetObject
+    if (source === $MASH) return assetObject
 
     // otherwise, load asset so we can create a clip with it
     const clips: ClipObjects = []
     const mash: MashAssetObject = {
       id: idGenerateString(), type, label,
       assets: [assetObject],
-      source: MASH,
+      source: $MASH,
       tracks: [{ clips}],
     }    
     const event = new EventManagedAssetPromise(assetObject)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { promise } = event.detail
     if (promise) {
       const orError = await promise
@@ -904,13 +899,13 @@ export class MasherClass implements Masher {
 
       // bring back selection
       if (value) this.redraw()
-      if (!mashUpdating) MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(PLAY))
+      if (!mashUpdating) MOVIEMASHER.dispatch(new EventChangedClientAction(PLAY))
     }
   }
 
-  private elementsPromise(outputSize?: number | Size): Promise<Elements> {
+  private elementsPromise(outputSize?: number | Size): Promise<SvgItems> {
     const { mashAsset } = this
-    if (!mashAsset || mashAsset.type === AUDIO) return Promise.resolve([])
+    if (!mashAsset || mashAsset.type === $AUDIO) return Promise.resolve([])
 
     return mashAsset.elementsPromise(outputSize, this.selection || undefined)
   }
@@ -938,7 +933,7 @@ export class MasherClass implements Masher {
     if (!mashAsset) return
 
     mashAsset.clearPreview()
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedPreviews())
+    MOVIEMASHER.dispatch(new EventChangedPreviews())
   }
 
   private removeClip(clientClip?: ClientClip): void {
@@ -968,9 +963,9 @@ export class MasherClass implements Masher {
 
     // console.debug(this.constructor.name, 'selection', 'dispatching', value ? value.id : '')
 
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClipId(value ? value.id : ''))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedTargetIds(this.selectedTargetIds))
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangedClientAction(REMOVE))
+    MOVIEMASHER.dispatch(new EventChangedClipId(value ? value.id : ''))
+    MOVIEMASHER.dispatch(new EventChangedTargetIds(this.selectedTargetIds))
+    MOVIEMASHER.dispatch(new EventChangedClientAction(REMOVE))
   }
 
   private selectable(id: TargetId | PropertyId): Selectable | false {
@@ -981,11 +976,11 @@ export class MasherClass implements Masher {
       return false
     }
     switch (targetId) {
-      case MASH: return mashAsset || false
-      case CLIP_TARGET: return selection
-      case CONTENT: return selection && selection.content 
-      case CONTAINER: return selection && selection.container || false
-      case ASSET_TARGET: return this.asset || false
+      case $MASH: return mashAsset || false
+      case $CLIP: return selection
+      case $CONTENT: return selection && selection.content 
+      case $CONTAINER: return selection && selection.container || false
+      case $ASSET: return this.asset || false
     }
   }
 
@@ -993,14 +988,14 @@ export class MasherClass implements Masher {
     const ids: TargetIds = []
     const { mashAsset, selection, assetId } = this
     if (mashAsset) {
-      ids.push(MASH)
+      ids.push($MASH)
       if (selection) {
-        ids.push(CLIP_TARGET)
-        ids.push(CONTENT)
-        if (selection.container) ids.push(CONTAINER)
+        ids.push($CLIP)
+        ids.push($CONTENT)
+        if (selection.container) ids.push($CONTAINER)
       }
     }
-    if (assetId) ids.push(ASSET_TARGET)
+    if (assetId) ids.push($ASSET)
     return ids
   }
 

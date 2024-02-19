@@ -1,18 +1,17 @@
+import type { DataOrError, InstanceArgs, InstanceCacheArgs, ListenersFunction, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size } from '@moviemasher/shared-lib/types.js'
+import type { ClientShapeAsset, ClientShapeInstance } from '../../types.js'
 
-import type { ClientShapeAsset, ClientShapeInstance, Panel } from '../../types.js'
-import type { DataOrError, InstanceArgs, InstanceCacheArgs, SvgItem, ListenersFunction, Rect, ShapeAssetObject, ShapeInstance, ShapeInstanceObject, Size, Time } from '@moviemasher/shared-lib/types.js'
-
-
-import { centerPoint, sizeContain } from '@moviemasher/shared-lib/utility/rect.js'
-import { EventAsset } from '../../utility/events.js'
-import { DEFAULT_CONTAINER_ID, ERROR, IMAGE, SHAPE, errorPromise, isAssetObject, isPopulatedString } from '@moviemasher/shared-lib/runtime.js'
-import { ClientVisibleAssetMixin } from '../../mixin/visible.js'
-import { ClientVisibleInstanceMixin } from '../../mixin/visible.js'
-import { ClientInstanceClass } from '../../base/ClientInstanceClass.js'
-import { ClientAssetClass } from '../../base/ClientAssetClass.js'
-import { svgPolygonElement, svgSvgElement, svgPathElement, svgSetTransformRects } from '@moviemasher/shared-lib/utility/svg.js'
-import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
 import { ShapeAssetMixin, ShapeInstanceMixin } from '@moviemasher/shared-lib/mixin/shape.js'
+import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
+import { $IMAGE, $SHAPE, DEFAULT_CONTAINER_ID, ERROR, errorPromise, isAssetObject } from '@moviemasher/shared-lib/runtime.js'
+import { isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
+import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
+import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgSvgElement } from '@moviemasher/shared-lib/utility/svg.js'
+import { ClientAssetClass } from '../../base/ClientAssetClass.js'
+import { ClientInstanceClass } from '../../base/ClientInstanceClass.js'
+import { ClientVisibleAssetMixin, ClientVisibleInstanceMixin } from '../../mixin/visible.js'
+import { centerPoint } from '../../runtime.js'
+import { EventAsset } from '../../utility/events.js'
 
 const WithAsset = VisibleAssetMixin(ClientAssetClass)
 const WithClientAsset = ClientVisibleAssetMixin(WithAsset)
@@ -32,11 +31,11 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const inSize = { width, height }
     if (!isPopulatedString(path)) return errorPromise(ERROR.Unavailable, 'path')
 
-    const coverSize = sizeContain(inSize, size)
+    const coverSize = containSize(inSize, size)
     const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
-    const pathElement = svgPathElement(path)
-    svgSetTransformRects(pathElement, inSize, outRect)
-    return Promise.resolve({ data: svgSvgElement(size, pathElement) })
+    const element = svgPathElement(path)
+    svgSetTransformRects(element, inSize, outRect)
+    return Promise.resolve({ data: svgSvgElement(size, element) })
   }
 
   override instanceFromObject(object?: ShapeInstanceObject): ShapeInstance {
@@ -47,8 +46,8 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
   private static _defaultAsset?: ClientShapeAsset
   private static get defaultAsset(): ClientShapeAsset {
   return this._defaultAsset ||= new ClientShapeAssetClass({ 
-      id: DEFAULT_CONTAINER_ID, type: IMAGE, 
-      source: SHAPE, label: 'Rectangle'
+      id: DEFAULT_CONTAINER_ID, type: $IMAGE, 
+      source: $SHAPE, label: 'Rectangle'
     })
   }
   static handleAsset(event: EventAsset) {
@@ -56,7 +55,7 @@ export class ClientShapeAssetClass extends WithShapeAsset implements ClientShape
     const { assetObject, assetId } = detail
     
     const isDefault = assetId === DEFAULT_CONTAINER_ID
-    if (!(isDefault || isAssetObject(assetObject, IMAGE, SHAPE))) return
+    if (!(isDefault || isAssetObject(assetObject, $IMAGE, $SHAPE))) return
       
     event.stopImmediatePropagation()
     if (isDefault) detail.asset = ClientShapeAssetClass.defaultAsset
@@ -81,9 +80,7 @@ export class ClientShapeInstanceClass extends WithShapeInstance implements Clien
 
   declare asset: ClientShapeAsset
 
-  override containerSvgItemPromise(containerRect: Rect, _time: Time, _component: Panel): Promise<DataOrError<SvgItem>> {
-    return Promise.resolve({ data: this.pathElement(containerRect) })
-  }
+
 
   override instanceCachePromise(_args: InstanceCacheArgs): Promise<DataOrError<number>> {
     // console.log(this.constructor.name, 'instanceCachePromise', _args)

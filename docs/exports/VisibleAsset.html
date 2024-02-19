@@ -136,6 +136,11 @@
 <ul>
 <li><p><code><a href='Asset.html'>Asset</a></code></p>
 <p>↳ <strong><code><a href='#'>VisibleAsset</a></code></strong></p>
+<p>↳↳ <code><a href='ShapeAsset.html'>ShapeAsset</a></code></p>
+<p>↳↳ <code><a href='ContainerAsset.html'>ContainerAsset</a></code></p>
+<p>↳↳ <code><a href='ContentAsset.html'>ContentAsset</a></code></p>
+<p>↳↳ <code><a href='ImageAsset.html'>ImageAsset</a></code></p>
+<p>↳↳ <code><a href='VideoAsset.html'>VideoAsset</a></code></p>
 </li>
 </ul>
 <h2>Properties</h2>
@@ -145,65 +150,71 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="VisibleAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
-<p>Inherited from
+<h3><a id="VisibleAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code></p>
+<p>Overrides
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="VisibleAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assets">assets</a></p>
 <hr>
-<h3><a id="VisibleAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContainer">canBeContainer</a></p>
+<h3><a id="VisibleAsset.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <hr>
-<h3><a id="VisibleAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContent">canBeContent</a></p>
+<h3><a id="VisibleAsset.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <hr>
-<h3><a id="VisibleAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.container">container</a></p>
+<h3><a id="VisibleAsset.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <hr>
-<h3><a id="VisibleAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
+<h3><a id="VisibleAsset.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
+<hr>
+<h3><a id="VisibleAsset.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
+<hr>
+<h3><a id="VisibleAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.content">content</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decoding">decoding</a></p>
 <hr>
 <h3><a id="VisibleAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodings">decodings</a></p>
 <hr>
+<h3><a id="VisibleAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<hr>
 <h3><a id="VisibleAsset.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.id">id</a></p>
 <hr>
-<h3><a id="VisibleAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.isVector">isVector</a></p>
+<h3><a id="VisibleAsset.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <hr>
 <h3><a id="VisibleAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.label">label</a></p>
 <hr>
+<h3><a id="VisibleAsset.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
+<hr>
 <h3><a id="VisibleAsset.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.properties">properties</a></p>
 <hr>
-<h3><a id="VisibleAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="VisibleAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.scalarRecord">scalarRecord</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.request">request</a></p>
+<hr>
+<h3><a id="VisibleAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resource">resource</a></p>
+<hr>
+<h3><a id="VisibleAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resources">resources</a></p>
 <hr>
 <h3><a id="VisibleAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.source">source</a></p>
 <hr>
-<h3><a id="VisibleAsset.sourceSize">sourceSize</a></h3><p>• <code>Optional</code> <strong>sourceSize</strong>: <code><a href='Size.html'>Size</a></code></p>
-<hr>
 <h3><a id="VisibleAsset.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.targetId">targetId</a></p>
 <hr>
-<h3><a id="VisibleAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="VisibleAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.type">type</a></p>
 <h2>Methods</h2>
@@ -286,6 +297,25 @@
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.constrainedValue">constrainedValue</a></p>
+<hr>
+<h3><a id="VisibleAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodingOfType">decodingOfType</a></p>
 <hr>
 <h3><a id="VisibleAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -401,7 +431,26 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="VisibleAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="VisibleAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resourceOfType">resourceOfType</a></p>
+<hr>
+<h3><a id="VisibleAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -420,7 +469,7 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.setValue">setValue</a></p>
 <hr>
@@ -429,6 +478,33 @@
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="VisibleAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="VisibleAsset.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -463,30 +539,38 @@
 <li><a class='' href='#VisibleAsset.assets'>assets</a></li>
 <li><a class='' href='#VisibleAsset.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#VisibleAsset.canBeContent'>canBeContent</a></li>
+<li><a class='' href='#VisibleAsset.canBeFill'>canBeFill</a></li>
 <li><a class='' href='#VisibleAsset.container'>container</a></li>
 <li><a class='' href='#VisibleAsset.content'>content</a></li>
+<li><a class='' href='#VisibleAsset.decoding'>decoding</a></li>
 <li><a class='' href='#VisibleAsset.decodings'>decodings</a></li>
+<li><a class='' href='#VisibleAsset.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
 <li><a class='' href='#VisibleAsset.id'>id</a></li>
 <li><a class='' href='#VisibleAsset.isVector'>isVector</a></li>
 <li><a class='' href='#VisibleAsset.label'>label</a></li>
+<li><a class='' href='#VisibleAsset.probeSize'>probeSize</a></li>
 <li><a class='' href='#VisibleAsset.properties'>properties</a></li>
-<li><a class='' href='#VisibleAsset.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#VisibleAsset.request'>request</a></li>
+<li><a class='' href='#VisibleAsset.resource'>resource</a></li>
+<li><a class='' href='#VisibleAsset.resources'>resources</a></li>
 <li><a class='' href='#VisibleAsset.source'>source</a></li>
-<li><a class='' href='#VisibleAsset.sourceSize'>sourceSize</a></li>
 <li><a class='' href='#VisibleAsset.targetId'>targetId</a></li>
 <li><a class='' href='#VisibleAsset.type'>type</a></li>
 <li><a class='' href='#VisibleAsset.asset'>asset</a></li>
 <li><a class='' href='#VisibleAsset.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#VisibleAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#VisibleAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#VisibleAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#VisibleAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#VisibleAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#VisibleAsset.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#VisibleAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#VisibleAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#VisibleAsset.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#VisibleAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#VisibleAsset.setValue'>setValue</a></li>
 <li><a class='' href='#VisibleAsset.toJSON'>toJSON</a></li>
+<li><a class='' href='#VisibleAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#VisibleAsset.value'>value</a></li></ul>
       </nav>
     </main>

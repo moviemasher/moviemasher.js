@@ -154,8 +154,8 @@
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ClientMashAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
-<p>Inherited from
+<h3><a id="ClientMashAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code></p>
+<p>Overrides
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="ClientMashAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
@@ -163,14 +163,6 @@
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assets">assets</a></p>
 <hr>
 <h3><a id="ClientMashAsset.buffer">buffer</a></h3><p>• <strong>buffer</strong>: <code>number</code></p>
-<hr>
-<h3><a id="ClientMashAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.canBeContainer">canBeContainer</a></p>
-<hr>
-<h3><a id="ClientMashAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.canBeContent">canBeContent</a></p>
 <hr>
 <h3><a id="ClientMashAsset.clips">clips</a></h3><p>• <strong>clips</strong>: <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <p>Overrides
@@ -182,13 +174,9 @@ MashAsset.color</p>
 <hr>
 <h3><a id="ClientMashAsset.composition">composition</a></h3><p>• <strong>composition</strong>: <code><a href='AudioPreview.html'>AudioPreview</a></code></p>
 <hr>
-<h3><a id="ClientMashAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
+<h3><a id="ClientMashAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.container">container</a></p>
-<hr>
-<h3><a id="ClientMashAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.content">content</a></p>
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decoding">decoding</a></p>
 <hr>
 <h3><a id="ClientMashAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
@@ -214,10 +202,6 @@ MashAsset.endTime</p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.id">id</a></p>
 <hr>
-<h3><a id="ClientMashAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.isVector">isVector</a></p>
-<hr>
 <h3><a id="ClientMashAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.label">label</a></p>
@@ -227,6 +211,10 @@ MashAsset.endTime</p>
 <h3><a id="ClientMashAsset.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
 <p>Inherited from
 MashAsset.loop</p>
+<hr>
+<h3><a id="ClientMashAsset.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
+<p>Inherited from
+MashAsset.mashIndex</p>
 <hr>
 <h3><a id="ClientMashAsset.paused">paused</a></h3><p>• <strong>paused</strong>: <code>boolean</code></p>
 <hr>
@@ -238,15 +226,23 @@ MashAsset.loop</p>
 <p>Inherited from
 MashAsset.quantize</p>
 <hr>
+<h3><a id="ClientMashAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
+<p>Inherited from
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.request">request</a></p>
+<hr>
+<h3><a id="ClientMashAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resource">resource</a></p>
+<hr>
+<h3><a id="ClientMashAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resources">resources</a></p>
+<hr>
 <h3><a id="ClientMashAsset.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.saveNeeded">saveNeeded</a></p>
 <hr>
-<h3><a id="ClientMashAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.scalarRecord">scalarRecord</a></p>
-<hr>
-<h3><a id="ClientMashAsset.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code></p>
+<h3><a id="ClientMashAsset.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
 MashAsset.size</p>
 <hr>
@@ -272,11 +268,7 @@ MashAsset.totalFrames</p>
 <p>Overrides
 MashAsset.tracks</p>
 <hr>
-<h3><a id="ClientMashAsset.transcodings">transcodings</a></h3><p>• <strong>transcodings</strong>: <code><a href='Transcodings.html'>Transcodings</a></code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.transcodings">transcodings</a></p>
-<hr>
-<h3><a id="ClientMashAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="ClientMashAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.type">type</a></p>
 <h2>Methods</h2>
@@ -291,7 +283,7 @@ MashAsset.tracks</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>clip</code></td>
-<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code> | <code><a href='ClientClips.html'>ClientClips</a></code></td>
+<td align="left"><code><a href='ClientClips.html'>ClientClips</a></code> | <code><a href='ClientClip.html'>ClientClip</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>trackIndex?</code></td>
@@ -375,7 +367,7 @@ MashAsset.tracks</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -387,7 +379,7 @@ MashAsset.tracks</p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetIcon">assetIcon</a></p>
 <hr>
-<h3><a id="ClientMashAsset.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>requestable</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
+<h3><a id="ClientMashAsset.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -397,12 +389,12 @@ MashAsset.tracks</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>requestable</code></td>
-<td align="left"><code><a href='Requestable.html'>Requestable</a></code></td>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code> | <code><a href='Rect.html'>Rect</a></code></td>
+<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -588,6 +580,25 @@ MashAsset.clipsInTimeOfType</p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.constrainedValue">constrainedValue</a></p>
 <hr>
+<h3><a id="ClientMashAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decodingOfType">decodingOfType</a></p>
+<hr>
 <h3><a id="ClientMashAsset.dispatchChanged">dispatchChanged</a></h3><p>▸ <strong>dispatchChanged</strong>(<code>action</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -609,7 +620,7 @@ MashAsset.clipsInTimeOfType</p>
 <p>Returns
 <code>void</code></p>
 <hr>
-<h3><a id="ClientMashAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>request</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientMashAsset.elementsPromise">elementsPromise</a></h3><p>▸ <strong>elementsPromise</strong>(<code>size?</code>, <code>selectedClip?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -619,8 +630,46 @@ MashAsset.clipsInTimeOfType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>request</code></td>
-<td align="left"><code><a href='ClientMediaRequest.html'>ClientMediaRequest</a></code></td>
+<td align="left"><code>size?</code></td>
+<td align="left"><code>number</code> | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>selectedClip?</code></td>
+<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
+<hr>
+<h3><a id="ClientMashAsset.framesHaveChanged">framesHaveChanged</a></h3><p>▸ <strong>framesHaveChanged</strong>(<code>frames?</code>): <code>void</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>frames?</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
+<hr>
+<h3><a id="ClientMashAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -647,7 +696,7 @@ MashAsset.clipsInTimeOfType</p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.initializeProperties">initializeProperties</a></p>
 <hr>
-<h3><a id="ClientMashAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceObject.html'>InstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
+<h3><a id="ClientMashAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -662,8 +711,8 @@ MashAsset.clipsInTimeOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='InstanceObject.html'>InstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
-<p>Overrides
+<code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
+<p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.instanceArgs">instanceArgs</a></p>
 <hr>
 <h3><a id="ClientMashAsset.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='Instance.html'>Instance</a></code></p>
@@ -682,10 +731,10 @@ MashAsset.clipsInTimeOfType</p>
 </tbody></table>
 <p>Returns
 <code><a href='Instance.html'>Instance</a></code></p>
-<p>Overrides
+<p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.instanceFromObject">instanceFromObject</a></p>
 <hr>
-<h3><a id="ClientMashAsset.mashPreviewsPromise">mashPreviewsPromise</a></h3><p>▸ <strong>mashPreviewsPromise</strong>(<code>size?</code>, <code>selectedClip?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../categories/Elements.html'>Elements</a></code>&gt;</p>
+<h3><a id="ClientMashAsset.mashDescription">mashDescription</a></h3><p>▸ <strong>mashDescription</strong>(<code>options</code>, <code>selectedClip?</code>): <code><a href='ClientMashDescription.html'>ClientMashDescription</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -695,8 +744,8 @@ MashAsset.clipsInTimeOfType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>size?</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
+<td align="left"><code>options</code></td>
+<td align="left"><code><a href='ClientMashDescriptionOptions.html'>ClientMashDescriptionOptions</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>selectedClip?</code></td>
@@ -704,26 +753,9 @@ MashAsset.clipsInTimeOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../categories/Elements.html'>Elements</a></code>&gt;</p>
-<hr>
-<h3><a id="ClientMashAsset.preferredTranscoding">preferredTranscoding</a></h3><p>▸ <strong>preferredTranscoding</strong>(<code>...types</code>): <code><a href='Transcoding.html'>Transcoding</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>...types</code></td>
-<td align="left"><code><a href='TranscodingTypes.html'>TranscodingTypes</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Transcoding.html'>Transcoding</a></code></p>
-<p>Inherited from
-<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.preferredTranscoding">preferredTranscoding</a></p>
+<code><a href='ClientMashDescription.html'>ClientMashDescription</a></code></p>
+<p>Overrides
+MashAsset.mashDescription</p>
 <hr>
 <h3><a id="ClientMashAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -801,7 +833,7 @@ MashAsset.clipsInTimeOfType</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>clip</code></td>
-<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code> | <code><a href='ClientClips.html'>ClientClips</a></code></td>
+<td align="left"><code><a href='ClientClips.html'>ClientClips</a></code> | <code><a href='ClientClip.html'>ClientClip</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -823,6 +855,25 @@ MashAsset.clipsInTimeOfType</p>
 </tbody></table>
 <p>Returns
 <code>void</code></p>
+<hr>
+<h3><a id="ClientMashAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resourceOfType">resourceOfType</a></p>
 <hr>
 <h3><a id="ClientMashAsset.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -860,7 +911,7 @@ MashAsset.clipsInTimeOfType</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <hr>
-<h3><a id="ClientMashAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ClientMashAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -879,7 +930,7 @@ MashAsset.clipsInTimeOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.setValue">setValue</a></p>
 <hr>
@@ -907,6 +958,33 @@ MashAsset.clipsInTimeOfType</p>
 <code><a href='Track.html'>Track</a></code></p>
 <p>Inherited from
 MashAsset.trackInstance</p>
+<hr>
+<h3><a id="ClientMashAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ClientMashAsset.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -967,13 +1045,10 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ClientMashAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientMashAsset.assets'>assets</a></li>
 <li><a class='' href='#ClientMashAsset.buffer'>buffer</a></li>
-<li><a class='' href='#ClientMashAsset.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#ClientMashAsset.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ClientMashAsset.clips'>clips</a></li>
 <li><a class='' href='#ClientMashAsset.color'>color</a></li>
 <li><a class='' href='#ClientMashAsset.composition'>composition</a></li>
-<li><a class='' href='#ClientMashAsset.container'>container</a></li>
-<li><a class='' href='#ClientMashAsset.content'>content</a></li>
+<li><a class='' href='#ClientMashAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ClientMashAsset.decodings'>decodings</a></li>
 <li><a class='' href='#ClientMashAsset.drawnTime'>drawnTime</a></li>
 <li><a class='' href='#ClientMashAsset.duration'>duration</a></li>
@@ -982,15 +1057,17 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ClientMashAsset.endTime'>endTime</a></li>
 <li><a class='' href='#ClientMashAsset.frame'>frame</a></li>
 <li><a class='' href='#ClientMashAsset.id'>id</a></li>
-<li><a class='' href='#ClientMashAsset.isVector'>isVector</a></li>
 <li><a class='' href='#ClientMashAsset.label'>label</a></li>
 <li><a class='' href='#ClientMashAsset.loading'>loading</a></li>
 <li><a class='' href='#ClientMashAsset.loop'>loop</a></li>
+<li><a class='' href='#ClientMashAsset.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#ClientMashAsset.paused'>paused</a></li>
 <li><a class='' href='#ClientMashAsset.properties'>properties</a></li>
 <li><a class='' href='#ClientMashAsset.quantize'>quantize</a></li>
+<li><a class='' href='#ClientMashAsset.request'>request</a></li>
+<li><a class='' href='#ClientMashAsset.resource'>resource</a></li>
+<li><a class='' href='#ClientMashAsset.resources'>resources</a></li>
 <li><a class='' href='#ClientMashAsset.saveNeeded'>saveNeeded</a></li>
-<li><a class='' href='#ClientMashAsset.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientMashAsset.size'>size</a></li>
 <li><a class='' href='#ClientMashAsset.source'>source</a></li>
 <li><a class='' href='#ClientMashAsset.targetId'>targetId</a></li>
@@ -999,7 +1076,6 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ClientMashAsset.timeToBuffer'>timeToBuffer</a></li>
 <li><a class='' href='#ClientMashAsset.totalFrames'>totalFrames</a></li>
 <li><a class='' href='#ClientMashAsset.tracks'>tracks</a></li>
-<li><a class='' href='#ClientMashAsset.transcodings'>transcodings</a></li>
 <li><a class='' href='#ClientMashAsset.type'>type</a></li>
 <li><a class='' href='#ClientMashAsset.addClipToTrack'>addClipToTrack</a></li>
 <li><a class='' href='#ClientMashAsset.addTrack'>addTrack</a></li>
@@ -1016,14 +1092,16 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ClientMashAsset.clipsAudibleInTime'>clipsAudibleInTime</a></li>
 <li><a class='' href='#ClientMashAsset.clipsInTimeOfType'>clipsInTimeOfType</a></li>
 <li><a class='' href='#ClientMashAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#ClientMashAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientMashAsset.dispatchChanged'>dispatchChanged</a></li>
 <li><a class='' href='#ClientMashAsset.draw'>draw</a></li>
+<li><a class='' href='#ClientMashAsset.elementsPromise'>elementsPromise</a></li>
+<li><a class='' href='#ClientMashAsset.framesHaveChanged'>framesHaveChanged</a></li>
 <li><a class='' href='#ClientMashAsset.imagePromise'>imagePromise</a></li>
 <li><a class='' href='#ClientMashAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientMashAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientMashAsset.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientMashAsset.mashPreviewsPromise'>mashPreviewsPromise</a></li>
-<li><a class='' href='#ClientMashAsset.preferredTranscoding'>preferredTranscoding</a></li>
+<li><a class='' href='#ClientMashAsset.mashDescription'>mashDescription</a></li>
 <li><a class='' href='#ClientMashAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientMashAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientMashAsset.propertyInstance'>propertyInstance</a></li>
@@ -1031,11 +1109,13 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ClientMashAsset.reload'>reload</a></li>
 <li><a class='' href='#ClientMashAsset.removeClipFromTrack'>removeClipFromTrack</a></li>
 <li><a class='' href='#ClientMashAsset.removeTrack'>removeTrack</a></li>
+<li><a class='' href='#ClientMashAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ClientMashAsset.savePromise'>savePromise</a></li>
 <li><a class='' href='#ClientMashAsset.seekToTime'>seekToTime</a></li>
 <li><a class='' href='#ClientMashAsset.setValue'>setValue</a></li>
 <li><a class='' href='#ClientMashAsset.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientMashAsset.trackInstance'>trackInstance</a></li>
+<li><a class='' href='#ClientMashAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientMashAsset.unload'>unload</a></li>
 <li><a class='' href='#ClientMashAsset.updateAssetId'>updateAssetId</a></li>
 <li><a class='' href='#ClientMashAsset.value'>value</a></li></ul>

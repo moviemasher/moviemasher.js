@@ -1,8 +1,33 @@
-import { FLIP, HEIGHT, type Lock, type Rect, type RectTuple, type Rects, type SideDirectionRecord, type Size } from '@moviemasher/shared-lib/runtime.js'
+import type { Lock, Rect, RectTuple, Rects, SideDirectionRecord, Size } from '../../../packages/@moviemasher/shared-lib/src/types.js'
 
-import { tweenPad, containerRects, tweenScaleSizeToRect } from '@moviemasher/shared-lib'
+import { $FLIP, $HEIGHT, $CEIL, assertTuple } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
+import { containerEvaluationPoint, containerEvaluationSize, numberPoint, numberSize} from '../../../packages/@moviemasher/shared-lib/src/utility/rect.js'
+
 import assert from 'assert'
 import { describe, test } from 'node:test'
+
+
+// tweenPoint: EvaluationPoint, containerSize: EvaluationSize, outputSize: Size, pointAspect: string, cropDirections: SideDirectionRecord, rounding: Rounding
+
+//tweenSize: Size, intrinsicSize: Size, outputSize: Size, sizeAspect: string, rounding: Rounding, sizeKey?: SizeKey): EvaluationSize => {
+
+const tweenScaleSizeToRect = (size: Size, scaleRect: Rect, directions: SideDirectionRecord): Rect => {
+  const containerSize = numberSize(containerEvaluationSize(scaleRect, size, size, '', $CEIL))
+  const point = containerEvaluationPoint(scaleRect, size, containerSize, '', directions, $CEIL)
+
+  return {
+    ...numberPoint(point),
+    ...containerSize
+  }
+}
+
+const containerRects = (rects: RectTuple, intrinsicSize: Size, lock: Lock, outputSize: Size, directions: SideDirectionRecord, pointAspect: string, sizeAspect: string): RectTuple => {
+  const tweened = rects.map((rect, i) => {
+    return tweenScaleSizeToRect(intrinsicSize, rect, directions)
+  })
+  assertTuple<Rect>(tweened)
+  return tweened
+}
 
 describe('Tween', () => {
   describe('tweenPad', () => {
@@ -65,11 +90,11 @@ describe('Tween', () => {
         'returns properly tweened rect', 
         rects, 
         intrinsicSize,
-        HEIGHT, 
+        $HEIGHT, 
         { width: 200, height: 100 },
         {},
-        FLIP,
-        FLIP,
+        $FLIP,
+        $FLIP,
         expectedRects, 
       ],
     ]

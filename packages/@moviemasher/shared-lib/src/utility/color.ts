@@ -1,6 +1,8 @@
-import type { NumberRecord, Value, ValueRecord } from '../types.js'
+import type { NumberRecord, Time, TimeRange, Value, ValueRecord } from '../types.js'
 
 import { RGBA_KEYS, RGB_KEYS } from '../runtime.js'
+import { assertTrue } from './guards.js'
+import { offsetLength } from './time.js'
 
 interface Rgb extends NumberRecord {
   r: number
@@ -22,6 +24,8 @@ interface RgbaObject extends RgbObject {
   a: Value
 }
 
+const blackRgb: Rgb = { r: 0, g: 0, b: 0 }
+const blackRgba: Rgba = { ...blackRgb, a: 1.0 }
 
 const colorRgbRegex = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/
 const colorRgbaRegex = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(\d*(?:\.\d+)?)\)$/
@@ -45,7 +49,7 @@ const hex256 = (hexStr: string): number => parseInt(hexStr.repeat(2 / hexStr.len
 const colorRgbaToRgba = (value: string): Rgba => {
   const color = colorStrip(value)
   const rgbaMatch = color.match(colorRgbaRegex)
-  if (!rgbaMatch) return colorRgba
+  if (!rgbaMatch) return blackRgba
 
   return {
     r: Number(rgbaMatch[1]),
@@ -55,15 +59,12 @@ const colorRgbaToRgba = (value: string): Rgba => {
   }
 }
 
-const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
-const colorRgba: Rgba = { ...colorRgb, a: 1.0 }
-
 const colorHexToRgba = (hex: string): Rgba => {
-  if (!colorValidHex(hex)) return colorRgba
+  if (!colorValidHex(hex)) return blackRgba
 
   const chunkSize = Math.floor((hex.length - 1) / 3)
   const hexArr = getChunksFromString(hex.slice(1), chunkSize)
-  if (!hexArr) return colorRgba
+  if (!hexArr) return blackRgba
 
   const [r, g, b, alpha] = hexArr.map(hex256)
   const a = Math.max(0, Math.min(255, alpha ?? 255)) / 255
@@ -121,7 +122,7 @@ export const colorToRgb = (value: string): Rgb => {
    if (colorValidHex(color)) return colorHexToRgb(color)
 
   const rgbMatch = color.match(colorRgbRegex)
-  if (!rgbMatch) return colorRgb
+  if (!rgbMatch) return blackRgb
 
   return {
     r: Number(rgbMatch[1]),
@@ -131,7 +132,7 @@ export const colorToRgb = (value: string): Rgb => {
 }
 
 export const colorToRgba = (value: string): Rgba => {
-  if (!colorValid(value)) return colorRgba
+  if (!colorValid(value)) return blackRgba
 
   const color = colorStrip(value)
   if (colorValidHex(color)) return colorHexToRgba(color)
@@ -140,7 +141,7 @@ export const colorToRgba = (value: string): Rgba => {
 
   if (colorValidRgb(color)) return { a: 1.0, ...colorToRgb(color) }
 
-  return colorRgba
+  return blackRgba
 }
 
 export const colorFromRgb = (rgb: Rgb): string => {
@@ -175,15 +176,30 @@ export const colorMixRbg = (fromRgb: Rgb, toRgb: Rgb, amountToMix = 1.0): Rgb =>
  * @internal
  */
 export const colorHexToRgb = (hex: string): Rgb => {
-  if (!colorValidHex(hex)) return colorRgb
+  if (!colorValidHex(hex)) return blackRgb
 
   const chunkSize = Math.floor((hex.length - 1) / 3)
   const hexArr = getChunksFromString(hex.slice(1), chunkSize)
-  if (!hexArr) return colorRgb
+  if (!hexArr) return blackRgb
 
   const [r, g, b] = hexArr.map(hex256)
   return { r, g, b }
 }
 
 
+export const tweenColorStep = (value: string, valueEnd: string, frame: number, frames: number): string => {
+  const offset = frame / frames
+  assertTrue(colorValidHex(value))
+  if (value.length === 7 || value.length === 4) {
+    const result = colorRgbToHex(colorMixRbg(colorToRgb(value), colorToRgb(valueEnd), offset))
+    // console.log('tweenColorStep', { frame, frames, offset })
+    return result
+  }
+  const color = colorRgbaToHex(colorMixRbga(colorToRgba(value), colorToRgba(valueEnd), offset))
+  return color
+}
 
+export const tweenColor = (value: string, valueEnd: string, time: Time, range: TimeRange): string => {
+  const [offset, lengthSeconds] = offsetLength(time, range)
+  return tweenColorStep(value, valueEnd, offset, lengthSeconds)
+}

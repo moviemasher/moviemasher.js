@@ -1,7 +1,7 @@
-import type { AudibleInstance, ImageElement } from '@moviemasher/shared-lib/types.js'
-import type { ClientAudibleInstance, ClientInstance, ClientVideo, ClientVisibleInstance } from '../types.js'
+import type { AudibleInstance } from '@moviemasher/shared-lib/types.js'
+import type { ClientAudibleInstance, ClientInstance, ClientVisibleInstance } from '../types.js'
 
-import { errorThrow, isObject } from '@moviemasher/shared-lib/runtime.js'
+import { errorThrow } from '@moviemasher/shared-lib/runtime.js'
 import { isAudibleAsset, isInstance, isVisibleInstance } from '@moviemasher/shared-lib/utility/guards.js'
 import { isClientAsset } from '../runtime.js'
 
@@ -33,15 +33,3 @@ export function assertClientVisibleInstance(value: any, name?: string): asserts 
 export function assertClientAudibleInstance(value: any, name?: string): asserts value is ClientAudibleInstance {
   if (!isClientAudibleInstance(value)) errorThrow(value, 'ClientAudibleInstance', name)
 }
-
-export const isClientAudio = (value: any): value is AudioBuffer => {
-  return isObject(value) && value instanceof AudioBuffer
-}
-
-export const isClientVideo = (value: any): value is ClientVideo => {
-  return isObject(value) && value instanceof HTMLVideoElement
-}
-export const isClientImage = (value: any): value is ImageElement => {
-  return isObject(value) && value instanceof HTMLImageElement
-}
-

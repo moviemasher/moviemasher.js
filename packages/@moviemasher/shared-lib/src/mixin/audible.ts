@@ -1,7 +1,10 @@
 import type { Asset, AudibleAsset, AudibleAssetObject, AudibleInstance, AudibleInstanceObject, Constrained, Instance, IntrinsicOptions, Numbers, Time, UnknownRecord, Value } from '../types.js'
 
-import { ASSET_TARGET, BOOLEAN, COMMA, CONTAINER, CONTENT, DURATION_UNKNOWN, FRAMES_MINIMUM, NUMBER, PERCENT, PROBE, arrayOfNumbers, isProbing, isString, isUndefined } from '../runtime.js'
-import { assertAboveZero, isAboveZero, isPositive } from '../utility/guards.js'
+import { $ASSET, $BOOLEAN, COMMA, $CONTAINER, $CONTENT, DURATION_UNKNOWN, FRAMES_MINIMUM, $NUMBER, $PERCENT, $PROBE, arrayOfNumbers, isProbing } from '../runtime.js'
+import { isString } from '../utility/guard.js'
+import { isUndefined } from '../utility/guard.js'
+import { assertAboveZero } from '../utility/guards.js'
+import { isAboveZero, isPositive } from '../utility/guard.js'
 import { timeFromSeconds } from '../utility/time.js'
 
 
@@ -34,21 +37,19 @@ export function AudibleAssetMixin<T extends Constrained<Asset>>(Base: T):
     audioUrl = ''
 
     private _duration = 0
+
     get duration(): number {
       if (!isAboveZero(this._duration)) {
-        const probing = this.decodings.find(decoding => decoding.type === PROBE)
-        // console.debug(this.constructor.name, 'duration', probing, probing?.data?.duration)
+        const probing = this.decodings.find(decoding => decoding.type === $PROBE)
         if (isProbing(probing)) {
           const { data } = probing
           const { duration } = data
           if (isAboveZero(duration)) this._duration = duration
-
-        } else {
-          // console.warn(this.constructor.name, 'no duration no probing', this.decodings)
-        }
+        } 
       }
       return this._duration
     }
+
     set duration(value: number) { this._duration = value }
 
     /**
@@ -69,14 +70,14 @@ export function AudibleAssetMixin<T extends Constrained<Asset>>(Base: T):
       const { canBeMuted: audio } = this
       if (audio) {
         this.properties.push(this.propertyInstance({
-          targetId: ASSET_TARGET,
-          name: 'loop', type: BOOLEAN,
+          targetId: $ASSET,
+          name: 'loop', type: $BOOLEAN,
         }))
         this.properties.push(this.propertyInstance({
-          targetId: ASSET_TARGET, name: 'muted', type: BOOLEAN,
+          targetId: $ASSET, name: 'muted', type: $BOOLEAN,
         }))
         this.properties.push(this.propertyInstance({
-          targetId: ASSET_TARGET, name: 'gain', type: PERCENT,
+          targetId: $ASSET, name: 'gain', type: $PERCENT,
           defaultValue: 1, min: 0, max: 2, step: 0.01
         }))
       }
@@ -165,38 +166,38 @@ export function AudibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
 
     override initializeProperties(object: unknown): void {
       const { asset, container } = this
-      const targetId = container ? CONTAINER : CONTENT
+      const targetId = container ? $CONTAINER : $CONTENT
       if (asset.canBeMuted) {
         this.properties.push(this.propertyInstance({
-          targetId, name: 'muted', type: BOOLEAN,
+          targetId, name: 'muted', type: $BOOLEAN,
         }))
         if (asset.loop) {
           this.properties.push(this.propertyInstance({
-            targetId, name: 'loops', type: NUMBER,
+            targetId, name: 'loops', type: $NUMBER,
             defaultValue: 1,
           }))
         }
         this.properties.push(this.propertyInstance({
-          targetId, name: 'gain', type: PERCENT,
+          targetId, name: 'gain', type: $PERCENT,
           defaultValue: 1, min: 0, max: 2, step: 0.01
         }))
       }
       this.properties.push(this.propertyInstance({
-        targetId, name: 'speed', type: PERCENT,
+        targetId, name: 'speed', type: $PERCENT,
         defaultValue: 1, min: 0.5, max: 2, step: 0.01,
       }))
       this.properties.push(this.propertyInstance({
-        targetId, name: 'startTrim', type: PERCENT,
+        targetId, name: 'startTrim', type: $PERCENT,
         defaultValue: 0, min: 0, max: 1, step: 0.01,
       }))
       this.properties.push(this.propertyInstance({
-        targetId, name: 'endTrim', type: PERCENT,
+        targetId, name: 'endTrim', type: $PERCENT,
         defaultValue: 0, min: 0, max: 1, step: 0.01,
       }))
       super.initializeProperties(object)
     }
 
-    intrinsicsKnown(options: IntrinsicOptions): boolean {
+    override intrinsicsKnown(options: IntrinsicOptions): boolean {
       const superKnown = super.intrinsicsKnown(options)
       if (!superKnown) return false
 
@@ -206,7 +207,7 @@ export function AudibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
       return isAboveZero(this.asset.duration)
     }
 
-    get canBeMuted() { return this.asset.canBeMuted }
+    override get canBeMuted() { return this.asset.canBeMuted }
 
 
     declare speed: number

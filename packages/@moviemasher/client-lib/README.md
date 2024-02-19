@@ -76,6 +76,7 @@ The second SCRIPT element imports the MOVIE-MASHER custom element, which is then
         "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@1.6.3/",
         "lit-element/": "https://unpkg.com/lit-element@3.3.3/",
         "lit-html": "https://unpkg.com/lit-html@2.8.0/lit-html.js",
+        "lit-html/": "https://unpkg.com/lit-html@2.8.0/",
         "lit/": "https://unpkg.com/lit/@2.8.0/"
       }
     }</script>

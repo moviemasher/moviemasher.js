@@ -1,7 +1,8 @@
+import { isTyped } from '@moviemasher/shared-lib/runtime.js'
 import type { ChangeEdit, ChangePropertyEdit, Edit,  } from '../types.js'
 import type { ChangeEditObject, ChangePropertyEditObject, EditObject, Propertied } from '@moviemasher/shared-lib/types.js'
 
-import { isArray, isObject, isPopulatedString, isTyped } from '@moviemasher/shared-lib/runtime.js'
+import { isArray, isObject, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
 
 const isEdit = (value: any): value is Edit => {
   return isObject(value) && 'redo' in value && 'undo' in value

@@ -1,11 +1,16 @@
 import type { DataOrError, ListenersFunction, StringRecord } from '@moviemasher/shared-lib/types.js'
 
-import { isStringRecord } from '@moviemasher/shared-lib/utility/guards.js'
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventIcon } from '../utility/events.js'
 import { IconResponse } from '../types.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../utility/request.js'
+import { isObject, isString } from '@moviemasher/shared-lib/utility/guard.js'
+
+
+const isStringRecord = (value: any): value is StringRecord => {
+  return isObject(value) && Object.values(value).every(value => isString(value))
+}
 
 export class FetchIconHandler {
   static json?: StringRecord

@@ -27,7 +27,7 @@ export class PlayerTimeElement extends PlayerTimeWithDisablarable {
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()

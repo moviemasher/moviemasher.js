@@ -148,29 +148,21 @@
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ServerRawAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<h3><a id="ServerRawAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
 <p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetManager">assetManager</a></p>
+<hr>
+<h3><a id="ServerRawAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='RawAssetObject.html'>RawAssetObject</a></code></p>
+<p>Overrides
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="ServerRawAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assets">assets</a></p>
 <hr>
-<h3><a id="ServerRawAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
+<h3><a id="ServerRawAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.canBeContainer">canBeContainer</a></p>
-<hr>
-<h3><a id="ServerRawAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.canBeContent">canBeContent</a></p>
-<hr>
-<h3><a id="ServerRawAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.container">container</a></p>
-<hr>
-<h3><a id="ServerRawAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.content">content</a></p>
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.decoding">decoding</a></p>
 <hr>
 <h3><a id="ServerRawAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
@@ -180,10 +172,6 @@
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.id">id</a></p>
 <hr>
-<h3><a id="ServerRawAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.isVector">isVector</a></p>
-<hr>
 <h3><a id="ServerRawAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.label">label</a></p>
@@ -192,13 +180,17 @@
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.properties">properties</a></p>
 <hr>
-<h3><a id="ServerRawAsset.request">request</a></h3><p>• <strong>request</strong>: <code><a href='ServerMediaRequest.html'>ServerMediaRequest</a></code></p>
-<p>Overrides
-RawAsset.request</p>
-<hr>
-<h3><a id="ServerRawAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="ServerRawAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.scalarRecord">scalarRecord</a></p>
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.request">request</a></p>
+<hr>
+<h3><a id="ServerRawAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.resource">resource</a></p>
+<hr>
+<h3><a id="ServerRawAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.resources">resources</a></p>
 <hr>
 <h3><a id="ServerRawAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
@@ -208,7 +200,7 @@ RawAsset.request</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.targetId">targetId</a></p>
 <hr>
-<h3><a id="ServerRawAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="ServerRawAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.type">type</a></p>
 <h2>Methods</h2>
@@ -250,7 +242,8 @@ RawAsset.request</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetCachePromise">assetCachePromise</a></p>
 <hr>
-<h3><a id="ServerRawAsset.assetGraphFiles">assetGraphFiles</a></h3><p>▸ <strong>assetGraphFiles</strong>(<code>args</code>): <code><a href='GraphFiles.html'>GraphFiles</a></code></p>
+<h3><a id="ServerRawAsset.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>args</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
+<p>All files needed for audible and/or visible encode commands.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -265,9 +258,9 @@ RawAsset.request</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='GraphFiles.html'>GraphFiles</a></code></p>
+<code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetGraphFiles">assetGraphFiles</a></p>
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetFiles">assetFiles</a></p>
 <hr>
 <h3><a id="ServerRawAsset.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -287,6 +280,30 @@ RawAsset.request</p>
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.clipObject">clipObject</a></p>
+<hr>
+<h3><a id="ServerRawAsset.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<p>Writes a command file, if it&#39;s not a raw asset.</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ServerPromiseArgs.html'>ServerPromiseArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>commandFile</code></td>
+<td align="left"><code><a href='CommandFile.html'>CommandFile</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.commandFilePromise">commandFilePromise</a></p>
 <hr>
 <h3><a id="ServerRawAsset.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -311,6 +328,25 @@ RawAsset.request</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.constrainedValue">constrainedValue</a></p>
 <hr>
+<h3><a id="ServerRawAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.decodingOfType">decodingOfType</a></p>
+<hr>
 <h3><a id="ServerRawAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -330,7 +366,7 @@ RawAsset.request</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.initializeProperties">initializeProperties</a></p>
 <hr>
-<h3><a id="ServerRawAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceObject.html'>InstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
+<h3><a id="ServerRawAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -345,8 +381,8 @@ RawAsset.request</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='InstanceObject.html'>InstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
-<p>Overrides
+<code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
+<p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.instanceArgs">instanceArgs</a></p>
 <hr>
 <h3><a id="ServerRawAsset.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='Instance.html'>Instance</a></code></p>
@@ -365,7 +401,7 @@ RawAsset.request</p>
 </tbody></table>
 <p>Returns
 <code><a href='Instance.html'>Instance</a></code></p>
-<p>Overrides
+<p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.instanceFromObject">instanceFromObject</a></p>
 <hr>
 <h3><a id="ServerRawAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
@@ -425,7 +461,7 @@ RawAsset.request</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ServerRawAsset.serverPromise">serverPromise</a></h3><p>▸ <strong>serverPromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<h3><a id="ServerRawAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -435,20 +471,16 @@ RawAsset.request</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ServerPromiseArgs.html'>ServerPromiseArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>commandFile</code></td>
-<td align="left"><code><a href='CommandFile.html'>CommandFile</a></code></td>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<code><a href='Resource.html'>Resource</a></code></p>
 <p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.serverPromise">serverPromise</a></p>
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.resourceOfType">resourceOfType</a></p>
 <hr>
-<h3><a id="ServerRawAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ServerRawAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -467,7 +499,7 @@ RawAsset.request</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.setValue">setValue</a></p>
 <hr>
@@ -476,6 +508,33 @@ RawAsset.request</p>
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="ServerRawAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ServerRawAsset.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -505,36 +564,37 @@ RawAsset.request</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ServerRawAsset'>ServerRawAsset</a></li>
 <li><a class='' href='#ServerRawAsset.assetIds'>assetIds</a></li>
+<li><a class='' href='#ServerRawAsset.assetManager'>assetManager</a></li>
 <li><a class='' href='#ServerRawAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#ServerRawAsset.assets'>assets</a></li>
-<li><a class='' href='#ServerRawAsset.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#ServerRawAsset.canBeContent'>canBeContent</a></li>
-<li><a class='' href='#ServerRawAsset.container'>container</a></li>
-<li><a class='' href='#ServerRawAsset.content'>content</a></li>
+<li><a class='' href='#ServerRawAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ServerRawAsset.decodings'>decodings</a></li>
 <li><a class='' href='#ServerRawAsset.id'>id</a></li>
-<li><a class='' href='#ServerRawAsset.isVector'>isVector</a></li>
 <li><a class='' href='#ServerRawAsset.label'>label</a></li>
 <li><a class='' href='#ServerRawAsset.properties'>properties</a></li>
 <li><a class='' href='#ServerRawAsset.request'>request</a></li>
-<li><a class='' href='#ServerRawAsset.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#ServerRawAsset.resource'>resource</a></li>
+<li><a class='' href='#ServerRawAsset.resources'>resources</a></li>
 <li><a class='' href='#ServerRawAsset.source'>source</a></li>
 <li><a class='' href='#ServerRawAsset.targetId'>targetId</a></li>
 <li><a class='' href='#ServerRawAsset.type'>type</a></li>
 <li><a class='' href='#ServerRawAsset.asset'>asset</a></li>
 <li><a class='' href='#ServerRawAsset.assetCachePromise'>assetCachePromise</a></li>
-<li><a class='' href='#ServerRawAsset.assetGraphFiles'>assetGraphFiles</a></li>
+<li><a class='' href='#ServerRawAsset.assetFiles'>assetFiles</a></li>
 <li><a class='' href='#ServerRawAsset.clipObject'>clipObject</a></li>
+<li><a class='' href='#ServerRawAsset.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerRawAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#ServerRawAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ServerRawAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerRawAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerRawAsset.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#ServerRawAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerRawAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerRawAsset.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ServerRawAsset.serverPromise'>serverPromise</a></li>
+<li><a class='' href='#ServerRawAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerRawAsset.setValue'>setValue</a></li>
 <li><a class='' href='#ServerRawAsset.toJSON'>toJSON</a></li>
+<li><a class='' href='#ServerRawAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerRawAsset.value'>value</a></li></ul>
       </nav>
     </main>

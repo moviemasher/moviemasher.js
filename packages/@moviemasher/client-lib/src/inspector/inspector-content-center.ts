@@ -6,11 +6,12 @@ import { css } from '@lit/reactive-element/css-tag.js'
 import { isPropertyId } from '@moviemasher/shared-lib/utility/guards.js'
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventChangedMashAsset, EventChangedInspectorSelectors, EventInspectorSelectors } from '../utility/events.js'
-import { COMMA, TARGET_IDS, isArray, isUndefined } from '@moviemasher/shared-lib/runtime.js'
+import { COMMA, TARGET_IDS } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
 import { Scroller } from '../base/LeftCenterRight.js'
 import { isTargetId } from '../guards/TypeGuards.js'
+import { isUndefined, isArray } from '@moviemasher/shared-lib/utility/guard.js'
 
 export const InspectorContentCenterTag = 'movie-masher-inspector-content-center'
 
@@ -28,7 +29,7 @@ export class InspectorContentCenterElement extends InspectorContentCenterDisabla
       this.selectorsSupplied = Boolean(selectors.length)
       if (!this.selectorsSupplied) {
         const event = new EventInspectorSelectors()
-        MOVIEMASHER.eventDispatcher.dispatch(event)
+        MOVIEMASHER.dispatch(event)
         this.selectors = event.detail.selectorTypes
         this.listeners[EventChangedInspectorSelectors.Type] = this.handleChangedInspectorSelectors.bind(this)
       }

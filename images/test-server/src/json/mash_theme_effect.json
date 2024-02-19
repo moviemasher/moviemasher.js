@@ -1,0 +1,48 @@
+{
+	"id": "mash_theme_effect",
+	"type": "mash",
+	"mash": {
+		"quantize": 10,
+		"label": "Ten Seconds of Gray",
+		"backcolor": "red",
+		"media": [],
+		"video": [
+			{
+				"type": "video",
+				"clips": [{
+					"id": "com.moviemasher.theme.color",
+					"effects": [
+					  {
+					    "id": "com.moviemasher.effect.grayscale",
+					    "rr": 0.3,
+              "rg": 0.4,
+              "rb": 0.3,
+              "ra": 0,
+              "gr": 0.3,
+              "gg": 0.4,
+              "gb": 0.3,
+              "ga": 0,
+              "br": 0.3,
+              "bg": 0.4,
+              "bb": 0.3,
+              "ba": 0,
+              "ar": 0,
+              "ag": 0,
+              "ab": 0,
+              "aa": 1
+					  }
+					],
+					"frame": 0,
+					"frames": 100,
+					"color": "green"
+				}]
+			}
+		],
+		"audio": [
+			{
+				"type": "audio",
+				"clips": []
+			}
+		]
+	}
+}

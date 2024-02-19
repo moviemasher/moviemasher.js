@@ -1,81 +1,40 @@
-import type { AudibleAsset, AudibleType, AudioAsset, AudioAssetObject, ClientMediaRequest, Clip, ClipObject, ComplexSvgItem, ContainerAsset, ContainerInstance, ContentAsset, ContentInstance, Encoding, Endpoint, EndpointRequest, ImageAsset, Instance, Integer, MashAsset, NestedStringRecord, NumberRecord, Point, PopulatedString, PropertyId, Rect, Requestable, Scalar, ServerMediaRequest, Size, StringRecord, StringTuple, Transcoding, TranscodingType, TranscodingTypes, Unknowns, Value, VideoAsset, VisibleAsset, VisibleContentInstance, VisibleInstance } from '../types.js'
+import type { AssetResource, AudibleAsset, AudibleType, AudioAsset, AudioAssetObject, AudioInstance, Clip, ClipObject, ComplexSvgItem, ContainerAsset, ContainerInstance, ContentAsset, ContentInstance, DropResource, Encoding, Endpoint, EndpointRequest, ImageAsset, Instance, Integer, MashAsset, Point, PopulatedString, PropertyId, Rect, Resource, Size, StringTuple, Transcoding, TranscodingType, TranscodingTypes, Value, VideoAsset, VisibleAsset, VisibleInstance } from '../types.js'
 
-import { ASSET_TYPES, AUDIBLE_TYPES, AUDIO, HEIGHT, IMAGE, MASH, BITMAPS, TARGET_IDS, VIDEO, VISIBLE_TYPES, WAVEFORM, WIDTH, errorThrow, isAbsolutePath, isArray, isAsset, isAssetObject, isAssetType, isBoolean, isDefined, isNumber, isNumberOrNaN, isNumeric, isObject, isPopulatedString, isSourceAsset, isString, length } from '../runtime.js'
+import { $AUDIO, $BITMAPS, $HEIGHT, $IMAGE, $MASH, $VIDEO, $WAVEFORM, $WIDTH, RAW_TYPES, AUDIBLE_TYPES, TARGET_IDS, VISIBLE_TYPES, errorThrow, isAsset, isAssetObject, isRawType, isSourceAsset, isDropType, $TTF } from '../runtime.js'
+import { isAboveZero, isDefined, isInteger, isNumber, isObject, isPopulatedString, isPositive, isValue } from './guard.js'
 
 export const isTranscoding = (value: any): value is Transcoding => {
   return isRequestable(value) && isTranscodingType(value.type)
 }
 
-export const isEncoding = (value: any): value is Encoding => {
-  return isRequestable(value) && isAssetType(value.type)
+export function assertDefined<T = true>(value: any, name?: string): asserts value is T {
+  if (!isDefined<T>(value)) errorThrow(value, 'Defined', name)
 }
 
-export const isRequestable = (value: any): value is Requestable => {
+
+export function assertPopulatedString(value: any, name = 'value'): asserts value is PopulatedString {
+  if (!isPopulatedString(value)) errorThrow(value, 'populated string', name)
+}
+
+
+export const isEncoding = (value: any): value is Encoding => {
+  return isRequestable(value) && isRawType(value.type)
+}
+
+export const isRequestable = (value: any): value is Resource => {
   return isObject(value) && 'request' in value
 }
 
-export function isPopulatedArray<T = unknown>(value: any): value is T[] {
-  return isArray<T>(value) && length(value)
-}
 
-export const isInteger = (value: any): value is Integer => isNumber(value) && Number.isInteger(value)
-export const isFloat = (value: any): boolean => isNumber(value) && !isInteger(value)
-export const isPositive = (value: any): value is number => isNumber(value) && value >= 0
-export const isBelowOne = (value: any): value is number => isNumber(value) && value < 1
-export const isAboveZero = (value: any): value is number => isNumber(value) && value > 0
-
-export const isValue = (value: any): value is Value => {
-  return isNumber(value) || isString(value)
-}
-
-export const isScalar = (value: any): value is Scalar => (
-  isBoolean(value) || isValue(value)
+export const isRawResource = (value: any): value is AssetResource => (
+  isRequestable(value) && isRawType(value.type) 
+)
+export const isDropResource = (value: any): value is DropResource => (
+  isRequestable(value) && (isRawType(value.type) || value.type === $TTF)
 )
 
-export const isTrueValue = (value: any): value is Value => {
-  if (!isValue(value)) return false
-
-  if (isNumeric(value)) return !!Number(value)
-
-  return isPopulatedString(value)
-}
-
-export const isStringRecord = (value: any): value is StringRecord => {
-  return isObject(value) && Object.values(value).every(value => isString(value))
-}
-
-export const isNumberRecord = (value: any): value is NumberRecord => {
-  return isObject(value) && Object.values(value).every(value => isNumber(value))
-}
-
-export function assertNumberRecord(value: any, name?: string): asserts value is NumberRecord {
-  if (!isNumberRecord(value)) errorThrow(value, 'NumberRecord', name)
-}
-
-export const isNestedStringRecord = (value: any): value is NestedStringRecord => {
-  return isObject(value) && Object.values(value).every(value => (
-    isStringRecord(value) || isNestedStringRecord(value)
-  ))
-}
-
-export function assertObject(value: any, name?: string): asserts value is object {
-  if (!isObject(value)) errorThrow(value, 'Object', name)
-}
-
-export function assertString(value: any, name?: string): asserts value is string {
-  if (!isString(value)) errorThrow(value, 'String', name)
-}
-
-export function assertNumber(value: any, name?: string): asserts value is number {
-  if (!isNumberOrNaN(value)) errorThrow(value, 'Number', name)
-}
-
-export function assertBoolean(value: any, name?: string): asserts value is boolean {
-  if (!isBoolean(value)) errorThrow(value, 'Boolean', name)
-}
-
-export function assertDefined<T = true>(value: any, name?: string): asserts value is T {
-  if (!isDefined<T>(value)) errorThrow(value, 'Defined', name)
+export function assertAssetResource(value: any, name?: string): asserts value is AssetResource {
+  if (!isRawResource(value)) errorThrow(value, 'AssetResource', name)
 }
 
 export function assertInteger(value: any, name?: string): asserts value is Integer {
@@ -90,17 +49,6 @@ export function assertAboveZero(value: any, name?: string): asserts value is num
   if (!isAboveZero(value)) errorThrow(value, '> zero', name)
 }
 
-export function assertArray<T = unknown>(value: any, name?: string): asserts value is T[] {
-  if (!isArray(value)) errorThrow(value, 'Array', name)
-}
-
-export function assertPopulatedString(value: any, name = 'value'): asserts value is PopulatedString {
-  if (!isPopulatedString(value)) errorThrow(value, 'populated string', name)
-}
-
-export function assertPopulatedArray(value: any, name = 'value'): asserts value is Unknowns {
-  if (!isPopulatedArray(value)) errorThrow(value, 'populated array', name)
-}
 
 export function assertTrue(value: any, name = 'value'): asserts value is true {
   if (!value) errorThrow(value, 'true', name)
@@ -110,17 +58,13 @@ export function assertValue(value: any, name?: string): asserts value is Value {
   if (!isValue(value)) errorThrow(value, 'Value', name)
 }
 
-export function assertScalar(value: any, name?: string): asserts value is Scalar {
-  if (!isScalar(value)) errorThrow(value, 'Scalar', name)
-}
-
 export const isPropertyId = (value: any): value is PropertyId => (
   isPopulatedString(value)
   && TARGET_IDS.some(type => value.startsWith(type))
   && value.split('.').length === 2
 )
 
-const TypesTranscoding: TranscodingTypes = [...ASSET_TYPES, BITMAPS, WAVEFORM]
+const TypesTranscoding: TranscodingTypes = [...RAW_TYPES, $BITMAPS, $WAVEFORM]
 
 export const isTranscodingType = (type?: any): type is TranscodingType => {
   return TypesTranscoding.includes(type)
@@ -131,11 +75,11 @@ export const isAudibleAsset = (value: any): value is AudibleAsset => {
 }
 
 export const isAudioAssetObject = (value: any): value is AudioAssetObject => (
-  isAssetObject(value) && value.type === AUDIO
+  isAssetObject(value) && value.type === $AUDIO
 )
 
 export const isAudioAsset = (value: any): value is AudioAsset => (
-  isAsset(value) && value.type === AUDIO
+  isAsset(value) && value.type === $AUDIO
 )
 
 export const isClip = (value: any): value is Clip => {
@@ -151,21 +95,28 @@ export const isClipObject = (value: any): value is ClipObject => {
 }
 
 export const isImageAsset = (value: any): value is ImageAsset => {
-  return isAsset(value) && value.type === IMAGE
+  return isAsset(value) && value.type === $IMAGE
 }
 
 export const isInstance = (value?: any): value is Instance => {
   return isObject(value) && 'assetIds' in value
 }
 
+export const isAudioInstance = (value: any): value is AudioInstance => (
+  isInstance(value) && isAudioAsset(value.asset)
+)
+export function assertAudioInstance(value: any, name?: string): asserts value is AudioInstance {
+  if (!isAudioInstance(value)) errorThrow(value, 'AudioInstance', name)
+}
+
 export const isVideoAsset = (value: any): value is VideoAsset => {
-  return isAsset(value) && value.type === VIDEO
+  return isAsset(value) && value.type === $VIDEO
 }
 
 export const isMashAsset = (value: any): value is MashAsset => (
   isVideoAsset(value)
   && isSourceAsset(value)
-  && value.source === MASH
+  && value.source === $MASH
   && 'trackInstance' in value
 )
 
@@ -184,7 +135,6 @@ export const canBeContainerInstance = (value?: any): value is ContainerInstance 
 export function assertCanBeContainerInstance(value?: any, name?: string): asserts value is ContainerInstance {
   if (!canBeContainerInstance(value)) errorThrow(value, 'ContainerInstance', name)
 }
-
 
 const canBeContentAsset = (value?: any): value is ContentAsset => {
   return isVisibleAsset(value) && !!value.canBeContent
@@ -226,9 +176,9 @@ export function assertPoint(value: any, name?: string): asserts value is Point {
     errorThrow(value, 'Point', name)
 }
 
-export const isSize = (value: any): value is Size => {
+export const isSize = <T=number>(value: any): value is Size<T> => {
   return isObject(value) &&
-    WIDTH in value && HEIGHT in value &&
+    $WIDTH in value && $HEIGHT in value &&
     isNumber(value.width) && isNumber(value.height)
 }
 
@@ -245,13 +195,6 @@ export function assertVisibleInstance(value: any, name?: string): asserts value 
   if (!isVisibleInstance(value)) errorThrow(value, 'VisibleInstance', name)
 }
 
-export const isStringTuple = (value: any): value is StringTuple => {
-  return isArray(value) && value.length === 2 && value.every(isPopulatedString)
-}
-
-export function assertStringTuple(value: any, name?: string): asserts value is StringTuple {
-  if (!isStringTuple(value)) errorThrow(value, 'StringTuple', name)
-}
 
 export const isRequest = (value: any): value is EndpointRequest => (
   isObject(value)
@@ -259,15 +202,8 @@ export const isRequest = (value: any): value is EndpointRequest => (
   && (isPopulatedString(value.endpoint) || isEndpoint(value.endpoint))
 )
 
-
-export const isServerMediaRequest = (value: any): value is ServerMediaRequest => {
-  return isRequest(value) && 'path' in value && isAbsolutePath(value.path)
-}
-
-export const isClientMediaRequest = (value: any): value is ClientMediaRequest => {
-  return isRequest(value) && 'objectUrl' in value && isPopulatedString(value.objectUrl)
-}
-
 export const isComplexSvgItem = (value: any): value is ComplexSvgItem => (
   isObject(value) && 'svgItem' in value
 )
+
+

@@ -3,9 +3,8 @@
   "description": "Builds Movie Masher documentation",
   "type": "commonjs",
   "scripts": {
-    "build-docs-contained-full": "run-s build-markdown build-typedoc build-documentation",
-    "build-docs-contained": "run-s build-documentation",
-
+    "build-docs-contained": "run-s build-markdown build-typedoc build-documentation",
+    "build-docs-contained-full": "run-s build-documentation",
     "build-markdown": "run-s build-markdown-md build-markdown-main build-markdown-packages",
     "build-markdown-main": "markdown --path './README.md'",
     "build-markdown-md": "markdown --path './images/build-docs/src/md/**/*.md'",

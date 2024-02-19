@@ -1,10 +1,12 @@
 import type { DataOrError, EndpointRequest, StringDataOrError, Strings } from '../types.js'
 
-import { COLON, EQUALS, GET, QUESTION, SLASH, isDefiniteError, isObject, isString } from '../runtime.js'
+import { COLON, EQUALS, $GET, QUESTION, SLASH, isDefiniteError } from '../runtime.js'
+import { isObject } from './guard.js'
+import { isString } from './guard.js'
 
-const ProtocolBlob = 'blob'
+const $BLOB = 'blob'
 
-const urlIsBlob = (url: string): boolean => url.startsWith(ProtocolBlob)
+const urlIsBlob = (url: string): boolean => url.startsWith($BLOB)
 
 export const requestUrl = (request: EndpointRequest): string => {
   const { endpoint = '', init } = request
@@ -19,7 +21,7 @@ export const requestUrl = (request: EndpointRequest): string => {
   if (search) searchBits.push(search.slice(1))
   if (init) {
     const { body, method } = init
-    if (method === GET && isObject(body)) {
+    if (method === $GET && isObject(body)) {
       searchBits.push(...Object.entries(body).map(entry => entry.join(EQUALS)))
     }
   }
@@ -34,50 +36,6 @@ export const requestUrl = (request: EndpointRequest): string => {
   return bits.join('')
 }
 
-export const promiseNumbers = (promises: Promise<DataOrError<number>>[]) => {
-  const { length } = promises
-  const result = { data: 0 }
-
-  switch (length) {
-    case 0: return Promise.resolve(result)
-    case 1: return promises[0]
-  }
-
-  const promise = promises.reduce((promise, next) => promise.then(orError => {
-    if (isDefiniteError(orError)) return orError
-
-    result.data += orError.data
-    return next
-  }), Promise.resolve(result))
-
-  return promise.then(orError => {
-    if (isDefiniteError(orError)) return orError
-
-    return result
-  })
-}
-
-export const promisesString = (promises: Promise<StringDataOrError>[]): Promise<StringDataOrError> => {
-  const result = { data: '' }
-
-  const { length } = promises
-  switch (length) {
-    case 0: return Promise.resolve(result)
-    case 1: return promises[0]
-  }
-
-  const promise = promises.reduce((promise, next) => promise.then(orError => {
-    if (isDefiniteError(orError)) return orError
-    result.data += orError.data
-
-    return next
-  }), Promise.resolve(result))
-  return promise.then(orError => {
-    if (isDefiniteError(orError)) return orError
-
-    return result
-  })
-}
 
 export const urlFromCss = (string: string): string => {
   const exp = /url\(([^)]+)\)(?!.*\1)/g
@@ -85,8 +43,27 @@ export const urlFromCss = (string: string): string => {
   const matchesArray = Array.from(matches)
   const { length } = matchesArray
   if (!length) return ''
+
   const values = matchesArray[length - 1]
   const { length: valuesLength } = values
   if (!valuesLength) return ''
+
   return values[valuesLength - 1]
 }
+
+export const familyFromCss = (string: string): string => {
+  // regular expression to find the font-family, ignoring  whitespace and quotes
+  const exp = /font-family: ['"]?([^'";]*)['";]?/gm
+  const matches = string.matchAll(exp)
+  const matchesArray = Array.from(matches)
+  const { length } = matchesArray
+  if (!length) return ''
+
+  const values = matchesArray[length - 1]
+  const { length: valuesLength } = values
+  if (!valuesLength) return ''
+  
+  return values[valuesLength - 1]
+}
+
+export const urlName = (url: string): string => url.replace(/[^a-z0-9]/gi, '_')

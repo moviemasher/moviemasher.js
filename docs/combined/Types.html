@@ -139,7 +139,7 @@
   <div class="section">
     <h1>Type alias: AVType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.AVType</p>
-<p>Ƭ <strong>AVType</strong>: <code><a href='Types.html#AudioAVType'>AudioAVType</a></code> | <code><a href='Types.html#BothAVType'>BothAVType</a></code> | <code><a href='Types.html#VideoAVType'>VideoAVType</a></code></p>
+<p>Ƭ <strong>AVType</strong>: <code><a href='Types.html#AudioType'>AudioType</a></code> | <code><a href='Types.html#VideoType'>VideoType</a></code> | <code>&quot;both&quot;</code></p>
 
   </div>
 </section>
@@ -148,7 +148,7 @@
   <a id="AbsolutePath"><h2>AbsolutePath</h2></a>
   <div class="section">
     <h1>Type alias: AbsolutePath</h1>
-<p><a href="../server-lib.html">server-lib</a>.AbsolutePath</p>
+<p><a href="../shared-lib.html">shared-lib</a>.AbsolutePath</p>
 <p>Ƭ <strong>AbsolutePath</strong>: `/${string}`</p>
 
   </div>
@@ -169,7 +169,108 @@
   <div class="section">
     <h1>Type alias: AlphaType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.AlphaType</p>
-<p>Ƭ <strong>AlphaType</strong>: <code><a href='Types.html#ImageType'>ImageType</a></code> | <code><a href='Types.html#SequenceType'>SequenceType</a></code> | <code><a href='Types.html#VideoType'>VideoType</a></code></p>
+<p>Ƭ <strong>AlphaType</strong>: <code><a href='Types.html#ImageType'>ImageType</a></code> | <code><a href='Types.html#BitmapsType'>BitmapsType</a></code> | <code><a href='Types.html#VideoType'>VideoType</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ArrayOf1"><h2>ArrayOf1</h2></a>
+  <div class="section">
+    <h1>Type alias: ArrayOf1&lt;T&gt;</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ArrayOf1</p>
+<p>Ƭ <strong>ArrayOf1</strong>&lt;<code>T</code>&gt;: [<code>T</code>]</p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+</tbody></table>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ArrayOf2"><h2>ArrayOf2</h2></a>
+  <div class="section">
+    <h1>Type alias: ArrayOf2&lt;T, S&gt;</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ArrayOf2</p>
+<p>Ƭ <strong>ArrayOf2</strong>&lt;<code>T</code>, <code>S</code>&gt;: [<code>T</code>, <code>S</code>]</p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+<tr>
+<td align="left"><code>S</code></td>
+<td align="left"><code>T</code></td>
+</tr>
+</tbody></table>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ArrayOf3"><h2>ArrayOf3</h2></a>
+  <div class="section">
+    <h1>Type alias: ArrayOf3&lt;T, S, U&gt;</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ArrayOf3</p>
+<p>Ƭ <strong>ArrayOf3</strong>&lt;<code>T</code>, <code>S</code>, <code>U</code>&gt;: [<code>T</code>, <code>S</code>, <code>U</code>]</p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+<tr>
+<td align="left"><code>S</code></td>
+<td align="left"><code>T</code></td>
+</tr>
+<tr>
+<td align="left"><code>U</code></td>
+<td align="left"><code>S</code></td>
+</tr>
+</tbody></table>
+
+  </div>
+</section>
+  
+<section>
+  <a id="Aspect"><h2>Aspect</h2></a>
+  <div class="section">
+    <h1>Type alias: Aspect</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.Aspect</p>
+<p>Ƭ <strong>Aspect</strong>: <code>&quot;flip&quot;</code> | <code>&quot;maintain&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="AssetFileType"><h2>AssetFileType</h2></a>
+  <div class="section">
+    <h1>Type alias: AssetFileType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.AssetFileType</p>
+<p>Ƭ <strong>AssetFileType</strong>: <code><a href='Types.html#SvgType'>SvgType</a></code> | <code><a href='Types.html#SvgsType'>SvgsType</a></code> | <code><a href='Types.html#TxtType'>TxtType</a></code> | <code><a href='Types.html#DropType'>DropType</a></code></p>
 
   </div>
 </section>
@@ -179,7 +280,7 @@
   <div class="section">
     <h1>Type alias: AssetRecord&lt;T&gt;</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.AssetRecord</p>
-<p>Ƭ <strong>AssetRecord</strong>&lt;<code>T</code>&gt;: { [key in AssetType]?: T }</p>
+<p>Ƭ <strong>AssetRecord</strong>&lt;<code>T</code>&gt;: { [key in RawType]?: T }</p>
 <h4>Type parameters</h4>
 <table>
 <thead>
@@ -202,7 +303,7 @@
   <div class="section">
     <h1>Type alias: AssetType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.AssetType</p>
-<p>Ƭ <strong>AssetType</strong>: <code><a href='Types.html#AudioType'>AudioType</a></code> | <code><a href='Types.html#ImageType'>ImageType</a></code> | <code><a href='Types.html#VideoType'>VideoType</a></code></p>
+<p>Ƭ <strong>AssetType</strong>: <code>&quot;asset&quot;</code></p>
 
   </div>
 </section>
@@ -228,21 +329,21 @@
 </section>
   
 <section>
-  <a id="AudioAVType"><h2>AudioAVType</h2></a>
-  <div class="section">
-    <h1>Type alias: AudioAVType</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.AudioAVType</p>
-<p>Ƭ <strong>AudioAVType</strong>: <code>&quot;audio&quot;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="AudioType"><h2>AudioType</h2></a>
   <div class="section">
     <h1>Type alias: AudioType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.AudioType</p>
 <p>Ƭ <strong>AudioType</strong>: <code>&quot;audio&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="BitmapsType"><h2>BitmapsType</h2></a>
+  <div class="section">
+    <h1>Type alias: BitmapsType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.BitmapsType</p>
+<p>Ƭ <strong>BitmapsType</strong>: <code>&quot;bitmaps&quot;</code></p>
 
   </div>
 </section>
@@ -268,20 +369,10 @@
 </section>
   
 <section>
-  <a id="BothAVType"><h2>BothAVType</h2></a>
-  <div class="section">
-    <h1>Type alias: BothAVType</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.BothAVType</p>
-<p>Ƭ <strong>BothAVType</strong>: <code>&quot;both&quot;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="BrowserPanel"><h2>BrowserPanel</h2></a>
   <div class="section">
     <h1>Type alias: BrowserPanel</h1>
-<p><a href="../client-lib.html">client-lib</a>.BrowserPanel</p>
+<p><a href="../shared-lib.html">shared-lib</a>.BrowserPanel</p>
 <p>Ƭ <strong>BrowserPanel</strong>: <code>&quot;browser&quot;</code></p>
 
   </div>
@@ -302,7 +393,7 @@
   <div class="section">
     <h1>Type alias: ClientAudioDataOrError</h1>
 <p><a href="../client-lib.html">client-lib</a>.ClientAudioDataOrError</p>
-<p>Ƭ <strong>ClientAudioDataOrError</strong>: <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer"><code>AudioBuffer</code></a>&gt;</p>
+<p>Ƭ <strong>ClientAudioDataOrError</strong>: <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/ClientAudio.html'>ClientAudio</a></code>&gt;</p>
 
   </div>
 </section>
@@ -328,31 +419,21 @@
 </section>
   
 <section>
-  <a id="ClientImageOrVideo"><h2>ClientImageOrVideo</h2></a>
-  <div class="section">
-    <h1>Type alias: ClientImageOrVideo</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientImageOrVideo</p>
-<p>Ƭ <strong>ClientImageOrVideo</strong>: <code><a href='../exports/ClientImage.html'>ClientImage</a></code> | <code><a href='../exports/ClientVideo.html'>ClientVideo</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="ClientMedia"><h2>ClientMedia</h2></a>
   <div class="section">
     <h1>Type alias: ClientMedia</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMedia</p>
-<p>Ƭ <strong>ClientMedia</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer"><code>AudioBuffer</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/FontFace"><code>FontFace</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement"><code>HTMLImageElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement"><code>HTMLVideoElement</code></a></p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientMedia</p>
+<p>Ƭ <strong>ClientMedia</strong>: <code>string</code> | <code><a href='../exports/ClientAudio.html'>ClientAudio</a></code> | <code><a href='../exports/ClientFont.html'>ClientFont</a></code> | <code><a href='../exports/ClientImage.html'>ClientImage</a></code> | <code><a href='../exports/ClientVideo.html'>ClientVideo</a></code></p>
 
   </div>
 </section>
   
 <section>
-  <a id="ClientMediaType"><h2>ClientMediaType</h2></a>
+  <a id="ClientOrServer"><h2>ClientOrServer</h2></a>
   <div class="section">
-    <h1>Type alias: ClientMediaType</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMediaType</p>
-<p>Ƭ <strong>ClientMediaType</strong>: <code><a href='Types.html#AudioType'>AudioType</a></code> | <code><a href='Types.html#ImageType'>ImageType</a></code> | <code><a href='Types.html#VideoType'>VideoType</a></code> | <code><a href='Types.html#FontType'>FontType</a></code></p>
+    <h1>Type alias: ClientOrServer</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientOrServer</p>
+<p>Ƭ <strong>ClientOrServer</strong>: <code>&quot;client&quot;</code> | <code>&quot;server&quot;</code></p>
 
   </div>
 </section>
@@ -414,11 +495,31 @@
 </section>
   
 <section>
+  <a id="ContainerSource"><h2>ContainerSource</h2></a>
+  <div class="section">
+    <h1>Type alias: ContainerSource</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ContainerSource</p>
+<p>Ƭ <strong>ContainerSource</strong>: <code>&quot;container&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="ContainerTiming"><h2>ContainerTiming</h2></a>
   <div class="section">
     <h1>Type alias: ContainerTiming</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.ContainerTiming</p>
 <p>Ƭ <strong>ContainerTiming</strong>: <code>&quot;container&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ContentSource"><h2>ContentSource</h2></a>
+  <div class="section">
+    <h1>Type alias: ContentSource</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ContentSource</p>
+<p>Ƭ <strong>ContentSource</strong>: <code>&quot;content&quot;</code></p>
 
   </div>
 </section>
@@ -541,7 +642,7 @@
   <div class="section">
     <h1>Type alias: DecodingType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.DecodingType</p>
-<p>Ƭ <strong>DecodingType</strong>: <code>string</code> | <code><a href='Types.html#ProbeType'>ProbeType</a></code></p>
+<p>Ƭ <strong>DecodingType</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -552,6 +653,16 @@
     <h1>Type alias: Direction</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.Direction</p>
 <p>Ƭ <strong>Direction</strong>: <code><a href='Types.html#SideDirection'>SideDirection</a></code> | <code><a href='Types.html#CornerDirection'>CornerDirection</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="DropType"><h2>DropType</h2></a>
+  <div class="section">
+    <h1>Type alias: DropType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.DropType</p>
+<p>Ƭ <strong>DropType</strong>: <code><a href='Types.html#RawType'>RawType</a></code> | <code><a href='Types.html#FontType'>FontType</a></code></p>
 
   </div>
 </section>
@@ -591,7 +702,7 @@
   <div class="section">
     <h1>Type alias: EncodingType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.EncodingType</p>
-<p>Ƭ <strong>EncodingType</strong>: <code><a href='Types.html#AssetType'>AssetType</a></code></p>
+<p>Ƭ <strong>EncodingType</strong>: <code><a href='Types.html#RawType'>RawType</a></code></p>
 
   </div>
 </section>
@@ -617,11 +728,41 @@
 </section>
   
 <section>
+  <a id="EvaluationValue"><h2>EvaluationValue</h2></a>
+  <div class="section">
+    <h1>Type alias: EvaluationValue</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.EvaluationValue</p>
+<p>Ƭ <strong>EvaluationValue</strong>: <code><a href='../exports/Evaluation.html'>Evaluation</a></code> | <code><a href='Types.html#Value'>Value</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="EvaluationValueObject"><h2>EvaluationValueObject</h2></a>
+  <div class="section">
+    <h1>Type alias: EvaluationValueObject</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.EvaluationValueObject</p>
+<p>Ƭ <strong>EvaluationValueObject</strong>: <code><a href='Types.html#Value'>Value</a></code> | <code><a href='../exports/EvaluationObject.html'>EvaluationObject</a></code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="EventOptions"><h2>EventOptions</h2></a>
   <div class="section">
     <h1>Type alias: EventOptions</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.EventOptions</p>
 <p>Ƭ <strong>EventOptions</strong>: <code><a href='../exports/EventDispatcherOptions.html'>EventDispatcherOptions</a></code> | <code>boolean</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ExporterPanel"><h2>ExporterPanel</h2></a>
+  <div class="section">
+    <h1>Type alias: ExporterPanel</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ExporterPanel</p>
+<p>Ƭ <strong>ExporterPanel</strong>: <code>&quot;exporter&quot;</code></p>
 
   </div>
 </section>
@@ -654,11 +795,11 @@
 </section>
   
 <section>
-  <a id="FfmpegSvgFilter"><h2>FfmpegSvgFilter</h2></a>
+  <a id="FetchType"><h2>FetchType</h2></a>
   <div class="section">
-    <h1>Type alias: FfmpegSvgFilter</h1>
-<p><a href="../client-lib.html">client-lib</a>.FfmpegSvgFilter</p>
-<p>Ƭ <strong>FfmpegSvgFilter</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEFloodElement"><code>SVGFEFloodElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEOffsetElement"><code>SVGFEOffsetElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEBlendElement"><code>SVGFEBlendElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGClipPathElement"><code>SVGClipPathElement</code></a></p>
+    <h1>Type alias: FetchType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.FetchType</p>
+<p>Ƭ <strong>FetchType</strong>: <code>&quot;fetch&quot;</code></p>
 
   </div>
 </section>
@@ -674,11 +815,11 @@
 </section>
   
 <section>
-  <a id="GraphFileType"><h2>GraphFileType</h2></a>
+  <a id="IdElement"><h2>IdElement</h2></a>
   <div class="section">
-    <h1>Type alias: GraphFileType</h1>
-<p><a href="../server-lib.html">server-lib</a>.GraphFileType</p>
-<p>Ƭ <strong>GraphFileType</strong>: <code>&quot;svg&quot;</code> | <code>&quot;sequence&quot;</code> | <code>&quot;txt&quot;</code></p>
+    <h1>Type alias: IdElement</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.IdElement</p>
+<p>Ƭ <strong>IdElement</strong>: [<code>string</code>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>]</p>
 
   </div>
 </section>
@@ -698,7 +839,17 @@
   <div class="section">
     <h1>Type alias: ImportType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.ImportType</p>
-<p>Ƭ <strong>ImportType</strong>: <code><a href='Types.html#AssetType'>AssetType</a></code> | <code><a href='Types.html#FontType'>FontType</a></code></p>
+<p>Ƭ <strong>ImportType</strong>: <code><a href='Types.html#RawType'>RawType</a></code> | <code><a href='Types.html#ShapeSource'>ShapeSource</a></code> | <code><a href='Types.html#TextSource'>TextSource</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ImporterPanel"><h2>ImporterPanel</h2></a>
+  <div class="section">
+    <h1>Type alias: ImporterPanel</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ImporterPanel</p>
+<p>Ƭ <strong>ImporterPanel</strong>: <code>&quot;importer&quot;</code></p>
 
   </div>
 </section>
@@ -709,6 +860,16 @@
     <h1>Type alias: Integer</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.Integer</p>
 <p>Ƭ <strong>Integer</strong>: <code>number</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="JobType"><h2>JobType</h2></a>
+  <div class="section">
+    <h1>Type alias: JobType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.JobType</p>
+<p>Ƭ <strong>JobType</strong>: <code><a href='Types.html#DecodeType'>DecodeType</a></code> | <code><a href='Types.html#EncodeType'>EncodeType</a></code> | <code><a href='Types.html#TranscodeType'>TranscodeType</a></code></p>
 
   </div>
 </section>
@@ -754,11 +915,21 @@
 </section>
   
 <section>
+  <a id="KnownSource"><h2>KnownSource</h2></a>
+  <div class="section">
+    <h1>Type alias: KnownSource</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.KnownSource</p>
+<p>Ƭ <strong>KnownSource</strong>: <code><a href='Types.html#ContainerSource'>ContainerSource</a></code> | <code><a href='Types.html#ContentSource'>ContentSource</a></code> | <code><a href='Types.html#ColorSource'>ColorSource</a></code> | <code><a href='Types.html#MashSource'>MashSource</a></code> | <code><a href='Types.html#RawSource'>RawSource</a></code> | <code><a href='Types.html#ShapeSource'>ShapeSource</a></code> | <code><a href='Types.html#TextSource'>TextSource</a></code> | <code><a href='Types.html#PromptSource'>PromptSource</a></code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="Lock"><h2>Lock</h2></a>
   <div class="section">
     <h1>Type alias: Lock</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.Lock</p>
-<p>Ƭ <strong>Lock</strong>: <code><a href='Types.html#PropertySize'>PropertySize</a></code> | <code>&quot;longest&quot;</code> | <code>&quot;none&quot;</code> | <code>&quot;shortest&quot;</code></p>
+<p>Ƭ <strong>Lock</strong>: <code><a href='Types.html#SizeKey'>SizeKey</a></code> | <code>&quot;longest&quot;</code> | <code>&quot;none&quot;</code> | <code>&quot;shortest&quot;</code></p>
 
   </div>
 </section>
@@ -784,11 +955,41 @@
 </section>
   
 <section>
+  <a id="MaybeComplexSvgItem"><h2>MaybeComplexSvgItem</h2></a>
+  <div class="section">
+    <h1>Type alias: MaybeComplexSvgItem</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.MaybeComplexSvgItem</p>
+<p>Ƭ <strong>MaybeComplexSvgItem</strong>: <code><a href='Types.html#SvgItem'>SvgItem</a></code> | <code><a href='../exports/ComplexSvgItem.html'>ComplexSvgItem</a></code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="Mimetype"><h2>Mimetype</h2></a>
   <div class="section">
     <h1>Type alias: Mimetype</h1>
-<p><a href="../server-lib.html">server-lib</a>.Mimetype</p>
+<p><a href="../shared-lib.html">shared-lib</a>.Mimetype</p>
 <p>Ƭ <strong>Mimetype</strong>: `${string}/${string}`</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ModuleType"><h2>ModuleType</h2></a>
+  <div class="section">
+    <h1>Type alias: ModuleType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ModuleType</p>
+<p>Ƭ <strong>ModuleType</strong>: <code>string</code> | <code><a href='Types.html#FetchType'>FetchType</a></code> | <code><a href='Types.html#RawType'>RawType</a></code> | <code><a href='Types.html#JobType'>JobType</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="Not"><h2>Not</h2></a>
+  <div class="section">
+    <h1>Type alias: Not</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.Not</p>
+<p>Ƭ <strong>Not</strong>: <code>undefined</code> | <code>null</code> | <code>void</code></p>
 
   </div>
 </section>
@@ -804,11 +1005,41 @@
 </section>
   
 <section>
+  <a id="NumberNotZero"><h2>NumberNotZero</h2></a>
+  <div class="section">
+    <h1>Type alias: NumberNotZero</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.NumberNotZero</p>
+<p>Ƭ <strong>NumberNotZero</strong>: <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#excludeuniontype-excludedmembers"><code>Exclude</code></a>&lt;<code>number</code>, <code>0</code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="NumberType"><h2>NumberType</h2></a>
   <div class="section">
     <h1>Type alias: NumberType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.NumberType</p>
 <p>Ƭ <strong>NumberType</strong>: <code>&quot;number&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="Numeric"><h2>Numeric</h2></a>
+  <div class="section">
+    <h1>Type alias: Numeric</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.Numeric</p>
+<p>Ƭ <strong>Numeric</strong>: <code><a href='Types.html#OkNumber'>OkNumber</a></code> | <code><a href='../exports/PopulatedString.html'>PopulatedString</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="OkNumber"><h2>OkNumber</h2></a>
+  <div class="section">
+    <h1>Type alias: OkNumber</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.OkNumber</p>
+<p>Ƭ <strong>OkNumber</strong>: <code>number</code></p>
 
   </div>
 </section>
@@ -827,8 +1058,8 @@
   <a id="Panel"><h2>Panel</h2></a>
   <div class="section">
     <h1>Type alias: Panel</h1>
-<p><a href="../client-lib.html">client-lib</a>.Panel</p>
-<p>Ƭ <strong>Panel</strong>: <code><a href='Types.html#BrowserPanel'>BrowserPanel</a></code> | <code><a href='Types.html#PlayerPanel'>PlayerPanel</a></code> | <code><a href='Types.html#TimelinePanel'>TimelinePanel</a></code></p>
+<p><a href="../shared-lib.html">shared-lib</a>.Panel</p>
+<p>Ƭ <strong>Panel</strong>: <code><a href='Types.html#BrowserPanel'>BrowserPanel</a></code> | <code><a href='Types.html#PlayerPanel'>PlayerPanel</a></code> | <code><a href='Types.html#TimelinePanel'>TimelinePanel</a></code> | <code><a href='Types.html#ImporterPanel'>ImporterPanel</a></code> | <code><a href='Types.html#ExporterPanel'>ExporterPanel</a></code></p>
 
   </div>
 </section>
@@ -837,38 +1068,18 @@
   <a id="PlayerPanel"><h2>PlayerPanel</h2></a>
   <div class="section">
     <h1>Type alias: PlayerPanel</h1>
-<p><a href="../client-lib.html">client-lib</a>.PlayerPanel</p>
+<p><a href="../shared-lib.html">shared-lib</a>.PlayerPanel</p>
 <p>Ƭ <strong>PlayerPanel</strong>: <code>&quot;player&quot;</code></p>
 
   </div>
 </section>
   
 <section>
-  <a id="PointTuple"><h2>PointTuple</h2></a>
+  <a id="PointOrSize"><h2>PointOrSize</h2></a>
   <div class="section">
-    <h1>Type alias: PointTuple</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.PointTuple</p>
-<p>Ƭ <strong>PointTuple</strong>: [<code><a href='../exports/Point.html'>Point</a></code>, <code><a href='../exports/Point.html'>Point</a></code>]</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="PopulatedString"><h2>PopulatedString</h2></a>
-  <div class="section">
-    <h1>Type alias: PopulatedString</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.PopulatedString</p>
-<p>Ƭ <strong>PopulatedString</strong>: <code>string</code> &amp; { <code>isEmpty</code>: <code>never</code>  }</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="PreviewElement"><h2>PreviewElement</h2></a>
-  <div class="section">
-    <h1>Type alias: PreviewElement</h1>
-<p><a href="../client-lib.html">client-lib</a>.PreviewElement</p>
-<p>Ƭ <strong>PreviewElement</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLDivElement"><code>HTMLDivElement</code></a></p>
+    <h1>Type alias: PointOrSize</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.PointOrSize</p>
+<p>Ƭ <strong>PointOrSize</strong>: <code>&quot;point&quot;</code> | <code>&quot;size&quot;</code></p>
 
   </div>
 </section>
@@ -914,36 +1125,6 @@
 </section>
   
 <section>
-  <a id="PropertyPoint"><h2>PropertyPoint</h2></a>
-  <div class="section">
-    <h1>Type alias: PropertyPoint</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.PropertyPoint</p>
-<p>Ƭ <strong>PropertyPoint</strong>: <code>&quot;x&quot;</code> | <code>&quot;y&quot;</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="PropertyRect"><h2>PropertyRect</h2></a>
-  <div class="section">
-    <h1>Type alias: PropertyRect</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.PropertyRect</p>
-<p>Ƭ <strong>PropertyRect</strong>: <code><a href='Types.html#PropertySize'>PropertySize</a></code> | <code><a href='Types.html#PropertyPoint'>PropertyPoint</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="PropertySize"><h2>PropertySize</h2></a>
-  <div class="section">
-    <h1>Type alias: PropertySize</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.PropertySize</p>
-<p>Ƭ <strong>PropertySize</strong>: <code>&quot;width&quot;</code> | <code>&quot;height&quot;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="RawSource"><h2>RawSource</h2></a>
   <div class="section">
     <h1>Type alias: RawSource</h1>
@@ -954,11 +1135,41 @@
 </section>
   
 <section>
-  <a id="RectTuple"><h2>RectTuple</h2></a>
+  <a id="RawType"><h2>RawType</h2></a>
   <div class="section">
-    <h1>Type alias: RectTuple</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.RectTuple</p>
-<p>Ƭ <strong>RectTuple</strong>: [<code><a href='../exports/Rect.html'>Rect</a></code>, <code><a href='../exports/Rect.html'>Rect</a></code>]</p>
+    <h1>Type alias: RawType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.RawType</p>
+<p>Ƭ <strong>RawType</strong>: <code><a href='Types.html#AudioType'>AudioType</a></code> | <code><a href='Types.html#ImageType'>ImageType</a></code> | <code><a href='Types.html#VideoType'>VideoType</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="RequestType"><h2>RequestType</h2></a>
+  <div class="section">
+    <h1>Type alias: RequestType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.RequestType</p>
+<p>Ƭ <strong>RequestType</strong>: <code><a href='Types.html#TranscodingType'>TranscodingType</a></code> | <code><a href='Types.html#AssetFileType'>AssetFileType</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="ResourceType"><h2>ResourceType</h2></a>
+  <div class="section">
+    <h1>Type alias: ResourceType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ResourceType</p>
+<p>Ƭ <strong>ResourceType</strong>: <code>string</code> | <code><a href='Types.html#DropType'>DropType</a></code> | <code><a href='Types.html#TranscodingType'>TranscodingType</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="Rounding"><h2>Rounding</h2></a>
+  <div class="section">
+    <h1>Type alias: Rounding</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.Rounding</p>
+<p>Ƭ <strong>Rounding</strong>: <code>&quot;ceil&quot;</code> | <code>&quot;floor&quot;</code> | <code>&quot;round&quot;</code></p>
 
   </div>
 </section>
@@ -984,16 +1195,6 @@
 </section>
   
 <section>
-  <a id="ScalarTuple"><h2>ScalarTuple</h2></a>
-  <div class="section">
-    <h1>Type alias: ScalarTuple</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.ScalarTuple</p>
-<p>Ƭ <strong>ScalarTuple</strong>: [<code>string</code>, <code><a href='Types.html#ScalarOrUndefined'>ScalarOrUndefined</a></code>]</p>
-
-  </div>
-</section>
-  
-<section>
   <a id="ScalarType"><h2>ScalarType</h2></a>
   <div class="section">
     <h1>Type alias: ScalarType</h1>
@@ -1014,6 +1215,16 @@
 </section>
   
 <section>
+  <a id="ScanType"><h2>ScanType</h2></a>
+  <div class="section">
+    <h1>Type alias: ScanType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.ScanType</p>
+<p>Ƭ <strong>ScanType</strong>: <code>&quot;scan&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="SelectedPropertyRecord"><h2>SelectedPropertyRecord</h2></a>
   <div class="section">
     <h1>Type alias: SelectedPropertyRecord</h1>
@@ -1029,16 +1240,6 @@
     <h1>Type alias: SelectorType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.SelectorType</p>
 <p>Ƭ <strong>SelectorType</strong>: <code><a href='Types.html#TargetId'>TargetId</a></code> | <code><a href='Types.html#PropertyId'>PropertyId</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="SequenceType"><h2>SequenceType</h2></a>
-  <div class="section">
-    <h1>Type alias: SequenceType</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.SequenceType</p>
-<p>Ƭ <strong>SequenceType</strong>: <code>&quot;sequence&quot;</code></p>
 
   </div>
 </section>
@@ -1074,6 +1275,16 @@
 </section>
   
 <section>
+  <a id="SizeKey"><h2>SizeKey</h2></a>
+  <div class="section">
+    <h1>Type alias: SizeKey</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.SizeKey</p>
+<p>Ƭ <strong>SizeKey</strong>: <code>&quot;width&quot;</code> | <code>&quot;height&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="SizeProbing"><h2>SizeProbing</h2></a>
   <div class="section">
     <h1>Type alias: SizeProbing</h1>
@@ -1098,7 +1309,7 @@
   <div class="section">
     <h1>Type alias: Source</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.Source</p>
-<p>Ƭ <strong>Source</strong>: <code>string</code> | <code><a href='Types.html#ColorSource'>ColorSource</a></code> | <code><a href='Types.html#MashSource'>MashSource</a></code> | <code><a href='Types.html#RawSource'>RawSource</a></code> | <code><a href='Types.html#ShapeSource'>ShapeSource</a></code> | <code><a href='Types.html#TextSource'>TextSource</a></code> | <code><a href='Types.html#PromptSource'>PromptSource</a></code></p>
+<p>Ƭ <strong>Source</strong>: <code>string</code> | <code><a href='Types.html#KnownSource'>KnownSource</a></code></p>
 
   </div>
 </section>
@@ -1144,16 +1355,6 @@
 </section>
   
 <section>
-  <a id="StringTuple"><h2>StringTuple</h2></a>
-  <div class="section">
-    <h1>Type alias: StringTuple</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.StringTuple</p>
-<p>Ƭ <strong>StringTuple</strong>: [<code>string</code>, <code>string</code>]</p>
-
-  </div>
-</section>
-  
-<section>
   <a id="StringType"><h2>StringType</h2></a>
   <div class="section">
     <h1>Type alias: StringType</h1>
@@ -1174,11 +1375,21 @@
 </section>
   
 <section>
+  <a id="SvgElement"><h2>SvgElement</h2></a>
+  <div class="section">
+    <h1>Type alias: SvgElement</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgElement</p>
+<p>Ƭ <strong>SvgElement</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="SvgFilter"><h2>SvgFilter</h2></a>
   <div class="section">
     <h1>Type alias: SvgFilter</h1>
-<p><a href="../client-lib.html">client-lib</a>.SvgFilter</p>
-<p>Ƭ <strong>SvgFilter</strong>: <code><a href='Types.html#FfmpegSvgFilter'>FfmpegSvgFilter</a></code> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEColorMatrixElement"><code>SVGFEColorMatrixElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEConvolveMatrixElement"><code>SVGFEConvolveMatrixElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEDisplacementMapElement"><code>SVGFEDisplacementMapElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEComponentTransferElement"><code>SVGFEComponentTransferElement</code></a></p>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgFilter</p>
+<p>Ƭ <strong>SvgFilter</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEFloodElement"><code>SVGFEFloodElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEOffsetElement"><code>SVGFEOffsetElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEBlendElement"><code>SVGFEBlendElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGClipPathElement"><code>SVGClipPathElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEColorMatrixElement"><code>SVGFEColorMatrixElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEConvolveMatrixElement"><code>SVGFEConvolveMatrixElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEDisplacementMapElement"><code>SVGFEDisplacementMapElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGFEComponentTransferElement"><code>SVGFEComponentTransferElement</code></a></p>
 
   </div>
 </section>
@@ -1187,38 +1398,48 @@
   <a id="SvgItem"><h2>SvgItem</h2></a>
   <div class="section">
     <h1>Type alias: SvgItem</h1>
-<p><a href="../client-lib.html">client-lib</a>.SvgItem</p>
-<p>Ƭ <strong>SvgItem</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGElement"><code>SVGElement</code></a> | <code><a href='../exports/ClientImage.html'>ClientImage</a></code> | <code><a href='../exports/ClientVideo.html'>ClientVideo</a></code></p>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgItem</p>
+<p>Ƭ <strong>SvgItem</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGElement"><code>SVGElement</code></a> | <code><a href='../exports/ClientImage.html'>ClientImage</a></code></p>
 
   </div>
 </section>
   
 <section>
-  <a id="SvgItemsTuple"><h2>SvgItemsTuple</h2></a>
+  <a id="SvgStyleElement"><h2>SvgStyleElement</h2></a>
   <div class="section">
-    <h1>Type alias: SvgItemsTuple</h1>
-<p><a href="../client-lib.html">client-lib</a>.SvgItemsTuple</p>
-<p>Ƭ <strong>SvgItemsTuple</strong>: [<code><a href='../exports/SvgItems.html'>SvgItems</a></code>, <code><a href='../exports/SvgItems.html'>SvgItems</a></code>]</p>
+    <h1>Type alias: SvgStyleElement</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgStyleElement</p>
+<p>Ƭ <strong>SvgStyleElement</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGStyleElement"><code>SVGStyleElement</code></a></p>
 
   </div>
 </section>
   
 <section>
-  <a id="SvgOrImage"><h2>SvgOrImage</h2></a>
+  <a id="SvgType"><h2>SvgType</h2></a>
   <div class="section">
-    <h1>Type alias: SvgOrImage</h1>
-<p><a href="../client-lib.html">client-lib</a>.SvgOrImage</p>
-<p>Ƭ <strong>SvgOrImage</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a> | <code><a href='../exports/ClientImage.html'>ClientImage</a></code></p>
+    <h1>Type alias: SvgType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgType</p>
+<p>Ƭ <strong>SvgType</strong>: <code>&quot;svg&quot;</code></p>
 
   </div>
 </section>
   
 <section>
-  <a id="SvgOrImageDataOrError"><h2>SvgOrImageDataOrError</h2></a>
+  <a id="SvgVector"><h2>SvgVector</h2></a>
   <div class="section">
-    <h1>Type alias: SvgOrImageDataOrError</h1>
-<p><a href="../client-lib.html">client-lib</a>.SvgOrImageDataOrError</p>
-<p>Ƭ <strong>SvgOrImageDataOrError</strong>: <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Types.html#SvgOrImage'>SvgOrImage</a></code>&gt;</p>
+    <h1>Type alias: SvgVector</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgVector</p>
+<p>Ƭ <strong>SvgVector</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGTextElement"><code>SVGTextElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGPolygonElement"><code>SVGPolygonElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGPathElement"><code>SVGPathElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGRectElement"><code>SVGRectElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGCircleElement"><code>SVGCircleElement</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGEllipseElement"><code>SVGEllipseElement</code></a></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="SvgsType"><h2>SvgsType</h2></a>
+  <div class="section">
+    <h1>Type alias: SvgsType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.SvgsType</p>
+<p>Ƭ <strong>SvgsType</strong>: <code>&quot;svgs&quot;</code></p>
 
   </div>
 </section>
@@ -1257,7 +1478,7 @@
   <a id="TimelinePanel"><h2>TimelinePanel</h2></a>
   <div class="section">
     <h1>Type alias: TimelinePanel</h1>
-<p><a href="../client-lib.html">client-lib</a>.TimelinePanel</p>
+<p><a href="../shared-lib.html">shared-lib</a>.TimelinePanel</p>
 <p>Ƭ <strong>TimelinePanel</strong>: <code>&quot;timeline&quot;</code></p>
 
   </div>
@@ -1288,7 +1509,7 @@
   <div class="section">
     <h1>Type alias: TranscodeOptions</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.TranscodeOptions</p>
-<p>Ƭ <strong>TranscodeOptions</strong>: <code><a href='Types.html#EncodeOptions'>EncodeOptions</a></code> | <code><a href='../exports/FontOutputOptions.html'>FontOutputOptions</a></code> | <code><a href='../exports/WaveformOutputOptions.html'>WaveformOutputOptions</a></code> | <code><a href='../exports/SequenceOutputOptions.html'>SequenceOutputOptions</a></code></p>
+<p>Ƭ <strong>TranscodeOptions</strong>: <code><a href='Types.html#EncodeOptions'>EncodeOptions</a></code> | <code><a href='../exports/WaveformOutputOptions.html'>WaveformOutputOptions</a></code> | <code><a href='../exports/SequenceOutputOptions.html'>SequenceOutputOptions</a></code></p>
 
   </div>
 </section>
@@ -1308,7 +1529,7 @@
   <div class="section">
     <h1>Type alias: TranscodingType</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.TranscodingType</p>
-<p>Ƭ <strong>TranscodingType</strong>: <code><a href='Types.html#ImportType'>ImportType</a></code> | <code><a href='Types.html#SequenceType'>SequenceType</a></code> | <code><a href='Types.html#WaveformType'>WaveformType</a></code></p>
+<p>Ƭ <strong>TranscodingType</strong>: <code><a href='Types.html#RawType'>RawType</a></code> | <code><a href='Types.html#BitmapsType'>BitmapsType</a></code> | <code><a href='Types.html#WaveformType'>WaveformType</a></code></p>
 
   </div>
 </section>
@@ -1319,6 +1540,16 @@
     <h1>Type alias: Transparency</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.Transparency</p>
 <p>Ƭ <strong>Transparency</strong>: <code>&quot;alpha&quot;</code> | <code>&quot;luminance&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="TxtType"><h2>TxtType</h2></a>
+  <div class="section">
+    <h1>Type alias: TxtType</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.TxtType</p>
+<p>Ƭ <strong>TxtType</strong>: <code>&quot;txt&quot;</code></p>
 
   </div>
 </section>
@@ -1352,16 +1583,6 @@
 <td align="left"><code>unknown</code></td>
 </tr>
 </tbody></table>
-
-  </div>
-</section>
-  
-<section>
-  <a id="VideoAVType"><h2>VideoAVType</h2></a>
-  <div class="section">
-    <h1>Type alias: VideoAVType</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.VideoAVType</p>
-<p>Ƭ <strong>VideoAVType</strong>: <code>&quot;video&quot;</code></p>
 
   </div>
 </section>
@@ -1406,27 +1627,32 @@
 <li><a class='' href='#AbsolutePath'>AbsolutePath</a></li>
 <li><a class='' href='#AlphaProbing'>AlphaProbing</a></li>
 <li><a class='' href='#AlphaType'>AlphaType</a></li>
+<li><a class='' href='#ArrayOf1'>ArrayOf1</a></li>
+<li><a class='' href='#ArrayOf2'>ArrayOf2</a></li>
+<li><a class='' href='#ArrayOf3'>ArrayOf3</a></li>
+<li><a class='' href='#Aspect'>Aspect</a></li>
+<li><a class='' href='#AssetFileType'>AssetFileType</a></li>
 <li><a class='' href='#AssetRecord'>AssetRecord</a></li>
 <li><a class='' href='#AssetType'>AssetType</a></li>
 <li><a class='' href='#AudibleProbing'>AudibleProbing</a></li>
 <li><a class='' href='#AudibleType'>AudibleType</a></li>
-<li><a class='' href='#AudioAVType'>AudioAVType</a></li>
 <li><a class='' href='#AudioType'>AudioType</a></li>
+<li><a class='' href='#BitmapsType'>BitmapsType</a></li>
 <li><a class='' href='#BooleanDataType'>BooleanDataType</a></li>
 <li><a class='' href='#BooleanType'>BooleanType</a></li>
-<li><a class='' href='#BothAVType'>BothAVType</a></li>
 <li><a class='' href='#BrowserPanel'>BrowserPanel</a></li>
 <li><a class='' href='#ClientAction'>ClientAction</a></li>
 <li><a class='' href='#ClientAudioDataOrError'>ClientAudioDataOrError</a></li>
 <li><a class='' href='#ClientFontDataOrError'>ClientFontDataOrError</a></li>
 <li><a class='' href='#ClientImageDataOrError'>ClientImageDataOrError</a></li>
-<li><a class='' href='#ClientImageOrVideo'>ClientImageOrVideo</a></li>
 <li><a class='' href='#ClientMedia'>ClientMedia</a></li>
-<li><a class='' href='#ClientMediaType'>ClientMediaType</a></li>
+<li><a class='' href='#ClientOrServer'>ClientOrServer</a></li>
 <li><a class='' href='#ClientVideoDataOrError'>ClientVideoDataOrError</a></li>
 <li><a class='' href='#ColorSource'>ColorSource</a></li>
 <li><a class='' href='#Constrained'>Constrained</a></li>
+<li><a class='' href='#ContainerSource'>ContainerSource</a></li>
 <li><a class='' href='#ContainerTiming'>ContainerTiming</a></li>
+<li><a class='' href='#ContentSource'>ContentSource</a></li>
 <li><a class='' href='#ContentTiming'>ContentTiming</a></li>
 <li><a class='' href='#ControlGroupType'>ControlGroupType</a></li>
 <li><a class='' href='#ControlInput'>ControlInput</a></li>
@@ -1439,56 +1665,67 @@
 <li><a class='' href='#DecodeType'>DecodeType</a></li>
 <li><a class='' href='#DecodingType'>DecodingType</a></li>
 <li><a class='' href='#Direction'>Direction</a></li>
+<li><a class='' href='#DropType'>DropType</a></li>
 <li><a class='' href='#DurationProbing'>DurationProbing</a></li>
 <li><a class='' href='#EncodeOptions'>EncodeOptions</a></li>
 <li><a class='' href='#EncodeType'>EncodeType</a></li>
 <li><a class='' href='#EncodingType'>EncodingType</a></li>
 <li><a class='' href='#EnvironmentKey'>EnvironmentKey</a></li>
 <li><a class='' href='#EnvironmentRecord'>EnvironmentRecord</a></li>
+<li><a class='' href='#EvaluationValue'>EvaluationValue</a></li>
+<li><a class='' href='#EvaluationValueObject'>EvaluationValueObject</a></li>
 <li><a class='' href='#EventOptions'>EventOptions</a></li>
+<li><a class='' href='#ExporterPanel'>ExporterPanel</a></li>
 <li><a class='' href='#ExpressHandler'>ExpressHandler</a></li>
-<li><a class='' href='#FfmpegSvgFilter'>FfmpegSvgFilter</a></li>
+<li><a class='' href='#FetchType'>FetchType</a></li>
 <li><a class='' href='#FontType'>FontType</a></li>
-<li><a class='' href='#GraphFileType'>GraphFileType</a></li>
+<li><a class='' href='#IdElement'>IdElement</a></li>
 <li><a class='' href='#ImageType'>ImageType</a></li>
 <li><a class='' href='#ImportType'>ImportType</a></li>
+<li><a class='' href='#ImporterPanel'>ImporterPanel</a></li>
 <li><a class='' href='#Integer'>Integer</a></li>
+<li><a class='' href='#JobType'>JobType</a></li>
 <li><a class='' href='#JsonArray'>JsonArray</a></li>
 <li><a class='' href='#JsonRecordDataOrError'>JsonRecordDataOrError</a></li>
 <li><a class='' href='#JsonRecordsDataOrError'>JsonRecordsDataOrError</a></li>
 <li><a class='' href='#JsonValue'>JsonValue</a></li>
+<li><a class='' href='#KnownSource'>KnownSource</a></li>
 <li><a class='' href='#Lock'>Lock</a></li>
 <li><a class='' href='#ManageType'>ManageType</a></li>
 <li><a class='' href='#MashSource'>MashSource</a></li>
+<li><a class='' href='#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></li>
 <li><a class='' href='#Mimetype'>Mimetype</a></li>
+<li><a class='' href='#ModuleType'>ModuleType</a></li>
+<li><a class='' href='#Not'>Not</a></li>
 <li><a class='' href='#NumberDataType'>NumberDataType</a></li>
+<li><a class='' href='#NumberNotZero'>NumberNotZero</a></li>
 <li><a class='' href='#NumberType'>NumberType</a></li>
+<li><a class='' href='#Numeric'>Numeric</a></li>
+<li><a class='' href='#OkNumber'>OkNumber</a></li>
 <li><a class='' href='#OptionalContent'>OptionalContent</a></li>
 <li><a class='' href='#Panel'>Panel</a></li>
 <li><a class='' href='#PlayerPanel'>PlayerPanel</a></li>
-<li><a class='' href='#PointTuple'>PointTuple</a></li>
-<li><a class='' href='#PopulatedString'>PopulatedString</a></li>
-<li><a class='' href='#PreviewElement'>PreviewElement</a></li>
+<li><a class='' href='#PointOrSize'>PointOrSize</a></li>
 <li><a class='' href='#ProbeType'>ProbeType</a></li>
 <li><a class='' href='#ProbingType'>ProbingType</a></li>
 <li><a class='' href='#PromptSource'>PromptSource</a></li>
 <li><a class='' href='#PropertyId'>PropertyId</a></li>
-<li><a class='' href='#PropertyPoint'>PropertyPoint</a></li>
-<li><a class='' href='#PropertyRect'>PropertyRect</a></li>
-<li><a class='' href='#PropertySize'>PropertySize</a></li>
 <li><a class='' href='#RawSource'>RawSource</a></li>
-<li><a class='' href='#RectTuple'>RectTuple</a></li>
+<li><a class='' href='#RawType'>RawType</a></li>
+<li><a class='' href='#RequestType'>RequestType</a></li>
+<li><a class='' href='#ResourceType'>ResourceType</a></li>
+<li><a class='' href='#Rounding'>Rounding</a></li>
 <li><a class='' href='#Scalar'>Scalar</a></li>
 <li><a class='' href='#ScalarOrUndefined'>ScalarOrUndefined</a></li>
-<li><a class='' href='#ScalarTuple'>ScalarTuple</a></li>
 <li><a class='' href='#ScalarType'>ScalarType</a></li>
 <li><a class='' href='#ScalarsById'>ScalarsById</a></li>
+<li><a class='' href='#ScanType'>ScanType</a></li>
 <li><a class='' href='#SelectedPropertyRecord'>SelectedPropertyRecord</a></li>
 <li><a class='' href='#SelectorType'>SelectorType</a></li>
-<li><a class='' href='#SequenceType'>SequenceType</a></li>
 <li><a class='' href='#ServerAction'>ServerAction</a></li>
 <li><a class='' href='#ShapeSource'>ShapeSource</a></li>
 <li><a class='' href='#SideDirection'>SideDirection</a></li>
+<li><a class='' href='#SizeKey'>SizeKey</a></li>
 <li><a class='' href='#SizeProbing'>SizeProbing</a></li>
 <li><a class='' href='#Sizing'>Sizing</a></li>
 <li><a class='' href='#Source'>Source</a></li>
@@ -1496,14 +1733,15 @@
 <li><a class='' href='#StringDataType'>StringDataType</a></li>
 <li><a class='' href='#StringOrRecord'>StringOrRecord</a></li>
 <li><a class='' href='#StringRecordDataOrError'>StringRecordDataOrError</a></li>
-<li><a class='' href='#StringTuple'>StringTuple</a></li>
 <li><a class='' href='#StringType'>StringType</a></li>
 <li><a class='' href='#StringsDataOrError'>StringsDataOrError</a></li>
+<li><a class='' href='#SvgElement'>SvgElement</a></li>
 <li><a class='' href='#SvgFilter'>SvgFilter</a></li>
 <li><a class='' href='#SvgItem'>SvgItem</a></li>
-<li><a class='' href='#SvgItemsTuple'>SvgItemsTuple</a></li>
-<li><a class='' href='#SvgOrImage'>SvgOrImage</a></li>
-<li><a class='' href='#SvgOrImageDataOrError'>SvgOrImageDataOrError</a></li>
+<li><a class='' href='#SvgStyleElement'>SvgStyleElement</a></li>
+<li><a class='' href='#SvgType'>SvgType</a></li>
+<li><a class='' href='#SvgVector'>SvgVector</a></li>
+<li><a class='' href='#SvgsType'>SvgsType</a></li>
 <li><a class='' href='#TargetId'>TargetId</a></li>
 <li><a class='' href='#TemplateContent'>TemplateContent</a></li>
 <li><a class='' href='#TextSource'>TextSource</a></li>
@@ -1514,9 +1752,9 @@
 <li><a class='' href='#TranscodeType'>TranscodeType</a></li>
 <li><a class='' href='#TranscodingType'>TranscodingType</a></li>
 <li><a class='' href='#Transparency'>Transparency</a></li>
+<li><a class='' href='#TxtType'>TxtType</a></li>
 <li><a class='' href='#Value'>Value</a></li>
 <li><a class='' href='#VersionedDataOrError'>VersionedDataOrError</a></li>
-<li><a class='' href='#VideoAVType'>VideoAVType</a></li>
 <li><a class='' href='#VideoType'>VideoType</a></li>
 <li><a class='' href='#VisibleType'>VisibleType</a></li>
 <li><a class='' href='#WaveformType'>WaveformType</a></li></ul>

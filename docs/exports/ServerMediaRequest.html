@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerMediaRequest"><h2>ServerMediaRequest</h2></a>
   <div class="section">
     <h1>Interface: ServerMediaRequest</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerMediaRequest</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerMediaRequest</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
@@ -139,17 +139,23 @@
 </li>
 </ul>
 <h2>Properties</h2>
+<h3><a id="ServerMediaRequest.dataUrl">dataUrl</a></h3><p>• <code>Optional</code> <strong>dataUrl</strong>: <code>string</code></p>
+<hr>
 <h3><a id="ServerMediaRequest.endpoint">endpoint</a></h3><p>• <strong>endpoint</strong>: <code>string</code> | <code><a href='Endpoint.html'>Endpoint</a></code></p>
 <p>Inherited from
-EndpointRequest.endpoint</p>
+<a href="EndpointRequest.html">EndpointRequest</a>.<a href="EndpointRequest.html#EndpointRequest.endpoint">endpoint</a></p>
 <hr>
 <h3><a id="ServerMediaRequest.init">init</a></h3><p>• <code>Optional</code> <strong>init</strong>: <code><a href='RequestInit.html'>RequestInit</a></code></p>
 <p>Inherited from
-EndpointRequest.init</p>
+<a href="EndpointRequest.html">EndpointRequest</a>.<a href="EndpointRequest.html#EndpointRequest.init">init</a></p>
 <hr>
 <h3><a id="ServerMediaRequest.path">path</a></h3><p>• <code>Optional</code> <strong>path</strong>: `/${string}`</p>
 <hr>
-<h3><a id="ServerMediaRequest.type">type</a></h3><p>• <code>Optional</code> <strong>type</strong>: <code><a href='../combined/Types.html#ImportType'>ImportType</a></code> | `${string}/${string}`</p>
+<h3><a id="ServerMediaRequest.requestType">requestType</a></h3><p>• <code>Optional</code> <strong>requestType</strong>: <code><a href='../combined/Types.html#RequestType'>RequestType</a></code></p>
+<p>Inherited from
+<a href="EndpointRequest.html">EndpointRequest</a>.<a href="EndpointRequest.html#EndpointRequest.requestType">requestType</a></p>
+<hr>
+<h3><a id="ServerMediaRequest.type">type</a></h3><p>• <code>Optional</code> <strong>type</strong>: `${string}/${string}` | <code><a href='../combined/Types.html#DropType'>DropType</a></code></p>
 
   </div>
 </section>
@@ -159,9 +165,11 @@ EndpointRequest.init</p>
         <input type='checkbox' id='nav-input-last'>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ServerMediaRequest'>ServerMediaRequest</a></li>
+<li><a class='' href='#ServerMediaRequest.dataUrl'>dataUrl</a></li>
 <li><a class='' href='#ServerMediaRequest.endpoint'>endpoint</a></li>
 <li><a class='' href='#ServerMediaRequest.init'>init</a></li>
 <li><a class='' href='#ServerMediaRequest.path'>path</a></li>
+<li><a class='' href='#ServerMediaRequest.requestType'>requestType</a></li>
 <li><a class='' href='#ServerMediaRequest.type'>type</a></li></ul>
       </nav>
     </main>

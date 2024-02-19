@@ -2,7 +2,6 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 import { colorHexToRgb, colorMixRbg, colorRgbaToHex, colorToRgb, colorValid } from '../../../packages/@moviemasher/shared-lib/src/utility/color.js'
 
-
 describe('Color', () => {
   describe('colorValid', () => {
     const validColors = [

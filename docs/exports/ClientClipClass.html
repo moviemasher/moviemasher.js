@@ -160,6 +160,22 @@
 <p>Inherited from
 ClipClass.constructor</p>
 <h2>Properties</h2>
+<h3><a id="ClientClipClass._container">_container</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_container</strong>: <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
+<p>Inherited from
+ClipClass._container</p>
+<hr>
+<h3><a id="ClientClipClass._containerObject">_containerObject</a></h3><p>• <code>Protected</code> <strong>_containerObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
+<p>Inherited from
+ClipClass._containerObject</p>
+<hr>
+<h3><a id="ClientClipClass._content">_content</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_content</strong>: <code><a href='ContentInstance.html'>ContentInstance</a></code> | <code><a href='AudioInstance.html'>AudioInstance</a></code></p>
+<p>Inherited from
+ClipClass._content</p>
+<hr>
+<h3><a id="ClientClipClass._contentObject">_contentObject</a></h3><p>• <code>Protected</code> <strong>_contentObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
+<p>Inherited from
+ClipClass._contentObject</p>
+<hr>
 <h3><a id="ClientClipClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
 ClipClass._id</p>
@@ -192,11 +208,15 @@ ClipClass.frame</p>
 <p>Inherited from
 ClipClass.frames</p>
 <hr>
-<h3><a id="ClientClipClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
+<h3><a id="ClientClipClass.opacity">opacity</a></h3><p>• <strong>opacity</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.muted">muted</a></p>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.opacity">opacity</a></p>
 <p>Inherited from
-ClipClass.muted</p>
+ClipClass.opacity</p>
+<hr>
+<h3><a id="ClientClipClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<p>Inherited from
+ClipClass.opacityEnd</p>
 <hr>
 <h3><a id="ClientClipClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <h4>Implementation of</h4>
@@ -210,7 +230,7 @@ ClipClass.properties</p>
 <p>Inherited from
 ClipClass.sizing</p>
 <hr>
-<h3><a id="ClientClipClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#CLIP_TARGET'>CLIP_TARGET</a></code></p>
+<h3><a id="ClientClipClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CLIP'>$CLIP</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.targetId">targetId</a></p>
 <p>Overrides
@@ -250,6 +270,22 @@ ClipClass.assetIds</p>
 <p>Inherited from
 ClipClass.audible</p>
 <hr>
+<h3><a id="ClientClipClass.canBeMuted">canBeMuted</a></h3><p>• <code>get</code> <strong>canBeMuted</strong>(): <code>boolean</code></p>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.canBeMuted">canBeMuted</a></p>
+<p>Inherited from
+ClipClass.canBeMuted</p>
+<hr>
+<h3><a id="ClientClipClass.clipIndex">clipIndex</a></h3><p>• <code>get</code> <strong>clipIndex</strong>(): <code><a href='ClipIndex.html'>ClipIndex</a></code></p>
+<p>Returns
+<code><a href='ClipIndex.html'>ClipIndex</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.clipIndex">clipIndex</a></p>
+<p>Inherited from
+ClipClass.clipIndex</p>
+<hr>
 <h3><a id="ClientClipClass.clipObject">clipObject</a></h3><p>• <code>get</code> <strong>clipObject</strong>(): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
@@ -258,9 +294,9 @@ ClipClass.audible</p>
 <p>Inherited from
 ClipClass.clipObject</p>
 <hr>
-<h3><a id="ClientClipClass.container">container</a></h3><p>• <code>get</code> <strong>container</strong>(): <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code></p>
+<h3><a id="ClientClipClass.container">container</a></h3><p>• <code>get</code> <strong>container</strong>(): <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <p>Returns
-<code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code></p>
+<code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.container">container</a></p>
 <p>Overrides
@@ -272,17 +308,17 @@ ClipClass.container</p>
 <p>Inherited from
 ClipClass.containerInitialize</p>
 <hr>
-<h3><a id="ClientClipClass.content">content</a></h3><p>• <code>get</code> <strong>content</strong>(): <code><a href='ClientInstance.html'>ClientInstance</a></code></p>
+<h3><a id="ClientClipClass.content">content</a></h3><p>• <code>get</code> <strong>content</strong>(): <code><a href='ClientAudioInstance.html'>ClientAudioInstance</a></code> | <code><a href='ClientInstance.html'>ClientInstance</a></code> &amp; <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <p>Returns
-<code><a href='ClientInstance.html'>ClientInstance</a></code></p>
+<code><a href='ClientAudioInstance.html'>ClientAudioInstance</a></code> | <code><a href='ClientInstance.html'>ClientInstance</a></code> &amp; <code><a href='ContainerInstance.html'>ContainerInstance</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.content">content</a></p>
 <p>Overrides
 ClipClass.content</p>
 <hr>
-<h3><a id="ClientClipClass.contentInitialize">contentInitialize</a></h3><p>• <code>Protected</code> <code>get</code> <strong>contentInitialize</strong>(): <code><a href='Instance.html'>Instance</a></code></p>
+<h3><a id="ClientClipClass.contentInitialize">contentInitialize</a></h3><p>• <code>Protected</code> <code>get</code> <strong>contentInitialize</strong>(): <code><a href='ContentInstance.html'>ContentInstance</a></code> | <code><a href='AudioInstance.html'>AudioInstance</a></code></p>
 <p>Returns
-<code><a href='Instance.html'>Instance</a></code></p>
+<code><a href='ContentInstance.html'>ContentInstance</a></code> | <code><a href='AudioInstance.html'>AudioInstance</a></code></p>
 <p>Inherited from
 ClipClass.contentInitialize</p>
 <hr>
@@ -330,27 +366,17 @@ ClipClass.label</p>
 <p>Inherited from
 ClipClass.label</p>
 <hr>
-<h3><a id="ClientClipClass.mutable">mutable</a></h3><p>• <code>get</code> <strong>mutable</strong>(): <code>boolean</code></p>
+<h3><a id="ClientClipClass.muted">muted</a></h3><p>• <code>get</code> <strong>muted</strong>(): <code>boolean</code></p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.mutable">mutable</a></p>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.muted">muted</a></p>
 <p>Inherited from
-ClipClass.mutable</p>
+ClipClass.muted</p>
 <hr>
-<h3><a id="ClientClipClass.notMuted">notMuted</a></h3><p>• <code>get</code> <strong>notMuted</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.notMuted">notMuted</a></p>
-<p>Inherited from
-ClipClass.notMuted</p>
-<hr>
-<h3><a id="ClientClipClass.scalarRecord">scalarRecord</a></h3><p>• <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="ClientClipClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.scalarRecord">scalarRecord</a></p>
 <p>Inherited from
 ClipClass.scalarRecord</p>
 <hr>
@@ -389,6 +415,12 @@ ClipClass.trackNumber</p>
 <p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.trackNumber">trackNumber</a></p>
 <p>Inherited from
 ClipClass.trackNumber</p>
+<hr>
+<h3><a id="ClientClipClass.tweening">tweening</a></h3><p>• <code>Protected</code> <code>get</code> <strong>tweening</strong>(): <code>boolean</code></p>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+ClipClass.tweening</p>
 <hr>
 <h3><a id="ClientClipClass.visible">visible</a></h3><p>• <code>get</code> <strong>visible</strong>(): <code>boolean</code></p>
 <p>Returns
@@ -486,7 +518,7 @@ ClipClass.changeScalars</p>
 <p>Inherited from
 ClipClass.clipCachePromise</p>
 <hr>
-<h3><a id="ClientClipClass.clipIcon">clipIcon</a></h3><p>▸ <strong>clipIcon</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
+<h3><a id="ClientClipClass.clipRects">clipRects</a></h3><p>▸ <strong>clipRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -497,44 +529,15 @@ ClipClass.clipCachePromise</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='ClipIconArgs.html'>ClipIconArgs</a></code></td>
+<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.clipIcon">clipIcon</a></p>
-<hr>
-<h3><a id="ClientClipClass.clipPreviewPromise">clipPreviewPromise</a></h3><p>▸ <strong>clipPreviewPromise</strong>(<code>size</code>, <code>time</code>, <code>component</code>, <code>_scale?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>component</code></td>
-<td align="left"><code><a href='../combined/Types.html#Panel'>Panel</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>_scale?</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.clipPreviewPromise">clipPreviewPromise</a></p>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.clipRects">clipRects</a></p>
+<p>Inherited from
+ClipClass.clipRects</p>
 <hr>
 <h3><a id="ClientClipClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>scalar?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -561,7 +564,7 @@ ClipClass.clipCachePromise</p>
 <p>Overrides
 ClipClass.constrainedValue</p>
 <hr>
-<h3><a id="ClientClipClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<h3><a id="ClientClipClass.elementPromise">elementPromise</a></h3><p>▸ <strong>elementPromise</strong>(<code>outputSize</code>, <code>time</code>, <code>panel</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -571,16 +574,22 @@ ClipClass.constrainedValue</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
+<td align="left"><code>outputSize</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>panel</code></td>
+<td align="left"><code><a href='../combined/Types.html#Panel'>Panel</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.containerRects">containerRects</a></p>
-<p>Inherited from
-ClipClass.containerRects</p>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.elementPromise">elementPromise</a></p>
 <hr>
 <h3><a id="ClientClipClass.endTime">endTime</a></h3><p>▸ <strong>endTime</strong>(<code>quantize</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -772,52 +781,10 @@ ClipClass.propertyInstance</p>
 <code>void</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.resetTiming">resetTiming</a></p>
-<p>Inherited from
+<p>Overrides
 ClipClass.resetTiming</p>
 <hr>
-<h3><a id="ClientClipClass.scalar">scalar</a></h3><p>▸ <code>Protected</code> <strong>scalar</strong>(<code>propertyId</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>propertyId</code></td>
-<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
-<p>Inherited from
-ClipClass.scalar</p>
-<hr>
-<h3><a id="ClientClipClass.selectorTypesPropertyNames">selectorTypesPropertyNames</a></h3><p>▸ <code>Protected</code> <strong>selectorTypesPropertyNames</strong>(<code>selectorTypes</code>, <code>targetId</code>): <code><a href='Strings.html'>Strings</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>selectorTypes</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>targetId</code></td>
-<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Strings.html'>Strings</a></code></p>
-<p>Inherited from
-ClipClass.selectorTypesPropertyNames</p>
-<hr>
-<h3><a id="ClientClipClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ClientClipClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -836,10 +803,10 @@ ClipClass.selectorTypesPropertyNames</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.setValue">setValue</a></p>
-<p>Inherited from
+<p>Overrides
 ClipClass.setValue</p>
 <hr>
 <h3><a id="ClientClipClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
@@ -865,6 +832,50 @@ ClipClass.setValue</p>
 <p>Overrides
 ClipClass.shouldSelectProperty</p>
 <hr>
+<h3><a id="ClientClipClass.sizingRect">sizingRect</a></h3><p>▸ <strong>sizingRect</strong>(<code>size</code>, <code>loading?</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>size</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>loading?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<h4>Implementation of</h4>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.sizingRect">sizingRect</a></p>
+<p>Inherited from
+ClipClass.sizingRect</p>
+<hr>
+<h3><a id="ClientClipClass.svgItemPromise">svgItemPromise</a></h3><p>▸ <strong>svgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ClipIconArgs.html'>ClipIconArgs</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a>&gt;&gt;</p>
+<h4>Implementation of</h4>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.svgItemPromise">svgItemPromise</a></p>
+<hr>
 <h3><a id="ClientClipClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
@@ -878,6 +889,35 @@ ClipClass.toJSON</p>
 <code>string</code></p>
 <p>Inherited from
 ClipClass.toString</p>
+<hr>
+<h3><a id="ClientClipClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
+<h4>Implementation of</h4>
+<p><a href="ClientClip.html">ClientClip</a>.<a href="ClientClip.html#ClientClip.tweenValues">tweenValues</a></p>
+<p>Inherited from
+ClipClass.tweenValues</p>
 <hr>
 <h3><a id="ClientClipClass.updateAssetId">updateAssetId</a></h3><p>▸ <strong>updateAssetId</strong>(<code>oldId</code>, <code>newId</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -932,13 +972,18 @@ ClipClass.value</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ClientClipClass'>ClientClipClass</a></li>
 <li><a class='' href='#ClientClipClass.constructor'>constructor</a></li>
+<li><a class='' href='#ClientClipClass._container'>_container</a></li>
+<li><a class='' href='#ClientClipClass._containerObject'>_containerObject</a></li>
+<li><a class='' href='#ClientClipClass._content'>_content</a></li>
+<li><a class='' href='#ClientClipClass._contentObject'>_contentObject</a></li>
 <li><a class='' href='#ClientClipClass._id'>_id</a></li>
 <li><a class='' href='#ClientClipClass._label'>_label</a></li>
 <li><a class='' href='#ClientClipClass.containerId'>containerId</a></li>
 <li><a class='' href='#ClientClipClass.contentId'>contentId</a></li>
 <li><a class='' href='#ClientClipClass.frame'>frame</a></li>
 <li><a class='' href='#ClientClipClass.frames'>frames</a></li>
-<li><a class='' href='#ClientClipClass.muted'>muted</a></li>
+<li><a class='' href='#ClientClipClass.opacity'>opacity</a></li>
+<li><a class='' href='#ClientClipClass.opacityEnd'>opacityEnd</a></li>
 <li><a class='' href='#ClientClipClass.properties'>properties</a></li>
 <li><a class='' href='#ClientClipClass.sizing'>sizing</a></li>
 <li><a class='' href='#ClientClipClass.targetId'>targetId</a></li>
@@ -947,6 +992,8 @@ ClipClass.value</p>
 <li><a class='' href='#ClientClipClass.transparency'>transparency</a></li>
 <li><a class='' href='#ClientClipClass.assetIds'>assetIds</a></li>
 <li><a class='' href='#ClientClipClass.audible'>audible</a></li>
+<li><a class='' href='#ClientClipClass.canBeMuted'>canBeMuted</a></li>
+<li><a class='' href='#ClientClipClass.clipIndex'>clipIndex</a></li>
 <li><a class='' href='#ClientClipClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientClipClass.container'>container</a></li>
 <li><a class='' href='#ClientClipClass.containerInitialize'>containerInitialize</a></li>
@@ -955,20 +1002,19 @@ ClipClass.value</p>
 <li><a class='' href='#ClientClipClass.endFrame'>endFrame</a></li>
 <li><a class='' href='#ClientClipClass.id'>id</a></li>
 <li><a class='' href='#ClientClipClass.label'>label</a></li>
-<li><a class='' href='#ClientClipClass.mutable'>mutable</a></li>
-<li><a class='' href='#ClientClipClass.notMuted'>notMuted</a></li>
+<li><a class='' href='#ClientClipClass.muted'>muted</a></li>
 <li><a class='' href='#ClientClipClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientClipClass.timeRange'>timeRange</a></li>
 <li><a class='' href='#ClientClipClass.trackNumber'>trackNumber</a></li>
+<li><a class='' href='#ClientClipClass.tweening'>tweening</a></li>
 <li><a class='' href='#ClientClipClass.visible'>visible</a></li>
 <li><a class='' href='#ClientClipClass.asset'>asset</a></li>
 <li><a class='' href='#ClientClipClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientClipClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientClipClass.clipCachePromise'>clipCachePromise</a></li>
-<li><a class='' href='#ClientClipClass.clipIcon'>clipIcon</a></li>
-<li><a class='' href='#ClientClipClass.clipPreviewPromise'>clipPreviewPromise</a></li>
+<li><a class='' href='#ClientClipClass.clipRects'>clipRects</a></li>
 <li><a class='' href='#ClientClipClass.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ClientClipClass.containerRects'>containerRects</a></li>
+<li><a class='' href='#ClientClipClass.elementPromise'>elementPromise</a></li>
 <li><a class='' href='#ClientClipClass.endTime'>endTime</a></li>
 <li><a class='' href='#ClientClipClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientClipClass.intrinsicsKnown'>intrinsicsKnown</a></li>
@@ -978,12 +1024,13 @@ ClipClass.value</p>
 <li><a class='' href='#ClientClipClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientClipClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientClipClass.resetTiming'>resetTiming</a></li>
-<li><a class='' href='#ClientClipClass.scalar'>scalar</a></li>
-<li><a class='' href='#ClientClipClass.selectorTypesPropertyNames'>selectorTypesPropertyNames</a></li>
 <li><a class='' href='#ClientClipClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientClipClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientClipClass.sizingRect'>sizingRect</a></li>
+<li><a class='' href='#ClientClipClass.svgItemPromise'>svgItemPromise</a></li>
 <li><a class='' href='#ClientClipClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientClipClass.toString'>toString</a></li>
+<li><a class='' href='#ClientClipClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientClipClass.updateAssetId'>updateAssetId</a></li>
 <li><a class='' href='#ClientClipClass.value'>value</a></li></ul>
       </nav>

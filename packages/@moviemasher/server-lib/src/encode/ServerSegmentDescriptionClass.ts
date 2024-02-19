@@ -1,14 +1,14 @@
-import type { AVType, AbsolutePath, AssetType, DataOrError, Size, Time, TimeRange } from '@moviemasher/shared-lib/types.js'
-import type { ServerSegmentDescription, ServerSegmentDescriptionArgs, ServerMashDescription, VideoCommandFileOptions, AudibleCommandFilterArgs, EncodeDescription, PrecodeDescription } from '../types.js'
+import type { AVType, AbsolutePath, RawType, DataOrError, Size, Time, TimeRange } from '@moviemasher/shared-lib/types.js'
 import type { ServerClip, ServerClips, ServerMashAsset } from '../type/ServerMashTypes.js'
-import type { AudioCommandFileArgs, CommandFiles, CommandFilter, CommandFilters, CommandInput, ServerPromiseArgs, VideoCommandFilterArgs } from '../types.js'
+import type { AudibleCommandFilterArgs, AudioCommandFileArgs, CommandFiles, CommandFilter, CommandFilters, CommandInput, EncodeDescription, PrecodeDescription, ServerMashDescription, ServerPromiseArgs, ServerSegmentDescription, ServerSegmentDescriptionArgs, VideoCommandFileOptions, VideoCommandFilterArgs } from '../types.js'
 
-import { AUDIO, ERROR, IMAGE, RGBA_BLACK_ZERO, VIDEO, arrayLast, assertAsset, errorThrow, idGenerate, sortByTrack, sortByType } from '@moviemasher/shared-lib/runtime.js'
-import { assertDefined, assertPopulatedString, assertTrue, isAboveZero } from '@moviemasher/shared-lib/utility/guards.js'
-import { promiseNumbers } from '@moviemasher/shared-lib/utility/request.js'
+import { $AUDIO, $IMAGE, $VIDEO, ERROR, RGBA_BLACK_ZERO, arrayLast, assertAsset, errorThrow, idGenerate, sortByTrack, sortByType } from '@moviemasher/shared-lib/runtime.js'
+import { assertDefined, assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
+import { promiseNumbers } from '@moviemasher/shared-lib/runtime.js'
 import { assertTime, isTimeRange, timeRangeFromTime } from '@moviemasher/shared-lib/utility/time.js'
-import { assertServerMashAsset } from '../guard/mash.js'
+import { assertServerMashAsset } from '../utility/guard.js'
 import { CommandInputRecord } from '../types.js'
+import { isAboveZero } from '@moviemasher/shared-lib/utility/guard.js'
 
 const BACKCOLOR = 'BACKCOLOR'
 
@@ -22,7 +22,7 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
     assertTrue(time.fps === this.quantize, 'time is in mash rate')
   }
 
-  declare assetType: AssetType
+  declare assetType: RawType
 
   get assetsServerPromise(): Promise<DataOrError<number>> {
     // raw assets are already cached on disk, so write other command files
@@ -37,15 +37,15 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
     })
     return promiseNumbers(promises)
   }
-  get audible(): boolean { return this.avType === AUDIO }
+  get audible(): boolean { return this.avType === $AUDIO }
 
-  get visible(): boolean { return this.avType === VIDEO }
+  get visible(): boolean { return this.avType === $VIDEO }
 
   get avType(): AVType { 
     switch (this.assetType) {
-      case AUDIO: return AUDIO
-      case IMAGE:
-      case VIDEO: return VIDEO
+      case $AUDIO: return $AUDIO
+      case $IMAGE:
+      case $VIDEO: return $VIDEO
     }
   }
 
@@ -83,7 +83,7 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
   protected get encodePath(): AbsolutePath { return this.mashDescription.encodePath }
 
   get filters(): CommandFilters { 
-    return errorThrow(ERROR.Unimplemented, 'commandFilters')
+    return errorThrow(ERROR.Unimplemented)
   }
 
   _id?: string
@@ -97,7 +97,7 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
     const entries = this.inputCommandFiles.map(commandFile => {
       const { path, inputId, file, inputOptions, outputOptions, avType } = commandFile
       const source = path || file
-      assertPopulatedString(avType)
+      assertDefined(avType)
 
       const input: CommandInput = { avType, source, inputOptions, outputOptions }
       return [inputId, input]
@@ -129,7 +129,7 @@ export class AudioServerSegmentDescriptionClass extends ServerSegmentDescription
     assertTrue(isAboveZero(this.audioRate), 'audioRate')
   }
   
-  assetType = AUDIO 
+  assetType = $AUDIO 
 
   private get audioRate(): number { return this.mashDescription.audioRate }
 
@@ -193,7 +193,7 @@ export class ImageServerSegmentDescriptionClass extends ServerSegmentDescription
   constructor(public args: ServerSegmentDescriptionArgs) {
     super(args)
   }
-  assetType = IMAGE
+  assetType = $IMAGE
 }
 
 export class VideoServerSegmentDescriptionClass extends ServerSegmentDescriptionClass {
@@ -203,7 +203,7 @@ export class VideoServerSegmentDescriptionClass extends ServerSegmentDescription
     assertTrue(isAboveZero(this.videoRate), 'videoRate')
   }
 
-  assetType = VIDEO
+  assetType = $VIDEO
 
   private get background(): string { return this.mashDescription.background }
 

@@ -1,13 +1,12 @@
-import type { Tweening } from '../type/ServerTypes.js'
-import type { CommandFile, CommandFileArgs, CommandFiles, CommandFilters, ServerAsset, ServerInstance, VisibleCommandFilterArgs } from '../types.js'
+import type { CommandFile, CommandFileArgs, CommandFiles, ServerAsset, ServerInstance } from '../types.js'
 
 import { InstanceClass } from '@moviemasher/shared-lib/base/instance.js'
-import { DASH, ERROR, errorThrow } from '@moviemasher/shared-lib/runtime.js'
+import { DASH } from '@moviemasher/shared-lib/runtime.js'
 
 export class ServerInstanceClass extends InstanceClass implements ServerInstance {
   declare asset: ServerAsset
  
-  fileCommandFiles(cacheArgs: CommandFileArgs): CommandFiles {
+  commandFiles(cacheArgs: CommandFileArgs): CommandFiles {
     const files = this.asset.assetFiles(cacheArgs)
     return files.map((assetFile, index) => {
       const { avType } = assetFile
@@ -17,9 +16,5 @@ export class ServerInstanceClass extends InstanceClass implements ServerInstance
       const commandFile: CommandFile = { ...assetFile, inputId }
       return commandFile
     })
-  }
-
-  initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
-    return errorThrow(ERROR.Unimplemented)
   }
 }

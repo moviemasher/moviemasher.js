@@ -1,4 +1,4 @@
-import type { AudioInstance, ServerMediaRequest, ColorAsset, ColorInstance, ImageInstance, Instance, RawAsset, RawAssetObject, RawAudioAssetObject, RawImageAssetObject, RawVideoAssetObject, ShapeAsset, ShapeInstance, TextAsset, TextAssetObject, TextInstance, VideoInstance, ArrayOf2, Value } from '@moviemasher/shared-lib/types.js'
+import type { AudioInstance, ColorAsset, ColorInstance, ImageInstance, Instance, RawAsset, RawAssetObject, RawAudioAssetObject, RawImageAssetObject, RawVideoAssetObject, ShapeAsset, ShapeInstance, TextAsset, TextAssetObject, TextInstance, VideoInstance, ArrayOf2, Value } from '@moviemasher/shared-lib/types.js'
 import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset, ServerVisibleAsset } from './ServerAssetTypes.js'
 import type { ServerInstance, ServerVisibleInstance } from '../types.js'
 import type { ServerAsset } from '../types.js'
@@ -32,7 +32,6 @@ export interface Tweening {
 
 export interface ServerRawAsset extends RawAsset, ServerAsset {
   assetObject: RawAssetObject
-  request: ServerMediaRequest
 }
 
 export interface ServerRawAudioAsset extends ServerRawAsset, ServerAudioAsset {

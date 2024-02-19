@@ -163,13 +163,11 @@
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.properties">properties</a></p>
 <hr>
-<h3><a id="Track.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.scalarRecord">scalarRecord</a></p>
-<hr>
 <h3><a id="Track.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.targetId">targetId</a></p>
+<hr>
+<h3><a id="Track.trackIndex">trackIndex</a></h3><p>• <strong>trackIndex</strong>: <code><a href='TrackIndex.html'>TrackIndex</a></code></p>
 <hr>
 <h3><a id="Track.trackObject">trackObject</a></h3><p>• <strong>trackObject</strong>: <code><a href='TrackObject.html'>TrackObject</a></code></p>
 <h2>Methods</h2>
@@ -293,7 +291,7 @@
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="Track.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="Track.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -312,7 +310,7 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.setValue">setValue</a></p>
 <hr>
@@ -338,6 +336,33 @@
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="Track.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="Track.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -373,8 +398,8 @@
 <li><a class='' href='#Track.index'>index</a></li>
 <li><a class='' href='#Track.mash'>mash</a></li>
 <li><a class='' href='#Track.properties'>properties</a></li>
-<li><a class='' href='#Track.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#Track.targetId'>targetId</a></li>
+<li><a class='' href='#Track.trackIndex'>trackIndex</a></li>
 <li><a class='' href='#Track.trackObject'>trackObject</a></li>
 <li><a class='' href='#Track.assureFrames'>assureFrames</a></li>
 <li><a class='' href='#Track.constrainedValue'>constrainedValue</a></li>
@@ -385,6 +410,7 @@
 <li><a class='' href='#Track.setValue'>setValue</a></li>
 <li><a class='' href='#Track.sortClips'>sortClips</a></li>
 <li><a class='' href='#Track.toJSON'>toJSON</a></li>
+<li><a class='' href='#Track.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#Track.value'>value</a></li></ul>
       </nav>
     </main>

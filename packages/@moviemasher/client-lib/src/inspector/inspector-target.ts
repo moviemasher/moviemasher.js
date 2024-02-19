@@ -4,14 +4,14 @@ import type { CSSResultGroup, PropertyValues } from 'lit-element/lit-element.js'
 import type { TemplateContent, TemplateContents, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventPropertyIds } from '../utility/events.js'
 import { EventControlGroupDetail } from '../types.js'
-import { ASSET_TARGET, MASH, arraySet, sortByOrder } from '@moviemasher/shared-lib/runtime.js'
+import { $ASSET, $MASH, arraySet, sortByOrder } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { Component } from '../base/Component.js'
 import { ComponentLoader } from '../base/Component.js'
+import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 
 export const InspectorTargetTag = 'movie-masher-inspector-target'
 /**
@@ -37,7 +37,7 @@ export class InspectorTargetElement extends ComponentLoader {
 
       // see if anyone wants to group some of the remaining selected properties
       const event = new EventControlGroup(propertyIds, groupedPropertyIds)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       if (!groupedPropertyIds.length) break
 
       const { detail } = event
@@ -89,7 +89,7 @@ export class InspectorTargetElement extends ComponentLoader {
     if (!targetId) return []
     
     const event = new EventPropertyIds([targetId])
-    MOVIEMASHER.eventDispatcher.dispatch(event)  
+    MOVIEMASHER.dispatch(event)  
     const { propertyIds } = event.detail
     return propertyIds
   }
@@ -100,19 +100,19 @@ export class InspectorTargetElement extends ComponentLoader {
     super.willUpdate(changedProperties)
     if (changedProperties.has('targetId')) {
       const { targetId } = this
-      assertPopulatedString(targetId)
+      assertDefined(targetId)
 
-      MOVIEMASHER.eventDispatcher.listenersRemove(this.listeners)
+      MOVIEMASHER.listenersRemove(this.listeners)
       this.listeners = {}
       const { listeners } = this
 
       const bound = this.handleChanged.bind(this)
       switch (targetId) {
-        case ASSET_TARGET: {
+        case $ASSET: {
           listeners[EventChangedAssetId.Type] = bound
           break
         }
-        case MASH: {
+        case $MASH: {
           listeners[EventChangedMashAsset.Type] = bound
           break 
         }
@@ -120,7 +120,7 @@ export class InspectorTargetElement extends ComponentLoader {
           listeners[EventChangedClipId.Type] = bound
         }
       }   
-      MOVIEMASHER.eventDispatcher.listenersAdd(listeners)
+      MOVIEMASHER.listenersAdd(listeners)
     }
   }
 

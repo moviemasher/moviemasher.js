@@ -151,21 +151,9 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assets">assets</a></p>
 <hr>
-<h3><a id="PromptAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
+<h3><a id="PromptAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContainer">canBeContainer</a></p>
-<hr>
-<h3><a id="PromptAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContent">canBeContent</a></p>
-<hr>
-<h3><a id="PromptAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.container">container</a></p>
-<hr>
-<h3><a id="PromptAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.content">content</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decoding">decoding</a></p>
 <hr>
 <h3><a id="PromptAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
@@ -175,10 +163,6 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.id">id</a></p>
 <hr>
-<h3><a id="PromptAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.isVector">isVector</a></p>
-<hr>
 <h3><a id="PromptAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.label">label</a></p>
@@ -187,11 +171,17 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.properties">properties</a></p>
 <hr>
-<h3><a id="PromptAsset.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
-<hr>
-<h3><a id="PromptAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="PromptAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.scalarRecord">scalarRecord</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.request">request</a></p>
+<hr>
+<h3><a id="PromptAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resource">resource</a></p>
+<hr>
+<h3><a id="PromptAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resources">resources</a></p>
 <hr>
 <h3><a id="PromptAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
@@ -201,7 +191,7 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.targetId">targetId</a></p>
 <hr>
-<h3><a id="PromptAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="PromptAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.type">type</a></p>
 <h2>Methods</h2>
@@ -284,6 +274,25 @@
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.constrainedValue">constrainedValue</a></p>
+<hr>
+<h3><a id="PromptAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodingOfType">decodingOfType</a></p>
 <hr>
 <h3><a id="PromptAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -399,7 +408,26 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="PromptAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="PromptAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resourceOfType">resourceOfType</a></p>
+<hr>
+<h3><a id="PromptAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -418,7 +446,7 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.setValue">setValue</a></p>
 <hr>
@@ -427,6 +455,33 @@
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="PromptAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="PromptAsset.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -458,17 +513,14 @@
 <li><a class='' href='#PromptAsset.assetIds'>assetIds</a></li>
 <li><a class='' href='#PromptAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#PromptAsset.assets'>assets</a></li>
-<li><a class='' href='#PromptAsset.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#PromptAsset.canBeContent'>canBeContent</a></li>
-<li><a class='' href='#PromptAsset.container'>container</a></li>
-<li><a class='' href='#PromptAsset.content'>content</a></li>
+<li><a class='' href='#PromptAsset.decoding'>decoding</a></li>
 <li><a class='' href='#PromptAsset.decodings'>decodings</a></li>
 <li><a class='' href='#PromptAsset.id'>id</a></li>
-<li><a class='' href='#PromptAsset.isVector'>isVector</a></li>
 <li><a class='' href='#PromptAsset.label'>label</a></li>
 <li><a class='' href='#PromptAsset.properties'>properties</a></li>
 <li><a class='' href='#PromptAsset.request'>request</a></li>
-<li><a class='' href='#PromptAsset.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#PromptAsset.resource'>resource</a></li>
+<li><a class='' href='#PromptAsset.resources'>resources</a></li>
 <li><a class='' href='#PromptAsset.source'>source</a></li>
 <li><a class='' href='#PromptAsset.targetId'>targetId</a></li>
 <li><a class='' href='#PromptAsset.type'>type</a></li>
@@ -476,14 +528,17 @@
 <li><a class='' href='#PromptAsset.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#PromptAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#PromptAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#PromptAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#PromptAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#PromptAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#PromptAsset.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#PromptAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#PromptAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#PromptAsset.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#PromptAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#PromptAsset.setValue'>setValue</a></li>
 <li><a class='' href='#PromptAsset.toJSON'>toJSON</a></li>
+<li><a class='' href='#PromptAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#PromptAsset.value'>value</a></li></ul>
       </nav>
     </main>

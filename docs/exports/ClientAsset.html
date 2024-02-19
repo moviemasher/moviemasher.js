@@ -144,6 +144,7 @@
 <p>↳↳ <code><a href='ClientVisibleAsset.html'>ClientVisibleAsset</a></code></p>
 <p>↳↳ <code><a href='ClientColorAsset.html'>ClientColorAsset</a></code></p>
 <p>↳↳ <code><a href='ClientShapeAsset.html'>ClientShapeAsset</a></code></p>
+<p>↳↳ <code><a href='ClientAudioAsset.html'>ClientAudioAsset</a></code></p>
 <p>↳↳ <code><a href='ClientTextAsset.html'>ClientTextAsset</a></code></p>
 </li>
 </ul>
@@ -164,21 +165,9 @@ Asset.assetObject</p>
 <p>Inherited from
 Asset.assets</p>
 <hr>
-<h3><a id="ClientAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
+<h3><a id="ClientAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-Asset.canBeContainer</p>
-<hr>
-<h3><a id="ClientAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<p>Inherited from
-Asset.canBeContent</p>
-<hr>
-<h3><a id="ClientAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-Asset.container</p>
-<hr>
-<h3><a id="ClientAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-Asset.content</p>
+Asset.decoding</p>
 <hr>
 <h3><a id="ClientAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
@@ -188,10 +177,6 @@ Asset.decodings</p>
 <p>Inherited from
 Asset.id</p>
 <hr>
-<h3><a id="ClientAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-Asset.isVector</p>
-<hr>
 <h3><a id="ClientAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 Asset.label</p>
@@ -200,11 +185,19 @@ Asset.label</p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.properties">properties</a></p>
 <hr>
-<h3><a id="ClientAsset.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
-<hr>
-<h3><a id="ClientAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="ClientAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-<a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.scalarRecord">scalarRecord</a></p>
+Asset.request</p>
+<hr>
+<h3><a id="ClientAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+Asset.resource</p>
+<hr>
+<h3><a id="ClientAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+Asset.resources</p>
+<hr>
+<h3><a id="ClientAsset.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
 <hr>
 <h3><a id="ClientAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
@@ -214,9 +207,7 @@ Asset.source</p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.targetId">targetId</a></p>
 <hr>
-<h3><a id="ClientAsset.transcodings">transcodings</a></h3><p>• <strong>transcodings</strong>: <code><a href='Transcodings.html'>Transcodings</a></code></p>
-<hr>
-<h3><a id="ClientAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="ClientAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 Asset.type</p>
 <h2>Methods</h2>
@@ -269,7 +260,7 @@ Asset.assetCachePromise</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -279,7 +270,7 @@ Asset.assetCachePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <hr>
-<h3><a id="ClientAsset.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>requestable</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
+<h3><a id="ClientAsset.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -289,12 +280,12 @@ Asset.assetCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>requestable</code></td>
-<td align="left"><code><a href='Requestable.html'>Requestable</a></code></td>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code> | <code><a href='Rect.html'>Rect</a></code></td>
+<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -388,7 +379,7 @@ Asset.clipObject</p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.constrainedValue">constrainedValue</a></p>
 <hr>
-<h3><a id="ClientAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>request</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -398,8 +389,27 @@ Asset.clipObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>request</code></td>
-<td align="left"><code><a href='ClientMediaRequest.html'>ClientMediaRequest</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+Asset.decodingOfType</p>
+<hr>
+<h3><a id="ClientAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>resource</code></td>
+<td align="left"><code><a href='Resource.html'>Resource</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -462,23 +472,6 @@ Asset.instanceArgs</p>
 <p>Inherited from
 Asset.instanceFromObject</p>
 <hr>
-<h3><a id="ClientAsset.preferredTranscoding">preferredTranscoding</a></h3><p>▸ <strong>preferredTranscoding</strong>(<code>...types</code>): <code><a href='Transcoding.html'>Transcoding</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>...types</code></td>
-<td align="left"><code><a href='TranscodingTypes.html'>TranscodingTypes</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Transcoding.html'>Transcoding</a></code></p>
-<hr>
 <h3><a id="ClientAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -536,6 +529,25 @@ Asset.instanceFromObject</p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.propertyInstance">propertyInstance</a></p>
 <hr>
+<h3><a id="ClientAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+Asset.resourceOfType</p>
+<hr>
 <h3><a id="ClientAsset.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
 <table>
@@ -553,7 +565,7 @@ Asset.instanceFromObject</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <hr>
-<h3><a id="ClientAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ClientAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -572,7 +584,7 @@ Asset.instanceFromObject</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.setValue">setValue</a></p>
 <hr>
@@ -581,6 +593,33 @@ Asset.instanceFromObject</p>
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 <a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.toJSON">toJSON</a></p>
+<hr>
+<h3><a id="ClientAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Selectable.html">Selectable</a>.<a href="Selectable.html#Selectable.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ClientAsset.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -616,20 +655,17 @@ Asset.instanceFromObject</p>
 <li><a class='' href='#ClientAsset.assetIds'>assetIds</a></li>
 <li><a class='' href='#ClientAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientAsset.assets'>assets</a></li>
-<li><a class='' href='#ClientAsset.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#ClientAsset.canBeContent'>canBeContent</a></li>
-<li><a class='' href='#ClientAsset.container'>container</a></li>
-<li><a class='' href='#ClientAsset.content'>content</a></li>
+<li><a class='' href='#ClientAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ClientAsset.decodings'>decodings</a></li>
 <li><a class='' href='#ClientAsset.id'>id</a></li>
-<li><a class='' href='#ClientAsset.isVector'>isVector</a></li>
 <li><a class='' href='#ClientAsset.label'>label</a></li>
 <li><a class='' href='#ClientAsset.properties'>properties</a></li>
+<li><a class='' href='#ClientAsset.request'>request</a></li>
+<li><a class='' href='#ClientAsset.resource'>resource</a></li>
+<li><a class='' href='#ClientAsset.resources'>resources</a></li>
 <li><a class='' href='#ClientAsset.saveNeeded'>saveNeeded</a></li>
-<li><a class='' href='#ClientAsset.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientAsset.source'>source</a></li>
 <li><a class='' href='#ClientAsset.targetId'>targetId</a></li>
-<li><a class='' href='#ClientAsset.transcodings'>transcodings</a></li>
 <li><a class='' href='#ClientAsset.type'>type</a></li>
 <li><a class='' href='#ClientAsset.asset'>asset</a></li>
 <li><a class='' href='#ClientAsset.assetCachePromise'>assetCachePromise</a></li>
@@ -639,17 +675,19 @@ Asset.instanceFromObject</p>
 <li><a class='' href='#ClientAsset.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#ClientAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientAsset.imagePromise'>imagePromise</a></li>
 <li><a class='' href='#ClientAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientAsset.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientAsset.preferredTranscoding'>preferredTranscoding</a></li>
 <li><a class='' href='#ClientAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientAsset.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#ClientAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ClientAsset.savePromise'>savePromise</a></li>
 <li><a class='' href='#ClientAsset.setValue'>setValue</a></li>
 <li><a class='' href='#ClientAsset.toJSON'>toJSON</a></li>
+<li><a class='' href='#ClientAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientAsset.unload'>unload</a></li>
 <li><a class='' href='#ClientAsset.value'>value</a></li></ul>
       </nav>

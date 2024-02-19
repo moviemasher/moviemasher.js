@@ -1,21 +1,19 @@
-import type { AssetObject, CacheArgs, DataOrError, InstanceArgs, InstanceObject, IntrinsicOptions } from '@moviemasher/shared-lib/types.js'
-import type { CommandFile, AssetFile, AssetFiles, ServerAsset, ServerPromiseArgs } from '../types.js'
+import type { AssetObject, CacheArgs, DataOrError, InstanceArgs, InstanceObject } from '@moviemasher/shared-lib/types.js'
+import type { AssetFiles, CommandFile, ServerAsset, ServerAssetManager, ServerPromiseArgs } from '../types.js'
 
 import { AssetClass } from '@moviemasher/shared-lib/base/asset.js'
-import { assertAsset, FONT, IMAGE, isDefiniteError, isString, jsonStringify, MOVIEMASHER, SVG, SVGS, TXT } from '@moviemasher/shared-lib/runtime.js'
-import { EventServerManagedAsset } from '../runtime.js'
-import { fileCopyPromise, fileLinkPromise, filePathExists, fileWritePromise } from '../utility/File.js'
+import { assertAsset, ERROR, errorThrow, $FONT, isDefiniteError, jsonStringify, $SVG, $SVGS, $TXT } from '@moviemasher/shared-lib/runtime.js'
 import path from 'path'
-import { ENV, ENV_KEY } from '../utility/EnvironmentConstants.js'
-import { assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
+import { fileCopyPromise, fileWritePromise } from '../utility/file.js'
+import { ENV, ENV_KEY } from '../utility/env.js'
 
 export class ServerAssetClass extends AssetClass implements ServerAsset {
+  constructor(object: AssetObject, manager?: ServerAssetManager) {
+    super(object)
+    this.manager = manager
+  }
   override asset(assetId: string | AssetObject): ServerAsset {
-    const event = new EventServerManagedAsset(assetId)
-    const handled = MOVIEMASHER.eventDispatcher.dispatch(event)
-    assertTrue(handled, 'handled')
-
-    const { asset } = event.detail
+    const asset = this.assetManager.asset(assetId)
     assertAsset(asset, jsonStringify(assetId))
     
     return asset
@@ -23,45 +21,37 @@ export class ServerAssetClass extends AssetClass implements ServerAsset {
 
   assetFiles(args: CacheArgs): AssetFiles { return [] }
   
+  get assetManager(): ServerAssetManager { 
+    const { manager } = this
+    if (!manager) errorThrow(ERROR.AssetId, 'assetManager')
+    
+    return manager
+  }
+
+  protected manager?: ServerAssetManager 
+  
   commandFilePromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>> {
     const { file, content, type } = commandFile
-    // console.log(this.constructor.name, 'ServerAssetClass.commandFilePromise', { source: file, type })
     switch(type) {
-      case SVGS: 
-      case TXT: 
-      case SVG: {
+      case $SVGS: 
+      case $TXT: 
+      case $SVG: {
         if (!content) break
 
         return fileWritePromise(file, content, true).then(() => ({ data: 1 }))
       }
-      // case IMAGE: {
-      //   const destination = path.join(this.imageDirectory, path.basename(file))
-      //   return fileCopyPromise(file, destination).then(copyOrError => {
-      //     console.log(this.constructor.name, 'ServerAssetClass.commandFilePromise IMAGE', { destination, copyOrError }, filePathExists(destination))
-      //     if (isDefiniteError(copyOrError)) return copyOrError
-
-      //     return { data: 1 }
-      //   })
+      // we do this during retrieve now
+      // case $FONT: {
+      //   const ttfFile = path.join(ENV.get(ENV_KEY.FontDir), path.basename(file))
+      //   // console.log('ServerAssetClass commandFilePromise', { file, ttfFile })
+      //   return fileCopyPromise(file, ttfFile).then(copyOrError => (
+      //     isDefiniteError(copyOrError) ? copyOrError : { data: 1 }
+      //   ))
       // }
-      case FONT: {
-        const destination = path.join(this.fontDirectory, path.basename(file))
-        return fileCopyPromise(file, destination).then(copyOrError => {
-          // console.log(this.constructor.name, 'ServerAssetClass.commandFilePromise FONT', { destination, copyOrError }, filePathExists(destination))
-          if (isDefiniteError(copyOrError)) return copyOrError
-
-          return { data: 1 }
-        })
-      }
     }
     return Promise.resolve({ data: 0 })
   }
   
-  // TODO: get this from an environment variable
-
-  get fontDirectory(): string {
-    return '/usr/share/fonts'
-  }
-
   instanceArgs(object?: InstanceObject): InstanceArgs {
     return { ...super.instanceArgs(object), asset: this, assetId: this.id }
   }

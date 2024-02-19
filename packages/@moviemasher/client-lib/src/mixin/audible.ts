@@ -1,7 +1,7 @@
-import type { AudibleAsset, AudibleInstance, Constrained, DataOrError, Property, Scalar, ScalarTuple, Size, SvgItem } from '@moviemasher/shared-lib/types.js'
+import type { AudibleAsset, AudibleInstance, Constrained, DataOrError, ClientAudio, Property, Scalar, ScalarTuple, Size, SvgItem } from '@moviemasher/shared-lib/types.js'
 import type { ClientAsset, ClientAudibleAsset, ClientAudibleInstance, ClientInstance } from '../types.js'
 
-import { ALPHA, ERROR, FRAMES_MINIMUM, WAVEFORM, errorPromise, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { $ALPHA, ERROR, FRAMES_MINIMUM, $WAVEFORM, errorPromise, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { assertAboveZero, assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
 import { svgSetDimensions } from '@moviemasher/shared-lib/utility/svg.js'
 import { timeFromArgs, timeFromSeconds } from '@moviemasher/shared-lib/utility/time.js'
@@ -25,7 +25,7 @@ export class AudibleContextClass {
 
   private _context? : AudioContext
 
-  private get context() : AudioContext {
+  private get audioContext() : AudioContext {
     if (!this._context) {
       const Klass = AudioContext || window.webkitAudioContext
       this._context = new Klass()
@@ -33,25 +33,25 @@ export class AudibleContextClass {
     return this._context
   }
 
-  createBuffer(seconds : number) : AudioBuffer {
+  createBuffer(seconds : number) : ClientAudio {
     const length = AudibleSampleRate * seconds
-    return this.context.createBuffer(AudibleChannels, length, AudibleSampleRate)
+    return this.audioContext.createBuffer(AudibleChannels, length, AudibleSampleRate)
   }
 
-  createBufferSource(buffer?: AudioBuffer): AudioBufferSourceNode {
+  createBufferSource(buffer?: ClientAudio): AudioBufferSourceNode {
     // console.trace(this.constructor.name, 'createBufferSource')
-    const sourceNode = this.context.createBufferSource()
+    const sourceNode = this.audioContext.createBufferSource()
     if (buffer) sourceNode.buffer = buffer
     return sourceNode
   }
 
-  private createGain() : GainNode { return this.context.createGain() }
+  private createGain() : GainNode { return this.audioContext.createGain() }
 
-  get currentTime() : number { return this.context.currentTime }
+  get currentTime() : number { return this.audioContext.currentTime }
 
-  decode(buffer : ArrayBuffer) : Promise<AudioBuffer> {
+  decode(buffer : ArrayBuffer) : Promise<ClientAudio> {
     return new Promise((resolve, reject) => (
-      this.context.decodeAudioData(
+      this.audioContext.decodeAudioData(
         buffer,
         audioData => resolve(audioData),
         error => reject(error)
@@ -71,7 +71,7 @@ export class AudibleContextClass {
     gainSource.stop()
   }
 
-  get destination() : AudioDestinationNode { return this.context.destination }
+  get destination() : AudioDestinationNode { return this.audioContext.destination }
 
   getSource(id: string): AudibleContextSource | undefined {
     return this.sourcesById.get(id)
@@ -110,7 +110,7 @@ T & Constrained<ClientAudibleAsset> {
       return 
     }
 
-    loadedAudio?: AudioBuffer
+    loadedAudio?: ClientAudio
   }
 }
 
@@ -121,8 +121,8 @@ export function ClientAudibleInstanceMixin<T extends Constrained<ClientInstance 
 
     audiblePreviewPromise(clipSize: Size, scale?: number): Promise<DataOrError<SvgItem>> {
       const { asset, speed, clip } = this
-      const transcoding = asset.preferredTranscoding(WAVEFORM)
-      if (!transcoding) return errorPromise(ERROR.Unavailable, WAVEFORM)
+      const resource = asset.resourceOfType($WAVEFORM)
+      if (!resource) return errorPromise(ERROR.Unavailable, $WAVEFORM)
 
       assertAboveZero(scale)
       const { track } = clip
@@ -135,12 +135,12 @@ export function ClientAudibleInstanceMixin<T extends Constrained<ClientInstance 
       const width = pixelFromFrame(widthTime.frame, scale)
       const { height } = clipSize
       const rect = { x, y: 0, width, height }
-      return asset.assetIconPromise(transcoding, rect, false).then(orError => {
+      return asset.assetIconPromise(resource, rect, false).then(orError => {
         if (isDefiniteError(orError)) return orError
 
         const { data: svgItem } = orError
         svgSetDimensions(svgItem, rect)
-        const { waveformTransparency = ALPHA } = MOVIEMASHER.options
+        const { waveformTransparency = $ALPHA } = MOVIEMASHER.options
         return { data: svgColorMask(svgItem, clipSize, waveformTransparency, 'fore', rect) }
       })
     }

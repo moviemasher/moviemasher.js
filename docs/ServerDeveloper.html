@@ -153,9 +153,9 @@ package, but this is not a requirement - the library can be used independently.<
   <div class="section">
     <p>Server functions are organized into three main types of tasks:</p>
 <ul>
-<li><code><a href='combined/Functions.html#decode'>decode</a></code>: extract information from a media file</li>
+<li><code>decode</code>: extract information from a media file</li>
 <li><code><a href='combined/Functions.html#encode'>encode</a></code>: render a mash into a media file</li>
-<li><code><a href='combined/Functions.html#transcode'>transcode</a></code>: convert a media file into another format</li>
+<li><code>transcode</code>: convert a media file into another format</li>
 </ul>
 <p>These tasks take time and involve subprocesses, so functions all return a 
 promise and operate asynchronously. The promise resolves when the task is 
@@ -172,7 +172,7 @@ be downloaded before processing begins. </p>
   <div class="section">
     <p>Media files typically contain metadata that describe the contents of the file. 
 For example, an image file&#39;s metadata includes the dimensions of the image while
-an audio file&#39;s metadata includes the duration of the audio. The <code><a href='combined/Functions.html#decodeProbe'>decodeProbe</a></code> 
+an audio file&#39;s metadata includes the duration of the audio. The <code>decodeProbe</code> 
 function extracts this metadata from a media file and returns it as a <code><a href='exports/Decoding.html'>Decoding</a></code> object.</p>
 <p>Decoding is not strictly necessary since the client is able to extract the metadata
 it needs from the raw file itself. However, decoding assures that the file can
@@ -198,7 +198,7 @@ also possible to create one manually. </p>
   <div class="section">
     <p>Media files are typically much higher resolution than the client needs in order
 to display its preview. Transcoding is used to create a lower resolution
-version of a media file for the client to work with. The <code><a href='combined/Functions.html#transcode'>transcode</a></code> 
+version of a media file for the client to work with. The <code>transcode</code> 
 function converts a media file and returns its path in a <code><a href='exports/Transcoding.html'>Transcoding</a></code> object.</p>
 <p>For instance, the client transcodes an imported video file into a separate audio 
 file and an image sequence (literally a series of image files). The client is 

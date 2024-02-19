@@ -1,8 +1,8 @@
 import type { EndpointRequest, ListenersFunction, UnknownRecord } from '@moviemasher/shared-lib/types.js'
 
-import { assertObject, assertPopulatedString, assertTrue, isRequest } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertDefined, assertPopulatedString, assertTrue, isRequest } from '@moviemasher/shared-lib/utility/guards.js'
 import { EventUpload } from '../utility/events.js'
-import { POST, errorThrow, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { $POST, errorThrow, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../utility/request.js'
 
 function assertRequest(value: any, name?: string): asserts value is EndpointRequest {
@@ -22,7 +22,7 @@ export class UploadHandler {
 
     progress?.do(sizeMb + 1)
     const jsonRequest = {
-      endpoint: '/upload/request', init: { method: POST }
+      endpoint: '/upload/request', init: { method: $POST }
     }
     detail.promise = requestJsonRecordPromise(jsonRequest, { name, size, type }).then(orError => {
       if (isDefiniteError(orError)) return orError
@@ -37,7 +37,7 @@ export class UploadHandler {
       assertPopulatedString(id)
 
       const { init } = storeRequest
-      assertObject(init)
+      assertDefined(init)
 
       const params: UnknownRecord = { id }
       if (fileProperty) {

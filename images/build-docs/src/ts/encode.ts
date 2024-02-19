@@ -2,12 +2,12 @@
 import type { MashAssetObject } from '@moviemasher/shared-lib/types.js'
 
 import { encode } from '@moviemasher/server-lib'
-import { IMAGE, MASH, SHAPE, VIDEO, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { $IMAGE, $MASH, $SHAPE, $VIDEO, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 
 const object: MashAssetObject = {
-  type: VIDEO, source: MASH, id: 'mash',
+  type: $VIDEO, source: $MASH, id: 'mash',
   assets: [{
-    type: IMAGE, source: SHAPE, id: SHAPE,
+    type: $IMAGE, source: $SHAPE, id: $SHAPE,
     
   }],
   tracks: [{ clips: [

@@ -2,8 +2,9 @@ import type { MashAssetObject } from '@moviemasher/shared-lib/types.js'
 
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventAssetObject } from '../../utility/events.js'
-import { ERROR, isAssetObject, isAssetType, isDefiniteError, isPopulatedString, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { ERROR, isAssetObject, isRawType, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../../utility/request.js'
+import { isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
 
 const AssetObjectHandler = (event: EventAssetObject) => {
   event.stopImmediatePropagation()
@@ -30,7 +31,7 @@ const AssetObjectHandler = (event: EventAssetObject) => {
 
     const { data: json } = orError    
     const { type, source } = json
-    if (isAssetType(type) && isPopulatedString(source)) {
+    if (isRawType(type) && isPopulatedString(source)) {
       if (isAssetObject(json, type, source)) {
         return { data: json }
       }
@@ -39,6 +40,6 @@ const AssetObjectHandler = (event: EventAssetObject) => {
   })
 }
 
-MOVIEMASHER.eventDispatcher.addDispatchListener(EventAssetObject.Type, AssetObjectHandler)
+MOVIEMASHER.listenersAdd({ [EventAssetObject.Type]: AssetObjectHandler })
 
 export {}

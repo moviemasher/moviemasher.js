@@ -1,8 +1,9 @@
 import type { Clip, Clips, MashAsset, TimeRange, Track, TrackArgs, TrackIndex, TrackObject, UnknownRecord } from '../types.js'
 
-import { ASSET_DURATION, BOOLEAN, DURATION_NONE, DURATION_UNKNOWN, DURATION_UNLIMITED, MASH, isDefined, sortByFrame } from '../runtime.js'
+import { ASSET_DURATION, $BOOLEAN, DURATION_NONE, DURATION_UNKNOWN, DURATION_UNLIMITED, $MASH, sortByFrame } from '../runtime.js'
+import { isDefined } from '../utility/guard.js'
 import { arrayLast } from '../runtime.js'
-import { isAboveZero, isPositive } from '../utility/guards.js'
+import { isAboveZero, isPositive } from '../utility/guard.js'
 import { idGenerate } from '../runtime.js'
 import { PropertiedClass } from './propertied.js'
 
@@ -78,7 +79,7 @@ export class TrackClass extends PropertiedClass implements Track {
     this.dense = isDefined(dense) ? !!dense : !this.index  
 
     this.properties.push(this.propertyInstance({ 
-      targetId: MASH, name: 'dense', type: BOOLEAN, 
+      targetId: $MASH, name: 'dense', type: $BOOLEAN, 
     }))
     this.propertiesInitialize(args)
     

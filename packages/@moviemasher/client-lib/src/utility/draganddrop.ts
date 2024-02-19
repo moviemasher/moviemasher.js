@@ -1,11 +1,12 @@
 import type { ClientAssets, ClientClips, ClipLocation } from '../types.js'
-import type { AssetObject, AssetObjects, AssetType, DataOrError, Source, Strings } from '@moviemasher/shared-lib/types.js'
+import type { AssetObject, AssetObjects, RawType, DataOrError, Source, Strings } from '@moviemasher/shared-lib/types.js'
 
 import { INDEX_LAST, X_MOVIEMASHER, eventStop, isClientAsset } from '../runtime.js'
 import { EventManagedAssetPromise, EventAddAssets, EventImport, EventImportFile, EventImportManagedAssets, EventMoveClip, EventTrackClips } from './events.js'
-import { ERROR, MOVIEMASHER, RAW, errorPromise, isAssetType, isDefiniteError, isObject, isPopulatedString, isString, jsonParse } from '@moviemasher/shared-lib/runtime.js'
-import { isPositive } from '@moviemasher/shared-lib/utility/guards.js'
+import { ERROR, MOVIEMASHER, $RAW, errorPromise, isRawType, isDefiniteError,  jsonParse } from '@moviemasher/shared-lib/runtime.js'
+import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 import { pixelToFrame } from './pixel.js'
+import { isObject, isPopulatedString, isString } from '@moviemasher/shared-lib/utility/guard.js'
 
 type TransferType = `${string}/x-moviemasher`
 
@@ -27,9 +28,9 @@ const isTransferType = (value: any): value is TransferType => {
   return isString(value) && value.endsWith(X_MOVIEMASHER)
 }
 
-const dragAssetType = (transferType: TransferType): AssetType | undefined => {
+const dragRawType = (transferType: TransferType): RawType | undefined => {
   const [type] = transferType.split('/')
-  return isAssetType(type) ? type : undefined
+  return isRawType(type) ? type : undefined
 }
 
 const dragTypes = (dataTransfer?: DataTransfer | null): Strings => {
@@ -52,7 +53,7 @@ export const dragTypeValid = (dataTransfer?: DataTransfer | null, allowClip = fa
   // anything can be dropped on a clip 
   if (type.startsWith('clip')) return allowClip
 
-  return !!dragAssetType(type)
+  return !!dragRawType(type)
 }
 
 export const dragData = (dataTransfer?: DataTransfer, type?: TransferType) => {
@@ -65,16 +66,16 @@ export const dragData = (dataTransfer?: DataTransfer, type?: TransferType) => {
   return json ? jsonParse(json) : {}
 }
 
-export const dropFile = (file: File, source: Source = RAW): Promise<DataOrError<AssetObject>> => {
+export const dropFile = (file: File, source: Source = $RAW): Promise<DataOrError<AssetObject>> => {
   const event = new EventImportFile(file, source)
-  MOVIEMASHER.eventDispatcher.dispatch(event)
+  MOVIEMASHER.dispatch(event)
   const { promise } = event.detail
   return promise || errorPromise(ERROR.Unimplemented, EventImportFile.Type)
 }
 
 export const dropRawFiles = (fileList: FileList) => {
   const event = new EventImport(fileList)
-  MOVIEMASHER.eventDispatcher.dispatch(event)
+  MOVIEMASHER.dispatch(event)
   return event.detail.promise
 }
 
@@ -92,7 +93,7 @@ const dropFiles = async (fileList: FileList, mashIndex?: ClipLocation): Promise<
       for (const assetObject of assetObjects) {
         
         const event =  new EventManagedAssetPromise(assetObject)
-        MOVIEMASHER.eventDispatcher.dispatch(event)
+        MOVIEMASHER.dispatch(event)
         const { promise } = event.detail
         if (!promise) continue
         
@@ -106,11 +107,11 @@ const dropFiles = async (fileList: FileList, mashIndex?: ClipLocation): Promise<
       }
       if (assets.length) {
         const addEvent = new EventAddAssets(assets, mashIndex)
-        MOVIEMASHER.eventDispatcher.dispatch(addEvent) 
+        MOVIEMASHER.dispatch(addEvent) 
       }
     }
     // console.log('dropFiles EventImportManagedAssets', assetObjects.length)
-    MOVIEMASHER.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects)) 
+    MOVIEMASHER.dispatch(new EventImportManagedAssets(assetObjects)) 
   }
   return assetObjects
 }
@@ -142,7 +143,7 @@ export const dropped = async (event: DragEvent, clipLocation?: ClipLocation) => 
         const { assetId } = data
         if (clipLocation) {
           const event = new EventManagedAssetPromise(assetId)
-          MOVIEMASHER.eventDispatcher.dispatch(event)
+          MOVIEMASHER.dispatch(event)
           const { promise } = event.detail
           if (!promise) return
         
@@ -152,11 +153,11 @@ export const dropped = async (event: DragEvent, clipLocation?: ClipLocation) => 
           const { data: asset } = orError
           if (!isClientAsset(asset)) return
 
-          MOVIEMASHER.eventDispatcher.dispatch(new EventAddAssets([asset], clipLocation)) 
+          MOVIEMASHER.dispatch(new EventAddAssets([asset], clipLocation)) 
         }
       } else if (clipLocation) {
         const moveEvent = new EventMoveClip(clipLocation)
-        MOVIEMASHER.eventDispatcher.dispatch(moveEvent)
+        MOVIEMASHER.dispatch(moveEvent)
       }
     } else {
       // console.log('dropped with no offset', data)
@@ -172,7 +173,7 @@ export const droppedMashIndex = (dataTransfer: DataTransfer, trackIndex = INDEX_
   let isDense = false
   if (isPositive(trackIndex)) {
     const event = new EventTrackClips(trackIndex)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { clips, dense } = event.detail
     if (clips) {
       clientClips.push(...clips)

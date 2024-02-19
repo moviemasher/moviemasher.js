@@ -3,7 +3,7 @@ import type { PropertyDeclarations } from 'lit'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventZoom, NumberEvent } from '../utility/events.js'
-import { isNumber } from '@moviemasher/shared-lib/runtime.js'
+import { isNumber } from '@moviemasher/shared-lib/utility/guard.js'
 import { html } from 'lit-html'
 import { Component } from '../base/Component.js'
 import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
@@ -27,7 +27,7 @@ export class TimelineRangeElement extends WithDisablable {
     const detail = parseFloat(value)
     if (isNumber(detail)) {
       const event: NumberEvent = new EventZoom(detail)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
     }
   }
 

@@ -4,17 +4,18 @@ import type { CommandInputRecord, CommandOptions } from '../types.js'
 import type { CommandFilters, CommandInput, CommandInputs } from '../types.js'
 import type { RunningCommand } from './RunningCommand.js'
 
-import { AUDIO, BOTH, COLON, ERROR, VIDEO, errorThrow, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
-import { assertPopulatedString, isPositive } from '@moviemasher/shared-lib/utility/guards.js'
+import { COLON, ERROR, errorThrow, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
 import path from 'path'
-import { commandError, commandString } from '../utility/Command.js'
-import { directoryCreatePromise } from '../utility/File.js'
+import { commandError, commandString } from '../utility/command.js'
+import { directoryCreatePromise } from '../utility/file.js'
 import { commandInstance } from './CommandFactory.js'
+import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 
 export class RunningCommandClass implements RunningCommand {
   constructor(public id: string, public commandOptions: CommandOptions) {
     if (!(this.inputs.length || this.filters.length)) {
-      return errorThrow(ERROR.Internal, 'no inputs or filters') 
+      return errorThrow(ERROR.Internal) 
     }
   }
   get avType(): string { return this.commandOptions.avType }
@@ -143,6 +144,7 @@ export class RunningCommandClass implements RunningCommand {
         delete options[key]
       } else {
         // console.log(this.constructor.name, 'optionsInitialize UNFOUND', { key, inputId })
+
       }
 
     })

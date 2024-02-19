@@ -1,14 +1,13 @@
-import type { DataOrError, StringRecord, Strings, StringsRecord } from '@moviemasher/shared-lib/types.js'
+import type { DataOrError, StringRecord, Strings, StringsRecord } from '@moviemasher/shared-lib'
 import type { MarkedOptions } from 'marked'
 import type { Theme } from "shiki"
-import type { Anchor, ClientServerOrShared, DocumentationConfiguration, DocCategory, DocCombined, DocExport, DocFile, DocFileOrFolder, DocFiles, DocFilesAndFolders, DocFolder, DocHtml, DocMarkdown, DocModule, ExportId, ExportIds, ExportRecord, LibOrRuntime, Rendered, Rendereds, TypedocDirectory } from './Types.js'
+import type { Anchor, ClientServerOrShared, DocCategory, DocCombined, DocExport, DocFile, DocFileOrFolder, DocFiles, DocFilesAndFolders, DocFolder, DocHtml, DocMarkdown, DocModule, DocumentationConfiguration, ExportId, ExportIds, ExportRecord, LibOrRuntime, Rendered, Rendereds, TypedocDirectory } from './Types.js'
 
-import { fileReadPromise, fileWritePromise, urlIsHttp } from '@moviemasher/server-lib'
-import { assertArray, assertPopulatedString } from '@moviemasher/shared-lib'
-import { DASH, DOT, ERROR, SLASH, arrayUnique, errorThrow, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { assertAbsolutePath, fileReadPromise, fileWritePromise, urlIsHttp } from '@moviemasher/server-lib'
+import { DASH, DOT, ERROR, arrayUnique, errorThrow, isDefiniteError, namedError } from '@moviemasher/shared-lib'
 import { marked } from 'marked'
 import path from 'path'
-import { BUNDLED_LANGUAGES, BUNDLED_THEMES, getHighlighter } from "shiki"
+import { BUNDLED_LANGUAGES, getHighlighter } from "shiki"
 import { EXTENSION_HTML, EXTENSION_MARKDOWN, HASH, isDoc, isDocCategory, isDocCombined, isDocExport, isDocFile, isDocFolder, isDocHtml, isDocMarkdown, isDocModule, isTypedocDirectory } from './Constants.js'
 import { DoubleHighlighter } from './DoubleHighlighter.js'
 import { ProjectInfo } from './ProjectInfo.js'
@@ -27,7 +26,7 @@ const SECTIONS = 'SECTIONS'
 const TITLE = 'TITLE'
 const URL = 'URL'
 const PREFIX_SECTION = '## '
-const STYLE = 'STYLE'
+// const STYLE = 'STYLE'
 
 const SELECTED = 'selected'
 // import markdownMagic from 'markdown-magic'
@@ -65,6 +64,7 @@ const cleanMarkdown = (text: string): string => {
 }
 
 const REGEX_DOUBLE_BRACKETS = /\[\[(.*?)\]\]/g
+
 
 export class Builder {
   private absoluteForCategory(category: string, exportId?: ExportId): string {
@@ -834,7 +834,7 @@ export class Builder {
     const template = templatePath || inputPageHtmlPath
     const pageTemplate = await this.templateRead(template)
 
-    assertPopulatedString(absolutePath, 'absolutePath')
+    assertAbsolutePath(absolutePath, 'absolutePath')
     const record: StringRecord = {
       [NAV_LEFT]: await this.renderNavigationLeft(),
       [NAV_RIGHT]: await this.renderNavigationRight(ids),

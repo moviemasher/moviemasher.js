@@ -143,7 +143,7 @@
 <li><code><a href='ServerMashAsset.html'>ServerMashAsset</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerMashAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerMashAssetClass</strong>(<code>object</code>)</p>
+<h3><a id="ServerMashAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerMashAssetClass</strong>(<code>object</code>, <code>manager?</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -156,10 +156,18 @@
 <td align="left"><code>object</code></td>
 <td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
 </tr>
+<tr>
+<td align="left"><code>manager?</code></td>
+<td align="left"><code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></td>
+</tr>
 </tbody></table>
 <p>Inherited from
 WithMashAsset.constructor</p>
 <h2>Properties</h2>
+<h3><a id="ServerMashAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<p>Inherited from
+WithMashAsset._assets</p>
+<hr>
 <h3><a id="ServerMashAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetIds">assetIds</a></p>
@@ -178,35 +186,17 @@ WithMashAsset.assetObject</p>
 <p>Inherited from
 WithMashAsset.assets</p>
 <hr>
-<h3><a id="ServerMashAssetClass.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.canBeContainer">canBeContainer</a></p>
-<p>Inherited from
-WithMashAsset.canBeContainer</p>
-<hr>
-<h3><a id="ServerMashAssetClass.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.canBeContent">canBeContent</a></p>
-<p>Inherited from
-WithMashAsset.canBeContent</p>
-<hr>
 <h3><a id="ServerMashAssetClass.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.color">color</a></p>
 <p>Inherited from
 WithMashAsset.color</p>
 <hr>
-<h3><a id="ServerMashAssetClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
+<h3><a id="ServerMashAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.container">container</a></p>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.decoding">decoding</a></p>
 <p>Inherited from
-WithMashAsset.container</p>
-<hr>
-<h3><a id="ServerMashAssetClass.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.content">content</a></p>
-<p>Inherited from
-WithMashAsset.content</p>
+WithMashAsset.decoding</p>
 <hr>
 <h3><a id="ServerMashAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <h4>Implementation of</h4>
@@ -232,12 +222,6 @@ WithMashAsset.endTime</p>
 <p>Inherited from
 WithMashAsset.id</p>
 <hr>
-<h3><a id="ServerMashAssetClass.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.isVector">isVector</a></p>
-<p>Inherited from
-WithMashAsset.isVector</p>
-<hr>
 <h3><a id="ServerMashAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.label">label</a></p>
@@ -249,6 +233,16 @@ WithMashAsset.label</p>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.loop">loop</a></p>
 <p>Inherited from
 WithMashAsset.loop</p>
+<hr>
+<h3><a id="ServerMashAssetClass.manager">manager</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>manager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<p>Inherited from
+WithMashAsset.manager</p>
+<hr>
+<h3><a id="ServerMashAssetClass.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.mashIndex">mashIndex</a></p>
+<p>Inherited from
+WithMashAsset.mashIndex</p>
 <hr>
 <h3><a id="ServerMashAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <h4>Implementation of</h4>
@@ -262,13 +256,25 @@ WithMashAsset.properties</p>
 <p>Inherited from
 WithMashAsset.quantize</p>
 <hr>
-<h3><a id="ServerMashAssetClass.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="ServerMashAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.scalarRecord">scalarRecord</a></p>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.request">request</a></p>
 <p>Inherited from
-WithMashAsset.scalarRecord</p>
+WithMashAsset.request</p>
 <hr>
-<h3><a id="ServerMashAssetClass.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code></p>
+<h3><a id="ServerMashAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.resource">resource</a></p>
+<p>Inherited from
+WithMashAsset.resource</p>
+<hr>
+<h3><a id="ServerMashAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.resources">resources</a></p>
+<p>Inherited from
+WithMashAsset.resources</p>
+<hr>
+<h3><a id="ServerMashAssetClass.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.size">size</a></p>
 <p>Inherited from
@@ -298,12 +304,20 @@ WithMashAsset.totalFrames</p>
 <p>Inherited from
 WithMashAsset.tracks</p>
 <hr>
-<h3><a id="ServerMashAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="ServerMashAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.type">type</a></p>
 <p>Inherited from
 WithMashAsset.type</p>
 <h2>Accessors</h2>
+<h3><a id="ServerMashAssetClass.assetManager">assetManager</a></h3><p>• <code>get</code> <strong>assetManager</strong>(): <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<p>Returns
+<code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetManager">assetManager</a></p>
+<p>Inherited from
+WithMashAsset.assetManager</p>
+<hr>
 <h3><a id="ServerMashAssetClass.clips">clips</a></h3><p>• <code>get</code> <strong>clips</strong>(): <code><a href='ServerClips.html'>ServerClips</a></code></p>
 <p>Returns
 <code><a href='ServerClips.html'>ServerClips</a></code></p>
@@ -311,6 +325,12 @@ WithMashAsset.type</p>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.clips">clips</a></p>
 <p>Overrides
 WithMashAsset.clips</p>
+<hr>
+<h3><a id="ServerMashAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<p>Returns
+<code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<p>Inherited from
+WithMashAsset.scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ServerMashAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
 <h4>Parameters</h4>
@@ -374,7 +394,8 @@ WithMashAsset.asset</p>
 <p>Inherited from
 WithMashAsset.assetCachePromise</p>
 <hr>
-<h3><a id="ServerMashAssetClass.assetGraphFiles">assetGraphFiles</a></h3><p>▸ <strong>assetGraphFiles</strong>(<code>args</code>): <code><a href='GraphFiles.html'>GraphFiles</a></code></p>
+<h3><a id="ServerMashAssetClass.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>_</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
+<p>All files needed for audible and/or visible encode commands.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -384,16 +405,16 @@ WithMashAsset.assetCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>_</code></td>
 <td align="left"><code><a href='CacheArgs.html'>CacheArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='GraphFiles.html'>GraphFiles</a></code></p>
+<code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetGraphFiles">assetGraphFiles</a></p>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetFiles">assetFiles</a></p>
 <p>Overrides
-WithMashAsset.assetGraphFiles</p>
+WithMashAsset.assetFiles</p>
 <hr>
 <h3><a id="ServerMashAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -525,6 +546,32 @@ WithMashAsset.clipsAudibleInTime</p>
 <p>Overrides
 WithMashAsset.clipsInTimeOfType</p>
 <hr>
+<h3><a id="ServerMashAssetClass.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<p>Writes a command file, if it&#39;s not a raw asset.</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code><a href='ServerPromiseArgs.html'>ServerPromiseArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>commandFile</code></td>
+<td align="left"><code><a href='CommandFile.html'>CommandFile</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.commandFilePromise">commandFilePromise</a></p>
+<p>Inherited from
+WithMashAsset.commandFilePromise</p>
+<hr>
 <h3><a id="ServerMashAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -549,6 +596,27 @@ WithMashAsset.clipsInTimeOfType</p>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
 WithMashAsset.constrainedValue</p>
+<hr>
+<h3><a id="ServerMashAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.decodingOfType">decodingOfType</a></p>
+<p>Inherited from
+WithMashAsset.decodingOfType</p>
 <hr>
 <h3><a id="ServerMashAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -612,7 +680,7 @@ WithMashAsset.initializeProperties</p>
 <p>Inherited from
 WithMashAsset.instanceArgs</p>
 <hr>
-<h3><a id="ServerMashAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='Instance.html'>Instance</a></code></p>
+<h3><a id="ServerMashAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>_?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -622,7 +690,7 @@ WithMashAsset.instanceArgs</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>_?</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -632,6 +700,27 @@ WithMashAsset.instanceArgs</p>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Inherited from
 WithMashAsset.instanceFromObject</p>
+<hr>
+<h3><a id="ServerMashAssetClass.mashDescription">mashDescription</a></h3><p>▸ <strong>mashDescription</strong>(<code>options</code>): <code><a href='ServerMashDescription.html'>ServerMashDescription</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>options</code></td>
+<td align="left"><code><a href='ServerMashDescriptionOptions.html'>ServerMashDescriptionOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ServerMashDescription.html'>ServerMashDescription</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.mashDescription">mashDescription</a></p>
+<p>Overrides
+WithMashAsset.mashDescription</p>
 <hr>
 <h3><a id="ServerMashAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -715,7 +804,7 @@ WithMashAsset.propertyIds</p>
 <p>Inherited from
 WithMashAsset.propertyInstance</p>
 <hr>
-<h3><a id="ServerMashAssetClass.scalar">scalar</a></h3><p>▸ <code>Protected</code> <strong>scalar</strong>(<code>propertyId</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
+<h3><a id="ServerMashAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -725,64 +814,18 @@ WithMashAsset.propertyInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>propertyId</code></td>
-<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
-<p>Inherited from
-WithMashAsset.scalar</p>
-<hr>
-<h3><a id="ServerMashAssetClass.selectorTypesPropertyNames">selectorTypesPropertyNames</a></h3><p>▸ <code>Protected</code> <strong>selectorTypesPropertyNames</strong>(<code>selectorTypes</code>, <code>targetId</code>): <code><a href='Strings.html'>Strings</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>selectorTypes</code></td>
+<td align="left"><code>...types</code></td>
 <td align="left"><code><a href='Strings.html'>Strings</a></code></td>
 </tr>
-<tr>
-<td align="left"><code>targetId</code></td>
-<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
-</tr>
 </tbody></table>
 <p>Returns
-<code><a href='Strings.html'>Strings</a></code></p>
-<p>Inherited from
-WithMashAsset.selectorTypesPropertyNames</p>
-<hr>
-<h3><a id="ServerMashAssetClass.serverPromise">serverPromise</a></h3><p>▸ <strong>serverPromise</strong>(<code>_args</code>, <code>_commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>_args</code></td>
-<td align="left"><code><a href='ServerPromiseArgs.html'>ServerPromiseArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>_commandFile</code></td>
-<td align="left"><code><a href='CommandFile.html'>CommandFile</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.serverPromise">serverPromise</a></p>
-<p>Overrides
-WithMashAsset.serverPromise</p>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.resourceOfType">resourceOfType</a></p>
+<p>Inherited from
+WithMashAsset.resourceOfType</p>
 <hr>
-<h3><a id="ServerMashAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ServerMashAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -801,7 +844,7 @@ WithMashAsset.serverPromise</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.setValue">setValue</a></p>
 <p>Inherited from
@@ -859,6 +902,35 @@ WithMashAsset.toJSON</p>
 <p>Overrides
 WithMashAsset.trackInstance</p>
 <hr>
+<h3><a id="ServerMashAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.tweenValues">tweenValues</a></p>
+<p>Inherited from
+WithMashAsset.tweenValues</p>
+<hr>
 <h3><a id="ServerMashAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -889,55 +961,60 @@ WithMashAsset.value</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ServerMashAssetClass'>ServerMashAssetClass</a></li>
 <li><a class='' href='#ServerMashAssetClass.constructor'>constructor</a></li>
+<li><a class='' href='#ServerMashAssetClass._assets'>_assets</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetIds'>assetIds</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ServerMashAssetClass.assets'>assets</a></li>
-<li><a class='' href='#ServerMashAssetClass.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#ServerMashAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ServerMashAssetClass.color'>color</a></li>
-<li><a class='' href='#ServerMashAssetClass.container'>container</a></li>
-<li><a class='' href='#ServerMashAssetClass.content'>content</a></li>
+<li><a class='' href='#ServerMashAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ServerMashAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ServerMashAssetClass.duration'>duration</a></li>
 <li><a class='' href='#ServerMashAssetClass.endTime'>endTime</a></li>
 <li><a class='' href='#ServerMashAssetClass.id'>id</a></li>
-<li><a class='' href='#ServerMashAssetClass.isVector'>isVector</a></li>
 <li><a class='' href='#ServerMashAssetClass.label'>label</a></li>
 <li><a class='' href='#ServerMashAssetClass.loop'>loop</a></li>
+<li><a class='' href='#ServerMashAssetClass.manager'>manager</a></li>
+<li><a class='' href='#ServerMashAssetClass.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#ServerMashAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ServerMashAssetClass.quantize'>quantize</a></li>
-<li><a class='' href='#ServerMashAssetClass.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#ServerMashAssetClass.request'>request</a></li>
+<li><a class='' href='#ServerMashAssetClass.resource'>resource</a></li>
+<li><a class='' href='#ServerMashAssetClass.resources'>resources</a></li>
 <li><a class='' href='#ServerMashAssetClass.size'>size</a></li>
 <li><a class='' href='#ServerMashAssetClass.source'>source</a></li>
 <li><a class='' href='#ServerMashAssetClass.targetId'>targetId</a></li>
 <li><a class='' href='#ServerMashAssetClass.totalFrames'>totalFrames</a></li>
 <li><a class='' href='#ServerMashAssetClass.tracks'>tracks</a></li>
 <li><a class='' href='#ServerMashAssetClass.type'>type</a></li>
+<li><a class='' href='#ServerMashAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ServerMashAssetClass.clips'>clips</a></li>
+<li><a class='' href='#ServerMashAssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerMashAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetCachePromise'>assetCachePromise</a></li>
-<li><a class='' href='#ServerMashAssetClass.assetGraphFiles'>assetGraphFiles</a></li>
+<li><a class='' href='#ServerMashAssetClass.assetFiles'>assetFiles</a></li>
 <li><a class='' href='#ServerMashAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerMashAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerMashAssetClass.clipInstance'>clipInstance</a></li>
 <li><a class='' href='#ServerMashAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerMashAssetClass.clipsAudibleInTime'>clipsAudibleInTime</a></li>
 <li><a class='' href='#ServerMashAssetClass.clipsInTimeOfType'>clipsInTimeOfType</a></li>
+<li><a class='' href='#ServerMashAssetClass.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerMashAssetClass.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#ServerMashAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ServerMashAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerMashAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerMashAssetClass.instanceFromObject'>instanceFromObject</a></li>
+<li><a class='' href='#ServerMashAssetClass.mashDescription'>mashDescription</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ServerMashAssetClass.scalar'>scalar</a></li>
-<li><a class='' href='#ServerMashAssetClass.selectorTypesPropertyNames'>selectorTypesPropertyNames</a></li>
-<li><a class='' href='#ServerMashAssetClass.serverPromise'>serverPromise</a></li>
+<li><a class='' href='#ServerMashAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerMashAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerMashAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
 <li><a class='' href='#ServerMashAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerMashAssetClass.trackInstance'>trackInstance</a></li>
+<li><a class='' href='#ServerMashAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerMashAssetClass.value'>value</a></li></ul>
       </nav>
     </main>

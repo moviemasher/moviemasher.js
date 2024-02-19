@@ -1,18 +1,19 @@
-import type { ClientAsset, ClientImageDataOrError, ServerProgress } from '../types.js'
-import type { AssetObject, ClientMediaRequest, DataOrError, InstanceArgs, InstanceObject, Rect, Requestable, Requestables, Size, StringDataOrError, TargetId, TranscodingTypes } from '@moviemasher/shared-lib/types.js'
+import type { ClientAsset, ClientImageDataOrError } from '../types.js'
+import type { AssetObject, DataOrError, ServerProgress, InstanceArgs, InstanceObject, Rect, Resource, Size, StringDataOrError, TargetId } from '@moviemasher/shared-lib/types.js'
 
 import { AssetClass } from '@moviemasher/shared-lib/base/asset.js'
-import { MOVIEMASHER, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
-import { EventClientImagePromise, EventManagedAsset, EventManagedAssetId, EventSave } from '../utility/events.js'
-import { ASSET_TARGET, ERROR, assertAsset, errorPromise, errorThrow, idIsTemporary, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
-import { assertSizeAboveZero, centerPoint, sizeAboveZero, sizeCopy, sizeCover } from '@moviemasher/shared-lib/utility/rect.js'
-import { svgImagePromise } from '../utility/svg.js'
-import { svgSetDimensions } from '@moviemasher/shared-lib/utility/svg.js'
+import { $RETRIEVE, MOVIEMASHER, jsonStringify, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { EventManagedAsset, EventManagedAssetId, EventSave } from '../utility/events.js'
+import { $ASSET, ERROR, assertAsset, errorPromise, idIsTemporary, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { assertSizeNotZero, sizeNotZero, copySize, coverSize } from '@moviemasher/shared-lib/utility/rect.js'
+import { svgImagePromiseWithOptions, svgSetDimensions } from '@moviemasher/shared-lib/utility/svg.js'
+import { centerPoint } from '../runtime.js'
+import { isClientImage } from '@moviemasher/shared-lib/utility/guard.js'
 
 export class ClientAssetClass extends AssetClass implements ClientAsset {
   override asset(assetIdOrObject: string | AssetObject): ClientAsset {
     const event = new EventManagedAsset(assetIdOrObject)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { asset } = event.detail
     assertAsset(asset, jsonStringify(assetIdOrObject))
 
@@ -24,36 +25,37 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     return errorPromise(ERROR.Unavailable) 
   }
 
-  imagePromise(request: ClientMediaRequest): Promise<ClientImageDataOrError> {
-    // console.log(this.constructor.name, 'imagePromise')
-    const event = new EventClientImagePromise(request)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
-    const { promise } = event.detail
-    if (!promise) return errorPromise(ERROR.Unimplemented, EventClientImagePromise.Type)
+  imagePromise(resource: Resource): Promise<ClientImageDataOrError> {
+    return MOVIEMASHER.promise($RETRIEVE, resource).then(functionOrError => {
+      if (isDefiniteError(functionOrError)) return functionOrError
 
-    return promise
+      const { response } = resource.request
+      if (isClientImage(response)) return { data: response }
+
+      return errorPromise(ERROR.Unknown, 'response')
+    })
   }
 
-  assetIconPromise(requestable: Requestable, options: Rect | Size, cover?: boolean): Promise<DataOrError<SVGImageElement>> {
-    if (!sizeAboveZero(options)) return errorPromise(ERROR.Unknown, 'size')
+  assetIconPromise(resource: Resource, options: Rect | Size, cover?: boolean): Promise<DataOrError<SVGImageElement>> {
+    if (!sizeNotZero(options)) return errorPromise(ERROR.Unknown, 'size')
    
-    return this.imagePromise(requestable.request).then(orError => {
-      if (isDefiniteError(orError)) return errorThrow(orError.error)
+    return this.imagePromise(resource).then(orError => {
+      if (isDefiniteError(orError)) return orError
 
       const { data: clientImage } = orError
       const { width, height, src } = clientImage
 
-      // console.log(this.constructor.name, 'assetIconPromise -> imagePromise', width, height, src)
+      console.log(this.constructor.name, 'assetIconPromise -> imagePromise', width, height, src)
 
-      return svgImagePromise(src).then(svgImage => {
-        // console.log(this.constructor.name, 'assetIconPromise -> svgImagePromise', svgImage?.constructor.name)
+      return svgImagePromiseWithOptions(src).then(svgImage => {
+        // console.log(this.constructor.name, 'assetIconPromise -> svgImagePromiseWithOptions', svgImage?.constructor.name)
 
         const inSize = { width, height }
-        assertSizeAboveZero(inSize)
+        assertSizeNotZero(inSize)
 
-        const size = sizeCopy(options)
-        const coverSize = sizeCover(inSize, size, !cover)
-        const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
+        const size = copySize(options)
+        const coveredSize = coverSize(inSize, size, !cover)
+        const outRect = { ...coveredSize, ...centerPoint(size, coveredSize) }
         return { data: svgSetDimensions(svgImage, outRect) }
       })
     })
@@ -63,13 +65,6 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     return { ...super.instanceArgs(object), asset: this, assetId: this.id }
   }
 
-  preferredTranscoding(...types: TranscodingTypes): Requestable | undefined {
-    for (const type of types) {
-      const found = this.transcodings.find(object => object.type === type)
-      if (found) return found
-    }
-    return
-  }
   
   protected saveId(newId?: string) {
     const { id: oldId } = this
@@ -79,40 +74,37 @@ export class ClientAssetClass extends AssetClass implements ClientAsset {
     if (newId !== oldId) {
       this.id = newId
       // console.debug(this.constructor.name, 'saveId', oldId, newId)
-      MOVIEMASHER.eventDispatcher.dispatch(new EventManagedAssetId(oldId, newId))
+      MOVIEMASHER.dispatch(new EventManagedAssetId(oldId, newId))
     }
   }
   
   get saveNeeded(): boolean { return idIsTemporary(this.id) }
 
-  protected savingPromise(progress?: ServerProgress): Promise<StringDataOrError> {
+  protected async savingPromise(progress?: ServerProgress): Promise<StringDataOrError> {
     const event = new EventSave(this, progress)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const { promise } = event.detail
-    if (!promise) return errorPromise(ERROR.Unimplemented)
+    if (!promise) return namedError(ERROR.Unimplemented, EventSave.Type)
   
-    return promise
+    console.log(this.constructor.name, 'savingPromise awaiting EventSave', this.label)
+    return await promise
   }
 
-  savePromise(progress?: ServerProgress): Promise<StringDataOrError> { 
-    const promise = this.savingPromise(progress)
-    return promise.then(orError => {
-      // console.log(this.constructor.name, 'ClientAssetClass savingPromise result', orError)
-      
-      if (!isDefiniteError(orError)) {
-        // console.log(this.constructor.name, 'ClientAssetClass calling saveId', orError.data)
-        this.saveId(orError.data)
-      } else {
-        // console.error(this.constructor.name, 'savePromise', orError)
-      }
-      return orError
-    })
+  async savePromise(progress?: ServerProgress): Promise<StringDataOrError> { 
+    const orError = await this.savingPromise(progress)
+    if (!isDefiniteError(orError)) {
+      // console.log(this.constructor.name, 'ClientAssetClass calling saveId', orError.data)
+      this.saveId(orError.data)
+    } else {
+      console.error(this.constructor.name, 'savePromise', orError)
+    }
+    return orError
+
   }
 
-  override targetId: TargetId = ASSET_TARGET
+  override targetId: TargetId = $ASSET
 
-  transcodings: Requestables = []
-  
+
   unload(): void {
     // console.log(this.constructor.name, 'unload', this.id)
     

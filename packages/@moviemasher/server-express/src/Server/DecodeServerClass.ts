@@ -1,11 +1,11 @@
-import type { Decoding, EndpointRequest } from '@moviemasher/shared-lib/types.js'
+import type { Decoding, EndpointRequest, JobOptions } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { DecodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
 import type { DecodeServerArgs, ExpressHandler } from './Server.js'
 
-import { assertProbingOptions, idUnique } from '@moviemasher/server-lib'
-import { EventServerDecode, EventServerDecodeStatus } from '@moviemasher/server-lib/runtime.js'
-import { CONTENT_TYPE, ERROR, MIME_JSON, MOVIEMASHER, POST, VERSION, VIDEO, errorCaught, errorObjectCaught, errorThrow, isDecoding, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { EventServerDecodeStatus } from '@moviemasher/server-lib/utility/events.js'
+import { idUnique } from '@moviemasher/server-lib/utility/id.js'
+import { $DECODE, $POST, CONTENT_TYPE, ERROR, MIME_JSON, MOVIEMASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isDecoding, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
 
@@ -15,17 +15,14 @@ export class DecodeServerClass extends ServerClass {
   id = 'decode'
 
   decode: ExpressHandler<VersionedDataOrError<EndpointRequest>, DecodeStartRequest> = async (req, res) => {
-    const { decodingType = VIDEO, request, options = {}, assetType } = req.body
+    const { body: args } = req
+    const { version: _, ...decodeArgs } = args
     try {
       const user = this.userFromRequest(req)
-      assertProbingOptions(options)
-
       const id = idUnique()
-      const event = new EventServerDecode(decodingType, assetType, request, user, id, options)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
-      const { promise } = event.detail
-      if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecode.Type)
-    
+      const jobOptions: JobOptions = { id, user }
+      const promise = MOVIEMASHER.promise($DECODE, decodeArgs, jobOptions)
+
       res.send({ version : VERSION, data: this.statusEndpointRequest(id) })
     } catch (error) { 
       console.error(this.constructor.name, 'start', error)
@@ -46,9 +43,8 @@ export class DecodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerDecodeStatus(id)
-      MOVIEMASHER.eventDispatcher.dispatch(event)
+      MOVIEMASHER.dispatch(event)
       const { promise } = event.detail
-      // console.log(this.constructor.name, 'status', !!promise)
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecodeStatus.Type)
 
       const orError = await promise
@@ -76,7 +72,7 @@ export class DecodeServerClass extends ServerClass {
     const data: EndpointRequest = {
       endpoint: { pathname: Endpoints.decode.status },
       init: { 
-        method: POST, headers: { [CONTENT_TYPE]: MIME_JSON}, 
+        method: $POST, headers: { [CONTENT_TYPE]: MIME_JSON}, 
         body: jsonStringify({ id }) 
       }
     }

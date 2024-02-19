@@ -165,11 +165,11 @@
 </tr>
 </tbody></table>
 <h2>Properties</h2>
-<h3><a id="TimeClass.fps">fps</a></h3><p>• <strong>fps</strong>: <code>number</code></p>
+<h3><a id="TimeClass.fps">fps</a></h3><p>• <strong>fps</strong>: <code>number</code> = <code>1</code></p>
 <h4>Implementation of</h4>
 <p><a href="Time.html">Time</a>.<a href="Time.html#Time.fps">fps</a></p>
 <hr>
-<h3><a id="TimeClass.frame">frame</a></h3><p>• <strong>frame</strong>: <code>number</code></p>
+<h3><a id="TimeClass.frame">frame</a></h3><p>• <strong>frame</strong>: <code>number</code> = <code>0</code></p>
 <h4>Implementation of</h4>
 <p><a href="Time.html">Time</a>.<a href="Time.html#Time.frame">frame</a></p>
 <hr>
@@ -211,42 +211,6 @@
 <h4>Implementation of</h4>
 <p><a href="Time.html">Time</a>.<a href="Time.html#Time.timeRange">timeRange</a></p>
 <h2>Methods</h2>
-<h3><a id="TimeClass.add">add</a></h3><p>▸ <strong>add</strong>(<code>time</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="Time.html">Time</a>.<a href="Time.html#Time.add">add</a></p>
-<hr>
-<h3><a id="TimeClass.addFrame">addFrame</a></h3><p>▸ <strong>addFrame</strong>(<code>frames</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>frames</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<hr>
 <h3><a id="TimeClass.closest">closest</a></h3><p>▸ <strong>closest</strong>(<code>timeRange</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -265,32 +229,6 @@
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="Time.html">Time</a>.<a href="Time.html#Time.closest">closest</a></p>
-<hr>
-<h3><a id="TimeClass.divide">divide</a></h3><p>▸ <strong>divide</strong>(<code>number</code>, <code>rounding?</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-<th align="left">Default value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>number</code></td>
-<td align="left"><code>number</code></td>
-<td align="left"><code>undefined</code></td>
-</tr>
-<tr>
-<td align="left"><code>rounding</code></td>
-<td align="left"><code>string</code></td>
-<td align="left"><code>&#39;&#39;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="Time.html">Time</a>.<a href="Time.html#Time.divide">divide</a></p>
 <hr>
 <h3><a id="TimeClass.durationFrames">durationFrames</a></h3><p>▸ <strong>durationFrames</strong>(<code>duration</code>, <code>fps?</code>): <code><a href='Numbers.html'>Numbers</a></code></p>
 <h4>Parameters</h4>
@@ -353,8 +291,6 @@
 </tbody></table>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="Time.html">Time</a>.<a href="Time.html#Time.min">min</a></p>
 <hr>
 <h3><a id="TimeClass.scale">scale</a></h3><p>▸ <strong>scale</strong>(<code>fps</code>, <code>rounding?</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -363,18 +299,15 @@
 <tr>
 <th align="left">Name</th>
 <th align="left">Type</th>
-<th align="left">Default value</th>
 </tr>
 </thead>
 <tbody><tr>
 <td align="left"><code>fps</code></td>
 <td align="left"><code>number</code></td>
-<td align="left"><code>undefined</code></td>
 </tr>
 <tr>
-<td align="left"><code>rounding</code></td>
-<td align="left"><code>string</code></td>
-<td align="left"><code>&#39;&#39;</code></td>
+<td align="left"><code>rounding?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Rounding'>Rounding</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -400,57 +333,6 @@
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="Time.html">Time</a>.<a href="Time.html#Time.scaleToFps">scaleToFps</a></p>
-<hr>
-<h3><a id="TimeClass.scaleToTime">scaleToTime</a></h3><p>▸ <strong>scaleToTime</strong>(<code>time</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<hr>
-<h3><a id="TimeClass.subtract">subtract</a></h3><p>▸ <strong>subtract</strong>(<code>time</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
-<hr>
-<h3><a id="TimeClass.subtractFrames">subtractFrames</a></h3><p>▸ <strong>subtractFrames</strong>(<code>frames</code>): <code><a href='Time.html'>Time</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>frames</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Time.html'>Time</a></code></p>
 <hr>
 <h3><a id="TimeClass.toString">toString</a></h3><p>▸ <strong>toString</strong>(): <code>string</code></p>
 <p>Returns
@@ -493,18 +375,12 @@
 <li><a class='' href='#TimeClass.seconds'>seconds</a></li>
 <li><a class='' href='#TimeClass.startTime'>startTime</a></li>
 <li><a class='' href='#TimeClass.timeRange'>timeRange</a></li>
-<li><a class='' href='#TimeClass.add'>add</a></li>
-<li><a class='' href='#TimeClass.addFrame'>addFrame</a></li>
 <li><a class='' href='#TimeClass.closest'>closest</a></li>
-<li><a class='' href='#TimeClass.divide'>divide</a></li>
 <li><a class='' href='#TimeClass.durationFrames'>durationFrames</a></li>
 <li><a class='' href='#TimeClass.equalsTime'>equalsTime</a></li>
 <li><a class='' href='#TimeClass.min'>min</a></li>
 <li><a class='' href='#TimeClass.scale'>scale</a></li>
 <li><a class='' href='#TimeClass.scaleToFps'>scaleToFps</a></li>
-<li><a class='' href='#TimeClass.scaleToTime'>scaleToTime</a></li>
-<li><a class='' href='#TimeClass.subtract'>subtract</a></li>
-<li><a class='' href='#TimeClass.subtractFrames'>subtractFrames</a></li>
 <li><a class='' href='#TimeClass.toString'>toString</a></li>
 <li><a class='' href='#TimeClass.withFrame'>withFrame</a></li></ul>
       </nav>

@@ -59,7 +59,7 @@ export class IconElement extends Component {
   private get iconEventPromise() {
     const { icon } = this
     const event = new EventIcon(icon) 
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     return event.detail.promise
   }
 

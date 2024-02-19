@@ -1,8 +1,8 @@
-import type { Endpoint, EndpointRequest, JsonRecordDataOrError } from '@moviemasher/shared-lib/types.js'
-import type { ServerProgress } from '../types.js'
+import type { Endpoint, ServerProgress, EndpointRequest, JsonRecordDataOrError, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { assertPopulatedString, assertTrue, isEndpoint, isRequest } from '@moviemasher/shared-lib/utility/guards.js'
-import { HTTP, COLON, CONTENT_TYPE, GET, LIST, MIME_JSON, MIME_MULTI, POST, PUT, QUESTION, SLASH, errorCaught, errorPromise, isDefiniteError, isNumeric, isUndefined, jsonStringify, errorThrow } from '@moviemasher/shared-lib/runtime.js'
+import { $GET, $HTTP, $LIST, $POST, $PUT, COLON, CONTENT_TYPE, MIME_JSON, MIME_MULTI, QUESTION, SLASH, errorCaught, errorPromise, errorThrow, isDefiniteError, pathJoin, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { isNumeric, isUndefined } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined, assertTrue, isEndpoint, isRequest } from '@moviemasher/shared-lib/utility/guards.js'
 
 
 
@@ -38,14 +38,8 @@ const urlBase = (): string => {
   if (document) return _urlBase = document.baseURI
   
   return _urlBase = [
-    HTTP, COLON, SLASH, SLASH, 'localhost', SLASH
+    $HTTP, COLON, SLASH, SLASH, 'localhost', SLASH
   ].join('')
-}
-
-const pathJoin = (url: string, path: string): string => {
-  const urlStripped = url.endsWith(SLASH) ? url.slice(0, -1) : url
-  const pathStripped = path.startsWith(SLASH) ? path.slice(1) : path
-  return [urlStripped, SLASH, pathStripped].join('')
 }
 
 const requestFormData = (values: any = {}): FormData => {
@@ -94,13 +88,14 @@ const requestUrlInit = (endpointRequest: EndpointRequest, params?: any): [string
   const init = requestInit ? { ...requestInit } : {}
 
   // make sure init.method is a valid string
-  const { method = POST } = init
-  assertTrue([GET, POST, PUT, LIST].includes(method))
+  const { method = $POST } = init
+  const methods: Strings = [$GET, $POST, $PUT, $LIST]
+  assertTrue(methods.includes(method))
 
   init.method ||= method
 
   if (params) {
-    if (method === GET) {
+    if (method === $GET) {
       // populate search with params
       if (isUndefined(object.search)) object.search = requestSearch(params)
     } else if (isUndefined(init.body)) {
@@ -129,10 +124,10 @@ export const endpointUrl = (endpoint: Endpoint): string => {
   const absoluteEndpoint = endpointAbsolute(endpoint)
   const { port, pathname, hostname, protocol, search } = absoluteEndpoint
 
-  assertPopulatedString(hostname)
-  assertPopulatedString(protocol)
+  assertDefined(hostname)
+  assertDefined(protocol)
   
-  const bits = [protocol, SLASH, SLASH, hostname]
+  const bits: Strings = [protocol, SLASH, SLASH, hostname]
   if (isNumeric(port)) bits.push(COLON, String(port))
   const url = bits.join('')
   if (!pathname) return url
@@ -152,7 +147,10 @@ export const requestCallbackPromise = async (request: EndpointRequest, progress?
 
   const orError = await requestJsonRecordPromise(request, params)
   // console.debug('requestCallbackPromise response', orError)
-  if (isDefiniteError(orError)) return orError
+  if (isDefiniteError(orError)) {
+    console.error('requestCallbackPromise', 'requestJsonRecordPromise', orError)
+    return orError
+  }
 
   progress?.did(1)
   const { data } = orError
@@ -165,34 +163,13 @@ export const requestJsonRecordPromise = (request: EndpointRequest, params?: any)
   const [url, init] = requestUrlInit(request, params)
   try {
     return fetch(url, init).then(response => response.json()).then(orError => {
-      if (isDefiniteError(orError)) return orError
+      if (isDefiniteError(orError)) {
+        console.error('requestJsonRecordPromise', 'fetch', orError)
+        return orError
+      }
 
       return orError.data ? orError : { data: orError }
     }).catch(error => errorCaught(error))
   }
   catch (error) { return errorPromise(errorCaught(error).error.message) }
 }
-
-
-//   return fetchUrlPromise(request).then(orError => {
-//     if (isDefiniteError(orError)) return orError
-
-//     const { data: url } = orError
-//     const { [url]: imagePromise } = IMAGE_PROMISES
-//     if (imagePromise) return imagePromise
-
-//     return IMAGE_PROMISES[url] = new Promise<ClientImageDataOrError>(resolve => {
-//       const data = new Image()
-//       data.src = url
-//       data.onerror = error => {
-//         delete IMAGE_PROMISES[url]
-//         resolve(errorCaught(error))
-//       }
-//       data.onload = () => {
-//         request.response = data
-//         delete IMAGE_PROMISES[url]
-//         resolve({ data })
-//       }
-//     })
-//   })
-// }

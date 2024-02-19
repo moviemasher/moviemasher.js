@@ -46,11 +46,11 @@ export class ExporterContentElement extends ContentBase {
   // }
 
   // private handleExporterComplete(): void {
-  //   MOVIEMASHER.eventDispatcher.dispatch(new EventDialog())
+  //   MOVIEMASHER.dispatch(new EventDialog())
 
   //   const { assetObjects } = this
   //   this.assetObjects = []
-  //   MOVIEMASHER.eventDispatcher.dispatch(new EventImportManagedAssets(assetObjects))
+  //   MOVIEMASHER.dispatch(new EventImportManagedAssets(assetObjects))
   // }
 
   // private handleExporterAdd(event: EventExporterAdd): void {
@@ -83,7 +83,7 @@ export class ExporterContentElement extends ContentBase {
   private get exportersInitialize(): ClientExporters {
     const exporters: ClientExporters = []
     const event = new EventExporters(exporters)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     const [exporter] = exporters
     if (exporter) this.exporterId ||= exporter.id
     return exporters
@@ -124,7 +124,7 @@ export class ExporterContentElement extends ContentBase {
 
   protected override rightContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
-    htmls.push(html`RIGHT CONTENT`)
+    htmls.push(html`$RIGHT $CONTENT`)
     // const { assetObjects } = this
     // this.loadComponent('movie-masher-link')
     

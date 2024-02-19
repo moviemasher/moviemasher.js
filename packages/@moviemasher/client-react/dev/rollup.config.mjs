@@ -1,10 +1,10 @@
 import path from 'path'
 import typescript from 'rollup-plugin-typescript2'
-import { monoDir } from '../../../../dev/utils/file.mjs'
+import { fileURLToPath } from 'url'
 import terser from '@rollup/plugin-terser'
 import resolve from '@rollup/plugin-node-resolve'
 
-const projectDir = monoDir()
+const projectDir = path.resolve(fileURLToPath(import.meta.url), '../../../../../')
 const rootDir = path.resolve('src')
 const declaration = true
 

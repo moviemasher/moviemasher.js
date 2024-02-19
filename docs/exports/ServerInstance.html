@@ -136,8 +136,6 @@
 <ul>
 <li><p><code><a href='Instance.html'>Instance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerInstance</a></code></strong></p>
-<p>↳↳ <code><a href='ServerAudibleInstance.html'>ServerAudibleInstance</a></code></p>
-<p>↳↳ <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashInstance.html'>ServerMashInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashAudioInstance.html'>ServerMashAudioInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashImageInstance.html'>ServerMashImageInstance</a></code></p>
@@ -146,6 +144,9 @@
 <p>↳↳ <code><a href='ServerRawAudioInstance.html'>ServerRawAudioInstance</a></code></p>
 <p>↳↳ <code><a href='ServerRawImageInstance.html'>ServerRawImageInstance</a></code></p>
 <p>↳↳ <code><a href='ServerRawVideoInstance.html'>ServerRawVideoInstance</a></code></p>
+<p>↳↳ <code><a href='ServerAudibleInstance.html'>ServerAudibleInstance</a></code></p>
+<p>↳↳ <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code></p>
+<p>↳↳ <code><a href='ServerAudioInstance.html'>ServerAudioInstance</a></code></p>
 </li>
 </ul>
 <h2>Properties</h2>
@@ -161,27 +162,25 @@ Instance.assetId</p>
 <p>Inherited from
 Instance.assetIds</p>
 <hr>
-<h3><a id="ServerInstance.bottomConstrain">bottomConstrain</a></h3><p>• <strong>bottomConstrain</strong>: <code>boolean</code></p>
+<h3><a id="ServerInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.bottomConstrain</p>
+Instance.bottomCrop</p>
+<hr>
+<h3><a id="ServerInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<p>Inherited from
+Instance.canBeMuted</p>
 <hr>
 <h3><a id="ServerInstance.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <p>Inherited from
 Instance.clip</p>
 <hr>
-<h3><a id="ServerInstance.clipped">clipped</a></h3><p>• <strong>clipped</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.clipped</p>
-<hr>
-<h3><a id="ServerInstance.colorMaximize">colorMaximize</a></h3><p>• <strong>colorMaximize</strong>: <code>boolean</code></p>
-<hr>
 <h3><a id="ServerInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
 <p>Inherited from
 Instance.container</p>
 <hr>
-<h3><a id="ServerInstance.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h3><a id="ServerInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <p>Inherited from
-Instance.hasIntrinsicSizing</p>
+Instance.cropDirections</p>
 <hr>
 <h3><a id="ServerInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
 <p>Inherited from
@@ -191,6 +190,10 @@ Instance.hasIntrinsicTiming</p>
 <p>Inherited from
 Instance.height</p>
 <hr>
+<h3><a id="ServerInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
+<p>Inherited from
+Instance.heightEnd</p>
+<hr>
 <h3><a id="ServerInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 Instance.id</p>
@@ -199,17 +202,17 @@ Instance.id</p>
 <p>Inherited from
 Instance.instanceObject</p>
 <hr>
+<h3><a id="ServerInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+Instance.intrinsicRect</p>
+<hr>
 <h3><a id="ServerInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
 Instance.isDefault</p>
 <hr>
-<h3><a id="ServerInstance.isDefaultOrAudio">isDefaultOrAudio</a></h3><p>• <strong>isDefaultOrAudio</strong>: <code>boolean</code></p>
+<h3><a id="ServerInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.isDefaultOrAudio</p>
-<hr>
-<h3><a id="ServerInstance.leftConstrain">leftConstrain</a></h3><p>• <strong>leftConstrain</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.leftConstrain</p>
+Instance.leftCrop</p>
 <hr>
 <h3><a id="ServerInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
 <p>Inherited from
@@ -219,15 +222,11 @@ Instance.lock</p>
 <p>Inherited from
 Instance.muted</p>
 <hr>
-<h3><a id="ServerInstance.opacity">opacity</a></h3><p>• <strong>opacity</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.opacity</p>
-<hr>
 <h3><a id="ServerInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
 <p>Inherited from
 Instance.opacityEnd</p>
 <hr>
-<h3><a id="ServerInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code>string</code></p>
+<h3><a id="ServerInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
 <p>Inherited from
 Instance.pointAspect</p>
 <hr>
@@ -235,60 +234,51 @@ Instance.pointAspect</p>
 <p>Inherited from
 Instance.properties</p>
 <hr>
-<h3><a id="ServerInstance.rightConstrain">rightConstrain</a></h3><p>• <strong>rightConstrain</strong>: <code>boolean</code></p>
+<h3><a id="ServerInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.rightConstrain</p>
+Instance.rightCrop</p>
 <hr>
-<h3><a id="ServerInstance.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
-<p>Inherited from
-Instance.scalarRecord</p>
-<hr>
-<h3><a id="ServerInstance.sideDirectionRecord">sideDirectionRecord</a></h3><p>• <strong>sideDirectionRecord</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
-<p>Inherited from
-Instance.sideDirectionRecord</p>
-<hr>
-<h3><a id="ServerInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code>string</code></p>
+<h3><a id="ServerInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
 <p>Inherited from
 Instance.sizeAspect</p>
+<hr>
+<h3><a id="ServerInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
+<p>Inherited from
+Instance.sizeKey</p>
 <hr>
 <h3><a id="ServerInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 Instance.targetId</p>
 <hr>
-<h3><a id="ServerInstance.topConstrain">topConstrain</a></h3><p>• <strong>topConstrain</strong>: <code>boolean</code></p>
+<h3><a id="ServerInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.topConstrain</p>
+Instance.topCrop</p>
 <hr>
 <h3><a id="ServerInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
 <p>Inherited from
 Instance.width</p>
 <hr>
+<h3><a id="ServerInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
+<p>Inherited from
+Instance.widthEnd</p>
+<hr>
 <h3><a id="ServerInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
 <p>Inherited from
 Instance.x</p>
 <hr>
+<h3><a id="ServerInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
+<p>Inherited from
+Instance.xEnd</p>
+<hr>
 <h3><a id="ServerInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
 <p>Inherited from
 Instance.y</p>
-<h2>Methods</h2>
-<h3><a id="ServerInstance.alphamergeCommandFilters">alphamergeCommandFilters</a></h3><p>▸ <strong>alphamergeCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='CommandFilterArgs.html'>CommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
 <hr>
-<h3><a id="ServerInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>, <code>unbounded?</code>): <code><a href='Time.html'>Time</a></code></p>
+<h3><a id="ServerInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
+<p>Inherited from
+Instance.yEnd</p>
+<h2>Methods</h2>
+<h3><a id="ServerInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -301,17 +291,13 @@ Instance.y</p>
 <td align="left"><code>masherTime</code></td>
 <td align="left"><code><a href='Time.html'>Time</a></code></td>
 </tr>
-<tr>
-<td align="left"><code>unbounded?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
 </tbody></table>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
 Instance.assetTime</p>
 <hr>
-<h3><a id="ServerInstance.canColor">canColor</a></h3><p>▸ <strong>canColor</strong>(<code>args</code>): <code>boolean</code></p>
+<h3><a id="ServerInstance.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>args</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -322,132 +308,11 @@ Instance.assetTime</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>args</code></td>
-<td align="left"><code><a href='CommandFilterArgs.html'>CommandFilterArgs</a></code></td>
+<td align="left"><code><a href='CommandFileArgs.html'>CommandFileArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>boolean</code></p>
-<hr>
-<h3><a id="ServerInstance.canColorTween">canColorTween</a></h3><p>▸ <strong>canColorTween</strong>(<code>args</code>): <code>boolean</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='CommandFilterArgs.html'>CommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>boolean</code></p>
-<hr>
-<h3><a id="ServerInstance.colorBackCommandFilters">colorBackCommandFilters</a></h3><p>▸ <strong>colorBackCommandFilters</strong>(<code>args</code>, <code>output?</code>, <code>intrinsicSize?</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>output?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>intrinsicSize?</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.colorCommandFilters">colorCommandFilters</a></h3><p>▸ <strong>colorCommandFilters</strong>(<code>duration</code>, <code>videoRate</code>, <code>size</code>, <code>sizeEnd</code>, <code>color</code>, <code>colorEnd</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>duration</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-<tr>
-<td align="left"><code>videoRate</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-<tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>sizeEnd</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>color</code></td>
-<td align="left"><code><a href='../combined/Types.html#Value'>Value</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>colorEnd</code></td>
-<td align="left"><code><a href='../combined/Types.html#Value'>Value</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.colorizeCommandFilters">colorizeCommandFilters</a></h3><p>▸ <strong>colorizeCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.commandFilters">commandFilters</a></h3><p>▸ <strong>commandFilters</strong>(<code>args</code>, <code>tweening</code>, <code>container?</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>tweening</code></td>
-<td align="left"><code><a href='Tweening.html'>Tweening</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>container?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
+<code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <hr>
 <h3><a id="ServerInstance.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -472,62 +337,7 @@ Instance.assetTime</p>
 <p>Inherited from
 Instance.constrainedValue</p>
 <hr>
-<h3><a id="ServerInstance.containerColorCommandFilters">containerColorCommandFilters</a></h3><p>▸ <strong>containerColorCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.containerCommandFilters">containerCommandFilters</a></h3><p>▸ <strong>containerCommandFilters</strong>(<code>args</code>, <code>tweening</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>tweening</code></td>
-<td align="left"><code><a href='Tweening.html'>Tweening</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.containerFinalCommandFilters">containerFinalCommandFilters</a></h3><p>▸ <strong>containerFinalCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>inRect</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<h3><a id="ServerInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -541,37 +351,16 @@ Instance.constrainedValue</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>inRect</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code></td>
+<td align="left"><code>sizingSize</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
 Instance.containerRects</p>
 <hr>
-<h3><a id="ServerInstance.contentCommandFilters">contentCommandFilters</a></h3><p>▸ <strong>contentCommandFilters</strong>(<code>args</code>, <code>tweening</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>tweening</code></td>
-<td align="left"><code><a href='Tweening.html'>Tweening</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<h3><a id="ServerInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -586,51 +375,9 @@ Instance.containerRects</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#RectTuple'>RectTuple</a></code></p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
 Instance.contentRects</p>
-<hr>
-<h3><a id="ServerInstance.copyCommandFilter">copyCommandFilter</a></h3><p>▸ <strong>copyCommandFilter</strong>(<code>input</code>, <code>track</code>, <code>prefix?</code>): <code><a href='CommandFilter.html'>CommandFilter</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>input</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>track</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-<tr>
-<td align="left"><code>prefix?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilter.html'>CommandFilter</a></code></p>
-<hr>
-<h3><a id="ServerInstance.fileCommandFiles">fileCommandFiles</a></h3><p>▸ <strong>fileCommandFiles</strong>(<code>graphFileArgs</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>graphFileArgs</code></td>
-<td align="left"><code><a href='CacheArgs.html'>CacheArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <hr>
 <h3><a id="ServerInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -650,31 +397,6 @@ Instance.contentRects</p>
 <code>number</code></p>
 <p>Inherited from
 Instance.frames</p>
-<hr>
-<h3><a id="ServerInstance.initialCommandFilters">initialCommandFilters</a></h3><p>▸ <strong>initialCommandFilters</strong>(<code>args</code>, <code>tweening</code>, <code>container?</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>tweening</code></td>
-<td align="left"><code><a href='Tweening.html'>Tweening</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>container?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
 <hr>
 <h3><a id="ServerInstance.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -714,42 +436,6 @@ Instance.initializeProperties</p>
 <p>Inherited from
 Instance.instanceCachePromise</p>
 <hr>
-<h3><a id="ServerInstance.intrinsicGraphFile">intrinsicGraphFile</a></h3><p>▸ <strong>intrinsicGraphFile</strong>(<code>options</code>): <code><a href='GraphFile.html'>GraphFile</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>options</code></td>
-<td align="left"><code><a href='IntrinsicOptions.html'>IntrinsicOptions</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='GraphFile.html'>GraphFile</a></code></p>
-<hr>
-<h3><a id="ServerInstance.intrinsicRect">intrinsicRect</a></h3><p>▸ <strong>intrinsicRect</strong>(<code>editing?</code>): <code><a href='Rect.html'>Rect</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>editing?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Rect.html'>Rect</a></code></p>
-<p>Inherited from
-Instance.intrinsicRect</p>
-<hr>
 <h3><a id="ServerInstance.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>options</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
 <table>
@@ -768,54 +454,6 @@ Instance.intrinsicRect</p>
 <code>boolean</code></p>
 <p>Inherited from
 Instance.intrinsicsKnown</p>
-<hr>
-<h3><a id="ServerInstance.mutable">mutable</a></h3><p>▸ <strong>mutable</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-Instance.mutable</p>
-<hr>
-<h3><a id="ServerInstance.opacityCommandFilters">opacityCommandFilters</a></h3><p>▸ <strong>opacityCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<hr>
-<h3><a id="ServerInstance.overlayCommandFilters">overlayCommandFilters</a></h3><p>▸ <strong>overlayCommandFilters</strong>(<code>bottomInput</code>, <code>topInput</code>, <code>alpha?</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>bottomInput</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>topInput</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>alpha?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
 <hr>
 <h3><a id="ServerInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -874,7 +512,7 @@ Instance.propertyIds</p>
 <p>Inherited from
 Instance.propertyInstance</p>
 <hr>
-<h3><a id="ServerInstance.scaleCommandFilters">scaleCommandFilters</a></h3><p>▸ <strong>scaleCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
+<h3><a id="ServerInstance.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -884,14 +522,20 @@ Instance.propertyInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
+<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<p>Inherited from
+Instance.scaleRects</p>
 <hr>
-<h3><a id="ServerInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="ServerInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -910,7 +554,7 @@ Instance.propertyInstance</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 Instance.setValue</p>
 <hr>
@@ -919,23 +563,6 @@ Instance.setValue</p>
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
 Instance.toJSON</p>
-<hr>
-<h3><a id="ServerInstance.translateCommandFilters">translateCommandFilters</a></h3><p>▸ <strong>translateCommandFilters</strong>(<code>args</code>): <code><a href='CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFilters.html'>CommandFilters</a></code></p>
 <hr>
 <h3><a id="ServerInstance.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
 <h4>Parameters</h4>
@@ -982,23 +609,6 @@ Instance.tweenValues</p>
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
 Instance.value</p>
-<hr>
-<h3><a id="ServerInstance.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VisibleCommandFileArgs.html'>VisibleCommandFileArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 
   </div>
 </section>
@@ -1011,71 +621,52 @@ Instance.value</p>
 <li><a class='' href='#ServerInstance.asset'>asset</a></li>
 <li><a class='' href='#ServerInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ServerInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerInstance.bottomConstrain'>bottomConstrain</a></li>
+<li><a class='' href='#ServerInstance.bottomCrop'>bottomCrop</a></li>
+<li><a class='' href='#ServerInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerInstance.clip'>clip</a></li>
-<li><a class='' href='#ServerInstance.clipped'>clipped</a></li>
-<li><a class='' href='#ServerInstance.colorMaximize'>colorMaximize</a></li>
 <li><a class='' href='#ServerInstance.container'>container</a></li>
-<li><a class='' href='#ServerInstance.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerInstance.cropDirections'>cropDirections</a></li>
 <li><a class='' href='#ServerInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerInstance.height'>height</a></li>
+<li><a class='' href='#ServerInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerInstance.id'>id</a></li>
 <li><a class='' href='#ServerInstance.instanceObject'>instanceObject</a></li>
+<li><a class='' href='#ServerInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerInstance.isDefaultOrAudio'>isDefaultOrAudio</a></li>
-<li><a class='' href='#ServerInstance.leftConstrain'>leftConstrain</a></li>
+<li><a class='' href='#ServerInstance.leftCrop'>leftCrop</a></li>
 <li><a class='' href='#ServerInstance.lock'>lock</a></li>
 <li><a class='' href='#ServerInstance.muted'>muted</a></li>
-<li><a class='' href='#ServerInstance.opacity'>opacity</a></li>
 <li><a class='' href='#ServerInstance.opacityEnd'>opacityEnd</a></li>
 <li><a class='' href='#ServerInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerInstance.properties'>properties</a></li>
-<li><a class='' href='#ServerInstance.rightConstrain'>rightConstrain</a></li>
-<li><a class='' href='#ServerInstance.scalarRecord'>scalarRecord</a></li>
-<li><a class='' href='#ServerInstance.sideDirectionRecord'>sideDirectionRecord</a></li>
+<li><a class='' href='#ServerInstance.rightCrop'>rightCrop</a></li>
 <li><a class='' href='#ServerInstance.sizeAspect'>sizeAspect</a></li>
+<li><a class='' href='#ServerInstance.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ServerInstance.topConstrain'>topConstrain</a></li>
+<li><a class='' href='#ServerInstance.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerInstance.width'>width</a></li>
+<li><a class='' href='#ServerInstance.widthEnd'>widthEnd</a></li>
 <li><a class='' href='#ServerInstance.x'>x</a></li>
+<li><a class='' href='#ServerInstance.xEnd'>xEnd</a></li>
 <li><a class='' href='#ServerInstance.y'>y</a></li>
-<li><a class='' href='#ServerInstance.alphamergeCommandFilters'>alphamergeCommandFilters</a></li>
+<li><a class='' href='#ServerInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ServerInstance.assetTime'>assetTime</a></li>
-<li><a class='' href='#ServerInstance.canColor'>canColor</a></li>
-<li><a class='' href='#ServerInstance.canColorTween'>canColorTween</a></li>
-<li><a class='' href='#ServerInstance.colorBackCommandFilters'>colorBackCommandFilters</a></li>
-<li><a class='' href='#ServerInstance.colorCommandFilters'>colorCommandFilters</a></li>
-<li><a class='' href='#ServerInstance.colorizeCommandFilters'>colorizeCommandFilters</a></li>
-<li><a class='' href='#ServerInstance.commandFilters'>commandFilters</a></li>
+<li><a class='' href='#ServerInstance.commandFiles'>commandFiles</a></li>
 <li><a class='' href='#ServerInstance.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ServerInstance.containerColorCommandFilters'>containerColorCommandFilters</a></li>
-<li><a class='' href='#ServerInstance.containerCommandFilters'>containerCommandFilters</a></li>
-<li><a class='' href='#ServerInstance.containerFinalCommandFilters'>containerFinalCommandFilters</a></li>
 <li><a class='' href='#ServerInstance.containerRects'>containerRects</a></li>
-<li><a class='' href='#ServerInstance.contentCommandFilters'>contentCommandFilters</a></li>
 <li><a class='' href='#ServerInstance.contentRects'>contentRects</a></li>
-<li><a class='' href='#ServerInstance.copyCommandFilter'>copyCommandFilter</a></li>
-<li><a class='' href='#ServerInstance.fileCommandFiles'>fileCommandFiles</a></li>
 <li><a class='' href='#ServerInstance.frames'>frames</a></li>
-<li><a class='' href='#ServerInstance.initialCommandFilters'>initialCommandFilters</a></li>
 <li><a class='' href='#ServerInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerInstance.instanceCachePromise'>instanceCachePromise</a></li>
-<li><a class='' href='#ServerInstance.intrinsicGraphFile'>intrinsicGraphFile</a></li>
-<li><a class='' href='#ServerInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerInstance.mutable'>mutable</a></li>
-<li><a class='' href='#ServerInstance.opacityCommandFilters'>opacityCommandFilters</a></li>
-<li><a class='' href='#ServerInstance.overlayCommandFilters'>overlayCommandFilters</a></li>
 <li><a class='' href='#ServerInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerInstance.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ServerInstance.scaleCommandFilters'>scaleCommandFilters</a></li>
+<li><a class='' href='#ServerInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerInstance.setValue'>setValue</a></li>
 <li><a class='' href='#ServerInstance.toJSON'>toJSON</a></li>
-<li><a class='' href='#ServerInstance.translateCommandFilters'>translateCommandFilters</a></li>
 <li><a class='' href='#ServerInstance.tweenValues'>tweenValues</a></li>
-<li><a class='' href='#ServerInstance.value'>value</a></li>
-<li><a class='' href='#ServerInstance.visibleCommandFiles'>visibleCommandFiles</a></li></ul>
+<li><a class='' href='#ServerInstance.value'>value</a></li></ul>
       </nav>
     </main>
   </body>

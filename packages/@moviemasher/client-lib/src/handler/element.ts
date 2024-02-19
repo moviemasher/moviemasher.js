@@ -7,7 +7,7 @@ import type { DragAssetObject } from '../utility/draganddrop.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
-import { assertSizeAboveZero } from '@moviemasher/shared-lib/utility/rect.js'
+import { assertSizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
 import { SELECTED, X_MOVIEMASHER } from '../runtime.js'
 import { EventAssetElement, EventAssetId, EventChangeAssetId, EventChangedAssetId, EventManagedAsset, EventManagedAssetIcon } from '../utility/events.js'
 import { EventAssetElementDetail } from '../types.js'
@@ -38,7 +38,7 @@ export class BrowserAssetElement extends Component {
     if (!assetId) return 
 
     const event = new EventManagedAsset(assetId)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     return event.detail.asset
   }
 
@@ -47,7 +47,7 @@ export class BrowserAssetElement extends Component {
   override get defaultContent(): OptionalContent { 
     const { asset, icon, labels, icons, size } = this
     const { label } = asset || this
-    assertSizeAboveZero(size)
+    assertSizeNotZero(size)
 
     const htmls: TemplateContents = []
     if (labels) {
@@ -83,14 +83,14 @@ export class BrowserAssetElement extends Component {
 
   private get iconPromiseInitialize(): Promise<void> {
     const { size, cover } = this
-    assertSizeAboveZero(size)
+    assertSizeNotZero(size)
     
     const { assetId } = this
     if (!assetId) return Promise.resolve()
 
     // console.log('BrowserAssetElement.iconPromiseInitialize', {assetId, size, cover})
     const event = new EventManagedAssetIcon(assetId, size, cover)
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
    
     const { promise } = event.detail 
     if (!promise) {        
@@ -102,7 +102,7 @@ export class BrowserAssetElement extends Component {
 
     return promise.then(elementOrError => {
       if (isDefiniteError(elementOrError)) {
-        // console.error(this.tagName, 'iconPromiseInitialize EventManagedAssetIcon', elementOrError.error)
+        console.error(this.tagName, 'iconPromiseInitialize EventManagedAssetIcon', elementOrError.error)
         return 
       }
       
@@ -126,7 +126,7 @@ export class BrowserAssetElement extends Component {
     const { assetId } = this
     assertDefined(assetId)
 
-    MOVIEMASHER.eventDispatcher.dispatch(new EventChangeAssetId(assetId))
+    MOVIEMASHER.dispatch(new EventChangeAssetId(assetId))
   }
 
   override ondragstart = (event: DragEvent) => {
@@ -156,7 +156,7 @@ export class BrowserAssetElement extends Component {
   
   private get selectedAssetId(): string | undefined {
     const event = new EventAssetId()
-    MOVIEMASHER.eventDispatcher.dispatch(event)
+    MOVIEMASHER.dispatch(event)
     return event.detail.assetId
   }
 

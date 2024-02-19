@@ -151,25 +151,13 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assets">assets</a></p>
 <hr>
-<h3><a id="MashAsset.canBeContainer">canBeContainer</a></h3><p>• <strong>canBeContainer</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContainer">canBeContainer</a></p>
-<hr>
-<h3><a id="MashAsset.canBeContent">canBeContent</a></h3><p>• <strong>canBeContent</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.canBeContent">canBeContent</a></p>
-<hr>
 <h3><a id="MashAsset.clips">clips</a></h3><p>• <strong>clips</strong>: <code><a href='Clips.html'>Clips</a></code></p>
 <hr>
 <h3><a id="MashAsset.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
 <hr>
-<h3><a id="MashAsset.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
+<h3><a id="MashAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.container">container</a></p>
-<hr>
-<h3><a id="MashAsset.content">content</a></h3><p>• <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.content">content</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decoding">decoding</a></p>
 <hr>
 <h3><a id="MashAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
@@ -183,15 +171,13 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.id">id</a></p>
 <hr>
-<h3><a id="MashAsset.isVector">isVector</a></h3><p>• <strong>isVector</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.isVector">isVector</a></p>
-<hr>
 <h3><a id="MashAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.label">label</a></p>
 <hr>
 <h3><a id="MashAsset.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
+<hr>
+<h3><a id="MashAsset.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
 <hr>
 <h3><a id="MashAsset.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
@@ -199,11 +185,19 @@
 <hr>
 <h3><a id="MashAsset.quantize">quantize</a></h3><p>• <strong>quantize</strong>: <code>number</code></p>
 <hr>
-<h3><a id="MashAsset.scalarRecord">scalarRecord</a></h3><p>• <strong>scalarRecord</strong>: <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
+<h3><a id="MashAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.scalarRecord">scalarRecord</a></p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.request">request</a></p>
 <hr>
-<h3><a id="MashAsset.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code></p>
+<h3><a id="MashAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resource">resource</a></p>
+<hr>
+<h3><a id="MashAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resources">resources</a></p>
+<hr>
+<h3><a id="MashAsset.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <hr>
 <h3><a id="MashAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
@@ -217,7 +211,7 @@
 <hr>
 <h3><a id="MashAsset.tracks">tracks</a></h3><p>• <strong>tracks</strong>: <code><a href='Track.html'>Track</a></code>[]</p>
 <hr>
-<h3><a id="MashAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#AssetType'>AssetType</a></code></p>
+<h3><a id="MashAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.type">type</a></p>
 <h2>Methods</h2>
@@ -356,6 +350,25 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.constrainedValue">constrainedValue</a></p>
 <hr>
+<h3><a id="MashAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...types</code></td>
+<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodingOfType">decodingOfType</a></p>
+<hr>
 <h3><a id="MashAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -412,6 +425,23 @@
 <code><a href='Instance.html'>Instance</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.instanceFromObject">instanceFromObject</a></p>
+<hr>
+<h3><a id="MashAsset.mashDescription">mashDescription</a></h3><p>▸ <strong>mashDescription</strong>(<code>options</code>): <code><a href='MashDescription.html'>MashDescription</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>options</code></td>
+<td align="left"><code><a href='MashDescriptionOptions.html'>MashDescriptionOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='MashDescription.html'>MashDescription</a></code></p>
 <hr>
 <h3><a id="MashAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -470,7 +500,26 @@
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="MashAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<h3><a id="MashAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...type</code></td>
+<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resourceOfType">resourceOfType</a></p>
+<hr>
+<h3><a id="MashAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -489,7 +538,7 @@
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#ScalarTuple'>ScalarTuple</a></code></p>
+<code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.setValue">setValue</a></p>
 <hr>
@@ -515,6 +564,33 @@
 </tbody></table>
 <p>Returns
 <code><a href='Track.html'>Track</a></code></p>
+<hr>
+<h3><a id="MashAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>time</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>range</code></td>
+<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Scalars.html'>Scalars</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="MashAsset.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -546,22 +622,21 @@
 <li><a class='' href='#MashAsset.assetIds'>assetIds</a></li>
 <li><a class='' href='#MashAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#MashAsset.assets'>assets</a></li>
-<li><a class='' href='#MashAsset.canBeContainer'>canBeContainer</a></li>
-<li><a class='' href='#MashAsset.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#MashAsset.clips'>clips</a></li>
 <li><a class='' href='#MashAsset.color'>color</a></li>
-<li><a class='' href='#MashAsset.container'>container</a></li>
-<li><a class='' href='#MashAsset.content'>content</a></li>
+<li><a class='' href='#MashAsset.decoding'>decoding</a></li>
 <li><a class='' href='#MashAsset.decodings'>decodings</a></li>
 <li><a class='' href='#MashAsset.duration'>duration</a></li>
 <li><a class='' href='#MashAsset.endTime'>endTime</a></li>
 <li><a class='' href='#MashAsset.id'>id</a></li>
-<li><a class='' href='#MashAsset.isVector'>isVector</a></li>
 <li><a class='' href='#MashAsset.label'>label</a></li>
 <li><a class='' href='#MashAsset.loop'>loop</a></li>
+<li><a class='' href='#MashAsset.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#MashAsset.properties'>properties</a></li>
 <li><a class='' href='#MashAsset.quantize'>quantize</a></li>
-<li><a class='' href='#MashAsset.scalarRecord'>scalarRecord</a></li>
+<li><a class='' href='#MashAsset.request'>request</a></li>
+<li><a class='' href='#MashAsset.resource'>resource</a></li>
+<li><a class='' href='#MashAsset.resources'>resources</a></li>
 <li><a class='' href='#MashAsset.size'>size</a></li>
 <li><a class='' href='#MashAsset.source'>source</a></li>
 <li><a class='' href='#MashAsset.targetId'>targetId</a></li>
@@ -575,15 +650,19 @@
 <li><a class='' href='#MashAsset.clipsAudibleInTime'>clipsAudibleInTime</a></li>
 <li><a class='' href='#MashAsset.clipsInTimeOfType'>clipsInTimeOfType</a></li>
 <li><a class='' href='#MashAsset.constrainedValue'>constrainedValue</a></li>
+<li><a class='' href='#MashAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#MashAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#MashAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#MashAsset.instanceFromObject'>instanceFromObject</a></li>
+<li><a class='' href='#MashAsset.mashDescription'>mashDescription</a></li>
 <li><a class='' href='#MashAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#MashAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#MashAsset.propertyInstance'>propertyInstance</a></li>
+<li><a class='' href='#MashAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#MashAsset.setValue'>setValue</a></li>
 <li><a class='' href='#MashAsset.toJSON'>toJSON</a></li>
 <li><a class='' href='#MashAsset.trackInstance'>trackInstance</a></li>
+<li><a class='' href='#MashAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#MashAsset.value'>value</a></li></ul>
       </nav>
     </main>

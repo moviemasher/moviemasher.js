@@ -137,6 +137,7 @@
 <li><p><code><a href='LeftCenterRight.html'>LeftCenterRight</a></code></p>
 <p>↳ <strong><code><a href='#'>HeaderBase</a></code></strong></p>
 <p>↳↳ <code><a href='../categories/Elements.html#BrowserHeaderElement'>BrowserHeaderElement</a></code></p>
+<p>↳↳ <code><a href='../categories/Elements.html#ExporterHeaderElement'>ExporterHeaderElement</a></code></p>
 <p>↳↳ <code><a href='../categories/Elements.html#ImporterHeaderElement'>ImporterHeaderElement</a></code></p>
 <p>↳↳ <code><a href='../categories/Elements.html#InspectorHeaderElement'>InspectorHeaderElement</a></code></p>
 <p>↳↳ <code><a href='../categories/Elements.html#PlayerHeaderElement'>PlayerHeaderElement</a></code></p>
@@ -148,8 +149,6 @@
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="HeaderBase.icon">icon</a></h3><p>• <strong>icon</strong>: <code>string</code> = <code>&#39;&#39;</code></p>
-<hr>
 <h3><a id="HeaderBase.listeners">listeners</a></h3><p>• <code>Protected</code> <strong>listeners</strong>: <code><a href='EventDispatcherListeners.html'>EventDispatcherListeners</a></code> = <code>{}</code></p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.listeners">listeners</a></p>
@@ -174,7 +173,7 @@
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.cssShared">cssShared</a></p>
 <hr>
-<h3><a id="HeaderBase.partSeparator">partSeparator</a></h3><p>▪ <code>Static</code> <strong>partSeparator</strong>: <code>string</code> = <code><a href='../combined/Variables.html#PIPE'>PIPE</a></code></p>
+<h3><a id="HeaderBase.partSeparator">partSeparator</a></h3><p>▪ <code>Static</code> <strong>partSeparator</strong>: <code>&quot;|&quot;</code></p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.partSeparator">partSeparator</a></p>
 <hr>
@@ -224,12 +223,6 @@ LeftCenterRight.slots</p>
 <code><a href='Nodes.html'>Nodes</a></code></p>
 <p>Inherited from
 LeftCenterRight.unslottedNodes</p>
-<hr>
-<h3><a id="HeaderBase.importFinished">importFinished</a></h3><p>• <code>Static</code> <code>Protected</code> <code>get</code> <strong>importFinished</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-LeftCenterRight.importFinished</p>
 <h2>Methods</h2>
 <h3><a id="HeaderBase.centerContent">centerContent</a></h3><p>▸ <code>Protected</code> <strong>centerContent</strong>(<code>htmls</code>): <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <h4>Parameters</h4>
@@ -256,25 +249,6 @@ LeftCenterRight.importFinished</p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.connectedCallback">connectedCallback</a></p>
 <hr>
-<h3><a id="HeaderBase.content">content</a></h3><p>▸ <code>Protected</code> <strong>content</strong>(<code>contents</code>): <code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>contents</code></td>
-<td align="left"><code><a href='TemplateContents.html'>TemplateContents</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
-<p>Overrides
-<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.content">content</a></p>
-<hr>
 <h3><a id="HeaderBase.disconnectedCallback">disconnectedCallback</a></h3><p>▸ <strong>disconnectedCallback</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
@@ -287,7 +261,20 @@ LeftCenterRight.importFinished</p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.dispatchExportParts">dispatchExportParts</a></p>
 <hr>
-<h3><a id="HeaderBase.element">element</a></h3><p>▸ <code>Protected</code> <strong>element</strong>(<code>selector?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></p>
+<h3><a id="HeaderBase.element">element</a></h3><p>▸ <code>Protected</code> <strong>element</strong>&lt;<code>T</code>&gt;(<code>selector?</code>): <code>T</code></p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&lt;<code>T</code>&gt; = <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></td>
+</tr>
+</tbody></table>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -304,7 +291,7 @@ LeftCenterRight.importFinished</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></p>
+<code>T</code></p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.element">element</a></p>
 <hr>
@@ -314,7 +301,7 @@ LeftCenterRight.importFinished</p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.handleExportParts">handleExportParts</a></p>
 <hr>
-<h3><a id="HeaderBase.importElements">importElements</a></h3><p>▸ <code>Protected</code> <strong>importElements</strong>(<code>elements</code>): <code>void</code></p>
+<h3><a id="HeaderBase.leftContent">leftContent</a></h3><p>▸ <code>Protected</code> <strong>leftContent</strong>(<code>htmls</code>): <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -324,16 +311,16 @@ LeftCenterRight.importFinished</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>elements</code></td>
-<td align="left"><code><a href='../categories/Elements.html'>Elements</a></code></td>
+<td align="left"><code>htmls</code></td>
+<td align="left"><code><a href='Htmls.html'>Htmls</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <p>Inherited from
-<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.importElements">importElements</a></p>
+<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.leftContent">leftContent</a></p>
 <hr>
-<h3><a id="HeaderBase.importTag">importTag</a></h3><p>▸ <code>Protected</code> <strong>importTag</strong>(<code>name</code>): <code>void</code></p>
+<h3><a id="HeaderBase.loadComponent">loadComponent</a></h3><p>▸ <code>Protected</code> <strong>loadComponent</strong>(<code>name</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -350,9 +337,9 @@ LeftCenterRight.importFinished</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.importTag">importTag</a></p>
+<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.loadComponent">loadComponent</a></p>
 <hr>
-<h3><a id="HeaderBase.leftContent">leftContent</a></h3><p>▸ <code>Protected</code> <strong>leftContent</strong>(<code>slots</code>): <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
+<h3><a id="HeaderBase.loadElements">loadElements</a></h3><p>▸ <code>Protected</code> <strong>loadElements</strong>(<code>elements</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -362,14 +349,14 @@ LeftCenterRight.importFinished</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>slots</code></td>
-<td align="left"><code><a href='Htmls.html'>Htmls</a></code></td>
+<td align="left"><code>elements</code></td>
+<td align="left"><code><a href='../categories/Elements.html'>Elements</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
-<p>Overrides
-<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.leftContent">leftContent</a></p>
+<code>void</code></p>
+<p>Inherited from
+<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.loadElements">loadElements</a></p>
 <hr>
 <h3><a id="HeaderBase.partContent">partContent</a></h3><p>▸ <code>Protected</code> <strong>partContent</strong>(<code>part</code>, <code>slots</code>): <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <h4>Parameters</h4>
@@ -418,6 +405,57 @@ LeftCenterRight.importFinished</p>
 <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <p>Inherited from
 <a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.rightContent">rightContent</a></p>
+<hr>
+<h3><a id="HeaderBase.selectElement">selectElement</a></h3><p>▸ <code>Protected</code> <strong>selectElement</strong>&lt;<code>T</code>&gt;(<code>selector?</code>): <code>T</code></p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&lt;<code>T</code>&gt; = <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></td>
+</tr>
+</tbody></table>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>selector?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>T</code></p>
+<p>Inherited from
+<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.selectElement">selectElement</a></p>
+<hr>
+<h3><a id="HeaderBase.templateContent">templateContent</a></h3><p>▸ <code>Protected</code> <strong>templateContent</strong>(<code>contents</code>): <code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>contents</code></td>
+<td align="left"><code><a href='TemplateContents.html'>TemplateContents</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
+<p>Overrides
+<a href="LeftCenterRight.html">LeftCenterRight</a>.<a href="LeftCenterRight.html#LeftCenterRight.templateContent">templateContent</a></p>
 <hr>
 <h3><a id="HeaderBase.variable">variable</a></h3><p>▸ <code>Protected</code> <strong>variable</strong>(<code>name</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -489,7 +527,6 @@ LeftCenterRight.importFinished</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#HeaderBase'>HeaderBase</a></li>
 <li><a class='' href='#HeaderBase.constructor'>constructor</a></li>
-<li><a class='' href='#HeaderBase.icon'>icon</a></li>
 <li><a class='' href='#HeaderBase.listeners'>listeners</a></li>
 <li><a class='' href='#HeaderBase.parts'>parts</a></li>
 <li><a class='' href='#HeaderBase.cssBorderBoxSizing'>cssBorderBoxSizing</a></li>
@@ -505,20 +542,20 @@ LeftCenterRight.importFinished</p>
 <li><a class='' href='#HeaderBase.exportParts'>exportParts</a></li>
 <li><a class='' href='#HeaderBase.slots'>slots</a></li>
 <li><a class='' href='#HeaderBase.unslottedNodes'>unslottedNodes</a></li>
-<li><a class='' href='#HeaderBase.importFinished'>importFinished</a></li>
 <li><a class='' href='#HeaderBase.centerContent'>centerContent</a></li>
 <li><a class='' href='#HeaderBase.connectedCallback'>connectedCallback</a></li>
-<li><a class='' href='#HeaderBase.content'>content</a></li>
 <li><a class='' href='#HeaderBase.disconnectedCallback'>disconnectedCallback</a></li>
 <li><a class='' href='#HeaderBase.dispatchExportParts'>dispatchExportParts</a></li>
 <li><a class='' href='#HeaderBase.element'>element</a></li>
 <li><a class='' href='#HeaderBase.handleExportParts'>handleExportParts</a></li>
-<li><a class='' href='#HeaderBase.importElements'>importElements</a></li>
-<li><a class='' href='#HeaderBase.importTag'>importTag</a></li>
 <li><a class='' href='#HeaderBase.leftContent'>leftContent</a></li>
+<li><a class='' href='#HeaderBase.loadComponent'>loadComponent</a></li>
+<li><a class='' href='#HeaderBase.loadElements'>loadElements</a></li>
 <li><a class='' href='#HeaderBase.partContent'>partContent</a></li>
 <li><a class='' href='#HeaderBase.render'>render</a></li>
 <li><a class='' href='#HeaderBase.rightContent'>rightContent</a></li>
+<li><a class='' href='#HeaderBase.selectElement'>selectElement</a></li>
+<li><a class='' href='#HeaderBase.templateContent'>templateContent</a></li>
 <li><a class='' href='#HeaderBase.variable'>variable</a></li>
 <li><a class='' href='#HeaderBase.variableSet'>variableSet</a></li>
 <li><a class='' href='#HeaderBase.willUpdate'>willUpdate</a></li></ul>
