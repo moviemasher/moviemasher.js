@@ -1,4 +1,4 @@
-import { ComponentClicker } from '../base/Component.js'
+import { ComponentClicker } from '../base/component.js'
 
 export const LinkTag = 'movie-masher-link'
 /**

@@ -4,7 +4,7 @@ import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '
 import { css } from '@lit/reactive-element/css-tag.js'
 import { EventDialog } from '../utility/events.js'
 import { html } from 'lit-html'
-import { ComponentSlotter } from '../base/Component.js'
+import { ComponentSlotter } from '../base/component.js'
 
 const PartImporter = 'importer'
 const PartExporter = 'exporter'

@@ -1,13 +1,13 @@
 
-import type { AVType, AbsolutePath, AssetCacheArgs, DataOrError, DecodeArgs, IntrinsicOptions, ProbingOptions, Time, TimeRange, Times } from '@moviemasher/shared-lib/types.js'
+import type { AVType, AbsolutePath, AssetCacheArgs, Clips, DataOrError, DecodeArgs, IntrinsicOptions, ProbingOptions, Time, TimeRange, Times } from '@moviemasher/shared-lib/types.js'
 import type { EncodeCommands, PrecodeCommands, ServerMashDescription, ServerMashDescriptionArgs, ServerSegmentDescription, ServerSegmentDescriptionArgs } from '../types.js'
 
 import { MashDescriptionClass } from '@moviemasher/shared-lib/base/description.js'
-import { $AUDIO, $BOTH, $DECODE, $IMAGE, $JSON, $PROBE, $VIDEO, ASSET_DURATION, ERROR, MOVIEMASHER, PROBING_TYPES, isDefiniteError, isProbing, namedError, promiseNumbers, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIO, $BOTH, $COLOR, $DECODE, $IMAGE, $JSON, $PROBE, $VIDEO, ASSET_DURATION, ERROR, MOVIE_MASHER, PROBING_TYPES, isDefiniteError, isProbing, namedError, promiseNumbers, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import { isAboveZero, isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertAboveZero, isDropResource } from '@moviemasher/shared-lib/utility/guards.js'
 import { assertTimeRange, isTimeRange, timeRangeFromArgs } from '@moviemasher/shared-lib/utility/time.js'
-import { ServerClips, ServerMashAsset } from '../type/ServerMashTypes.js'
+import { isServerClip } from '../utility/guard.js'
 import { AudioServerSegmentDescriptionClass, ImageServerSegmentDescriptionClass, VideoServerSegmentDescriptionClass } from './ServerSegmentDescriptionClass.js'
 
 export class ServerMashDescriptionClass extends MashDescriptionClass implements ServerMashDescription {
@@ -60,7 +60,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
     if (avType !== $BOTH) return avType
 
     const { mash, time } = this
-    const renderingClips = mash.clipsInTimeOfType(time, avType)
+    const renderingClips = mash.clipsInTimeOfType(time, avType).filter(isServerClip)
     const types = new Set<AVType>()
     renderingClips.forEach(renderingClip => {
       if (renderingClip.audible) types.add($AUDIO)
@@ -72,19 +72,10 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
     return type
   }
 
-  get background(): string { return this.args.background || this.mash.color }
-
-  private async cache(): Promise<DataOrError<number>> {
-    // cache all files that dont' have intrinsic size or duration
-    const intrinsicsOrError = await this.intrinsicsPromise
-    if (isDefiniteError(intrinsicsOrError)) return intrinsicsOrError
-
-    // make sure all clips have duration, probing if needed
-    return await this.probingsPromise()
-  }
+  get background(): string { return this.args.background || String(this.mash.value($COLOR)) }
 
   private async cachePrecodePromise(): Promise<DataOrError<number>> {
-    const cacheOrError = await this.cache()
+    const cacheOrError = await this.cachePromise()
     if (isDefiniteError(cacheOrError)) return cacheOrError
 
     const { precodeSegmentDescriptions } = this
@@ -101,10 +92,10 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
   }
 
   private async cacheEncodePromise(): Promise<DataOrError<number>> {
-    const cacheOrError = await this.cache()
+    const cacheOrError = await this.cachePromise()
     if (isDefiniteError(cacheOrError)) return cacheOrError
 // cache everything within our output time
-    const { avTypeNeededForClips: avType, args, time } = this
+    const { avTypeNeededForClips: avType, time } = this
     const { mash } = this
     const cacheArgs: AssetCacheArgs = { 
       time, audible: avType !== $VIDEO, visible: avType !== $AUDIO 
@@ -118,12 +109,13 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
     return await this.assetsServerPromise(segments)
   }
 
-  async cachePromise(): Promise<DataOrError<number>> {
-    const orError = await this.cache()
-    // if (isDefiniteError(orError)) {
-    //   MOVIEMASHER.dispatch(new EventReleaseServerManagedAssets())
-    // }
-    return orError
+  async cachePromise(): Promise<DataOrError<number>> { 
+    // cache all files that dont' have intrinsic size or duration
+    const intrinsicsOrError = await this.intrinsicsPromise
+    if (isDefiniteError(intrinsicsOrError)) return intrinsicsOrError
+
+    // make sure all clips have duration, probing if needed
+    return await this.probingsPromise()
   }
 
   get duration(): number { 
@@ -156,7 +148,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
 
   get encodePath(): AbsolutePath { return this.args.encodePath }
 
-  private get framesUnknownClips(): ServerClips {
+  private get framesUnknownClips(): Clips {
     return this.mash.clips.filter(clip => !isPositive(clip.frames))
   }
 
@@ -184,18 +176,18 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
     return promiseNumbers(unknownPromises)
   }
 
-  private _intrinsicsUnknownClips?: ServerClips
+  private _intrinsicsUnknownClips?: Clips
 
-  private get intrinsicsUnknownClips(): ServerClips { 
+  private get intrinsicsUnknownClips(): Clips { 
     return this._intrinsicsUnknownClips ||= this.intrinsicsUnknownClipsInitialize 
   }
 
-  private get intrinsicsUnknownClipsInitialize(): ServerClips {
+  private get intrinsicsUnknownClipsInitialize(): Clips {
     const { clips } = this.mash
     return clips.filter(clip => !clip.intrinsicsKnown(this.intrinsicOptions))
   }
 
-  override get mash(): ServerMashAsset { return this.args.mash }
+  // override get mash(): MashAsset { return this.args.mash }
 
   private get mute(): boolean { return !!this.args.mute }
 
@@ -227,7 +219,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
 
     // find the clips that need precoding
     const { mash, time: timeRange } = this
-    const clips = mash.clipsInTimeOfType(timeRange, $VIDEO)
+    const clips = mash.clipsInTimeOfType(timeRange, $VIDEO).filter(isServerClip)
     const prerenderClips = clips.filter(clip => clip.requiresPrecoding)
     return this._precodeSegmentDescriptions = prerenderClips.map(clip => {
       const args = this.segmentArgs(clip.timeRange)
@@ -250,7 +242,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
   
   private probingsPromise(): Promise<DataOrError<number>> {
     const { intrinsicsUnknownClips } = this
-    const { quantize } = this.mash
+    const quantize = this.mash.value('quantize')
     assertAboveZero(quantize, 'assureClipFrames quantize')
 
     const promises: Promise<DataOrError<number>>[] = intrinsicsUnknownClips.flatMap(clip => {
@@ -261,7 +253,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
 
       const decodeOptions: ProbingOptions = { types: PROBING_TYPES }
       const args: DecodeArgs = { resource, type: $PROBE, options: decodeOptions}
-      const promise = MOVIEMASHER.promise($DECODE, args)
+      const promise = MOVIE_MASHER.promise(args, $DECODE)
 
    
       const framesPromise: Promise<DataOrError<number>> = promise.then(orError => {
@@ -304,7 +296,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
     const times: Times = []
     const { mash, timeRange } = this
     // console.log(this.constructor.name, 'timesAudio', timeRange)
-    const clips = mash.clipsInTimeOfType(timeRange, $AUDIO)
+    const clips = mash.clipsInTimeOfType(timeRange, $AUDIO).filter(isServerClip)
     // console.log(this.constructor.name, 'timesAudio clips', clips.length)
 
     const unmutedClips = clips.filter(clip => clip.canBeMuted && !clip.muted)
@@ -315,7 +307,7 @@ export class ServerMashDescriptionClass extends MashDescriptionClass implements 
 
   private get timesVideo(): Times {
     const { quantize, mash, timeRange } = this
-    const clips = mash.clipsInTimeOfType(timeRange, $VIDEO)
+    const clips = mash.clipsInTimeOfType(timeRange, $VIDEO).filter(isServerClip)
     const { length } = clips
     switch (length) {
       case 0: return []

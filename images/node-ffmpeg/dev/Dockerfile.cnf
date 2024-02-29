@@ -1,6 +1,6 @@
 ARG DIR_ROOT=/app
 
-FROM amazonlinux:2023.3.20231218.0 AS code
+FROM amazonlinux:2023.3.20240131.0 AS code
 ARG DIR_ROOT
 
 COPY package.json ${DIR_ROOT}/package.json
@@ -12,7 +12,7 @@ COPY packages/@moviemasher/shared-lib/dist ${DIR_ROOT}/packages/@moviemasher/sha
 COPY packages/@moviemasher/server-lib/package.json ${DIR_ROOT}/packages/@moviemasher/server-lib/package.json
 COPY packages/@moviemasher/server-lib/dist ${DIR_ROOT}/packages/@moviemasher/server-lib/dist
 
-FROM amazonlinux:2023.3.20231218.0 
+FROM amazonlinux:2023.3.20240131.0 
 ARG DIR_ROOT
 ARG OS_INSTALL=''
 ARG OS_EXECUTE='npm install -g npm'
@@ -25,7 +25,7 @@ WORKDIR ${DIR_ROOT}
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
 COPY --from=code ${DIR_ROOT} ${DIR_ROOT}
 COPY dev/image/sh ${DIR_ROOT}/dev/image/sh
-RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-aws2023.sh \
+RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-aws202.sh \
   -n "${NPM_INSTALL}" \
   -m "${NPM_BUILD}" \
   -i "${INSTALL_NODE}" \

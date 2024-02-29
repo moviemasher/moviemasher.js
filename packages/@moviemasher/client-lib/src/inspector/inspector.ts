@@ -3,7 +3,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html'
-import { CONTENTS, FOOTER, HEADER, Section } from '../base/LeftCenterRight.js'
+import { CONTENTS, FOOTER, HEADER, Section } from '../base/component-view.js'
 
 export const InspectorTag = 'movie-masher-inspector'
 

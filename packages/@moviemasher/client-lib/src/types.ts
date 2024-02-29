@@ -1,9 +1,8 @@
-import type { SvgElement, AVType, Asset, AssetObject, AssetObjects, AssetObjectsResponse, AssetParams, RawType, RawTypes, Assets, AudibleAsset, AudibleAssetObject, AudibleInstance, AudioAsset, AudioAssetObject, AudioInstance, ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, EndpointRequest, Clip, ClipObject, ColorAsset, ColorAssetObject, ColorInstance, ContainerSvgItemArgs, ContentInstance, ContentSvgItemArgs, DataOrError, DataType, DecodeOptions, Decoding, DecodingType, Directions, EditArgs, EditObject, EncodeArgs, Encoding, Encodings, Exporter, Exporters, Identified, ImageAsset, ImageAssetObject, ClientImage, ImageInstance, Importer, Importers, Instance, ManageTypes, MashAsset, MashAssetObject, MashAudioAssetObject, MashDescription, MashDescriptionArgs, MashDescriptionOptions, MashVideoAssetObject, MaybeComplexSvgItem, Ordered, Panel, Propertied, Property, PropertyId, PropertyIds, RawAsset, RawAssetObject, Rect, Resource, Scalar, ScalarsById, SegmentDescription, SegmentDescriptionArgs, SelectorType, SelectorTypes, ShapeAsset, ShapeAssetObject, ShapeInstance, Size, Source, Sources, StringDataOrError, Strings, SvgItem, SvgItems, SvgItemsRecord, SvgVector, TargetId, TargetIds, TextAsset, TextAssetObject, TextInstance, Time, TimeRange, Track, TrackObject, TranscodeOptions, Transcoding, TranscodingType, ValueRecord, VideoAsset, VideoAssetObject, VideoInstance, VisibleAsset, VisibleAssetObject, VisibleInstance, ClientAudio, ClientFont, ClientVideo, ServerProgress, MashImageAssetObject } from '@moviemasher/shared-lib/types.js'
-import type { ContainerInstance } from '@moviemasher/shared-lib/types.js'
+import type { AssetObject, AssetObjects, AssetObjectsResponse, AssetParams, Assets, AudibleAsset, AudibleInstance, AudioAsset, AudioInstance, ChangeEdit, ChangePropertiesEditObject, ChangePropertyEditObject, ClientAssets, ClientAudibleAsset, ClientClip, ClientImage, ClientInstance, ClientMashAsset, ClientMashDescription, ClientMashDescriptionOptions, ClientAsset, ClientTrack, ClientVisibleAsset, Clip, Clips, ContainerAsset, ContainerInstance, DataOrError, DataType, DecodeOptions, Decoding, DecodingType, EditObject, EncodeArgs, Encoding, Exporter, Exporters, Identified, ImageAsset, ImageInstance, Importer, Importers, Instance, ManageTypes, MashAssetObject, MashAudioAssetObject, MashDescriptionArgs, MashImageAssetObject, MashVideoAssetObject, Ordered, Propertied, Property, PropertyId, PropertyIds, RawType, RawTypes, Rect, Scalar, ScalarsById, SegmentDescription, SegmentDescriptionArgs, SelectorTypes, ServerProgress, Size, Source, Sources, Strings, SvgElement, SvgItem, SvgItems, TargetId, TargetIds, Time, TrackObject, TranscodeOptions, Transcoding, TranscodingType, ValueRecord, VideoAsset, VideoInstance } from '@moviemasher/shared-lib/types.js'
 
-export type ClientAction = string
-export type ServerAction = string 
-
+declare global { 
+  interface Window { webkitAudioContext: typeof AudioContext } 
+}
 
 export interface TranslateArgs extends Identified {
   values?: ValueRecord
@@ -22,17 +21,6 @@ export interface SelectedProperty {
 
 export interface SelectedProperties extends Array<SelectedProperty>{}
 
-export type SelectedPropertyRecord = Record<string, SelectedProperty>
-
-export interface Selectable extends Propertied { 
-  changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject
-  changeScalars(scalars: ScalarsById): ChangeEditObject
-}
-
-export interface Selectables extends Array<Selectable>{}
-
-export interface SelectorTypesObject extends Record<string, SelectorType[]> {}
-
 export interface Masher {
   load(data: AssetObject): Promise<void>
   unload(): void
@@ -47,36 +35,10 @@ export interface ClipLocation {
 export interface MasherArgs {
   buffer: number
   fps: number
-  loop: boolean
   mash?: MashAssetObject
 }
 
 export interface MasherOptions extends Partial<MasherArgs> {}
-
-
-export interface Edits {
-  canRedo: boolean
-  canSave: boolean
-  canUndo: boolean
-  create(object: EditObject): void
-  redo(): void
-  save(): void
-  undo(): void
-}
-
-export interface Edit {
-  redo(): void
-  undo(): void
-  updateSelection(): void
-  affects: PropertyIds
-}
-
-
-
-export interface ChangeEdit extends Edit {
-  target: Propertied
-  updateEdit(object: ChangeEditObject): void
-}
 
 export interface ChangePropertyEdit extends ChangeEdit {
   property: PropertyId
@@ -92,19 +54,19 @@ export interface ChangePropertiesEdit extends ChangeEdit {
 }
 
 export interface AddClipsEditObject extends AddTrackEditObject {
-  clips: ClientClips
+  clips: Clips
   insertIndex?: number
   trackIndex: number
   redoFrame?: number
 }
 
-export interface AddTrackEditObject extends EditArgs {
+export interface AddTrackEditObject extends EditObject {
   mashAsset: ClientMashAsset
   createTracks: number
 }
 
 export interface MoveClipEditObject extends AddTrackEditObject {
-  clip: ClientClip
+  clip: Clip
   insertIndex?: number
   redoFrame?: number
   trackIndex: number
@@ -113,12 +75,11 @@ export interface MoveClipEditObject extends AddTrackEditObject {
   undoTrackIndex: number
 }
 
-export interface RemoveClipEditObject extends EditArgs {
-  clip: ClientClip
+export interface RemoveClipEditObject extends EditObject {
+  clip: Clip
   index: number
   track: ClientTrack
 }
-
 
 export interface DropTarget {
   acceptsClip: boolean
@@ -154,26 +115,18 @@ export interface SizeReactive {
   size?: Size
 }
 
-export interface ClientRawAsset extends RawAsset, ClientAsset {
-  assetObject: ClientRawAssetObject
-}
 
-export interface ClientRawAudioAsset extends ClientRawAsset, ClientAudioAsset, ClientAudibleAsset {
-  assetObject: ClientRawAudioAssetObject
-}
+export interface ClientRawAudioAsset extends ClientAsset, ClientAudioAsset, ClientAudibleAsset {}
 
-export interface ClientRawImageAsset extends ClientRawAsset, ClientImageAsset {
-  assetObject: ClientRawImageAssetObject
-}
+export interface ClientRawImageAsset extends ClientAsset, ClientImageAsset {}
 
-export interface ClientRawVideoAsset extends ClientRawAsset, ClientVideoAsset {
-  assetObject: ClientRawVideoAssetObject
-  loadedImagePromise(assetTime: Time, size?: Size): Promise<DataOrError<ClientImage>>
-  loadedImage(assetTime: Time, size?: Size): DataOrError<ClientImage>
+export interface ClientRawVideoAsset extends ClientAsset, ClientVideoAsset {
+  clientImagePromise(assetTime: Time, size?: Size): Promise<DataOrError<ClientImage>>
+  clientImage(assetTime: Time, size?: Size): DataOrError<ClientImage>
 }
 
 export interface ClientRawInstance extends Instance, ClientInstance {
-  asset: ClientRawAsset
+  asset: ClientAsset
   clip: ClientClip
 }
 
@@ -190,56 +143,6 @@ export interface ClientRawImageInstance extends ImageInstance, ClientInstance {
 export interface ClientRawVideoInstance extends VideoInstance, ClientInstance {
   clip: ClientClip
   asset: ClientRawVideoAsset
-}
-
-
-
-export type ClientAudioDataOrError = DataOrError<ClientAudio>
-
-export type ClientFontDataOrError = DataOrError<ClientFont>
-
-
-export type ClientImageDataOrError = DataOrError<ClientImage>
-
-
-
-export type ClientVideoDataOrError = DataOrError<ClientVideo>
-
-
-export interface ClientMashAsset extends ClientAsset, MashAsset {
-  assetObject: ClientMashAssetObject
-  actions: Edits
-  addClipToTrack(clip : ClientClip | ClientClips, trackIndex? : number, insertIndex? : number, frame? : number) : void
-  addTrack(object?: TrackObject): Track
-  buffer: number
-  changeTiming(propertied: Propertied, property: string, value : number) : void
-  clearPreview(): void
-  clipInstance(clipObject: ClipObject): ClientClip
-  clips: ClientClips
-  clipsInTimeOfType(time: Time, avType?: AVType): ClientClips
-  composition: AudioPreview
-  dispatchChanged(action: Edit): void
-  draw() : void
-  drawnTime? : Time
-  encoding: string
-  encodings: Encodings
-  frame: number
-  framesHaveChanged(frames?: number): void 
-  loading: boolean
-  elementsPromise(size?: Size | number, selectedClip?: ClientClip): Promise<SvgItems>
-  paused: boolean
-  putPromise(): Promise<void>
-  mashDescription(options: ClientMashDescriptionOptions, selectedClip?: ClientClip): ClientMashDescription
-
-  reload(): Promise<void> | undefined
-  removeClipFromTrack(clip : ClientClip | ClientClips) : void
-  removeTrack(index?: number): void
-  seekToTime(time: Time): Promise<void> | undefined
-  time: Time
-  timeRange: TimeRange
-  timeToBuffer: Time
-  tracks: ClientTracks
-  updateAssetId(oldId: string, newId: string): void
 }
 
 export interface ClientMashAudioAsset extends ClientMashAsset, ClientAudioAsset {
@@ -274,44 +177,9 @@ export interface ClientMashVideoInstance extends VideoInstance, ClientInstance {
   clip: ClientClip
 }
 
-export interface ClipIconArgs {
-  clipSize: Size
-  scale: number
-  width?: number
-  gap?: number
-  audible: boolean
-  visible: boolean
-  audibleHeight: number
-  visibleHeight: number
-}
-
-export interface ClientClip extends Selectable, Clip {
-  svgItemPromise(args: ClipIconArgs): Promise<DataOrError<SvgElement>>
-  elementPromise(size: Size, time: Time, component: Panel): Promise<DataOrError<SvgItemsRecord>>
-  container?: ClientVisibleInstance & ContainerInstance
-  content: ClientInstance & ContentInstance | ClientAudioInstance
-  track: ClientTrack
-  updateAssetId(oldId: string, newId: string): void
-}
-export interface ClientClips extends Array<ClientClip>{}
-
-export interface ClientTrack extends Track {
-  addClips(clip: ClientClips, insertIndex?: number): void
-  clips: ClientClips
-  frameForClipNearFrame(clip: ClientClip, frame?: number): number
-  mash: ClientMashAsset
-  removeClips(clip: ClientClips): void
-}
-
-export interface ClientTracks extends Array<ClientTrack>{}
 
 export interface ClientTrackArgs extends TrackObject {
   mashAsset: ClientMashAsset
-}
-
-export interface ClientMashAssetObject extends MashAssetObject {
-  encodings?: Encodings
-  encoding?: string
 }
 
 export interface ClientImporter extends Importer {}
@@ -325,53 +193,12 @@ export interface ClientExporter extends Exporter {
 
 export interface ClientExporters extends Array<ClientExporter>{}
 
-export interface ClientAudibleAsset extends ClientAsset, AudibleAsset {
-  assetObject: AudibleAssetObject
-  audibleSource(): AudioBufferSourceNode | undefined
-  loadedAudio?: ClientAudio
-}
-
-export interface ClientVisibleAsset extends ClientAsset, VisibleAsset {
-  assetObject: VisibleAssetObject
-}
-
-
-export interface ClientRawAssetObject extends ClientRawAudioAssetObject, ClientRawImageAssetObject, ClientRawVideoAssetObject {}
-
-export interface ClientRawAudioAssetObject extends RawAssetObject {
-  loadedAudio?: ClientAudio
-}
-
-export interface ClientRawImageAssetObject extends RawAssetObject {
-  loadedImage?: ClientImage
-}
-
-export interface ClientRawVideoAssetObject extends RawAssetObject {
-  loadedVideo?: ClientVideo
-}
-
-export interface ClientAsset extends Asset, Selectable {
-  assetIcon(size: Size, cover?: boolean): Promise<DataOrError<Element>> 
-  assetIconPromise(resource: Resource, options: Rect | Size, cover?: boolean): Promise<DataOrError<SvgItem>>
-  imagePromise(resource: Resource): Promise<ClientImageDataOrError>
-  saveNeeded: boolean
-  savePromise(progress?: ServerProgress): Promise<StringDataOrError>
-  unload(): void
-}
-
-export interface ClientAssets extends Array<ClientAsset>{}
-
-export interface ClientAssetObject extends AssetObject {
-}
-
-export interface ClientAssetObjects extends Array<ClientAssetObject>{}
-
 export interface AudioPreview {
-  adjustClipGain(clip: Clip, quantize: number): void
+  adjustGain(audible: AudibleInstance): void
   buffer: number
   bufferClips(clips: Clip[], quantize: number): boolean 
   seconds: number
-  setGain(value : number, quantize: number): void
+  // setGain(value : number, quantize: number): void
   startContext(): void
   startPlaying(time: Time, clips: Clip[], quantize: number): boolean 
   stopContext(): void
@@ -391,90 +218,30 @@ export interface StartOptions {
 
 export type Timeout = ReturnType<typeof setTimeout>
 
-export interface ClientInstance extends Instance, Selectable {
-  asset: ClientAsset
-  clip: ClientClip
-  directions: Directions
-  unload(): void
-}
+export interface ClientImageAsset extends ImageAsset, ClientVisibleAsset {}
 
-export interface ClientAudibleInstance extends ClientInstance, AudibleInstance {
-  audiblePreviewPromise(outputSize: Size, scale?: number): Promise<DataOrError<SvgItem>>
-  asset: ClientAudibleAsset
-  clip: ClientClip
-}
+export interface ClientVideoAsset extends VideoAsset, ClientAudibleAsset, ClientVisibleAsset {}
 
-export interface ClientVisibleInstance extends VisibleInstance, ClientInstance {
-  asset: ClientVisibleAsset
-  clip: ClientClip
-  clippedElementPromise(content: ClientVisibleInstance, args: ContainerSvgItemArgs): Promise<DataOrError<SvgItemsRecord>>
-  containerSvgItemPromise(args: ContainerSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>>
-  contentSvgItemPromise(args: ContentSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>>
-}
-
-export interface ClientImageAsset extends ImageAsset, ClientVisibleAsset {
-  assetObject: ImageAssetObject
-}
-
-export interface ClientVideoAsset extends VideoAsset, ClientAudibleAsset, ClientVisibleAsset {
-  assetObject: VideoAssetObject
-  // previewTranscoding?: Resource
-}
-
-export interface ClientColorAsset extends ColorAsset, ClientAsset {
-  assetObject: ColorAssetObject
-}
-
-export interface ClientShapeAsset extends ShapeAsset, ClientAsset {
-  assetObject: ShapeAssetObject
-}
-
-export interface ClientColorInstance extends ColorInstance, ClientInstance {
-  clip: ClientClip
-  asset: ClientColorAsset
-}
-
-export interface ClientAudioAsset extends AudioAsset, ClientAsset, AudibleAsset {
-  assetObject: AudioAssetObject
-}
+export interface ClientAudioAsset extends AudioAsset, ClientAsset, AudibleAsset {}
 
 export interface ClientAudioInstance extends AudioInstance, ClientInstance, AudibleInstance {
   asset: ClientAudioAsset
   clip: ClientClip
 }
 
-export interface ClientShapeInstance extends ShapeInstance, ClientInstance {
-  clip: ClientClip
-  asset: ClientShapeAsset
-}
-
-export interface ClientTextAsset extends TextAsset, ClientAsset {
-  assetObject: TextAssetObject
-}
-
-export interface ClientTextInstance extends TextInstance, ClientInstance {
-  clip: ClientClip
-  asset: ClientTextAsset
-}
-
-export interface ClientTextAssetObject extends TextAssetObject {
-  loadedFont?: ClientFont
-}
-
 export interface EventFunction<T=Event> {
   (event: T): void
 }
 
-
 export interface EventEnabledClientActionDetail {
-  clientAction: ClientAction
+  clientAction: string
   enabled?: boolean
 }
 
 export interface EventClientDecodeDetail {
   options?: DecodeOptions
   decodingType: DecodingType
-  asset: ClientRawAsset
+  asset: ClientAsset
   promise?: Promise<DataOrError<Decoding>>
   progress?: ServerProgress
 }
@@ -487,26 +254,8 @@ export interface EventClientEncodeDetail extends EncodeArgs {
 export interface EventClientTranscodeDetail {
   options?: TranscodeOptions
   transcodingType: TranscodingType
-  asset: ClientRawAsset
-  promise?: Promise<DataOrError<Transcoding>>
-  progress?: ServerProgress
-}
-
-export interface EventSaveDetail {
   asset: ClientAsset
-  promise?: Promise<StringDataOrError>
-  progress?: ServerProgress
-}
-
-export interface UploadResult {
-  assetRequest: EndpointRequest
-  id?: string
-}
-
-export interface EventUploadDetail {
-  id?: string
-  request: EndpointRequest
-  promise?: Promise<DataOrError<UploadResult>>
+  promise?: Promise<DataOrError<Transcoding>>
   progress?: ServerProgress
 }
 
@@ -543,13 +292,13 @@ export interface EventProgressDetail {
 }
 
 export interface EventDoServerActionDetail {
-  serverAction: ServerAction
+  serverAction: string
   id?: string
   promise?: Promise<void>
 }
 
 export interface EventEnabledServerActionDetail {
-  serverAction: ServerAction
+  serverAction: string
   enabled?: boolean
 }
 
@@ -606,7 +355,7 @@ export interface EventScalarDetail {
 
 export interface EventSelectableDetail {
   targetId: TargetId
-  selectable?: Selectable | false
+  selectable?: Propertied | false
 }
 
 export interface EventChangeScalarDetail {
@@ -616,7 +365,7 @@ export interface EventChangeScalarDetail {
 
 export interface EventClipDetail {
   clipId: string
-  clip?: ClientClip
+  clip?: Clip
 }
 
 export interface EventControlGroupDetail extends Ordered {
@@ -694,7 +443,7 @@ export interface EventImportersDetail {
 }
 
 export interface EventImporterAddDetail {
-  assetObject: ClientAssetObject
+  assetObject: AssetObject
   promise?: Promise<DataOrError<ClientAsset>>
 }
 
@@ -704,7 +453,7 @@ export interface EventExportersDetail {
 
 export interface TrackClipsEventDetail {
   trackIndex: number
-  clips?: ClientClips
+  clips?: Clips
   dense?: boolean
 }
 
@@ -733,23 +482,9 @@ export interface EventPickedDetail {
   picked?: string
 }
 
-export interface ClientMashDescription extends MashDescription {
-  size: Size
-  svgItemsPromise: Promise<SvgItems>
-  elementsPromise: Promise<SvgItems>
-  time: Time
-  selectedClip?: ClientClip
-  mash: ClientMashAsset
-}
-
-export interface ClientMashDescriptionOptions extends MashDescriptionOptions {
-  selectedClip?: ClientClip
-  clip?: ClientClip
-}
-
 export interface ClientMashDescriptionArgs extends MashDescriptionArgs, ClientMashDescriptionOptions {
-  selectedClip?: ClientClip
-  clip?: ClientClip
+  selectedClip?: Clip
+  clip?: Clip
   mash: ClientMashAsset
   time: Time
 }
@@ -757,7 +492,7 @@ export interface ClientMashDescriptionArgs extends MashDescriptionArgs, ClientMa
 export interface ClientSegmentDescription extends SegmentDescription {
   clip: ClientClip
   /** Item for display of clip itself */
-  svgVector(classes: string[], inactive?: boolean): SvgVector
+  svgItem(animate: boolean): SvgItem
   /** Items for display of clip's bounds and outline. */
   svgItems(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems 
 }
@@ -767,4 +502,9 @@ export interface ClientSegmentDescriptions extends Array<ClientSegmentDescriptio
 export interface ClientSegmentDescriptionArgs extends SegmentDescriptionArgs {
   clip: ClientClip
   mashDescription: ClientMashDescription
+}
+
+export interface ClientContainerInstance extends ClientInstance, ContainerInstance {
+  asset: ClientAsset & ContainerAsset
+  clip: ClientClip
 }

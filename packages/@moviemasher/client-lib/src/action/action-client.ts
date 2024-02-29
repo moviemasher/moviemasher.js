@@ -1,6 +1,6 @@
 import type { PropertyValues } from 'lit'
 
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventDoClientAction, EventEnabledClientAction, EventChangedClientAction } from '../utility/events.js'
 import { ButtonElement } from '../component/button.js'
 
@@ -29,7 +29,7 @@ export class ClientActionElement extends ButtonElement {
     const { enabledEvent } = this
     if (!enabledEvent) return
     
-    MOVIEMASHER.dispatch(enabledEvent)
+    MOVIE_MASHER.dispatch(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 

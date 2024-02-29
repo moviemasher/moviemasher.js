@@ -2,8 +2,9 @@ import type { PropertyDeclarations } from '@lit/reactive-element'
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { REDO, UNDO, SAVE } from '../runtime.js'
-import { FooterBase } from '../base/LeftCenterRight.js'
+import { REDO, UNDO } from '../runtime.js'
+import { FooterBase } from '../base/component-view.js'
+import { $SAVE } from '@moviemasher/shared-lib/runtime.js'
 
 export const InspectorFooterTag = 'movie-masher-inspector-footer'
 /**
@@ -17,9 +18,9 @@ export class InspectorFooterElement extends FooterBase {
     this.loadComponent('movie-masher-action-server')
     htmls.push(html`
       <movie-masher-action-server
-        detail='${SAVE}'
-        icon='${SAVE}'
-        string='${SAVE}'
+        detail='${$SAVE}'
+        icon='${$SAVE}'
+        string='${$SAVE}'
       ></movie-masher-action-server>
     `)
     return super.leftContent(htmls)

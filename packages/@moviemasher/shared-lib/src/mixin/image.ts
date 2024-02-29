@@ -1,9 +1,9 @@
-import type { MaybeComplexSvgItem, Constrained, DataOrError, ImageAsset, ImageInstance, SvgItem, VisibleAsset, VisibleInstance, ContainerSvgItemArgs, ContentSvgItemArgs, Rect, Scalar } from '../types.js'
+import type { Constrained, ContainerSvgItemArgs, ContentSvgItemArgs, DataOrError, ImageAsset, ImageInstance, MaybeComplexSvgItem, Rect, Scalar, SvgItem, VisibleAsset, VisibleInstance } from '../types.js'
 
-import { ERROR, $IMAGE, namedError } from '../runtime.js'
-import { svgImageWithOptions, svgOpacity } from '../utility/svg.js'
-import { requestUrl } from '../utility/request.js'
+import { $IMAGE, ERROR, namedError } from '../runtime.js'
 import { isRequestable } from '../utility/guards.js'
+import { requestUrl } from '../utility/request.js'
+import { svgImageWithOptions, svgOpacity } from '../utility/svg.js'
 
 export function ImageAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
   T & Constrained<ImageAsset> {
@@ -11,8 +11,8 @@ export function ImageAssetMixin<T extends Constrained<VisibleAsset>>(Base: T):
     override canBeContainer = true
     override canBeContent = true
     override canBeFill = true
-    override type = $IMAGE
     override hasIntrinsicSizing = true
+    override type = $IMAGE
   }
 }
 

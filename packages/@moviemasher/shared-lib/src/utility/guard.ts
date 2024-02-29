@@ -1,4 +1,4 @@
-import type { ClientAudio, ClientFont, ClientImage, ClientVideo, Integer, Not, Numeric, OkNumber, PopulatedArray, PopulatedString, StringTuple, Value } from '../types.js'
+import type { ClientAudio, ClientFont, ClientImage, ClientVideo, Integer, Not, Numeric, OkNumber, PopulatedArray, PopulatedString, Scalar, StringTuple, Value } from '../types.js'
 
 const isNan = (value: any): boolean => { return Number.isNaN(value) }
 
@@ -59,6 +59,9 @@ export const isPopulatedArray = <T = unknown>(value: any): value is PopulatedArr
     isArray<T>(value) && Boolean(value.length)
   )
 }
+export const isBoolean = (value: any): value is boolean => (
+  typeof value === 'boolean'
+)
 
 export const isString = (value: any): value is string => {
   return typeof value === 'string'
@@ -79,6 +82,10 @@ export const isPositive = (value: any): value is number => {
 export const isValue = (value: any): value is Value => {
   return isNumber(value) || isString(value) 
 }
+
+export const isScalar = (value: any): value is Scalar => (
+  isValue(value) || isBoolean(value)
+)
 
 export const isObject = (value: any): value is object => {
   return typeof value === 'object'

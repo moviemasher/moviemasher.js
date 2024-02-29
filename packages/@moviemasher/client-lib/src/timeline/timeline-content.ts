@@ -3,8 +3,8 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html'
-import { ContentBase } from '../base/LeftCenterRight.js'
-import { Scroller } from '../base/LeftCenterRight.js'
+import { ContentBase } from '../base/component-view.js'
+import { Scroller } from '../base/component-view.js'
 
 export const TimelineContentTag = 'movie-masher-timeline-content'
 

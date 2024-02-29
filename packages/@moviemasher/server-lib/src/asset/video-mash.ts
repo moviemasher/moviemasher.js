@@ -1,7 +1,6 @@
-import type { EvaluationRect, AVType, AbsolutePath, Aspect, Asset, AssetObject, CacheArgs, ClipObject, ContainerRectArgs, ContainerSvgItemArgs, ContentRectArgs, ContentSvgItemArgs, DataOrError, EvaluationPoint, EvaluationSize, EvaluationValue, InstanceArgs, ListenersFunction, MashInstanceObject, MashVideoAssetObject, Point, Rect, RectTuple, Rounding, Size, SizeKey, SizeTuple, SvgItemArgs, SvgItems, SvgItemsRecord, Time, TimeRange, TrackArgs, ValueRecord, Values, VisibleInstance } from '@moviemasher/shared-lib/types.js'
+import type { AVType, AbsolutePath, Aspect, AssetFiles, AssetFunction, AudioCommandFileArgs, CacheArgs, ClipObject, CommandFile, CommandFiles, ContainerRectArgs, ContainerSvgItemArgs, ContentRectArgs, ContentSvgItemArgs, DataOrError, EvaluationPoint, EvaluationRect, EvaluationSize, EvaluationValue, Rect, RectTuple, Rounding, Size, SizeKey, SizeTuple, SvgItemArgs, SvgItemsRecord, Time, TimeRange, TrackArgs, ValueRecord, Values, VideoCommandFileOptions, VisibleCommandFileArgs, VisibleInstance } from '@moviemasher/shared-lib/types.js'
 import type { ServerClip, ServerClips, ServerMashAsset, ServerMashVideoAsset, ServerMashVideoInstance, ServerTrack } from '../type/ServerMashTypes.js'
-import type { Tweening } from '../type/ServerTypes.js'
-import type { AssetFiles, AudibleCommandFilterArgs, AudioCommandFileArgs, CommandFile, CommandFiles, CommandFilter, CommandFilters, ServerAssetManager, ServerAudioInstance, ServerContainerInstance, ServerContentInstance, ServerMashDescription, ServerMashDescriptionOptions, VideoCommandFileOptions, VideoCommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../types.js'
+import type { AudibleCommandFilterArgs, CommandFilter, CommandFilters, ServerAudioInstance, ServerContainerInstance, ServerContentInstance, ServerMashDescription, ServerMashDescriptionOptions, Tweening, VideoCommandFilterArgs, VisibleCommandFilterArgs } from "../types.js"
 
 import { ClipClass } from '@moviemasher/shared-lib/base/clip.js'
 import { TrackClass } from '@moviemasher/shared-lib/base/track.js'
@@ -9,27 +8,31 @@ import { AudibleAssetMixin, AudibleInstanceMixin } from '@moviemasher/shared-lib
 import { MashAssetMixin } from '@moviemasher/shared-lib/mixin/mash.js'
 import { VideoAssetMixin, VideoInstanceMixin } from '@moviemasher/shared-lib/mixin/video.js'
 import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
-import { $ALPHA, $AUDIO, $CEIL, $DIVIDE, $END, $FRAME, $HEIGHT, $MASH, $NUMBER, $OPACITY, $POINT, $SIZE, $SUBTRACT, $SVG, $SVGS, $VARIABLE, $VIDEO, $WIDTH, COLON, DASH, DOT, ERROR, POINT_KEYS, POINT_ZERO, RECTS_ZERO, RECT_KEYS, RECT_ZERO, RGBA_BLACK_ZERO, RGB_BLACK, RGB_WHITE, arrayLast, arraySet, assertAsset, errorThrow, idGenerate, isAssetObject, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { $ALPHA, $ASPECT, $AUDIO, $CEIL, $DIVIDE, $END, $FRAME, $HEIGHT, $MASH, $NUMBER, $OPACITY, $POINT, $SIZE, $SUBTRACT, $SVG, $SVGS, $VARIABLE, $VIDEO, $WIDTH, COLON, DASH, DOT, ERROR, POINT_KEYS, POINT_ZERO, RECTS_ZERO, RECT_KEYS, RECT_ZERO, RGBA_BLACK_ZERO, RGB_BLACK, RGB_WHITE, SLASH, arrayLast, arraySet, errorThrow, idGenerate, isAssetObject, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { Eval } from '@moviemasher/shared-lib/utility/evaluation.js'
-import { isDefined, isNumber, isBelowOne, isValue  } from '@moviemasher/shared-lib/utility/guard.js'
-import { assertCanBeContainerInstance, assertDefined, assertTrue} from '@moviemasher/shared-lib/utility/guards.js'
+import { isBelowOne, isDefined, isNumber, isValue } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertAspect, assertCanBeContainerInstance, assertDefined, assertTransparency, assertTrue, assertVisibleInstance, isAudibleInstance, isVisibleInstance } from '@moviemasher/shared-lib/utility/guards.js'
 import { assertSizeNotZero, containerEvaluationPoint, contentEvaluationSize, copyPoint, copyRect, copySize, evenEvaluationSize, orientPoint, pointsEqual, rectsEqual, scaleContentEvaluationPoint, sizeNotZero, sizeString, sizeValid, sizesEqual, translateEvaluationPoint, translatePoint, tweenEvaluation, tweenEvaluationPoint, tweenEvaluationSize, unionRects } from '@moviemasher/shared-lib/utility/rect.js'
-import { appendSvgItemsRecord, mergeSvgItemsRecords, simplifyRecord, svgPolygonElement, svgSet, svgSetDimensions, svgText } from '@moviemasher/shared-lib/utility/svg.js'
+import { appendSvgItemsRecord, mergeSvgItemsRecords, simplifyRecord, svgPolygonElement } from '@moviemasher/shared-lib/utility/svg.js'
 import { assertTimeRange } from '@moviemasher/shared-lib/utility/time.js'
 import path from 'path'
-import { ServerAssetClass } from '../base/asset.js'
-import { ServerInstanceClass } from '../base/instance.js'
+import { ServerAssetClass } from '@moviemasher/shared-lib/base/server-asset.js'
+import { ServerInstanceClass } from '@moviemasher/shared-lib/base/server-instance.js'
 import { ServerMashDescriptionClass } from '../encode/ServerMashDescriptionClass.js'
-import { assertServerAudibleInstance, assertServerContentInstance, assertServerVisibleInstance, isServerAudibleInstance } from '../utility/guard.js'
-import { ServerAudibleAssetMixin, ServerAudibleInstanceMixin } from '../mixin/audible.js'
-import { ServerVisibleAssetMixin, ServerVisibleInstanceMixin } from '../mixin/visible.js'
-import { EventServerAsset } from '../utility/events.js'
+import { ServerAudibleAssetMixin, ServerAudibleInstanceMixin } from '@moviemasher/shared-lib/mixin/server-audible.js'
+import { ServerVisibleAssetMixin, ServerVisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/server-visible.js'
 import { alphamergeFilters, colorFilter, cropFilter, fpsFilter, overlayFilter, scaleFilter, setPtsSpeedFilters, setsarFilter } from '../utility/command.js'
 import { ENV, ENV_KEY } from '../utility/env.js'
+import { assertAbsolutePath, assertServerAudibleInstance } from '../utility/guard.js'
 
 const WithMashAsset = MashAssetMixin(ServerAssetClass)
 export class ServerMashAssetClass extends WithMashAsset implements ServerMashAsset {
 
+
+  assetFiles(_: CacheArgs): AssetFiles {
+    return errorThrow(ERROR.Unimplemented)
+  }
+  
   override get clips(): ServerClips { return super.clips as ServerClips }
 
   clipsInTimeOfType(time: Time, avType?: AVType): ServerClips {
@@ -40,10 +43,6 @@ export class ServerMashAssetClass extends WithMashAsset implements ServerMashAss
     return new ServerClipClass(object)
   } 
 
-  assetFiles(_: CacheArgs): AssetFiles {
-    return errorThrow(ERROR.Unimplemented)
-  }
-  
   override mashDescription(options: ServerMashDescriptionOptions): ServerMashDescription {
     return new ServerMashDescriptionClass({ ...options, mash: this })
   }
@@ -65,26 +64,8 @@ const WithServerVisibleAsset = ServerVisibleAssetMixin(WithServerAudibleAsset)
 const WithVideoAsset = VideoAssetMixin(WithServerVisibleAsset)
 
 export class ServerMashVideoAssetClass extends WithVideoAsset implements ServerMashVideoAsset {
-  constructor(args: MashVideoAssetObject, manager?: ServerAssetManager) {
-    super(args, manager)
-    this.initializeProperties(args)
-  }
 
-  static handleAsset(event: EventServerAsset) {
-    const { detail } = event
-    const { assetObject, manager } = detail
-    if (isAssetObject(assetObject, $VIDEO, $MASH)) {
-      // console.log('ServerMashVideoAssetClass.handleAsset', !!manager)
-      detail.asset = new ServerMashVideoAssetClass(assetObject, manager)
-      event.stopImmediatePropagation()
-    }
-  }
 }
-
-// listen for video/mash asset event
-export const ServerMashVideoListeners: ListenersFunction = () => ({
-  [EventServerAsset.Type]: ServerMashVideoAssetClass.handleAsset
-})
 
 const WithAudibleInstance = AudibleInstanceMixin(ServerInstanceClass)
 const WithVisibleInstance = VisibleInstanceMixin(WithAudibleInstance)
@@ -93,23 +74,10 @@ const WithServerVisibleInstance = ServerVisibleInstanceMixin(WithServerAudibleIn
 const WithVideoInstance = VideoInstanceMixin(WithServerVisibleInstance)
 
 export class ServerMashVideoInstanceClass extends WithVideoInstance implements ServerMashVideoInstance {
-  constructor(args: MashInstanceObject & InstanceArgs) {
-    super(args)
-    this.initializeProperties(args)
-  }
-  
   declare asset: ServerMashVideoAsset
 }
 
 export class ServerClipClass extends ClipClass implements ServerClip {
-  override asset(assetIdOrObject: string | AssetObject): Asset {
-    const { mash } = this.track
-    const asset = mash.asset(assetIdOrObject)
-    assertAsset(asset)
-    
-    return asset
-  }
-
   audioCommandFiles(args: AudioCommandFileArgs): CommandFiles {
     const { content } = this
     assertServerAudibleInstance(content)
@@ -125,23 +93,26 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     const clipTime = this.timeRange
     const contentArgs: AudibleCommandFilterArgs = { ...args, clipTime }
     const { content } = this
-    assertServerAudibleInstance(content, 'ServerAudibleInstance')
+    assertServerAudibleInstance(content)
+
     return audibleCommandFilters(contentArgs, content)
   }
 
-  override get container(): ServerContainerInstance { return super.container as ServerContainerInstance}
+  override get container(): ServerContainerInstance { 
+    return super.container as ServerContainerInstance
+  }
 
-  override get content(): ServerContentInstance | ServerAudioInstance { 
-    return super.content as ServerContentInstance | ServerAudioInstance 
+  override get content(): ServerContentInstance  { 
+    return super.content as ServerContentInstance 
   }
 
   precoding?: AbsolutePath
   
   get requiresPrecoding(): boolean {
     const { container, content } = this
-    assertServerContentInstance(content, 'content')
-    if (content.asset.canBeFill) return false
+    if (!isVisibleInstance(content)) return false 
 
+    if (content.asset.canBeFill) return false
     if (container.tweens($SIZE) && container.tweens($POINT)) return true
     if (content.tweens($SIZE) && content.tweens($POINT)) return true
   
@@ -151,10 +122,11 @@ export class ServerClipClass extends ClipClass implements ServerClip {
   private svgFilesForTime(encodePath: AbsolutePath, time: TimeRange, outputSize: Size, videoRate: number): DataOrError<CommandFiles>{
     const svgFiles: CommandFiles = []
     const result = { data: svgFiles }
-    const { content, container, timeRange, transparency, clipIndex } = this
+    const transparency = this.value('transparency')
+    const { content, container, timeRange, clipIndex } = this
     const svgItemArgs: SvgItemArgs = { timeRange, size: outputSize, time: time }
     const { asset: containerAsset, id: containerId } = container
-    assertServerVisibleInstance(content, 'content')
+    assertVisibleInstance(content)
 
     const { asset: contentAsset } = content
     const { isVector, canBeFill: containerCanBeFill } = containerAsset
@@ -187,16 +159,20 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     const lastTime = arrayLast(times) 
     const root = path.resolve(ENV.get(ENV_KEY.RelativeRequestRoot))
 
-    const base_uri = `file://${root}`    
-    const inputOptions: ValueRecord = { framerate: videoRate, base_uri }
+    const inputOptions: ValueRecord = { framerate: videoRate, base_uri: `file://${root}` }
     if (isRange) inputOptions.t = time.lengthSeconds
     const nameBits: Values = [firstTime.frame, lastTime.frame, frameRect.width, frameRect.height]
     const basePath = path.join(encodePath, $SVGS, clipIndex.join(DASH), nameBits.join(DASH))
     const baseFile: CommandFile = { 
       inputId: containerId, inputOptions, avType: $VIDEO,
-      type: $SVGS, asset: containerAsset, file: '',
+      type: $SVGS, asset: containerAsset, file: '/',
     }  
-    if (multipleTimes) baseFile.path = [basePath, $FRAME, `%0${String(length + 1).length}d.svg`, ].join(DASH)
+    if (multipleTimes) {
+      const pattern = [basePath, $FRAME, `%0${String(length + 1).length}d.svg`].join(DASH)
+      assertAbsolutePath(pattern)
+      baseFile.path = pattern
+    }
+
     for (const [index, time] of times.entries()) {
       const record: SvgItemsRecord = { 
         items: [svgPolygonElement(frameRect, '', backColor)], defs: [], styles: [] 
@@ -236,6 +212,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
         nameBits.push('', $FRAME, String(1 + time.frame - firstTime.frame).padStart(pad, '0'))
       }
       const file = [basePath, [nameBits.join(DASH), $SVG].join(DOT)].join('')
+      assertAbsolutePath(file)
       const svgFile: CommandFile = { ...baseFile, content: text, file }  
       svgFiles.push(svgFile)
     }
@@ -270,7 +247,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
   videoCommandFiles(args: VideoCommandFileOptions): CommandFiles {
     const files: CommandFiles = []
     const { content, container, timeRange, precoding, timeRange: clipTime } = this
-    assertServerVisibleInstance(content, 'content')
+    assertVisibleInstance(content)
 
     const { outputSize, time: timeOrRange, videoRate, encodePath } = args
     assertSizeNotZero(outputSize, 'outputSize')
@@ -307,7 +284,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
   videoCommandFilters(args: VideoCommandFilterArgs): CommandFilters {
     const filters: CommandFilters = []
     const { content, container } = this
-    assertServerVisibleInstance(content, 'content')
+    assertVisibleInstance(content)
 
     const { asset: containerAsset, id: containerId } = container
     const { isVector, canBeFill: containerCanBeFill, alpha } = containerAsset
@@ -329,6 +306,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
 
   private bestFrameRects(args: ContentRectArgs, hasContentSvg?: boolean, hasContainerSvg?: boolean): [Rect, RectTuple, Rect | undefined] {
     const { content, precoding } = this
+    assertVisibleInstance(content)
     const { outputSize, containerRects } = args
     const outputRect = { ...POINT_ZERO, ...outputSize }
     const contentRects: RectTuple = hasContentSvg ? RECTS_ZERO : content.contentRects(args)
@@ -355,7 +333,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     let containerInput = inputId 
     const filters: CommandFilters = []
     const { content, container } = this
-    assertServerVisibleInstance(content, 'content')
+    assertVisibleInstance(content)
 
     const { asset: containerAsset, id: containerId } = container
     const { isVector, canBeFill: containerCanBeFill } = containerAsset
@@ -371,7 +349,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
 
     const time = clipTime.intersection(outputTime)
     assertTimeRange(time)
-    assertCanBeContainerInstance(container, 'container')
+    assertCanBeContainerInstance(container)
 
     const containerRectArgs: ContainerRectArgs = { 
       outputSize, time, timeRange: clipTime 
@@ -382,7 +360,10 @@ export class ServerClipClass extends ClipClass implements ServerClip {
       tweening.point = !pointsEqual(containerRects[0], containerRects[1])
       tweening.size = !sizesEqual(containerRects[0], containerRects[1])
     }
-    const { transparency, precoding } = this
+    const transparency = this.string('transparency')
+    assertTransparency(transparency)
+
+    const { precoding } = this
     const visibleArgs: VisibleCommandFilterArgs = { ...args, containerRects }
     const outputRect = { ...POINT_ZERO, ...outputSize }
     const alphaId = idGenerate('alpha')
@@ -422,11 +403,11 @@ export class ServerClipClass extends ClipClass implements ServerClip {
           tweening.point ||= !pointsEqual(first, last)
           tweening.size ||= !sizesEqual(first, last)
         }
-        filters.push(...this.videoInstanceFilters(content, frameRect, contentRects, visibleArgs, tweening))   
+        filters.push(...this.videoInstanceFilters(false, content, frameRect, contentRects, visibleArgs, tweening))   
         contentInput = arrayLast(arrayLast(filters).outputs)
       }
       if (containerIsVideo) {
-        filters.push(...this.videoInstanceFilters(container, frameRect, containerRects, visibleArgs, tweening))   
+        filters.push(...this.videoInstanceFilters(true, container, frameRect, containerRects, visibleArgs, tweening))   
         containerInput = arrayLast(arrayLast(filters).outputs)
       }     
     }
@@ -445,12 +426,12 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     return filters
   }
 
-  private videoInstanceFilters(instance: VisibleInstance, frameRect: Rect, rects: RectTuple, args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
+  private videoInstanceFilters(container: boolean, instance: VisibleInstance, frameRect: Rect, rects: RectTuple, args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     const filters: CommandFilters = []
     const { size, point } = tweening
     const needsDynamic = size && point
     const { videoRate, duration, commandFiles, time } = args
-    const { asset, container, id } = instance
+    const { asset, id } = instance
     const { alpha } = asset
     const commandFile = commandFiles.find(file => (
       file.inputId.startsWith(id) && file.asset === asset && file.type === $VIDEO
@@ -470,7 +451,7 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     const pointPosition = tweenPosition(videoRate * duration, 1) // overlay bug
     filters.push(colorFilter(colorId, '#000000', videoRate, frameRect))
 
-    if (isServerAudibleInstance(instance)) {
+    if (isAudibleInstance(instance)) {
       const setptsId = idGenerate('setpts')
       filters.push(...setPtsSpeedFilters(filterInput, setptsId, instance))
       filterInput = setptsId
@@ -528,7 +509,12 @@ export class ServerClipClass extends ClipClass implements ServerClip {
       })
       return point
     })
-    const { pointAspect, cropDirections } = container
+
+    const pointAspect = container.string([$POINT, $ASPECT].join('')) 
+    assertAspect(pointAspect)
+
+
+    const { cropDirections } = container
     const containerTweenPoint = tweenEvaluationPoint(containerTweenPoints, position)
     const containerPoint = containerEvaluationPoint(containerTweenPoint, containerSize, outputSize, pointAspect, cropDirections, rounding)
     return containerPoint
@@ -540,26 +526,12 @@ export class ServerClipClass extends ClipClass implements ServerClip {
     const containerSize = tweenEvaluationSize(containerRects, position)
     const evenedSize = evenEvaluationSize(containerSize, rounding)
     return evenedSize
-    
-    // const { container } = this
-    // const intrinsicSize = this.sizingRect(outputSize)
-    // const { sizeAspect, SizeKey } = container
-    // const tweenRects = container.scaleRects(time, clipTime)
-    // const tweenSize = tweenEvaluationSize(tweenRects, position)
-    // const flippedSize = orientEvaluationSize(tweenSize, intrinsicSize, outputSize, sizeAspect, SizeKey)
-    // const { container } = this
-    // assertServerContainerInstance(container)
-    // const { time, clipTime, outputSize } = args
-    // const intrinsicSize = this.sizingRect(outputSize)
-    // const { sizeAspect, SizeKey } = container
-    // const tweenRects = container.scaleRects(time, clipTime)
-    // const tweenSize = tweenEvaluationSize(tweenRects, position)
-    // const containerSize = containerEvaluationSize(tweenSize, intrinsicSize, outputSize, sizeAspect, SizeKey, rounding)
-    // return containerSize
   }
 
   private contentEvaluationPoint(position: EvaluationValue, args: VisibleCommandFilterArgs, rounding: Rounding): EvaluationPoint {
     const { content } = this
+    assertVisibleInstance(content)
+
     const { time, clipTime, outputSize} = args
 
     // can't interpolate between points in container rects since they are based on sizes
@@ -584,7 +556,12 @@ export class ServerClipClass extends ClipClass implements ServerClip {
       ...tweenEvaluationSize(contentTweenRects, position),
       ...tweenEvaluationPoint(contentTweenRects, position)
     }
-    const { intrinsicRect, sizeKey, pointAspect, sizeAspect } = content
+    const pointAspect = content.string([$POINT, $ASPECT].join('')) 
+    assertAspect(pointAspect)
+    const sizeAspect = content.string([$SIZE, $ASPECT].join(''))
+    assertAspect(sizeAspect)
+
+    const { intrinsicRect, sizeKey } = content
     const point = contentEvaluationPoint(tweenRect, intrinsicRect, containerRect, outputSize, sizeAspect, pointAspect, rounding, sizeKey)
     return point
   }
@@ -592,7 +569,12 @@ export class ServerClipClass extends ClipClass implements ServerClip {
   private contentEvaluationSize = (position: EvaluationValue, args: VisibleCommandFilterArgs, rounding: Rounding): EvaluationSize => {
     const { time, clipTime, outputSize } = args
     const { content } = this
-    const { sizeKey, intrinsicRect, sizeAspect } = content
+    assertVisibleInstance(content)
+
+    const sizeAspect = content.string([$SIZE, $ASPECT].join(''))
+    assertAspect(sizeAspect)
+
+    const { sizeKey, intrinsicRect } = content
     const contentTweenRects = content.scaleRects(time, clipTime)
     const contentTweenSize = tweenEvaluationSize(contentTweenRects, position)
     const containerSize = this.containerEvaluationSize(position, args, rounding)
@@ -702,11 +684,11 @@ const evaluationValue = (operative: EvaluationValue) => (
   isValue(operative) ? operative : operative.toValue()
 )
 
-
 const audibleCommandFilters = (args: AudibleCommandFilterArgs, instance: ServerAudioInstance): CommandFilters => {
   const filters: CommandFilters = []
   const { commandFiles, time, clipTime } = args
-  const { id, speed } = instance
+  const speed = instance.number('speed')
+  const { id } = instance
   const { asset } = instance
   const commandFile = commandFiles.find(file => file.asset === asset && $AUDIO === file.avType)
   const contentId = commandFile ? commandFile.inputId : id
@@ -760,155 +742,9 @@ const rectValuesString = (rect: Rect): string => {
   return `${width}x${height}@${x}/${y}`
 }
 
-// type EvaluationRecord = Record<string, EvaluationValue> | EvaluationPoint | EvaluationSize
-
-// const debugFilters = (inputId: string, clip: ServerClip, args: VisibleCommandFilterArgs, frameRect: Rect): CommandFilters => {
-//   const drawtextFilter = (inputId: string, outputId: string, point: Point, text: Value, fontcolor: string = RGB_WHITE, fontsize: number = 12): CommandFilter => {
-//     const options = { text, ...roundPoint(point, $FLOOR), fontcolor, fontsize }  
-//     const commandFilter: CommandFilter = {
-//       ffmpegFilter: 'drawtext', options, inputs: [inputId], outputs: [outputId]
-//     }
-//     return commandFilter
-//   }  
-
-
-//   const drawboxFilter = (inputId: string, outputId: string, rect: Rect, color: string = RGB_WHITE, thickness: Value = 1): CommandFilter => {
-//     const options = { ...rect, color, thickness }
-//     const commandFilter: CommandFilter = {
-//       ffmpegFilter: 'drawbox', options,
-//       inputs: [inputId], outputs: [outputId]
-//     }
-//     return commandFilter
-//   }
-
-
-//   const { content, container } = clip
-//   assertServerContentInstance(content, 'content')
-//   assertServerContainerInstance(container, 'container')
-
-//   const { time: argsTime, clipTime: argsClipTime, outputSize } = args
-//   const time = argsTime.scale(3)
-//   const clipTime = argsClipTime.scale(3)
-
-//   assertTimeRange(time)
-//   // const argsTime = timeRange.scale(videoRate)
-//   const { frameTimes } = time
-//   let filterInput = inputId
-
-//   const containerColor = RGB_BLACK // '#00FF00' 
-//   const contentColor = RGB_BLACK // '#0000FF' 
-
-
-//   return frameTimes.flatMap(time => {
-//     const filters: CommandFilters = []
-//     const containerArgs: ContainerRectArgs = { 
-//       outputSize, time, timeRange: clipTime 
-//     }
-//     const [containerStartRect] = clip.clipRects(containerArgs)
-//     const contentArgs: ContentRectArgs = {
-//       containerRects:  [containerStartRect, containerStartRect], 
-//       time, timeRange: clipTime, outputSize
-//     }
-//     const [contentStartRect] = content.contentRects(contentArgs)
-//     const contentRect = { ...contentStartRect, ...translatePoint(contentStartRect, frameRect, true) }
-//     const contentTextRect = { ...contentRect, ...translatePoint(contentRect, { x: 3, y: 3 }) }
-//     const contentDrawtextId = idGenerate('drawtext')
-//     const contentText = `${time.frame} ${rectValuesString(contentRect)}`
-//     const contentTextFilter = drawtextFilter(filterInput, contentDrawtextId, contentTextRect, contentText, contentColor)
-//     filters.push(contentTextFilter)
-//     filterInput = contentDrawtextId
-
-//     const contentDrawboxId = idGenerate('drawbox')
-//     const contentDrawboxFilter = drawboxFilter(filterInput, contentDrawboxId, contentRect, contentColor)
-//     filters.push(contentDrawboxFilter)
-//     filterInput = contentDrawboxId
-
-//     const containerRect = { ...containerStartRect, ...translatePoint(containerStartRect, frameRect, true) }
-//     const containerTextRect = { ...containerRect, ...translatePoint(containerRect, { x: 3, y: 3 }) }
-//     const containerDrawtextId = idGenerate('drawtext')
-//     const containerText = `${time.frame} ${rectValuesString(containerRect)}`
-//     const containerTextFilter = drawtextFilter(filterInput, containerDrawtextId, containerTextRect, containerText, containerColor)
-//     filters.push(containerTextFilter)
-//     filterInput = containerDrawtextId
-
-//     const containerDrawboxId = idGenerate('drawbox')
-//     const containerDrawboxFilter = drawboxFilter(filterInput, containerDrawboxId, containerRect, containerColor)
-//     filters.push(containerDrawboxFilter)
-//     filterInput = containerDrawboxId
-
-
-//     return filters
-//   })    
-// }
-// const heading = (numbers: Numbers): string => {
-//   const strings: Strings = []
-//   let [number] = numbers
-//   let headed = ''
-//   numbers.forEach((next, index) => {
-//     const delta = next - number
-//     if (delta) {
-//       const direction = isPositive(delta) ? '+' : '-'
-//       if (direction !== headed) {
-//         headed = direction
-//         strings.push(`${headed}${index}`)
-//       }
-//     }
-//     number = next
-//   })
-//   return strings.join(',')
-// }
-
-// let DEBUG_COUNTER = 0
-// const indentExpression = (expression: string): string => {
-//   const indent = SPACE.repeat(2)
-//   let depth = 0
-//   const chars = expression.split('').flatMap(char => {
-//     if (char === '(') return [char, NEWLINE, indent.repeat(++depth)]
-//     if (char === ')') return [NEWLINE, indent.repeat(--depth), char]
-//     return [char]
-//   })
-//   return chars.join('')
-// }
-// const outputEvaluation = (record: EvaluationRecord, contentOrContainer: string): void => {
-//   const prefix = `/app/temporary/assets/json/${contentOrContainer}`
-//   Object.entries(record).forEach(([key, evaluation]) => {
-//     if (key === $X || key === $Y) {
-//       const numbers = arrayOfNumbers(3, 1).map(frame => {
-//         EvaluationVariables.n = frame
-//         const value = Number(evaluation)
-//         fileWrite(`${prefix}-${key}-${DEBUG_COUNTER}-description-${frame}.txt`, evaluation.description)
-//         return value
-//       })
-//       delete EvaluationVariables.n
-//       const value = evaluation.toValue()
-//       fileWrite(`${prefix}-${key}-${DEBUG_COUNTER}-expression.txt`, value)
-//       fileWrite(`${prefix}-${key}-${DEBUG_COUNTER}-expression-indented.txt`, indentExpression(value))
-//       const headed = heading(numbers)
-
-//     }
-//     const string = jsonStringify(evaluation)
-//     fileWrite(`${prefix}-${key}-${DEBUG_COUNTER}.json`, string)
-//   })
-// }
-
-
-// const containerEvaluationSize = (tweenSize: EvaluationSize, intrinsicSize: Size, outputSize: Size, sizeAspect: string = $MAINTAIN, rounding: Rounding, sizeKey?: SizeKey): EvaluationSize => {
-//   const flippedSize = orientEvaluationSize(tweenSize, intrinsicSize, outputSize, sizeAspect, sizeKey)
-//   const scaledSize = scaleEvaluationSize(outputSize, flippedSize.width, flippedSize.height, rounding)   
-//   const evenedSize = evenEvaluationSize(scaledSize, rounding)
-//   return evenedSize
-// }
-
-
-// const debugEvaluations = (opertives: EvaluationRecord): any => {
-//   Object.entries(opertives).forEach(([key, operative]) => {
-//     const filePath = path.join('/app/temporary/assets/json', `${key}.json`)//ENV.get(ENV_KEY.ApiDirCache)
-//     fileWrite(filePath, jsonStringify(operative))
-//   })
-//   return Object.keys(opertives)
-// }
-// const debugObjects = (objects: EvaluationsRecord): any => {
-//   return Object.fromEntries(Object.entries(objects).map(([key, value]) => {
-//     return [key, debugEvaluations(value)]
-//   }))
-// }
+export const serverVideoMashAssetFunction: AssetFunction = (assetObject) => {
+  if (!isAssetObject(assetObject, $VIDEO, $MASH)) {
+    return namedError(ERROR.Syntax, [$VIDEO, $MASH].join(SLASH))
+  }
+  return { data: new ServerMashVideoAssetClass(assetObject) }
+}

@@ -5,7 +5,7 @@ import { css } from '@lit/reactive-element/css-tag.js';
 import { ROW } from '../runtime.js';
 import { DOT, $END } from '@moviemasher/shared-lib/runtime.js';
 import { html, nothing } from 'lit-html';
-import { Component, ComponentLoader } from '../base/Component.js';
+import { Component, ComponentLoader } from '../base/component.js';
 import { ControlInputElement } from './control-input.js';
 
 

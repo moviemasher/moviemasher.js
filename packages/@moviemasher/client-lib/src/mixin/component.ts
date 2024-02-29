@@ -5,9 +5,9 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { DROPPING, INDEX_CURRENT, eventStop } from '../runtime.js'
 import { EventChangedMashAsset, EventChangedSize, EventMashAsset, EventSize } from '../utility/events.js'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 import { dragTypeValid, dropped } from '../utility/draganddrop.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 
 export function DisablableMixin
 <T extends Constrained<Component>>(Base: T): 
@@ -21,13 +21,14 @@ T & Constrained<Disablable> {
     override connectedCallback(): void {
       super.connectedCallback()
       const event = new EventMashAsset()
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       this.disabled = !event.detail.mashAsset
     }
     
     disabled = true
 
     handleChangedMashAsset(event: EventChangedMashAsset): void { 
+      // console.log(this.tagName, 'handleChangedMashAsset', !!event.detail)
       this.disabled = !event.detail
     }
   }
@@ -172,7 +173,7 @@ export function SizeReactiveMixin<T extends Constrained<Component>>(Base: T):
     override connectedCallback(): void {
       this.listeners[EventChangedSize.Type] = this.handleChangedSize.bind(this)
       const event = new EventSize()
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { size } = event.detail
       if (size) this.size = size
       else {

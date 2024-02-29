@@ -1,7 +1,7 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { FooterBase } from '../base/LeftCenterRight.js'
+import { FooterBase } from '../base/component-view.js'
 
 export const PlayerFooterTag = 'movie-masher-player-footer'
 /**

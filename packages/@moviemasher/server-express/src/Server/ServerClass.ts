@@ -21,7 +21,7 @@ export class ServerClass implements Server {
         return basicAuth.safeCompare(suppliedPassword, password)
       }
       const options: basicAuth.BasicAuthMiddlewareOptions = {
-        users, authorizer, challenge: true, realm: 'MOVIEMASHER',
+        users, authorizer, challenge: true, realm: 'MOVIE_MASHER',
       }
       app.use(`/${this.id}/*`, basicAuth(options), (_req, _res, next) => { next() })
     }

@@ -1,10 +1,10 @@
 import type { PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../client-types.js'
+import type { DefiniteError } from '@moviemasher/shared-lib/types.js'
 
 import { EventDialog, EventImporterComplete, EventImporterAdd, EventImporterRemove, EventImporterError } from '../utility/events.js'
 import { html, nothing } from 'lit-html'
-import { FooterBase } from '../base/LeftCenterRight.js'
-import { DefiniteError } from '@moviemasher/shared-lib'
+import { FooterBase } from '../base/component-view.js'
 
 export const ImporterFooterTag = 'movie-masher-importer-footer'
 /**

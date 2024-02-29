@@ -2,7 +2,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { $FLIP } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
-import { HeaderBase } from '../base/LeftCenterRight.js'
+import { HeaderBase } from '../base/component-view.js'
 
 export const PlayerHeaderTag = 'movie-masher-player-header'
 /**

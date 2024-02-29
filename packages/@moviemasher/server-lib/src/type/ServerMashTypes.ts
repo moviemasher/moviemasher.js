@@ -1,10 +1,8 @@
-import type { AVType, AbsolutePath, AudioInstance, Clip, ContainerInstance, ContentInstance, ImageInstance, MashAsset, MashAudioAssetObject, MashImageAssetObject, MashInstance, MashVideoAssetObject, Time, Track, VideoInstance } from '@moviemasher/shared-lib/types.js'
-import type { AudibleCommandFilterArgs, AudioCommandFileOptions, CommandFiles, CommandFilters, ServerAsset, ServerAssetManager, ServerAudioInstance, ServerInstance, ServerMashDescription, ServerMashDescriptionOptions, ServerVisibleInstance, VideoCommandFileOptions, VideoCommandFilterArgs } from '../types.js'
+import type { AbsolutePath, AudioInstance, Clip, AudioCommandFileOptions, CommandFiles, ImageInstance, MashAsset, MashAudioAssetObject, MashImageAssetObject, VideoCommandFileOptions, MashInstance, MashVideoAssetObject, ServerAsset, ServerInstance, Track, VideoInstance } from '@moviemasher/shared-lib/types.js'
+import type { AudibleCommandFilterArgs, CommandFilters, ServerContainerInstance, ServerContentInstance, ServerMashDescription, ServerMashDescriptionOptions, VideoCommandFilterArgs } from '../types.js'
 import type { ServerAudioAsset, ServerImageAsset, ServerVideoAsset } from './ServerAssetTypes.js'
 
 export interface ServerMashAsset extends MashAsset, ServerAsset {
-  clips: ServerClips
-  clipsInTimeOfType(time: Time, avType?: AVType): ServerClips
   mashDescription(options: ServerMashDescriptionOptions): ServerMashDescription
 }
 
@@ -43,8 +41,8 @@ export interface ServerClip extends Clip {
   audioCommandFiles(args: AudioCommandFileOptions): CommandFiles
   videoCommandFilters(args: VideoCommandFilterArgs): CommandFilters
   audioCommandFilters(args: AudibleCommandFilterArgs): CommandFilters
-  container?: ServerVisibleInstance & ContainerInstance
-  content: ServerInstance & ContentInstance | ServerAudioInstance
+  container?: ServerContainerInstance
+  content: ServerContentInstance
 }
 
 export interface ServerClips extends Array<ServerClip>{}

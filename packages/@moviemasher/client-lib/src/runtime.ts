@@ -1,18 +1,15 @@
-import type { ManageType, Point, Size } from '@moviemasher/shared-lib/types.js'
-import type { ClientAsset, EventFunction } from './types.js'
+import type { ClientAsset, ManageType } from '@moviemasher/shared-lib/types.js'
+import type { EventFunction } from './types.js'
 
-import { $CLIP, MOVIEMASHER, errorThrow, isAsset, $COLOR, $ENCODE } from '@moviemasher/shared-lib/runtime.js'
-
+import { $CLIP, $ENCODE, $SAVE, MOVIE_MASHER, errorThrow, isAsset } from '@moviemasher/shared-lib/runtime.js'
 
 export const ADD = 'add'
 export const ADD_TRACK = 'add-track'
-export const CHANGE_FRAME = 'change-frame'
 export const MOVE_CLIP = 'move-clip'
 export const PLAY = 'play'
 export const REDO = 'redo'
 export const REMOVE = 'remove'
 export const REMOVE_CLIP = 'remove-clip'
-export const SAVE = 'save'
 export const UNDO = 'undo'
 export const VIEW = 'view'
 export const TRANSLATE = 'translate'
@@ -21,7 +18,6 @@ export const IMPORT: ManageType = 'import'
 export const REFERENCE: ManageType = 'reference'
 
 export const ICON = 'icon'
-
 
 export const SELECTED = 'selected'
 export const ROW = 'row'
@@ -61,43 +57,24 @@ export function assertDatasetElement(value: any, name?: string): asserts value i
 }
 
 
-const Lib = '@moviemasher/client-lib'
-// const SharedLib = '@moviemasher/shared-lib'
 
-const HANDLER = `${Lib}/handler`
+const LIB = '@moviemasher/client-lib'
+const MODULE = `${LIB}/module`
+const HANDLER = `${LIB}/handler`
 const CONTROLS = `${HANDLER}/controls.js`
-// const Media = `${HANDLER}/media.js`
-const SOURCE = `${Lib}/source`
-const RAW = `${SOURCE}/raw/raw.js`
+const SOURCE = `${LIB}/source`
 
-MOVIEMASHER.imports = {
-  [$CLIP]: `${Lib}/timeline/timeline-clip.js`,
+MOVIE_MASHER.imports = {
+  ClientAssetManagerListeners: `${HANDLER}/manager.js`,
+  [$CLIP]: `${LIB}/timeline/timeline-clip.js`,
   ClientAssetElementListeners: `${HANDLER}/element.js`,
 
   [ICON]: `${HANDLER}/${ICON}.js`,
   [TRANSLATE]: `${HANDLER}/translate.js`,
 
-  // assetModules
-  ClientMashVideoListeners: `${SOURCE}/mash/video-mash.js`,
-  [$COLOR]: `${SOURCE}/color/image-color.js`,
-  ClientShapeImageListeners: `${SOURCE}/shape/image-shape.js`,
-  ClientTextImageListeners: `${SOURCE}/text/image-text.js`,
-  ClientRawAudioListeners: RAW,
-  ClientRawImageListeners: RAW,
-  ClientRawVideoListeners: RAW,
-
   // importModules
-  ClientRawImportListeners: RAW,
+  ClientRawImportListeners: `${MODULE}/raw.js`,
   ClientTextImportListeners: `${SOURCE}/text/image-text-importer.js`,
-
-  // actionModules
-  // [$DECODE]: `${HANDLER}/decode.js`,
-  [$ENCODE]: `${HANDLER}/encode.js`,
-  [SAVE]: `${HANDLER}/save.js`,
-  // [$TRANSCODE]: `${HANDLER}/transcode.js`,
-  ClientAssetUploadListeners: `${HANDLER}/upload.js`,
-
-  ClientAssetManagerListeners: `${HANDLER}/manager.js`,
 
   // controlModules
   ClientControlAssetListeners: CONTROLS,
@@ -112,19 +89,15 @@ MOVIEMASHER.imports = {
   ClientGroupFillListeners: CONTROLS,
   ClientGroupLocationListeners: CONTROLS,
   ClientGroupTimeListeners: CONTROLS,
+
+  // actionModules
+  [$ENCODE]: `${HANDLER}/encode.js`,
+  [$SAVE]: `${MODULE}/save.js`,
 }
 
-
-export const MANAGE_TYPES = [IMPORT, REFERENCE]
+const MANAGE_TYPES = [IMPORT, REFERENCE]
 
 export const isManageType = (value: any): value is ManageType => (
   MANAGE_TYPES.includes(value as ManageType)
 )
-
-export const centerPoint = (size: Size, inSize: Size): Point => {
-  return {
-    x: Math.round((size.width - inSize.width) / 2),
-    y: Math.round((size.height - inSize.height) / 2)
-  }
-}
 

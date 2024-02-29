@@ -5,7 +5,7 @@ import type { EncodeServerArgs, ExpressHandler } from './Server.js'
 
 import { EventServerEncodeStatus } from '@moviemasher/server-lib/utility/events.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
-import { $ENCODE, $MASH, $POST, CONTENT_TYPE, ERROR, MIME_JSON, MOVIEMASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isAssetObject, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { $ENCODE, $MASH, $POST, CONTENT_TYPE, ERROR, MIME_JSON, MOVIE_MASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isAssetObject, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { isEncoding } from '@moviemasher/shared-lib/utility/guards.js'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
@@ -27,7 +27,7 @@ export class EncodeServerClass extends ServerClass {
       }
       const id = idUnique()
       const jobOptions: JobOptions = { id, user }
-      const promise = MOVIEMASHER.promise($ENCODE, encodeArgs, jobOptions)
+      const promise = MOVIE_MASHER.promise(encodeArgs, $ENCODE, jobOptions)
       res.send({ version: VERSION, data: this.statusEndpointRequest(id) })
     } catch (error) { 
       console.error(this.constructor.name, 'start', error)
@@ -48,7 +48,7 @@ export class EncodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerEncodeStatus(id)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerEncodeStatus.Type)
 

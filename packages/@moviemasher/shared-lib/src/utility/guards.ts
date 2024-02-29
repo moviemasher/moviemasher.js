@@ -1,7 +1,7 @@
-import type { AssetResource, AudibleAsset, AudibleType, AudioAsset, AudioAssetObject, AudioInstance, Clip, ClipObject, ComplexSvgItem, ContainerAsset, ContainerInstance, ContentAsset, ContentInstance, DropResource, Encoding, Endpoint, EndpointRequest, ImageAsset, Instance, Integer, MashAsset, Point, PopulatedString, PropertyId, Rect, Resource, Size, StringTuple, Transcoding, TranscodingType, TranscodingTypes, Value, VideoAsset, VisibleAsset, VisibleInstance } from '../types.js'
+import type { Aspect, AssetResource, AudibleAsset, AudibleInstance, AudibleType, AudioAsset, AudioInstance, ChangeEdit, ChangeEditObject, ChangePropertyEditObject, Clip, ClipObject, ComplexSvgItem, ContainerAsset, ContainerInstance, ContentAsset, ContentInstance, DropResource, Edit, EditObject, Encoding, Endpoint, EndpointRequest, ImageAsset, Instance, Integer, MashAsset, OkNumber, Point, PopulatedString, Propertied, PropertyId, Rect, Resource, SelectorType, ServerAsset, Size, TargetId, Transcoding, TranscodingType, TranscodingTypes, Transparency, Usage, Value, VideoAsset, VisibleAsset, VisibleInstance } from '../types.js'
 
-import { $AUDIO, $BITMAPS, $HEIGHT, $IMAGE, $MASH, $VIDEO, $WAVEFORM, $WIDTH, RAW_TYPES, AUDIBLE_TYPES, TARGET_IDS, VISIBLE_TYPES, errorThrow, isAsset, isAssetObject, isRawType, isSourceAsset, isDropType, $TTF } from '../runtime.js'
-import { isAboveZero, isDefined, isInteger, isNumber, isObject, isPopulatedString, isPositive, isValue } from './guard.js'
+import { $AUDIO, $BITMAPS, $HEIGHT, $IMAGE, $MASH, $VIDEO, $WAVEFORM, $WIDTH, RAW_TYPES, AUDIBLE_TYPES, TARGET_IDS, VISIBLE_TYPES, errorThrow, isAsset, isRawType, isSourceAsset, $TTF, TRANSPARENCIES, ASPECTS, $ENCODE, $TRANSCODE, $STRING, $BOOLEAN, $NUMBER, isTyped } from '../runtime.js'
+import { isAboveZero, isArray, isBoolean, isDefined, isInteger, isNumber, isObject, isPopulatedString, isPositive, isString, isValue } from './guard.js'
 
 export const isTranscoding = (value: any): value is Transcoding => {
   return isRequestable(value) && isTranscodingType(value.type)
@@ -11,11 +11,26 @@ export function assertDefined<T = true>(value: any, name?: string): asserts valu
   if (!isDefined<T>(value)) errorThrow(value, 'Defined', name)
 }
 
+export function assertNumber(value: any, name?: string): asserts value is OkNumber {
+  if (!isNumber(value)) errorThrow(value, $NUMBER, name)
+}
+
+export function assertBoolean(value: any, name?: string): asserts value is boolean {
+  if (!isBoolean(value)) errorThrow(value, $BOOLEAN, name)
+}
+
+export function assertString(value: any, name?: string): asserts value is string {
+  if (!isString(value)) errorThrow(value, $STRING, name)
+}
 
 export function assertPopulatedString(value: any, name = 'value'): asserts value is PopulatedString {
   if (!isPopulatedString(value)) errorThrow(value, 'populated string', name)
 }
 
+const USAGES: Usage[] = [$ENCODE, $TRANSCODE]
+export const isUsage = (value: any): value is Usage => (
+  USAGES.includes(value)
+)
 
 export const isEncoding = (value: any): value is Encoding => {
   return isRequestable(value) && isRawType(value.type)
@@ -24,6 +39,12 @@ export const isEncoding = (value: any): value is Encoding => {
 export const isRequestable = (value: any): value is Resource => {
   return isObject(value) && 'request' in value
 }
+
+
+export const isServerAsset = (value: any): value is ServerAsset => {
+  return isAsset(value) && 'assetFiles' in value
+}
+
 
 
 export const isRawResource = (value: any): value is AssetResource => (
@@ -64,6 +85,23 @@ export const isPropertyId = (value: any): value is PropertyId => (
   && value.split('.').length === 2
 )
 
+
+export const isAspect = (value: any): value is Aspect => (
+  ASPECTS.includes(value)
+)
+
+export function assertAspect(value: any, name?: string): asserts value is Aspect {
+  if (!isAspect(value)) errorThrow(value, 'Aspect', name)
+}
+
+export const isTargetId = (value: any): value is TargetId => (
+  TARGET_IDS.includes(value)
+)
+
+export const isSelectorType = (value: any): value is SelectorType => (
+  isTargetId(value) || isPropertyId(value) 
+)
+
 const TypesTranscoding: TranscodingTypes = [...RAW_TYPES, $BITMAPS, $WAVEFORM]
 
 export const isTranscodingType = (type?: any): type is TranscodingType => {
@@ -74,16 +112,12 @@ export const isAudibleAsset = (value: any): value is AudibleAsset => {
   return isAsset(value) && AUDIBLE_TYPES.includes(value.type as AudibleType)
 }
 
-export const isAudioAssetObject = (value: any): value is AudioAssetObject => (
-  isAssetObject(value) && value.type === $AUDIO
-)
-
 export const isAudioAsset = (value: any): value is AudioAsset => (
   isAsset(value) && value.type === $AUDIO
 )
 
 export const isClip = (value: any): value is Clip => {
-  return isObject(value) && 'contentId' in value
+  return isObject(value) && 'clipCachePromise' in value
 }
 
 export function assertClip(value: any, name?: string): asserts value is Clip {
@@ -99,7 +133,7 @@ export const isImageAsset = (value: any): value is ImageAsset => {
 }
 
 export const isInstance = (value?: any): value is Instance => {
-  return isObject(value) && 'assetIds' in value
+  return isObject(value) && 'instanceObject' in value
 }
 
 export const isAudioInstance = (value: any): value is AudioInstance => (
@@ -123,6 +157,13 @@ export const isMashAsset = (value: any): value is MashAsset => (
 export const isVisibleAsset = (value: any): value is VisibleAsset => {
   return isAsset(value) && VISIBLE_TYPES.includes(value.type)
 }
+export const isTransparency = (value: any): value is Transparency => (
+  TRANSPARENCIES.includes(value)
+)
+export function assertTransparency(value: any, name?: string): asserts value is Transparency {
+  if (!isTransparency(value)) errorThrow(value, 'Transparency', name)
+}
+
 
 const canBeContainerAsset = (value?: any): value is ContainerAsset => {
   return isVisibleAsset(value) && !!value.canBeContainer
@@ -191,10 +232,13 @@ export const isVisibleInstance = (value: any): value is VisibleInstance => {
   return isInstance(value) && 'asset' in value && isVisibleAsset(value.asset) 
 }
 
+export const isAudibleInstance = (value: any): value is AudibleInstance => {
+  return isInstance(value) && 'asset' in value && isAudibleAsset(value.asset) 
+}
+
 export function assertVisibleInstance(value: any, name?: string): asserts value is VisibleInstance {
   if (!isVisibleInstance(value)) errorThrow(value, 'VisibleInstance', name)
 }
-
 
 export const isRequest = (value: any): value is EndpointRequest => (
   isObject(value)
@@ -206,4 +250,30 @@ export const isComplexSvgItem = (value: any): value is ComplexSvgItem => (
   isObject(value) && 'svgItem' in value
 )
 
+export const isPropertied = (target: any): target is Propertied => {
+  return isObject(target) && 'properties' in target && isArray(target.properties)
+}
 
+const isEditObject = (value: any): value is EditObject => {
+  return isTyped(value)  
+}
+
+const isEdit = (value: any): value is Edit => {
+  return isObject(value) && 'redo' in value && 'undo' in value
+}
+
+export const isChangeEdit = (value: any): value is ChangeEdit => (
+  isEdit(value) 
+  && 'updateEdit' in value 
+  && 'target' in value && isPropertied(value.target)
+)
+
+export const isChangeEditObject = (value: any): value is ChangeEditObject => (
+  isEditObject(value) 
+  && 'target' in value && isPropertied(value.target)
+)
+
+export const isChangePropertyEditObject = (value: any): value is ChangePropertyEditObject => (
+  isChangeEditObject(value) 
+  && 'property' in value && isPopulatedString(value.property)
+)

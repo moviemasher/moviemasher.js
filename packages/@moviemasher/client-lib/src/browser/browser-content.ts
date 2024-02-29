@@ -1,7 +1,7 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { ContentBase } from '../base/LeftCenterRight.js'
+import { ContentBase } from '../base/component-view.js'
 
 export const BrowserContentTag = 'movie-masher-browser-content'
 

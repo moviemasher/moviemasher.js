@@ -1,17 +1,21 @@
-import type { CacheArgs, InstanceArgs, ListenersFunction, RawVideoAssetObject, VideoInstanceObject } from '@moviemasher/shared-lib/types.js'
-import type { ServerRawVideoAsset, ServerRawVideoInstance } from '../type/ServerTypes.js'
-import type { AssetFile, AssetFiles, ServerAssetManager } from '../types.js'
+import type {AssetFile, AssetFiles, ServerInstance, AssetFunction, CacheArgs, VideoInstance, VideoInstanceObject } from '@moviemasher/shared-lib/types.js'
 
 import { AudibleAssetMixin, AudibleInstanceMixin } from '@moviemasher/shared-lib/mixin/audible.js'
 import { VideoAssetMixin, VideoInstanceMixin } from '@moviemasher/shared-lib/mixin/video.js'
 import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
-import { $AUDIO, $RAW, $VIDEO, isAssetObject } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIO, $RAW, $VIDEO, ERROR, SLASH, isAssetObject, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
-import { ServerRawAssetClass } from '../base/asset-raw.js'
-import { ServerInstanceClass } from '../base/instance.js'
-import { ServerAudibleAssetMixin, ServerAudibleInstanceMixin } from '../mixin/audible.js'
-import { ServerVisibleAssetMixin, ServerVisibleInstanceMixin } from '../mixin/visible.js'
-import { EventServerAsset } from '../utility/events.js'
+import { ServerRawAssetClass } from '@moviemasher/shared-lib/base/server-raw-asset.js'
+import { ServerInstanceClass } from '@moviemasher/shared-lib/base/server-instance.js'
+import { ServerAudibleAssetMixin, ServerAudibleInstanceMixin } from '@moviemasher/shared-lib/mixin/server-audible.js'
+import { ServerVisibleAssetMixin, ServerVisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/server-visible.js'
+import { ServerVideoAsset } from '../type/ServerAssetTypes.js'
+
+interface ServerRawVideoAsset extends ServerVideoAsset {}
+
+interface ServerRawVideoInstance extends VideoInstance, ServerInstance {
+  asset: ServerRawVideoAsset
+}
 
 const WithAudibleAsset = AudibleAssetMixin(ServerRawAssetClass)
 const WithVisibleAsset = VisibleAssetMixin(WithAudibleAsset)
@@ -20,11 +24,6 @@ const WithServerAsset = ServerAudibleAssetMixin(WithServerVisibleAsset)
 const WithVideoAsset = VideoAssetMixin(WithServerAsset)
 
 export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRawVideoAsset {
-  constructor(args: RawVideoAssetObject, manager?: ServerAssetManager) {
-    super(args, manager)
-    this.initializeProperties(args)
-  }
-  
   override assetFiles(args: CacheArgs): AssetFiles {
     const { audible, visible } = args
     const files: AssetFiles = []
@@ -40,7 +39,7 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
     }
     if (audible) {
       const mutable = this.duration ? this.canBeMuted : true
-      if (mutable && !this.muted) {
+      if (mutable) {
         const audFile: AssetFile = { type: $AUDIO, avType: $AUDIO, file, asset: this }
         files.push(audFile)
       }
@@ -48,22 +47,12 @@ export class ServerRawVideoAssetClass extends WithVideoAsset implements ServerRa
     return files
   }
 
-
   override instanceFromObject(object?: VideoInstanceObject): ServerRawVideoInstance {
     const args = this.instanceArgs(object)
     return new ServerRawVideoInstanceClass(args)
   }
 
   type = $VIDEO
-
-  static handleAsset(event: EventServerAsset) {
-    const { detail } = event
-    const { assetObject, manager } = detail
-    if (isAssetObject(assetObject, $VIDEO, $RAW)) {
-      detail.asset = new ServerRawVideoAssetClass(assetObject, manager)
-      event.stopImmediatePropagation()
-    }
-  }
 }
 
 const WithAudibleInstance = AudibleInstanceMixin(ServerInstanceClass)
@@ -72,15 +61,12 @@ const WithServerVisibleInstanceD = ServerVisibleInstanceMixin(WithVisibleInstanc
 const WithServerAudibleInstance = ServerAudibleInstanceMixin(WithServerVisibleInstanceD)
 const WithVideoInstance = VideoInstanceMixin(WithServerAudibleInstance)
 export class ServerRawVideoInstanceClass extends WithVideoInstance implements ServerRawVideoInstance {  
-  constructor(args: VideoInstanceObject & InstanceArgs) {
-    super(args)
-    this.initializeProperties(args)
-  }
-
   declare asset: ServerRawVideoAsset
 }
 
-// listen for video/raw asset event
-export const ServerRawVideoListeners: ListenersFunction = () => ({
-  [EventServerAsset.Type]: ServerRawVideoAssetClass.handleAsset
-})
+export const serverVideoRawAssetFunction: AssetFunction = (assetObject) => {
+  if (!isAssetObject(assetObject, $VIDEO, $RAW)) {
+    return namedError(ERROR.Syntax, [$VIDEO, $RAW].join(SLASH))
+  }
+  return { data: new ServerRawVideoAssetClass(assetObject) }
+}

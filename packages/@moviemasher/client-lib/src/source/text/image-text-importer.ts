@@ -6,9 +6,9 @@ import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html'
 import { EventImporterNodeFunction, EventImport, EventImporterAdd, EventImporterError } from '../../utility/events.js'
 import { ERROR, $IMAGE, $TEXT, errorCaught, idGenerateString, isDefiniteError, namedError, pathExtension, $CSS, $SCAN } from '@moviemasher/shared-lib/runtime.js'
-import { Component, ComponentLoader } from '../../base/Component.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
-import { svgStringElement } from '../../utility/svg.js'
+import { Component, ComponentLoader } from '../../base/component.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
+import { svgStringElement } from '@moviemasher/shared-lib/utility/svg.js'
 import { familyFromCss, urlFromCss } from '@moviemasher/shared-lib/utility/request.js'
 
 const ClientTextUrl = 'https://fonts.googleapis.com/css2?family='
@@ -69,7 +69,7 @@ export class ClientTextElement extends ComponentLoader {
 
     const endpointOrError = await this.cssUrlPromise(label)
     if (isDefiniteError(endpointOrError)) {
-      MOVIEMASHER.dispatch(new EventImporterError(endpointOrError))
+      MOVIE_MASHER.dispatch(new EventImporterError(endpointOrError))
       return 
     }
 
@@ -85,7 +85,7 @@ export class ClientTextElement extends ComponentLoader {
       resources: [cssResource, clientResource],
       label, type: $IMAGE, source: $TEXT,  
     }
-    MOVIEMASHER.dispatch(new EventImporterAdd(object))
+    MOVIE_MASHER.dispatch(new EventImporterAdd(object))
   }
 
   protected override render(): unknown {
@@ -146,7 +146,7 @@ export class TextClientImporter implements ClientImporter {
   private _ui?: ClientTextElement
   ui(): Node {
     // console.log(this.id, 'ui')
-    const { document } = MOVIEMASHER.window
+    const { document } = MOVIE_MASHER.window
     return this._ui ||= document.createElement(ClientTextTag)
   }
 

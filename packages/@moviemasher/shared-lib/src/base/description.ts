@@ -27,7 +27,9 @@ export class MashDescriptionClass implements MashDescription {
     const { mash, time, clip, avType } = this
     if (clip) return [clip]
     
-    return mash.clipsInTimeOfType(time, avType).sort(sortByTrack) 
+    const clips = mash.clipsInTimeOfType(time, avType).sort(sortByTrack) 
+    // console.log('clipsInitialize', clips.length)
+    return clips
   }
   
   private get frame(): number { return this.args.frame || 0 } 
@@ -36,9 +38,9 @@ export class MashDescriptionClass implements MashDescription {
     return this.args.frames || this.mash.totalFrames
   }
 
-  get mash(): MashAsset { return errorThrow(ERROR.Unimplemented) }
+  get mash(): MashAsset { return this.args.mash }
 
-  get quantize(): number { return this.mash.quantize }
+  get quantize(): number { return Number(this.mash.value('quantize')) }
   
   get size(): Size { return this.args.size || this.mash.size }
 

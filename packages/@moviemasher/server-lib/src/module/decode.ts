@@ -1,11 +1,11 @@
 import type { DecodeFunction, Decoding, Numbers, ProbingData, Scalar, ScalarRecord, Scanning, Sizes, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { $AUDIBLE, $DURATION, $RETRIEVE, $HEIGHT, $PROBE, $SCAN, $SIZE, $WIDTH, ERROR, MOVIEMASHER, NEWLINE, assertDecoding, errorCaught, errorPromise, isDefiniteError, isScanning, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIBLE, $DURATION, $RETRIEVE, $HEIGHT, $PROBE, $SCAN, $SIZE, $WIDTH, ERROR, MOVIE_MASHER, NEWLINE, assertDecoding, errorCaught, errorPromise, isDefiniteError, isScanning, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { isNumeric, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
 import { execSync } from 'child_process'
 import ffmpeg from 'fluent-ffmpeg'
 import path from 'path'
-import { filePathExists } from '../utility/file.js'
+import { filePathExists } from './file-write.js'
 import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
 import { isProbingOptions } from '../utility/guard.js'
 import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
@@ -41,7 +41,7 @@ const decode: DecodeFunction = async (args, options = {}) => {
 
 const decodePromise: DecodeFunction = async (args, options) => {
   const { resource } = args
-  const assetOrError = await MOVIEMASHER.promise($RETRIEVE, resource)
+  const assetOrError = await MOVIE_MASHER.promise(resource, $RETRIEVE)
   if (isDefiniteError(assetOrError)) return assetOrError
    
   const { type: decodingType } = args

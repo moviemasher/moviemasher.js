@@ -3,8 +3,8 @@ import type { TemplateContent, TemplateContents } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html'
-import { Component } from '../base/Component.js'
-import { ComponentClicker } from '../base/Component.js'
+import { Component } from '../base/component.js'
+import { ComponentClicker } from '../base/component.js'
 
 export const ButtonTag = 'movie-masher-button'
 

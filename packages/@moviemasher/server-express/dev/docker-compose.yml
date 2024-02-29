@@ -5,6 +5,9 @@ services:
     env_file:
       - ../../../../dev/local.env
     build: 
+      platform: 
+        - linux/amd64
+        - linux/arm64
       context: ../../../../
       dockerfile: packages/@moviemasher/server-express/dev/Dockerfile.cnf
     image: moviemasher/server-express:${MOVIEMASHER_VERSION}

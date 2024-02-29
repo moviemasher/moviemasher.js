@@ -1,69 +1,13 @@
-import type { AssetObject, AssetParams, AssetPromiseEventDetail, RawType, RawTypes, EndpointRequest, DataType, DefiniteError, Exporters, Importers, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, Source, Sources, StringRecord, Strings, TargetId, TargetIds, Time, ServerProgress, TimeRange } from '@moviemasher/shared-lib/types.js'
-import type { ClientAction, ClientAsset, ClientAssetObject, ClientAssetObjects, ClientAssets, ClientMashAsset, ClipLocation, Edit, EventClipDetail, EventExportersDetail, EventImportFileDetail, EventImporterAddDetail, EventImporterNodeFunctionDetail, EventPickDetail, EventPickedDetail, EventSelectableDetail, NodeFunctionMap, SelectedProperties, ServerAction } from '../types.js'
+import type { AssetObject, Edit, AssetParams, ClientAssets, ClientMashAsset, AssetPromiseEventDetail, RawType, RawTypes, DataType, DefiniteError, Exporters, Importers, PropertyId, PropertyIds, Rect, Scalar, ScalarsById, SelectorTypes, Size, Source, Sources, StringRecord, Strings, TargetId, TargetIds, Time, TimeRange, AssetObjects } from '@moviemasher/shared-lib/types.js'
+import type { ClipLocation, EventClipDetail, EventExportersDetail, EventImportFileDetail, EventImporterAddDetail, EventImporterNodeFunctionDetail, EventPickDetail, EventPickedDetail, EventSelectableDetail, NodeFunctionMap, SelectedProperties } from '../types.js'
 
-import { $ASSET, $CLIP, customEventClass } from '@moviemasher/shared-lib/runtime.js'
-import { ICON, IMPORT, SAVE, TRANSLATE } from '../runtime.js'
-import { AssetEventDetail, AssetObjectEventDetail, AssetObjectsParams, EventAddAssetsDetail, EventAssetElementDetail, EventAssetObjectsDetail, EventChangeScalarDetail, EventClipElementDetail, EventClipIdDetail, EventControlDetail, EventControlGroupDetail, EventDataTypeDetail, EventDoServerActionDetail, EventEnabledClientActionDetail, EventEnabledServerActionDetail, EventIconDetail, EventImportDetail, EventImportersDetail, EventInspectorSelectorsDetail, EventManagedAssetIconDetail, EventManagedAssetIdDetail, EventManagedAssetsDetail, EventMoveClipDetail, EventPreviewsDetail, EventProgressDetail, EventPropertyIdsDetail, EventSaveDetail, EventScalarDetail, EventSelectedPropertiesDetail, EventTrackClipIconDetail, EventTranslateDetail, EventUploadDetail, TrackClipsEventDetail } from '../types.js'
+import { $CHANGE_FRAME, $CLIP, $FRAMES, customEventClass } from '@moviemasher/shared-lib/runtime.js'
+import { ICON, IMPORT, TRANSLATE } from '../runtime.js'
+import { AssetEventDetail, AssetObjectEventDetail, AssetObjectsParams, EventAddAssetsDetail, EventAssetElementDetail, EventAssetObjectsDetail, EventChangeScalarDetail, EventClipElementDetail, EventClipIdDetail, EventControlDetail, EventControlGroupDetail, EventDataTypeDetail, EventDoServerActionDetail, EventEnabledClientActionDetail, EventEnabledServerActionDetail, EventIconDetail, EventImportDetail, EventImportersDetail, EventInspectorSelectorsDetail, EventManagedAssetIconDetail, EventManagedAssetIdDetail, EventManagedAssetsDetail, EventMoveClipDetail, EventPreviewsDetail, EventProgressDetail, EventPropertyIdsDetail, EventScalarDetail, EventSelectedPropertiesDetail, EventTrackClipIconDetail, EventTranslateDetail, TrackClipsEventDetail } from '../types.js'
 import { isString } from '@moviemasher/shared-lib/utility/guard.js'
 
 export class NumberEvent extends customEventClass<number>() {}
 export class StringEvent extends customEventClass<string>() {}
-
-
-// /**
-//  * Dispatch to initiate a decode request for an asset.
-//  * @category ClientEvents
-//  */
-// export class EventClientDecode extends customEventClass<EventClientDecodeDetail>() {
-//   static Type = $DECODE
-//   constructor(asset: ClientRawAsset, decodingType: DecodingType, options?: DecodeOptions, progress?: ServerProgress) {
-//     super(EventClientDecode.Type, { detail: { asset, options, decodingType, progress } })
-//   }
-// }
-
-// /**
-//  * Dispatch to initiate an encode request for a mash.
-//  * @category ClientEvents
-//  */
-// export class EventClientEncode extends customEventClass<EventClientEncodeDetail>() {
-//   static Type = $ENCODE
-//   constructor(asset: MashAssetObject, type?: EncodingType, options?: EncodeOptions, progress?: ServerProgress) {
-//     super(EventClientEncode.Type, { detail: { asset, type, options, progress } })
-//   }
-// }
-
-// /**
-//  * Dispatch to initiate a transcoding request for an asset.
-//  * @category ClientEvents
-//  */
-// export class EventClientTranscode extends customEventClass<EventClientTranscodeDetail>() {
-//   static Type = $TRANSCODE
-//   constructor(asset: ClientRawAsset, transcodingType: TranscodingType, options?: TranscodeOptions, progress?: ServerProgress) {
-//     super(EventClientTranscode.Type, { detail: { asset, transcodingType, options, progress } })
-//   }
-// }
-
-/**
- * Dispatch to initiate a save request for an asset.
- * @category ClientEvents
- */
-export class EventSave extends customEventClass<EventSaveDetail>() {
-  static Type = SAVE
-  constructor(asset: ClientAsset, progress?: ServerProgress) {
-    super(EventSave.Type, { detail: { asset, progress } })
-  }
-}
-
-/**
- * Dispatch to initiate an upload request, optionally replacing an existing asset.
- * @category ClientEvents
- */
-export class EventUpload extends customEventClass<EventUploadDetail>() {
-  static Type = 'upload'
-  constructor(request: EndpointRequest, progress?: ServerProgress, id?: string) {
-    super(EventUpload.Type, { detail: { request, progress, id } })
-  }
-}
 
 /**
  * Dispatch to retrieve the time range of the mash's selected clip.
@@ -79,7 +23,7 @@ export class EventTimeRange extends customEventClass<{ timeRange?: TimeRange }>(
  * @category ClientEvents
  */
 export class EventFrames extends customEventClass<{ frames: number }>() {
-  static Type = 'frames'
+  static Type = $FRAMES
   constructor() {
     super(EventFrames.Type, { detail: { frames: 0 } })
   }
@@ -108,7 +52,7 @@ export class EventMashTime extends customEventClass<{ time?: Time }>() {
  * @category ClientEvents
  */
 export class EventChangeFrame extends NumberEvent {
-  static Type = 'change-frame'
+  static Type = $CHANGE_FRAME
   constructor(detail: number) { super(EventChangeFrame.Type, { detail }) }
 }
 
@@ -138,9 +82,9 @@ export class EventDataType extends customEventClass<EventDataTypeDetail>() {
  * Dispatch to initiate a client action.
  * @category ClientEvents
  */
-export class EventDoClientAction extends customEventClass<ClientAction>() {
+export class EventDoClientAction extends customEventClass<string>() {
   static Type = 'do-client-action'
-  constructor(clientAction: ClientAction) {
+  constructor(clientAction: string) {
     super(EventDoClientAction.Type, { detail: clientAction })
   }
 }
@@ -149,9 +93,9 @@ export class EventDoClientAction extends customEventClass<ClientAction>() {
  * Dispatched when the enabled state of a particular client action has changed.
  * @category ClientEvents
  */
-export class EventChangedClientAction extends customEventClass<ClientAction>() {
+export class EventChangedClientAction extends customEventClass<string>() {
   static Type = 'changed-client-action'
-  constructor(detail: ClientAction) { super(EventChangedClientAction.Type, { detail }) }
+  constructor(detail: string) { super(EventChangedClientAction.Type, { detail }) }
 }
 
 /**
@@ -160,7 +104,7 @@ export class EventChangedClientAction extends customEventClass<ClientAction>() {
  */
 export class EventEnabledClientAction extends customEventClass<EventEnabledClientActionDetail>() {
   static Type = 'enabled-client-action'
-  constructor(clientAction: ClientAction) {
+  constructor(clientAction: string) {
     super(EventEnabledClientAction.Type, { detail: { clientAction } })
   }
 }
@@ -182,7 +126,7 @@ export class EventProgress extends customEventClass<EventProgressDetail>() {
  */
 export class EventDoServerAction extends customEventClass<EventDoServerActionDetail>() {
   static Type = 'do-server-action'
-  constructor(serverAction: ServerAction, id?: string) {
+  constructor(serverAction: string, id?: string) {
     super(EventDoServerAction.Type, { detail: { serverAction, id } })
   }
 }
@@ -191,9 +135,9 @@ export class EventDoServerAction extends customEventClass<EventDoServerActionDet
  * Dispatched when the enabled state of a particular server action has changed.
  * @category ClientEvents
  */
-export class EventChangedServerAction extends customEventClass<ServerAction>() {
+export class EventChangedServerAction extends customEventClass<string>() {
   static Type = 'changed-server-action'
-  constructor(detail: ServerAction) { super(EventChangedServerAction.Type, { detail }) }
+  constructor(detail: string) { super(EventChangedServerAction.Type, { detail }) }
 }
 
 /**
@@ -202,7 +146,7 @@ export class EventChangedServerAction extends customEventClass<ServerAction>() {
  */
 export class EventEnabledServerAction extends customEventClass<EventEnabledServerActionDetail>() {
   static Type = 'enabled-server-action'
-  constructor(serverAction: ServerAction) {
+  constructor(serverAction: string) {
     super(EventEnabledServerAction.Type, { detail: { serverAction } })
   }
 }
@@ -676,9 +620,9 @@ export class EventCanDestroy extends customEventClass<Strings>() {
  * Dispatch to import managed assets from client asset objects.
  * @category ClientEvents
  */
-export class EventImportManagedAssets extends customEventClass<ClientAssetObjects>() {
+export class EventImportManagedAssets extends customEventClass<AssetObjects>() {
   static Type = 'import-asset-objects'
-  constructor(detail: ClientAssetObjects) {
+  constructor(detail: AssetObjects) {
     super(EventImportManagedAssets.Type, { detail })
   }
 }
@@ -764,7 +708,7 @@ export class EventImporterError extends customEventClass<DefiniteError>() {
  */
 export class EventImporterAdd extends customEventClass<EventImporterAddDetail>() {
   static Type = 'importer-add'
-  constructor(assetObject: ClientAssetObject) {
+  constructor(assetObject: AssetObject) {
     super(EventImporterAdd.Type, { detail: { assetObject } })
   }
 }
@@ -942,20 +886,5 @@ export class EventManagedAssetPromise extends customEventClass<AssetPromiseEvent
     const assetId = string ? assetIdOrObject : assetIdOrObject.id
     const assetObject = string ? undefined : assetIdOrObject
     super(EventManagedAssetPromise.Type, { detail: { assetId, assetObject } })
-  }
-}
-
-/**
- * Dispatch to retrieve an asset from an asset id or object.
- * @category ClientEvents
- */
-export class EventAsset extends customEventClass<AssetEventDetail>() {
-  static Type = $ASSET
-  constructor(assetIdOrObject: string | AssetObject) {
-    const string = isString(assetIdOrObject)
-    const assetId = string ? assetIdOrObject : assetIdOrObject.id
-    const assetObject = string ? undefined : assetIdOrObject
-    const detail = { assetId, assetObject }
-    super(EventAsset.Type, { detail })
   }
 }

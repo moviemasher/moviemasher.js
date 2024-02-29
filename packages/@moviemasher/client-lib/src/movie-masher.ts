@@ -5,12 +5,11 @@ import type { Htmls, OptionalContent } from './client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { EventAssetObject, EventAssetObjects, EventEdited, EventChangedMashAsset, EventManagedAssets } from './utility/events.js'
-import { COMMA, $GET, $MASH, MOVIEMASHER, PIPE, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { COMMA, $GET, $MASH, MOVIE_MASHER, PIPE, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
-import { Component } from './base/Component.js'
-import { ComponentSlotter } from './base/Component.js'
-import { isChangeEdit } from './guards/EditGuards.js'
-import { isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
+import { Component } from './base/component.js'
+import { ComponentSlotter } from './base/component.js'
+import { isChangeEdit, isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
 import { patchSvg, svgImagePromise } from '@moviemasher/shared-lib/utility/svg.js'
 
 const FormSlotPlayer = 'player'
@@ -24,7 +23,7 @@ export const MovieMasherTag = 'movie-masher'
 
 // test for support for load events from svg images
 const initializeSvg = () => {
-  const { window, options } = MOVIEMASHER
+  const { window, options } = MOVIE_MASHER
   const { document } = window
   const canvas = document.createElement('canvas')
   canvas.width = canvas.height = 1
@@ -83,11 +82,11 @@ export class MovieMasherElement extends ComponentSlotter {
     return import(this.url('handler/object/video')).then(() => {
       const { assetObject } = this
       if (assetObject) {
-        MOVIEMASHER.options.assetObject ||= { endpoint: assetObject, init: { method: $GET } }
+        MOVIE_MASHER.options.assetObject ||= { endpoint: assetObject, init: { method: $GET } }
       } 
       // console.debug(this.tagName, 'assetObjectPromise!')
       const listener = { [EventAssetObject.Type]: this.listeners[EventAssetObject.Type] }
-      MOVIEMASHER.listenersRemove(listener)
+      MOVIE_MASHER.listenersRemove(listener)
     })
   }
 
@@ -111,11 +110,11 @@ export class MovieMasherElement extends ComponentSlotter {
       const { assetObjects } = this
       // console.debug(this.tagName, 'assetObjectsPromiseInitialize', assetObjects)
       if (assetObjects) {
-        MOVIEMASHER.options.assetObjects ||= { endpoint: assetObjects, init: { method: $GET } }
+        MOVIE_MASHER.options.assetObjects ||= { endpoint: assetObjects, init: { method: $GET } }
       }
       // console.debug(this.tagName, 'assetObjectsPromise removing listener')
       const listener = { [EventAssetObjects.Type]: this.listeners[EventAssetObjects.Type] }
-      MOVIEMASHER.listenersRemove(listener)
+      MOVIE_MASHER.listenersRemove(listener)
     })
   }
 
@@ -125,22 +124,22 @@ export class MovieMasherElement extends ComponentSlotter {
     initializeSvg()
     const { icons, imports } = this
     if (icons) {
-      MOVIEMASHER.options.icons ||= { endpoint: icons, init: { method: $GET } }
+      MOVIE_MASHER.options.icons ||= { endpoint: icons, init: { method: $GET } }
     }
     if (imports) {
       const importeds = imports.split(COMMA)
       importeds.forEach(imported => {
         const [key, value] = imported.split(PIPE)
-        MOVIEMASHER.imports[key] = value
+        MOVIE_MASHER.imports[key] = value
       })
     }
 
-    MOVIEMASHER.importPromise().then(importResultOrError => {
+    MOVIE_MASHER.importPromise().then(importResultOrError => {
       if (isDefiniteError(importResultOrError)) return
       if (this.mashingAssetObject) return  
       
       const event = new EventAssetObject()
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) return
 
@@ -158,7 +157,7 @@ export class MovieMasherElement extends ComponentSlotter {
     
     const { detail } = event
     detail.promise = this.assetObjectPromise.then(() => {
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       return detail.promise!
     })
   }
@@ -168,13 +167,14 @@ export class MovieMasherElement extends ComponentSlotter {
 
     const { detail } = event
     detail.promise = this.assetObjectsPromise.then(() => {
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       return detail.promise!
     })
   }
 
 
   private handleChangedMashAsset(event: EventChangedMashAsset): void {
+    // console.log(this.tagName, 'handleChangedMashAsset', !!event.detail)
     const { detail: target } = event
     if (target) this.variableSet('mash-color', target.value('color'))
   }
@@ -195,7 +195,7 @@ export class MovieMasherElement extends ComponentSlotter {
   private handleManagedAssets(event: EventManagedAssets) {
     const { detail } = event
     detail.promise = this.managedAssetsPromise.then(() => {
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       return detail.promise!
     })
   }
@@ -209,7 +209,7 @@ export class MovieMasherElement extends ComponentSlotter {
   private get managedAssetsPromise() {
     return this._managedAssetsPromise ||= import(this.url('handler/manager')).then(() => {
       const listener = { [EventManagedAssets.Type]: this.listeners[EventManagedAssets.Type] }
-      MOVIEMASHER.listenersRemove(listener)
+      MOVIE_MASHER.listenersRemove(listener)
     })
   }
   protected masher?: Masher | undefined

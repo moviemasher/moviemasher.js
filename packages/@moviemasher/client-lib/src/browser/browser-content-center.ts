@@ -4,13 +4,13 @@ import type { OptionalContent, TemplateContent, TemplateContents } from '../clie
 import type { ClipLocation } from '../types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { $BROWSER, DASH, MOVIEMASHER, SIZE_ZERO, arrayFromOneOrMore, arrayRemove, isRawType, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { $BROWSER, DASH, MOVIE_MASHER, SIZE_ZERO, arrayFromOneOrMore, arrayRemove, isRawType, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { isAboveZero } from '@moviemasher/shared-lib/utility/guard.js'
 import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
 import { html } from 'lit-html'
-import { Component, ComponentLoader } from '../base/Component.js'
-import { Scroller } from '../base/LeftCenterRight.js'
-import { DROP_TARGET_CSS, DisablableMixin, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
+import { Component, ComponentLoader } from '../base/component.js'
+import { Scroller } from '../base/component-view.js'
+import { DISABLABLE_DECLARATIONS, DROP_TARGET_CSS, DisablableMixin, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
 import { isManageType } from '../runtime.js'
 import { EventAssetElement, EventPick, EventPicked, EventChangedManagedAssets, EventManagedAssets, EventWillDestroy, EventCanDestroy } from '../utility/events.js'
 import { AssetObjectsParams } from '../types.js'
@@ -35,11 +35,10 @@ export class BrowserContentCenterElement extends WithDropTarget {
     if (disabled) return  
     
     const sorts = arrayFromOneOrMore(sort || [])
-    // console.log(this.tagName, 'assetsPromiseRefresh', types, sources)
     if (isAboveZero(types.length + sources.length)) {
       const params: AssetObjectsParams = { manageTypes, sorts, sources, types }
       const event = new EventManagedAssets(params)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { promise } = event.detail
       if (promise) {
         this.assetsPromise = promise
@@ -49,11 +48,11 @@ export class BrowserContentCenterElement extends WithDropTarget {
             const { data } = orError
             const assetIds = this.assets.map(asset => asset.id)
             this.assets = data          
-            MOVIEMASHER.dispatch(new EventCanDestroy(assetIds))
+            MOVIE_MASHER.dispatch(new EventCanDestroy(assetIds))
             this.requestUpdate()
           }
         })
-      }
+      } 
     }
   }
 
@@ -65,7 +64,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
     this.listeners[EventWillDestroy.Type] = this.handleWillDestroy.bind(this)
     this.listeners[EventChangedManagedAssets.Type] = this.handleChangedManagedAssets.bind(this)
     const event = new EventPicked($BROWSER)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     this.pick(event.detail.picked)
     super.connectedCallback()
   }
@@ -97,17 +96,17 @@ export class BrowserContentCenterElement extends WithDropTarget {
       const icons = true
       const { iconSize, cover } = this
       if (iconSize) {
-        assets.forEach(assetObject => {
-          const { id, label } = assetObject
+        assets.forEach(asset => {
+          const { id } = asset
           const existing = elementsById[id]
           if (existing) {
             contents.push(existing)
             byId[id] = existing
             return 
           }
-
+          const label = String(asset.value('label') || '')
           const event = new EventAssetElement(id, iconSize, cover, label, icons, labels)
-          MOVIEMASHER.dispatch(event)
+          MOVIE_MASHER.dispatch(event)
           const { element } = event.detail
           if (element) {
             contents.push(element)
@@ -187,13 +186,18 @@ export class BrowserContentCenterElement extends WithDropTarget {
   private sources: Sources = []
   
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
+    super.willUpdate(changedProperties)
     if (changedProperties.has('size')) {
       this.elementsById = {}
     } 
+    if (changedProperties.has('disabled')) {
+      this.assetsPromiseRefresh()
+    }
   }
 
   static override properties: PropertyDeclarations = {
     ...ComponentLoader.properties,
+    ...DISABLABLE_DECLARATIONS,
     ...SIZE_REACTIVE_DECLARATIONS,
     assets: { type: Array, attribute: false },
     cover: { type: Boolean },

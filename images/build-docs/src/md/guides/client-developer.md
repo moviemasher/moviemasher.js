@@ -222,7 +222,7 @@ If it's not a mash asset object, a new one of the same type will
 be loaded instead, containing a clip referencing it. If a more complex 
 `EndpointRequest`
 is needed or you've already got an asset object to load, you can put it in the 
-`assetObject` property of the `MOVIEMASHER`
+`assetObject` property of the `MOVIE_MASHER`
 `options` object before loading the client library: 
 
 ```html
@@ -252,7 +252,7 @@ JSON file:
 
 Alternatively, a more complex request can be made by adding a 
 `RequestObject` to the
-`MOVIEMASHER` global object's 
+`MOVIE_MASHER` global object's 
 `options` before loading the client library: 
 
 ```html

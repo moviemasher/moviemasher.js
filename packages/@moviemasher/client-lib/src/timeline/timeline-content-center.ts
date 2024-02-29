@@ -7,13 +7,12 @@ import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 import { LAYER, eventStop } from '../runtime.js'
 import { EventChangeClipId, NumberEvent, EventChangeFrame, EventChangedFrame, EventChangedFrames, EventChangedMashAsset, EventFrames, EventChangedTracks, EventZoom } from '../utility/events.js'
-import { MOVIEMASHER, $FRAME, $WIDTH, arrayOfNumbers } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER, $FRAME, $WIDTH, arrayOfNumbers, $FRAMES } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
-import { DisablableMixin } from '../mixin/component.js'
+import { DISABLABLE_DECLARATIONS, DisablableMixin } from '../mixin/component.js'
 import { DROP_TARGET_CSS, DropTargetMixin } from '../mixin/component.js'
-import { Scroller } from '../base/LeftCenterRight.js'
-import { pixelToFrame } from '../utility/pixel.js'
-import { pixelFromFrame, pixelPerFrame } from '../utility/pixel.js'
+import { Scroller } from '../base/component-view.js'
+import { pixelToFrame, pixelFromFrame, pixelPerFrame } from '@moviemasher/shared-lib/utility/pixel.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 
 export const TimelineContentCenterTag = 'movie-masher-timeline-content-center'
@@ -40,7 +39,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -145,6 +144,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   }
 
   override handleChangedMashAsset(event: EventChangedMashAsset): void {
+    super.handleChangedMashAsset(event)
     const { detail: mash } = event
     this.mashAsset = mash
     this.tracksLength = mash?.tracks.length || 0
@@ -190,7 +190,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
     const pixel = Math.max(0, Math.min(max, clientX - x))
     const frame = pixelToFrame(pixel, this.scale, 'floor')
-    MOVIEMASHER.dispatch(new EventChangeFrame(frame))
+    MOVIE_MASHER.dispatch(new EventChangeFrame(frame))
   }
 
   private handleScrubberPointerUp(event: MouseEvent) {
@@ -215,7 +215,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   override onpointerdown = (event: Event): void => {
     // console.log(this.tagName, 'deselecting clip')
     eventStop(event)
-    MOVIEMASHER.dispatch(new EventChangeClipId())
+    MOVIE_MASHER.dispatch(new EventChangeClipId())
   }
 
   private recalculateLeft() {
@@ -243,7 +243,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
       changedProperties.has('zoom') 
       || changedProperties.has($WIDTH)
       || changedProperties.has($FRAME)
-      || changedProperties.has('frames')
+      || changedProperties.has($FRAMES)
     ) this.recalculateLeft()
   }
 
@@ -252,6 +252,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   zoom = 1.0
 
   static override properties: PropertyDeclarations = { 
+    ...DISABLABLE_DECLARATIONS,
     frame: { type: Number, attribute: false },
     left: { type: Number, attribute: false },
     frames: { type: Number, attribute: false },

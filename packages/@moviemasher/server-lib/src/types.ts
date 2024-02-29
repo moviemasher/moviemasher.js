@@ -1,38 +1,13 @@
-import type { AVType, AbsolutePath, Asset, AssetObject, RawType, AudibleInstance, AudioInstance, CacheArgs, CacheOptions, ContainerInstance, ContentInstance, DataOrError, DropType, AssetFileType, Importer, Instance, MashDescription, MashDescriptionArgs, MashDescriptionOptions, Mimetype, MovieMasherOptions, MovieMasherRuntime, OutputOptions, Propertied, RectTuple, SegmentDescription, SegmentDescriptionArgs, Size, Time, TimeRange, ValueRecord, VisibleContentInstance, VisibleInstance, AudioType, VideoType, VideoOutputOptions, Times } from '@moviemasher/shared-lib/types.js'
-import type { ServerAudibleAsset, ServerAudioAsset, ServerVisibleAsset } from './type/ServerAssetTypes.js'
-import type { ServerClip, ServerMashAsset } from './type/ServerMashTypes.js'
-
+import type { AVType, AbsolutePath, AssetObject, RawType, AudioInstance, ContainerInstance, DataOrError, DropType, Importer, MashDescription, MashDescriptionArgs, MashDescriptionOptions, Mimetype, MovieMasherOptions, MovieMasherRuntime, OutputOptions, Propertied, RectTuple, SegmentDescription, SegmentDescriptionArgs, Time, TimeRange, ValueRecord, VideoOutputOptions, Times, MashAsset, Clip, AudioAsset, ContainerAsset, ServerAsset, CommandFiles, ServerInstance, AudioCommandFileOptions, VideoCommandFileOptions, ServerVisibleInstance, ServerAudibleInstance } from '@moviemasher/shared-lib/types.js'
+import type { ServerMashAsset } from './type/ServerMashTypes.js'
 
 export interface ServerImporter extends Importer {
   icon: Node
 }
 
-export interface AssetFile {
-  avType?: AudioType | VideoType
-  type: AssetFileType
-  file: string
-  content?: string 
-  asset: ServerAsset
-}
-
-export interface AssetFiles extends Array<AssetFile>{}
-
-export interface CommandFile extends AssetFile {
-  path?: string
-  inputOptions?: ValueRecord
-  outputOptions?: ValueRecord
-  inputId: string
-}
-
-export interface ServerPromiseArgs extends CacheOptions { 
-  commandFiles: CommandFiles
-}
-
 export interface FilterArgs {
   propertied?: Propertied
 }
-
-export interface CommandFiles extends Array<CommandFile>{}
 
 export interface CommandInput {
   avType: AVType
@@ -52,39 +27,6 @@ export interface CommandFilter {
 
 export interface CommandFilters extends Array<CommandFilter>{}
 
-export interface CommandFileOptions {
-  time: Time
-}
-
-export interface AudioCommandFileOptions extends CommandFileOptions {
-  audioRate?: number
-}
-
-export interface AudioCommandFileArgs extends AudioCommandFileOptions {
-  audioRate: number
-  clipTime: TimeRange
-}
-
-export interface VideoCommandFileOptions extends CommandFileOptions {
-  encodePath: AbsolutePath
-  outputSize: Size
-  videoRate: number
-}
-
-export interface VisibleCommandFileArgs extends VideoCommandFileOptions {
-  // outputSize: Size
-  // videoRate: number
-  clipTime: TimeRange  
-  // videoRate: number
-  containerRects: RectTuple
-}
-
-export interface CommandFileArgs extends CommandFileOptions, CacheArgs {
-  
-  clipTime: TimeRange
-}
-
-
 export interface CommandFilterArgs  {
   track: number
   commandFiles: CommandFiles
@@ -94,19 +36,9 @@ export interface CommandFilterArgs  {
   clipTime: TimeRange
 }
 
-export interface VideoCommandFilterOptions extends CommandFilterArgs, VideoCommandFileOptions {
-  clipTime: TimeRange
-}
+export interface AudibleCommandFilterArgs extends CommandFilterArgs, AudioCommandFileOptions {}
 
-export interface AudioCommandFilterOptions extends CommandFilterArgs, AudioCommandFileOptions {
-  clipTime: TimeRange
-}
-
-export interface AudibleCommandFilterArgs extends AudioCommandFilterOptions {}
-
-export interface VideoCommandFilterArgs extends VideoCommandFilterOptions {
-  outputSize: Size
-}
+export interface VideoCommandFilterArgs extends CommandFilterArgs, VideoCommandFileOptions {}
 
 export interface VisibleCommandFilterArgs extends VideoCommandFilterArgs {
   containerRects: RectTuple
@@ -133,7 +65,7 @@ export interface PrecodeDescription {
   duration: number
   inputsById: CommandInputRecord
   commandFilters: CommandFilters
-  clip: ServerClip
+  clip: Clip
 }
 export interface PrecodeDescriptions extends Array<PrecodeDescription> {}
 
@@ -156,12 +88,11 @@ export interface EncodeCommands {
   encodingType: RawType
 }
 
-
 export interface ServerMashDescription extends MashDescription {
   needsPrecoding: boolean
   encodePath: AbsolutePath
   duration: number
-  mash: ServerMashAsset
+  mash: MashAsset
   audioRate: number
   background: string
   videoRate: number
@@ -199,7 +130,7 @@ export interface ServerSegmentDescription extends SegmentDescription {
 
 export interface ServerSegmentDescriptionArgs extends SegmentDescriptionArgs {
   time: Time
-  clip?: ServerClip
+  clip?: Clip
   mashDescription: ServerMashDescription
 }
 
@@ -207,43 +138,19 @@ export interface ServerAssetManager {
   asset(object: string | AssetObject): ServerAsset | undefined
 }
 
-
-export interface ServerAudibleInstance extends ServerInstance, AudibleInstance {
-  asset: ServerAudibleAsset
-  audibleCommandFiles(args: AudioCommandFileArgs): CommandFiles
-  // audibleCommandFilters(args: AudibleCommandFilterArgs): CommandFilters
-}
-
-export interface ServerVisibleInstance extends ServerInstance, VisibleInstance {
-  asset: ServerVisibleAsset
-  visibleCommandFiles(args: VisibleCommandFileArgs, content?: VisibleContentInstance): CommandFiles
-}
-
 export interface ServerAudioInstance extends ServerInstance, AudioInstance {
-  asset: ServerAudioAsset
+  asset: ServerAsset & AudioAsset 
 }
 
-export interface ServerContentInstance extends ServerVisibleInstance, ContentInstance {
-  asset: ServerVisibleAsset
-}
+export type ServerContentInstance = ServerVisibleInstance | ServerAudibleInstance
 
 export interface ServerContainerInstance extends ServerVisibleInstance, ContainerInstance {
-  asset: ServerVisibleAsset
+  asset: ServerAsset & ContainerAsset 
 }
 
-export interface ServerInstance extends Instance {
-  asset: ServerAsset
-  commandFiles(args: CommandFileArgs): CommandFiles
+export interface Tweening {
+  point?: boolean
+  size?: boolean
+  color?: boolean
+  canColor?: boolean
 }
-
-export interface ServerAsset extends Asset {
-  assetManager: ServerAssetManager
-
-  /** All files needed for audible and/or visible encode commands. */
-  assetFiles(args: CacheArgs): AssetFiles
-
-  /** Writes a command file, if it's not a raw asset. */
-  commandFilePromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>>
-}
-
-export interface ServerAssets extends Array<ServerAsset>{}

@@ -1,13 +1,12 @@
 import type { PropertyDeclarations, PropertyValues } from 'lit'
-import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '../client-types.js'
+import type { Htmls, OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
 
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, StringEvent } from '../utility/events.js'
-import { $STRING, arraySet } from '@moviemasher/shared-lib/runtime.js'
-import { html } from 'lit-html'
-import { ICON } from '../runtime.js'
-import { ButtonElement } from '../component/button.js'
+import { $STRING, MOVIE_MASHER, arraySet } from '@moviemasher/shared-lib/runtime.js'
 import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
+import { html } from 'lit-html'
+import { ButtonElement } from '../component/button.js'
+import { ICON } from '../runtime.js'
+import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, StringEvent } from '../utility/events.js'
 
 export const ServerActionTag = 'movie-masher-action-server'
 
@@ -61,9 +60,10 @@ export class ServerActionElement extends ButtonElement {
 
   private handleChanged() {
     const { enabledEvent } = this
+    // console.log(this.tagName, this.detail, 'handleChanged', enabledEvent)
     if (!enabledEvent) return
     
-    MOVIEMASHER.dispatch(enabledEvent)
+    MOVIE_MASHER.dispatch(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 
@@ -72,7 +72,7 @@ export class ServerActionElement extends ButtonElement {
     if (detail) {
       clickEvent.stopPropagation()
       const event = new EventDoServerAction(detail, progress ? detail : undefined)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { promise } = event.detail
       if (promise && progress) this.currentProgress = 0
     }
@@ -129,7 +129,7 @@ export class ServerActionElement extends ButtonElement {
 
   protected override render(): unknown {
     const { detail } = this
-    if (MOVIEMASHER.imports[detail]) return super.render()
+    if (MOVIE_MASHER.imports[detail]) return super.render()
 
     return
   }

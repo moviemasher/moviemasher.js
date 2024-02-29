@@ -3,15 +3,14 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { assertPositive, isSelectorType } from '@moviemasher/shared-lib/utility/guards.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { StringEvent, EventChangedInspectorSelectors, EventInspectorSelectors } from '../utility/events.js'
 import { COMMA, $MASH, TARGET_IDS } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
-import { ComponentSlotter } from '../base/Component.js'
-import { isSelectorType } from '../guards/TypeGuards.js'
+import { ComponentSlotter } from '../base/component.js'
 import { isArray } from '@moviemasher/shared-lib/utility/guard.js'
 
 const EventInspectorPicker = 'inspector-footer-left'
@@ -50,7 +49,7 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
     const types = this.partSelectorTypes(part)
     this.selectedPart = part
     const setEvent = new EventChangedInspectorSelectors(types)
-    MOVIEMASHER.dispatch(setEvent)
+    MOVIE_MASHER.dispatch(setEvent)
   }
 
   protected handleInspectorChooser(event: StringEvent): void {

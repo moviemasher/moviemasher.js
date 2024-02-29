@@ -6,17 +6,17 @@ import path from 'path'
 import { describe, test } from 'node:test'
 
 
-import { $RETRIEVE, MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { $RETRIEVE, MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 
 import '@moviemasher/server-lib/runtime.js'
 
-await MOVIEMASHER.importPromise()
+await MOVIE_MASHER.importPromise()
 
 
-describe('MOVIEMASHER', () => {
+describe('MOVIE_MASHER', () => {
   test.skip('promise fetch', () => {
     const resource: Resource = { type: 'type', request: { endpoint: 'test' } }
-    const promise = MOVIEMASHER.promise($RETRIEVE, resource)
+    const promise = MOVIE_MASHER.promise(resource, $RETRIEVE)
     
     assert(promise)
     assert.throws(async () => await promise)

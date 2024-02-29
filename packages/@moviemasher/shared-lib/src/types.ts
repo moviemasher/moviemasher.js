@@ -1,12 +1,6 @@
 declare global { 
   interface Window { webkitAudioContext: typeof AudioContext } 
-  // interface HTMLCanvasElement {
-  //   imp: {
-  //     canvasInstance(): { registerFont: (path: string, opts: { family: string }) => void }
-  //   }
-  // }
 }
-
 
 export interface DocumentWindow {
   document: Document
@@ -15,8 +9,267 @@ export interface DocumentWindow {
   EventTarget: typeof EventTarget
   HTMLCanvasElement: typeof HTMLCanvasElement
   FontFace: typeof FontFace
+  DOMParser: typeof DOMParser
   // fonts: typeof FontFaceSet
 }
+
+
+export interface Asset extends Propertied, Identified, Typed {
+  asset(assetObject: string): Asset 
+  assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>>
+  assetIds: Strings
+  assetManager: AssetManager
+  assetObject: AssetObject
+  assets: Assets
+  decodingOfType(...types: Strings): Decoding | undefined
+  decoding?: Decoding
+  decodings: Decodings
+  instanceArgs(object?: InstanceObject): InstanceArgs
+  instanceFromObject(object?: InstanceObject): Instance
+  clipObject(object?: InstanceObject): ClipObject
+  source: Source
+  type: RawType  
+  resourceOfType(...types: Array<ResourceType | Usage>): Resource | undefined
+  request?: EndpointRequest
+  resource?: Resource
+  resources: Resources  
+  hasIntrinsicTiming?: boolean  
+  hasIntrinsicSizing?: boolean
+}
+
+
+export interface ClientAsset extends Asset {
+  assetIcon(size: Size, cover?: boolean): Promise<DataOrError<Element>> 
+  assetIconPromise(resource: Resource, options: Rect | Size, cover?: boolean): Promise<DataOrError<SvgItem>>
+  imagePromise(resource: Resource): Promise<DataOrError<ClientImage>>
+  saveNeeded: boolean
+  savePromise(progress?: ServerProgress): Promise<StringDataOrError>
+  unload(): void
+}
+
+export interface ClientAssets extends Array<ClientAsset>{}
+
+
+export interface ClientInstance extends Instance {
+  asset: ClientAsset
+  clip: ClientClip
+  unload(): void
+}
+
+
+export interface ClientAudibleAsset extends ClientAsset, AudibleAsset {
+  audibleSource(): AudioBufferSourceNode | undefined
+}
+
+export interface ClientVisibleAsset extends ClientAsset, VisibleAsset {}
+
+export interface ClientAudibleInstance extends ClientInstance, AudibleInstance {
+  audiblePreviewPromise(outputSize: Size, scale?: number): Promise<DataOrError<SvgItem>>
+  asset: ClientAudibleAsset
+  clip: ClientClip
+}
+
+export interface ClientVisibleInstance extends VisibleInstance, ClientInstance {
+  asset: ClientVisibleAsset
+  clip: ClientClip
+  clippedElementPromise(content: ClientVisibleInstance, args: ContainerSvgItemArgs): Promise<DataOrError<SvgItemsRecord>>
+  containerSvgItemPromise(args: ContainerSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>>
+  contentSvgItemPromise(args: ContentSvgItemArgs): Promise<DataOrError<MaybeComplexSvgItem>>
+}
+
+
+export interface ClipIconArgs {
+  clipSize: Size
+  scale: number
+  width?: number
+  gap?: number
+  audible: boolean
+  visible: boolean
+  audibleHeight: number
+  visibleHeight: number
+}
+
+export interface ClientClip extends Clip {
+  container?: ClientInstance & ContainerInstance
+  content: ClientInstance & ContentInstance
+  elementPromise(size: Size, time: Time, component: Panel): Promise<DataOrError<SvgItemsRecord>>
+  svgItemPromise(args: ClipIconArgs): Promise<DataOrError<SvgElement>>
+  track?: ClientTrack
+  updateAssetId(oldId: string, newId: string): void
+}
+
+
+export interface ClientTrack extends Track {
+  addClips(clip: Clips, insertIndex?: number): void
+  // clips: ClientClips
+  frameForClipNearFrame(clip: Clip, frame?: number): number
+  mash: ClientMashAsset
+  removeClips(clip: Clips): void
+}
+
+export interface Edits {
+  canRedo: boolean
+  canSave: boolean
+  canUndo: boolean
+  create(object: EditObject): void
+  redo(): void
+  save(): void
+  undo(): void
+}
+
+export interface Edit {
+  redo(): void
+  undo(): void
+  updateSelection(): void
+  affects: PropertyIds
+}
+
+export interface ClientMashAsset extends ClientAsset, MashAsset {
+  actions: Edits
+  addClipToTrack(clip : Clip | Clips, trackIndex? : number, insertIndex? : number, frame? : number) : void
+  addTrack(object?: TrackObject): Track
+  assetObject: MashAssetObject
+  buffer: number
+  changeTiming(propertied: Propertied, property: string, value : number) : void
+  clearPreview(): void
+  clips: ClientClips
+  dispatchChanged(action: Edit): void
+  draw() : void
+  drawnTime? : Time
+  elementsPromise(size?: Size | number, selectedClip?: Clip): Promise<SvgItems>
+  encoding?: Resource 
+  frame: number
+  framesHaveChanged(frames?: number): void 
+  loading: boolean
+  mashDescription(options: ClientMashDescriptionOptions, selectedClip?: Clip): ClientMashDescription
+  paused: boolean
+  reload(): Promise<void> | undefined
+  removeClipFromTrack(clip : Clip | Clips) : void
+  removeTrack(index?: number): void
+  seekToTime(time: Time): Promise<void> | undefined
+  time: Time
+  timeRange: TimeRange
+  timeToBuffer: Time
+  tracks: ClientTracks
+  updateAssetId(oldId: string, newId: string): void
+}
+
+export interface ClientMashDescriptionOptions extends MashDescriptionOptions {
+  selectedClip?: Clip
+  clip?: Clip
+}
+
+
+export interface ClientMashDescription extends MashDescription {
+  size: Size
+  svgItemsPromise: Promise<SvgItems>
+  elementsPromise: Promise<SvgItems>
+  time: Time
+  selectedClip?: Clip
+  mash: ClientMashAsset
+}
+
+export interface ClientTracks extends Array<ClientTrack>{}
+
+
+export interface ClientClips extends Array<ClientClip>{}
+
+
+export interface ServerInstance extends Instance {
+  asset: ServerAsset
+  commandFiles(args: CommandFileArgs): CommandFiles
+}
+
+export interface ServerAudibleInstance extends ServerInstance, AudibleInstance {
+  asset: ServerAudibleAsset
+  audibleCommandFiles(args: AudioCommandFileArgs): CommandFiles
+}
+
+export interface ServerVisibleInstance extends ServerInstance, VisibleInstance {
+  asset: ServerVisibleAsset
+  visibleCommandFiles(args: VisibleCommandFileArgs, content?: VisibleContentInstance): CommandFiles
+}
+
+export interface CommandFileArgs extends CommandFileOptions, CacheArgs {
+  clipTime: TimeRange
+}
+export interface CommandFileOptions {
+  time: Time
+}
+
+export interface VideoCommandFileOptions extends CommandFileOptions {
+  encodePath: AbsolutePath
+  outputSize: Size
+  videoRate: number
+}
+
+export interface VisibleCommandFileArgs extends VideoCommandFileOptions {
+  clipTime: TimeRange  
+  containerRects: RectTuple
+}
+
+export interface ServerAsset extends Asset {
+  /** All files needed for audible and/or visible encode commands. */
+  assetFiles(args: CacheArgs): AssetFiles
+
+  /** Writes a command file, if it's not a raw asset. */
+  commandFilePromise(args: ServerPromiseArgs, commandFile: CommandFile): Promise<DataOrError<number>>
+}
+
+
+export interface ServerAudibleAsset extends ServerAsset, AudibleAsset {}
+
+export interface ServerVisibleAsset extends ServerAsset, VisibleAsset {}
+
+export interface AudioCommandFileOptions extends CommandFileOptions {
+  audioRate?: number
+}
+
+export interface AudioCommandFileArgs extends AudioCommandFileOptions {
+  audioRate: number
+  clipTime: TimeRange
+}
+
+export interface ServerPromiseArgs extends CacheOptions { 
+  commandFiles: CommandFiles
+}
+
+export interface ServerAssets extends Array<ServerAsset>{}
+
+export interface AssetFile {
+  avType?: AudioType | VideoType
+  type: AssetFileType
+  file: AbsolutePath
+  content?: string 
+  asset: ServerAsset
+}
+
+export interface AssetFiles extends Array<AssetFile>{}
+
+export interface CommandFile extends AssetFile {
+  path?: AbsolutePath
+  inputOptions?: ValueRecord
+  outputOptions?: ValueRecord
+  inputId: string
+}
+export interface CommandFiles extends Array<CommandFile>{}
+
+export interface AudibleAsset extends Asset {
+  canBeMuted?: boolean
+  duration: number
+  frames(quantize: number): number
+}
+
+export interface VisibleAsset extends Asset {
+  alpha?: boolean
+  canBeContainer?: boolean
+  canBeContent?: boolean
+  canBeFill?: boolean
+  isVector?: boolean
+  probeSize?: Size
+}
+
+
 
 export type Constrained<T> = new (...args: any[]) => T
 
@@ -212,17 +465,17 @@ export type FetchType = 'fetch'
 export type ResourceType = string | DropType | TranscodingType
 export interface ResourceTypes extends Array<ResourceType> {}
 
+export type Usage = TranscodeType | EncodeType 
 export interface Resource extends RequestObject, JobProduct {
   type: ResourceType
+  usage?: Usage
 }
 
 export interface Resources extends Array<Resource>{}
 
-export type DecodeType = 'decode'
-export type EncodeType = 'encode'
-export type TranscodeType = 'transcode'
+export type JobType = DecodeType | EncodeType | TranscodeType | Prompt
 
-export type JobType = DecodeType | EncodeType | TranscodeType
+export type DecodeType = 'decode'
 
 export interface Decoding extends JobProduct {
   type: DecodingType
@@ -230,12 +483,22 @@ export interface Decoding extends JobProduct {
 }
 export interface Decodings extends Array<Decoding> { }
 
-
+export type EncodeType = 'encode'
 
 export interface Encoding extends Resource {
   type: EncodingType
 }
 export interface Encodings extends Array<Encoding> { }
+
+export type Prompt = 'prompt'
+
+export interface Prompting extends Resource {
+  type: RawType
+  data: UnknownRecord
+}
+export interface Promptings extends Array<Prompting> { }
+
+export type TranscodeType = 'transcode'
 
 export interface Transcoding extends Resource {
   type: TranscodingType
@@ -250,27 +513,33 @@ export interface Property extends Typed, Ordered {
   name: string
   options?: Scalars
   step?: number
-  targetId: TargetId
+  targetId?: TargetId
   tweens?: boolean
   undefinedAllowed?: boolean
+  immutable?: boolean
 }
 
 export interface Properties extends Array<Property>{}
 
 export interface PropertyRecord extends Record<string, Property>{}
 
-export interface Propertied {
+export interface Propertied  {
+  boolean(key: string): boolean
+  changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject
+  changeScalars(scalars: ScalarsById): ChangeEditObject
   constrainedValue(found: Property, value?: Scalar): Scalar | undefined
-  initializeProperties(object: unknown): void
+  number(key: string): number
   properties: Properties
   propertyFind(name: string): Property | undefined
   propertyIds(targetIds?: TargetIds): PropertyIds
   propertyInstance(object: Property): Property 
   setValue(name: string, value?: Scalar): ScalarTuple
+  string(key: string): string
   targetId: TargetId
   toJSON(): UnknownRecord
   value(key: string): Scalar | undefined
   tweenValues(key: string, time: Time, range: TimeRange): Scalars 
+  shouldSelectProperty(property: Property, targetId: TargetId): Property | undefined
 }
 
 export type AssetRecord<T = string> = { [key in RawType]?: T }
@@ -280,19 +549,14 @@ export interface Typed {
 }
 
 export interface MashAsset extends Asset { 
-  // assetObject: MashAssetObject
   mashIndex: MashIndex
   mashDescription(options: MashDescriptionOptions): MashDescription
-  // gain: number
   clipInstance(object: ClipObject): Clip
   clips: Clips
   clipsAudibleInTime(time: Time): Clips
   clipsInTimeOfType(time: Time, avType?: AVType): Clips
-  color: string
   duration: number
   endTime: Time
-  loop: boolean
-  quantize: number
   size: Size
   toJSON(): UnknownRecord
   totalFrames: number
@@ -316,15 +580,11 @@ export interface MashAssetObject extends AssetObject {
   tracks?: TrackObjects
 }
 
-export interface MashAudioAssetObject extends MashAssetObject, AudioAssetObject {}
+export interface MashAudioAssetObject extends MashAssetObject {}
 
-export interface MashImageAssetObject extends MashAssetObject, ImageAssetObject {}
+export interface MashImageAssetObject extends MashAssetObject {}
 
-export interface MashVideoAssetObject extends MashAssetObject, VideoAssetObject {}
-
-export interface MashInstance extends Instance {
-  asset: MashAsset
-}
+export interface MashVideoAssetObject extends MashAssetObject {}
 
 export interface MashInstanceObject extends InstanceObject {}
 
@@ -334,50 +594,40 @@ export interface PromptAssets extends Array<PromptAsset>{}
 
 export interface PromptAssetObject extends AssetObject {}
 
-export interface PromptAudioAssetObject extends PromptAssetObject, AudioAssetObject {}
+export interface PromptAudioAssetObject extends PromptAssetObject {}
 
-export interface PromptImageAssetObject extends PromptAssetObject, ImageAssetObject {}
+export interface PromptImageAssetObject extends PromptAssetObject {}
 
-export interface PromptVideoAssetObject extends PromptAssetObject, VideoAssetObject {}
+export interface PromptVideoAssetObject extends PromptAssetObject {}
 
-export interface RawAsset extends Asset {
-  assetObject: RawAssetObject
+export interface ClientTextAsset extends TextAsset, ClientAsset {
+  assetObject: TextAssetObject
 }
 
-export interface RawAssets extends Array<RawAsset>{}
+export interface ClientTextInstance extends TextInstance, ClientInstance {
+  clip: ClientClip
+  asset: ClientTextAsset
+}
 
-export interface RawAssetObject extends AssetObject {}
-
-export interface RawAudioAssetObject extends RawAssetObject, AudioAssetObject {}
-
-export interface RawImageAssetObject extends RawAssetObject, ImageAssetObject {}
-
-export interface RawVideoAssetObject extends RawAssetObject, VideoAssetObject {}
-
-export interface RawInstanceObject extends InstanceObject { }
+export interface ClientTextAssetObject extends TextAssetObject {}
 
 export interface TextAsset extends ContainerAsset {
   assetObject: TextAssetObject
   family: string
-  string: string
   style(prefix?: string): SvgStyleElement
 }
 
 export interface TextInstance extends ContainerInstance {
   asset: TextAsset
-  string: string
-  intrinsic?: Rect
 }
 
 export interface TextInstanceObject extends VisibleInstanceObject {
-  intrinsic?: Rect
-  string?: string
+  text?: string
 }
 
-export interface TextAssetObject extends VisibleAssetObject {
-  string?: string
+export interface TextAssetObject extends AssetObject {
+  text?: string
 }
-
 
 export interface VideoInstance extends VisibleInstance, AudibleInstance {
   asset: VideoAsset
@@ -389,27 +639,21 @@ export interface VideoInstanceArgs extends InstanceArgs, VideoInstanceObject {
   asset: VideoAsset
 }
 
-
-
-
 export type DecodingType = string 
 
 export interface DecodingTypes extends Array<DecodingType> { }
-
 
 export interface DecodeOptions {}
 
 export type ColorSource = 'color'
 export type RawSource = 'raw'
 
-export type KnownSource = ContainerSource | ContentSource | ColorSource | MashSource | RawSource | ShapeSource | TextSource | PromptSource
+export type KnownSource = ContainerSource | ContentSource | ColorSource | MashSource | RawSource | ShapeSource | TextSource | Prompt
 export type Source = string | KnownSource
 
 export interface Sources extends Array<Source>{}
 
-
 export type TextSource = 'text'
-export type PromptSource = 'prompt'
 
 export type ContentSource = 'content'
 export type ContainerSource = 'container'
@@ -447,18 +691,12 @@ export interface AssetObject extends Identified, Labeled, Sourced, Typed {
   type: RawType 
 }
 
-export interface AssetObjects extends Array<AssetObject>{}
-
-
-export interface AudibleAssetObject extends AssetObject {
-  duration?: number
-  audio?: boolean
-  loop?: boolean
-  waveform?: string
-  audioUrl?: string
+export interface AssetArgs extends AssetObject {
+  assetManager: AssetManager
 }
 
-export interface VisibleAssetObject extends AssetObject {}
+export interface AssetObjects extends Array<AssetObject>{}
+
 
 export interface SourceAsset extends Asset {
   source: Source
@@ -490,25 +728,6 @@ export interface TrackObjects extends Array<TrackObject>{}
 export interface TrackArgs extends TrackObject {
   mashAsset: MashAsset
 }
-
-export interface Track extends Propertied, Indexed {
-  trackIndex: TrackIndex
-  assureFrames(quantize: number, clips?: Clips): void
-  clips: Clips
-  dense: boolean
-  frames: number
-  identifier: string
-  mash: MashAsset
-  sortClips(clips?: Clips): void
-  trackObject: TrackObject
-}
-
-export interface Tracks extends Array<Track>{}
-
-
-
-export interface VideoAssetObject extends AssetObject, VisibleAssetObject, AudibleAssetObject { }
-
 
 export type ContainerTiming = 'container'
 export type ContentTiming = 'content'
@@ -608,9 +827,10 @@ export interface SideDirectionRecord extends Partial<Record<SideDirection, boole
 
 
 export interface ShapeAsset extends VisibleAsset {
-  path: string
-  pathWidth: number
-  pathHeight: number
+  pathSize: Size
+  // path: string
+  // pathWidth: number
+  // pathHeight: number
 }
 
 export interface ShapeInstance extends VisibleInstance {
@@ -643,16 +863,11 @@ export type BooleanType = 'boolean'
 export type NumberType = 'number'
 export type StringType = 'string'
 
-
-
-
-export interface AudioAssetObject extends AssetObject { }
-
 export interface AudioInstance extends AudibleInstance {
   asset: AudioAsset
 }
 
-export interface AudioInstanceObject extends InstanceObject { }
+export interface AudioInstanceObject extends InstanceObject {}
 
 export interface AudioInstanceArgs extends InstanceArgs, AudioInstanceObject {
   asset: AudioAsset
@@ -666,10 +881,6 @@ export interface ImageInstanceObject extends VisibleInstanceObject { }
 export interface ImageInstanceArgs extends InstanceArgs, ImageInstanceObject {
   asset: ImageAsset
 }
-
-
-export interface ImageAssetObject extends AssetObject { }
-
 
 export interface CacheArgs {
   validDirectories?: AbsolutePaths
@@ -693,125 +904,26 @@ export interface AssetCacheArgs extends CacheOptions {
   assetTime?: Time
 }
 
-
-export interface InstanceObject extends Labeled {
-  assetId?: string
-
-  
-  x?: number
-  xEnd?: number
-  y?: number
-  yEnd?: number
-  lock?: string
-  container?: boolean
-
-  height?: number
-  heightEnd?: number
-
-  opacity?: number
-  opacityEnd?: number
-  width?: number
-  widthEnd?: number
-  pointAspect?: string
-  sizeAspect?: string
-}
-
 export interface InstanceArgs extends InstanceObject {
   asset: Asset
 }
 
-interface AudibleInstanceProperties {
-  gain: number
-  gainPairs: Numbers[]
-  speed: number
-  startTrim: number
-  endTrim: number
-}
-
-export interface AudibleInstanceObject extends InstanceObject {
-  gain?: Value
-  muted?: boolean
-  loops?: number
-  speed?: number
-  startTrim?: number
-  endTrim?: number
-}
-
-export interface VisibleInstanceObject extends InstanceObject {}
-
-
-export interface Clip extends Propertied {
-  opacity: number
-  sizingRect(size: Size, loading?: boolean): Rect
-  asset(assetIdOrObject: string | AssetObject): Asset 
-  assetIds: Strings
-  audible: boolean
-  clipCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
-  clipIndex: ClipIndex
-  clipObject: ClipObject
-  container?: ContainerInstance
-  containerId: string
-  content: ContentInstance | AudioInstance
-  contentId: string
-  // element(size: Size, time: Time): DataOrError<Element>
-  endFrame: number
-  frame : number
-  frames: number
-  id: string
-  intrinsicsKnown(options: IntrinsicOptions): boolean
-  label: string
-  transparency: Transparency
-  maxFrames(quantize : number, trim? : number) : number
-  canBeMuted: boolean
-  muted: boolean
-  clipRects(args: ContainerRectArgs): RectTuple
-  resetTiming(instance?: Instance, quantize?: number): void
-  sizing: Sizing
-  timeRange: TimeRange
-  timing: Timing
-  track: Track
-  trackNumber: number
-  visible : boolean
-}
-
-export interface Clips extends Array<Clip>{}
-
 export type Transparency = 'alpha' | 'luminance'
-
-export interface ClipObject extends Labeled {
-  opacity?: number
-  opacityEnd?: number
-  containerId?: string
-  contentId?: string
-  content?: InstanceObject
-  container?: InstanceObject
-  frame?: number
-  transparency?: Transparency | string
-  timing?: string
-  sizing?: string
-  frames?: number
-}
-
-export interface ClipObjects extends Array<ClipObject>{}
 
 export interface IntrinsicOptions {
   size?: boolean
   duration?: boolean
 }
 
-export interface ColorAsset extends ContentAsset {}
+export interface ColorAsset extends VisibleAsset {}
 
-export interface ColorInstance extends ContentInstance {
-  color: string
+export interface ColorInstance extends VisibleInstance {
   asset: ColorAsset
 }
 
 export interface ColorInstanceObject extends ImageInstanceObject {
   color?: string
 }
-
-export interface ColorAssetObject extends ImageAssetObject {}
-
 
 export interface ContainerRectArgs {
   outputSize: Size
@@ -835,12 +947,9 @@ export interface ContainerInstance extends VisibleInstance {
 
 export interface ContainerAsset extends VisibleAsset {}
 
-export interface ContentInstance extends VisibleInstance {
-  asset: ContentAsset
-}
+export type ContentInstance = VisibleInstance | AudibleInstance
 
-export interface ContentAsset extends VisibleAsset {
-}
+export type ContentAsset = VisibleAsset | AudibleAsset 
 
 export type DataGroup = string 
 
@@ -1124,8 +1233,12 @@ export interface ProbingFormat {
   tags?: Record<string, string | number> | undefined
 }
 
+export interface ChangeEdit extends Edit {
+  target: Propertied
+  updateEdit(object: ChangeEditObject): void
+}
 
-export interface ChangeEditObject extends EditArgs {
+export interface ChangeEditObject extends EditObject {
   target: Propertied
 }
 
@@ -1141,14 +1254,10 @@ export interface ChangePropertiesEditObject extends ChangeEditObject {
 }
 export interface EditObject extends Typed {}
 
-export interface EditArgs extends EditObject {}
-
 export type AbsolutePath = `/${string}`
 export interface AbsolutePaths extends Array<AbsolutePath>{}
 
 export type Mimetype = `${string}/${string}`
-
-
 
 export interface Nodes extends Array<Node>{}
 export interface Elements extends Array<Element>{}
@@ -1172,113 +1281,19 @@ export interface MashDescriptionArgs extends MashDescriptionOptions {
   mash: MashAsset
 }
 
-export interface SegmentDescription {
-}
+export interface SegmentDescription {}
 
 export interface SegmentDescriptionArgs {
   mashDescription: MashDescription
 }
 
-export interface Asset extends Propertied, Identified, Typed, Labeled {
-  asset(assetIdOrObject: string | AssetObject): Asset 
-  assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>>
-  assetIds: Strings
-  assetObject: AssetObject
-  assets: Assets
-  decodingOfType(...types: Strings): Decoding | undefined
-  decoding?: Decoding
-  decodings: Decodings
-  instanceArgs(object?: InstanceObject): InstanceArgs
-  instanceFromObject(object?: InstanceObject): Instance
-  clipObject(object?: InstanceObject): ClipObject
-  source: Source
-  type: RawType  
-  resourceOfType(...type: ResourceTypes): Resource | undefined
-  request?: EndpointRequest
-  resource?: Resource
-  resources: Resources
-}
-
-export interface AudibleAsset extends Asset {
-  assetObject: AudibleAssetObject
-  canBeMuted: boolean
-  audioUrl: string
-  duration: number
-  frames(quantize: number): number
-  loop: boolean
-}
-
-export interface VisibleAsset extends Asset {
-  assetObject: VisibleAssetObject
-  probeSize?: Size
-  alpha?: boolean
-  canBeFill?: boolean
-  canBeContainer?: boolean
-  canBeContent?: boolean
-  container?: boolean
-  content?: boolean
-  isVector?: boolean
-  hasIntrinsicSizing?: boolean
-}
-
 export interface AudioAsset extends AudibleAsset {}
 export interface ImageAsset extends VisibleAsset {}
 
-export interface VideoAsset extends VisibleAsset, AudibleAsset {
-  assetObject: VideoAssetObject
-}
+export interface VideoAsset extends VisibleAsset, AudibleAsset {}
 
-export interface Instance extends Propertied, Identified {
-
-  // all visual...
-  bottomCrop: boolean
-  height: number
-  intrinsicRect: Rect
-  scaleRects(time: Time, range: TimeRange): RectTuple
-  containerRects(args: ContainerRectArgs, sizingSize: Size): RectTuple
-  contentRects(args: ContentRectArgs): RectTuple 
-  opacityEnd?: number
-  leftCrop: boolean
-  lock: Lock
-  pointAspect: Aspect
-  sizeKey?: SizeKey
-  rightCrop: boolean
-  cropDirections: SideDirectionRecord
-  sizeAspect: Aspect
-  topCrop: boolean
-  width: number
-  x: number
-  y: number
-  xEnd?: number
-  yEnd?: number
-  widthEnd?: number
-  heightEnd?: number
-
-
-  // audible
-  canBeMuted: boolean
-  muted: boolean
-  hasIntrinsicTiming: boolean
-
-  // should be durationKnown, rectKnown
-  intrinsicsKnown(options: IntrinsicOptions): boolean
-  isDefault: boolean
-  asset: Asset
-  assetId: string
-  assetIds: Strings
-  assetTime(masherTime: Time): Time
-  clip: Clip
-  container: boolean
-
-  
-  frames(quantize: number): number 
-  instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
-  instanceObject: InstanceObject
-}
-
-export interface AudibleInstance extends Instance, AudibleInstanceProperties {
-  /** @returns Array containing duration, start trim, and end trim in frames. */
-  assetFrames(quantize: number): Numbers
+export interface MashInstance extends Instance {
+  asset: MashAsset
 }
 
 export type Panel = BrowserPanel | PlayerPanel | TimelinePanel | ImporterPanel | ExporterPanel
@@ -1346,21 +1361,10 @@ export interface ContainerSvgItemArgs extends SvgItemArgs {
 export type MaybeComplexSvgItem = SvgItem | ComplexSvgItem
 export interface MaybeComplexSvgItems extends Array<MaybeComplexSvgItem>{}
 
-export interface VisibleInstance extends Instance {
-  clippedElement(content: ContentInstance, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord>
-  containedItem(contentItem: MaybeComplexSvgItem, containerItem: MaybeComplexSvgItem, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord>
-  containerSvgItem(args: ContainerSvgItemArgs): DataOrError<MaybeComplexSvgItem>
-  contentSvgItem(args: ContentSvgItemArgs): DataOrError<MaybeComplexSvgItem>
-  contentRect(time: Time, containerRect: Rect, outputSize: Size): Rect
-  svgVector(rect: Rect, forecolor?: string, opacity?: Scalar): SvgVector
-  asset: VisibleAsset
-  tweening: boolean
-  tweens(key: string): boolean
-}
 
-export interface VisibleContentAsset extends ContentAsset {}
+export interface VisibleContentAsset extends VisibleAsset {}
   
-export interface VisibleContentInstance extends ContentInstance {}
+export interface VisibleContentInstance extends VisibleInstance {}
 
 export interface AssetPromiseEventDetail {
   assetId: string
@@ -1458,14 +1462,31 @@ export interface PromiseFunction<RET = any, OPTS extends object = object, ARGS e
   (args: ARGS, options?: OPTS): Promise<DataOrError<RET>>
 }
 
-export interface DecodeFunction extends PromiseFunction<Decoding, JobOptions, DecodeArgs> {
-  // (args: DecodeArgs, options: JobOptions): Promise<DataOrError<Decoding>>
-}
+export interface DecodeFunction extends PromiseFunction<Decoding, JobOptions, DecodeArgs> {}
 export interface TranscodeFunction extends PromiseFunction<string | Transcoding, JobOptions, TranscodeArgs> {}
+export interface RetrieveFunction extends PromiseFunction<string, JobOptions, Resource> {}
 
-export interface RetrieveFunction extends PromiseFunction<string, JobOptions, Resource> {
-  // (args: Resource, options: JobOptions): Promise<DataOrError<string>>
+export interface FileWriteArgs extends Typed {
+  path: AbsolutePath
+  content: string
+  dontReplace?: boolean
 }
+
+export interface FileFunction extends PromiseFunction<string, JobOptions, FileWriteArgs> {}
+
+
+export interface UploadResult {
+  assetRequest: EndpointRequest
+  id?: string
+}
+export interface RequestArgs extends Typed {
+  request: EndpointRequest
+}
+
+
+export interface SaveFunction extends PromiseFunction<string, JobOptions, Asset> {}
+
+export interface FileUploadFunction extends PromiseFunction<UploadResult, JobOptions, RequestArgs> {}
 
 export interface TextRectArgs {
   size: number
@@ -1480,9 +1501,8 @@ export interface EncodeArgs extends Typed {
   options?: EncodeOptions
 }
 
-export interface EncodeFunction extends PromiseFunction<string | Encoding, JobOptions, EncodeArgs> {
-  // (args: EncodeArgs, options: JobOptions): Promise<DataOrError<string | Encoding>>
-}
+export interface EncodeFunction extends PromiseFunction<string | Encoding, JobOptions, EncodeArgs> {}
+export interface AssetFunction extends ReturningFunction<Asset, AssetArgs> {}
 
 export interface TranscodeArgs {
   resource: AssetResource
@@ -1490,17 +1510,16 @@ export interface TranscodeArgs {
   options: TranscodeOptions
 }
 
-export interface AssetFunction {
-  (assetIdOrObject: string | AssetObject): Asset 
+export interface AssetManager {
+  get(id: string): DataOrError<Asset>
+  define(...assetObjects: (AssetObject | Identified)[]): Promise<DataOrError<Assets>>
+  undefine(id?: string | Strings): void
+  updateDefinitionId(previousId: string, currentId: string): void
 }
-
-export interface AssetManager {}
 
 export type AssetType = 'asset'
 
 export type ModuleType = string | FetchType | RawType | JobType
-
-
 
 export interface MovieMasherRuntime extends EventDispatcher {
   context: ClientOrServer
@@ -1509,24 +1528,152 @@ export interface MovieMasherRuntime extends EventDispatcher {
   importPromise(): Promise<DataOrError<ImportResult>>
   window: DocumentWindow
 //* Call a loaded function. */
-  call<RET = any>(moduleType: ModuleType, id: string, args?: object): DataOrError<RET> 
+  call<RET = any, OPTS extends object = object>(id: string, moduleType?: ModuleType, args?: OPTS): DataOrError<RET> 
 
   /** install and load a function asyncronously  */
-  load<RET=any>(moduleType: ModuleType, id: string, moduleId: string, exported?: string): Promise<DataOrError<ReturningFunction<RET>>>
+  load<RET=any, OPTS extends object = object>(moduleType: ModuleType, id: string, moduleId: string, exported?: string): Promise<DataOrError<ReturningFunction<RET, OPTS>>>
 
   /** Install a PromiseFunction for a module type, aside from asset.  */
   install(moduleType: ModuleType, id: string, moduleId: string, exported?: string): DefiniteError | undefined
 
   /** Call installed promise function, loading if needed. */
-  promise<RET=any, OPTS extends object = object, ARGS extends Typed=Typed>(moduleType: ModuleType, args: ARGS, opts?: OPTS): Promise<DataOrError<RET>>
+  promise<RET=any, OPTS extends object = object, ARGS extends Typed=Typed>(args: ARGS, moduleType?: ModuleType, opts?: OPTS): Promise<DataOrError<RET>>
 
 }
 
 export interface MovieMasherInstance extends MovieMasherRuntime {
-
   eventDispatcher: EventDispatcher
-
 }
+
+export interface Instance extends Propertied, Identified {
+  asset: Asset
+  assetId: string
+  assetIds: Strings
+  assetTime(masherTime: Time): Time
+  canBeMuted: boolean
+  clip: Clip
+  frames(quantize: number): number 
+  instanceCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
+  instanceObject: InstanceObject
+  intrinsicsKnown(options: IntrinsicOptions): boolean
+  isDefault: boolean
+  muted: boolean
+}
+
+export interface InstanceObject {
+  assetId?: string
+}
+
+export interface AudibleInstance extends Instance {
+  /** @returns Array containing duration, start trim, and end trim in frames. */
+  assetFrames(quantize: number): Numbers
+}
+
+export interface AudibleInstanceObject extends InstanceObject {
+  gain?: number
+  muted?: boolean
+  loops?: number
+  speed?: number
+  startTrim?: number
+  endTrim?: number
+}
+
+export interface VisibleInstance extends Instance {
+  asset: VisibleAsset
+  clippedElement(content: VisibleContentInstance, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord>
+  containedItem(contentItem: MaybeComplexSvgItem, containerItem: MaybeComplexSvgItem, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord>
+  containerRects(args: ContainerRectArgs, sizingSize: Size): RectTuple
+  containerSvgItem(args: ContainerSvgItemArgs): DataOrError<MaybeComplexSvgItem>
+  contentRect(time: Time, containerRect: Rect, outputSize: Size): Rect
+  contentRects(args: ContentRectArgs): RectTuple 
+  contentSvgItem(args: ContentSvgItemArgs): DataOrError<MaybeComplexSvgItem>
+  cropDirections: SideDirectionRecord
+  intrinsicRect: Rect
+  scaleRects(time: Time, range: TimeRange): RectTuple
+  sizeKey?: SizeKey
+  svgVector(rect: Rect, forecolor?: string, opacity?: Scalar): SvgVector
+  tweening: boolean
+  tweens(key: string): boolean
+}
+
+export interface VisibleInstanceObject extends InstanceObject {
+  container?: boolean
+
+  x?: number
+  xEnd?: number
+  y?: number
+  yEnd?: number
+  lock?: string
+
+  height?: number
+  heightEnd?: number
+
+  width?: number
+  widthEnd?: number
+  pointAspect?: string
+  sizeAspect?: string
+}
+
+
+export interface Clip extends Propertied {
+  asset(assetIdOrObject: string): Asset 
+  assetIds: Strings
+  audible: boolean
+  canBeMuted: boolean
+  clipCachePromise(args: InstanceCacheArgs): Promise<DataOrError<number>>
+  clipIndex: ClipIndex
+  clipObject: ClipObject
+  clipRects(args: ContainerRectArgs): RectTuple
+  container?: ContainerInstance
+  content: ContentInstance
+  endFrame: number
+  frame : number
+  frames: number
+  id: string
+  intrinsicsKnown(options: IntrinsicOptions): boolean
+  maxFrames(quantize : number, trim? : number) : number
+  muted: boolean
+  resetTiming(instance?: Instance, quantize?: number): void
+  sizingRect(size: Size, loading?: boolean): Rect
+  timeRange: TimeRange
+  track?: Track
+  trackNumber: number
+  visible : boolean
+}
+
+export interface Clips extends Array<Clip>{}
+
+export interface ClipObject extends Labeled {
+  opacity?: number
+  opacityEnd?: number
+  containerId?: string
+  contentId?: string
+  content?: VisibleInstanceObject | AudibleInstanceObject
+  container?: VisibleInstanceObject
+  frame?: number
+  transparency?: Transparency | string
+  timing?: string
+  sizing?: string
+  frames?: number
+}
+
+export interface ClipObjects extends Array<ClipObject>{}
+
+
+export interface Track extends Propertied, Indexed {
+  trackIndex: TrackIndex
+  assureFrames(quantize: number, clips?: Clips): void
+  clips: Clips
+  dense: boolean
+  frames: number
+  identifier: string
+  mash: MashAsset
+  sortClips(clips?: Clips): void
+  trackObject: TrackObject
+}
+
+export interface Tracks extends Array<Track>{}
+
 
 // interface Animation {
 //   percent: number

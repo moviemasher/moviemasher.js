@@ -3,12 +3,12 @@ import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventIcon } from '../utility/events.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
-import { Component } from '../base/Component.js'
-import { svgStringElement } from '../utility/svg.js'
+import { Component } from '../base/component.js'
+import { svgStringElement } from '@moviemasher/shared-lib/utility/svg.js'
 
 const IconElementTimeout = 1000
 
@@ -59,7 +59,7 @@ export class IconElement extends Component {
   private get iconEventPromise() {
     const { icon } = this
     const event = new EventIcon(icon) 
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     return event.detail.promise
   }
 

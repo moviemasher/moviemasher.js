@@ -5,10 +5,10 @@ import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '
 import { css } from '@lit/reactive-element/css-tag.js'
 import { SELECTED } from '../runtime.js'
 import { EventPick, EventPicked, StringEvent } from '../utility/events.js'
-import { $BROWSER, RAW_TYPES,MOVIEMASHER,  $AUDIO, DASH, $IMAGE, $MASH, $RAW, $SHAPE, $TEXT, $VIDEO, VISIBLE_TYPES } from '@moviemasher/shared-lib/runtime.js'
+import { $BROWSER, RAW_TYPES,MOVIE_MASHER,  $AUDIO, DASH, $IMAGE, $MASH, $RAW, $SHAPE, $TEXT, $VIDEO, VISIBLE_TYPES } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
-import { Component } from '../base/Component.js'
-import { ComponentSlotter } from '../base/Component.js'
+import { Component } from '../base/component.js'
+import { ComponentSlotter } from '../base/component.js'
 
 export const PickerTag = 'movie-masher-picker'
 
@@ -43,7 +43,7 @@ export class PickerElement extends ComponentSlotter {
     if (!selected) return
 
     const event = new EventPick(picker, selected)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
   }
 
   private handlePick(event: EventPick) {
@@ -74,7 +74,7 @@ export class PickerElement extends ComponentSlotter {
     const part = rest.join(DASH) 
     // console.log(this.tagName, 'handlePicker', this.picker, part)
 
-    MOVIEMASHER.dispatch(new EventPick(picker, part))
+    MOVIE_MASHER.dispatch(new EventPick(picker, part))
     event.stopImmediatePropagation()
   }
 

@@ -1,7 +1,7 @@
-import type { TranscodeFunction } from '@moviemasher/shared-lib/types.js'
+import type { TranscodeFunction, Transcoding } from '@moviemasher/shared-lib/types.js'
 
 import { isRawResource, isTranscoding } from '@moviemasher/shared-lib/utility/guards.js'
-import { ERROR, $POST, isDefiniteError, namedError, copyResource, errorPromise } from '@moviemasher/shared-lib/runtime.js'
+import { ERROR, $POST, isDefiniteError, namedError, copyResource, errorPromise, $TRANSCODE } from '@moviemasher/shared-lib/runtime.js'
 import { requestCallbackPromise } from '../utility/request.js'
 
 export const transcodeFunction: TranscodeFunction = (args, jobOptions = {}) => {
@@ -15,9 +15,10 @@ export const transcodeFunction: TranscodeFunction = (args, jobOptions = {}) => {
     if (isDefiniteError(orError)) return orError
     
     progress?.did(1)
-    const { data } = orError
-    if (!isTranscoding(data)) return namedError(ERROR.Syntax, 'transcoding')
+    const { data: transcoding } = orError
+    if (!isTranscoding(transcoding)) return namedError(ERROR.Syntax, $TRANSCODE)
 
+    const data: Transcoding = { ...transcoding, usage: $TRANSCODE }
     return { data }
   })
 }

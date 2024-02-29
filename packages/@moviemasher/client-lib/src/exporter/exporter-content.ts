@@ -3,10 +3,10 @@ import type { CSSResultGroup, PropertyDeclarations, PropertyValueMap } from 'lit
 import type { Htmls, OptionalContent } from '../client-types.js'
 import type { AssetObjects } from '@moviemasher/shared-lib/types.js'
 
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventExporters } from '../utility/events.js'
 import { html, nothing } from 'lit-html'
-import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
+import { CENTER, ContentBase } from '../base/component-view.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 
 const EventTypeExporter = 'exporter'
@@ -46,11 +46,11 @@ export class ExporterContentElement extends ContentBase {
   // }
 
   // private handleExporterComplete(): void {
-  //   MOVIEMASHER.dispatch(new EventDialog())
+  //   MOVIE_MASHER.dispatch(new EventDialog())
 
   //   const { assetObjects } = this
   //   this.assetObjects = []
-  //   MOVIEMASHER.dispatch(new EventImportManagedAssets(assetObjects))
+  //   MOVIE_MASHER.dispatch(new EventImportManagedAssets(assetObjects))
   // }
 
   // private handleExporterAdd(event: EventExporterAdd): void {
@@ -83,7 +83,7 @@ export class ExporterContentElement extends ContentBase {
   private get exportersInitialize(): ClientExporters {
     const exporters: ClientExporters = []
     const event = new EventExporters(exporters)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const [exporter] = exporters
     if (exporter) this.exporterId ||= exporter.id
     return exporters

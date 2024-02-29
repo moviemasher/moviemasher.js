@@ -1,10 +1,10 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
-import { HeaderBase } from '../base/LeftCenterRight.js'
+import { HeaderBase } from '../base/component-view.js'
 import { $IMPORTER } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { IMPORT_TYPES } from '@moviemasher/shared-lib/runtime.js'
-import { ComponentSlotter } from '../base/Component.js'
+import { ComponentSlotter } from '../base/component.js'
 
 export const ImporterHeaderTag = 'movie-masher-importer-header'
 

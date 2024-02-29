@@ -4,10 +4,10 @@ import type { OptionalContent } from '../client-types.js'
 
 import { SLASH } from '@moviemasher/shared-lib/runtime.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventChangedFrame, EventChangedFrames, EventChangedMashAsset, EventFrames } from '../utility/events.js'
 import { html } from 'lit-html'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 import { DISABLABLE_DECLARATIONS, DisablableMixin } from '../mixin/component.js'
 import { stringSeconds } from '@moviemasher/shared-lib/utility/time.js'
 
@@ -27,7 +27,7 @@ export class PlayerTimeElement extends PlayerTimeWithDisablarable {
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -37,7 +37,8 @@ export class PlayerTimeElement extends PlayerTimeWithDisablarable {
     const { frame, frames, mashAsset } = this
     if (!mashAsset) return 
 
-    const { quantize } = mashAsset
+    const quantize = Number(mashAsset.value('quantize'))
+    
     const position = frame / quantize
     const duration = frames / quantize
     const numbers = [position, duration]

@@ -3,7 +3,7 @@ import type { Application } from 'express'
 import type { UploadFileRequest, UploadFileResponse, UploadRequestRequest, UploadResponse, VersionedDataOrError } from '../Api/Api.js'
 import type { ExpressHandler, UploadServerArgs } from './Server.js'
 
-import { CONTENT_TYPE, DROP_TYPES, ERROR, MIME_MULTI, $POST, SLASH, VERSION, errorMessageObject, errorObjectCaught, errorThrow, isDropType } from '@moviemasher/shared-lib/runtime.js'
+import { $UPLOAD, CONTENT_TYPE, DROP_TYPES, ERROR, MIME_MULTI, $POST, SLASH, VERSION, errorMessageObject, errorObjectCaught, errorThrow, isDropType } from '@moviemasher/shared-lib/runtime.js'
 import basicAuth from 'express-basic-auth'
 import fs from 'fs'
 import multer from 'multer'
@@ -34,7 +34,7 @@ export class UploadServerClass extends ServerClass {
     return found
   }
 
-  id = 'upload'
+  id = $UPLOAD
 
   private file: ExpressHandler<VersionedDataOrError<UploadFileResponse>, UploadFileRequest> = async (req, res) => {
     const request = req.body

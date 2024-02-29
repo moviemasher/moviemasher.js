@@ -156,6 +156,15 @@ export const copyPoint = <T=number>(from: Point<T>, to?: Point<T>):Point<T> => {
   return to ? copy(from, to) : strip(from)
 }
 
+export const centerPoint = (size: Size, inSize: Size): Point => {
+  return {
+    x: Math.round((size.width - inSize.width) / 2),
+    y: Math.round((size.height - inSize.height) / 2)
+  }
+}
+
+
+
 export const copyRect = <T=number>(from: Rect<T>, to?: Rect<T>): Rect<T> => {
   if (to) {
     copyPoint(from, to)

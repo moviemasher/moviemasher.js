@@ -1,5 +1,2 @@
-export * from './ClientAssetClass.js'
-export * from './ClientInstanceClass.js'
-export * from './Component.js'
-export * from './LeftCenterRight.js'
-export * from './ClientRawAssetClass.js'
+export * from './component.js'
+export * from './component-view.js'

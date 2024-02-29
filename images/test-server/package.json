@@ -9,10 +9,9 @@
     "test-fc-scan": "fc-scan -b /app/temporary/assets/font/lobster/lobster.ttf",
     "test-do": "node ./dev/jsdom.mjs",
     "clean": "rm -rf /app/temporary/output/*",
-    "create": "mkdir /app/temporary/cache",
     
-    "test-ts": "run-s clean test-ts",
-    "test": "node --loader tsx --test ./src/encode.test.ts"
+    "test": "run-s clean test-ts",
+    "test-ts": "node --loader tsx --test ./src/encode.test.ts"
   },
   "dependencies": {
     "@moviemasher/server-lib": "5.2.0"

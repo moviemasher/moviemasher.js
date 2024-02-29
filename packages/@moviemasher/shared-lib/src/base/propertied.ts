@@ -1,18 +1,17 @@
-import type { ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, DataType, Propertied, Properties, Property, PropertyId, PropertyIds, Scalar, ScalarRecord, ScalarTuple, ScalarsById, Strings, TargetId, TargetIds, Time, TimeRange, UnknownRecord } from '../types.js'
+import type { ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, DataType, PopulatedString, Propertied, Properties, Property, PropertyId, PropertyIds, Scalar, ScalarRecord, ScalarTuple, ScalarsById, Strings, TargetId, TargetIds, Time, TimeRange, UnknownRecord } from '../types.js'
 
 import { $BOOLEAN, $CHANGE, $CHANGES, $CONTAINER_ID, $CONTENT_ID, $END, $FRAME, $NUMBER, $PERCENT, $RGB, $STRING, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DOT, RGB_BLACK, arrayUnique, sortByOrder, } from '../runtime.js'
-import { isPopulatedString } from '../utility/guard.js'
+import { isBoolean, isPopulatedString, isScalar } from '../utility/guard.js'
 import { isNumeric } from '../utility/guard.js'
 import { isNumber } from '../utility/guard.js'
 import { isString } from '../utility/guard.js'
 import { isDefined } from '../utility/guard.js'
 import { colorValid, tweenColor } from '../utility/color.js'
 import { isUndefined } from '../utility/guard.js'
-import { assertDefined, assertPopulatedString, assertTrue, isPropertyId } from '../utility/guards.js'
+import { assertBoolean, assertDefined, assertNumber, assertPopulatedString, assertString, assertTrue, isPropertyId, isTargetId } from '../utility/guards.js'
 import { tweenNumber } from '../utility/rect.js'
 import { isTimeRange } from '../utility/time.js'
 
-export const isBoolean = (value: any): value is boolean => typeof value === 'boolean'
 
 const propertyTypeValidBoolean = (value: Scalar): boolean => {
   if (isBoolean(value)) return true
@@ -68,9 +67,20 @@ const propertyTypeRepresentedAsNumber = (dataType: DataType): boolean => {
 }
 
 export class PropertiedClass implements Propertied {
-  constructor(..._: any[]) {}
+  constructor(object: any) {
+    Object.entries(object).forEach(([key, value]) => {
+      if (isScalar(value)) {
+        // console.log(this.constructor.name, 'scalars', key, value)
+        this.scalars[key] = value
+      }
+    })
+  }
 
-  [index: string]: unknown
+  boolean(key: string): boolean {
+    const value = this.value(key)
+    assertBoolean(value, key)
+    return value
+  }
 
   changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject {
     // console.debug(this.constructor.name, 'changeScalar', propertyId, scalar)
@@ -98,22 +108,24 @@ export class PropertiedClass implements Propertied {
   }
   
   constrainedValue(property: Property, value?: Scalar): Scalar | undefined {
-    return this.valueOrDefault(property, value)
+    const { type, undefinedAllowed, name } = property
+    if (!isDefined<Scalar>(value)) {
+      if (undefinedAllowed) return 
+      
+      return property.defaultValue
+    } 
+    assertTrue(propertyTypeValid(value, type), `${value} not valid for ${name}`)
+
+    return propertyTypeCoerce(value, type)
   }
 
-  initializeProperties(object: unknown) { this.propertiesInitialize(object) }
+  number(id: string): number {
+    const value = this.value(id)
+    assertNumber(value)
+    return value
+  }
 
   properties: Properties = []
-
-  protected propertiesInitialize(object: any) {
-    this.properties.forEach(property => {
-      const { name, defaultValue } = property
-      const { [name]: value = defaultValue } = object
-      if (isUndefined(value) && property.undefinedAllowed) return
-      
-      this[name] = this.valueOrDefault(property, value)
-    })
-  }
 
   propertyFind(name: string): Property | undefined {
     return this.properties.find(property => property.name === name)
@@ -124,12 +136,12 @@ export class PropertiedClass implements Propertied {
     const propertyIds = targets.flatMap(id => 
       this.propertyNamesOfTarget(id).map(name => [id, name].join(DOT))
     )
-    // console.debug(this.constructor.name, 'propertyIds', targetIds, propertyIds)
     return propertyIds.filter(isPropertyId)
   }
 
   private get propertyTargetIds(): TargetIds {
-    return arrayUnique(this.properties.map(property => property.targetId))
+    const ids = this.properties.map(property => property.targetId)
+    return arrayUnique(ids.filter(isTargetId))
   } 
 
   propertyInstance(object: Property): Property {
@@ -184,16 +196,25 @@ export class PropertiedClass implements Propertied {
     const name = isPropertyId(id) ? id.split(DOT).pop() : id
     assertPopulatedString(name, 'name')
 
-    const found = this.propertyFind(name)
-    assertTrue(found, name)
+    const property = this.propertyFind(name)
+    assertTrue(property, name)
 
-    const constrained = this.constrainedValue(found, value)
-    this[name] = constrained
+    const constrained = this.constrainedValue(property, value)
+    this.scalars[name] = constrained
+    // this[name] = constrained
     return [name, constrained]
   }
 
-  protected shouldSelectProperty(property: Property, targetId: TargetId): Property | undefined {
+  shouldSelectProperty(property: Property, targetId: TargetId): Property | undefined {
     if (property.targetId === targetId) return  property 
+  }
+
+  private scalars: Partial<ScalarRecord> = {}
+
+  string(id: string): string {
+    const value = this.value(id)
+    assertString(value, id)
+    return value
   }
 
   declare targetId: TargetId
@@ -232,18 +253,23 @@ export class PropertiedClass implements Propertied {
     const name = isPropertyId(id) ? id.split(DOT).pop() : id
     if (!name) return
 
-    return this[name] as Scalar | undefined
-  }
-  
-  private valueOrDefault(property: Property, value?: Scalar): Scalar | undefined {
-    const { type, undefinedAllowed, name } = property
-    if (!isDefined<Scalar>(value)) {
-      if (undefinedAllowed) return 
-      
-      return property.defaultValue
-    } 
-    assertTrue(propertyTypeValid(value, type), `${value} not valid for ${name}`)
+    // const { [name]: value } = this
+    // if (isDefined(value)) {
+    //   // console.log(this.constructor.name, 'value from this', name, value)
+    //   return value
+    // }
+    const { [name]: scalar } = this.scalars
+    if (isDefined(scalar)) {
+      // console.log(this.constructor.name, 'value from scalars', name, scalar)
+      return scalar
+    }
 
-    return propertyTypeCoerce(value, type)
+    const property = this.propertyFind(name)
+    if (!property) return
+    const { defaultValue } = property
+    if (isDefined(defaultValue)) {
+      // console.log(this.constructor.name, 'value from property', name, defaultValue)
+      return defaultValue
+    }
   }
 }

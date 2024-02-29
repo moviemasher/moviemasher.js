@@ -1,7 +1,7 @@
 import { PLAY } from '../runtime.js'
 import { EventChangedClientAction, EventDoClientAction, EventEnabledClientAction } from '../utility/events.js'
-import { ComponentClicker } from '../base/Component.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { ComponentClicker } from '../base/component.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 
 export const PlayerButtonTag = 'movie-masher-player-button'
 
@@ -23,7 +23,7 @@ export class PlayerButtonElement extends ComponentClicker {
 
     if (detail === event.detail) {
       const enabledEvent = new EventEnabledClientAction(detail)
-      MOVIEMASHER.dispatch(enabledEvent)
+      MOVIE_MASHER.dispatch(enabledEvent)
 
       this.icon = enabledEvent.detail.enabled ? PLAY : 'pause'
     }

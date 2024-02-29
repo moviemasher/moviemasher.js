@@ -1,6 +1,6 @@
 import type { MashAssetObject } from '@moviemasher/shared-lib/types.js'
 
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventAssetObject } from '../../utility/events.js'
 import { ERROR, isAssetObject, isRawType, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../../utility/request.js'
@@ -9,7 +9,7 @@ import { isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
 const AssetObjectHandler = (event: EventAssetObject) => {
   event.stopImmediatePropagation()
   const { detail } = event
-  const { assetObject } = MOVIEMASHER.options
+  const { assetObject } = MOVIE_MASHER.options
   if (!assetObject) {
     const data: MashAssetObject = {
       id: `temporary-${crypto.randomUUID()}`,
@@ -40,6 +40,6 @@ const AssetObjectHandler = (event: EventAssetObject) => {
   })
 }
 
-MOVIEMASHER.listenersAdd({ [EventAssetObject.Type]: AssetObjectHandler })
+MOVIE_MASHER.listenersAdd({ [EventAssetObject.Type]: AssetObjectHandler })
 
 export {}

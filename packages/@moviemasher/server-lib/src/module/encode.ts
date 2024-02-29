@@ -3,17 +3,17 @@ import type { AVType, AbsolutePath, AssetObject, DataOrError, DecodeArgs, DropRe
 import type { RunningCommand } from '../command/RunningCommand.js'
 import type { CommandFilters, CommandInput, CommandOptions, EncodeCommands, EncodeDescription, EncodeDescriptions, PrecodeCommands, ServerMashDescriptionOptions } from '../types.js'
 
-import { $AUDIO, $BOTH, $DECODE, $DURATION, $IMAGE, $JSON, $MASH, $NUMBER, $PROBE, $RAW, $TXT, $VIDEO, COLON, DASH, DOT, ERROR, MOVIEMASHER, NEWLINE, PROBING_TYPES, errorCaught, idGenerate, idReset, isDefiniteError, isProbing, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIO, $BOTH, $DECODE, $DURATION, $IMAGE, $JSON, $MASH, $NUMBER, $PROBE, $RAW, $TXT, $VIDEO, COLON, DASH, DOT, ERROR, MOVIE_MASHER, NEWLINE, PROBING_TYPES, errorCaught, idGenerate, idReset, isDefiniteError, isProbing, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import { isAboveZero, isPositive } from '@moviemasher/shared-lib/utility/guard.js'
-import { assertAboveZero, isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
+import { isServerAsset, assertAboveZero, isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
 import path from 'path'
 import { RunningCommandClass } from '../command/RunningCommandClass.js'
 import { ENV, ENV_KEY } from '../utility/env.js'
-import { EventServerManagedAsset } from '../utility/events.js'
-import { directoryCreatePromise, fileNameFromOptions, fileWriteJsonPromise, fileWritePromise } from '../utility/file.js'
-import { assertAbsolutePath, isServerAsset, isServerMashAsset } from '../utility/guard.js'
+import { directoryCreatePromise, fileNameFromOptions, fileWriteJsonPromise, fileWritePromise } from './file-write.js'
+import { assertAbsolutePath, isServerClip, isServerMashAsset } from '../utility/guard.js'
 import { idUnique } from '../utility/id.js'
 import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
+import { AssetManagerClass } from '@moviemasher/shared-lib/base/asset-manager.js'
 
 type PathDurationTuple = [string, number]
 
@@ -60,7 +60,7 @@ const probePromise = async (outPath: AbsolutePath, type: DropType): Promise<Data
   const request: EndpointRequest = { endpoint: outPath, path: outPath }
   const resource: DropResource = { request, type }
   const args: DecodeArgs = { resource, type: $PROBE, options: decodeOptions}
-  const promise = MOVIEMASHER.promise($DECODE, args)
+  const promise = MOVIE_MASHER.promise(args, $DECODE)
   const orError = await promise
   if (isDefiniteError(orError)) return orError
 
@@ -254,8 +254,7 @@ const precodePromise = async (pathFragment: string, commands:PrecodeCommands): P
   
     if (!isAboveZero(probeDuration)) return namedError(ERROR.Internal, 'probeDuration')
     if (duration !== probeDuration) return namedError(ERROR.Internal, 'duration mismatch')
-
-    clip.precoding = outputPath
+    if (isServerClip(clip)) clip.precoding = outputPath
     data.push(outputPath)
   }
   return { data }
@@ -357,16 +356,16 @@ const encodePromise = async ( mashAssetObject: MashAssetObject, id: string, enco
     const writeRawOrError = writeRawMash(pathFragments, mashAssetObject)
     if (isDefiniteError(writeRawOrError)) return namedError(ERROR.Internal, 'writeRawPromise')
 
-    // console.log('encode dispatching EventServerManagedAsset')
-    const assetEvent = new EventServerManagedAsset(mashAssetObject)
-    MOVIEMASHER.dispatch(assetEvent)
-    const { asset } = assetEvent.detail
+    const assetManager = new AssetManagerClass()
+    const assetsOrError = await assetManager.define(mashAssetObject)
+    if (isDefiniteError(assetsOrError)) return assetsOrError
+
+    const { data: assets } = assetsOrError
+    const [asset] = assets
     if (!isServerMashAsset(asset)) {
       console.log('encode invalid mash asset', !!asset, isMashAsset(asset), isServerAsset(asset), mashAssetObject)
       return namedError(ERROR.Syntax, 'invalid mash asset')
     }
-        // console.log('encode dispatched EventServerManagedAsset')
-
     const { assetObject } = asset
     const writeMashOrError = await writeMash(pathFragment, assetObject)
     if (isDefiniteError(writeMashOrError)) return writeMashOrError

@@ -1,6 +1,6 @@
-import type { TimeRanges, Times } from '../../../packages/@moviemasher/shared-lib/src/types.js'
+import type { TimeRanges } from '../../../packages/@moviemasher/shared-lib/src/types.js'
 
-import { $FRAME } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
+import { $FRAME, $FRAMES } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
 import assert from 'assert'
 import { describe, test } from 'node:test'
 import { TimeRangeClass, stringSeconds, timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTimes } from '../../../packages/@moviemasher/shared-lib/src/utility/time.js'
@@ -10,7 +10,7 @@ describe('TimeRange', () => {
   const rangeOneSecond = new TimeRangeClass(0, 1, 1)
   test('constructor', () => assert.deepStrictEqual(range, rangeOneSecond))
   test($FRAME, () => assert.equal(range.frame, 0))
-  test('frames', () => assert.equal(range.frames, 1))
+  test($FRAMES, () => assert.equal(range.frames, 1))
   test('fps', () => assert.equal(range.fps, 1))
   test('copy', () => {
     assert.deepStrictEqual(range.copy, range)

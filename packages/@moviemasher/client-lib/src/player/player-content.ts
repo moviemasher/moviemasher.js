@@ -3,7 +3,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html'
-import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
+import { CENTER, ContentBase } from '../base/component-view.js'
 
 export const PlayerContentTag = 'movie-masher-player-content'
 

@@ -5,14 +5,14 @@ import type { TemplateContent, TemplateContents, OptionalContent } from '../clie
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertSizeNotZero, copyPoint, containSize } from '@moviemasher/shared-lib/utility/rect.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventChangeClipId, EventChangedPreviews, EventPreviews, EventRect } from '../utility/events.js'
 import { html } from 'lit-html'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
 import { DROP_TARGET_CSS, DropTargetMixin } from '../mixin/component.js'
 import { RectObserverMixin } from '../mixin/component.js'
-import { Scroller } from '../base/LeftCenterRight.js'
+import { Scroller } from '../base/component-view.js'
 import { SizeReactiveMixin, SIZE_REACTIVE_DECLARATIONS } from '../mixin/component.js'
 
 const PlayerRefreshTics = 1
@@ -73,7 +73,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
   protected handlePointerDown(event: Event) {
     // console.log(this.tagName, 'deselecting clip')
     event.stopPropagation()
-    MOVIEMASHER.dispatch(new EventChangeClipId())
+    MOVIE_MASHER.dispatch(new EventChangeClipId())
   }
 
   private handleRect(event: EventRect) {
@@ -99,7 +99,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
     if (disabled) return Promise.resolve()
 
     const event = new EventPreviews(this.variable('size-preview'))
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { promise } = event.detail
     if (!promise) {
       console.warn(this.tagName, 'requestItemsPromise NO PROMISE')
@@ -111,7 +111,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
       
       if (this.watchingRedraw) this.handleChangedPreviews()
       // else 
-    this.element().replaceChildren(...svgs)
+      this.element().replaceChildren(...svgs)
     })
   }
 
@@ -158,14 +158,18 @@ export class PlayerContentCenterElement extends WithSizeReactive {
         pointer-events: none;
       }
 
-      div.root > svg.outlines > .outline {
-        cursor: move;
-        pointer-events: visibleFill;
+      div.root > svg.outlines :is(.outline, .animate) {
         stroke-width: 0;
         fill: transparent;
       }
 
-      div.root > svg.outlines > .outline.animate:hover {
+      div.root > svg.outlines .outline {
+        cursor: move;
+        pointer-events: visibleFill;
+      }
+
+      div.root > svg.outlines > *:hover .animate, 
+      div.root > svg.outlines > .animate.outline:hover {
         stroke-width: calc(2 * var(--size-border));
         stroke-dasharray: 4px;
         stroke-dashoffset: 8px;

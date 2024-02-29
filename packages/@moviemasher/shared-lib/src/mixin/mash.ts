@@ -1,8 +1,8 @@
-import type { AVType, Asset, AssetCacheArgs, Clip, ClipObject, Clips, Constrained, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, MashDescription, MashDescriptionOptions, MashIndex, MashInstance, Size, Strings, Time, Track, TrackArgs, UnknownRecord } from '../types.js'
+import type { AVType, Asset, AssetCacheArgs, AssetManager, Clip, ClipObject, Clips, Constrained, DataOrError, Instance, InstanceArgs, InstanceCacheArgs, InstanceObject, MashAsset, MashAssetObject, MashDescription, MashDescriptionOptions, MashIndex, MashInstance, Scalar, ScalarTuple, Size, Strings, Time, Track, TrackArgs, Tracks, UnknownRecord } from '../types.js'
 
-import { $AUDIO, $BOTH, DURATION_NONE, DURATION_UNKNOWN, ERROR, $HEIGHT, $MASH, $NUMBER, $RGB, RGB_BLACK, SIZE_OUTPUT, $VIDEO, $WIDTH, arrayUnique, errorThrow, sortByIndex } from '../runtime.js'
+import { $AUDIO, $BOTH, DURATION_NONE, DURATION_UNKNOWN, ERROR, $HEIGHT, $MASH, $NUMBER, $RGB, RGB_BLACK, SIZE_OUTPUT, $VIDEO, $WIDTH, arrayUnique, errorThrow, sortByIndex, SIZE_ZERO, $BOOLEAN } from '../runtime.js'
 import { isAboveZero, isArray } from '../utility/guard.js'
-import { assertTrue } from '../utility/guards.js'
+import { assertAboveZero, assertTrue } from '../utility/guards.js'
 import { isPositive } from '../utility/guard.js'
 import { promiseNumbers } from '../runtime.js'
 import { assertTime, timeFromArgs } from '../utility/time.js'
@@ -13,9 +13,58 @@ export function MashAssetMixin
 <T extends Constrained<Asset>>(Base: T): 
 T & Constrained<MashAsset> {
   return class extends Base implements MashAsset {
-    declare aspectWidth: number
-    declare aspectHeight: number
-    declare aspectShortest: number
+    constructor(...args: any[]) {
+      super(...args)
+      const [object] = args as [MashAssetObject]
+
+      const { tracks } = object
+    
+      this.properties.push(this.propertyInstance({
+        targetId: $MASH, name: 'aspectHeight', type: $NUMBER, 
+        defaultValue: 9, min: 1, step: 1, order: 2
+      }))
+      this.properties.push(this.propertyInstance({
+        targetId: $MASH, name: 'aspectWidth', type: $NUMBER, 
+        defaultValue: 16, min: 1, step: 1, order: 1
+      }))
+      this.properties.push(this.propertyInstance({
+        targetId: $MASH, name: 'aspectShortest', type: $NUMBER, 
+        defaultValue: SIZE_OUTPUT.height, min: 1, step: 1, order: 3
+      }))
+      this.properties.push(this.propertyInstance({
+        targetId: $MASH, name: 'color', type: $RGB, 
+        defaultValue: RGB_BLACK, 
+      }))
+      this.properties.push(this.propertyInstance({
+        targetId: $MASH, name: 'loop', type: $BOOLEAN, 
+        defaultValue: true, 
+      }))
+      
+      this.properties.push(this.propertyInstance({
+        targetId: $MASH, name: 'quantize', type: $NUMBER, 
+        defaultValue: DefaultQuantize, step: 1, options: [10, 20, 40]
+      }))
+      
+      if (isArray(tracks)) tracks.forEach((trackObject, index) => {
+        const trackArgs: TrackArgs = {
+          mashAsset: this, dense: !index, ...trackObject, index
+        }
+        const track = this.trackInstance(trackArgs)
+        const { quantize } = this
+
+        assertAboveZero(quantize, 'quantize')
+
+        track.assureFrames(quantize)
+        track.sortClips()
+        this.tracks.push(track)
+      })
+      this.assureTrack()
+      this.tracks.sort(sortByIndex)
+    }
+  
+    // declare aspectWidth: number
+    // declare aspectHeight: number
+    // declare aspectShortest: number
 
     override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
       const preloadOptions = this.assetCacheArgs(args)
@@ -40,15 +89,13 @@ T & Constrained<MashAsset> {
     get assetIds(): Strings {
       return arrayUnique(this.clips.flatMap(clip => clip.assetIds))
     }
-  
+
     override get assetObject(): MashAssetObject {
       const { tracks: trackInstances } = this
       const tracks = trackInstances.map(track => track.trackObject)
       return { ...super.assetObject, tracks }
     }
     
- 
-
     private assureTrack(): void {
       if (!this.tracks.length) {
         const trackArgs: TrackArgs = { dense: true, mashAsset: this }
@@ -116,7 +163,7 @@ T & Constrained<MashAsset> {
       return this.filterIntersecting(clipsVisible, time)
     }
   
-    declare color: string
+    // declare color: string
     
     get duration(): number { return this.endTime.seconds }
   
@@ -137,57 +184,13 @@ T & Constrained<MashAsset> {
   
     //   if (this._gain !== value) {
     //     this._gain = value
-    //     if (this._composition) this.composition.setGain(value, this.quantize)
     //   }
     // }
   
 
-    override initializeProperties(object: MashAssetObject): void {
-      this.tracks = []
-  
-      this.properties.push(this.propertyInstance({
-        targetId: $MASH, name: 'aspectHeight', type: $NUMBER, 
-        defaultValue: 9, min: 1, step: 1, order: 2
-      }))
-      this.properties.push(this.propertyInstance({
-        targetId: $MASH, name: 'aspectWidth', type: $NUMBER, 
-        defaultValue: 16, min: 1, step: 1, order: 1
-      }))
-      this.properties.push(this.propertyInstance({
-        targetId: $MASH, name: 'aspectShortest', type: $NUMBER, 
-        defaultValue: SIZE_OUTPUT.height, min: 1, step: 1, order: 3
-      }))
-      this.properties.push(this.propertyInstance({
-        targetId: $MASH, name: 'color', type: $RGB, 
-        defaultValue: RGB_BLACK, 
-      }))
-      this.properties.push(this.propertyInstance({
-        targetId: $MASH, name: 'quantize', type: $NUMBER, 
-        
-        defaultValue: DefaultQuantize, step: 1, options: [10, 20, 40]
-      }))
-      const { tracks, loop } = object
-      if (loop) this.loop = true
-      super.initializeProperties(object)
-      
-      if (isArray(tracks)) tracks.forEach((trackObject, index) => {
-        const trackArgs: TrackArgs = {
-          mashAsset: this, dense: !index, ...trackObject, index
-        }
-        const track = this.trackInstance(trackArgs)
-        track.assureFrames(this.quantize)
-        track.sortClips()
-        this.tracks.push(track)
-      })
-      this.assureTrack()
-      this.tracks.sort(sortByIndex)
-    }
-  
     instanceArgs(object?: InstanceObject): InstanceArgs {
       return { ...super.instanceArgs(object), asset: this, assetId: this.id }
     }
-
-    loop = false
   
     mashDescription(_: MashDescriptionOptions): MashDescription {
       return errorThrow(ERROR.Unimplemented)
@@ -195,13 +198,21 @@ T & Constrained<MashAsset> {
 
     get mashIndex(): MashIndex { return [0] }
 
-    declare quantize: number
+    private get quantize(): number {
+      return Number(this.value('quantize'))
+    }
+
+  
   
     get size(): Size {
-      const { aspectHeight, aspectWidth, aspectShortest } = this 
-      const size = sizeAspect(aspectWidth, aspectHeight, aspectShortest)
+      const aspectHeight = this.value('aspectHeight')
+      const aspectWidth = this.value('aspectWidth')
+      const aspectShortest = this.value('aspectShortest')
+      if (isAboveZero(aspectHeight) && isAboveZero(aspectWidth) && isAboveZero(aspectShortest)) {
+        return sizeAspect(aspectWidth, aspectHeight, aspectShortest)
+      }
       // console.log(this.constructor.name, 'size', aspectWidth, aspectHeight, aspectShortest, size)
-      return size
+      return { ...SIZE_ZERO }
     }
     
     source = $MASH
@@ -227,7 +238,7 @@ T & Constrained<MashAsset> {
       return errorThrow(ERROR.Unimplemented)
     }
   
-    declare tracks: Track[] 
+    tracks: Tracks = []
   }
 }
 

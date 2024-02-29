@@ -1,4 +1,4 @@
-import type { AbsolutePath, AlphaType, ArrayOf2, Aspect, Asset, AssetObject, AudibleType, AudioAssetObject, AudioOutputOptions, AudioType, BitmapsType, BooleanDataType, ClientOrServer, ColorAssetObject, ColorSource, CornerDirection, DataOrError, DataType, DecodeType, Decoding, DefiniteError, Directions, DocumentWindow, DropType, DropTypes, EncodeType, EndpointRequest, ErrorObject, EventDispatcher, EventDispatcherListener, EventDispatcherListeners, EventOptions, FontType, Framed, Identified, ImageAssetObject, ImageOutputOptions, ImageType, ImportResult, ImportTypes, Importer, Indexed, JobType, Lock, MashAudioAssetObject, MashImageAssetObject, MashSource, MashVideoAssetObject, Mimetype, ModuleType, MovieMasherInstance, MovieMasherOptions, MovieMasherRuntime, NumberDataType, Numbers, Ordered, OutputOptions, Panel, Point, Probing, ProbingTypes, PromiseFunction, PromptAudioAssetObject, PromptImageAssetObject, PromptSource, PromptVideoAssetObject, RawAudioAssetObject, RawImageAssetObject, RawSource, RawType, RawTypes, RawVideoAssetObject, Rect, RectTuple, Resource, ReturningFunction, Rounding, Scanning, SequenceOutputOptions, ShapeAssetObject, ShapeSource, SideDirection, Size, Source, SourceAsset, StringDataType, StringRecord, StringTuple, Strings, StringsRecord, TargetIds, TextAssetObject, TextSource, Timing, Tracked, TranscodeType, TranscodingType, Typed, ValueRecord, VideoAssetObject, VideoOutputOptions, VideoType, VisibleType, WaveformOutputOptions, WaveformType } from './types.js'
+import type { AbsolutePath, AlphaType, ArrayOf2, Aspect, Asset, AssetObject, AudibleType, AudioOutputOptions, AudioType, BitmapsType, BooleanDataType, ClientOrServer, ColorSource, CornerDirection, DataOrError, DataType, DecodeType, Decoding, DefiniteError, Directions, DocumentWindow, DropType, DropTypes, EncodeType, EndpointRequest, ErrorObject, EventDispatcher, EventDispatcherListener, EventDispatcherListeners, EventOptions, FontType, Framed, Identified, ImageOutputOptions, ImageType, ImportResult, ImportTypes, Importer, Indexed, JobType, Lock, MashAudioAssetObject, MashImageAssetObject, MashSource, MashVideoAssetObject, Mimetype, ModuleType, MovieMasherInstance, MovieMasherOptions, MovieMasherRuntime, NumberDataType, Numbers, Ordered, OutputOptions, Panel, Point, Probing, ProbingTypes, PromiseFunction, PromptAudioAssetObject, PromptImageAssetObject, Prompt, PromptVideoAssetObject, RawSource, RawType, RawTypes, Rect, RectTuple, Resource, ReturningFunction, Rounding, Scanning, SequenceOutputOptions, ShapeAssetObject, ShapeSource, SideDirection, Size, Source, SourceAsset, StringDataType, StringRecord, StringTuple, Strings, StringsRecord, TargetIds, TextAssetObject, TextSource, Timing, Tracked, TranscodeType, TranscodingType, Typed, ValueRecord, VideoOutputOptions, VideoType, VisibleType, WaveformOutputOptions, WaveformType } from './types.js'
 
 import { isArray, isFunction, isObject, isPopulatedString, isString } from './utility/guard.js'
 
@@ -13,7 +13,7 @@ export const $VIDEO: VideoType = 'video' as const
 export const $COLOR: ColorSource = 'color' as const
 export const $FONT: FontType = 'font' as const
 export const $MASH: MashSource = 'mash' as const
-export const $PROMPT: PromptSource = 'prompt' as const
+export const $PROMPT: Prompt = 'prompt' as const
 export const $RAW: RawSource = 'raw' as const
 export const $SHAPE: ShapeSource = 'shape' as const
 export const $TEXT: TextSource = 'text' as const
@@ -25,9 +25,12 @@ export const $TIMELINE: Panel = 'timeline' as const
 export const $IMPORTER: Panel = 'importer' as const
 export const $EXPORTER: Panel = 'exporter' as const
 export const $RETRIEVE = 'retrieve' as const
+export const $SAVE = 'save' as const
 export const $JSON = 'json' as const
 export const $WOFF2 = 'woff2' as const
 export const $CSS = 'css' as const
+export const $PROMISE = 'promise' as const
+export const $CALL = 'call' as const
 export const $TTF = 'ttf' as const
 export const $TXT = 'txt' as const
 export const $SVG = 'svg' as const
@@ -63,12 +66,16 @@ export const $LEFT: SideDirection = 'left' as const
 export const $TOP: SideDirection = 'top' as const
 export const $BOTTOM: SideDirection = 'bottom' as const
 export const $RIGHT: SideDirection = 'right' as const
+export const $JS = 'js' as const
 
 export const $TEMPORARY = 'temporary' as const
 
 export const $DECODE: DecodeType = 'decode' as const
 export const $ENCODE: EncodeType = 'encode' as const
 export const $TRANSCODE: TranscodeType = 'transcode' as const
+export const $WRITE = 'write' as const
+export const $UPLOAD = 'upload' as const
+export const $FILE = 'file' as const
 
 export const $PROBE = 'probe' as const
 export const $SCAN = 'scan' as const
@@ -96,6 +103,7 @@ export const $NUMBER: NumberDataType = 'number' as const
 export const $STRING: StringDataType = 'string' as const
 export const $FRAME = 'frame' as const
 export const $PERCENT: DataType = 'percent' as const
+export const $FRAMES = 'frames' as const
 export const $RGB: DataType = 'rgb' as const
 
 // can these just be CONTAINER and CONTENT?
@@ -144,6 +152,7 @@ export const $BOTTOM_LEFT: CornerDirection = 'bottom-left' as const
 export const $CACHE_ALL = 'cache-all' as const
 export const $CACHE_NONE = 'cache-none' as const
 export const $CACHE_SOURCE_TYPE = 'cache-source-type' as const
+export const $CHANGE_FRAME = 'change-frame' as const
 
 export const VERSION = '5.2.0' as const
 
@@ -599,27 +608,14 @@ export const isSourceAsset = (value: any): value is SourceAsset => (
 )
 
 export function isAssetObject(value: any, type?: undefined, source?: undefined): value is AssetObject 
-
-export function isAssetObject(value: any, type?: AudioType, source?: undefined): value is AudioAssetObject 
-export function isAssetObject(value: any, type?: ImageType, source?: undefined): value is ImageAssetObject 
-export function isAssetObject(value: any, type?: VideoType, source?: undefined): value is VideoAssetObject 
-
-export function isAssetObject(value: any, type?: AudioType, source?: RawSource): value is RawAudioAssetObject 
-export function isAssetObject(value: any, type?: ImageType, source?: RawSource): value is RawImageAssetObject 
-export function isAssetObject(value: any, type?: VideoType, source?: RawSource): value is RawVideoAssetObject 
-
 export function isAssetObject(value: any, type?: AudioType, source?: MashSource): value is MashAudioAssetObject 
 export function isAssetObject(value: any, type?: ImageType, source?: MashSource): value is MashImageAssetObject 
 export function isAssetObject(value: any, type?: VideoType, source?: MashSource): value is MashVideoAssetObject 
-
-export function isAssetObject(value: any, type?: AudioType, source?: PromptSource): value is PromptAudioAssetObject 
-export function isAssetObject(value: any, type?: ImageType, source?: PromptSource): value is PromptImageAssetObject 
-export function isAssetObject(value: any, type?: VideoType, source?: PromptSource): value is PromptVideoAssetObject 
-
+export function isAssetObject(value: any, type?: AudioType, source?: Prompt): value is PromptAudioAssetObject 
+export function isAssetObject(value: any, type?: ImageType, source?: Prompt): value is PromptImageAssetObject 
+export function isAssetObject(value: any, type?: VideoType, source?: Prompt): value is PromptVideoAssetObject 
 export function isAssetObject(value: any, type?: ImageType, source?: TextSource): value is TextAssetObject 
-export function isAssetObject(value: any, type?: ImageType, source?: ColorSource): value is ColorAssetObject 
 export function isAssetObject(value: any, type?: ImageType, source?: ShapeSource): value is ShapeAssetObject 
-
 export function isAssetObject(value: any, type?: RawType, source?: Source): value is AssetObject 
 export function isAssetObject(value: any, type: undefined | RawType = undefined, source: undefined | Source = undefined): value is AssetObject {
   return (
@@ -787,11 +783,11 @@ export const promiseNumbers = (promises: Promise<DataOrError<number>>[]) => {
   })
 }
 
-const JOB_TYPES = [$DECODE, $ENCODE, $TRANSCODE]
+// const JOB_TYPES = [$DECODE, $ENCODE, $TRANSCODE]
 
-const isJobType = (value: any): value is JobType => (
-  JOB_TYPES.includes(value)
-)
+// const isJobType = (value: any): value is JobType => (
+//   JOB_TYPES.includes(value)
+// )
 
 export const copyEndpointRequest = (request: EndpointRequest): EndpointRequest => {
   const { endpoint, init } = request
@@ -805,7 +801,7 @@ export const copyResource = (resourse: Resource) => {
   }
 }
 
-export const customEventClass = <T>() => MOVIEMASHER.window.CustomEvent<T> 
+export const customEventClass = <T>() => MOVIE_MASHER.window.CustomEvent<T> 
 
 
 type Ids = Record<string, StringTuple>
@@ -851,8 +847,9 @@ class FunctionLoader <RET = any, OPTS extends object = object, ARGS extends Type
       const orError = await this.returningFunctionPromise(id)
       if (isDefiniteError(orError)) return orError
     }
-    return {data: {}}
+    return { data: {} }
   }
+
   private async promiseFunctionPromise(id: string): Promise<DataOrError<PromiseFunction<RET, OPTS, ARGS>>> {
     const { promisingFunctions: functions, ids, promisingFunctionPromises: promises } = this
     const { [id]: loadingPromise } = promises
@@ -923,7 +920,7 @@ class MovieMasherClass implements MovieMasherInstance {
   constructor() {
     this.loaders = {
       [$AUDIO]: new FunctionLoader({  
-        [$RAW]: ['@moviemasher/client-lib/source/raw/raw.js', 'ClientRawAudioListeners'],
+        [$RAW]: ['@moviemasher/client-lib/module/raw.js', 'audioRawAssetFunction'],
       }),
       [$DECODE]: new FunctionLoader({
         [$PROBE]: ['@moviemasher/client-lib/module/decode.js', 'decodeFunction'],
@@ -935,10 +932,10 @@ class MovieMasherClass implements MovieMasherInstance {
         [$VIDEO]: ['@moviemasher/client-lib/module/encode.js', 'encodeFunction'],
       }),
       [$IMAGE]: new FunctionLoader({
-        [$RAW]: ['@moviemasher/client-lib/source/raw/raw.js', 'ClientRawImageListeners'],
-        [$SHAPE]: ['@moviemasher/client-lib/source/shape/image-shape.js', 'ClientShapeImageListeners'],
-        [$TEXT]: ['@moviemasher/client-lib/source/text/image-text.js', 'ClientTextImageListeners'],
-        [$COLOR]: ['@moviemasher/client-lib/source/color/image-color.js', 'colorClientListeners'],
+        [$RAW]: ['@moviemasher/client-lib/module/raw.js', 'imageRawAssetFunction'],
+        [$SHAPE]: ['@moviemasher/shared-lib/module/image-shape.js', 'imageShapeAssetFunction'],
+        [$TEXT]: ['@moviemasher/shared-lib/module/image-text.js', 'imageTextAssetFunction'],
+        [$COLOR]: ['@moviemasher/shared-lib/module/image-color.js', 'imageColorAssetFunction'],
       }),
       [$RETRIEVE]: new FunctionLoader({
         [$AUDIO]: ['@moviemasher/client-lib/module/retrieve.js', 'audioRetrieveFunction'],
@@ -956,15 +953,22 @@ class MovieMasherClass implements MovieMasherInstance {
         [$IMAGE]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
         [$VIDEO]: ['@moviemasher/client-lib/module/transcode.js', 'transcodeFunction'],
       }),
-      [$VIDEO]: new FunctionLoader({
-        [$RAW]: ['@moviemasher/client-lib/source/raw/raw.js', 'ClientRawVideoListeners'],
-        [$MASH]: ['@moviemasher/client-lib/source/mash/video-mash.js', 'ClientMashVideoListeners'],
+      [$SAVE]: new FunctionLoader({
+        [$AUDIO]: ['@moviemasher/client-lib/module/save.js', 'audioSaveFunction'],
+        [$IMAGE]: ['@moviemasher/client-lib/module/save.js', 'imageSaveFunction'],
+        [$VIDEO]: ['@moviemasher/client-lib/module/save.js', 'videoSaveFunction'],
       }),
-      [$TEXT]: new FunctionLoader({
-        [$RECT]: ['@moviemasher/shared-lib/module/text-rect.js', 'textRect'],
-      })
+      [$VIDEO]: new FunctionLoader({
+        [$RAW]: ['@moviemasher/client-lib/module/raw.js', 'videoRawAssetFunction'],
+        [$MASH]: ['@moviemasher/client-lib/module/video-mash.js', 'videoMashAssetFunction'],
+      }),
+      [$FILE]: new FunctionLoader({
+        [$UPLOAD]: ['@moviemasher/client-lib/module/file-upload.js', 'fileUploadFunction'],
+        [$WRITE]: ['@moviemasher/server-lib/module/file-write.js', 'fileWriteFunction'],
+      }),
     }
   }
+
   dispatch<T = any>(typeOrEvent: Event | CustomEvent<T>): boolean {
     return MOVIE_MASHER_INSTANCE.eventDispatcher.dispatch(typeOrEvent)
   }
@@ -977,15 +981,18 @@ class MovieMasherClass implements MovieMasherInstance {
     MOVIE_MASHER_INSTANCE.eventDispatcher.listenersRemove(record)
   }
 
-  call<RET = any>(moduleType: ModuleType, id: string, args?: object): DataOrError<RET> {
+  call<RET = any, OPTS extends object = object>(id: string, moduleType: ModuleType = $CALL, args?: OPTS): DataOrError<RET> {
     const { [moduleType]: loader} = this.loaders
     if (!loader) return namedError(ERROR.Unimplemented, moduleType)
 
     const returningFunction = loader.getReturningFunction(id)
-    if (!returningFunction) return namedError(ERROR.Unimplemented, id)
+    if (!returningFunction) return namedError(ERROR.Unimplemented, [moduleType, id].join(SLASH))
 
     return returningFunction(args)    
   }
+
+  // TODO: remove $TEXT
+  callable: ModuleType[] = [...RAW_TYPES]
 
   private _context?: ClientOrServer
 
@@ -1000,7 +1007,7 @@ class MovieMasherClass implements MovieMasherInstance {
   }
 
   private get eventDispatcherInitialize(): EventDispatcher {
-    class DefaultEventDispatcher extends MOVIEMASHER.window.EventTarget implements EventDispatcher {
+    class DefaultEventDispatcher extends MOVIE_MASHER.window.EventTarget implements EventDispatcher {
       private addDispatchListener<T>(type: string, listener: EventDispatcherListener<T>, options?: EventOptions): EventDispatcher {
         this.addEventListener(type, listener as EventListener, options)
         return this
@@ -1033,12 +1040,10 @@ class MovieMasherClass implements MovieMasherInstance {
 
   async importPromise(): Promise<DataOrError<ImportResult>> { 
     const { imports, context, loaders } = this
-    const keys = Object.keys(loaders).filter(key => (
-      !(isRawType(key) || isJobType(key) || key === $RETRIEVE)
-    ))
-    for (const key of keys) {
-
+    const { callable } = this
+    for (const key of callable) {
       const { [key]: loader } = loaders
+      if (!loader) return namedError(ERROR.Unimplemented, key)
       const orError = await loader.importPromise()
       if (isDefiniteError(orError)) return orError
     }
@@ -1092,7 +1097,7 @@ class MovieMasherClass implements MovieMasherInstance {
     }
   }
 
-  promise<RET = any, OPTS extends object = object, ARGS extends Typed = Typed>(moduleType: ModuleType, args: ARGS, opts?: OPTS): Promise<DataOrError<RET>> {
+  promise<RET = any, OPTS extends object = object, ARGS extends Typed = Typed>(args: ARGS, moduleType: ModuleType = $PROMISE, opts?: OPTS): Promise<DataOrError<RET>> {
     const { [moduleType]: loader} = this.loaders
     if (!loader) return Promise.resolve(namedError(ERROR.Unimplemented, moduleType))
 
@@ -1105,7 +1110,7 @@ class MovieMasherClass implements MovieMasherInstance {
     const { _window } = this
     if (_window) return _window
 
-    const orError = this.call<DocumentWindow>($DOM, $WINDOW)
+    const orError = this.call<DocumentWindow>($WINDOW, $DOM)
     const window = isDefiniteError(orError) ? globalThis.window : orError.data
     return this._window = window
   }
@@ -1113,6 +1118,5 @@ class MovieMasherClass implements MovieMasherInstance {
 
 const MOVIE_MASHER_INSTANCE: MovieMasherInstance = new MovieMasherClass()
 
-export const MOVIEMASHER: MovieMasherRuntime = MOVIE_MASHER_INSTANCE
+export const MOVIE_MASHER: MovieMasherRuntime = MOVIE_MASHER_INSTANCE
 
-globalThis.window.document.fonts

@@ -1,17 +1,6 @@
-import type { AssetObject, AssetResource, RawType, DataOrError, DecodeOptions, Decoding, DecodingType, EncodeOptions, Encoding, EncodingType, EndpointRequest, MashAssetObject, StringDataOrError, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/shared-lib/types.js'
-
-import { ServerAsset, ServerAssetManager } from '../types.js'
+import type { RawType, DataOrError, DecodeOptions, Decoding, DecodingType, EncodeOptions, Encoding, EncodingType, EndpointRequest, MashAssetObject, StringDataOrError, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/shared-lib/types.js'
 
 
-export interface EventServerManagedAssetDetail {
-  assetId: string
-  assetObject?: AssetObject
-  asset?: ServerAsset
-}
-
-export interface EventServerAssetDetail extends EventServerManagedAssetDetail {
-  manager: ServerAssetManager
-}
 
 export interface EventServerDecodeStatusDetail {
   id: string

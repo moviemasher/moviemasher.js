@@ -1,6 +1,6 @@
 import type { MaybeComplexSvgItem, ComplexSvgItem, NumberRecord, Point, Rect, RectOptions, Scalar, Size, SvgFilters, SvgItem, SvgItems, SvgItemsRecord, Transparency, Value, MaybeComplexSvgItems, SvgStyleElement, SvgElement } from '../types.js'
 
-import { $OPACITY, CURRENT_COLOR, $HEIGHT, MOVIEMASHER, NAMESPACE_SVG, NAMESPACE_XLINK, $NONE, $SERVER, $SHORTEST, $WIDTH, arrayFromOneOrMore, idGenerateString } from '../runtime.js'
+import { $OPACITY, CURRENT_COLOR, $HEIGHT, MOVIE_MASHER, NAMESPACE_SVG, NAMESPACE_XLINK, $NONE, $SERVER, $SHORTEST, $WIDTH, arrayFromOneOrMore, idGenerateString, svgStringClean, MIME_SVG, $ALPHA } from '../runtime.js'
 import { isPopulatedString } from './guard.js'
 import { isArray } from './guard.js'
 import { assertDefined, assertTrue, isComplexSvgItem, isPoint, isSize } from './guards.js'
@@ -59,7 +59,7 @@ export const svgPolygonElement = (dimensions: any, className?: string | string[]
 }
 
 const svgThing = <T extends SVGElement = SVGElement>(name: string): T => (
-  MOVIEMASHER.window.document.createElementNS(NAMESPACE_SVG, name) as T
+  MOVIE_MASHER.window.document.createElementNS(NAMESPACE_SVG, name) as T
 )
 
 export const svgDefsElement = (svgItems?: SvgItems): SVGDefsElement => (
@@ -99,7 +99,7 @@ export const svgAppend = <T extends Element = Element>(element: T, items?: SvgIt
 export const svgSvgElement = (size?: Size, svgItems?: SvgItem | SvgItems): SvgElement => {
   const element = svgThing<SvgElement>('svg') 
   svgSet(element, NAMESPACE_SVG, 'xmlns')
-  if (MOVIEMASHER.context === $SERVER) {
+  if (MOVIE_MASHER.context === $SERVER) {
     svgSet(element, '1.1', 'version')
     svgSet(element, NAMESPACE_XLINK, 'xmlns:xlink')
   }
@@ -266,7 +266,7 @@ export const svgImageWithOptions = (url:string, options?: RectOptions): SVGImage
 }
 
 export const svgImagePromise = (url: string, dontPatch?: boolean): Promise<SVGImageElement> => {
-  const patch = !(dontPatch || MOVIEMASHER.options.supportsSvgLoad) 
+  const patch = !(dontPatch || MOVIE_MASHER.options.supportsSvgLoad) 
   return new Promise<SVGImageElement>((resolve, reject) => {
     const element = svgImageElement()
     const completed = () => {
@@ -312,7 +312,7 @@ const PatchSvgInitialize = (): SvgElement => {
 }
 
 export const patchSvg = (value?: SvgElement): SvgElement => {
-  const { options } = MOVIEMASHER
+  const { options } = MOVIE_MASHER
   // console.trace('svgPatch', value)
   if (value) return options.patchSvg = value
   
@@ -385,4 +385,26 @@ export const recordFromItems = (items: MaybeComplexSvgItems, dontAddToItems?: bo
 export const simplifySvgItems = (first: MaybeComplexSvgItem, second: MaybeComplexSvgItem, size?: Size): SvgItem => {
   const record = recordFromItems([first, second])
   return simplifyRecord(record, size)
+}
+
+export const svgColorMask = (svgImage: Element, size: Size, transparency: Transparency = $ALPHA, className = '', rect?: Rect): SvgElement => {
+  const defs: SvgItems = []
+  const maskedElement =  svgPolygonElement(rect || size, className)
+  const maskElement = svgMaskElement(maskedElement, transparency)   
+  maskElement.appendChild(svgImage)
+
+  defs.push(maskElement)
+  return svgSvgElement(size, [svgDefsElement(defs), maskedElement])
+}
+
+export const svgStringElement = (svgString: string) => {
+  const cleaned = svgStringClean(svgString)
+  if (!cleaned) return
+
+  const parser = new MOVIE_MASHER.window.DOMParser()
+  const parsed = parser.parseFromString(cleaned, MIME_SVG)
+  const firstChild = parsed.children[0]
+  if (!firstChild) return
+
+  return firstChild
 }

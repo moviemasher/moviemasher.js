@@ -1,12 +1,13 @@
+import type { ClipObject } from '@moviemasher/shared-lib/src/types.js'
 import assert from 'assert'
 import { describe, test } from 'node:test'
 
-import { VIDEO, VideoClass, idGenerateString, timeRangeFromArgs, videoDefinition, videoInstance } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
+import { $VIDEO, VideoClass, idGenerateString, timeRangeFromArgs, videoDefinition, videoInstance } from '../../../packages/@moviemasher/shared-lib/src/runtime.js'
 
 describe('Video', () => {
   describe('startOptions', () => {
     test('returns expected options', () => {
-      const clipObject = object => {
+      const clipObject = (object: ClipObject) => {
         object ||= {}
         return {
         id: idGenerateString(),
@@ -19,7 +20,7 @@ describe('Video', () => {
       }}
       const quantize = 30
       const timeRange = timeRangeFromArgs(0, quantize)
-      const zeroClip = videoInstance(clipObject())
+      const zeroClip = videoInstance(clipObject({}))
       const zeroZeroTiming = zeroClip.startOptions(0, timeRange)
       assert.equal(zeroZeroTiming.start, 0)
       assert.equal(zeroZeroTiming.offset, 0)
@@ -41,7 +42,7 @@ describe('Video', () => {
     const definitionObject = {
       id: idGenerateString(),
       url: 'file.mp4',
-      type: VIDEO,
+      type: $VIDEO,
       fps: 30, duration: 10
     }
     const definition = () => videoDefinition(definitionObject)

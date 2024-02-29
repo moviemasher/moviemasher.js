@@ -1,6 +1,6 @@
 import type { AssetObject } from '@moviemasher/shared-lib/types.js'
 
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventAssetObjects } from '../../utility/events.js'
 import { ERROR, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../../utility/request.js'
@@ -11,7 +11,7 @@ export class AssetObjectsHandler {
     event.stopImmediatePropagation()
     const { detail } = event
  
-    const { assetObjects } = MOVIEMASHER.options
+    const { assetObjects } = MOVIE_MASHER.options
     if (!assetObjects) {
       detail.promise = Promise.resolve({ data: { assets: [] } }) 
       return
@@ -38,4 +38,4 @@ export class AssetObjectsHandler {
   }
 }
 
-MOVIEMASHER.listenersAdd({ [EventAssetObjects.Type]: AssetObjectsHandler.handle })
+MOVIE_MASHER.listenersAdd({ [EventAssetObjects.Type]: AssetObjectsHandler.handle })

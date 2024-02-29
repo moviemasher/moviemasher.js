@@ -1,25 +1,265 @@
-
-FROM moviemasher/node-ffmpeg:5.2.0
 ARG DIR_ROOT=/app
+ARG SRC=/usr/local/src
+ARG DIR_BINARY=/usr/bin
+ARG PREFIX=/usr
+ARG ESSENTIAL_AV_DEPENDENCIES='cairo-devel pango-devel libjpeg-turbo-devel giflib-devel librsvg2-devel librsvg2-tools librsvg2 openjpeg2 opus libvorbis-devel libtheora-devel libogg-devel'
 
-COPY package.json ${DIR_ROOT}/package.json
+FROM amazonlinux:2023.3.20240131.0 AS stage
+ARG DIR_ROOT
+ARG SRC
+ARG DIR_BINARY
+ARG PREFIX
+ARG ESSENTIAL_AV_DEPENDENCIES
 
-COPY packages/@moviemasher/client-lib/package.json ${DIR_ROOT}/packages/@moviemasher/client-lib/package.json
-COPY packages/@moviemasher/client-lib/dist ${DIR_ROOT}/packages/@moviemasher/client-lib/dist
+ENV \
+  ESSENTIAL_TOOL_DEPENDENCIES='pkgconfig autoconf automake' \
+  TOOL_DEPENDENCIES='nasm yasm yasm-devel libtool cmake make bzip2 gcc gcc-c++ diffutils bzip2-devel tar zlib-devel git' 
 
-COPY packages/@moviemasher/shared-lib/package.json ${DIR_ROOT}/packages/@moviemasher/shared-lib/package.json
-COPY packages/@moviemasher/shared-lib/dist ${DIR_ROOT}/packages/@moviemasher/shared-lib/dist
+RUN \
+  cd ${SRC} && \
+  yum update -y && \ 
+  yum install -y $TOOL_DEPENDENCIES $ESSENTIAL_TOOL_DEPENDENCIES
 
-COPY packages/@moviemasher/client-react/package.json ${DIR_ROOT}/packages/@moviemasher/client-react/package.json
-COPY packages/@moviemasher/client-react/dist ${DIR_ROOT}/packages/@moviemasher/client-react/dist
+ENV \
+  AV_DEPENDENCIES='openjpeg2-devel libsndfile-devel harfbuzz-devel libjpeg-devel libwebp-devel libzstd-devel jbigkit-devel' 
 
-COPY packages/@moviemasher/server-express/package.json ${DIR_ROOT}/packages/@moviemasher/server-express/package.json
-COPY packages/@moviemasher/server-express/dist ${DIR_ROOT}/packages/@moviemasher/server-express/dist
+RUN \
+  yum install -y $AV_DEPENDENCIES ${ESSENTIAL_AV_DEPENDENCIES} 
 
-COPY packages/@moviemasher/server-lib/package.json ${DIR_ROOT}/packages/@moviemasher/server-lib/package.json
-COPY packages/@moviemasher/server-lib/dist ${DIR_ROOT}/packages/@moviemasher/server-lib/dist
+RUN \
+  echo "x264" && \
+  mkdir -p ${SRC}/x264 && \
+  curl -Lf \
+    https://code.videolan.org/videolan/x264/-/archive/master/x264-stable.tar.bz2 | \
+    tar -jx --strip-components=1 -C ${SRC}/x264 && \
+  cd ${SRC}/x264 && \
+  ./configure --prefix=${PREFIX} --bindir=${DIR_BINARY} \
+    --disable-cli \
+    --disable-static \
+    --enable-pic \
+    --enable-shared && \
+  make && \
+  make install 
 
-COPY docs ${DIR_ROOT}/docs
+ENV FDKAAC=2.0.3 
+RUN \
+  echo "fdk-aac" && \
+  mkdir -p ${SRC}/fdk-aac && \
+  curl -Lf \
+    https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC}.tar.gz | \
+    tar -zx --strip-components=1 -C ${SRC}/fdk-aac && \
+  cd ${SRC}/fdk-aac && \
+  autoreconf -fiv && \
+  ./configure \
+    --disable-static \
+    --enable-shared && \
+  make && \
+  make install 
 
-RUN npm install 
-LABEL org.opencontainers.image.authors="support@moviemasher.com"
+ENV LAME=3.100 
+RUN \
+  echo "lame" && \
+  mkdir -p ${SRC}/lame && \
+  curl -Lf \
+    http://downloads.sourceforge.net/project/lame/lame/${LAME}/lame-${LAME}.tar.gz | \
+    tar -zx --strip-components=1 -C ${SRC}/lame && \
+  cd ${SRC}/lame && \
+  cp \
+    /usr/share/automake-1.16/config.guess \
+    config.guess && \
+  cp \
+    /usr/share/automake-1.16/config.sub \
+    config.sub && \
+  ./configure \
+    --disable-frontend \
+    --disable-static \
+    --enable-nasm \
+    --enable-shared && \
+  make && \
+  make install 
+
+ENV VPX=1.14.0 
+RUN \
+  echo "vpx" && \
+  mkdir -p ${SRC}/vpx && \
+  curl -Lf \
+    https://github.com/webmproject/libvpx/archive/v${VPX}.tar.gz | \
+    tar -zx --strip-components=1 -C ${SRC}/vpx && \
+  cd ${SRC}/vpx && \
+  ./configure \
+    --as=yasm \
+    --disable-debug \
+    --disable-docs \
+    --disable-examples \
+    --disable-install-bins \
+    --disable-static \
+    --disable-unit-tests \
+    --enable-pic \
+    --enable-shared \
+    --enable-vp8 \
+    --enable-vp9 \
+    --enable-vp9-highbitdepth \
+    --prefix=${PREFIX} && \ 
+  make && \
+  make install 
+
+ENV FFMPEG=6.0.1
+RUN \
+  echo "ffmpeg" && \
+  mkdir -p ${SRC}/ffmpeg && \
+  echo "https://ffmpeg.org/releases/ffmpeg-${FFMPEG}.tar.bz2" && \
+  curl -Lf \
+    https://ffmpeg.org/releases/ffmpeg-${FFMPEG}.tar.bz2 | \
+    tar -jx --strip-components=1 -C ${SRC}/ffmpeg 
+
+COPY dev/image/sh/patches/librsvgdec.c ${SRC}/ffmpeg/libavcodec/librsvgdec.c
+
+RUN \
+  cd ${SRC}/ffmpeg && \
+  PATH="$DIR_BINARY:$PATH" \
+  LD_LIBRARY_PATH="${PREFIX}/lib:${PREFIX}/lib64" \
+  PKG_CONFIG_PATH="${PREFIX}/lib/pkgconfig:${PREFIX}/lib64/pkgconfig" \
+  ./configure \
+    --disable-debug \
+    --disable-doc \
+    --disable-ffplay \
+    --enable-ffprobe \
+    --enable-gpl \
+    --enable-libfdk_aac \
+    --enable-libmp3lame \
+    --enable-libopenjpeg \
+    --enable-libopus \
+    --enable-librsvg \
+    --enable-libtheora \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libx264 \
+    --enable-nonfree \
+    --enable-stripping \
+    --enable-version3 \
+    --prefix=${PREFIX} && \
+  make
+
+# --enable-alsa \
+# --enable-libaom \
+# --enable-libass \
+# --enable-libfreetype \
+# --enable-libkvazaar \
+# --enable-libopencore-amrnb \
+# --enable-libopencore-amrwb \
+# --enable-librav1e \
+# --enable-libsvtav1 \
+# --enable-libv4l2 \
+# --enable-libvidstab \
+# --enable-libwebp \
+# --enable-libxml2 \
+# --enable-libx265 \
+# --enable-libxvid \
+# --enable-libzimg \
+# --enable-openssl \
+
+# --enable-gpl 
+# --enable-libfdk_aac 
+# --enable-libmp3lame 
+# --enable-libopenjpeg 
+# --enable-libopus
+# --enable-librsvg 
+# --enable-libtheora 
+# --enable-libvorbis 
+# --enable-libvpx 
+# --enable-libx264 
+# --enable-nonfree 
+# --enable-postproc 
+# --enable-pthreads 
+# --enable-swresample
+# --enable-version3 
+# --enable-zlib 
+
+
+# NOT used
+# --enable-postproc 
+# --enable-pthreads 
+# --enable-swresample
+# --enable-zlib 
+ 
+
+
+RUN \
+  ldconfig && \
+  mkdir -p \
+    /buildout/usr/local/bin \
+    /buildout/usr/local/lib && \
+  cp -a \
+    /usr/local/lib/lib*so* \
+    /buildout/usr/local/lib/
+
+# cp \
+#   ${SRC}/ffmpeg/ffmpeg \
+#   /buildout/usr/local/bin && \
+# cp \
+#   ${SRC}/ffmpeg/ffprobe \
+#   /buildout/usr/local/bin && \
+
+# runtime stage
+# FROM amazonlinux:2023.3.20240131.0
+
+# # Add files from stage
+# COPY --from=stage /buildout/ /
+
+# RUN groupadd -r moviemasher && useradd --no-log-init -r -g moviemasher moviemasher
+
+# USER moviemasher
+
+# # ARG NPM_INSTALL='--workspace=@moviemasher/node-ffmpeg'
+# # ARG NPM_BUILD='canvas@2.11.2'
+
+
+# # COPY package.json ${DIR_ROOT}/package.json
+
+
+# # COPY docs ${DIR_ROOT}/docs
+
+# # RUN npm install 
+# # COPY package.json ${DIR_ROOT}/package.json
+# # COPY images/node-ffmpeg/package.json ${DIR_ROOT}/images/node-ffmpeg/package.json
+
+# # COPY packages/@moviemasher/shared-lib/package.json ${DIR_ROOT}/packages/@moviemasher/shared-lib/package.json
+# # COPY packages/@moviemasher/shared-lib/dist ${DIR_ROOT}/packages/@moviemasher/shared-lib/dist
+
+# # COPY packages/@moviemasher/server-lib/package.json ${DIR_ROOT}/packages/@moviemasher/server-lib/package.json
+# # COPY packages/@moviemasher/server-lib/dist ${DIR_ROOT}/packages/@moviemasher/server-lib/dist
+
+# # COPY packages/@moviemasher/client-lib/package.json ${DIR_ROOT}/packages/@moviemasher/client-lib/package.json
+# # COPY packages/@moviemasher/client-lib/dist ${DIR_ROOT}/packages/@moviemasher/client-lib/dist
+
+# # COPY packages/@moviemasher/shared-lib/package.json ${DIR_ROOT}/packages/@moviemasher/shared-lib/package.json
+# # COPY packages/@moviemasher/shared-lib/dist ${DIR_ROOT}/packages/@moviemasher/shared-lib/dist
+
+# # COPY packages/@moviemasher/client-react/package.json ${DIR_ROOT}/packages/@moviemasher/client-react/package.json
+# # COPY packages/@moviemasher/client-react/dist ${DIR_ROOT}/packages/@moviemasher/client-react/dist
+
+# # COPY packages/@moviemasher/server-express/package.json ${DIR_ROOT}/packages/@moviemasher/server-express/package.json
+# # COPY packages/@moviemasher/server-express/dist ${DIR_ROOT}/packages/@moviemasher/server-express/dist
+
+# # COPY packages/@moviemasher/server-lib/package.json ${DIR_ROOT}/packages/@moviemasher/server-lib/package.json
+# # COPY packages/@moviemasher/server-lib/dist ${DIR_ROOT}/packages/@moviemasher/server-lib/dist
+
+
+# # LABEL org.opencontainers.image.authors="support@moviemasher.com"
+
+# # ENV NODE='20.11.0'
+# # RUN \
+# #   cd ${SRC} && \
+# #   yum update -y && \ 
+# #   yum install -y ${ESSENTIAL_AV_DEPENDENCIES} && \
+# #   curl -L https://git.io/n-install --output n-install && \
+# #   chmod +x n-install && \
+# #   yes y | ./n-install && \
+# #   ${HOME}/n/bin/n ${NODE} && \
+# #   rm -rf ${SRC}/n-install* && \
+# #   rm -rf ${HOME}/n/* && \
+# #   cd $DIR_ROOT && \
+# #   npm install -g npm && \
+# #   rm -rf \
+# #     /var/lib/apt/lists/* \
+# #     /var/tmp/*

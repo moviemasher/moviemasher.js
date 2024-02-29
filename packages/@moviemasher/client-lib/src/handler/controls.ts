@@ -4,14 +4,13 @@ import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit-e
 import type { TemplateContents, Control, ControlGroup, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertDefined, assertPopulatedString, isPropertyId } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertDefined, assertPopulatedString, isPropertyId, isTargetId } from '@moviemasher/shared-lib/utility/guards.js'
 import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
-import { $LOCK, $OPACITY, $SIZE, MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { $FRAMES, $LOCK, $OPACITY, $SIZE, MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventManagedAssetPromise, EventAssetId, EventChangeFrame, EventChangeScalar, EventEdited, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventControl, EventControlGroup, EventManagedAssetIcon, EventMashAsset, EventScalar, EventSelectedProperties, EventTimeRange, StringEvent, EventRequestUpdate } from '../utility/events.js'
 import { $ASPECT, $ASSET, $BOOLEAN, $BOTTOM, $CLIP, $CONTAINER, $CONTAINER_ID, $CONTENT_ID, $CROP, DIRECTIONS_SIDE, DOT, $END, $FLIP, $FRAME, $HEIGHT, $LEFT, $MASH, $NUMBER, $PERCENT, POINT_KEYS, $RGB, $RIGHT, SIZE_KEYS, $STRING, $TOP, $WIDTH, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
-import { Component, ComponentLoader } from '../base/Component.js'
-import { isTargetId } from '../guards/TypeGuards.js'
+import { Component, ComponentLoader } from '../base/component.js'
 import { DROP_TARGET_CSS, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
 import { dragData, dropRawFiles, droppingFiles, isDragAssetObject } from '../utility/draganddrop.js'
 import { EventControlDetail } from '../types.js'
@@ -36,7 +35,7 @@ T & Constrained<ControlGroup> {
         return
       }
       // console.log(this.tagName, 'addOrRemoveEnd', endPropertyId)
-      MOVIEMASHER.dispatch(new EventChangeScalar(endPropertyId, value))
+      MOVIE_MASHER.dispatch(new EventChangeScalar(endPropertyId, value))
     }
 
     controlContent(name: string, icon?: string, more?: OptionalContent): OptionalContent {
@@ -76,7 +75,7 @@ T & Constrained<ControlGroup> {
   
       this.loadComponent('movie-masher-link')
       const event = new EventScalar(endPropertyId)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const defined = isDefined(event.detail.value)
       const addOrRemove = defined ? 'remove' : 'add'
       const input = defined ? this.controlInputContent(endPropertyId): undefined
@@ -124,7 +123,7 @@ T & Constrained<ControlGroup> {
 
     selectedProperty(propertyId: PropertyId): SelectedProperty | undefined {
       const propertiesEvent = new EventSelectedProperties([propertyId])
-      MOVIEMASHER.dispatch(propertiesEvent)
+      MOVIE_MASHER.dispatch(propertiesEvent)
       const { selectedProperties } = propertiesEvent.detail
       if (!selectedProperties?.length) {
         // console.warn(this.tagName, 'addOrRemoveEnd', 'no selected properties')
@@ -139,7 +138,7 @@ T & Constrained<ControlGroup> {
       if (!propertyId) return
 
       const event = new EventScalar(propertyId)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       return event.detail.value 
     }
 
@@ -210,7 +209,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (!propertyId) return false
 
       const event = new EventScalar(`${propertyId}${$END}`)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       return isDefined(event.detail.value)
     }
 
@@ -233,18 +232,18 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (isEnd || this.endValueDefined) {
         // console.debug(this.tagName, propertyId, 'handleInput $END DEFINED')
         const event = new EventTimeRange()
-        MOVIEMASHER.dispatch(event)
+        MOVIE_MASHER.dispatch(event)
         const { detail: { timeRange } } = event
         if (timeRange) {
           const frame = isEnd ? timeRange.last : timeRange.frame
           // console.debug(this.tagName, propertyId, 'handleInput GOING', frame)
-          MOVIEMASHER.dispatch(new EventChangeFrame(frame))
+          MOVIE_MASHER.dispatch(new EventChangeFrame(frame))
         }
       }
       // console.debug(this.tagName, this.propertyId, 'handleInput', inputValue)
       selectedProperty.value = inputValue
 
-      MOVIEMASHER.dispatch(new EventChangeScalar(propertyId, inputValue))
+      MOVIE_MASHER.dispatch(new EventChangeScalar(propertyId, inputValue))
     }
 
     get input(): ControlInput | undefined {
@@ -286,7 +285,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (!propertyId) return
 
       const event = new EventScalar(propertyId)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       return event.detail.value
     }
 
@@ -304,7 +303,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       }
       const selectedProperties: SelectedProperties = []
       const event = new EventSelectedProperties([propertyId], selectedProperties)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { length } = selectedProperties
       switch (length) {
         case 0: {
@@ -390,6 +389,7 @@ export function ControlPropertyMixin<T extends Constrained<Component>>(Base: T):
     }
 
     protected handleChangedMashAsset(event: EventChangedMashAsset): void {
+      
       const { detail: mashAsset } = event
       const id = mashAsset?.id
       // console.log(this.tagName, 'handleChangedMashAsset', id)
@@ -410,17 +410,17 @@ export function ControlPropertyMixin<T extends Constrained<Component>>(Base: T):
       switch (targetId) {
         case $MASH: {
           const event = new EventMashAsset()
-          MOVIEMASHER.dispatch(event)
+          MOVIE_MASHER.dispatch(event)
           return event.detail.mashAsset?.id
         }
         case $ASSET: {
           const event = new EventAssetId()
-          MOVIEMASHER.dispatch(event)
+          MOVIE_MASHER.dispatch(event)
           return event.detail.assetId
         }
         default: {
           const event = new EventClipId()
-          MOVIEMASHER.dispatch(event)
+          MOVIE_MASHER.dispatch(event)
           return event.detail.clipId
         }
       }
@@ -502,7 +502,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
 
     // console.debug(this.tagName, this.propertyId, 'iconPromiseInitialize', { scalar, iconSize })
     const event = new EventManagedAssetIcon(scalar, iconSize, true)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { promise } = event.detail 
     if (!promise) return Promise.resolve()
 
@@ -558,7 +558,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
       if (!assetObject) return
 
       const assetEvent = new EventManagedAssetPromise(assetObject)
-      MOVIEMASHER.dispatch(assetEvent)
+      MOVIE_MASHER.dispatch(assetEvent)
 
       const { promise } = assetEvent.detail
       if (!promise) return
@@ -587,7 +587,8 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
     
     const data = dragData(dataTransfer)
     if (isDragAssetObject(data)) {
-      const { assetId } = data
+      const { assetObject } = data
+      const { id: assetId } = assetObject
       this.setInputValue(assetId)
       this.handleInput()
     }
@@ -904,7 +905,7 @@ declare global {
 }
 
 // listen for control event
-MOVIEMASHER.listenersAdd({ [EventControl.Type]: RgbControlElement.handleNode })
+MOVIE_MASHER.listenersAdd({ [EventControl.Type]: RgbControlElement.handleNode })
 
 // listen for control rgb event
 export const ClientControlRgbListeners: ListenersFunction = () => ({
@@ -1433,7 +1434,7 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
     if (!propertyId) return
     
     const scalar = this.propertyIdValue(propertyId)
-    MOVIEMASHER.dispatch(new EventChangeScalar(propertyId, !scalar))
+    MOVIE_MASHER.dispatch(new EventChangeScalar(propertyId, !scalar))
   }
 
   protected handleX(event: StringEvent) {
@@ -1516,11 +1517,11 @@ export class TimeControlGroupElement extends TimeWithControlGroup implements Con
       <movie-masher-icon icon='frame'></movie-masher-icon>
       ${frameInput}
     `)
-    const framesId = this.namePropertyId('frames')
+    const framesId = this.namePropertyId($FRAMES)
     const framesInput = this.controlInputContent(framesId)
     // console.log('TimeControlGroupElement.framedContent', framesId, framesInput)
     if (framesInput) htmls.push(html`
-      <movie-masher-icon icon='frames'></movie-masher-icon>
+      <movie-masher-icon icon='${$FRAMES}'></movie-masher-icon>
       ${framesInput}
     `)
     if (!htmls.length) return
@@ -1590,7 +1591,7 @@ export class TimeControlGroupElement extends TimeWithControlGroup implements Con
     return element
   }
 
-  private static names: Strings = [$FRAME, 'frames', 'timing', 'startTrim', 'endTrim', 'speed']
+  private static names: Strings = [$FRAME, $FRAMES, 'timing', 'startTrim', 'endTrim', 'speed']
 
   static override properties: PropertyDeclarations = {
     ...CONTROL_GROUP_DECLARATIONS,

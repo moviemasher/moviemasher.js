@@ -1,7 +1,7 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { HeaderBase } from '../base/LeftCenterRight.js'
+import { HeaderBase } from '../base/component-view.js'
 
 export const InspectorHeaderTag = 'movie-masher-inspector-header'
 /**

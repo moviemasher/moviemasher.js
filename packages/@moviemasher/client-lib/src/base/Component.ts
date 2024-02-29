@@ -5,7 +5,7 @@ import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '
 import { css } from '@lit/reactive-element/css-tag.js'
 import { SELECTED } from '../runtime.js'
 import { StringEvent } from '../utility/events.js'
-import { MOVIEMASHER, DASH, PIPE, SLASH, $STRING, arrayUnique } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER, DASH, PIPE, SLASH, $STRING, arrayUnique } from '@moviemasher/shared-lib/runtime.js'
 import { LitElement } from 'lit-element/lit-element.js'
 import { html, nothing } from 'lit-html'
 import { ICON } from '../runtime.js'
@@ -19,7 +19,7 @@ const partFirst = (element: Element): string => element.part[0] || ''
 export class Component extends LitElement {
   override connectedCallback(): void {
     // console.log(this.tagName, 'connectedCallback')
-    MOVIEMASHER.listenersAdd(this.listeners)
+    MOVIE_MASHER.listenersAdd(this.listeners)
     this.handleExportParts()
     this.dispatchExportParts()
     super.connectedCallback()
@@ -41,7 +41,7 @@ export class Component extends LitElement {
 
   override disconnectedCallback(): void {
     this.dispatchExportParts()
-    MOVIEMASHER.listenersRemove(this.listeners)
+    MOVIE_MASHER.listenersRemove(this.listeners)
     super.disconnectedCallback()
   }
 
@@ -218,8 +218,8 @@ export class ComponentLoader extends Component {
     const file = second ? `${first}-${second}` : first
     const lib = [directory, file].join(SLASH)
     const relativePath = `../${lib}.js`
-    // console.log('importComponent', name, relativePath)
-    const libPromise = import(new URL(relativePath, import.meta.url).href).then(() => {
+    const { href } = new URL(relativePath, import.meta.url)
+    const libPromise = import(href).then(() => {
       promises.delete(name)
       return lib
     })
@@ -239,8 +239,9 @@ export class ComponentSlotter extends ComponentLoader {
     const { slotChildren } = this
     this.slots.forEach(childSlot => {
       const slots: Htmls = []
-      const childSlotElements = slotChildren.filter(child => child.slot.startsWith(childSlot)
-      )
+      const childSlotElements = slotChildren.filter(child => (
+        child.slot.startsWith(childSlot)
+      ))
       const terminated = childSlotElements.some(slotChild => {
         const { slot } = slotChild
         if (slot === childSlot) {
@@ -308,7 +309,7 @@ export class ComponentClicker extends ComponentSlotter {
   private dispatchStringEvent() {
     const { emit, detail } = this
     const stringEvent: StringEvent = new CustomEvent(emit, { detail })
-    MOVIEMASHER.dispatch(stringEvent)
+    MOVIE_MASHER.dispatch(stringEvent)
   }
 
   protected handleClick(event: PointerEvent): void {

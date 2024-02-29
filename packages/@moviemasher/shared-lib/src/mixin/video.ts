@@ -16,6 +16,5 @@ export function VideoInstanceMixin<T extends Constrained<AudibleInstance & Visib
   T & Constrained<VideoInstance> {
   return class extends Base implements VideoInstance {
     declare asset: VideoAsset
-    type = $VIDEO
   }
 }

@@ -1,7 +1,7 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
+import { CENTER, ContentBase } from '../base/component-view.js'
 
 export const InspectorContentTag = 'movie-masher-inspector-content'
 

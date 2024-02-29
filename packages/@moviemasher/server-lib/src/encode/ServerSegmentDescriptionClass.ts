@@ -1,26 +1,19 @@
-import type { AVType, AbsolutePath, RawType, DataOrError, Size, Time, TimeRange } from '@moviemasher/shared-lib/types.js'
-import type { ServerClip, ServerClips, ServerMashAsset } from '../type/ServerMashTypes.js'
-import type { AudibleCommandFilterArgs, AudioCommandFileArgs, CommandFiles, CommandFilter, CommandFilters, CommandInput, EncodeDescription, PrecodeDescription, ServerMashDescription, ServerPromiseArgs, ServerSegmentDescription, ServerSegmentDescriptionArgs, VideoCommandFileOptions, VideoCommandFilterArgs } from '../types.js'
+import type { VideoCommandFileOptions,  AudioCommandFileArgs, AVType, AbsolutePath, Clip, Clips, CommandFiles, DataOrError, MashAsset, RawType, ServerPromiseArgs, Size, Time, TimeRange } from '@moviemasher/shared-lib/types.js'
+import type { AudibleCommandFilterArgs,CommandFilter, CommandFilters, CommandInput, EncodeDescription, PrecodeDescription, ServerMashDescription, ServerSegmentDescription, ServerSegmentDescriptionArgs, VideoCommandFilterArgs } from '../types.js'
 
-import { $AUDIO, $IMAGE, $VIDEO, ERROR, RGBA_BLACK_ZERO, arrayLast, assertAsset, errorThrow, idGenerate, sortByTrack, sortByType } from '@moviemasher/shared-lib/runtime.js'
-import { assertDefined, assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
-import { promiseNumbers } from '@moviemasher/shared-lib/runtime.js'
-import { assertTime, isTimeRange, timeRangeFromTime } from '@moviemasher/shared-lib/utility/time.js'
-import { assertServerMashAsset } from '../utility/guard.js'
-import { CommandInputRecord } from '../types.js'
+import { $AUDIO, $IMAGE, $VIDEO, ERROR, RGBA_BLACK_ZERO, arrayLast, assertAsset, errorThrow, idGenerate, promiseNumbers, sortByTrack, sortByType } from '@moviemasher/shared-lib/runtime.js'
 import { isAboveZero } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined, assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
+import { isTimeRange, timeRangeFromTime } from '@moviemasher/shared-lib/utility/time.js'
+import { CommandInputRecord } from '../types.js'
+import { isServerClip } from '../utility/guard.js'
 
 const BACKCOLOR = 'BACKCOLOR'
 
 const SILENCE = 'SILENCE'
 
 export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
-  constructor(protected args: ServerSegmentDescriptionArgs) {
-    const { mash, time } = this
-    assertServerMashAsset(mash)
-    assertTime(time)
-    assertTrue(time.fps === this.quantize, 'time is in mash rate')
-  }
+  constructor(protected args: ServerSegmentDescriptionArgs) {}
 
   declare assetType: RawType
 
@@ -49,9 +42,9 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
     }
   }
 
-  get clip(): ServerClip | undefined { return this.args.clip }
+  get clip(): Clip | undefined { return this.args.clip }
   
-  private _clips?: ServerClips
+  private _clips?: Clips
 
   protected get clips() { return this._clips ||= this.clipsInitialize }
   
@@ -105,7 +98,7 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
     return Object.fromEntries(entries)
   }
   
-  protected get mash(): ServerMashAsset { return this.mashDescription.mash }
+  protected get mash(): MashAsset { return this.mashDescription.mash }
 
   protected get mashDescription(): ServerMashDescription { return this.args.mashDescription }
   
@@ -114,7 +107,6 @@ export class ServerSegmentDescriptionClass implements ServerSegmentDescription {
     assertDefined(clip)
     return { inputsById, commandFilters, duration, clip }
   }
-  get quantize() { return this.mash.quantize }
 
   protected get size(): Size { return this.mashDescription.size }
 
@@ -136,7 +128,7 @@ export class AudioServerSegmentDescriptionClass extends ServerSegmentDescription
   protected override get commandFilesInitialize(): CommandFiles {
     // console.log(this.constructor.name, 'commandFilesInitialize')
     const { time, audioRate, clips } = this
-    const commandFiles = clips.flatMap(clip => {
+    const commandFiles = clips.filter(isServerClip).flatMap(clip => {
       const clipTime = clip.timeRange
       const chainArgs: AudioCommandFileArgs = { 
         time, audioRate, clipTime
@@ -171,7 +163,7 @@ export class AudioServerSegmentDescriptionClass extends ServerSegmentDescription
     filters.push(this.commandFilterAudible)
     chainArgs.chainInput = SILENCE
     const { length } = clips
-    clips.forEach((clip, index) => {
+    clips.filter(isServerClip).forEach((clip, index) => {
       chainArgs.clipTime = clip.timeRange
       chainArgs.track = index
       filters.push(...clip.audioCommandFilters(chainArgs))
@@ -210,7 +202,7 @@ export class VideoServerSegmentDescriptionClass extends ServerSegmentDescription
   protected get commandFilesInitialize(): CommandFiles {
     // console.log(this.constructor.name, 'commandFilesInitialize')
     const { time, videoRate, size: outputSize, clips, encodePath } = this
-    const files = clips.flatMap(clip => {
+    const files = clips.filter(isServerClip).flatMap(clip => {
       const options: VideoCommandFileOptions = { 
         time, outputSize, videoRate, encodePath
       }
@@ -242,7 +234,7 @@ export class VideoServerSegmentDescriptionClass extends ServerSegmentDescription
       commandFiles, duration, videoRate, time, outputSize: size, encodePath,
       chainInput: BACKCOLOR, clipTime: timeRangeFromTime(time), track: 0
     }
-    clips.forEach((clip, index) => {
+    clips.filter(isServerClip).forEach((clip, index) => {
       chainArgs.clipTime = clip.timeRange
       chainArgs.track = index
       filters.push(...clip.videoCommandFilters(chainArgs))

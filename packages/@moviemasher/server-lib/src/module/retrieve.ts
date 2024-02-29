@@ -11,7 +11,7 @@ import { finished } from 'stream/promises'
 import { ReadableStream } from 'stream/web'
 import { assertAbsolutePath } from '../utility/guard.js'
 import { ENV, ENV_KEY } from '../utility/env.js'
-import { directoryCreatePromise, fileCopyPromise, fileNameFromContent, filePathExists } from '../utility/file.js'
+import { directoryCreatePromise, fileCopyPromise, fileNameFromContent, filePathExists } from './file-write.js'
 
 const ProtocolSuffix = [COLON, SLASH, SLASH].join('')
 

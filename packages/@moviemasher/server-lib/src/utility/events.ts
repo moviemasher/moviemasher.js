@@ -1,56 +1,9 @@
-import type { AssetObject, ManageType } from '@moviemasher/shared-lib/types.js'
-import type { ServerAssetManager } from '../types.js'
-import type { EventServerAssetDetail, EventServerDecodeStatusDetail, EventServerEncodeStatusDetail, EventServerManagedAssetDetail, EventServerTranscodeStatusDetail } from './event-types.js'
+import type { ManageType } from '@moviemasher/shared-lib/types.js'
+import type { EventServerDecodeStatusDetail, EventServerEncodeStatusDetail, EventServerTranscodeStatusDetail } from './event-types.js'
 
 import '../runtime.js'
 
-import { $ASSET, customEventClass } from '@moviemasher/shared-lib/runtime.js'
-
-
-/**
- * Dispatch to retrieve a managed asset from an asset id or object.
- * @category ServerEvents
- */
-
-
-export class EventServerManagedAsset extends customEventClass<EventServerManagedAssetDetail>() {
-  static Type = 'managed-asset'
-  constructor(assetIdOrObject: string | AssetObject) {
-    const string = typeof assetIdOrObject === 'string'
-    const assetId = string ? assetIdOrObject : assetIdOrObject.id
-    const assetObject = string ? undefined : assetIdOrObject
-    const detail = { assetId, assetObject }
-    super(EventServerManagedAsset.Type, { detail })
-  }
-}
-
-/**
- * Dispatch to retrieve an asset from an asset id or object.
- * @category ServerEvents
- */
-
-export class EventServerAsset extends customEventClass<EventServerAssetDetail>() {
-  static Type = $ASSET
-  constructor(assetIdOrObject: string | AssetObject, manager: ServerAssetManager) {
-    // console.log('EventServerAsset', !!assetIdOrObject, !!manager)
-    const string = typeof assetIdOrObject === 'string'
-    const assetId = string ? assetIdOrObject : assetIdOrObject.id
-    const assetObject = string ? undefined : assetIdOrObject
-    const detail = { assetId, assetObject, manager }
-    super(EventServerAsset.Type, { detail })
-  }
-}
-/**
- * Dispatch to release managed assets.
- * @category ServerEvents
- */
-
-export class EventReleaseServerManagedAssets extends customEventClass<string | undefined>() {
-  static Type = 'release-assets'
-  constructor(detail?: ManageType) {
-    super(EventReleaseServerManagedAssets.Type, { detail })
-  }
-}
+import { customEventClass } from '@moviemasher/shared-lib/runtime.js'
 
 /**
  * Dispatch to retrieve a promise that returns progress or decoding if finished.

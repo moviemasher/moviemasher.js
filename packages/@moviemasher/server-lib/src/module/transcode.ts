@@ -2,7 +2,7 @@
 import type { AbsolutePath, AbsolutePaths, AlphaType, DataOrError, DecodeArgs, DecodeOptions, DropResource, DropType, EndpointRequest, Probing, RawType, Resource, StringDataOrError, TranscodeFunction, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/shared-lib/types.js'
 import type { CommandFilter } from '../types.js'
 
-import { $ALPHA, $BITMAPS, $CEIL, $DECODE, $RETRIEVE, $IMAGE, $PROBE, $VIDEO, $WAVEFORM, ERROR, MOVIEMASHER, PROBING_TYPES, errorPromise, isDefiniteError, isProbing, isRawType, namedError, typeOutputAlphaOptions, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
+import { $ALPHA, $BITMAPS, $CEIL, $DECODE, $RETRIEVE, $IMAGE, $PROBE, $VIDEO, $WAVEFORM, ERROR, MOVIE_MASHER, PROBING_TYPES, errorPromise, isDefiniteError, isProbing, isRawType, namedError, typeOutputAlphaOptions, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import { isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertAboveZero, assertAssetResource } from '@moviemasher/shared-lib/utility/guards.js'
 import { assertSizeNotZero, coverSize, evenSize, sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
@@ -10,7 +10,7 @@ import path from 'path'
 import { ffmpegCommand, ffmpegFilters, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../command/CommandFactory.js'
 import { sizeValueString } from '../utility/command.js'
 import { ENV, ENV_KEY } from '../utility/env.js'
-import { fileNameFromOptions } from '../utility/file.js'
+import { fileNameFromOptions } from './file-write.js'
 import { assertAbsolutePath } from '../utility/guard.js'
 import { idUnique } from '../utility/id.js'
 import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
@@ -35,13 +35,13 @@ const probePromise = async (filePath: AbsolutePath, type: DropType): Promise<Dat
   const resource: DropResource = { request, type }
   assertAssetResource(resource, 'probePromise')
   const args: DecodeArgs = { resource, type: $PROBE, options: decodeOptions }
-  const promise = MOVIEMASHER.promise($DECODE, args)
+  const promise = MOVIE_MASHER.promise(args, $DECODE)
  
   return await promise
 }
 
 const downloadAsset = async (resource: Resource, validDirectories?: AbsolutePaths): Promise<StringDataOrError> => {
-  return await MOVIEMASHER.promise($RETRIEVE, resource, { validDirectories })
+  return await MOVIE_MASHER.promise(resource, $RETRIEVE, { validDirectories })
 }
 
 const transcodeFileName = (duration: number, commandOutput: TranscodeOptions): string => {

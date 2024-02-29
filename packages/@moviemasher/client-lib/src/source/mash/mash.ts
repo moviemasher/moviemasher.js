@@ -1,27 +1,51 @@
-import type { AVType, Asset, AssetCacheArgs, AssetObject, Assets, CacheOptions, ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, Clip, ClipObject, ContainerInstance, ContainerRectArgs, ContainerSvgItemArgs, DataOrError, Direction, EditArgs, EditObject, Encodings, EventDispatcherListeners, Instance, InstanceCacheArgs, NumberRecord, Panel, Point, PointOrSize, Propertied, Property, PropertyId, PropertyIds, Rect, Scalar, ScalarTuple, ScalarsById, SideDirectionRecord, Size, StringDataOrError, Strings, SvgElement, SvgItem, SvgItems, ServerProgress, SvgItemsRecord, SvgVector, TargetId, TextAsset, TextInstance, Time, TimeRange, Track, TrackArgs, TrackObject, UnknownRecord } from '@moviemasher/shared-lib/types.js'
-import type { AddClipsEditObject, AddTrackEditObject, AudioPreview, AudioPreviewArgs, ChangeEdit, ChangePropertiesEdit, ChangePropertyEdit, ClientAudibleInstance, ClientAudioInstance, ClientClip, ClientClips, ClientInstance, ClientMashAsset, ClientMashAssetObject, ClientMashDescription, ClientMashDescriptionArgs, ClientMashDescriptionOptions, ClientSegmentDescription, ClientSegmentDescriptionArgs, ClientSegmentDescriptions, ClientTrack, ClientTracks, ClientVisibleInstance, ClipIconArgs, Edit, Edits, EventFunction, MoveClipEditObject, RemoveClipEditObject, StartOptions } from '../../types.js'
+import type { ChangeEdit, AVType, AssetCacheArgs, Assets, ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, Clip, ClipObject, ContainerInstance, ContainerRectArgs, ContainerSvgItemArgs, DataOrError, Direction, EditObject, ClientVisibleInstance, EventDispatcherListeners, Instance, InstanceCacheArgs, NumberRecord, Panel, Point, PointOrSize, Propertied, Property, PropertyId, PropertyIds, Rect, Scalar, ScalarTuple, ScalarsById, SideDirectionRecord, Size, StringDataOrError, Strings, SvgElement, SvgItem, SvgItems, ServerProgress, SvgItemsRecord, TargetId, Time, TimeRange, Track, TrackArgs, TrackObject, AssetArgs, Resource, AudibleInstance, MashAssetObject, Clips, ClientTrack, ClientClips, ClientMashAsset, Edit, ClientClip, ClientInstance, ClipIconArgs, Edits, ClientMashDescription, ClientMashDescriptionOptions, ClientTracks } from '@moviemasher/shared-lib/types.js'
+import type { AddClipsEditObject, AddTrackEditObject, AudioPreview, ChangePropertiesEdit, ChangePropertyEdit, ClientMashDescriptionArgs, ClientSegmentDescription, ClientSegmentDescriptionArgs, ClientSegmentDescriptions, EventFunction, MoveClipEditObject, RemoveClipEditObject, StartOptions } from '../../types.js'
 
 import { ClipClass } from '@moviemasher/shared-lib/base/clip.js'
 import { MashDescriptionClass } from '@moviemasher/shared-lib/base/description.js'
 import { TrackClass } from '@moviemasher/shared-lib/base/track.js'
 import { MashAssetMixin } from '@moviemasher/shared-lib/mixin/mash.js'
-import { $ASPECT, $AUDIO, $BOTTOM, $CHANGE, $CHANGES, $CLIP, $CONTAINER, $CONTENT, $CROP, $CUSTOM, $END, $FLIP, $FRAME, $LEFT, $MASH, $OPACITY, $PLAYER, $POINT, $RIGHT, $ROUND, $SIZE, $STRING, $TEXT, $TIMELINE, $TOP, DASH, DOT, ERROR, MOVIEMASHER, POINT_KEYS, POINT_ZERO, SIZE_KEYS, VOID_FUNCTION, arrayFromOneOrMore, arrayOfNumbers, arraySet, assertAsset, errorThrow, isAsset, isAudibleType, isDefiniteError, isVisibleType, jsonStringify, sortByIndex } from '@moviemasher/shared-lib/runtime.js'
-import { isArray, isDefined, isNumber, isAboveZero, isPositive, isObject } from '@moviemasher/shared-lib/utility/guard.js'
-import { assertDefined, assertPopulatedString, assertPositive, assertRect, assertTrue, isImageAsset, isInstance, isPropertyId, isVisibleInstance } from '@moviemasher/shared-lib/utility/guards.js'
+import { $ASPECT, $AUDIO, $BOTTOM, $CHANGE, $CHANGES, $CHANGE_FRAME, $CLIP, $CONTAINER, $CONTENT, $CROP, $CUSTOM, $ENCODE, $END, $FLIP, $FRAME, $FRAMES, $HEIGHT, $IMAGE, $LEFT, $MASH, $OPACITY, $PLAYER, $POINT, $RIGHT, $ROUND, $SAVE, $SIZE, $TEXT, $TIMELINE, $TOP, $WIDTH, DASH, DIRECTIONS_ALL, DOT, ERROR, MOVIE_MASHER, POINT_KEYS, POINT_ZERO, SIZE_KEYS, VOID_FUNCTION, arrayFromOneOrMore, arrayOfNumbers, arraySet, errorThrow, isAsset, isAudibleType, isDefiniteError, isVisibleType, sortByIndex } from '@moviemasher/shared-lib/runtime.js'
+import { isArray, isDefined, isNumber, isAboveZero, isPositive, isObject, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined, assertPopulatedString, assertPositive, assertRect, assertTrue, isAudibleInstance, isChangeEdit, isChangeEditObject, isChangePropertyEditObject, isClip, isInstance, isPropertyId, isVisibleInstance } from '@moviemasher/shared-lib/utility/guards.js'
 import { assertSizeNotZero, containSize, copyPoint, roundPoint, sizeNotZero, translatePoint } from '@moviemasher/shared-lib/utility/rect.js'
-import { recordFromItems, simplifyRecord, svgAddClass, svgAppend, svgPolygonElement, svgSet, svgSetDimensions, svgSvgElement } from '@moviemasher/shared-lib/utility/svg.js'
+import { recordFromItems, simplifyRecord, svgAddClass, svgAppend, svgGroupElement, svgPolygonElement, svgSet, svgSetDimensions, svgSvgElement } from '@moviemasher/shared-lib/utility/svg.js'
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime, timeRangeFromTimes } from '@moviemasher/shared-lib/utility/time.js'
-import { ClientAssetClass } from '../../base/ClientAssetClass.js'
-import { assertClientAudibleInstance, assertClientInstance, assertClientVisibleInstance, isClientAudibleInstance, isClientInstance } from '../../guards/ClientGuards.js'
-import { isClientClip } from '../../guards/ClientMashGuards.js'
-import { isChangeEdit, isChangeEditObject, isChangePropertyEdit, isChangePropertyEditObject } from '../../guards/EditGuards.js'
-import { AUDIBLE_CONTEXT } from '../../mixin/audible.js'
-import { ADD, ADD_TRACK, ANIMATE, BACK, BOUNDS, CHANGE_FRAME, FORE, HANDLE, LAYER, LINE, MOVE_CLIP, OUTLINE, OUTLINES, PLAY, REDO, REMOVE_CLIP, SAVE, UNDO, assertDatasetElement, eventStop } from '../../runtime.js'
-import { EventCanDestroy, EventChangeAssetId, EventChangeClipId, EventChangeFrame, EventChangeScalars, EventChangedClientAction, EventChangedFrame, EventChangedFrames, EventChangedPreviews, EventChangedScalars, EventChangedServerAction, EventChangedSize, EventChangedTracks, EventEdited, EventFrames, EventManagedAsset, EventRect, EventSize } from '../../utility/events.js'
-import { pixelFromFrame, pixelToFrame } from '../../utility/pixel.js'
+import { ClientAssetClass } from '@moviemasher/shared-lib/base/client-asset.js'
+import { assertClientAudibleInstance, assertClientInstance, assertClientVisibleInstance, isClientAudibleInstance } from '../../guards/guards.js'
+import { assertClientTrack, isClientClip } from '../../guards/ClientMashGuards.js'
+import { AUDIBLE_CONTEXT } from '@moviemasher/shared-lib/mixin/client-audible.js'
+import { ADD, ADD_TRACK, ANIMATE, BACK, BOUNDS, FORE, HANDLE, LAYER, LINE, MOVE_CLIP, OUTLINE, OUTLINES, PLAY, REDO, REMOVE_CLIP, UNDO, assertDatasetElement, eventStop } from '../../runtime.js'
+import { EventCanDestroy, EventChangeAssetId, EventChangeClipId, EventChangeFrame, EventChangeScalars, EventChangedClientAction, EventChangedFrame, EventChangedFrames, EventChangedPreviews, EventChangedScalars, EventChangedServerAction, EventChangedSize, EventChangedTracks, EventEdited, EventFrames, EventRect, EventSize } from '../../utility/events.js'
+import { pixelFromFrame, pixelToFrame } from '@moviemasher/shared-lib/utility/pixel.js'
 
 type TrackClips = [ClientTrack, ClientClips]
 type Interval = ReturnType<typeof setInterval>
+
+export const isChangePropertyEdit = (value: any): value is ChangePropertyEdit => (
+  isChangeEdit(value)
+  && 'property' in value && isPopulatedString(value.property)
+)
+
+interface Doing {
+  /** offset relative to container rect for Pointing,  */
+  offsetPoint: Point
+  pointFlipping: boolean
+  pointTweening: boolean
+  moveHandler: EventFunction<PointerEvent>
+  moved?: boolean
+  clickedNumbers: NumberRecord
+}
+
+interface Sizing extends Doing {
+  sizeFlipping: boolean
+  sizeTweening: boolean
+  direction: string
+  clickedPreviewPoint: Point
+  clickedRect: Rect
+}
+
+interface Pointing extends Doing {}
 
 const isChangePropertiesEdit = (value: any): value is ChangePropertiesEdit => (
   isChangeEdit(value) 
@@ -34,14 +58,6 @@ const isChangePropertiesEditObject = (value: any): value is ChangePropertiesEdit
   && 'redoValues' in value && isObject(value.redoValues)
   && 'undoValues' in value && isObject(value.undoValues)
 )
-
-const isTextAsset = (value: any): value is TextAsset => {
-  return isImageAsset(value) && value.source === $TEXT
-}
-
-const isTextInstance = (value: any): value is TextInstance => {
-  return isInstance(value) && 'asset' in value && isTextAsset(value.asset) 
-}
 
 class EditsClass implements Edits {
   constructor(public mashAsset: ClientMashAsset) { }
@@ -61,7 +77,7 @@ class EditsClass implements Edits {
 
   create(object: EditObject): void {
     const { type = $CHANGE, ...rest } = object
-    const clone: EditArgs = { ...rest, type }
+    const clone: EditObject = { ...rest, type }
     if (this.currentEditIsLast) {
       const { currentEdit: action } = this
       if (isChangeEditObject(object) && isChangeEdit(action)) {
@@ -103,8 +119,8 @@ class EditsClass implements Edits {
   private get currentEditIsLast(): boolean { return this.canUndo && !this.canRedo }
 
   private dispatchChangedAction(): void {
-    MOVIEMASHER.dispatch(new EventChangedClientAction(UNDO))
-    MOVIEMASHER.dispatch(new EventChangedClientAction(REDO))
+    MOVIE_MASHER.dispatch(new EventChangedClientAction(UNDO))
+    MOVIE_MASHER.dispatch(new EventChangedClientAction(REDO))
   }
 
   private dispatchChangedEdit(edit: Edit): void {
@@ -144,7 +160,7 @@ class EditsClass implements Edits {
 }
 
 class EditClass implements Edit {
-  constructor(object: EditArgs) {
+  constructor(object: EditObject) {
     this.type = object.type
   }
 
@@ -202,7 +218,7 @@ class AddClipsEditClass extends AddTrackEditClass {
     this.redoFrame = redoFrame
   }
 
-  clips: ClientClips
+  clips: Clips
 
   insertIndex?: number
 
@@ -227,7 +243,7 @@ class AddClipsEditClass extends AddTrackEditClass {
   override updateSelection(): void {
     const { done } = this
     const id = done ? this.clips[0].id : undefined
-    MOVIEMASHER.dispatch(new EventChangeClipId(id))
+    MOVIE_MASHER.dispatch(new EventChangeClipId(id))
   }
 }
 
@@ -244,14 +260,14 @@ class ChangeEditClass extends EditClass implements ChangeEdit {
 
   override updateSelection(): void {
     const { target } = this
-    if (isClientClip(target)) {
-      MOVIEMASHER.dispatch(new EventChangeClipId(target.id))
-    } else if (isClientInstance(target)) {
-      MOVIEMASHER.dispatch(new EventChangeClipId(target.clip.id))
+    if (isClip(target)) {
+      MOVIE_MASHER.dispatch(new EventChangeClipId(target.id))
+    } else if (isInstance(target)) {
+      MOVIE_MASHER.dispatch(new EventChangeClipId(target.clip.id))
     } else if (isAsset(target)) {
-      MOVIEMASHER.dispatch(new EventChangeAssetId(target.id))
+      MOVIE_MASHER.dispatch(new EventChangeAssetId(target.id))
     }
-    MOVIEMASHER.dispatch(new EventChangedScalars(this.affects))
+    MOVIE_MASHER.dispatch(new EventChangedScalars(this.affects))
   }
 }
 
@@ -347,7 +363,7 @@ class ChangeFramesEditClass extends ChangePropertyEditClass {
     return target.clip
   }
 
-  private get mash(): ClientMashAsset { return this.clip.track.mash }
+  private get mash(): ClientMashAsset { return this.clip.track!.mash }
 
   override redoEdit(): void {
     this.mash.changeTiming(this.target, this.property, this.redoValueNumber)
@@ -376,7 +392,7 @@ class MoveClipEditClass extends AddTrackEditClass {
 
   override get affects(): PropertyIds { return [`${$CLIP}${DOT}frame`] }
 
-  clip: ClientClip
+  clip: Clip
 
   insertIndex?: number
 
@@ -405,8 +421,8 @@ class MoveClipEditClass extends AddTrackEditClass {
   }
 
   override updateSelection(): void {
-    MOVIEMASHER.dispatch(new EventChangeClipId(this.clip.id))
-    MOVIEMASHER.dispatch(new EventChangedScalars(this.affects))
+    MOVIE_MASHER.dispatch(new EventChangeClipId(this.clip.id))
+    MOVIE_MASHER.dispatch(new EventChangedScalars(this.affects))
   }
 }
 
@@ -419,7 +435,7 @@ class RemoveClipEditClass extends EditClass {
     this.track = track
   }
 
-  clip: ClientClip
+  clip: Clip
 
   index: number
 
@@ -440,17 +456,17 @@ class RemoveClipEditClass extends EditClass {
   override updateSelection(): void {
     const { done } = this
     const id = done ? undefined : this.clip.id
-    MOVIEMASHER.dispatch(new EventChangeClipId(id))
+    MOVIE_MASHER.dispatch(new EventChangeClipId(id))
   }
 }
 
-const editInstance = (object: EditArgs): Edit => {
+const editInstance = (object: EditObject): Edit => {
   const { type } = object
   switch (type) {
     case ADD: return new AddClipsEditClass(<AddClipsEditObject>object)
     case ADD_TRACK: return new AddTrackEditClass(<AddTrackEditObject>object)
     case $CHANGE: return new ChangePropertyEditClass(<ChangePropertyEditObject>object)
-    case CHANGE_FRAME: return new ChangeFramesEditClass(<ChangePropertyEditObject>object)
+    case $CHANGE_FRAME: return new ChangeFramesEditClass(<ChangePropertyEditObject>object)
     case $CHANGES: return new ChangePropertiesEditClass(<ChangePropertiesEditObject>object)
     case MOVE_CLIP: return new MoveClipEditClass(<MoveClipEditObject>object)
     case REMOVE_CLIP: return new RemoveClipEditClass(<RemoveClipEditObject>object)
@@ -458,45 +474,31 @@ const editInstance = (object: EditArgs): Edit => {
   errorThrow(ERROR.Internal)
 }
 
-class AudioPreviewClass {
-  constructor(object: AudioPreviewArgs) {
-    const { buffer, gain } = object
-    if (isPositive(gain)) this.gain = gain
-    if (isAboveZero(buffer)) this.buffer = buffer
-  }
+class AudioPreviewClass implements AudioPreview {
+  constructor(public buffer: number = 10) {}
 
-  adjustClipGain(clip: Clip, _quantize: number): void {
-    const timeRange = clip.timeRange
-    this.audibleInstances(clip).forEach(audibleInstance => { 
-      const options = this.startOptions(audibleInstance, this.seconds, timeRange)
-      this.adjustSourceGain(audibleInstance, options) 
-    })
-  }
-
-  private adjustSourceGain(audibleInstance: ClientAudibleInstance, options: StartOptions): void {
+  adjustGain(audibleInstance: AudibleInstance): void {
     const source = AUDIBLE_CONTEXT.getSource(audibleInstance.id)
     if (!source) return
 
     const { gainNode } = source
-    if (this.gain === 0.0) {
-      gainNode.gain.value = 0.0
-      return
-    }
-    const { gain, speed } = audibleInstance
-    if (isPositive(gain)) {
-      gainNode.gain.value = this.gain * gain
-      return
-    }
-    // position/gain pairs...
-    const { start, duration } = options
-    gainNode.gain.cancelScheduledValues(0)
-    audibleInstance.gainPairs.forEach(pair => {
-      const [position, value] = pair
-      gainNode.gain.linearRampToValueAtTime(this.gain * value, start + (position * duration * speed))
-    })
+    gainNode.gain.value = audibleInstance.number('gain')
+  
+    // const speed = audibleInstance.number('speed')
+    // const gain = audibleInstance.number('gain')
+    // if (isPositive(gain)) {
+    //   gainNode.gain.value = gain
+    //   return
+    // }
+    // // position/gain pairs...
+    // const { start, duration } = options
+    // gainNode.gain.cancelScheduledValues(0)
+    // audibleInstance.gainPairs.forEach(pair => {
+    //   const [position, value] = pair
+    //   gainNode.gain.linearRampToValueAtTime(this.gain * value, start + (position * duration * speed))
+    // })
   }
 
-  buffer = 10
   
   bufferClips(clips: Clip[], quantize: number): boolean {
     // console.log(this.constructor.name, 'bufferClips', clips.length)
@@ -510,8 +512,8 @@ class AudioPreviewClass {
 
   clear() {}
 
-  private audibleInstances(clip: Clip): ClientAudibleInstance[] {
-    const instances: ClientAudibleInstance[] = []
+  private audibleInstances(clip: Clip): AudibleInstance[] {
+    const instances: AudibleInstance[] = []
     const { container, content } = clip
     if (isClientAudibleInstance(container) && !container.muted) instances.push(container)
     if (isClientAudibleInstance(content) && !content.muted) instances.push(content)
@@ -538,14 +540,16 @@ class AudioPreviewClass {
         const { start, duration, offset } = options
 
         if (isPositive(start) && isAboveZero(duration)) {
+          assertClientAudibleInstance(audibleInstance)
+
           const { asset, id } = audibleInstance
           const source = asset.audibleSource()
           if (!source) return start ? true : !asset.canBeMuted
           
           // console.log(this.constructor.name, 'createSources starting', asset.label, start, duration, offset)
-          AUDIBLE_CONTEXT.startAt(id, source, start, duration, audibleInstance.speed, offset)
+          AUDIBLE_CONTEXT.startAt(id, source, start, duration, audibleInstance.number('speed'), offset)
 
-          this.adjustSourceGain(audibleInstance, options)
+          this.adjustGain(audibleInstance)
         } 
         return true
       })
@@ -554,7 +558,7 @@ class AudioPreviewClass {
     return okay
   }
 
-  private startOptions(instance: ClientAudibleInstance, startSeconds: number, timeRange: TimeRange): StartOptions {
+  private startOptions(instance: AudibleInstance, startSeconds: number, timeRange: TimeRange): StartOptions {
     const { fps } = timeRange
     const [_, startTrimFrame] = instance.assetFrames(fps)
     let duration = timeRange.lengthSeconds
@@ -579,18 +583,16 @@ class AudioPreviewClass {
     this.playingClips = clipsToKeep
   }
 
-  gain = 1.0
+  // setGain(value: number, quantize: number) {
+  //   if (this.gain === value) return
 
-  setGain(value: number, quantize: number) {
-    if (this.gain === value) return
+  //   this.gain = value
 
-    this.gain = value
+  //   if (this.playing) {
+  //     this.playingClips.forEach(clip => this.adjustClipGain(clip))
+  //   }
 
-    if (this.playing) {
-      this.playingClips.forEach(clip => this.adjustClipGain(clip, quantize))
-    }
-
-  }
+  // }
 
   private playing = false
 
@@ -608,6 +610,8 @@ class AudioPreviewClass {
 
     const buffer = AUDIBLE_CONTEXT.createBuffer(this.buffer)
     this.bufferSource = AUDIBLE_CONTEXT.createBufferSource(buffer)
+    if (!this.bufferSource) errorThrow(ERROR.Internal)
+
     this.bufferSource.loop = true
     this.bufferSource.connect(AUDIBLE_CONTEXT.destination)
     this.bufferSource.start(0)
@@ -615,8 +619,6 @@ class AudioPreviewClass {
 
   // called when playhead starts moving
   startPlaying(time: Time, clips: Clip[], quantize: number): boolean {
-    // console.log(this.constructor.name, 'startPlaying')
-
     if (!this.bufferSource) errorThrow(ERROR.Internal) 
     if (this.playing) errorThrow(ERROR.Internal)
 
@@ -639,7 +641,6 @@ class AudioPreviewClass {
   private contextSecondsWhenStarted = 0
 
   stopContext(): void {
-    // console.log(this.constructor.name, 'stopContext')
     if (!this.bufferSource) return
 
     this.bufferSource.stop()
@@ -648,7 +649,6 @@ class AudioPreviewClass {
   }
 
   stopPlaying(): void {
-    // console.log(this.constructor.name, 'stopPlaying')
     if (!this.playing) return
 
     this.playing = false
@@ -658,24 +658,90 @@ class AudioPreviewClass {
   }
 }
 
-export class ClientClipClass extends ClipClass implements ClientClip {
-
-  // this should return data or error asset
-
-  override asset(assetIdOrObject: string | AssetObject): Asset {
-    const event = new EventManagedAsset(assetIdOrObject)
-    MOVIEMASHER.dispatch(event)
-    const { asset } = event.detail
-    assertAsset(asset, jsonStringify(assetIdOrObject))
-
-    return asset
-  }
-
+class ClientClipClass extends ClipClass implements ClientClip {
   override get container(): ClientVisibleInstance & ContainerInstance { return super.container as ClientVisibleInstance }
 
-  override get content(): ClientInstance & ContainerInstance | ClientAudioInstance { return super.content as ClientInstance & ContainerInstance | ClientAudioInstance  }
+  override get content(): ClientInstance & ContainerInstance { return super.content as ClientInstance & ContainerInstance  }
+
+  override changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject {
+    const object = super.changeScalar(propertyId, scalar)
+    if (!isChangePropertyEditObject(object)) return object
+    
+    const name = propertyId.split(DOT).pop()
+    switch (name) {
+      case $FRAME: 
+      case $FRAMES: {
+        object.type = $CHANGE_FRAME
+        break
+      }
+      case 'containerId': 
+      case 'contentId': {
+        const container = name === 'containerId'
+        const relevantTiming = container ? $CONTAINER : $CONTENT
+        const relevantSizing = container ? $CONTAINER : $CONTENT
+        const timing = this.value('timing')
+        const sizing = this.value('sizing')
+        const { targetId } = this
+        const timingBound = timing === relevantTiming
+        const sizingBound = sizing === relevantSizing
+        if (!(timingBound || sizingBound)) break
+
+        const { undoValue, redoValue } = object
+        assertPopulatedString(redoValue)
+
+        const sizingId: PropertyId = `${targetId}${DOT}sizing`
+        const timingId: PropertyId = `${targetId}${DOT}timing`
+        const undoValues: ScalarsById = { 
+          [timingId]: timing, 
+          [sizingId]: sizing,
+          [propertyId]: undoValue 
+        }
+        const redoValues: ScalarsById = { ...undoValues, [propertyId]: redoValue }
+        const asset = this.asset(redoValue)
+        const { type } = asset
+        if (timingBound && !isAudibleType(type)) {
+          redoValues[timingId] = $CUSTOM
+        }
+        if (sizingBound && !isVisibleType(type)) {
+          redoValues[sizingId] = container ? $CONTENT : $CONTAINER
+        }
+        const actionObject: ChangePropertiesEditObject = {
+          type: $CHANGES, target: this, redoValues, undoValues
+        }
+        return actionObject
+      }
+    }
+    return object
+  }
+
+  override constrainedValue(property: Property, scalar?: Scalar | undefined): Scalar | undefined {
+    const value = super.constrainedValue(property, scalar)
+    const { name } = property
+    switch (name) {
+      case $FRAMES: {
+        assertPositive(value)
+
+        const { track, frame } = this
+        assertDefined(track)
+
+        const { clips, dense } = track
+        if (dense) break
+        
+        const { length } = clips
+        const index = clips.indexOf(this)
+        if (index === length - 1) break
+        
+        const nextClip = clips[index + 1]
+        const { frame: nextFrame} = nextClip
+        const availableFrames = nextFrame - frame
+        if (availableFrames < value) return availableFrames
+      }
+    }
+    return value
+  }
 
   elementPromise(outputSize: Size, time: Time, panel: Panel): Promise<DataOrError<SvgItemsRecord>> {
+    // console.log(this.constructor.name, 'elementPromise', outputSize, time, panel)
     const { container, content, timeRange } = this
     const [opacity] = this.tweenValues($OPACITY, time, timeRange)
     const containerRectArgs: ContainerRectArgs = { outputSize, time, timeRange }
@@ -694,91 +760,10 @@ export class ClientClipClass extends ClipClass implements ClientClip {
 
       const { data: record } = clippedOrError
       // const { items, defs, styles } = record
-      const {svgElement:svg} = this
+      const { svgElement: svg } = this
       simplifyRecord(record, outputSize, svg)
-      // svgSetChildren(svg, [...styles, svgDefsElement(defs), ...items])
-      // svgSetDimensions(svg, outputSize)
       return { data: recordFromItems([svg])}
     })
-  }
-
-  override changeScalar(propertyId: PropertyId, scalar?: Scalar): ChangeEditObject {
-    const object = super.changeScalar(propertyId, scalar)
-    if (!isChangePropertyEditObject(object)) return object
-    
-    const name = propertyId.split(DOT).pop()
-    switch (name) {
-      case $FRAME: 
-      case 'frames': {
-        object.type = CHANGE_FRAME
-        break
-      }
-      case 'containerId': 
-      case 'contentId': {
-        const container = name === 'containerId'
-        const relevantTiming = container ? $CONTAINER : $CONTENT
-        const relevantSizing = container ? $CONTAINER : $CONTENT
-        const { timing, sizing, targetId } = this
-        const timingBound = timing === relevantTiming
-        const sizingBound = sizing === relevantSizing
-        if (!(timingBound || sizingBound)) break
-
-
-        const { undoValue, redoValue } = object
-        assertPopulatedString(redoValue)
-
-        const sizingId: PropertyId = `${targetId}${DOT}sizing`
-        const timingId: PropertyId = `${targetId}${DOT}timing`
-        const undoValues: ScalarsById = { 
-          [timingId]: timing, 
-          [sizingId]: sizing,
-          [propertyId]: undoValue 
-        }
-        const redoValues: ScalarsById = { ...undoValues, [propertyId]: redoValue }
-      
-        const asset = this.asset(redoValue)
-       
-
-        const { type } = asset
-        if (timingBound && !isAudibleType(type)) {
-          redoValues[timingId] = $CUSTOM
-        }
-        if (sizingBound && !isVisibleType(type)) {
-          redoValues[sizingId] = container ? $CONTENT : $CONTAINER
-        }
-
-        const actionObject: ChangePropertiesEditObject = {
-          type: $CHANGES,
-          target: this, redoValues, undoValues
-        }
-        return actionObject
-      }
-    }
-    return object
-  }
-
-  override constrainedValue(property: Property, scalar?: Scalar | undefined): Scalar | undefined {
-    const value = super.constrainedValue(property, scalar)
-    const { name } = property
-    switch (name) {
-      case 'frames': {
-        assertPositive(value)
-
-        const { track, frame } = this
-        const { clips, dense } = track
-        if (dense) break
-        
-        const { length } = clips
-        const index = clips.indexOf(this)
-        if (index === length - 1) break
-        
-        const nextClip = clips[index + 1]
-        const { frame: nextFrame} = nextClip
-        const availableFrames = nextFrame - frame
-        if (availableFrames < value) return availableFrames
-      }
-    }
-    return value
   }
 
   override resetTiming(instance?: Instance, quantize?: number): void {
@@ -790,7 +775,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     const tuple = super.setValue(id, value)
     const [name] = tuple
     switch (name) {
-      case 'frames': {
+      case $FRAMES: {
         // console.log(this.constructor.name, 'setValue', name, value, !!property)
         this.track?.sortClips()
         break
@@ -801,7 +786,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
         if (_container) {
           this._containerObject = _container.instanceObject
           delete this._container
-          MOVIEMASHER.dispatch(new EventCanDestroy([_container.asset.id]))
+          MOVIE_MASHER.dispatch(new EventCanDestroy([_container.asset.id]))
         } // else this._containerObject = {}
         break
       }
@@ -810,7 +795,7 @@ export class ClientClipClass extends ClipClass implements ClientClip {
         if (_content) {
           this._contentObject = _content.instanceObject
           delete this._content
-          MOVIEMASHER.dispatch(new EventCanDestroy([_content.asset.id]))
+          MOVIE_MASHER.dispatch(new EventCanDestroy([_content.asset.id]))
         } 
         break
       }
@@ -818,28 +803,27 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     return tuple
   }
   
-  protected override shouldSelectProperty(property: Property, targetId: TargetId): Property | undefined {
+  override shouldSelectProperty(property: Property, targetId: TargetId): Property | undefined {
     if (targetId !== property.targetId) return
+
     const { name } = property
     switch (name) {
       case 'sizing': return this.content.asset.type === $AUDIO ? undefined : property
       case 'timing': {
-        if (this.content.hasIntrinsicTiming) break
+        if (this.content.asset.hasIntrinsicTiming) break
         return isVisibleInstance(this.container) && this.container.asset.hasIntrinsicSizing ? property : undefined
       }
-      case $FRAME: return this.track.dense ? undefined : property
-      case 'frames': return this.timing === $CUSTOM ? property : undefined
+      case $FRAME: return this.track!.dense ? undefined : property
+      case $FRAMES: return this.value('timing') === $CUSTOM ? property : undefined
     }
     return super.shouldSelectProperty(property, targetId)
   }
 
-  // private _svgElement?: SvgElement
-
+  private _svgElement?: SvgElement
   private get svgElement() {
     // console.debug(this.constructor.name, 'svgElement USED!')
-    return svgSvgElement() //this._svgElement ||= svgSvgElement()
+    return this._svgElement ||= svgSvgElement()//svgSvgElement() //
   }
-
 
   async svgItemPromise(args: ClipIconArgs): Promise<DataOrError<SvgElement>> {
     const { 
@@ -852,6 +836,8 @@ export class ClientClipClass extends ClipClass implements ClientClip {
     const svgElement = svgSvgElement(clipSize)
     const result = { data: svgElement }
     const { timeRange, track, content } = this
+    assertDefined(track)
+
     const { startTime, fps } = timeRange
     const { frame } = startTime
     if (audible) {
@@ -901,24 +887,25 @@ export class ClientClipClass extends ClipClass implements ClientClip {
 
   override targetId: TargetId = $CLIP
 
-  declare track: ClientTrack
+  declare track?: ClientTrack
 
   updateAssetId(oldId: string, newId: string): void {
-    const { containerId, contentId } = this
+    const containerId = this.value('containerId')
+    const contentId = this.value('contentId')
+    
     // console.log(this.constructor.name, 'updateAssetId', { oldId, newId, containerId, contentId })
-    if (containerId === oldId) this.containerId = newId
-    if (contentId === oldId) this.contentId = newId
+    if (containerId === oldId) this.setValue('containerId', newId)
+    if (contentId === oldId) this.setValue('contentId', newId)
   }
 }
 
-export class ClientTrackClass extends TrackClass implements ClientTrack {
-  addClips(clips: ClientClips, insertIndex = 0): void {
-    // console.log(this.constructor.name, 'addClips', insertIndex)
+class ClientTrackClass extends TrackClass implements ClientTrack {
+  addClips(clips: Clips, insertIndex = 0): void {
     let clipIndex = insertIndex || 0
     if (!this.dense) clipIndex = 0 // ordered by clip.frame values
 
     const origIndex = clipIndex // note original, since it may decrease...
-    const movingClips: ClientClips = [] // build array of clips already in this.clips
+    const movingClips: Clips = [] // build array of clips already in this.clips
 
     // build array of my clips excluding the clips we're inserting
     const spliceClips = this.clips.filter((other, index) => {
@@ -934,9 +921,9 @@ export class ClientTrackClass extends TrackClass implements ClientTrack {
     arraySet(this.clips, spliceClips)
   }
 
-  declare clips: ClientClips
+  // declare clips: ClientClips
 
-  frameForClipNearFrame(clip: ClientClip, insertFrame = 0): number {
+  frameForClipNearFrame(clip: Clip, insertFrame = 0): number {
     if (this.dense) {
       return isPositive(insertFrame) ? insertFrame : this.frames
     }
@@ -960,7 +947,7 @@ export class ClientTrackClass extends TrackClass implements ClientTrack {
 
   declare mash: ClientMashAsset
 
-  removeClips(clips: ClientClips): void {
+  removeClips(clips: Clips): void {
     const newClips = this.clips.filter(other => !clips.includes(other))
     assertTrue(newClips.length !== this.clips.length)
     
@@ -974,33 +961,11 @@ const TrackPreviewHandleSize = 8
 
 const TrackPreviewLineSize = 2
 
-
 const minMax = (value: number, max: number = 1, min: number = 0): number => {
   return Math.min(max, Math.max(min, value))
 }
 
-interface Doing {
-  /** offset relative to container rect for Pointing,  */
-  offsetPoint: Point
-  pointFlipping: boolean
-  pointTweening: boolean
-  moveHandler: EventFunction<PointerEvent>
-  moved?: boolean
-  clickedNumbers: NumberRecord
-}
-
-interface Sizing extends Doing {
-  sizeFlipping: boolean
-  sizeTweening: boolean
-  direction: string
-  clickedPreviewPoint: Point
-  clickedRect: Rect
-}
-
-interface Pointing extends Doing {
-}
-
-export const sizeTranslate = (size: Size, translate: Size, negate = false): Size => {
+const sizeTranslate = (size: Size, translate: Size, negate = false): Size => {
   const { width, height } = size
   const negator = negate ? -1 : 1
   return {
@@ -1012,7 +977,7 @@ export const sizeTranslate = (size: Size, translate: Size, negate = false): Size
 /**
  * MashPreview of a single track at a single frame, thus representing a single clip 
  */
-export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
+class ClientSegmentDescriptionClass implements ClientSegmentDescription {
   constructor(public args: ClientSegmentDescriptionArgs) {
     this.handleDownPoint = this.handleDownPoint.bind(this)
     this.handleDownSize = this.handleDownSize.bind(this)
@@ -1031,7 +996,7 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
   private _clipTimeRange?: TimeRange
   private get clipTimeRange() { return this._clipTimeRange ||= this.clip.timeRange }
 
-  private get container(): ClientVisibleInstance { return this.clip.container! }
+  private get container(): ClientInstance & ContainerInstance { return this.clip.container! }
 
   private containerScalarsDefined(keys: Strings): boolean {
     const { container } = this
@@ -1041,15 +1006,11 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
   private get cropDirections(): SideDirectionRecord {
     const { pointFlipping: flipped } = ClientSegmentDescriptionClass.doing!
     const { container } = this
-    const leftCrop = container.value(`${flipped ? $TOP : $LEFT}${$CROP}`)
-    const rightCrop = container.value(`${flipped ? $BOTTOM : $RIGHT}${$CROP}`)
-    const topCrop = container.value(`${flipped ? $LEFT : $TOP}${$CROP}`)
-    const bottomCrop = container.value(`${flipped ? $RIGHT : $BOTTOM}${$CROP}`)
     return { 
-      [$LEFT]: leftCrop, 
-      [$RIGHT]: rightCrop, 
-      [$TOP]: topCrop, 
-      [$BOTTOM]: bottomCrop
+      [$LEFT]: container.value(`${flipped ? $TOP : $LEFT}${$CROP}`), 
+      [$RIGHT]: container.value(`${flipped ? $BOTTOM : $RIGHT}${$CROP}`), 
+      [$TOP]: container.value(`${flipped ? $LEFT : $TOP}${$CROP}`), 
+      [$BOTTOM]: container.value(`${flipped ? $RIGHT : $BOTTOM}${$CROP}`)
     }
   }
 
@@ -1137,7 +1098,7 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
     const eventPoint = roundPoint(this.pointEvent(point), $ROUND)
     const scalarsById = this.pointScalars(eventPoint)
     // console.log(this.constructor.name, 'handleMovePoint', scalarsById)
-    MOVIEMASHER.dispatch(new EventChangeScalars(scalarsById))
+    MOVIE_MASHER.dispatch(new EventChangeScalars(scalarsById))
   }
 
   private handleMoveSize(event: PointerEvent) {
@@ -1208,21 +1169,22 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
     if (sizingVert) scalarsById[vertId] = vert
   
     // console.log(this.constructor.name, 'handleMoveSize', scalarsById)
-    MOVIEMASHER.dispatch(new EventChangeScalars(scalarsById))
+    MOVIE_MASHER.dispatch(new EventChangeScalars(scalarsById))
   }
 
   private handleUp(event: Event) {
     eventStop(event)
-    // console.log(this.constructor.name, 'handleUp')
+    console.log(this.constructor.name, 'handleUp')
 
-    const { doing } = ClientSegmentDescriptionClass
-    assertDefined(doing)
-
-    const { moveHandler } = doing
-    globalThis.window.removeEventListener('pointermove', moveHandler)
     globalThis.window.removeEventListener('pointerup', this.handleUp)
+    const { doing } = ClientSegmentDescriptionClass
+    if (!doing) return
+
     delete ClientSegmentDescriptionClass.sizing
     delete ClientSegmentDescriptionClass.pointing
+    doing.moved = false
+    const { moveHandler } = doing
+    globalThis.window.removeEventListener('pointermove', moveHandler)
   }
 
   private ids(flipped: boolean, tweening: boolean, ...keys: Strings): PropertyIds {
@@ -1239,7 +1201,7 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
     return (event: Event) => { 
       // console.log(this.constructor.name, 'jump', frame)
       this.handleUp(event)
-      MOVIEMASHER.dispatch(new EventChangeFrame(frame)) 
+      MOVIE_MASHER.dispatch(new EventChangeFrame(frame)) 
     }
   }
   
@@ -1334,7 +1296,7 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
     if (this._previewRect) return this._previewRect 
     
     const event = new EventRect()
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { rect } = event.detail
     assertRect(rect)
     return this._previewRect = rect
@@ -1352,7 +1314,7 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
   }
   
   private selectClip(): void {
-    MOVIEMASHER.dispatch(new EventChangeClipId(this.clip.id))
+    MOVIE_MASHER.dispatch(new EventChangeClipId(this.clip.id))
   }
 
   private get outputSize(): Size { return this.preview.size }
@@ -1386,14 +1348,26 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
     return point
   }
 
-  svgVector(classes: string[], inactive?: boolean): SvgVector {
-    const { container, rect } = this
-    const svgVector = container.svgVector(rect)
+  svgItem(animate: boolean): SvgItem {
+    const classes: Strings = []
+    classes.push(OUTLINE)
+    if (animate) classes.push(ANIMATE)
 
-    svgVector.setAttribute('vector-effect', 'non-scaling-stroke')
-    svgAddClass(svgVector, classes)
-    if (!inactive) this.addPointerDownListenerPoint(svgVector)
-    return svgVector
+    const { container, rect } = this
+    const { type, source } = container.asset
+
+    const vector = container.svgVector(rect, 'transparent')
+    vector.setAttribute('vector-effect', 'non-scaling-stroke')
+    if (type === $IMAGE && source === $TEXT) {
+      const polygon = svgPolygonElement(rect, OUTLINE)
+      const group = svgGroupElement()
+      this.addPointerDownListenerPoint(polygon)
+      svgAddClass(vector, ANIMATE)
+      return svgAppend(group, [polygon, vector])
+    } 
+    svgAddClass(vector, classes)
+    this.addPointerDownListenerPoint(vector)
+    return vector
   }
 
   svgItems(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems {
@@ -1402,7 +1376,13 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
     const line = TrackPreviewLineSize 
     const halfLine = line / 2
     const { rect, container } = this
-    const { directions } = container
+    const directions = (() => {
+      switch (container.sizeKey) {
+        case $WIDTH: return [$LEFT, $RIGHT]
+        case $HEIGHT: return [$TOP, $BOTTOM]
+      }
+      return DIRECTIONS_ALL
+    })()
     // console.log(this.constructor.name, 'svgItems', directions)
     const { width, height, x, y } = rect
     const lineRect = { x: x - halfLine, y: y - halfLine, width: width, height: line }
@@ -1446,7 +1426,7 @@ export class ClientSegmentDescriptionClass implements ClientSegmentDescription {
 /**
  * MashPreview of a single mash at a single frame
  */
-export class ClientMashDescriptionClass extends MashDescriptionClass implements ClientMashDescription {
+class ClientMashDescriptionClass extends MashDescriptionClass implements ClientMashDescription {
   constructor(protected override args: ClientMashDescriptionArgs) {
     super(args)
   }
@@ -1455,19 +1435,14 @@ export class ClientMashDescriptionClass extends MashDescriptionClass implements 
     if (!items.length) return items
     
     items.forEach(item => { svgAddClass(item, LAYER) })
-
     const copy = [...items]
     const { size, selectedClip } = this
-
     const { trackPreviews } = this
-    const moved = ClientSegmentDescriptionClass.doing?.moved 
-    
+    const moved = ClientSegmentDescriptionClass.doing?.moved
     const selectedPreview = selectedClip ? trackPreviews.find(preview => preview.clip === selectedClip) : undefined
     const hoverItems: SvgItems = trackPreviews.map(trackPreview => {
       const trackSelected = trackPreview === selectedPreview
-      const classes = [OUTLINE]
-      if (!(moved || trackSelected)) classes.push(ANIMATE)
-      return trackPreview.svgVector(classes)
+      return trackPreview.svgItem(!(moved || trackSelected))
     })
     const hoversSvg = svgSvgElement(size, hoverItems)
     svgAddClass(hoversSvg, OUTLINES)
@@ -1496,10 +1471,13 @@ export class ClientMashDescriptionClass extends MashDescriptionClass implements 
   private _elementsData?: DataOrError<SvgItems>
 
   get elementsPromise(): Promise<SvgItems> { 
+
     const { _elementsData } = this
     if (_elementsData) {
       if (isDefiniteError(_elementsData)) return Promise.resolve([])
-      else return Promise.resolve(_elementsData.data)
+
+      // console.log(this.constructor.name, 'elementsPromise', 'using cached data', _elementsData.data.length)
+      return Promise.resolve(_elementsData.data)
     }
   
     const sizePromise = this.intrinsicSizePromise  
@@ -1507,11 +1485,13 @@ export class ClientMashDescriptionClass extends MashDescriptionClass implements 
       const { clips, size, time, clip } = this
       let promise = Promise.resolve([] as SvgItems)
       const component = clip ? $TIMELINE : $PLAYER
+      // console.log(this.constructor.name, 'elementsPromise', clips.length, { component })
       clips.forEach(clip => {
         promise = promise.then(elements => {
           return clip.elementPromise(size, time, component).then(orError => {
             if (isDefiniteError(orError)) return elements
-
+            
+            // console.log(this.constructor.name, 'elementsPromise elementPromise')
             const element = simplifyRecord(orError.data, size)
             return [...elements, element] 
           })
@@ -1544,7 +1524,7 @@ export class ClientMashDescriptionClass extends MashDescriptionClass implements 
 
   override get mash(): ClientMashAsset { return this.args.mash }
 
-  get selectedClip(): ClientClip | undefined { return this.args.selectedClip }
+  get selectedClip(): Clip | undefined { return this.args.selectedClip }
 
   get svgItemsPromise(): Promise<SvgItems> { 
     return this.elementsPromise as Promise<SvgItems>
@@ -1558,20 +1538,27 @@ export class ClientMashDescriptionClass extends MashDescriptionClass implements 
   }
 }
 
-export class NonePreview extends ClientMashDescriptionClass {
+class NonePreview extends ClientMashDescriptionClass {
   protected override get clips(): ClientClips { return [] }
 }
 
 const WithMashAsset = MashAssetMixin(ClientAssetClass)
 export class ClientMashAssetClass extends WithMashAsset implements ClientMashAsset {
-  constructor(args: ClientMashAssetObject) {
+  constructor(args: MashAssetObject & AssetArgs) {
     super(args)
-    this.listeners[EventFrames.Type] = this.handleFrames.bind(this)
-    this.listeners[EventSize.Type] = this.handleSize.bind(this)
-    this.actions = new EditsClass(this)
+    this.listeners = {
+      [EventFrames.Type]: this.handleFrames.bind(this),
+      [EventSize.Type]: this.handleSize.bind(this),
+    }
+    MOVIE_MASHER.listenersAdd(this.listeners)
+ 
+    const { buffer } = args
+    if (isAboveZero(buffer)) this.buffer = buffer
+    // if (isArray(encodings)) this.encodings.push(...encodings)
+    this._mashDescription = new NonePreview({ mash: this, time: timeFromArgs() })
   }
-  
-  actions: Edits
+
+  actions: Edits = new EditsClass(this)
 
   addClipToTrack(clip: ClientClip | ClientClips, trackIndex = 0, insertIndex = 0, frame?: number): void {
     const clips = arrayFromOneOrMore(clip) 
@@ -1590,12 +1577,12 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
           const { trackNumber: track } = insertClip
           if (isPositive(track) && track !== index) {
             // console.log(this.constructor.name, 'addClipToTrack', 'removing clip from track', track)
-            insertClip.track.removeClips([insertClip])
+            insertClip.track!.removeClips([insertClip])
           }  
           if (isPositive(frame)) insertClip.frame = frame
           insertClip.track = insertTrack
         })
-        insertTrack.assureFrames(this.quantize, insertClips)
+        insertTrack.assureFrames(this.quantizeNumber, insertClips)
         insertTrack.addClips(insertClips, insertIndex)
       })
     })
@@ -1612,13 +1599,8 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     const { length: detail } = tracks
 
     const event = new EventChangedTracks(detail)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     return track
-  }
-
-  override get assetObject(): ClientMashAssetObject {
-    const { encodings, encoding } = this
-    return { ...super.assetObject, encodings, encoding }
   }
     
   override get assets(): Assets { 
@@ -1644,7 +1626,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
       const options: AssetCacheArgs = { audible: true, assetTime: time, time }
       this.assetCachePromise(options)
       const clips = this.clipsAudibleInTime(time)
-      this.composition.bufferClips(clips, this.quantize)
+      this.composition.bufferClips(clips, this.quantizeNumber)
     }, Math.round((this.buffer * 1000) / 2))
   }
 
@@ -1686,40 +1668,28 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   }
 
   private _composition?: AudioPreview
-  get composition(): AudioPreview {
-    if (!this._composition) {
-      const options: AudioPreviewArgs = {
-        buffer: this.buffer,
-        // gain: this.gain
-      }
-      this._composition = new AudioPreviewClass(options)
-    }
-    return this._composition!
+  private get composition(): AudioPreview {
+    return this._composition ||= new AudioPreviewClass(this.buffer)
   }
   
   dispatchChanged(edit: Edit): void {
+    // console.log(this.constructor.name, 'dispatchChanged')
     this.clearPreview()
-    if (isChangePropertyEdit(edit)) {
+    if (!this.paused && isChangePropertyEdit(edit)) {
       const { property, target } = edit
-      switch(property) {
-        case `${$CONTENT}${DOT}gain`: {
-          if (isClientClip(target)) {
-            this.composition.adjustClipGain(target, this.quantize)
-          }    
-          break
-        }
-      }
+      if (property.endsWith('gain') && isAudibleInstance(target)) {
+        this.composition.adjustGain(target)
+      }   
     }
-    MOVIEMASHER.dispatch(new EventEdited(edit))
-    // console.log(this.constructor.name, 'dispatchChanged', SAVE)
-    MOVIEMASHER.dispatch(new EventChangedServerAction(SAVE))
+    MOVIE_MASHER.dispatch(new EventEdited(edit))
+    MOVIE_MASHER.dispatch(new EventChangedServerAction($SAVE))
     this.draw()
   }
 
   private dispatchChangedPreviews(time: Time): void {
     this.drawingTime = time
     this.clearPreview()
-    MOVIEMASHER.dispatch(new EventChangedPreviews())
+    MOVIE_MASHER.dispatch(new EventChangedPreviews())
   }
 
   draw(): void { this.dispatchChangedPreviews(this.time) }
@@ -1733,9 +1703,9 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     // const { time } = this
     requestAnimationFrame(() => { this.dispatchChangedPreviews(time) })
     if (timeChange) {
-      const { frame } = timeFromSeconds(time.seconds, this.quantize)
+      const { frame } = timeFromSeconds(time.seconds, this.quantizeNumber)
       const event = new EventChangedFrame(frame)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
     }
   }
 
@@ -1743,7 +1713,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
 
   drawnTime?: Time
 
-  elementsPromise(outputSize?: number | Size, selectedClip?: ClientClip): Promise<SvgItems> {
+  elementsPromise(outputSize?: number | Size, selectedClip?: Clip): Promise<SvgItems> {
     const { size: mashSize } = this         
     const size = outputSize ? containSize(mashSize, outputSize) : mashSize
 
@@ -1754,24 +1724,24 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   }
 
   private emitIfFramesChange(method: () => void): void {
-    const origFrames = this.frames
+    const origFrames = this.totalFrames
     method()
     const { totalFrames } = this
     if (origFrames !== totalFrames) this.framesHaveChanged(totalFrames)
   }
 
-  declare encoding: string
-  
-  encodings: Encodings = []
+  get encoding(): Resource | undefined { 
+    return this.resourceOfType($ENCODE, this.type)
+  }
 
   private _frame = 0 // initial frame supplied to constructor
 
-  get frame(): number { return this.time.scale(this.quantize, 'floor').frame }
+  get frame(): number { return this.time.scale(this.quantizeNumber, 'floor').frame }
   
   framesHaveChanged(frames?: number): void {
     const totalFrames = frames || this.totalFrames
-    MOVIEMASHER.dispatch(new EventChangedFrames(totalFrames))
-    if (this.frame > totalFrames) this.seekToTime(timeFromArgs(totalFrames, this.quantize))
+    MOVIE_MASHER.dispatch(new EventChangedFrames(totalFrames))
+    if (this.frame > totalFrames) this.seekToTime(timeFromArgs(totalFrames, this.quantizeNumber))
   }
 
   private handleDrawInterval(): void {
@@ -1783,7 +1753,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     // are we beyond the end of mash?
     if (seconds >= endTime.seconds) {
       // should we loop back to beginning?
-      if (this.loop) this.seekToTime(this.time.withFrame(0))
+      if (this.boolean('loop')) this.seekToTime(this.time.withFrame(0))
       else {
         this.paused = true
         this.seekToTime(endTime)
@@ -1808,37 +1778,23 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     event.stopImmediatePropagation()
   }
 
-  override initializeProperties(object: ClientMashAssetObject): void {
-    const { buffer, encodings } = object
-    if (isAboveZero(buffer)) this.buffer = buffer
-    if (isArray(encodings)) this.encodings.push(...encodings)
-    this._mashDescription = new NonePreview({ mash: this, time: timeFromArgs() })
-    this.properties.push(this.propertyInstance({
-      targetId: $MASH, name: 'encoding', type: $STRING, 
-      defaultValue: '', order: -1
-    }))
-    super.initializeProperties(object)  
-
-    MOVIEMASHER.listenersAdd(this.listeners)
-  }
-
   get loading(): boolean { return !!this.loadingPromises.length}
 
   private loadingPromises: Promise<void>[] = []
   
-  protected listeners: EventDispatcherListeners = {}
+  declare protected listeners: EventDispatcherListeners
   
   private _mashDescription?: ClientMashDescription
-  override mashDescription(options: ClientMashDescriptionOptions, selectedClip?: ClientClip): ClientMashDescription { 
+  override mashDescription(options: ClientMashDescriptionOptions, selectedClip?: Clip): ClientMashDescription { 
     return this._mashDescription ||= this.mashDescriptionInitialize(options, selectedClip) 
   }
 
-  private mashDescriptionInitialize(options: ClientMashDescriptionOptions, selectedClip?: ClientClip): ClientMashDescription {
+  private mashDescriptionInitialize(options: ClientMashDescriptionOptions, selectedClip?: Clip): ClientMashDescription {
     return new ClientMashDescriptionClass(this.mashDescriptionArgs(options, selectedClip))
   }
 
-  private mashDescriptionArgs(options: ClientMashDescriptionOptions = {}, selectedClip?: ClientClip): ClientMashDescriptionArgs {
-    const { drawingTime, time, quantize } = this
+  private mashDescriptionArgs(options: ClientMashDescriptionOptions = {}, selectedClip?: Clip): ClientMashDescriptionArgs {
+    const { drawingTime, time, quantizeNumber: quantize } = this
     const svgTime = drawingTime || time
     const args: ClientMashDescriptionArgs = {
       selectedClip,
@@ -1852,7 +1808,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   private _paused = true
   get paused(): boolean { return this._paused }
   set paused(value: boolean) {
-    const paused = value || !this.frames
+    const paused = value || !this.totalFrames
     // console.log(this.constructor.name, 'set paused', forcedValue)
     if (this._paused === paused) return
 
@@ -1877,7 +1833,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
         this.playing = true 
       })
     }
-    MOVIEMASHER.dispatch(new EventChangedClientAction(PLAY))
+    MOVIE_MASHER.dispatch(new EventChangedClientAction(PLAY))
   }
 
   private _playing = false
@@ -1887,7 +1843,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     if (this._playing !== value) {
       this._playing = value
       if (value) {
-        const { quantize, time } = this
+        const { quantizeNumber: quantize, time } = this
         const clips = this.clipsAudibleInTime(this.timeToBuffer)
         // console.log(this.constructor.name, 'playing', value, this.time, clips.length)
         if (!this.composition.startPlaying(time, clips, quantize)) {
@@ -1909,29 +1865,17 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     }
   }
 
-  putPromise(): Promise<void> { 
-    // make sure we've loaded fonts in order to calculate intrinsic rect
-    const promises = this.clips.flatMap(clip => {
-      const { container } = clip
-      if (container && isTextInstance(container)) {
-        if (!container.intrinsicsKnown({ size: true })) {
-          
-          const args: CacheOptions = { visible: true }
-          return container.asset.assetCachePromise(args)
-        }
-      }
-      return [] 
-    })  
-    return Promise.all(promises).then(VOID_FUNCTION)
-  }
+  private get quantizeNumber(): number { return Number(this.value('quantize')) } 
 
   reload(): Promise<void> | undefined { return this.stopLoadAndDraw() }
 
-  removeClipFromTrack(clip: ClientClip | ClientClips): void {
+  removeClipFromTrack(clip: Clip | Clips): void {
     const clips = isArray(clip) ? clip : [clip]
     this.emitIfFramesChange(() => { 
       clips.forEach(clip => {
-        const track = clip.track
+        const { track } = clip
+        assertClientTrack(track)
+        
         track.removeClips([clip]) 
       })
     })
@@ -1944,7 +1888,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     this.emitIfFramesChange(() => { tracks.splice(trackIndex, 1) })
     const { length: detail } = tracks
     const event = new EventChangedTracks(detail)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
   }
 
   private restartAfterStop(time: Time, paused: boolean, seeking?: boolean): void {
@@ -1957,11 +1901,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     }
   }
   
-  override get saveNeeded(): boolean { 
-    const { canSave } = this.actions
-    // console.log(this.constructor.name, 'saveNeeded', canSave)
-    return canSave
-  }
+  override get saveNeeded(): boolean { return this.actions.canSave }
 
   override async savePromise(progress?: ServerProgress): Promise<StringDataOrError> { 
     const orError = await this.savingPromise(progress)
@@ -1976,21 +1916,17 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
 
   }
 
-
   private seekTime?: Time
 
   seekToTime(time: Time): Promise<void> | undefined {
-    const { quantize } = this
-
+    const { quantizeNumber: quantize } = this
     const quantized = timeFromSeconds(time.seconds, quantize)
-
-
     if (!this.seekTime?.equalsTime(quantized)) {
       this.seekTime = time      
       const { frame } = quantized
       // console.log(this.constructor.name, 'seekToTime', time, quantized)
       const event = new EventChangedFrame(frame)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
     }
     return this.stopLoadAndDraw(true)
   }
@@ -2011,28 +1947,17 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
         if (this._composition) this.composition.buffer = Number(value)
         break
       }
-      case 'gain': {
-        if (this._composition) this.composition.setGain(Number(value), this.quantize) 
-        break
-      }
       case 'aspectHeight':
       case 'aspectWidth':
       case 'aspectShortest': {
         const { size } = this
         if (sizeNotZero(size)) {
-          MOVIEMASHER.dispatch(new EventChangedSize(this.size))
+          MOVIE_MASHER.dispatch(new EventChangedSize(this.size))
         } 
         break
       }
     }
     return tuple
-  }
-
-  protected override shouldSelectProperty(property: Property, targetId: TargetId): Property | undefined {
-    const { name } = property
-    if (name === 'encoding') return 
-
-    return super.shouldSelectProperty(property, targetId)
   }
 
   private stopLoadAndDraw(seeking?: boolean): Promise<void> | undefined {
@@ -2050,7 +1975,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   override targetId: TargetId = $MASH
 
   get time() : Time {
-    return this.seekTime || this.drawnTime || timeFromArgs(this._frame, this.quantize)
+    return this.seekTime || this.drawnTime || timeFromArgs(this._frame, this.quantizeNumber)
   }
 
   get timeRange(): TimeRange {
@@ -2062,16 +1987,10 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
   }
 
   get timeToBuffer(): Time {
-    const { time, quantize, buffer, paused } = this
+    const { time, quantizeNumber: quantize, buffer, paused } = this
     if (paused) return timeFromArgs(time.scale(quantize, 'floor').frame, quantize)
 
     return timeRangeFromTimes(time, timeFromSeconds(buffer + time.seconds, time.fps))
-  }
-
-  override toJSON(): UnknownRecord {
-    console.debug(this.constructor.name, 'toJSON')
-    const { encodings, encoding } = this
-    return { ...super.toJSON(), encodings, encoding }
   }
 
   override trackInstance(args: TrackArgs): ClientTrack {
@@ -2084,7 +2003,7 @@ export class ClientMashAssetClass extends WithMashAsset implements ClientMashAss
     super.unload()
 
     this.paused = true
-    MOVIEMASHER.listenersRemove(this.listeners)
+    MOVIE_MASHER.listenersRemove(this.listeners)
     this.clearDrawInterval()
   }
 

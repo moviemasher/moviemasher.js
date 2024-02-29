@@ -1,4 +1,4 @@
-import { HeaderBase } from '../base/LeftCenterRight.js'
+import { HeaderBase } from '../base/component-view.js'
 
 export const ExporterHeaderTag = 'movie-masher-exporter-header'
 

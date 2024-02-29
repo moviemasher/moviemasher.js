@@ -1,6 +1,6 @@
 import type { DataOrError, ListenersFunction, StringRecord } from '@moviemasher/shared-lib/types.js'
 
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventIcon } from '../utility/events.js'
 import { IconResponse } from '../types.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
@@ -21,7 +21,7 @@ export class FetchIconHandler {
     const { _jsonPromise } = FetchIconHandler
     if (_jsonPromise) return _jsonPromise
 
-    const { icons } = MOVIEMASHER.options
+    const { icons } = MOVIE_MASHER.options
     if (!icons) return this._jsonPromise = Promise.resolve({ data: {} })
     
     if (isStringRecord(icons)) {

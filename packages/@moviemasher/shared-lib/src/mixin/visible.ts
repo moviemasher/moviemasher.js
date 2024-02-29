@@ -1,16 +1,26 @@
-import type { Asset, ClipObject, Constrained, ContainerSvgItemArgs, ContentInstance, ContentRectArgs, ContentSvgItemArgs, DataOrError, Instance, InstanceObject, IntrinsicOptions, MaybeComplexSvgItem, Rect, Scalar, Size, SvgItemsRecord, SvgVector, Time, Transparency, VisibleAsset, VisibleInstance, VisibleInstanceObject } from '../types.js'
+import type { Asset, ClipObject, Constrained, ContainerRectArgs, ContainerSvgItemArgs, ContentInstance, ContentRectArgs, ContentSvgItemArgs, DataOrError, Instance, InstanceObject, IntrinsicOptions, MaybeComplexSvgItem, Point, Points, Rect, RectTuple, Scalar, SideDirectionRecord, Size, SizeKey, Sizes, SvgItemsRecord, SvgVector, Time, TimeRange, Transparency, VisibleAsset, VisibleContentInstance, VisibleInstance, VisibleInstanceObject } from '../types.js'
 
-import { $OPACITY, $POINT, $SIZE, $AUDIO, $CONTAINER, $CONTENT, DEFAULT_CONTAINER_ID, $END, $HEIGHT, $LUMINANCE, $PERCENT, $PLAYER, POINT_KEYS, POINT_ZERO, $PROBE, RGB_WHITE, SIZE_KEYS, SIZE_ZERO, $WIDTH, idGenerateString, isDefiniteError, isProbing } from '../runtime.js'
-import { isAboveZero } from '../utility/guard.js'
-import { isUndefined } from '../utility/guard.js'
-import { sizeNotZero } from '../utility/rect.js'
+import { $ASPECT, $AUDIO, $BOOLEAN, $CEIL, $CONTAINER, $CONTENT, $CROP, $END, $FLIP, $HEIGHT, $LOCK, $LONGEST, $LUMINANCE, $MAINTAIN, $NONE, $OPACITY, $PERCENT, $PLAYER, $POINT, $PROBE, $SHORTEST, $SIZE, $STRING, $WIDTH, $X, $Y, ASPECTS, DEFAULT_CONTAINER_ID, DIRECTIONS_SIDE, LOCKS, POINT_KEYS, POINT_ZERO, RGB_WHITE, SIZE_KEYS, SIZE_ZERO, assertTuple, idGenerateString, isDefiniteError, isProbing } from '../runtime.js'
+import { isAboveZero, isDefined, isUndefined } from '../utility/guard.js'
+import { assertAspect, assertPositive, assertTransparency } from '../utility/guards.js'
+import { assertSizeNotZero, containerPoints, containerSizes, contentPoints, contentSizes, sizeNotZero } from '../utility/rect.js'
 import { complexifySvgItem, recordFromItems, svgAddClass, svgAppend, svgClipPathElement, svgGroupElement, svgMaskElement, svgOpacity, svgPolygonElement, svgSet } from '../utility/svg.js'
 
 
 export function VisibleAssetMixin<T extends Constrained<Asset>>(Base: T):
   T & Constrained<VisibleAsset> {
   return class extends Base implements VisibleAsset {
-    alpha?: boolean
+    get alpha(): undefined | boolean {
+      const { decodings } = this
+      const decoding = decodings.find(decoding => decoding.type === $PROBE)
+      if (isProbing(decoding)) {
+        const { data } = decoding
+        if (data) {
+          const { alpha } = data
+          return alpha
+        }
+      }
+    }
 
     canBeFill?: boolean
     
@@ -34,11 +44,7 @@ export function VisibleAssetMixin<T extends Constrained<Asset>>(Base: T):
       return clipObject
     }
 
-    container?: boolean
-
-    content?: boolean
-
-    hasIntrinsicSizing?: boolean
+    override hasIntrinsicSizing = true
 
     isVector?: boolean
 
@@ -50,21 +56,101 @@ export function VisibleAssetMixin<T extends Constrained<Asset>>(Base: T):
           const { width, height } = data
           if (isAboveZero(width) && isAboveZero(height)) return { width, height }
         }
-      } else {
-        console.warn(this.constructor.name, 'probeSize not probing', probing)
-      }
+      } 
       return undefined
     }
   }
 }
 
-
 export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
   T & Constrained<VisibleInstance> {
   return class extends Base implements VisibleInstance {
+    constructor(...args: any[]) {
+      super(...args)
+      const [object] = args as [VisibleInstanceObject]
+
+      const { container } = object
+      if (container) this.targetId = $CONTAINER
+
+      // this.container = !!container
+
+      const { targetId, asset } = this
+      // console.log(this.constructor.name, 'initializeProperties', this.asset.label, { container, targetId })
+      if (container) {
+        DIRECTIONS_SIDE.forEach(direction => {
+          this.properties.push(this.propertyInstance({
+            targetId, name: `${direction}${$CROP}`, 
+            type: $BOOLEAN, defaultValue: false, 
+          }))
+        })
+      } 
+      if (container || !(this.isDefault || asset.type === $AUDIO)) {
+        this.properties.push(this.propertyInstance({
+          targetId, name: $X, type: $PERCENT, defaultValue: 0.5,
+          min: 0.0, max: 1.0, step: 0.01, tweens: true,
+        }))
+        this.properties.push(this.propertyInstance({
+          targetId, name: [$X, $END].join(''), 
+          type: $PERCENT, undefinedAllowed: true, tweens: true,
+          min: 0.0, max: 1.0, step: 0.01,
+        }))
+        this.properties.push(this.propertyInstance({
+          targetId, name: $Y, type: $PERCENT, defaultValue: 0.5,
+          min: 0.0, max: 1.0, step: 0.01, tweens: true,
+        }))
+        this.properties.push(this.propertyInstance({
+          targetId, name: [$Y, $END].join(''), 
+          type: $PERCENT, undefinedAllowed: true, tweens: true,
+          min: 0.0, max: 1.0, step: 0.01,
+        }))
+        this.properties.push(this.propertyInstance({
+          targetId, name: $LOCK, type: $STRING, 
+          defaultValue: $SHORTEST, options: LOCKS, 
+        }))
+        this.properties.push(this.propertyInstance({
+          targetId, name: [$POINT, $ASPECT].join(''), type: $STRING, 
+          defaultValue: $MAINTAIN, options: ASPECTS, 
+        }))
+        this.properties.push(this.propertyInstance({
+          targetId, name: [$SIZE, $ASPECT].join(''), type: $STRING, 
+          defaultValue: $FLIP, options: ASPECTS, 
+        }))
+      }
+
+      const hasDimensions = container || this.asset.hasIntrinsicSizing 
+      if (hasDimensions) {
+        const { properties } = this
+        const hasWidth = properties.some(property => property.name.endsWith($WIDTH))
+        const hasHeight = properties.some(property => property.name.endsWith($HEIGHT))
+        const min = container ? 0 : 1
+        const targetId = container ? $CONTAINER : $CONTENT
+        if (!hasWidth) {
+          this.properties.push(this.propertyInstance({
+            targetId, name: $WIDTH, type: $PERCENT,
+            defaultValue: 1, min, max: 2, step: 0.01, tweens: true,
+          }))
+          this.properties.push(this.propertyInstance({
+            targetId, name: `${$WIDTH}${$END}`, type: $PERCENT,
+            step: 0.01, max: 2, min, undefinedAllowed: true, tweens: true,
+          }))
+        }
+        if (!hasHeight) {
+          this.properties.push(this.propertyInstance({
+            targetId, name: $HEIGHT, type: $PERCENT,
+            defaultValue: 1, max: 2, min, step: 0.01, tweens: true,
+          }))
+          this.properties.push(this.propertyInstance({
+            targetId, name: `${$HEIGHT}${$END}`, type: $PERCENT,
+            step: 0.01, max: 2, min, undefinedAllowed: true, tweens: true,
+          }))
+        }
+      }
+    }
+
+
     declare asset: VisibleAsset
 
-    clippedElement(content: ContentInstance, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord> {
+    clippedElement(content: VisibleContentInstance, args: ContainerSvgItemArgs): DataOrError<SvgItemsRecord> {
       // opacity is applied to content during clipping
       const { containerRect, ...rest } = args
       const containerArgs: ContainerSvgItemArgs = { ...rest, containerRect }
@@ -116,7 +202,8 @@ export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
       if (!containerIsVector) svgAppend(group, svgPolygonElement(containerRect, '', 'transparent'))
       svgAppend(group, contentSvgItem)
 
-      const { transparency } = this.clip
+      const transparency = this.clip.value('transparency')
+      assertTransparency(transparency)
       const maskElement = this.maskingElement(group, transparency)
       defs.push(maskElement)
 
@@ -142,40 +229,55 @@ export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
       return { data: this.svgVector(contentRect, '', opacity) }
     }
 
-    override initializeProperties(object: VisibleInstanceObject): void {
-      const { container } = this
-      const hasDimensions = container || this.asset.hasIntrinsicSizing //!this.isDefault
-      if (hasDimensions) {
-        const { properties } = this
-        const hasWidth = properties.some(property => property.name.endsWith($WIDTH))
-        const hasHeight = properties.some(property => property.name.endsWith($HEIGHT))
-        const min = container ? 0 : 1
-        const targetId = container ? $CONTAINER : $CONTENT
-        if (!hasWidth) {
-          this.properties.push(this.propertyInstance({
-            targetId, name: $WIDTH, type: $PERCENT,
-            defaultValue: 1, min, max: 2, step: 0.01, tweens: true,
-          }))
-          this.properties.push(this.propertyInstance({
-            targetId, name: `${$WIDTH}${$END}`, type: $PERCENT,
-            step: 0.01, max: 2, min, undefinedAllowed: true, tweens: true,
-          }))
-        }
-        if (!hasHeight) {
-          this.properties.push(this.propertyInstance({
-            targetId, name: $HEIGHT, type: $PERCENT,
-            defaultValue: 1, max: 2, min, step: 0.01, tweens: true,
-          }))
-          this.properties.push(this.propertyInstance({
-            targetId, name: `${$HEIGHT}${$END}`, type: $PERCENT,
-            step: 0.01, max: 2, min, undefinedAllowed: true, tweens: true,
-          }))
-        }
-      }
-      super.initializeProperties(object)
-    }
+    // container = false
 
-    override get intrinsicRect(): Rect {
+    containerRects(args: ContainerRectArgs, size: Size): RectTuple {
+      const { outputSize, time, timeRange } = args
+      const inSize = sizeNotZero(size) ? size : this.intrinsicRect
+      assertSizeNotZero(outputSize, 'outputSize')
+      const pointAspect = this.value([$POINT, $ASPECT].join('')) 
+      assertAspect(pointAspect)
+  
+      const sizeAspect = this.value([$SIZE, $ASPECT].join(''))
+      assertAspect(sizeAspect)
+  
+      const { sizeKey, cropDirections } = this
+      const containerTweenRects = this.scaleRects(time, timeRange)
+      // containerTweenRects.forEach(rect => {
+      //   assertSize(rect, 'containerTweenRects')
+      // })
+      const sizes = containerSizes(containerTweenRects, inSize, outputSize, sizeAspect, $CEIL, sizeKey)
+      sizes.forEach(size => assertSizeNotZero(size, 'containerRects size'))
+      
+      const points = containerPoints(containerTweenRects, sizes, outputSize, pointAspect, cropDirections, $CEIL)
+      const rects = sizes.map((size, index) => ({ ...size, ...points[index] }))
+      assertTuple<Rect>(rects)
+      return rects
+    }
+    
+    contentRects(args: ContentRectArgs): RectTuple {
+      const { containerRects, time, timeRange, outputSize } = args    
+      const { intrinsicRect, sizeKey } = this
+      // if I have no intrinsic size (like color source), use the container rects
+      if (!sizeNotZero(intrinsicRect)) return containerRects
+  
+      const pointAspect = this.value([$POINT, $ASPECT].join('')) 
+      assertAspect(pointAspect)
+      const sizeAspect = this.value([$SIZE, $ASPECT].join(''))
+      assertAspect(sizeAspect)
+  
+  
+      const tweenRects = this.scaleRects(time, timeRange)
+      const points = contentPoints(tweenRects, intrinsicRect, containerRects, outputSize, sizeAspect, pointAspect, $CEIL, sizeKey)
+      const sizes = contentSizes(tweenRects, intrinsicRect, containerRects, outputSize, sizeAspect, $CEIL, sizeKey)
+      const rects = sizes.map((size, index) => ({ ...size, ...points[index] }))
+      assertTuple<Rect>(rects)
+      return rects
+    }
+    
+
+
+    get intrinsicRect(): Rect {
       const { probeSize = SIZE_ZERO } = this.asset
       return { ...POINT_ZERO, ...probeSize }
     }
@@ -201,11 +303,82 @@ export function VisibleInstanceMixin<T extends Constrained<Instance>>(Base: T):
       return svgMaskElement(group, transparency)
     }
 
+    scaleRects(time: Time, range: TimeRange): RectTuple {
+      const [size, sizeEnd] = this.tweenSizes(time, range)
+      const [point, pointEnd] = this.tweenPoints(time, range)
+      const rect = { ...point , ...size }
+      const rects: RectTuple = [ rect, rect ]
+      if (isDefined(sizeEnd) || isDefined(pointEnd)) {
+        rects[1] = { ...(pointEnd || point), ...(sizeEnd || size) }
+      }
+      return rects 
+    }
+    get sizeKey(): SizeKey | undefined {
+      const lock = this.value($LOCK)
+      switch (lock) {
+        case $NONE: return
+        case $WIDTH: 
+        case $HEIGHT: return lock
+      }
+      const size = this.intrinsicRect
+      const portrait = size.width < size.height
+      
+      switch (lock) {
+        case $SHORTEST: return portrait ? $WIDTH : $HEIGHT
+        case $LONGEST: return portrait ? $HEIGHT : $WIDTH
+      }
+    }
+  
+    get cropDirections(): SideDirectionRecord {
+      return Object.fromEntries(DIRECTIONS_SIDE.map(direction => {
+        const key = `${direction}${$CROP}`
+        const value = this.value(key)
+        return [direction, Boolean(value)]
+      })) 
+    }
+
     svgVector(rect: Rect, forecolor?: string, opacity?: Scalar): SvgVector {
       // console.log(this.constructor.name, 'svgVector', rect, forecolor, opacity)
       return svgOpacity(svgPolygonElement(rect, '', forecolor), opacity)
     }
-
+    private tweenPoints(time: Time, range: TimeRange): Points {
+      const [xStart, xEndOrNot] = this.tweenValues($X, time, range)
+      const [yStart, yEndOrNot] = this.tweenValues($Y, time, range)
+      assertPositive(xStart, 'xStart')
+      assertPositive(yStart, 'yStart')
+      const point: Point = { x: xStart, y: yStart } 
+      const points: Points = [point]
+      if (isDefined(xEndOrNot) || isDefined(yEndOrNot)) {
+        const x = isDefined(xEndOrNot) ? xEndOrNot : xStart
+        const y = isDefined(yEndOrNot) ? yEndOrNot : yStart
+        // console.log('InstanceClass.tweenPoints', { x, y }, time, range)
+        assertPositive(x, 'x')
+        assertPositive(y, 'y')
+  
+        points.push({ x, y }) 
+      }
+      return points
+    }
+  
+    private tweenSizes(time: Time, range: TimeRange): Sizes {
+      const [widthStart, widthEndOrNot] = this.tweenValues($WIDTH, time, range)
+      const [heightStart, heightEndOrNot] = this.tweenValues($HEIGHT, time, range)
+  
+      assertPositive(widthStart)
+      assertPositive(heightStart)
+      const size: Size = { width: widthStart, height: heightStart } 
+      const sizes: Sizes = [size]
+      if (isDefined(widthEndOrNot) || isDefined(heightEndOrNot)) {
+        const width = isDefined(widthEndOrNot) ? widthEndOrNot : widthStart
+        const height = isDefined(heightEndOrNot) ? heightEndOrNot : heightStart
+        assertPositive(width)
+        assertPositive(height)
+        
+        sizes.push({ width, height })
+      }
+      return sizes
+    }
+  
     get tweening(): boolean {
       let tweening = this.tweens($SIZE)
       tweening ||= this.tweens($POINT)

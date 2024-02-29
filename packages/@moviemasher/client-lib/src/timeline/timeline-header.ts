@@ -2,7 +2,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { VIEW } from '../runtime.js'
 import { html } from 'lit-html'
-import { HeaderBase } from '../base/LeftCenterRight.js'
+import { HeaderBase } from '../base/component-view.js'
 import { $ENCODE } from '@moviemasher/shared-lib/runtime.js'
 
 export const TimelineHeaderTag = 'movie-masher-timeline-header'

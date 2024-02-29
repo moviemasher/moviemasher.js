@@ -5,7 +5,7 @@ import type { DecodeServerArgs, ExpressHandler } from './Server.js'
 
 import { EventServerDecodeStatus } from '@moviemasher/server-lib/utility/events.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
-import { $DECODE, $POST, CONTENT_TYPE, ERROR, MIME_JSON, MOVIEMASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isDecoding, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { $DECODE, $POST, CONTENT_TYPE, ERROR, MIME_JSON, MOVIE_MASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isDecoding, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
 
@@ -21,7 +21,7 @@ export class DecodeServerClass extends ServerClass {
       const user = this.userFromRequest(req)
       const id = idUnique()
       const jobOptions: JobOptions = { id, user }
-      const promise = MOVIEMASHER.promise($DECODE, decodeArgs, jobOptions)
+      const promise = MOVIE_MASHER.promise(decodeArgs, $DECODE, jobOptions)
 
       res.send({ version : VERSION, data: this.statusEndpointRequest(id) })
     } catch (error) { 
@@ -43,7 +43,7 @@ export class DecodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerDecodeStatus(id)
-      MOVIEMASHER.dispatch(event)
+      MOVIE_MASHER.dispatch(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecodeStatus.Type)
 

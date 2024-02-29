@@ -1,9 +1,8 @@
-import type { ClientAsset, Timeout, } from '../types.js'
-import type { ListenersFunction, Size } from '@moviemasher/shared-lib/types.js'
+import type { Timeout, } from '../types.js'
+import type { ClientAsset, ListenersFunction, Size } from '@moviemasher/shared-lib/types.js'
 import type { PropertyDeclarations } from 'lit'
 import type { CSSResultGroup, PropertyValues } from 'lit-element/lit-element.js'
 import type { TemplateContents, OptionalContent } from '../client-types.js'
-import type { DragAssetObject } from '../utility/draganddrop.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
@@ -11,9 +10,9 @@ import { assertSizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
 import { SELECTED, X_MOVIEMASHER } from '../runtime.js'
 import { EventAssetElement, EventAssetId, EventChangeAssetId, EventChangedAssetId, EventManagedAsset, EventManagedAssetIcon } from '../utility/events.js'
 import { EventAssetElementDetail } from '../types.js'
-import { MOVIEMASHER, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 
 export const BrowserAssetTag = 'movie-masher-browser-asset'
 
@@ -38,15 +37,16 @@ export class BrowserAssetElement extends Component {
     if (!assetId) return 
 
     const event = new EventManagedAsset(assetId)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     return event.detail.asset
   }
 
   cover?: boolean
   
   override get defaultContent(): OptionalContent { 
-    const { asset, icon, labels, icons, size } = this
-    const { label } = asset || this
+    const { icon, labels, icons, size } = this
+
+    const { label } = this
     assertSizeNotZero(size)
 
     const htmls: TemplateContents = []
@@ -90,7 +90,7 @@ export class BrowserAssetElement extends Component {
 
     // console.log('BrowserAssetElement.iconPromiseInitialize', {assetId, size, cover})
     const event = new EventManagedAssetIcon(assetId, size, cover)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
    
     const { promise } = event.detail 
     if (!promise) {        
@@ -126,7 +126,7 @@ export class BrowserAssetElement extends Component {
     const { assetId } = this
     assertDefined(assetId)
 
-    MOVIEMASHER.dispatch(new EventChangeAssetId(assetId))
+    MOVIE_MASHER.dispatch(new EventChangeAssetId(assetId))
   }
 
   override ondragstart = (event: DragEvent) => {
@@ -139,8 +139,8 @@ export class BrowserAssetElement extends Component {
 
     const rect = this.getBoundingClientRect()
     const { left } = rect
-    const { id, type } = asset
-    const data: DragAssetObject = {  offset: clientX - left, assetId: id }
+    const { type, assetObject } = asset
+    const data = { offset: clientX - left, assetObject }
     dataTransfer.effectAllowed = 'copy'
     dataTransfer.setData(`${type}${X_MOVIEMASHER}`, jsonStringify(data))
   }
@@ -156,7 +156,7 @@ export class BrowserAssetElement extends Component {
   
   private get selectedAssetId(): string | undefined {
     const event = new EventAssetId()
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     return event.detail.assetId
   }
 

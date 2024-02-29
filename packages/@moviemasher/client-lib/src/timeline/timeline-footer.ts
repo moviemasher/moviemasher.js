@@ -3,7 +3,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 import { ADD, ADD_TRACK, REMOVE } from '../runtime.js'
 import { EventDoClientAction, EventZoom } from '../utility/events.js'
 import { html } from 'lit-html'
-import { FooterBase } from '../base/LeftCenterRight.js'
+import { FooterBase } from '../base/component-view.js'
 
 export const TimelineFooterTag = 'movie-masher-timeline-footer'
 

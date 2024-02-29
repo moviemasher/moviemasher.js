@@ -1,13 +1,13 @@
 import type { Data, StringData, TranscodeOptions, Transcoding, EndpointRequest } from '@moviemasher/shared-lib/types.js'
 
 import { filePathExists } from '@moviemasher/server-lib'
-import { isTranscoding, MOVIEMASHER } from '@moviemasher/shared-lib'
+import { isTranscoding, MOVIE_MASHER } from '@moviemasher/shared-lib'
 import { EventServerTranscode, EventServerTranscodeStatus } from '@moviemasher/server-lib/runtime.js'
 import { $AUDIO, $IMAGE, isDefiniteError, $BITMAPS, $VIDEO, $WAVEFORM } from '@moviemasher/shared-lib/runtime.js'
 import assert from 'node:assert'
 import { describe, test } from 'node:test'
 
-await MOVIEMASHER.importPromise()
+await MOVIE_MASHER.importPromise()
 
 
 function failIfError<T = any>(orError: any): asserts orError is T {
@@ -27,7 +27,7 @@ describe('Transcoding', () => {
     const id = 'image-transcode-image'
     const options: TranscodeOptions = {}
     const transcodeEvent = new EventServerTranscode(transcodingType, assetType, request, 'shared', id, options)
-    MOVIEMASHER.dispatch(transcodeEvent)
+    MOVIE_MASHER.dispatch(transcodeEvent)
     const { promise: transcodePromise } = transcodeEvent.detail
     assert(transcodePromise)
     const transcodeOrError = await transcodePromise
@@ -37,7 +37,7 @@ describe('Transcoding', () => {
     assert(filePathExists(transcodedFilePath))
 
     const statusEvent = new EventServerTranscodeStatus(id)
-    MOVIEMASHER.dispatch(statusEvent)
+    MOVIE_MASHER.dispatch(statusEvent)
     const { promise: statusPromise } = statusEvent.detail
     assert(statusPromise)
 
@@ -55,7 +55,7 @@ describe('Transcoding', () => {
     const id = 'video-transcode-sequence'
     const options: TranscodeOptions = {}
     const transcodeEvent = new EventServerTranscode(transcodingType, assetType, request, 'shared', id, options)
-    MOVIEMASHER.dispatch(transcodeEvent)
+    MOVIE_MASHER.dispatch(transcodeEvent)
     const { promise: transcodePromise } = transcodeEvent.detail
     assert(transcodePromise)
     const transcodeOrError = await transcodePromise
@@ -65,7 +65,7 @@ describe('Transcoding', () => {
     // assert(filePathExists(transcodedFilePath))
 
     const statusEvent = new EventServerTranscodeStatus(id)
-    MOVIEMASHER.dispatch(statusEvent)
+    MOVIE_MASHER.dispatch(statusEvent)
     const { promise: statusPromise } = statusEvent.detail
     assert(statusPromise)
 
@@ -84,14 +84,14 @@ describe('Transcoding', () => {
     const id = 'video-transcode-waveform'
     const options: TranscodeOptions = {}
     const transcodeEvent = new EventServerTranscode(transcodingType, assetType, request, 'shared', id, options)
-    MOVIEMASHER.dispatch(transcodeEvent)
+    MOVIE_MASHER.dispatch(transcodeEvent)
     const { promise: transcodePromise } = transcodeEvent.detail
     assert(transcodePromise)
     const transcodeOrError = await transcodePromise
     failIfError<StringData>(transcodeOrError)
 
     const statusEvent = new EventServerTranscodeStatus(id)
-    MOVIEMASHER.dispatch(statusEvent)
+    MOVIE_MASHER.dispatch(statusEvent)
     const { promise: statusPromise } = statusEvent.detail
     assert(statusPromise)
 

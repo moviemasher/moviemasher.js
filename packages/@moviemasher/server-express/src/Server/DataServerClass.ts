@@ -3,7 +3,7 @@ import type { DataAssetDefaultRequest, DataAssetDeleteRequest, DataAssetGetReque
 import type { DataServerArgs, ExpressHandler } from './Server.js'
 
 import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
-import { directoryCreatePromise, fileReadJsonPromise } from '@moviemasher/server-lib/utility/file.js'
+import { directoryCreatePromise, fileReadJsonPromise } from '@moviemasher/server-lib/module/file-write.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
 import { $CACHE_NONE, $CACHE_SOURCE_TYPE, $MASH, $STRING, $VIDEO, ERROR, RGB_WHITE, SIZE_OUTPUT, VERSION, VOID_FUNCTION, arrayFromOneOrMore, arrayOfNumbers, errorObjectCaught, errorThrow, idIsTemporary, isDefiniteError, jsonParse, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
@@ -20,11 +20,7 @@ const USER_SHARED = ENV.get(ENV_KEY.SharedUser)
 interface QueryResult<T> {
   rows: T[]
 }
-// const { Client: ClientClass } = pg
 
-// TODO: use environment variables for these
-//   const columnOwner = ENV.get(EnvironmentKeyAppColumnOwner)
-//   const columnSource = ENV.get(EnvironmentKeyAppColumnSource)
 type AssetColumn = 'id' | 'label' | 'type' | 'created' | 'deleted' | 'rest' | 'source' | 'user_id'
 
 interface Row extends Partial<Record<AssetColumn, string>> {

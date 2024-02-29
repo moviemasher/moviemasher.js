@@ -1,6 +1,6 @@
 import type { DataOrError, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { fileReadJsonPromise } from '@moviemasher/server-lib/utility/file.js'
+import { fileReadJsonPromise } from '@moviemasher/server-lib/module/file-write.js'
 import { DOT, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import fs from 'fs'
 import path from 'path'

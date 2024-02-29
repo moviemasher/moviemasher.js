@@ -1,10 +1,10 @@
 import type { PropertyDeclarations } from 'lit'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { isNumber } from '@moviemasher/shared-lib/utility/guard.js'
 import { html } from 'lit-html'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 import { EventChangeFrame, EventChangedFrame, EventChangedFrames, EventFrames } from '../utility/events.js'
 
 export const PlayerRangeTag = 'movie-masher-player-range'
@@ -21,7 +21,7 @@ export class PlayerRangeElement extends Component {
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -42,7 +42,7 @@ export class PlayerRangeElement extends Component {
     const detail = parseInt(value)
     if (isNumber(detail)) {
       // console.log('PlayerRangeElement.handleInput', detail)
-      MOVIEMASHER.dispatch(new EventChangeFrame(detail))
+      MOVIE_MASHER.dispatch(new EventChangeFrame(detail))
     }
   }
 

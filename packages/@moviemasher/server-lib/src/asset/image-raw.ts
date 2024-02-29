@@ -1,29 +1,29 @@
-import type { CacheArgs, DataOrError, ImageInstanceObject, InstanceArgs, ListenersFunction, RawImageAssetObject, ValueRecord, VisibleContentInstance } from '@moviemasher/shared-lib/types.js'
-import type { ServerRawImageAsset, ServerRawImageInstance } from '../type/ServerTypes.js'
-import type { AssetFile, AssetFiles, CommandFile, CommandFiles, ServerAssetManager, ServerPromiseArgs, VisibleCommandFileArgs } from '../types.js'
+import type { AssetFile, AssetFiles, AssetFunction, CacheArgs, CommandFile, CommandFiles, DataOrError, ImageInstance, ImageInstanceObject, ServerInstance, ServerPromiseArgs, ValueRecord, VisibleCommandFileArgs, VisibleContentInstance } from '@moviemasher/shared-lib/types.js'
+import type { ServerImageAsset } from '../type/ServerAssetTypes.js'
 
 import { ImageAssetMixin, ImageInstanceMixin } from '@moviemasher/shared-lib/mixin/image.js'
 import { VisibleAssetMixin, VisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/visible.js'
-import { $IMAGE, $RAW, $SVG, $VIDEO, DOT, ERROR, NAMESPACE_SVG, isAssetObject, isDefiniteError, namedError, svgStringClean } from '@moviemasher/shared-lib/runtime.js'
+import { $IMAGE, $RAW, $SVG, $VIDEO, DOT, ERROR, NAMESPACE_SVG, SLASH, isAssetObject, isDefiniteError, namedError, svgStringClean } from '@moviemasher/shared-lib/runtime.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 import { assertSizeNotZero, coverSize } from '@moviemasher/shared-lib/utility/rect.js'
 import { isTimeRange } from '@moviemasher/shared-lib/utility/time.js'
-import { ServerRawAssetClass } from '../base/asset-raw.js'
-import { ServerInstanceClass } from '../base/instance.js'
-import { ServerVisibleAssetMixin, ServerVisibleInstanceMixin } from '../mixin/visible.js'
-import { EventServerAsset } from '../utility/events.js'
-import { fileReadPromise, fileWritePromise } from '../utility/file.js'
+import { ServerRawAssetClass } from '@moviemasher/shared-lib/base/server-raw-asset.js'
+import { ServerInstanceClass } from '@moviemasher/shared-lib/base/server-instance.js'
+import { ServerVisibleAssetMixin, ServerVisibleInstanceMixin } from '@moviemasher/shared-lib/mixin/server-visible.js'
+import { fileReadPromise, fileWritePromise } from '../module/file-write.js'
+import { assertAbsolutePath } from '../utility/guard.js'
+
+interface ServerRawImageAsset extends ServerImageAsset {}
+
+interface ServerRawImageInstance extends ImageInstance, ServerInstance {
+  asset: ServerRawImageAsset
+}
 
 const WithAsset = VisibleAssetMixin(ServerRawAssetClass)
 const WithServerAsset = ServerVisibleAssetMixin(WithAsset)
 const WithImageAsset = ImageAssetMixin(WithServerAsset)
 
 export class ServerRawImageAssetClass extends WithImageAsset implements ServerRawImageAsset {
-  constructor(args: RawImageAssetObject, manager?: ServerAssetManager) {
-    super(args, manager)
-    this.initializeProperties(args)
-  }
-
   override assetFiles(args: CacheArgs): AssetFiles {
     const { visible } = args
     if (!visible) return []
@@ -32,13 +32,11 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
     if (!request) return []
 
     const { path: file } = request
-    assertDefined<string>(file)
+    assertDefined(file)
 
     // we handle $SVG files differently - see commandFilePromise below
-    const type = file.endsWith(`${DOT}${$SVG}`) ? $SVG : $IMAGE
-    const assetFile: AssetFile = { 
-      type, file, asset: this, avType: $VIDEO 
-    }
+    const type = String(file).endsWith(`${DOT}${$SVG}`) ? $SVG : $IMAGE
+    const assetFile: AssetFile = { type, file, asset: this, avType: $VIDEO }
     return [assetFile]
   }
 
@@ -80,6 +78,7 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
 
       // save file with new dimensions
       const sizedPath = `${file.slice(0, -4)}-${width}x${height}.${$SVG}`
+      assertAbsolutePath(sizedPath)
       return fileWritePromise(sizedPath, svg, true).then(orError => {
         if (isDefiniteError(orError)) return orError
         
@@ -95,15 +94,6 @@ export class ServerRawImageAssetClass extends WithImageAsset implements ServerRa
   }
 
   type = $IMAGE
-
-  static handleAsset(event: EventServerAsset) {
-    const { detail } = event
-    const { assetObject, manager } = detail
-    if (isAssetObject(assetObject, $IMAGE, $RAW)) {
-      detail.asset = new ServerRawImageAssetClass(assetObject, manager)
-      event.stopImmediatePropagation()
-    }
-  }
 }
 
 const WithInstance = VisibleInstanceMixin(ServerInstanceClass)
@@ -111,19 +101,12 @@ const WithServerInstance = ServerVisibleInstanceMixin(WithInstance)
 const WithImageInstance = ImageInstanceMixin(WithServerInstance)
 
 export class ServerRawImageInstanceClass extends WithImageInstance implements ServerRawImageInstance {
-  constructor(args: ImageInstanceObject & InstanceArgs) {
-    super(args)
-    this.initializeProperties(args)
-  }
-
   declare asset: ServerRawImageAsset
 
   override visibleCommandFiles(args: VisibleCommandFileArgs, content?: VisibleContentInstance): CommandFiles {
     const commandFiles: CommandFiles = super.visibleCommandFiles(args, content)
     const { time, videoRate } = args
     const { id: inputId } = this
-    // const found = commandFiles.find(file => file.inputId.startsWith(inputId))
-    // console.log(this.constructor.name, 'visibleCommandFiles', found, inputId, commandFiles.map(file => file.inputId))
     const files = this.asset.assetFiles({ visible: true })
     const [file] = files
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
@@ -140,7 +123,9 @@ export class ServerRawImageInstanceClass extends WithImageInstance implements Se
   }
 }
 
-// listen for image/raw asset event
-export const ServerRawImageListeners: ListenersFunction = () => ({
-  [EventServerAsset.Type]: ServerRawImageAssetClass.handleAsset
-})
+export const serverImageRawAssetFunction: AssetFunction = (assetObject) => {
+  if (!isAssetObject(assetObject, $IMAGE, $RAW)) {
+    return namedError(ERROR.Syntax, [$IMAGE, $RAW].join(SLASH))
+  }
+  return { data: new ServerRawImageAssetClass(assetObject) }
+}

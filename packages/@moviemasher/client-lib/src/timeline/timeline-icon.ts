@@ -6,7 +6,7 @@ import type { TemplateContents, OptionalContent } from '../client-types.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { html } from 'lit-html'
 import { DropTargetMixin } from '../mixin/component.js'
-import { ComponentLoader } from '../base/Component.js'
+import { ComponentLoader } from '../base/component.js'
 
 export const TimelineIconTag = 'movie-masher-timeline-icon'
 const WithDropTargetMixin = DropTargetMixin(ComponentLoader)

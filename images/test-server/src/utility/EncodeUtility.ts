@@ -1,12 +1,15 @@
-import type { AssetObjects, ClipObject, ColorInstanceObject, DecodeArgs, DecodeOptions, Decoding, DropResource, EncodeArgs, EndpointRequest, ImageAssetObject, InstanceObject, JobOptions, MashAssetObject, OutputOptions, Point, ShapeAssetObject, Size, StringDataOrError, TextAssetObject, TextInstanceObject, TrackObject, VideoAssetObject, VideoOutputOptions } from '@moviemasher/shared-lib/types.js'
+import type { AssetObject, AssetObjects, AudibleInstanceObject, ClipObject, DecodeArgs, DecodeOptions, Decoding, DropResource, EncodeArgs, EndpointRequest, InstanceObject, JobOptions, MashAssetObject, OutputOptions, Point, ShapeAssetObject, Size, StringDataOrError, TextInstanceObject, TrackObject, VideoOutputOptions, VisibleInstanceObject } from '@moviemasher/shared-lib/types.js'
 
-import { MOVIEMASHER, assertDefined, assertPoint, assertSize, isArray, isPoint, isPopulatedArray, isPopulatedString, isSize, isString, stringSeconds } from '@moviemasher/shared-lib'
-import { $CONTAINER, $CROP, $CSS, $CUSTOM, $DECODE, $DURATION, $ENCODE, $IMAGE, $LONGEST, $LUMINANCE, $MASH, $NONE, $PROBE, $TTF, $TXT, $VIDEO, $WIDTH, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION_UNKNOWN, ERROR, RGB_BLACK, SIZE_OUTPUT, arrayUnique, errorThrow, idReset, isDefiniteError, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
+// import { MOVIE_MASHER, assertDefined, assertPoint, assertSize, isArray, isDefined, isObject, isPoint, isPopulatedArray, isPopulatedString, isSize, isString, stringSeconds } from '@moviemasher/shared-lib'
+import { $CONTAINER, $CROP, $CSS, $CUSTOM, $DECODE, $DURATION, $ENCODE, $IMAGE, $LONGEST, $LUMINANCE, $MASH, $NONE, $PROBE, $TTF, $TXT, $VIDEO, DASH, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DIRECTIONS_SIDE, DOT, DURATION_UNKNOWN, ERROR, MOVIE_MASHER, SIZE_OUTPUT, arrayUnique, errorThrow, idReset, isDefiniteError, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import path from 'path'
 import { commandPromise, ffmpegCommand } from '../../../../packages/@moviemasher/server-lib/src/command/CommandFactory.js'
 import { ENV, ENV_KEY } from '../../../../packages/@moviemasher/server-lib/src/utility/env.js'
-import { directoryCreatePromise, fileMovePromise, fileNameFromOptions, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend } from '../../../../packages/@moviemasher/server-lib/src/utility/file.js'
+import { directoryCreatePromise, fileMovePromise, fileNameFromOptions, filePathExists, fileReadPromise, fileRemovePromise, fileWritePromise, filenameAppend } from '../../../../packages/@moviemasher/server-lib/src/module/file-write.js'
 import { assertAbsolutePath } from '../../../../packages/@moviemasher/server-lib/src/utility/guard.js'
+import { isArray, isDefined, isObject, isPopulatedArray, isPopulatedString, isString } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined, assertPoint, assertSize, isPoint, isSize } from '@moviemasher/shared-lib/utility/guards.js'
+import { stringSeconds } from '@moviemasher/shared-lib/utility/time.js'
 
 const colorRed = '#FF0000'
 const colorBlue = '#0000FF'
@@ -93,26 +96,31 @@ export enum GenerateArg {
 export const GenerateArgs = Object.values(GenerateArg)
 
 export type GenerateOptions = { [index in GenerateArg]?: string | string[] }
-export type GenerateContentTest = [string, string, InstanceObject]
-export type GenerateContainerTest = [string, string, InstanceObject, string | undefined]
-export type PointTest = [string, InstanceObject]
-
-export type SizeTest = [string, InstanceObject]
+export type GenerateContentTest = [string, string, VisibleInstanceObject | AudibleInstanceObject]
+export type GenerateContainerTest = [string, string, VisibleInstanceObject, string | undefined]
+export type PointTest = [string, VisibleInstanceObject]
+export type OpacityTest = [string, ClipObject]
+export type SizeTest = [string, VisibleInstanceObject]
 export type BooleanTest = [string, InstanceObject]
 export type NumberTest = [string, InstanceObject]
 
 const textOptions: TextInstanceObject = { 
-  string: "Lobster Wow!",
+  text: "Lobster Wow!",
   assetId: "text",
   lock: $LONGEST,
 } as const
 
-type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest
+type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest | OpacityTest
 const isRenderTest = (value: any): value is GenerateTest => {
   return isPopulatedArray(value) && isString(value[0])
 }
 function assertRenderTest(value: any): asserts value is GenerateTest {
   if (!isRenderTest(value)) errorThrow(value, 'RenderTest')
+}
+
+
+const isOpacityObject = (value: any): value is ClipObject => {
+  return isRenderTest(value) && isObject(value[1]) && 'opacity' in value[1]
 }
 
 type GenerateTests = { [index in GenerateArg]: GenerateTest[] }
@@ -180,10 +188,10 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DURA
 
   } = renderTestObject
 
-  const { width, height } = size
-  const textHeight = 0.1
+  // const { width, height } = size
+  // const textHeight = 0.1
 
-  const content: ColorInstanceObject = { color: RGB_BLACK }
+  // const content: ColorInstanceObject = { color: RGB_BLACK }
 
   assertPoint(containerPoint)
   assertPoint(contentPoint)
@@ -199,36 +207,37 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = DURA
     transparency: $LUMINANCE,
     container: {
       ...containerPoint, ...containerDimensions, 
-      ...containerObject, ...opacity, 
+      ...containerObject, 
       ...constrained,
-    }
+    },
+    ...opacity, 
   }  
   const objects = [clip]
-  if (labels) {
-    const labelClip: ClipObject = { 
-      container: { 
-        // intrinsic: { x: 0, y: 0, width: width, height: TEXT_HEIGHT / textHeight },
-        // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
-        assetId: "font.valken",
-        // height: textHeight, 
-        x: 0, y: 0.5, 
-        lock: $WIDTH,
-        width: 1, 
-        string: testId 
-      } as TextInstanceObject,
-      containerId: 'font.valken',
-      content,
-      sizing: $CONTAINER,
-      timing: $CUSTOM,
-      frames
-    }  
-    objects.push(labelClip)
-  }
+  // if (labels) {
+  //   const labelClip: ClipObject = { 
+  //     container: { 
+  //       // intrinsic: { x: 0, y: 0, width: width, height: TEXT_HEIGHT / textHeight },
+  //       // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
+  //       assetId: "font.valken",
+  //       // height: textHeight, 
+  //       x: 0, y: 0.5, 
+  //       lock: $WIDTH,
+  //       width: 1, 
+  //       string: testId 
+  //     } as TextInstanceObject,
+  //     containerId: 'font.valken',
+  //     content,
+  //     sizing: $CONTAINER,
+  //     timing: $CUSTOM,
+  //     frames
+  //   }  
+  //   objects.push(labelClip)
+  // }
   
   return objects
 }
 
-const pointsContainerObject = (...points: Point[]): InstanceObject => {
+const pointsContainerObject = (...points: Point[]): VisibleInstanceObject | AudibleInstanceObject => {
   const [point, pointEnd] = points
   assertPoint(point)
 
@@ -242,18 +251,24 @@ const pointTest = (...mashPoints: GeneratePoint[]): PointTest => {
   return [mashPoints.join(DASH), pointsContainerObject(...points)]
 }
 
-const opacitiesContainerObject = (...opacities: InstanceObject[]): InstanceObject => {
+// const opacitiesContainerObject = (...opacities: VisibleInstanceObject[]): ClipObject => {
+//   const [opacity, opacityEnd] = opacities
+//   if (!opacityEnd) return { ...opacity }
+
+//   return { ...opacity, opacityEnd: opacityEnd.opacity }
+// }
+
+const opacityTest = (...mashOpacity: GenerateOpacity[]): OpacityTest => {
+  const opacities = mashOpacity.map(key => MashOpacityDefault[key])
   const [opacity, opacityEnd] = opacities
-  if (!opacityEnd) return { ...opacity }
+  // assertDefined<number>(opacity)
 
-  return { ...opacity, opacityEnd: opacityEnd.opacity }
-}
+  const clipObject: ClipObject = { opacity: opacity.opacity }
+  if (isDefined(opacityEnd)) clipObject.opacityEnd = opacityEnd.opacity
 
-const opacityTest = (...mashOpacity: GenerateOpacity[]): PointTest => {
-  const opacities = mashOpacity.map(mashPoint => MashOpacityDefault[mashPoint])
-  return [mashOpacity.join(DASH), opacitiesContainerObject(...opacities)]
+  return [mashOpacity.join(DASH), clipObject]
 }
-const sizesContainerObject = (...sizes: Size[]): InstanceObject => {
+const sizesContainerObject = (...sizes: Size[]): VisibleInstanceObject => {
   const [size, sizeEnd] = sizes
   assertSize(size)
 
@@ -304,14 +319,14 @@ export const GenerateTestsDefault: GenerateTests = {
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [
-    ["BL", DEFAULT_CONTENT_ID, { color: colorBlue } as InstanceObject],
+    ["BL", DEFAULT_CONTENT_ID, { color: colorBlue } as VisibleInstanceObject],
     ["P", "puppy", {}],
     ["RGB", "rgb", {}],
     ["V", "video", {}],
     // ["BK", DEFAULT_CONTENT_ID, { color: RGB_BLACK }],
     // ["RE", DEFAULT_CONTENT_ID, { color: colorRed }],
     // ["WH", DEFAULT_CONTENT_ID, { color: RGB_WHITE }],
-    ["BL-RE", DEFAULT_CONTENT_ID, { colorEnd: colorRed, color: colorBlue } as InstanceObject],
+    ["BL-RE", DEFAULT_CONTENT_ID, { colorEnd: colorRed, color: colorBlue } as VisibleInstanceObject],
     // ["K", "image", {}],
   ],
   [GenerateArg.ContainerPoint]: [
@@ -363,35 +378,35 @@ export const GenerateAssetObjects: AssetObjects = [
     type: "image",
     resources: [{ type: $IMAGE, request: { endpoint: { pathname: "/app/temporary/assets/image/puppy/image.jpg" } } }],
     decodings: [{ id: '', type: $PROBE, data: {width: 3024, height: 4032} }]
-  } as ImageAssetObject,
+  } as AssetObject,
   {
     id: "rgb",
     source: 'raw',
     type: "video",
     resources: [{ type: $VIDEO, request: { endpoint: { pathname: "/app/temporary/assets/video/rgb.mp4" } } }],
     decodings: [{ id: '', type: $PROBE, data: { width: 512, height: 288, audible: true, duration: 3 } }]
-  } as VideoAssetObject,
+  } as AssetObject,
   {
     id: "image",
     source: 'raw',
     type: "image",
     resources: [{ type: $IMAGE, request: { endpoint: { pathname: "/app/temporary/assets/image/kitten/image.jpg" } } }],
     decodings: [{ id: '', type: $PROBE, data: { width: 4592, height: 3056 } } as Decoding]
-  } as ImageAssetObject,
+  } as AssetObject,
   {
     id: "text",
     source: 'text',
     type: $IMAGE,
     label: "Lobster",
     resources: [{ type: $TTF, request: { endpoint: "/app/temporary/assets/font/lobster/lobster.ttf" } }],
-  } as TextAssetObject,
+  } as AssetObject,
   {
     id: "font.valken",
     source: 'text',
     type: $IMAGE,
     label: "Valken",
     resources: [{ type: $TTF, request: { endpoint: "/app/temporary/assets/font/valken/valken.ttf" } }],
-  } as TextAssetObject,
+  } as AssetObject,
   // same size as text ^
   { 
     "label": "Text Rect",
@@ -408,7 +423,7 @@ export const GenerateAssetObjects: AssetObjects = [
     label: "Video", 
     id: "video",
     resources: [{ type: $VIDEO, request: { endpoint: { pathname: "/app/temporary/assets/video/dance.mp4" } } }],
-  } as VideoAssetObject,
+  } as AssetObject,
   {
     "label": "Movie Masher Logo",
     "type": "image",
@@ -440,7 +455,7 @@ export const GenerateAssetObjects: AssetObjects = [
         search: "?family=Butcherman" 
       }
     } }]
-  } as TextAssetObject
+  } as AssetObject
 ]
 
 export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTestIds => {
@@ -465,7 +480,7 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
         const size = isColor ? GenerateSize.F : undefined
         const limitedContentSizes = limitedOptions(GenerateArg.ContentSize, size) as SizeTest[]
         limitedContentSizes.forEach(([contentDimensionName]) => {
-          const limitedOpacities = limitedOptions(GenerateArg.Opacity) as NumberTest[]
+          const limitedOpacities = limitedOptions(GenerateArg.Opacity) as OpacityTest[]
           limitedOpacities.forEach(([opacityLabel]) => {
             const limitedContainerSizes = limitedOptions(GenerateArg.ContainerSize) as SizeTest[]
             limitedContainerSizes.forEach(([containerDimensionName]) => {
@@ -550,7 +565,7 @@ export const encodeId = async (id: string, outputOptions: OutputOptions, duratio
 
   const encodeArgs: EncodeArgs = { asset: fatMashObject, type: $VIDEO, options: outputOptions }
   const jobOptions: JobOptions = { id, user: 'shared' }
-  const promise = MOVIEMASHER.promise($ENCODE, encodeArgs, jobOptions)
+  const promise = MOVIE_MASHER.promise(encodeArgs, $ENCODE, jobOptions)
   const orError = await promise
   if (isDefiniteError(orError)) return orError
 
@@ -630,7 +645,7 @@ export const combineIds = async (ids: GenerateTestIds, id:string): Promise<Strin
   const resource: DropResource = { request, type: $VIDEO, id: id }
   const args: DecodeArgs = { resource, options: decodeOptions, type: $PROBE }
   const jobOptions: JobOptions = { id, user: 'shared' }
-  const promise = MOVIEMASHER.promise($DECODE, args, jobOptions)
+  const promise = MOVIE_MASHER.promise(args, $DECODE, jobOptions)
 
   const decodeOrError = await promise
   if (isDefiniteError(decodeOrError)) return decodeOrError

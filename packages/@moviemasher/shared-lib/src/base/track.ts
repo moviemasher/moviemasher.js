@@ -10,7 +10,26 @@ import { PropertiedClass } from './propertied.js'
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
     super(args)
-    this.initializeProperties(args)
+    this.clips = []
+    const { clips, index, dense, mashAsset } =  args
+    this.mash = mashAsset
+
+    if (isPositive(index)) this.index = index
+
+    this.dense = isDefined(dense) ? !!dense : !this.index  
+
+    this.properties.push(this.propertyInstance({ 
+      targetId: $MASH, name: 'dense', type: $BOOLEAN, 
+    }))
+    // this.propertiesInitialize(args)
+    
+    if (clips) {
+      this.clips.push(...clips.map(clip => {
+        const instance = this.mash.clipInstance(clip) 
+        instance.track = this
+        return instance
+      }))
+    }
   }
 
   private assureFrame(clips?: Clips) {
@@ -44,7 +63,7 @@ export class TrackClass extends PropertiedClass implements Track {
     })
   }
 
-  clips: Clips = []
+  clips: Clips 
 
   dense = false
 
@@ -70,31 +89,8 @@ export class TrackClass extends PropertiedClass implements Track {
 
   index = 0
 
-  override initializeProperties(args: TrackArgs): void {
-    const { clips, index, dense, mashAsset } =  args
-    this.mash = mashAsset
 
-    if (isPositive(index)) this.index = index
-
-    this.dense = isDefined(dense) ? !!dense : !this.index  
-
-    this.properties.push(this.propertyInstance({ 
-      targetId: $MASH, name: 'dense', type: $BOOLEAN, 
-    }))
-    this.propertiesInitialize(args)
-    
-    if (clips) {
-      this.clips.push(...clips.map(clip => {
-        const instance = this.mash.clipInstance(clip) 
-        instance.track = this
-        return instance
-      }))
-    }
-
-    super.initializeProperties(args)
-  }
-
-  declare mash: MashAsset 
+  mash: MashAsset 
   
   sortClips(clips?: Clips): void {
     const sortClips = clips || this.clips

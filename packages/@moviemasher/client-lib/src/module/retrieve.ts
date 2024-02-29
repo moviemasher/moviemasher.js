@@ -1,6 +1,6 @@
 import type { DataOrError, RetrieveFunction, StringDataOrError } from '@moviemasher/shared-lib/types.js'
 
-import { ERROR, MOVIEMASHER, errorCaught, errorPromise, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { ERROR, MOVIE_MASHER, errorCaught, errorPromise, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { isClientAudio, isClientImage, isClientVideo } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 import { requestUrl } from '@moviemasher/shared-lib/utility/request.js'
@@ -70,7 +70,7 @@ export const videoRetrieveFunction: RetrieveFunction = resource => {
   if (!url) return errorPromise(ERROR.Url, `requestVideoPromise`) 
 
   return request.resourcePromise = new Promise<StringDataOrError>(resolve => {
-    const { document } = MOVIEMASHER.window
+    const { document } = MOVIE_MASHER.window
     const video = document.createElement('video')
     video.src = url
     video.oncanplay = () => {

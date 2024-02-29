@@ -8,7 +8,7 @@ import { COLON, ERROR, errorThrow, isDefiniteError } from '@moviemasher/shared-l
 import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
 import path from 'path'
 import { commandError, commandString } from '../utility/command.js'
-import { directoryCreatePromise } from '../utility/file.js'
+import { directoryCreatePromise } from '../module/file-write.js'
 import { commandInstance } from './CommandFactory.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 

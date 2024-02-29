@@ -5,13 +5,13 @@ import type { TemplateContent, TemplateContents, OptionalContent } from '../clie
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventEdited, EventClipElement, EventTrackClips, EventScrollRoot } from '../utility/events.js'
 import { html } from 'lit-html'
-import { Component, ComponentLoader } from '../base/Component.js'
+import { Component, ComponentLoader } from '../base/component.js'
 import { DropTargetMixin } from '../mixin/component.js'
 import { droppedMashIndex } from '../utility/draganddrop.js'
-import { pixelFromFrame } from '../utility/pixel.js'
+import { pixelFromFrame } from '@moviemasher/shared-lib/utility/pixel.js'
 
 const WithDropTargetMixin = DropTargetMixin(ComponentLoader)
 
@@ -44,17 +44,18 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
 
     const contents: TemplateContents = []
     const event = new EventTrackClips(trackIndex)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { clips } = event.detail
     const byId: Record<string, Element> = {}
     if (clips?.length) {
       clips.forEach(clip => { 
-        const { frames, frame, label } = clip
+        const { frames, frame } = clip
+        const label = String(clip.value('label'))
         const width = pixelFromFrame(frames, scale, 'floor')
         const left = pixelFromFrame(frame, scale, 'floor')
         const existing = elementsById[clip.id]
         const event = new EventClipElement(clip.id, maxWidth, scale, trackIndex, trackWidth, width, left, label, existing)
-        MOVIEMASHER.dispatch(event)
+        MOVIE_MASHER.dispatch(event)
         const { element } = event.detail
         if (!element) return
         

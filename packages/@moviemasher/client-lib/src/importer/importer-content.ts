@@ -6,9 +6,9 @@ import type { NodeFunction } from '../types.js'
 import { ICON, assertDatasetElement } from '../runtime.js'
 import { EventDialog, EventImporterNodeFunction, EventImportManagedAssets, EventImporterAdd, EventImporterComplete, EventImporterRemove, EventPick, EventPicked, StringEvent } from '../utility/events.js'
 import { html, nothing } from 'lit-html'
-import { CENTER, ContentBase } from '../base/LeftCenterRight.js'
+import { CENTER, ContentBase } from '../base/component-view.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIEMASHER, DASH, $IMPORTER, isRawType } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER, DASH, $IMPORTER, isRawType } from '@moviemasher/shared-lib/runtime.js'
 import { assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 
@@ -40,7 +40,7 @@ export class ImporterContentElement extends ContentBase {
     this.listeners[EventImporterComplete.Type] = this.handleImporterComplete.bind(this)
     this.listeners[EventPick.Type] = this.handlePick.bind(this)
     const event = new EventPicked($IMPORTER)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     this.pick(event.detail.picked)
     super.connectedCallback()
   }
@@ -56,11 +56,11 @@ export class ImporterContentElement extends ContentBase {
   }
 
   private handleImporterComplete(): void {
-    MOVIEMASHER.dispatch(new EventDialog())
+    MOVIE_MASHER.dispatch(new EventDialog())
 
     const { assetObjects } = this
     this.assetObjects = []
-    MOVIEMASHER.dispatch(new EventImportManagedAssets(assetObjects))
+    MOVIE_MASHER.dispatch(new EventImportManagedAssets(assetObjects))
   }
 
   private handleImporterAdd(event: EventImporterAdd): void {
@@ -120,7 +120,7 @@ export class ImporterContentElement extends ContentBase {
     })
     // console.log(this.tagName, 'pick', sources, types)
     const event = new EventImporterNodeFunction(types, sources)
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     const { map } = event.detail
     const icons = [...map.keys()]
     const uis = [...map.values()]

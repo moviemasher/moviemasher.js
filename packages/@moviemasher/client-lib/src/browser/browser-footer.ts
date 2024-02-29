@@ -4,7 +4,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 import { IMPORT } from '../runtime.js'
 import { EventDialog } from '../utility/events.js'
 import { html } from 'lit-html'
-import { FooterBase } from '../base/LeftCenterRight.js'
+import { FooterBase } from '../base/component-view.js'
 
 export const BrowserFooterTag = 'movie-masher-browser-footer'
 

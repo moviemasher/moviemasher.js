@@ -3,7 +3,7 @@ import type { DataOrError, JobProduct } from '@moviemasher/shared-lib/types.js'
 import { $JSON, DOT, ERROR, isDefiniteError, isIdentified, isTyped, jsonParse, namedError } from '@moviemasher/shared-lib/runtime.js'
 import path from 'path'
 import { ENV, ENV_KEY } from './env.js'
-import { fileCreatedPromise, filePathExists, fileReadPromise, fileWriteJsonPromise } from './file.js'
+import { fileCreatedPromise, filePathExists, fileReadPromise, fileWriteJsonPromise } from '../module/file-write.js'
 
 const STARTED = 'started'
 const FINISHED = 'finished'
@@ -50,7 +50,7 @@ export const jobGetStatus = async (id: string): Promise<DataOrError<JobProduct |
     // assume file hasn't finished writing if empty
     if (resultString) {
       const data = jsonParse(resultString)
-      if (!isJobProduct(data)) return namedError(ERROR.Syntax, resultString)
+      if (!isTyped(data)) return namedError(ERROR.Syntax, resultString)
       
       return { data }
     }
@@ -60,9 +60,9 @@ export const jobGetStatus = async (id: string): Promise<DataOrError<JobProduct |
 
 
 
-const isJobProduct = (value: any): value is JobProduct => {
-  return isTyped(value) && isIdentified(value)
-}
+// const isJobProduct = (value: any): value is JobProduct => {
+//   return isTyped(value) && isIdentified(value)
+// }
 
 export const $DECODING = 'decoding'
 export const $ENCODING = 'encoding'

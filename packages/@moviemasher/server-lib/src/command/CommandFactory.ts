@@ -7,7 +7,7 @@ import { $AUDIO, ERROR, $VIDEO, errorCaught, errorPromise, namedError } from '@m
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import path from 'path'
 import { commandError, sizeValueString } from '../utility/command.js'
-import { directoryCreate } from '../utility/file.js'
+import { directoryCreate } from '../module/file-write.js'
 import { sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
 import { isNumber, isString } from '@moviemasher/shared-lib/utility/guard.js'
 

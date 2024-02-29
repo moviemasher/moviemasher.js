@@ -2,7 +2,7 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { CONTENTS, FOOTER, HEADER, Section } from '../base/LeftCenterRight.js'
+import { CONTENTS, FOOTER, HEADER, Section } from '../base/component-view.js'
 
 export const ExporterTag = 'movie-masher-exporter'
 

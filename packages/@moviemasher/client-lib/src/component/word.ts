@@ -1,11 +1,11 @@
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIEMASHER } from '@moviemasher/shared-lib/runtime.js'
+import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { EventTranslate } from '../utility/events.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { OptionalContent } from '../client-types.js'
-import { Component } from '../base/Component.js'
+import { Component } from '../base/component.js'
 
 const StringElementTimeout = 1000
 
@@ -37,7 +37,7 @@ export class WordElement extends Component {
   private get stringEventPromise() {
     const { string } = this
     const event = new EventTranslate(string) 
-    MOVIEMASHER.dispatch(event)
+    MOVIE_MASHER.dispatch(event)
     return event.detail.promise
   }
 

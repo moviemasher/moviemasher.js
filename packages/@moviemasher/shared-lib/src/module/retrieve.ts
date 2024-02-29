@@ -1,6 +1,6 @@
 import type { RetrieveFunction } from '../types.js'
 
-import { ERROR, MOVIEMASHER, errorCaught, errorPromise } from '../runtime.js'
+import { ERROR, MOVIE_MASHER, errorCaught, errorPromise } from '../runtime.js'
 import { isClientFont, isString } from '../utility/guard.js'
 import { requestUrl, urlName } from '../utility/request.js'
 
@@ -36,7 +36,7 @@ export const fontRetrieveFunction: RetrieveFunction = resource => {
   
   return request.resourcePromise = fetch(url, init).then(response => {
     return response.arrayBuffer().then(buffer => {
-      const { document, FontFace } = MOVIEMASHER.window
+      const { document, FontFace } = MOVIE_MASHER.window
       const { fonts } = document
       const fontFamily = urlName(url)
       const face = new FontFace(fontFamily, buffer)

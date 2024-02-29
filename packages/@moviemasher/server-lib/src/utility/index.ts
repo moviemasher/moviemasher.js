@@ -1,6 +1,5 @@
 export * from './command.js'
 export * from './env.js'
-export * from './file.js'
 export * from './id.js'
 export * from './job.js'
 export * from './event-types.js'

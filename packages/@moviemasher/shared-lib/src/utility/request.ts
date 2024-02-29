@@ -1,6 +1,6 @@
-import type { DataOrError, EndpointRequest, StringDataOrError, Strings } from '../types.js'
+import type { EndpointRequest, Strings } from '../types.js'
 
-import { COLON, EQUALS, $GET, QUESTION, SLASH, isDefiniteError } from '../runtime.js'
+import { COLON, EQUALS, $GET, QUESTION, SLASH } from '../runtime.js'
 import { isObject } from './guard.js'
 import { isString } from './guard.js'
 
@@ -9,7 +9,8 @@ const $BLOB = 'blob'
 const urlIsBlob = (url: string): boolean => url.startsWith($BLOB)
 
 export const requestUrl = (request: EndpointRequest): string => {
-  const { endpoint = '', init } = request
+  const { endpoint = '', init, objectUrl } = request
+  if (isString(objectUrl)) return objectUrl
   if (isString(endpoint)) return endpoint
 
   const { protocol, hostname, port, pathname, search } = endpoint

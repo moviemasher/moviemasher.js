@@ -1,12 +1,10 @@
-import type { Rect, Size, Strings, Transparency, ValueRecord } from '@moviemasher/shared-lib/types.js'
-import type { CommandFilter, CommandFilters, ServerAudioInstance } from '../types.js'
-import type { EvaluationSize, ErrorObject, StringTuple } from '@moviemasher/shared-lib/types.js'
+import type { AudibleInstance, ErrorObject, EvaluationSize, Rect, Size, StringTuple, Strings, Transparency, ValueRecord } from '@moviemasher/shared-lib/types.js'
+import type { CommandFilter, CommandFilters } from '../types.js'
 
-import { COLON, COMMA, DASH, DOT, EQUALS, ERROR, NEWLINE, SEMICOLON, SIZE_KEYS, SLASH, SPACE, arrayFromOneOrMore, arrayLast, } from '@moviemasher/shared-lib/runtime.js'
-import { ENV_KEY, ENV } from './env.js'
-import { $ALPHA, $FRAME, idGenerate } from '@moviemasher/shared-lib/runtime.js'
-import { copyPoint } from '@moviemasher/shared-lib/utility/rect.js'
+import { $ALPHA, $FRAME, COLON, COMMA, DASH, DOT, EQUALS, ERROR, NEWLINE, SEMICOLON, SIZE_KEYS, SLASH, SPACE, arrayFromOneOrMore, arrayLast, idGenerate, } from '@moviemasher/shared-lib/runtime.js'
 import { isNumeric, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
+import { copyPoint } from '@moviemasher/shared-lib/utility/rect.js'
+import { ENV, ENV_KEY } from './env.js'
 
 const commandExpandComplex = (trimmed: string): string => {
   if (!trimmed.includes(SEMICOLON)) return trimmed
@@ -105,9 +103,9 @@ export const formatFilter = (inputId: string, outputId: string, pix_fmts = 'yuva
 
 }
 
-export const setPtsSpeedFilters = (inputId: string, outputId: string, instance: ServerAudioInstance): CommandFilters => {
+export const setPtsSpeedFilters = (inputId: string, outputId: string, instance: AudibleInstance): CommandFilters => {
   const filters: CommandFilters = []
-  const { speed } = instance
+  const speed = instance.value('speed')
   let filterInput = inputId
   const setptsFilter = 'setpts'
   const setptsId = idGenerate(setptsFilter)
