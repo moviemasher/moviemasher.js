@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientMashAssetClass"><h2>ClientMashAssetClass</h2></a>
   <div class="section">
     <h1>Class: ClientMashAssetClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMashAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientMashAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithMashAsset</code></p>
+<li><p><code><a href='ClientAssetClass.html'>ClientAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='MashAsset.html'>MashAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientMashAssetClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ClientMashAsset.html'>ClientMashAsset</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientMashAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientMashAssetClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientMashAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientMashAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,48 +153,50 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='MashAssetObject.html'>MashAssetObject</a></code> &amp; <code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Overrides
-WithMashAsset.constructor</p>
+MashAssetMixin(ClientAssetClass).constructor</p>
 <h2>Properties</h2>
-<h3><a id="ClientMashAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<h3><a id="ClientMashAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
 <p>Inherited from
-WithMashAsset._assets</p>
-<hr>
-<h3><a id="ClientMashAssetClass.actions">actions</a></h3><p>• <strong>actions</strong>: <code><a href='Edits.html'>Edits</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.actions">actions</a></p>
+MashAssetMixin(ClientAssetClass)._assets</p>
 <hr>
 <h3><a id="ClientMashAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetIds">assetIds</a></p>
 <p>Inherited from
-WithMashAsset.assetIds</p>
+MashAssetMixin(ClientAssetClass).assetIds</p>
+<hr>
+<h3><a id="ClientMashAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetManager">assetManager</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).assetManager</p>
+<hr>
+<h3><a id="ClientMashAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetObject">assetObject</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).assetObject</p>
 <hr>
 <h3><a id="ClientMashAssetClass.buffer">buffer</a></h3><p>• <strong>buffer</strong>: <code>number</code> = <code>10</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.buffer">buffer</a></p>
 <hr>
-<h3><a id="ClientMashAssetClass.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.color">color</a></p>
-<p>Inherited from
-WithMashAsset.color</p>
-<hr>
 <h3><a id="ClientMashAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.decoding">decoding</a></p>
 <p>Inherited from
-WithMashAsset.decoding</p>
+MashAssetMixin(ClientAssetClass).decoding</p>
 <hr>
-<h3><a id="ClientMashAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ClientMashAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.decodings">decodings</a></p>
 <p>Inherited from
-WithMashAsset.decodings</p>
+MashAssetMixin(ClientAssetClass).decodings</p>
 <hr>
 <h3><a id="ClientMashAssetClass.drawnTime">drawnTime</a></h3><p>• <code>Optional</code> <strong>drawnTime</strong>: <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
@@ -204,129 +206,109 @@ WithMashAsset.decodings</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.duration">duration</a></p>
 <p>Inherited from
-WithMashAsset.duration</p>
+MashAssetMixin(ClientAssetClass).duration</p>
 <hr>
-<h3><a id="ClientMashAssetClass.encoding">encoding</a></h3><p>• <strong>encoding</strong>: <code>string</code></p>
+<h3><a id="ClientMashAssetClass.edits">edits</a></h3><p>• <strong>edits</strong>: <code><a href='Edits.html'>Edits</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.encoding">encoding</a></p>
-<hr>
-<h3><a id="ClientMashAssetClass.encodings">encodings</a></h3><p>• <strong>encodings</strong>: <code><a href='Encodings.html'>Encodings</a></code> = <code>[]</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.encodings">encodings</a></p>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.edits">edits</a></p>
 <hr>
 <h3><a id="ClientMashAssetClass.endTime">endTime</a></h3><p>• <strong>endTime</strong>: <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.endTime">endTime</a></p>
 <p>Inherited from
-WithMashAsset.endTime</p>
+MashAssetMixin(ClientAssetClass).endTime</p>
+<hr>
+<h3><a id="ClientMashAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ClientMashAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientMashAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.id">id</a></p>
 <p>Inherited from
-WithMashAsset.id</p>
-<hr>
-<h3><a id="ClientMashAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.label">label</a></p>
-<p>Inherited from
-WithMashAsset.label</p>
-<hr>
-<h3><a id="ClientMashAssetClass.listeners">listeners</a></h3><p>• <code>Protected</code> <strong>listeners</strong>: <code><a href='EventDispatcherListeners.html'>EventDispatcherListeners</a></code> = <code>{}</code></p>
-<hr>
-<h3><a id="ClientMashAssetClass.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.loop">loop</a></p>
-<p>Inherited from
-WithMashAsset.loop</p>
+MashAssetMixin(ClientAssetClass).id</p>
 <hr>
 <h3><a id="ClientMashAssetClass.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.mashIndex">mashIndex</a></p>
 <p>Inherited from
-WithMashAsset.mashIndex</p>
+MashAssetMixin(ClientAssetClass).mashIndex</p>
 <hr>
-<h3><a id="ClientMashAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientMashAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.properties">properties</a></p>
 <p>Inherited from
-WithMashAsset.properties</p>
-<hr>
-<h3><a id="ClientMashAssetClass.quantize">quantize</a></h3><p>• <strong>quantize</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.quantize">quantize</a></p>
-<p>Inherited from
-WithMashAsset.quantize</p>
+MashAssetMixin(ClientAssetClass).properties</p>
 <hr>
 <h3><a id="ClientMashAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.request">request</a></p>
 <p>Inherited from
-WithMashAsset.request</p>
+MashAssetMixin(ClientAssetClass).request</p>
 <hr>
 <h3><a id="ClientMashAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.resource">resource</a></p>
 <p>Inherited from
-WithMashAsset.resource</p>
+MashAssetMixin(ClientAssetClass).resource</p>
 <hr>
-<h3><a id="ClientMashAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ClientMashAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.resources">resources</a></p>
 <p>Inherited from
-WithMashAsset.resources</p>
+MashAssetMixin(ClientAssetClass).resources</p>
 <hr>
 <h3><a id="ClientMashAssetClass.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.size">size</a></p>
 <p>Inherited from
-WithMashAsset.size</p>
+MashAssetMixin(ClientAssetClass).size</p>
 <hr>
 <h3><a id="ClientMashAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.source">source</a></p>
 <p>Inherited from
-WithMashAsset.source</p>
+MashAssetMixin(ClientAssetClass).source</p>
 <hr>
 <h3><a id="ClientMashAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$MASH'>$MASH</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.targetId">targetId</a></p>
 <p>Overrides
-WithMashAsset.targetId</p>
+MashAssetMixin(ClientAssetClass).targetId</p>
 <hr>
 <h3><a id="ClientMashAssetClass.totalFrames">totalFrames</a></h3><p>• <strong>totalFrames</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.totalFrames">totalFrames</a></p>
 <p>Inherited from
-WithMashAsset.totalFrames</p>
+MashAssetMixin(ClientAssetClass).totalFrames</p>
 <hr>
 <h3><a id="ClientMashAssetClass.tracks">tracks</a></h3><p>• <strong>tracks</strong>: <code><a href='ClientTracks.html'>ClientTracks</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.tracks">tracks</a></p>
 <p>Overrides
-WithMashAsset.tracks</p>
+MashAssetMixin(ClientAssetClass).tracks</p>
 <hr>
 <h3><a id="ClientMashAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.type">type</a></p>
 <p>Inherited from
-WithMashAsset.type</p>
+MashAssetMixin(ClientAssetClass).type</p>
 <h2>Accessors</h2>
-<h3><a id="ClientMashAssetClass.assetObject">assetObject</a></h3><p>• <code>get</code> <strong>assetObject</strong>(): <code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code></p>
-<p>Returns
-<code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetObject">assetObject</a></p>
-<p>Overrides
-WithMashAsset.assetObject</p>
-<hr>
 <h3><a id="ClientMashAssetClass.assets">assets</a></h3><p>• <code>get</code> <strong>assets</strong>(): <code><a href='Assets.html'>Assets</a></code></p>
 <p>Returns
 <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assets">assets</a></p>
 <p>Overrides
-WithMashAsset.assets</p>
+MashAssetMixin(ClientAssetClass).assets</p>
 <hr>
 <h3><a id="ClientMashAssetClass.clips">clips</a></h3><p>• <code>get</code> <strong>clips</strong>(): <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <p>Returns
@@ -334,13 +316,13 @@ WithMashAsset.assets</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.clips">clips</a></p>
 <p>Overrides
-WithMashAsset.clips</p>
+MashAssetMixin(ClientAssetClass).clips</p>
 <hr>
-<h3><a id="ClientMashAssetClass.composition">composition</a></h3><p>• <code>get</code> <strong>composition</strong>(): <code><a href='AudioPreview.html'>AudioPreview</a></code></p>
+<h3><a id="ClientMashAssetClass.encoding">encoding</a></h3><p>• <code>get</code> <strong>encoding</strong>(): <code><a href='Resource.html'>Resource</a></code></p>
 <p>Returns
-<code><a href='AudioPreview.html'>AudioPreview</a></code></p>
+<code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.composition">composition</a></p>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.encoding">encoding</a></p>
 <hr>
 <h3><a id="ClientMashAssetClass.frame">frame</a></h3><p>• <code>get</code> <strong>frame</strong>(): <code>number</code></p>
 <p>Returns
@@ -384,13 +366,13 @@ WithMashAsset.clips</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.saveNeeded">saveNeeded</a></p>
 <p>Overrides
-WithMashAsset.saveNeeded</p>
+MashAssetMixin(ClientAssetClass).saveNeeded</p>
 <hr>
 <h3><a id="ClientMashAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithMashAsset.scalarRecord</p>
+MashAssetMixin(ClientAssetClass).scalarRecord</p>
 <hr>
 <h3><a id="ClientMashAssetClass.time">time</a></h3><p>• <code>get</code> <strong>time</strong>(): <code><a href='Time.html'>Time</a></code></p>
 <p>Returns
@@ -422,7 +404,7 @@ WithMashAsset.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>clip</code></td>
-<td align="left"><code><a href='ClientClips.html'>ClientClips</a></code> | <code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code> | <code><a href='ClientClips.html'>ClientClips</a></code></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
@@ -465,7 +447,7 @@ WithMashAsset.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.addTrack">addTrack</a></p>
 <hr>
-<h3><a id="ClientMashAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientMashAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -475,36 +457,16 @@ WithMashAsset.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ClientAsset.html'>ClientAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.asset">asset</a></p>
-<p>Inherited from
-WithMashAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Implementation of</h4>
-<p>ClientMashAsset.asset</p>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.asset">asset</a></p>
 <p>Inherited from
-WithMashAsset.asset</p>
+MashAssetMixin(ClientAssetClass).asset</p>
 <hr>
 <h3><a id="ClientMashAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -525,9 +487,9 @@ WithMashAsset.asset</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetCachePromise">assetCachePromise</a></p>
 <p>Inherited from
-WithMashAsset.assetCachePromise</p>
+MashAssetMixin(ClientAssetClass).assetCachePromise</p>
 <hr>
-<h3><a id="ClientMashAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
+<h3><a id="ClientMashAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_size</code>, <code>_cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -537,8 +499,12 @@ WithMashAsset.assetCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_</code></td>
+<td align="left"><code>_size</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>_cover?</code></td>
+<td align="left"><code>boolean</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -546,7 +512,7 @@ WithMashAsset.assetCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetIcon">assetIcon</a></p>
 <p>Inherited from
-WithMashAsset.assetIcon</p>
+MashAssetMixin(ClientAssetClass).assetIcon</p>
 <hr>
 <h3><a id="ClientMashAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -563,7 +529,7 @@ WithMashAsset.assetIcon</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -575,7 +541,28 @@ WithMashAsset.assetIcon</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.assetIconPromise">assetIconPromise</a></p>
 <p>Inherited from
-WithMashAsset.assetIconPromise</p>
+MashAssetMixin(ClientAssetClass).assetIconPromise</p>
+<hr>
+<h3><a id="ClientMashAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.boolean">boolean</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).boolean</p>
 <hr>
 <h3><a id="ClientMashAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -600,7 +587,7 @@ WithMashAsset.assetIconPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithMashAsset.changeScalar</p>
+MashAssetMixin(ClientAssetClass).changeScalar</p>
 <hr>
 <h3><a id="ClientMashAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -621,7 +608,7 @@ WithMashAsset.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithMashAsset.changeScalars</p>
+MashAssetMixin(ClientAssetClass).changeScalars</p>
 <hr>
 <h3><a id="ClientMashAssetClass.changeTiming">changeTiming</a></h3><p>▸ <strong>changeTiming</strong>(<code>propertied</code>, <code>property</code>, <code>value</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -675,7 +662,7 @@ WithMashAsset.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.clipInstance">clipInstance</a></p>
 <p>Overrides
-WithMashAsset.clipInstance</p>
+MashAssetMixin(ClientAssetClass).clipInstance</p>
 <hr>
 <h3><a id="ClientMashAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -687,7 +674,7 @@ WithMashAsset.clipInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -696,7 +683,7 @@ WithMashAsset.clipInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.clipObject">clipObject</a></p>
 <p>Inherited from
-WithMashAsset.clipObject</p>
+MashAssetMixin(ClientAssetClass).clipObject</p>
 <hr>
 <h3><a id="ClientMashAssetClass.clipsAudibleInTime">clipsAudibleInTime</a></h3><p>▸ <strong>clipsAudibleInTime</strong>(<code>time</code>): <code><a href='Clips.html'>Clips</a></code></p>
 <h4>Parameters</h4>
@@ -717,7 +704,7 @@ WithMashAsset.clipObject</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.clipsAudibleInTime">clipsAudibleInTime</a></p>
 <p>Inherited from
-WithMashAsset.clipsAudibleInTime</p>
+MashAssetMixin(ClientAssetClass).clipsAudibleInTime</p>
 <hr>
 <h3><a id="ClientMashAssetClass.clipsInTimeOfType">clipsInTimeOfType</a></h3><p>▸ <strong>clipsInTimeOfType</strong>(<code>time</code>, <code>avType?</code>): <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <h4>Parameters</h4>
@@ -742,7 +729,7 @@ WithMashAsset.clipsAudibleInTime</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.clipsInTimeOfType">clipsInTimeOfType</a></p>
 <p>Overrides
-WithMashAsset.clipsInTimeOfType</p>
+MashAssetMixin(ClientAssetClass).clipsInTimeOfType</p>
 <hr>
 <h3><a id="ClientMashAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -767,7 +754,7 @@ WithMashAsset.clipsInTimeOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithMashAsset.constrainedValue</p>
+MashAssetMixin(ClientAssetClass).constrainedValue</p>
 <hr>
 <h3><a id="ClientMashAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -788,7 +775,7 @@ WithMashAsset.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.decodingOfType">decodingOfType</a></p>
 <p>Inherited from
-WithMashAsset.decodingOfType</p>
+MashAssetMixin(ClientAssetClass).decodingOfType</p>
 <hr>
 <h3><a id="ClientMashAssetClass.dispatchChanged">dispatchChanged</a></h3><p>▸ <strong>dispatchChanged</strong>(<code>edit</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -830,7 +817,7 @@ WithMashAsset.decodingOfType</p>
 </tr>
 <tr>
 <td align="left"><code>selectedClip?</code></td>
-<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='Clip.html'>Clip</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -857,7 +844,7 @@ WithMashAsset.decodingOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.framesHaveChanged">framesHaveChanged</a></p>
 <hr>
-<h3><a id="ClientMashAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientMashAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -872,32 +859,11 @@ WithMashAsset.decodingOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.imagePromise">imagePromise</a></p>
 <p>Inherited from
-WithMashAsset.imagePromise</p>
-<hr>
-<h3><a id="ClientMashAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.initializeProperties">initializeProperties</a></p>
-<p>Overrides
-WithMashAsset.initializeProperties</p>
+MashAssetMixin(ClientAssetClass).imagePromise</p>
 <hr>
 <h3><a id="ClientMashAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -918,7 +884,7 @@ WithMashAsset.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.instanceArgs">instanceArgs</a></p>
 <p>Inherited from
-WithMashAsset.instanceArgs</p>
+MashAssetMixin(ClientAssetClass).instanceArgs</p>
 <hr>
 <h3><a id="ClientMashAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>_?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
@@ -930,7 +896,7 @@ WithMashAsset.instanceArgs</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_?</code></td>
+<td align="left"><code>_</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -939,7 +905,7 @@ WithMashAsset.instanceArgs</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Inherited from
-WithMashAsset.instanceFromObject</p>
+MashAssetMixin(ClientAssetClass).instanceFromObject</p>
 <hr>
 <h3><a id="ClientMashAssetClass.mashDescription">mashDescription</a></h3><p>▸ <strong>mashDescription</strong>(<code>options</code>, <code>selectedClip?</code>): <code><a href='ClientMashDescription.html'>ClientMashDescription</a></code></p>
 <h4>Parameters</h4>
@@ -956,7 +922,7 @@ WithMashAsset.instanceFromObject</p>
 </tr>
 <tr>
 <td align="left"><code>selectedClip?</code></td>
-<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='Clip.html'>Clip</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -964,9 +930,9 @@ WithMashAsset.instanceFromObject</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.mashDescription">mashDescription</a></p>
 <p>Overrides
-WithMashAsset.mashDescription</p>
+MashAssetMixin(ClientAssetClass).mashDescription</p>
 <hr>
-<h3><a id="ClientMashAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientMashAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -976,14 +942,16 @@ WithMashAsset.mashDescription</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.number">number</a></p>
 <p>Inherited from
-WithMashAsset.propertiesInitialize</p>
+MashAssetMixin(ClientAssetClass).number</p>
 <hr>
 <h3><a id="ClientMashAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -1004,7 +972,7 @@ WithMashAsset.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithMashAsset.propertyFind</p>
+MashAssetMixin(ClientAssetClass).propertyFind</p>
 <hr>
 <h3><a id="ClientMashAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -1025,7 +993,7 @@ WithMashAsset.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithMashAsset.propertyIds</p>
+MashAssetMixin(ClientAssetClass).propertyIds</p>
 <hr>
 <h3><a id="ClientMashAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -1046,13 +1014,7 @@ WithMashAsset.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithMashAsset.propertyInstance</p>
-<hr>
-<h3><a id="ClientMashAssetClass.putPromise">putPromise</a></h3><p>▸ <strong>putPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.putPromise">putPromise</a></p>
+MashAssetMixin(ClientAssetClass).propertyInstance</p>
 <hr>
 <h3><a id="ClientMashAssetClass.reload">reload</a></h3><p>▸ <strong>reload</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <p>Returns
@@ -1071,7 +1033,7 @@ WithMashAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>clip</code></td>
-<td align="left"><code><a href='ClientClips.html'>ClientClips</a></code> | <code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='Clip.html'>Clip</a></code> | <code><a href='Clips.html'>Clips</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1109,7 +1071,7 @@ WithMashAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1117,7 +1079,7 @@ WithMashAsset.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.resourceOfType">resourceOfType</a></p>
 <p>Inherited from
-WithMashAsset.resourceOfType</p>
+MashAssetMixin(ClientAssetClass).resourceOfType</p>
 <hr>
 <h3><a id="ClientMashAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1136,7 +1098,7 @@ WithMashAsset.resourceOfType</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-WithMashAsset.saveId</p>
+MashAssetMixin(ClientAssetClass).saveId</p>
 <hr>
 <h3><a id="ClientMashAssetClass.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -1157,7 +1119,7 @@ WithMashAsset.saveId</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.savePromise">savePromise</a></p>
 <p>Overrides
-WithMashAsset.savePromise</p>
+MashAssetMixin(ClientAssetClass).savePromise</p>
 <hr>
 <h3><a id="ClientMashAssetClass.savingPromise">savingPromise</a></h3><p>▸ <code>Protected</code> <strong>savingPromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -1176,7 +1138,7 @@ WithMashAsset.savePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <p>Inherited from
-WithMashAsset.savingPromise</p>
+MashAssetMixin(ClientAssetClass).savingPromise</p>
 <hr>
 <h3><a id="ClientMashAssetClass.seekToTime">seekToTime</a></h3><p>▸ <strong>seekToTime</strong>(<code>time</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <h4>Parameters</h4>
@@ -1220,9 +1182,9 @@ WithMashAsset.savingPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.setValue">setValue</a></p>
 <p>Overrides
-WithMashAsset.setValue</p>
+MashAssetMixin(ClientAssetClass).setValue</p>
 <hr>
-<h3><a id="ClientMashAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientMashAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1242,16 +1204,39 @@ WithMashAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
-<p>Overrides
-WithMashAsset.shouldSelectProperty</p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.shouldSelectProperty">shouldSelectProperty</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientMashAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.string">string</a></p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).string</p>
 <hr>
 <h3><a id="ClientMashAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.toJSON">toJSON</a></p>
-<p>Overrides
-WithMashAsset.toJSON</p>
+<p>Inherited from
+MashAssetMixin(ClientAssetClass).toJSON</p>
 <hr>
 <h3><a id="ClientMashAssetClass.trackInstance">trackInstance</a></h3><p>▸ <strong>trackInstance</strong>(<code>args</code>): <code><a href='ClientTrack.html'>ClientTrack</a></code></p>
 <h4>Parameters</h4>
@@ -1272,7 +1257,7 @@ WithMashAsset.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.trackInstance">trackInstance</a></p>
 <p>Overrides
-WithMashAsset.trackInstance</p>
+MashAssetMixin(ClientAssetClass).trackInstance</p>
 <hr>
 <h3><a id="ClientMashAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1301,7 +1286,7 @@ WithMashAsset.trackInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithMashAsset.tweenValues</p>
+MashAssetMixin(ClientAssetClass).tweenValues</p>
 <hr>
 <h3><a id="ClientMashAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -1309,7 +1294,7 @@ WithMashAsset.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.unload">unload</a></p>
 <p>Overrides
-WithMashAsset.unload</p>
+MashAssetMixin(ClientAssetClass).unload</p>
 <hr>
 <h3><a id="ClientMashAssetClass.updateAssetId">updateAssetId</a></h3><p>▸ <strong>updateAssetId</strong>(<code>oldId</code>, <code>newId</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1353,7 +1338,7 @@ WithMashAsset.unload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashAsset.html">ClientMashAsset</a>.<a href="ClientMashAsset.html#ClientMashAsset.value">value</a></p>
 <p>Inherited from
-WithMashAsset.value</p>
+MashAssetMixin(ClientAssetClass).value</p>
 
   </div>
 </section>
@@ -1365,24 +1350,21 @@ WithMashAsset.value</p>
         <ul><li><a class='' href='#ClientMashAssetClass'>ClientMashAssetClass</a></li>
 <li><a class='' href='#ClientMashAssetClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientMashAssetClass._assets'>_assets</a></li>
-<li><a class='' href='#ClientMashAssetClass.actions'>actions</a></li>
 <li><a class='' href='#ClientMashAssetClass.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientMashAssetClass.assetManager'>assetManager</a></li>
+<li><a class='' href='#ClientMashAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientMashAssetClass.buffer'>buffer</a></li>
-<li><a class='' href='#ClientMashAssetClass.color'>color</a></li>
 <li><a class='' href='#ClientMashAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ClientMashAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ClientMashAssetClass.drawnTime'>drawnTime</a></li>
 <li><a class='' href='#ClientMashAssetClass.duration'>duration</a></li>
-<li><a class='' href='#ClientMashAssetClass.encoding'>encoding</a></li>
-<li><a class='' href='#ClientMashAssetClass.encodings'>encodings</a></li>
+<li><a class='' href='#ClientMashAssetClass.edits'>edits</a></li>
 <li><a class='' href='#ClientMashAssetClass.endTime'>endTime</a></li>
+<li><a class='' href='#ClientMashAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientMashAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientMashAssetClass.id'>id</a></li>
-<li><a class='' href='#ClientMashAssetClass.label'>label</a></li>
-<li><a class='' href='#ClientMashAssetClass.listeners'>listeners</a></li>
-<li><a class='' href='#ClientMashAssetClass.loop'>loop</a></li>
 <li><a class='' href='#ClientMashAssetClass.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#ClientMashAssetClass.properties'>properties</a></li>
-<li><a class='' href='#ClientMashAssetClass.quantize'>quantize</a></li>
 <li><a class='' href='#ClientMashAssetClass.request'>request</a></li>
 <li><a class='' href='#ClientMashAssetClass.resource'>resource</a></li>
 <li><a class='' href='#ClientMashAssetClass.resources'>resources</a></li>
@@ -1392,10 +1374,9 @@ WithMashAsset.value</p>
 <li><a class='' href='#ClientMashAssetClass.totalFrames'>totalFrames</a></li>
 <li><a class='' href='#ClientMashAssetClass.tracks'>tracks</a></li>
 <li><a class='' href='#ClientMashAssetClass.type'>type</a></li>
-<li><a class='' href='#ClientMashAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientMashAssetClass.assets'>assets</a></li>
 <li><a class='' href='#ClientMashAssetClass.clips'>clips</a></li>
-<li><a class='' href='#ClientMashAssetClass.composition'>composition</a></li>
+<li><a class='' href='#ClientMashAssetClass.encoding'>encoding</a></li>
 <li><a class='' href='#ClientMashAssetClass.frame'>frame</a></li>
 <li><a class='' href='#ClientMashAssetClass.loading'>loading</a></li>
 <li><a class='' href='#ClientMashAssetClass.paused'>paused</a></li>
@@ -1410,6 +1391,7 @@ WithMashAsset.value</p>
 <li><a class='' href='#ClientMashAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ClientMashAssetClass.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientMashAssetClass.assetIconPromise'>assetIconPromise</a></li>
+<li><a class='' href='#ClientMashAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientMashAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientMashAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientMashAssetClass.changeTiming'>changeTiming</a></li>
@@ -1425,15 +1407,13 @@ WithMashAsset.value</p>
 <li><a class='' href='#ClientMashAssetClass.elementsPromise'>elementsPromise</a></li>
 <li><a class='' href='#ClientMashAssetClass.framesHaveChanged'>framesHaveChanged</a></li>
 <li><a class='' href='#ClientMashAssetClass.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientMashAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientMashAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientMashAssetClass.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#ClientMashAssetClass.mashDescription'>mashDescription</a></li>
-<li><a class='' href='#ClientMashAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientMashAssetClass.number'>number</a></li>
 <li><a class='' href='#ClientMashAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientMashAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientMashAssetClass.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ClientMashAssetClass.putPromise'>putPromise</a></li>
 <li><a class='' href='#ClientMashAssetClass.reload'>reload</a></li>
 <li><a class='' href='#ClientMashAssetClass.removeClipFromTrack'>removeClipFromTrack</a></li>
 <li><a class='' href='#ClientMashAssetClass.removeTrack'>removeTrack</a></li>
@@ -1444,6 +1424,7 @@ WithMashAsset.value</p>
 <li><a class='' href='#ClientMashAssetClass.seekToTime'>seekToTime</a></li>
 <li><a class='' href='#ClientMashAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientMashAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientMashAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientMashAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientMashAssetClass.trackInstance'>trackInstance</a></li>
 <li><a class='' href='#ClientMashAssetClass.tweenValues'>tweenValues</a></li>

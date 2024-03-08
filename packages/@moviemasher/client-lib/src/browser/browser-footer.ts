@@ -1,10 +1,11 @@
 import type { PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../client-types.js'
 
-import { IMPORT } from '../runtime.js'
-import { EventDialog } from '../utility/events.js'
+import { EventDialog } from '../module/event.js'
 import { html } from 'lit-html'
 import { FooterBase } from '../base/component-view.js'
+import { $IMPORT } from '@moviemasher/shared-lib/runtime.js'
+import { $INSERT } from '../utility/constants.js'
 
 export const BrowserFooterTag = 'movie-masher-browser-footer'
 
@@ -19,9 +20,9 @@ export class BrowserFooterElement extends FooterBase {
     this.loadComponent('movie-masher-button')
     htmls.push(html`
       <movie-masher-button
-        icon='add' emit='${EventDialog.Type}' 
+        icon='${$INSERT}' emit='${EventDialog.Type}' 
         detail='importer'
-        string='${IMPORT}'
+        string='${$IMPORT}'
       ></movie-masher-button>
     `)
     return super.leftContent(htmls)

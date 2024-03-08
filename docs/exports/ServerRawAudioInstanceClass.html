@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerRawAudioInstanceClass"><h2>ServerRawAudioInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ServerRawAudioInstanceClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawAudioInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerRawAudioInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code>WithAudioInstance</code></p>
@@ -140,10 +140,10 @@
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerRawAudioInstance.html'>ServerRawAudioInstance</a></code></li>
+<li><code>ServerRawAudioInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerRawAudioInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerRawAudioInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ServerRawAudioInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerRawAudioInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,273 +153,87 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='AudioInstanceObject.html'>AudioInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
+<p>Inherited from
 WithAudioInstance.constructor</p>
 <h2>Properties</h2>
 <h3><a id="ServerRawAudioInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
 WithAudioInstance._id</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithAudioInstance._label</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerRawAudioAsset.html'>ServerRawAudioAsset</a></code></p>
+<h3><a id="ServerRawAudioInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ServerRawAudioAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.asset">asset</a></p>
+<p>ServerRawAudioInstance.asset</p>
 <p>Overrides
 WithAudioInstance.asset</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.assetId">assetId</a></p>
+<p>ServerRawAudioInstance.assetId</p>
 <p>Inherited from
 WithAudioInstance.assetId</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.assetIds">assetIds</a></p>
+<p>ServerRawAudioInstance.assetIds</p>
 <p>Inherited from
 WithAudioInstance.assetIds</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithAudioInstance.bottomCrop</p>
-<hr>
 <h3><a id="ServerRawAudioInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.canBeMuted">canBeMuted</a></p>
+<p>ServerRawAudioInstance.canBeMuted</p>
 <p>Inherited from
 WithAudioInstance.canBeMuted</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.clip">clip</a></p>
+<p>ServerRawAudioInstance.clip</p>
 <p>Inherited from
 WithAudioInstance.clip</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.container">container</a></p>
-<p>Inherited from
-WithAudioInstance.container</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.cropDirections">cropDirections</a></p>
-<p>Inherited from
-WithAudioInstance.cropDirections</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.endTrim">endTrim</a></h3><p>• <strong>endTrim</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.endTrim">endTrim</a></p>
-<p>Inherited from
-WithAudioInstance.endTrim</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.gain">gain</a></h3><p>• <strong>gain</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.gain">gain</a></p>
-<p>Inherited from
-WithAudioInstance.gain</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.gainPairs">gainPairs</a></h3><p>• <strong>gainPairs</strong>: <code><a href='Numbers.html'>Numbers</a></code>[]</p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.gainPairs">gainPairs</a></p>
-<p>Inherited from
-WithAudioInstance.gainPairs</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<h3><a id="ServerRawAudioInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
 WithAudioInstance.hasIntrinsicTiming</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.height">height</a></p>
-<p>Inherited from
-WithAudioInstance.height</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithAudioInstance.heightEnd</p>
-<hr>
 <h3><a id="ServerRawAudioInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.id">id</a></p>
+<p>ServerRawAudioInstance.id</p>
 <p>Inherited from
 WithAudioInstance.id</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.instanceObject">instanceObject</a></p>
+<p>ServerRawAudioInstance.instanceObject</p>
 <p>Inherited from
 WithAudioInstance.instanceObject</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.intrinsicRect">intrinsicRect</a></p>
-<p>Inherited from
-WithAudioInstance.intrinsicRect</p>
-<hr>
 <h3><a id="ServerRawAudioInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.isDefault">isDefault</a></p>
+<p>ServerRawAudioInstance.isDefault</p>
 <p>Inherited from
 WithAudioInstance.isDefault</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithAudioInstance.leftCrop</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.lock">lock</a></p>
-<p>Inherited from
-WithAudioInstance.lock</p>
-<hr>
 <h3><a id="ServerRawAudioInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.muted">muted</a></p>
+<p>ServerRawAudioInstance.muted</p>
 <p>Inherited from
 WithAudioInstance.muted</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ServerRawAudioInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.opacityEnd">opacityEnd</a></p>
-<p>Inherited from
-WithAudioInstance.opacityEnd</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.pointAspect">pointAspect</a></p>
-<p>Inherited from
-WithAudioInstance.pointAspect</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.properties">properties</a></p>
+<p>ServerRawAudioInstance.properties</p>
 <p>Inherited from
 WithAudioInstance.properties</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
+<h3><a id="ServerRawAudioInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithAudioInstance.rightCrop</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithAudioInstance.sizeAspect</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithAudioInstance.sizeKey</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.speed">speed</a></h3><p>• <strong>speed</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.speed">speed</a></p>
-<p>Inherited from
-WithAudioInstance.speed</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.startTrim">startTrim</a></h3><p>• <strong>startTrim</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.startTrim">startTrim</a></p>
-<p>Inherited from
-WithAudioInstance.startTrim</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.targetId">targetId</a></p>
+<p>ServerRawAudioInstance.targetId</p>
 <p>Inherited from
 WithAudioInstance.targetId</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithAudioInstance.topCrop</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.width">width</a></p>
-<p>Inherited from
-WithAudioInstance.width</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithAudioInstance.widthEnd</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.x">x</a></p>
-<p>Inherited from
-WithAudioInstance.x</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithAudioInstance.xEnd</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.y">y</a></p>
-<p>Inherited from
-WithAudioInstance.y</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithAudioInstance.yEnd</p>
 <h2>Accessors</h2>
-<h3><a id="ServerRawAudioInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithAudioInstance.isAudio</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithAudioInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithAudioInstance.label</p>
-<hr>
 <h3><a id="ServerRawAudioInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
@@ -444,7 +258,7 @@ WithAudioInstance.scalarRecord</p>
 <code><a href='Numbers.html'>Numbers</a></code></p>
 <p>Array containing duration, start trim, and end trim in frames.</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.assetFrames">assetFrames</a></p>
+<p>ServerRawAudioInstance.assetFrames</p>
 <p>Inherited from
 WithAudioInstance.assetFrames</p>
 <hr>
@@ -465,7 +279,7 @@ WithAudioInstance.assetFrames</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.assetTime">assetTime</a></p>
+<p>ServerRawAudioInstance.assetTime</p>
 <p>Inherited from
 WithAudioInstance.assetTime</p>
 <hr>
@@ -488,6 +302,27 @@ WithAudioInstance.assetTime</p>
 <p>Inherited from
 WithAudioInstance.audibleCommandFiles</p>
 <hr>
+<h3><a id="ServerRawAudioInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioInstance.boolean</p>
+<p>Inherited from
+WithAudioInstance.boolean</p>
+<hr>
 <h3><a id="ServerRawAudioInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -508,6 +343,8 @@ WithAudioInstance.audibleCommandFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioInstance.changeScalar</p>
 <p>Inherited from
 WithAudioInstance.changeScalar</p>
 <hr>
@@ -527,6 +364,8 @@ WithAudioInstance.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioInstance.changeScalars</p>
 <p>Inherited from
 WithAudioInstance.changeScalars</p>
 <hr>
@@ -547,7 +386,7 @@ WithAudioInstance.changeScalars</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.commandFiles">commandFiles</a></p>
+<p>ServerRawAudioInstance.commandFiles</p>
 <p>Inherited from
 WithAudioInstance.commandFiles</p>
 <hr>
@@ -572,55 +411,9 @@ WithAudioInstance.commandFiles</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.constrainedValue">constrainedValue</a></p>
+<p>ServerRawAudioInstance.constrainedValue</p>
 <p>Inherited from
 WithAudioInstance.constrainedValue</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.containerRects">containerRects</a></p>
-<p>Inherited from
-WithAudioInstance.containerRects</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContentRectArgs.html'>ContentRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.contentRects">contentRects</a></p>
-<p>Inherited from
-WithAudioInstance.contentRects</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -639,50 +432,9 @@ WithAudioInstance.contentRects</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.frames">frames</a></p>
+<p>ServerRawAudioInstance.frames</p>
 <p>Inherited from
 WithAudioInstance.frames</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithAudioInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerRawAudioInstance.initializeProperties</p>
-<p>Inherited from
-WithAudioInstance.initializeProperties</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -701,7 +453,7 @@ WithAudioInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ServerRawAudioInstance.instanceCachePromise</p>
 <p>Inherited from
 WithAudioInstance.instanceCachePromise</p>
 <hr>
@@ -722,11 +474,11 @@ WithAudioInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ServerRawAudioInstance.intrinsicsKnown</p>
 <p>Inherited from
 WithAudioInstance.intrinsicsKnown</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerRawAudioInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -736,14 +488,16 @@ WithAudioInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioInstance.number</p>
 <p>Inherited from
-WithAudioInstance.propertiesInitialize</p>
+WithAudioInstance.number</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -762,7 +516,7 @@ WithAudioInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.propertyFind">propertyFind</a></p>
+<p>ServerRawAudioInstance.propertyFind</p>
 <p>Inherited from
 WithAudioInstance.propertyFind</p>
 <hr>
@@ -783,7 +537,7 @@ WithAudioInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.propertyIds">propertyIds</a></p>
+<p>ServerRawAudioInstance.propertyIds</p>
 <p>Inherited from
 WithAudioInstance.propertyIds</p>
 <hr>
@@ -804,34 +558,9 @@ WithAudioInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.propertyInstance">propertyInstance</a></p>
+<p>ServerRawAudioInstance.propertyInstance</p>
 <p>Inherited from
 WithAudioInstance.propertyInstance</p>
-<hr>
-<h3><a id="ServerRawAudioInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>range</code></td>
-<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.scaleRects">scaleRects</a></p>
-<p>Inherited from
-WithAudioInstance.scaleRects</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -854,11 +583,11 @@ WithAudioInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.setValue">setValue</a></p>
+<p>ServerRawAudioInstance.setValue</p>
 <p>Inherited from
 WithAudioInstance.setValue</p>
 <hr>
-<h3><a id="ServerRawAudioInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerRawAudioInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -878,14 +607,37 @@ WithAudioInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioInstance.shouldSelectProperty</p>
 <p>Inherited from
 WithAudioInstance.shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerRawAudioInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioInstance.string</p>
+<p>Inherited from
+WithAudioInstance.string</p>
 <hr>
 <h3><a id="ServerRawAudioInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.toJSON">toJSON</a></p>
+<p>ServerRawAudioInstance.toJSON</p>
 <p>Inherited from
 WithAudioInstance.toJSON</p>
 <hr>
@@ -914,7 +666,7 @@ WithAudioInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.tweenValues">tweenValues</a></p>
+<p>ServerRawAudioInstance.tweenValues</p>
 <p>Inherited from
 WithAudioInstance.tweenValues</p>
 <hr>
@@ -935,7 +687,7 @@ WithAudioInstance.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioInstance.html">ServerRawAudioInstance</a>.<a href="ServerRawAudioInstance.html#ServerRawAudioInstance.value">value</a></p>
+<p>ServerRawAudioInstance.value</p>
 <p>Inherited from
 WithAudioInstance.value</p>
 
@@ -949,67 +701,37 @@ WithAudioInstance.value</p>
         <ul><li><a class='' href='#ServerRawAudioInstanceClass'>ServerRawAudioInstanceClass</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.container'>container</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.endTrim'>endTrim</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.gain'>gain</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.gainPairs'>gainPairs</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.height'>height</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.id'>id</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.instanceObject'>instanceObject</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.sizeAspect'>sizeAspect</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.sizeKey'>sizeKey</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.speed'>speed</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.startTrim'>startTrim</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.topCrop'>topCrop</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.width'>width</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.x'>x</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.y'>y</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.label'>label</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.assetFrames'>assetFrames</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.assetTime'>assetTime</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.audibleCommandFiles'>audibleCommandFiles</a></li>
+<li><a class='' href='#ServerRawAudioInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.commandFiles'>commandFiles</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.containerRects'>containerRects</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerRawAudioInstanceClass.number'>number</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ServerRawAudioInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerRawAudioInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerRawAudioInstanceClass.value'>value</a></li></ul>

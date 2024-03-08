@@ -1,7 +1,8 @@
-import type { ClientClip,BooleanRecord, DataOrError, ListenersFunction, Propertied, PropertyId, Size, SvgElement, TargetId, Timing } from '@moviemasher/shared-lib/types.js'
+import type { BooleanRecord, ClientClip, DataOrError, ListenersFunction, Propertied, PropertyId, Size, SvgElement, TargetId, Timing } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent, TemplateContents } from '../client-types.js'
-import type {  ClipLocation, DropTarget, EventClipElementDetail, Timeout } from '../types.js'
+import type { ClipLocation, DropTarget, Timeout } from '../types.js'
+import type { EventClipElementDetail } from '../utility/event-types.js'
 
 import { IntersectionController } from '@lit-labs/observers/intersection-controller.js'
 import { ResizeController } from '@lit-labs/observers/resize-controller.js'
@@ -9,16 +10,17 @@ import { css } from '@lit/reactive-element/css-tag.js'
 import { $CLIP, $CONTAINER, $CONTENT, $FRAMES, $MASH, $NONE, DOT, MOVIE_MASHER, SIZE_ZERO, errorThrow, isDefiniteError, isTiming, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertDefined, assertPositive, isChangeEdit, isMashAsset, isTargetId } from '@moviemasher/shared-lib/utility/guards.js'
+import { pixelToFrame } from '@moviemasher/shared-lib/utility/pixel.js'
 import { copySize, sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
 import { html } from 'lit-html'
 import { Component, ComponentLoader } from '../base/component.js'
-import { assertClientAudibleInstance, isClientAudibleInstance, isClientInstance } from '../guards/guards.js'
 import { assertClientClip, isClientClip } from '../guards/ClientMashGuards.js'
+import { assertClientAudibleInstance, isClientAudibleInstance, isClientInstance } from '@moviemasher/shared-lib/utility/client-guards.js'
 import { DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
-import { X_MOVIEMASHER, eventStop } from '../runtime.js'
+import { EventChangeClipId, EventChangeScalar, EventClip, EventClipElement, EventEdited, EventRemoveClip, EventScalar, EventScrollRoot, EventTrackClipIcon } from '../module/event.js'
+import { X_MOVIEMASHER } from '../utility/constants.js'
+import { eventStop } from '../module/event.js'
 import { dropped, droppedMashIndex } from '../utility/draganddrop.js'
-import { EventChangeClipId, EventChangeScalar, EventClip, EventClipElement, EventEdited, EventRemoveClip, EventScalar, EventScrollRoot, EventTrackClipIcon, StringEvent } from '../utility/events.js'
-import { pixelToFrame } from '@moviemasher/shared-lib/utility/pixel.js'
 
 interface Trimming {
   clickedScroll: number
@@ -56,7 +58,7 @@ export class TimelineClipElement extends WithSizeReactiveMixin implements DropTa
 
     const { clipId } = this
     const clipEvent = new EventClip(clipId)
-    MOVIE_MASHER.dispatch(clipEvent)
+    MOVIE_MASHER.dispatchCustom(clipEvent)
     const { clip } = clipEvent.detail
     assertClientClip(clip)
     return this._clip = clip
@@ -104,7 +106,7 @@ export class TimelineClipElement extends WithSizeReactiveMixin implements DropTa
     const { clipId, scale, clipSize, gap } = this
     if (sizeNotZero(clipSize)) {
       const event = new EventTrackClipIcon(clipId, clipSize, scale, gap)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise, background } = event.detail
       if (promise && background) {
         this.hasChanged = false 
@@ -186,7 +188,7 @@ export class TimelineClipElement extends WithSizeReactiveMixin implements DropTa
     const value = this.eventValue(event)
     // console.log(this.tagName, 'handlePointerMove', propertyId, value)
 
-    MOVIE_MASHER.dispatch(new EventChangeScalar(propertyId, value))
+    MOVIE_MASHER.dispatchCustom(new EventChangeScalar(propertyId, value))
   }
 
 
@@ -223,7 +225,7 @@ export class TimelineClipElement extends WithSizeReactiveMixin implements DropTa
     const { clientX: clickedX } = event
     const { propertyId } = this
     const scalarEvent = new EventScalar(propertyId)
-    MOVIE_MASHER.dispatch(scalarEvent)
+    MOVIE_MASHER.dispatchCustom(scalarEvent)
     const { value: clickedValue } = scalarEvent.detail
     assertPositive(clickedValue) 
 
@@ -326,7 +328,7 @@ export class TimelineClipElement extends WithSizeReactiveMixin implements DropTa
     const { dropEffect } = dataTransfer
     if (dropEffect === $NONE) {
       const { clipId } = this
-      MOVIE_MASHER.dispatch(new EventRemoveClip(clipId))
+      MOVIE_MASHER.dispatchCustom(new EventRemoveClip(clipId))
     }
   }
 
@@ -444,8 +446,7 @@ export class TimelineClipElement extends WithSizeReactiveMixin implements DropTa
   }
 
   private selectClip() {
-    const clipEvent: StringEvent = new EventChangeClipId(this.clipId)
-    MOVIE_MASHER.dispatch(clipEvent)
+    MOVIE_MASHER.dispatch(EventChangeClipId.Type, this.clipId)
   }
 
   private get selectable(): Propertied {

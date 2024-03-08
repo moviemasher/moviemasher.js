@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,12 @@
   <a id="VideoCommandFilterArgs"><h2>VideoCommandFilterArgs</h2></a>
   <div class="section">
     <h1>Interface: VideoCommandFilterArgs</h1>
-<p><a href="../server-lib.html">server-lib</a>.VideoCommandFilterArgs</p>
+<p><a href="../shared-lib.html">shared-lib</a>.VideoCommandFilterArgs</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code><a href='VideoCommandFilterOptions.html'>VideoCommandFilterOptions</a></code></p>
+<li><p><code><a href='CommandFilterArgs.html'>CommandFilterArgs</a></code></p>
+</li>
+<li><p><code><a href='VideoCommandFileOptions.html'>VideoCommandFileOptions</a></code></p>
 <p>↳ <strong><code><a href='#'>VideoCommandFilterArgs</a></code></strong></p>
 <p>↳↳ <code><a href='VisibleCommandFilterArgs.html'>VisibleCommandFilterArgs</a></code></p>
 </li>
@@ -142,43 +144,43 @@
 <h2>Properties</h2>
 <h3><a id="VideoCommandFilterArgs.chainInput">chainInput</a></h3><p>• <strong>chainInput</strong>: <code>string</code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.chainInput">chainInput</a></p>
+<a href="CommandFilterArgs.html">CommandFilterArgs</a>.<a href="CommandFilterArgs.html#CommandFilterArgs.chainInput">chainInput</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.clipTime">clipTime</a></h3><p>• <strong>clipTime</strong>: <code><a href='TimeRange.html'>TimeRange</a></code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.clipTime">clipTime</a></p>
+<a href="CommandFilterArgs.html">CommandFilterArgs</a>.<a href="CommandFilterArgs.html#CommandFilterArgs.clipTime">clipTime</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.commandFiles">commandFiles</a></h3><p>• <strong>commandFiles</strong>: <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.commandFiles">commandFiles</a></p>
+<a href="CommandFilterArgs.html">CommandFilterArgs</a>.<a href="CommandFilterArgs.html#CommandFilterArgs.commandFiles">commandFiles</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.duration">duration</a></h3><p>• <strong>duration</strong>: <code>number</code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.duration">duration</a></p>
+<a href="CommandFilterArgs.html">CommandFilterArgs</a>.<a href="CommandFilterArgs.html#CommandFilterArgs.duration">duration</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.encodePath">encodePath</a></h3><p>• <strong>encodePath</strong>: `/${string}`</p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.encodePath">encodePath</a></p>
+<a href="VideoCommandFileOptions.html">VideoCommandFileOptions</a>.<a href="VideoCommandFileOptions.html#VideoCommandFileOptions.encodePath">encodePath</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.filterInput">filterInput</a></h3><p>• <code>Optional</code> <strong>filterInput</strong>: <code>string</code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.filterInput">filterInput</a></p>
+<a href="CommandFilterArgs.html">CommandFilterArgs</a>.<a href="CommandFilterArgs.html#CommandFilterArgs.filterInput">filterInput</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.outputSize">outputSize</a></h3><p>• <strong>outputSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
-<p>Overrides
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.outputSize">outputSize</a></p>
+<p>Inherited from
+<a href="VideoCommandFileOptions.html">VideoCommandFileOptions</a>.<a href="VideoCommandFileOptions.html#VideoCommandFileOptions.outputSize">outputSize</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.time">time</a></h3><p>• <strong>time</strong>: <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.time">time</a></p>
+<a href="VideoCommandFileOptions.html">VideoCommandFileOptions</a>.<a href="VideoCommandFileOptions.html#VideoCommandFileOptions.time">time</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.track">track</a></h3><p>• <strong>track</strong>: <code>number</code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.track">track</a></p>
+<a href="CommandFilterArgs.html">CommandFilterArgs</a>.<a href="CommandFilterArgs.html#CommandFilterArgs.track">track</a></p>
 <hr>
 <h3><a id="VideoCommandFilterArgs.videoRate">videoRate</a></h3><p>• <strong>videoRate</strong>: <code>number</code></p>
 <p>Inherited from
-<a href="VideoCommandFilterOptions.html">VideoCommandFilterOptions</a>.<a href="VideoCommandFilterOptions.html#VideoCommandFilterOptions.videoRate">videoRate</a></p>
+<a href="VideoCommandFileOptions.html">VideoCommandFileOptions</a>.<a href="VideoCommandFileOptions.html#VideoCommandFileOptions.videoRate">videoRate</a></p>
 
   </div>
 </section>

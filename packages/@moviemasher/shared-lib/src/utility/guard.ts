@@ -1,4 +1,4 @@
-import type { ClientAudio, ClientFont, ClientImage, ClientVideo, Integer, Not, Numeric, OkNumber, PopulatedArray, PopulatedString, Scalar, StringTuple, Value } from '../types.js'
+import type { AbsolutePath, ClientAudio, ClientFont, ClientImage, ClientVideo, Integer, Not, Numeric, OkNumber, PopulatedArray, PopulatedString, Scalar, StringTuple, Value } from '../types.js'
 
 const isNan = (value: any): boolean => { return Number.isNaN(value) }
 
@@ -80,11 +80,11 @@ export const isPositive = (value: any): value is number => {
 }
 
 export const isValue = (value: any): value is Value => {
-  return isNumber(value) || isString(value) 
-}
+  return isString(value) || isNumber(value) 
+} 
 
 export const isScalar = (value: any): value is Scalar => (
-  isValue(value) || isBoolean(value)
+  isBoolean(value) || isValue(value)
 )
 
 export const isObject = (value: any): value is object => {
@@ -108,3 +108,9 @@ export const isClientFont = (value: any): value is ClientFont => {
 export const isStringTuple = (value: any): value is StringTuple => {
   return isArray(value) && value.length === 2 && value.every(isPopulatedString)
 }
+
+
+export const isAbsolutePath = (value: any): value is AbsolutePath => {
+  return isString(value) && value.startsWith('/')
+}
+

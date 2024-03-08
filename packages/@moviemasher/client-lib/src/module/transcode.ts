@@ -1,10 +1,12 @@
 import type { TranscodeFunction, Transcoding } from '@moviemasher/shared-lib/types.js'
 
-import { isRawResource, isTranscoding } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertDefined, isRawResource, isTranscoding } from '@moviemasher/shared-lib/utility/guards.js'
 import { ERROR, $POST, isDefiniteError, namedError, copyResource, errorPromise, $TRANSCODE } from '@moviemasher/shared-lib/runtime.js'
 import { requestCallbackPromise } from '../utility/request.js'
 
 export const transcodeFunction: TranscodeFunction = (args, jobOptions = {}) => {
+  assertDefined(args)
+
   const { progress } = jobOptions
   const resource = copyResource(args.resource)
   if (!isRawResource(resource)) return errorPromise(ERROR.Syntax, 'resource')

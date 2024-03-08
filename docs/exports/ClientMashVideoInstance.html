@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ClientMashVideoInstance"><h2>ClientMashVideoInstance</h2></a>
   <div class="section">
     <h1>Interface: ClientMashVideoInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMashVideoInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientMashVideoInstance</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='VideoInstance.html'>VideoInstance</a></code></p>
@@ -157,10 +157,6 @@
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ClientMashVideoInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.bottomCrop">bottomCrop</a></p>
-<hr>
 <h3><a id="ClientMashVideoInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.canBeMuted">canBeMuted</a></p>
@@ -169,41 +165,9 @@
 <p>Overrides
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.clip">clip</a></p>
 <hr>
-<h3><a id="ClientMashVideoInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.container">container</a></p>
-<hr>
 <h3><a id="ClientMashVideoInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.cropDirections">cropDirections</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.directions">directions</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.endTrim">endTrim</a></h3><p>• <strong>endTrim</strong>: <code>number</code></p>
-<p>Inherited from
-VideoInstance.endTrim</p>
-<hr>
-<h3><a id="ClientMashVideoInstance.gain">gain</a></h3><p>• <strong>gain</strong>: <code>number</code></p>
-<p>Inherited from
-VideoInstance.gain</p>
-<hr>
-<h3><a id="ClientMashVideoInstance.gainPairs">gainPairs</a></h3><p>• <strong>gainPairs</strong>: <code><a href='Numbers.html'>Numbers</a></code>[]</p>
-<p>Inherited from
-VideoInstance.gainPairs</p>
-<hr>
-<h3><a id="ClientMashVideoInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.height">height</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.heightEnd">heightEnd</a></p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.cropDirections">cropDirections</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
@@ -215,91 +179,31 @@ VideoInstance.gainPairs</p>
 <hr>
 <h3><a id="ClientMashVideoInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.intrinsicRect">intrinsicRect</a></p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.intrinsicRect">intrinsicRect</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.isDefault">isDefault</a></p>
 <hr>
-<h3><a id="ClientMashVideoInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.leftCrop">leftCrop</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.lock">lock</a></p>
-<hr>
 <h3><a id="ClientMashVideoInstance.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.muted">muted</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.opacityEnd">opacityEnd</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.pointAspect">pointAspect</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.properties">properties</a></p>
 <hr>
-<h3><a id="ClientMashVideoInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.rightCrop">rightCrop</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.sizeAspect">sizeAspect</a></p>
-<hr>
 <h3><a id="ClientMashVideoInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.sizeKey">sizeKey</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.speed">speed</a></h3><p>• <strong>speed</strong>: <code>number</code></p>
-<p>Inherited from
-VideoInstance.speed</p>
-<hr>
-<h3><a id="ClientMashVideoInstance.startTrim">startTrim</a></h3><p>• <strong>startTrim</strong>: <code>number</code></p>
-<p>Inherited from
-VideoInstance.startTrim</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.sizeKey">sizeKey</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.targetId">targetId</a></p>
 <hr>
-<h3><a id="ClientMashVideoInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.topCrop">topCrop</a></p>
-<hr>
 <h3><a id="ClientMashVideoInstance.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <p>Inherited from
-VideoInstance.tweening</p>
-<hr>
-<h3><a id="ClientMashVideoInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.width">width</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.widthEnd">widthEnd</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.x">x</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.xEnd">xEnd</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.y">y</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.yEnd">yEnd</a></p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.tweening">tweening</a></p>
 <h2>Methods</h2>
 <h3><a id="ClientMashVideoInstance.assetFrames">assetFrames</a></h3><p>▸ <strong>assetFrames</strong>(<code>quantize</code>): <code><a href='Numbers.html'>Numbers</a></code></p>
 <h4>Parameters</h4>
@@ -319,7 +223,7 @@ VideoInstance.tweening</p>
 <code><a href='Numbers.html'>Numbers</a></code></p>
 <p>Array containing duration, start trim, and end trim in frames.</p>
 <p>Inherited from
-VideoInstance.assetFrames</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.assetFrames">assetFrames</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -339,6 +243,25 @@ VideoInstance.assetFrames</p>
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.assetTime">assetTime</a></p>
+<hr>
+<h3><a id="ClientMashVideoInstance.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.boolean">boolean</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -393,7 +316,7 @@ VideoInstance.assetFrames</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -403,7 +326,7 @@ VideoInstance.assetFrames</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <p>Inherited from
-VideoInstance.clippedElement</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.clippedElement">clippedElement</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -453,7 +376,7 @@ VideoInstance.clippedElement</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <p>Inherited from
-VideoInstance.containedItem</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.containedItem">containedItem</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -476,7 +399,7 @@ VideoInstance.containedItem</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.containerRects">containerRects</a></p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.containerRects">containerRects</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -495,7 +418,7 @@ VideoInstance.containedItem</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <p>Inherited from
-VideoInstance.containerSvgItem</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.containerSvgItem">containerSvgItem</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -522,7 +445,7 @@ VideoInstance.containerSvgItem</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-VideoInstance.contentRect</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.contentRect">contentRect</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -541,7 +464,7 @@ VideoInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.contentRects">contentRects</a></p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.contentRects">contentRects</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -560,7 +483,7 @@ VideoInstance.contentRect</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <p>Inherited from
-VideoInstance.contentSvgItem</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.contentSvgItem">contentSvgItem</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -580,25 +503,6 @@ VideoInstance.contentSvgItem</p>
 <code>number</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.frames">frames</a></p>
-<hr>
-<h3><a id="ClientMashVideoInstance.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.initializeProperties">initializeProperties</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -637,6 +541,25 @@ VideoInstance.contentSvgItem</p>
 <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<hr>
+<h3><a id="ClientMashVideoInstance.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.number">number</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -716,7 +639,7 @@ VideoInstance.contentSvgItem</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.scaleRects">scaleRects</a></p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.scaleRects">scaleRects</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -740,6 +663,48 @@ VideoInstance.contentSvgItem</p>
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.setValue">setValue</a></p>
+<hr>
+<h3><a id="ClientMashVideoInstance.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ClientMashVideoInstance.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.string">string</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -766,7 +731,7 @@ VideoInstance.contentSvgItem</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <p>Inherited from
-VideoInstance.svgVector</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.svgVector">svgVector</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -818,7 +783,7 @@ VideoInstance.svgVector</p>
 <p>Returns
 <code>boolean</code></p>
 <p>Inherited from
-VideoInstance.tweens</p>
+<a href="VideoInstance.html">VideoInstance</a>.<a href="VideoInstance.html#VideoInstance.tweens">tweens</a></p>
 <hr>
 <h3><a id="ClientMashVideoInstance.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -856,44 +821,21 @@ VideoInstance.tweens</p>
 <li><a class='' href='#ClientMashVideoInstance.asset'>asset</a></li>
 <li><a class='' href='#ClientMashVideoInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ClientMashVideoInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientMashVideoInstance.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientMashVideoInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientMashVideoInstance.clip'>clip</a></li>
-<li><a class='' href='#ClientMashVideoInstance.container'>container</a></li>
 <li><a class='' href='#ClientMashVideoInstance.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientMashVideoInstance.directions'>directions</a></li>
-<li><a class='' href='#ClientMashVideoInstance.endTrim'>endTrim</a></li>
-<li><a class='' href='#ClientMashVideoInstance.gain'>gain</a></li>
-<li><a class='' href='#ClientMashVideoInstance.gainPairs'>gainPairs</a></li>
-<li><a class='' href='#ClientMashVideoInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientMashVideoInstance.height'>height</a></li>
-<li><a class='' href='#ClientMashVideoInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientMashVideoInstance.id'>id</a></li>
 <li><a class='' href='#ClientMashVideoInstance.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ClientMashVideoInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientMashVideoInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientMashVideoInstance.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientMashVideoInstance.lock'>lock</a></li>
 <li><a class='' href='#ClientMashVideoInstance.muted'>muted</a></li>
-<li><a class='' href='#ClientMashVideoInstance.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientMashVideoInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientMashVideoInstance.properties'>properties</a></li>
-<li><a class='' href='#ClientMashVideoInstance.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientMashVideoInstance.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ClientMashVideoInstance.sizeKey'>sizeKey</a></li>
-<li><a class='' href='#ClientMashVideoInstance.speed'>speed</a></li>
-<li><a class='' href='#ClientMashVideoInstance.startTrim'>startTrim</a></li>
 <li><a class='' href='#ClientMashVideoInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ClientMashVideoInstance.topCrop'>topCrop</a></li>
 <li><a class='' href='#ClientMashVideoInstance.tweening'>tweening</a></li>
-<li><a class='' href='#ClientMashVideoInstance.width'>width</a></li>
-<li><a class='' href='#ClientMashVideoInstance.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientMashVideoInstance.x'>x</a></li>
-<li><a class='' href='#ClientMashVideoInstance.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientMashVideoInstance.y'>y</a></li>
-<li><a class='' href='#ClientMashVideoInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ClientMashVideoInstance.assetFrames'>assetFrames</a></li>
 <li><a class='' href='#ClientMashVideoInstance.assetTime'>assetTime</a></li>
+<li><a class='' href='#ClientMashVideoInstance.boolean'>boolean</a></li>
 <li><a class='' href='#ClientMashVideoInstance.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientMashVideoInstance.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientMashVideoInstance.clippedElement'>clippedElement</a></li>
@@ -905,14 +847,16 @@ VideoInstance.tweens</p>
 <li><a class='' href='#ClientMashVideoInstance.contentRects'>contentRects</a></li>
 <li><a class='' href='#ClientMashVideoInstance.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ClientMashVideoInstance.frames'>frames</a></li>
-<li><a class='' href='#ClientMashVideoInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientMashVideoInstance.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientMashVideoInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
+<li><a class='' href='#ClientMashVideoInstance.number'>number</a></li>
 <li><a class='' href='#ClientMashVideoInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientMashVideoInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientMashVideoInstance.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientMashVideoInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientMashVideoInstance.setValue'>setValue</a></li>
+<li><a class='' href='#ClientMashVideoInstance.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientMashVideoInstance.string'>string</a></li>
 <li><a class='' href='#ClientMashVideoInstance.svgVector'>svgVector</a></li>
 <li><a class='' href='#ClientMashVideoInstance.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientMashVideoInstance.tweenValues'>tweenValues</a></li>

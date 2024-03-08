@@ -1,5 +1,4 @@
-import type { StringRecord } from '@moviemasher/shared-lib/types.js'
-import type { DataServerArgs, DecodeServerArgs, EncodeServerArgs, Server, TranscodeServerArgs, UploadServerArgs, WebServerArgs } from '../Server/Server.js'
+import type { HostOptions, Server } from '../types.js'
 
 import cors from 'cors'
 import Express from 'express'
@@ -9,19 +8,6 @@ import { EncodeServerClass } from '../Server/EncodeServerClass.js'
 import { TranscodeServerClass } from '../Server/TranscodeServerClass.js'
 import { UploadServerClass } from '../Server/UploadServerClass.js'
 import { WebServerClass } from '../Server/WebServerClass.js'
-
-export interface HostOptions {
-  corsOptions?: StringRecord | false
-  data?: DataServerArgs | false
-  upload?: UploadServerArgs | false
-  decode?: DecodeServerArgs | false
-  transcode?: TranscodeServerArgs | false
-  port: number
-  host: string
-  encode?: EncodeServerArgs | false
-  web?: WebServerArgs | false
-  version?: string
-}
 
 export class Host {
   constructor(public args: HostOptions) { }

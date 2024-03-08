@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientRawVideoAsset"><h2>ClientRawVideoAsset</h2></a>
   <div class="section">
     <h1>Interface: ClientRawVideoAsset</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawVideoAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawVideoAsset</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code><a href='ClientRawAsset.html'>ClientRawAsset</a></code></p>
+<li><p><code><a href='ClientAsset.html'>ClientAsset</a></code></p>
 </li>
 <li><p><code><a href='ClientVideoAsset.html'>ClientVideoAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientRawVideoAsset</a></code></strong></p>
@@ -153,17 +153,17 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ClientRawVideoAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='ClientRawVideoAssetObject.html'>ClientRawVideoAssetObject</a></code></p>
-<p>Overrides
+<h3><a id="ClientRawVideoAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<p>Inherited from
+<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.assetManager">assetManager</a></p>
+<hr>
+<h3><a id="ClientRawVideoAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.assets">assets</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.audioUrl">audioUrl</a></h3><p>• <strong>audioUrl</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.audioUrl">audioUrl</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <p>Inherited from
@@ -177,17 +177,9 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.canBeFill">canBeFill</a></p>
 <hr>
-<h3><a id="ClientRawVideoAsset.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<h3><a id="ClientRawVideoAsset.canBeMuted">canBeMuted</a></h3><p>• <code>Optional</code> <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.canBeMuted">canBeMuted</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.container">container</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.content">content</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
@@ -205,6 +197,10 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
 <hr>
+<h3><a id="ClientRawVideoAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<hr>
 <h3><a id="ClientRawVideoAsset.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.id">id</a></p>
@@ -212,18 +208,6 @@
 <h3><a id="ClientRawVideoAsset.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.isVector">isVector</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.label">label</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.loadedAudio">loadedAudio</a></h3><p>• <code>Optional</code> <strong>loadedAudio</strong>: <code><a href='ClientAudio.html'>ClientAudio</a></code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.loadedAudio">loadedAudio</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.loop">loop</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
@@ -261,7 +245,7 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.type">type</a></p>
 <h2>Methods</h2>
-<h3><a id="ClientRawVideoAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h3><a id="ClientRawVideoAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -271,8 +255,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -337,7 +321,7 @@
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -354,6 +338,25 @@
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode"><code>AudioBufferSourceNode</code></a></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.audibleSource">audibleSource</a></p>
+<hr>
+<h3><a id="ClientRawVideoAsset.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.boolean">boolean</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -396,6 +399,48 @@
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.changeScalars">changeScalars</a></p>
+<hr>
+<h3><a id="ClientRawVideoAsset.clientImage">clientImage</a></h3><p>▸ <strong>clientImage</strong>(<code>assetTime</code>, <code>size?</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>assetTime</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>size?</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;</p>
+<hr>
+<h3><a id="ClientRawVideoAsset.clientImagePromise">clientImagePromise</a></h3><p>▸ <strong>clientImagePromise</strong>(<code>assetTime</code>, <code>size?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>assetTime</code></td>
+<td align="left"><code><a href='Time.html'>Time</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>size?</code></td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <hr>
 <h3><a id="ClientRawVideoAsset.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -477,7 +522,7 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.frames">frames</a></p>
 <hr>
-<h3><a id="ClientRawVideoAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientRawVideoAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -492,28 +537,9 @@
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.imagePromise">imagePromise</a></p>
-<hr>
-<h3><a id="ClientRawVideoAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.initializeProperties">initializeProperties</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -553,7 +579,7 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.instanceFromObject">instanceFromObject</a></p>
 <hr>
-<h3><a id="ClientRawVideoAsset.loadedImage">loadedImage</a></h3><p>▸ <strong>loadedImage</strong>(<code>assetTime</code>, <code>size?</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;</p>
+<h3><a id="ClientRawVideoAsset.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -563,37 +589,14 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetTime</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>size?</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;</p>
-<hr>
-<h3><a id="ClientRawVideoAsset.loadedImagePromise">loadedImagePromise</a></h3><p>▸ <strong>loadedImagePromise</strong>(<code>assetTime</code>, <code>size?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetTime</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>size?</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
+<code>number</code></p>
+<p>Inherited from
+<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.number">number</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -652,7 +655,7 @@
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ClientRawVideoAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h3><a id="ClientRawVideoAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -662,8 +665,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>...type</code></td>
-<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -712,6 +715,48 @@
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.setValue">setValue</a></p>
+<hr>
+<h3><a id="ClientRawVideoAsset.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ClientRawVideoAsset.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ClientVideoAsset.html">ClientVideoAsset</a>.<a href="ClientVideoAsset.html#ClientVideoAsset.string">string</a></p>
 <hr>
 <h3><a id="ClientRawVideoAsset.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -781,24 +826,20 @@
         <ul><li><a class='' href='#ClientRawVideoAsset'>ClientRawVideoAsset</a></li>
 <li><a class='' href='#ClientRawVideoAsset.alpha'>alpha</a></li>
 <li><a class='' href='#ClientRawVideoAsset.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientRawVideoAsset.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientRawVideoAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientRawVideoAsset.assets'>assets</a></li>
-<li><a class='' href='#ClientRawVideoAsset.audioUrl'>audioUrl</a></li>
 <li><a class='' href='#ClientRawVideoAsset.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ClientRawVideoAsset.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ClientRawVideoAsset.canBeFill'>canBeFill</a></li>
 <li><a class='' href='#ClientRawVideoAsset.canBeMuted'>canBeMuted</a></li>
-<li><a class='' href='#ClientRawVideoAsset.container'>container</a></li>
-<li><a class='' href='#ClientRawVideoAsset.content'>content</a></li>
 <li><a class='' href='#ClientRawVideoAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ClientRawVideoAsset.decodings'>decodings</a></li>
 <li><a class='' href='#ClientRawVideoAsset.duration'>duration</a></li>
 <li><a class='' href='#ClientRawVideoAsset.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientRawVideoAsset.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientRawVideoAsset.id'>id</a></li>
 <li><a class='' href='#ClientRawVideoAsset.isVector'>isVector</a></li>
-<li><a class='' href='#ClientRawVideoAsset.label'>label</a></li>
-<li><a class='' href='#ClientRawVideoAsset.loadedAudio'>loadedAudio</a></li>
-<li><a class='' href='#ClientRawVideoAsset.loop'>loop</a></li>
 <li><a class='' href='#ClientRawVideoAsset.probeSize'>probeSize</a></li>
 <li><a class='' href='#ClientRawVideoAsset.properties'>properties</a></li>
 <li><a class='' href='#ClientRawVideoAsset.request'>request</a></li>
@@ -813,24 +854,27 @@
 <li><a class='' href='#ClientRawVideoAsset.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientRawVideoAsset.assetIconPromise'>assetIconPromise</a></li>
 <li><a class='' href='#ClientRawVideoAsset.audibleSource'>audibleSource</a></li>
+<li><a class='' href='#ClientRawVideoAsset.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawVideoAsset.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawVideoAsset.changeScalars'>changeScalars</a></li>
+<li><a class='' href='#ClientRawVideoAsset.clientImage'>clientImage</a></li>
+<li><a class='' href='#ClientRawVideoAsset.clientImagePromise'>clientImagePromise</a></li>
 <li><a class='' href='#ClientRawVideoAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientRawVideoAsset.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ClientRawVideoAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientRawVideoAsset.frames'>frames</a></li>
 <li><a class='' href='#ClientRawVideoAsset.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientRawVideoAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawVideoAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientRawVideoAsset.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientRawVideoAsset.loadedImage'>loadedImage</a></li>
-<li><a class='' href='#ClientRawVideoAsset.loadedImagePromise'>loadedImagePromise</a></li>
+<li><a class='' href='#ClientRawVideoAsset.number'>number</a></li>
 <li><a class='' href='#ClientRawVideoAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawVideoAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawVideoAsset.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientRawVideoAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ClientRawVideoAsset.savePromise'>savePromise</a></li>
 <li><a class='' href='#ClientRawVideoAsset.setValue'>setValue</a></li>
+<li><a class='' href='#ClientRawVideoAsset.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawVideoAsset.string'>string</a></li>
 <li><a class='' href='#ClientRawVideoAsset.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawVideoAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientRawVideoAsset.unload'>unload</a></li>

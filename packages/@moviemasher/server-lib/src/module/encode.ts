@@ -1,37 +1,25 @@
 
-import type { AVType, AbsolutePath, AssetObject, DataOrError, DecodeArgs, DropResource, DropType, EncodeFunction, EncodeOptions, Encoding, EncodingType, EndpointRequest, MashAssetObject, Numbers, OutputOptions, Probing, ProbingOptions, RawType, StringDataOrError, Strings, VideoOutputOptions } from '@moviemasher/shared-lib/types.js'
+import type { AVType, AbsolutePath, AssetObject, CommandFilters, CommandInput, DataOrError, DecodeArgs, DropResource, DropType, EncodeCommands, EncodeDescription, EncodeDescriptions, EncodeFunction, EncodeOptions, Encoding, EncodingType, EndpointRequest, FileWriteArgs, MashAssetObject, Numbers, OutputOptions, PrecodeCommands, Probing, ProbingOptions, RawType, ServerMashDescriptionOptions, StringDataOrError, Strings, VideoOutputOptions } from '@moviemasher/shared-lib/types.js'
 import type { RunningCommand } from '../command/RunningCommand.js'
-import type { CommandFilters, CommandInput, CommandOptions, EncodeCommands, EncodeDescription, EncodeDescriptions, PrecodeCommands, ServerMashDescriptionOptions } from '../types.js'
+import type { CommandOptions, } from '../types.js'
 
-import { $AUDIO, $BOTH, $DECODE, $DURATION, $IMAGE, $JSON, $MASH, $NUMBER, $PROBE, $RAW, $TXT, $VIDEO, COLON, DASH, DOT, ERROR, MOVIE_MASHER, NEWLINE, PROBING_TYPES, errorCaught, idGenerate, idReset, isDefiniteError, isProbing, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
+import { AssetManagerClass } from '@moviemasher/shared-lib/base/asset-manager.js'
+import { $AUDIO, $BOTH, $DECODE, $DURATION, $IMAGE, $JSON, $MASH, $NUMBER, $PROBE, $RAW, $TXT, $VIDEO, $WRITE, COLON, DASH, DOT, ERROR, MOVIE_MASHER, NEWLINE, PROBING_TYPES, errorCaught, errorPromise, idGenerate, idReset, isDefiniteError, isProbing, namedError, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import { isAboveZero, isPositive } from '@moviemasher/shared-lib/utility/guard.js'
-import { isServerAsset, assertAboveZero, isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertAboveZero, assertAbsolutePath, assertDefined, isMashAsset, isServerAsset } from '@moviemasher/shared-lib/utility/guards.js'
 import path from 'path'
 import { RunningCommandClass } from '../command/RunningCommandClass.js'
-import { ENV, ENV_KEY } from '../utility/env.js'
-import { directoryCreatePromise, fileNameFromOptions, fileWriteJsonPromise, fileWritePromise } from './file-write.js'
-import { assertAbsolutePath, isServerClip, isServerMashAsset } from '../utility/guard.js'
+import { $Debug, $OutputRoot, $RelativeRequestRoot, ENV } from '../utility/env.js'
+import { isServerClip, isServerMashAsset } from '../utility/guard.js'
 import { idUnique } from '../utility/id.js'
 import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
-import { AssetManagerClass } from '@moviemasher/shared-lib/base/asset-manager.js'
+import { directoryCreatePromise, fileNameFromOptions, writeFileFunction, writeJsonFilePromise } from './file.js'
 
 type PathDurationTuple = [string, number]
 
 const $TS = 'ts'
 const $WAV = 'wav'
 
-// import { exec } from 'child_process'
-// import { promisify } from 'util'
-
-// const execPromise = promisify(exec)
-
-// const spawnPromise = async (cmd: string, args: Strings): Promise<StringDataOrError> => {
-//   try {
-//     // stdout is reserved for data, feedback provided by stderr
-//     const { stderr } =  await execPromise([cmd, ...args].join(' '))
-//     return { data: stderr }
-//   } catch (err) { return errorCaught(err) }
-// }
 
 const createDirectoryPromise = async (outPath: string): Promise<StringDataOrError> => {
   const parentDir = path.dirname(outPath)
@@ -49,7 +37,9 @@ const createDirectorAndDebugPromise = async (instance: RunningCommand, outPath: 
   const commandsText = instance.commandString(outPath)
   const dir = path.dirname(outPath)
   const commandPath = path.join(dir, `command${suffix}.${$TXT}`)
-  const writeOrError = await fileWritePromise(commandPath, commandsText)
+  assertAbsolutePath(commandPath)
+  const fileArgs: FileWriteArgs = { path: commandPath, type: $WRITE, content: commandsText }
+  const writeOrError = await writeFileFunction(fileArgs)
   if (isDefiniteError(writeOrError)) return writeOrError
 
   return { data: outPath }
@@ -87,8 +77,8 @@ const concatString = (fileDurations: PathDurationTuple[]): string => {
 }
 
 const commandPromise = async (pathFragment: string, outputPath: AbsolutePath, encodingType: EncodingType, outputOptions: OutputOptions, commandDescription: EncodeDescription, index = -1) => {
-  const debug = ENV.get(ENV_KEY.Debug, $NUMBER)
-    outputOptions.options ||= {}
+  const debug = ENV.get($Debug, $NUMBER)
+  outputOptions.options ||= {}
   const { options } = outputOptions  
   const { duration } = commandDescription
 
@@ -152,7 +142,9 @@ const combineDescriptions = async (descriptions: EncodeDescriptions, encodingTyp
 
   
   const concatFile = concatString(fileDurations)
-  const writeOrError = await fileWritePromise(concatFilePath, concatFile)
+  assertDefined(concatFilePath)
+  const fileArgs: FileWriteArgs = { path: concatFilePath, content: concatFile, type: $WRITE }
+  const writeOrError = await writeFileFunction(fileArgs)
   if (isDefiniteError(writeOrError)) return writeOrError
   
   const durations = fileDurations.map(([_, duration]) => duration)
@@ -296,7 +288,7 @@ const mergedDescription = (flatDescription: EncodeCommands): EncodeDescription |
 const writeMash = async (pathFragment: string, mashObject: AssetObject): Promise<StringDataOrError> => {
   const fileName = [$MASH, $JSON].join(DOT)
   const filePath = encodeOutputPath(pathFragment, fileName)
-  const jsonOrError = await fileWriteJsonPromise(filePath, mashObject)
+  const jsonOrError = await writeJsonFilePromise(filePath, mashObject)
   if (isDefiniteError(jsonOrError)) return jsonOrError
 
   return { data: fileName }
@@ -304,20 +296,20 @@ const writeMash = async (pathFragment: string, mashObject: AssetObject): Promise
 
 const writeRawMash = async (pathFragments: string[], raw: AssetObject): Promise<DataOrError<AssetObject>> => {
   const result = { data: raw }
-  const debug = ENV.get(ENV_KEY.Debug, $NUMBER)
+  const debug = ENV.get($Debug, $NUMBER)
   if (!debug) return result
 
   const fileName = [$MASH, DASH, $RAW, DOT, $JSON].join('')
   pathFragments.push(fileName)
   const filePath = encodeOutputPath(...pathFragments)
-  const jsonOrError = await fileWriteJsonPromise(filePath, raw)
+  const jsonOrError = await writeJsonFilePromise(filePath, raw)
   if (isDefiniteError(jsonOrError)) return jsonOrError
 
   return result
 }
 
 const encodeOutputPath = (...pathFragments: string[]): AbsolutePath => {
-  const root = path.resolve(ENV.get(ENV_KEY.OutputRoot))
+  const root = path.resolve(ENV.get($OutputRoot))
   assertAbsolutePath(root)
 
   return absolutePathJoin(root, ...pathFragments)
@@ -325,7 +317,7 @@ const encodeOutputPath = (...pathFragments: string[]): AbsolutePath => {
 
 
 const writeEncodingPromise = async (id: string, filePath: string, type: RawType) => {
-  const relativeRoot = ENV.get(ENV_KEY.RelativeRequestRoot)
+  const relativeRoot = ENV.get($RelativeRequestRoot)
   const endpoint = relativeRoot ? path.relative(relativeRoot, filePath) : filePath
   const data: Encoding = { id, type, request: { endpoint } }
   return await jobHasFinished(id, data)
@@ -449,6 +441,7 @@ export const encode = (asset: MashAssetObject, encodeOptions?: EncodeOptions, en
 
 
 export const serverEncodeFunction: EncodeFunction = (args, jobOptions = {}) => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
   // console.log('serverEncodeFunction', args, jobOptions)
   const { user, id } = jobOptions
   const { asset, options, type} = args

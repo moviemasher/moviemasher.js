@@ -385,7 +385,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#BrowserContentCenterElement'>BrowserContentCenterElement</a></code>&gt;, <code>&quot;sort&quot;</code> | <code>&quot;size&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;cover&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#BrowserContentCenterElement'>BrowserContentCenterElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#BrowserContentCenterElement'>BrowserContentCenterElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#BrowserContentCenterElement'>BrowserContentCenterElement</a></code>&gt;, <code>&quot;sort&quot;</code> | <code>&quot;size&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;cover&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#BrowserContentCenterElement'>BrowserContentCenterElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#BrowserContentCenterElement'>BrowserContentCenterElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -494,22 +494,10 @@
 </section>
   
 <section>
-  <a id="ClientAssetUploadListeners"><h2>ClientAssetUploadListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientAssetUploadListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientAssetUploadListeners</p>
-<p>▸ <strong>ClientAssetUploadListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="ClientAudibleAssetMixin"><h2>ClientAudibleAssetMixin</h2></a>
   <div class="section">
     <h1>Function: ClientAudibleAssetMixin</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientAudibleAssetMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientAudibleAssetMixin</p>
 <p>▸ <strong>ClientAudibleAssetMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ClientAudibleAsset.html'>ClientAudibleAsset</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -547,7 +535,7 @@
   <a id="ClientAudibleInstanceMixin"><h2>ClientAudibleInstanceMixin</h2></a>
   <div class="section">
     <h1>Function: ClientAudibleInstanceMixin</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientAudibleInstanceMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientAudibleInstanceMixin</p>
 <p>▸ <strong>ClientAudibleInstanceMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ClientAudibleInstance.html'>ClientAudibleInstance</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -702,83 +690,11 @@
 </section>
   
 <section>
-  <a id="ClientMashVideoListeners"><h2>ClientMashVideoListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientMashVideoListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMashVideoListeners</p>
-<p>▸ <strong>ClientMashVideoListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ClientRawAudioListeners"><h2>ClientRawAudioListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientRawAudioListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawAudioListeners</p>
-<p>▸ <strong>ClientRawAudioListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ClientRawImageListeners"><h2>ClientRawImageListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientRawImageListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawImageListeners</p>
-<p>▸ <strong>ClientRawImageListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="ClientRawImportListeners"><h2>ClientRawImportListeners</h2></a>
   <div class="section">
     <h1>Function: ClientRawImportListeners</h1>
 <p><a href="../client-lib.html">client-lib</a>.ClientRawImportListeners</p>
 <p>▸ <strong>ClientRawImportListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ClientRawVideoListeners"><h2>ClientRawVideoListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientRawVideoListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawVideoListeners</p>
-<p>▸ <strong>ClientRawVideoListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ClientShapeImageListeners"><h2>ClientShapeImageListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientShapeImageListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientShapeImageListeners</p>
-<p>▸ <strong>ClientShapeImageListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ClientTextImageListeners"><h2>ClientTextImageListeners</h2></a>
-  <div class="section">
-    <h1>Function: ClientTextImageListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientTextImageListeners</p>
-<p>▸ <strong>ClientTextImageListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
 <p>Returns
 <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
 
@@ -801,7 +717,7 @@
   <a id="ClientVisibleAssetMixin"><h2>ClientVisibleAssetMixin</h2></a>
   <div class="section">
     <h1>Function: ClientVisibleAssetMixin</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientVisibleAssetMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientVisibleAssetMixin</p>
 <p>▸ <strong>ClientVisibleAssetMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ClientVisibleAsset.html'>ClientVisibleAsset</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -839,7 +755,7 @@
   <a id="ClientVisibleInstanceMixin"><h2>ClientVisibleInstanceMixin</h2></a>
   <div class="section">
     <h1>Function: ClientVisibleInstanceMixin</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientVisibleInstanceMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientVisibleInstanceMixin</p>
 <p>▸ <strong>ClientVisibleInstanceMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ClientVisibleInstance.html'>ClientVisibleInstance</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -1740,7 +1656,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PickerElement'>PickerElement</a></code>&gt;, <code>&quot;container&quot;</code> | <code>&quot;content&quot;</code> | <code>&quot;mash&quot;</code> | <code>&quot;audio&quot;</code> | <code>&quot;video&quot;</code> | <code>&quot;image&quot;</code> | <code>&quot;color&quot;</code> | <code>&quot;raw&quot;</code> | <code>&quot;shape&quot;</code> | <code>&quot;text&quot;</code> | <code>&quot;prompt&quot;</code> | <code>&quot;picker&quot;</code> | <code>&quot;selected&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;parts&quot;</code> | <code>&quot;module&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PickerElement'>PickerElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PickerElement'>PickerElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PickerElement'>PickerElement</a></code>&gt;, <code>&quot;container&quot;</code> | <code>&quot;content&quot;</code> | <code>&quot;mash&quot;</code> | <code>&quot;audio&quot;</code> | <code>&quot;image&quot;</code> | <code>&quot;video&quot;</code> | <code>&quot;color&quot;</code> | <code>&quot;raw&quot;</code> | <code>&quot;shape&quot;</code> | <code>&quot;text&quot;</code> | <code>&quot;prompt&quot;</code> | <code>&quot;picker&quot;</code> | <code>&quot;selected&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;parts&quot;</code> | <code>&quot;module&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PickerElement'>PickerElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PickerElement'>PickerElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1840,7 +1756,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerContentCenterElement'>PlayerContentCenterElement</a></code>&gt;, <code>&quot;size&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;rect&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;point&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;handleResize&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PlayerContentCenterElement'>PlayerContentCenterElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerContentCenterElement'>PlayerContentCenterElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerContentCenterElement'>PlayerContentCenterElement</a></code>&gt;, <code>&quot;size&quot;</code> | <code>&quot;rect&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;point&quot;</code> | <code>&quot;handleResize&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PlayerContentCenterElement'>PlayerContentCenterElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerContentCenterElement'>PlayerContentCenterElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1915,7 +1831,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code>&gt;, <code>&quot;frames&quot;</code> | <code>&quot;frame&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code>&gt;, <code>&quot;frame&quot;</code> | <code>&quot;frames&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerRangeElement'>PlayerRangeElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1940,49 +1856,11 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerTimeElement'>PlayerTimeElement</a></code>&gt;, <code>&quot;frames&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;frame&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PlayerTimeElement'>PlayerTimeElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerTimeElement'>PlayerTimeElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerTimeElement'>PlayerTimeElement</a></code>&gt;, <code>&quot;frame&quot;</code> | <code>&quot;frames&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#PlayerTimeElement'>PlayerTimeElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#PlayerTimeElement'>PlayerTimeElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code>ReactNode</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="RawAssetMixin"><h2>RawAssetMixin</h2></a>
-  <div class="section">
-    <h1>Function: RawAssetMixin</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.RawAssetMixin</p>
-<p>▸ <strong>RawAssetMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/RawAsset.html'>RawAsset</a></code>&gt;</p>
-<h4>Type parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>T</code></td>
-<td align="left">extends <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</td>
-</tr>
-</tbody></table>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>Base</code></td>
-<td align="left"><code>T</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/RawAsset.html'>RawAsset</a></code>&gt;</p>
 
   </div>
 </section>
@@ -2026,22 +1904,10 @@
 </section>
   
 <section>
-  <a id="ServerAssetManagerListeners"><h2>ServerAssetManagerListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerAssetManagerListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerAssetManagerListeners</p>
-<p>▸ <strong>ServerAssetManagerListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="ServerAudibleAssetMixin"><h2>ServerAudibleAssetMixin</h2></a>
   <div class="section">
     <h1>Function: ServerAudibleAssetMixin</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerAudibleAssetMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerAudibleAssetMixin</p>
 <p>▸ <strong>ServerAudibleAssetMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ServerAudibleAsset.html'>ServerAudibleAsset</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -2079,7 +1945,7 @@
   <a id="ServerAudibleInstanceMixin"><h2>ServerAudibleInstanceMixin</h2></a>
   <div class="section">
     <h1>Function: ServerAudibleInstanceMixin</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerAudibleInstanceMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerAudibleInstanceMixin</p>
 <p>▸ <strong>ServerAudibleInstanceMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ServerAudibleInstance.html'>ServerAudibleInstance</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -2138,78 +2004,6 @@
 </section>
   
 <section>
-  <a id="ServerMashVideoListeners"><h2>ServerMashVideoListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerMashVideoListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerMashVideoListeners</p>
-<p>▸ <strong>ServerMashVideoListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ServerRawAudioListeners"><h2>ServerRawAudioListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerRawAudioListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawAudioListeners</p>
-<p>▸ <strong>ServerRawAudioListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ServerRawImageListeners"><h2>ServerRawImageListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerRawImageListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawImageListeners</p>
-<p>▸ <strong>ServerRawImageListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ServerRawVideoListeners"><h2>ServerRawVideoListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerRawVideoListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawVideoListeners</p>
-<p>▸ <strong>ServerRawVideoListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ServerShapeImageListeners"><h2>ServerShapeImageListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerShapeImageListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerShapeImageListeners</p>
-<p>▸ <strong>ServerShapeImageListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="ServerTextImageListeners"><h2>ServerTextImageListeners</h2></a>
-  <div class="section">
-    <h1>Function: ServerTextImageListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerTextImageListeners</p>
-<p>▸ <strong>ServerTextImageListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="ServerTranscodeStatusListeners"><h2>ServerTranscodeStatusListeners</h2></a>
   <div class="section">
     <h1>Function: ServerTranscodeStatusListeners</h1>
@@ -2225,7 +2019,7 @@
   <a id="ServerVisibleAssetMixin"><h2>ServerVisibleAssetMixin</h2></a>
   <div class="section">
     <h1>Function: ServerVisibleAssetMixin</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerVisibleAssetMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerVisibleAssetMixin</p>
 <p>▸ <strong>ServerVisibleAssetMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ServerVisibleAsset.html'>ServerVisibleAsset</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -2263,7 +2057,7 @@
   <a id="ServerVisibleInstanceMixin"><h2>ServerVisibleInstanceMixin</h2></a>
   <div class="section">
     <h1>Function: ServerVisibleInstanceMixin</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerVisibleInstanceMixin</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerVisibleInstanceMixin</p>
 <p>▸ <strong>ServerVisibleInstanceMixin</strong>&lt;<code>T</code>&gt;(<code>Base</code>): <code>T</code> &amp; <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/ServerVisibleInstance.html'>ServerVisibleInstance</a></code>&gt;</p>
 <h4>Type parameters</h4>
 <table>
@@ -2427,7 +2221,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>T</code></td>
-<td align="left">extends <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/RawAsset.html'>RawAsset</a></code> &amp; <code><a href='../exports/VisibleAsset.html'>VisibleAsset</a></code>&gt;</td>
+<td align="left">extends <code><a href='Types.html#Constrained'>Constrained</a></code>&lt;<code><a href='../exports/VisibleAsset.html'>VisibleAsset</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <h4>Parameters</h4>
@@ -2528,7 +2322,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineClipElement'>TimelineClipElement</a></code>&gt;, <code>&quot;size&quot;</code> | <code>&quot;label&quot;</code> | <code>&quot;width&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;left&quot;</code> | <code>&quot;trackIndex&quot;</code> | <code>&quot;scale&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;clipId&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;maxWidth&quot;</code> | <code>&quot;trackWidth&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineClipElement'>TimelineClipElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineClipElement'>TimelineClipElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineClipElement'>TimelineClipElement</a></code>&gt;, <code>&quot;size&quot;</code> | <code>&quot;label&quot;</code> | <code>&quot;width&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;left&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;clipId&quot;</code> | <code>&quot;trackIndex&quot;</code> | <code>&quot;scale&quot;</code> | <code>&quot;maxWidth&quot;</code> | <code>&quot;trackWidth&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineClipElement'>TimelineClipElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineClipElement'>TimelineClipElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -2578,7 +2372,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineContentCenterElement'>TimelineContentCenterElement</a></code>&gt;, <code>&quot;frames&quot;</code> | <code>&quot;zoom&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;width&quot;</code> | <code>&quot;frame&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineContentCenterElement'>TimelineContentCenterElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineContentCenterElement'>TimelineContentCenterElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineContentCenterElement'>TimelineContentCenterElement</a></code>&gt;, <code>&quot;zoom&quot;</code> | <code>&quot;frame&quot;</code> | <code>&quot;frames&quot;</code> | <code>&quot;disabled&quot;</code> | <code>&quot;width&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;handleChangedMashAsset&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineContentCenterElement'>TimelineContentCenterElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineContentCenterElement'>TimelineContentCenterElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -2653,7 +2447,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineIconElement'>TimelineIconElement</a></code>&gt;, <code>&quot;dense&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;trackIndex&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineIconElement'>TimelineIconElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineIconElement'>TimelineIconElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineIconElement'>TimelineIconElement</a></code>&gt;, <code>&quot;dense&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;trackIndex&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineIconElement'>TimelineIconElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineIconElement'>TimelineIconElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -2703,7 +2497,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>props</code></td>
-<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineTrackElement'>TimelineTrackElement</a></code>&gt;, <code>&quot;width&quot;</code> | <code>&quot;x&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;trackIndex&quot;</code> | <code>&quot;scale&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;maxWidth&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineTrackElement'>TimelineTrackElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineTrackElement'>TimelineTrackElement</a></code>&gt;</td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code>HTMLAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineTrackElement'>TimelineTrackElement</a></code>&gt;, <code>&quot;width&quot;</code> | <code>&quot;x&quot;</code> | <code>&quot;exportParts&quot;</code> | <code>&quot;connectedCallback&quot;</code> | <code>&quot;disconnectedCallback&quot;</code> | <code>&quot;renderOptions&quot;</code> | <code>&quot;renderRoot&quot;</code> | <code>&quot;isUpdatePending&quot;</code> | <code>&quot;hasUpdated&quot;</code> | <code>&quot;addController&quot;</code> | <code>&quot;removeController&quot;</code> | <code>&quot;attributeChangedCallback&quot;</code> | <code>&quot;requestUpdate&quot;</code> | <code>&quot;updateComplete&quot;</code> | <code>&quot;acceptsClip&quot;</code> | <code>&quot;dropValid&quot;</code> | <code>&quot;mashIndex&quot;</code> | <code>&quot;handleDragged&quot;</code> | <code>&quot;handleDropped&quot;</code> | <code>&quot;trackIndex&quot;</code> | <code>&quot;scale&quot;</code> | <code>&quot;maxWidth&quot;</code>&gt; &amp; <code>EventListeners</code>&lt;{}&gt; &amp; <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys"><code>Omit</code></a>&lt;<code><a href='../categories/Elements.html#TimelineTrackElement'>TimelineTrackElement</a></code>, keyof <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>&gt;&gt; &amp; <code>RefAttributes</code>&lt;<code><a href='../categories/Elements.html#TimelineTrackElement'>TimelineTrackElement</a></code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -2897,47 +2691,6 @@
 </tbody></table>
 <p>Returns
 <code>ReactNode</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="alphamergeFilters"><h2>alphamergeFilters</h2></a>
-  <div class="section">
-    <h1>Function: alphamergeFilters</h1>
-<p><a href="../server-lib.html">server-lib</a>.alphamergeFilters</p>
-<p>▸ <strong>alphamergeFilters</strong>(<code>maskInput</code>, <code>maskedInput</code>, <code>outputId</code>, <code>transparency</code>, <code>debug?</code>): <code><a href='../exports/CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>maskInput</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>maskedInput</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>transparency</code></td>
-<td align="left"><code><a href='Types.html#Transparency'>Transparency</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>debug?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilters.html'>CommandFilters</a></code></p>
 
   </div>
 </section>
@@ -3237,7 +2990,7 @@ asserts value is number</p>
   <a id="assertAbsolutePath"><h2>assertAbsolutePath</h2></a>
   <div class="section">
     <h1>Function: assertAbsolutePath</h1>
-<p><a href="../server-lib.html">server-lib</a>.assertAbsolutePath</p>
+<p><a href="../shared-lib.html">shared-lib</a>.assertAbsolutePath</p>
 <p>▸ <strong>assertAbsolutePath</strong>(<code>value</code>, <code>name?</code>): asserts value is `/${string}`</p>
 <h4>Parameters</h4>
 <table>
@@ -3258,6 +3011,35 @@ asserts value is number</p>
 </tbody></table>
 <p>Returns
 asserts value is `/${string}`</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="assertAspect"><h2>assertAspect</h2></a>
+  <div class="section">
+    <h1>Function: assertAspect</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.assertAspect</p>
+<p>▸ <strong>assertAspect</strong>(<code>value</code>, <code>name?</code>): asserts value is Aspect</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+asserts value is Aspect</p>
 
   </div>
 </section>
@@ -3350,6 +3132,35 @@ asserts value is AudioInstance</p>
 </section>
   
 <section>
+  <a id="assertBoolean"><h2>assertBoolean</h2></a>
+  <div class="section">
+    <h1>Function: assertBoolean</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.assertBoolean</p>
+<p>▸ <strong>assertBoolean</strong>(<code>value</code>, <code>name?</code>): asserts value is boolean</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+asserts value is boolean</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="assertCanBeContainerInstance"><h2>assertCanBeContainerInstance</h2></a>
   <div class="section">
     <h1>Function: assertCanBeContainerInstance</h1>
@@ -3411,7 +3222,7 @@ asserts value is ContentInstance</p>
   <a id="assertClientAudibleInstance"><h2>assertClientAudibleInstance</h2></a>
   <div class="section">
     <h1>Function: assertClientAudibleInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.assertClientAudibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.assertClientAudibleInstance</p>
 <p>▸ <strong>assertClientAudibleInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ClientAudibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -3469,7 +3280,7 @@ asserts value is ClientClip</p>
   <a id="assertClientInstance"><h2>assertClientInstance</h2></a>
   <div class="section">
     <h1>Function: assertClientInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.assertClientInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.assertClientInstance</p>
 <p>▸ <strong>assertClientInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ClientInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -3553,10 +3364,39 @@ asserts value is ClientMashInstance</p>
 </section>
   
 <section>
+  <a id="assertClientTrack"><h2>assertClientTrack</h2></a>
+  <div class="section">
+    <h1>Function: assertClientTrack</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.assertClientTrack</p>
+<p>▸ <strong>assertClientTrack</strong>(<code>value</code>, <code>name?</code>): asserts value is ClientTrack</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+asserts value is ClientTrack</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="assertClientVisibleInstance"><h2>assertClientVisibleInstance</h2></a>
   <div class="section">
     <h1>Function: assertClientVisibleInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.assertClientVisibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.assertClientVisibleInstance</p>
 <p>▸ <strong>assertClientVisibleInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ClientVisibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -3614,8 +3454,8 @@ asserts value is Clip</p>
   <a id="assertDatasetElement"><h2>assertDatasetElement</h2></a>
   <div class="section">
     <h1>Function: assertDatasetElement</h1>
-<p><a href="../client-lib.html">client-lib</a>.assertDatasetElement</p>
-<p>▸ <strong>assertDatasetElement</strong>(<code>value</code>, <code>name?</code>): asserts value is DatasetElement</p>
+<p><a href="../shared-lib.html">shared-lib</a>.assertDatasetElement</p>
+<p>▸ <strong>assertDatasetElement</strong>(<code>value</code>, <code>name?</code>): asserts value is HTMLElement | SVGElement</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -3634,7 +3474,7 @@ asserts value is Clip</p>
 </tr>
 </tbody></table>
 <p>Returns
-asserts value is DatasetElement</p>
+asserts value is HTMLElement | SVGElement</p>
 
   </div>
 </section>
@@ -3740,7 +3580,7 @@ asserts value is Endpoint</p>
   <div class="section">
     <h1>Function: assertFilePathExists</h1>
 <p><a href="../server-lib.html">server-lib</a>.assertFilePathExists</p>
-<p>▸ <strong>assertFilePathExists</strong>(<code>value</code>, <code>name?</code>): asserts value is string</p>
+<p>▸ <strong>assertFilePathExists</strong>(<code>value</code>, <code>name?</code>): asserts value is `/${string}`</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -3759,7 +3599,7 @@ asserts value is Endpoint</p>
 </tr>
 </tbody></table>
 <p>Returns
-asserts value is string</p>
+asserts value is `/${string}`</p>
 
   </div>
 </section>
@@ -3799,6 +3639,35 @@ asserts value is Identified</p>
     <h1>Function: assertInteger</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.assertInteger</p>
 <p>▸ <strong>assertInteger</strong>(<code>value</code>, <code>name?</code>): asserts value is number</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+asserts value is number</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="assertNumber"><h2>assertNumber</h2></a>
+  <div class="section">
+    <h1>Function: assertNumber</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.assertNumber</p>
+<p>▸ <strong>assertNumber</strong>(<code>value</code>, <code>name?</code>): asserts value is number</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -4049,7 +3918,7 @@ asserts value is Scanning</p>
   <a id="assertServerAudibleInstance"><h2>assertServerAudibleInstance</h2></a>
   <div class="section">
     <h1>Function: assertServerAudibleInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.assertServerAudibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.assertServerAudibleInstance</p>
 <p>▸ <strong>assertServerAudibleInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ServerAudibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -4070,122 +3939,6 @@ asserts value is Scanning</p>
 </tbody></table>
 <p>Returns
 asserts value is ServerAudibleInstance</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="assertServerContainerInstance"><h2>assertServerContainerInstance</h2></a>
-  <div class="section">
-    <h1>Function: assertServerContainerInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.assertServerContainerInstance</p>
-<p>▸ <strong>assertServerContainerInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ServerContainerInstance</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>name?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-asserts value is ServerContainerInstance</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="assertServerContentInstance"><h2>assertServerContentInstance</h2></a>
-  <div class="section">
-    <h1>Function: assertServerContentInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.assertServerContentInstance</p>
-<p>▸ <strong>assertServerContentInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ServerContentInstance</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>name?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-asserts value is ServerContentInstance</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="assertServerMashAsset"><h2>assertServerMashAsset</h2></a>
-  <div class="section">
-    <h1>Function: assertServerMashAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.assertServerMashAsset</p>
-<p>▸ <strong>assertServerMashAsset</strong>(<code>value</code>, <code>message?</code>): asserts value is ServerMashAsset</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>message?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-asserts value is ServerMashAsset</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="assertServerVisibleInstance"><h2>assertServerVisibleInstance</h2></a>
-  <div class="section">
-    <h1>Function: assertServerVisibleInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.assertServerVisibleInstance</p>
-<p>▸ <strong>assertServerVisibleInstance</strong>(<code>value</code>, <code>name?</code>): asserts value is ServerVisibleInstance</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>name?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-asserts value is ServerVisibleInstance</p>
 
   </div>
 </section>
@@ -4249,6 +4002,35 @@ asserts size is NonZeroSize</p>
 </section>
   
 <section>
+  <a id="assertString"><h2>assertString</h2></a>
+  <div class="section">
+    <h1>Function: assertString</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.assertString</p>
+<p>▸ <strong>assertString</strong>(<code>value</code>, <code>name?</code>): asserts value is string</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+asserts value is string</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="assertTime"><h2>assertTime</h2></a>
   <div class="section">
     <h1>Function: assertTime</h1>
@@ -4302,6 +4084,35 @@ asserts value is Time</p>
 </tbody></table>
 <p>Returns
 asserts value is TimeRange</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="assertTransparency"><h2>assertTransparency</h2></a>
+  <div class="section">
+    <h1>Function: assertTransparency</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.assertTransparency</p>
+<p>▸ <strong>assertTransparency</strong>(<code>value</code>, <code>name?</code>): asserts value is Transparency</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+asserts value is Transparency</p>
 
   </div>
 </section>
@@ -4468,11 +4279,11 @@ asserts value is VisibleInstance</p>
 </section>
   
 <section>
-  <a id="audioRetrieveFunction"><h2>audioRetrieveFunction</h2></a>
+  <a id="audioRawAssetFunction"><h2>audioRawAssetFunction</h2></a>
   <div class="section">
-    <h1>Function: audioRetrieveFunction</h1>
-<p><a href="../client-lib.html">client-lib</a>.audioRetrieveFunction</p>
-<p>▸ <strong>audioRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+    <h1>Function: audioRawAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.audioRawAssetFunction</p>
+<p>▸ <strong>audioRawAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -4482,7 +4293,36 @@ asserts value is VisibleInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="audioRetrieveFunction"><h2>audioRetrieveFunction</h2></a>
+  <div class="section">
+    <h1>Function: audioRetrieveFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.audioRetrieveFunction</p>
+<p>▸ <strong>audioRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -4492,6 +4332,64 @@ asserts value is VisibleInstance</p>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="audioSaveFunction"><h2>audioSaveFunction</h2></a>
+  <div class="section">
+    <h1>Function: audioSaveFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.audioSaveFunction</p>
+<p>▸ <strong>audioSaveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/Asset.html'>Asset</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code><a href='../exports/JobOptions.html'>JobOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="audioViewFunction"><h2>audioViewFunction</h2></a>
+  <div class="section">
+    <h1>Function: audioViewFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.audioViewFunction</p>
+<p>▸ <strong>audioViewFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='../exports/AudioPreview.html'>AudioPreview</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code>AudioPreviewArgs</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../exports/AudioPreview.html'>AudioPreview</a></code></p>
 
   </div>
 </section>
@@ -4550,7 +4448,7 @@ value is ContentInstance</p>
   <a id="centerPoint"><h2>centerPoint</h2></a>
   <div class="section">
     <h1>Function: centerPoint</h1>
-<p><a href="../client-lib.html">client-lib</a>.centerPoint</p>
+<p><a href="../shared-lib.html">shared-lib</a>.centerPoint</p>
 <p>▸ <strong>centerPoint</strong>(<code>size</code>, <code>inSize</code>): <code><a href='../exports/Point.html'>Point</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
@@ -4583,59 +4481,6 @@ value is ContentInstance</p>
 <p>▸ <strong>clipClientListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
 <p>Returns
 <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="colorClientListeners"><h2>colorClientListeners</h2></a>
-  <div class="section">
-    <h1>Function: colorClientListeners</h1>
-<p><a href="../client-lib.html">client-lib</a>.colorClientListeners</p>
-<p>▸ <strong>colorClientListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="colorFilter"><h2>colorFilter</h2></a>
-  <div class="section">
-    <h1>Function: colorFilter</h1>
-<p><a href="../server-lib.html">server-lib</a>.colorFilter</p>
-<p>▸ <strong>colorFilter</strong>(<code>outputId</code>, <code>color</code>, <code>rate</code>, <code>size?</code>, <code>duration?</code>): <code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>color</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>rate</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-<tr>
-<td align="left"><code>size?</code></td>
-<td align="left"><code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-<tr>
-<td align="left"><code>duration?</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
 
   </div>
 </section>
@@ -4810,18 +4655,6 @@ value is ContentInstance</p>
 </tbody></table>
 <p>Returns
 <code>string</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="colorServerListeners"><h2>colorServerListeners</h2></a>
-  <div class="section">
-    <h1>Function: colorServerListeners</h1>
-<p><a href="../server-lib.html">server-lib</a>.colorServerListeners</p>
-<p>▸ <strong>colorServerListeners</strong>(): <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
-<p>Returns
-<code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code></p>
 
   </div>
 </section>
@@ -5040,31 +4873,6 @@ value is ContentInstance</p>
 </tbody></table>
 <p>Returns
 <code>void</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="commandPromise"><h2>commandPromise</h2></a>
-  <div class="section">
-    <h1>Function: commandPromise</h1>
-<p><a href="../server-lib.html">server-lib</a>.commandPromise</p>
-<p>▸ <strong>commandPromise</strong>(<code>command</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>command</code></td>
-<td align="left"><code>FfmpegCommand</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 
   </div>
 </section>
@@ -5669,6 +5477,10 @@ value is ContentInstance</p>
 <td align="left"><code>type</code></td>
 <td align="left"><code>string</code></td>
 </tr>
+<tr>
+<td align="left"><code>usage?</code></td>
+<td align="left"><code><a href='Types.html#Usage'>Usage</a></code></td>
+</tr>
 </tbody></table>
 
   </div>
@@ -5788,44 +5600,11 @@ value is ContentInstance</p>
 </section>
   
 <section>
-  <a id="cropFilter"><h2>cropFilter</h2></a>
-  <div class="section">
-    <h1>Function: cropFilter</h1>
-<p><a href="../server-lib.html">server-lib</a>.cropFilter</p>
-<p>▸ <strong>cropFilter</strong>(<code>inputId</code>, <code>outputId</code>, <code>rect</code>): <code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>inputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>rect</code></td>
-<td align="left"><code><a href='../exports/Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="cssRetrieveFunction"><h2>cssRetrieveFunction</h2></a>
   <div class="section">
     <h1>Function: cssRetrieveFunction</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.cssRetrieveFunction</p>
-<p>▸ <strong>cssRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<p>▸ <strong>cssRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -5835,7 +5614,7 @@ value is ContentInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -5877,7 +5656,7 @@ value is ContentInstance</p>
   <div class="section">
     <h1>Function: decodeFunction</h1>
 <p><a href="../client-lib.html">client-lib</a>.decodeFunction</p>
-<p>▸ <strong>decodeFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Decoding.html'>Decoding</a></code>&gt;&gt;</p>
+<p>▸ <strong>decodeFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Decoding.html'>Decoding</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -5887,7 +5666,7 @@ value is ContentInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/DecodeArgs.html'>DecodeArgs</a></code></td>
 </tr>
 <tr>
@@ -5972,30 +5751,6 @@ value is ContentInstance</p>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="domWindow"><h2>domWindow</h2></a>
-  <div class="section">
-    <h1>Function: domWindow</h1>
-<p><a href="../server-lib.html">server-lib</a>.domWindow</p>
-<p>▸ <strong>domWindow</strong>(): <code>Object</code></p>
-<p>Returns
-<code>Object</code></p>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>data</code></td>
-<td align="left"><code>DOMWindow</code></td>
-</tr>
-</tbody></table>
 
   </div>
 </section>
@@ -6220,6 +5975,31 @@ dataTransfer is DataTransfer</p>
 </section>
   
 <section>
+  <a id="editFunction"><h2>editFunction</h2></a>
+  <div class="section">
+    <h1>Function: editFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.editFunction</p>
+<p>▸ <strong>editFunction</strong>(<code>object</code>): <code><a href='../exports/Edit.html'>Edit</a></code> | <code><a href='../exports/Edits.html'>Edits</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='../exports/EditObject.html'>EditObject</a></code> | <code><a href='../exports/ClientMashAsset.html'>ClientMashAsset</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../exports/Edit.html'>Edit</a></code> | <code><a href='../exports/Edits.html'>Edits</a></code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="encode"><h2>encode</h2></a>
   <div class="section">
     <h1>Function: encode</h1>
@@ -6285,7 +6065,7 @@ dataTransfer is DataTransfer</p>
   <div class="section">
     <h1>Function: encodeFunction</h1>
 <p><a href="../client-lib.html">client-lib</a>.encodeFunction</p>
-<p>▸ <strong>encodeFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Encoding.html'>Encoding</a></code>&gt;&gt;</p>
+<p>▸ <strong>encodeFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Encoding.html'>Encoding</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -6295,7 +6075,7 @@ dataTransfer is DataTransfer</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/EncodeArgs.html'>EncodeArgs</a></code></td>
 </tr>
 <tr>
@@ -6567,6 +6347,35 @@ dataTransfer is DataTransfer</p>
 </tbody></table>
 <p>Returns
 <code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="eventFunction"><h2>eventFunction</h2></a>
+  <div class="section">
+    <h1>Function: eventFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.eventFunction</p>
+<p>▸ <strong>eventFunction</strong>(<code>type</code>, <code>...args</code>): <code>any</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>...args</code></td>
+<td align="left"><code>any</code>[]</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>any</code></p>
 
   </div>
 </section>
@@ -6961,7 +6770,7 @@ dataTransfer is DataTransfer</p>
   <div class="section">
     <h1>Function: filePathExists</h1>
 <p><a href="../server-lib.html">server-lib</a>.filePathExists</p>
-<p>▸ <strong>filePathExists</strong>(<code>value</code>): value is string</p>
+<p>▸ <strong>filePathExists</strong>(<code>value</code>): value is `/${string}`</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -6976,7 +6785,7 @@ dataTransfer is DataTransfer</p>
 </tr>
 </tbody></table>
 <p>Returns
-value is string</p>
+value is `/${string}`</p>
 
   </div>
 </section>
@@ -7007,69 +6816,6 @@ value is string</p>
 </section>
   
 <section>
-  <a id="fileReadJsonPromise"><h2>fileReadJsonPromise</h2></a>
-  <div class="section">
-    <h1>Function: fileReadJsonPromise</h1>
-<p><a href="../server-lib.html">server-lib</a>.fileReadJsonPromise</p>
-<p>▸ <strong>fileReadJsonPromise</strong>&lt;<code>T</code>&gt;(<code>file?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>T</code>&gt;&gt;</p>
-<h4>Type parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>T</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>file?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>T</code>&gt;&gt;</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="fileReadPromise"><h2>fileReadPromise</h2></a>
-  <div class="section">
-    <h1>Function: fileReadPromise</h1>
-<p><a href="../server-lib.html">server-lib</a>.fileReadPromise</p>
-<p>▸ <strong>fileReadPromise</strong>(<code>file?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>file?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-
-  </div>
-</section>
-  
-<section>
   <a id="fileRemove"><h2>fileRemove</h2></a>
   <div class="section">
     <h1>Function: fileRemove</h1>
@@ -7095,11 +6841,11 @@ value is string</p>
 </section>
   
 <section>
-  <a id="fileRemovePromise"><h2>fileRemovePromise</h2></a>
+  <a id="fileUploadFunction"><h2>fileUploadFunction</h2></a>
   <div class="section">
-    <h1>Function: fileRemovePromise</h1>
-<p><a href="../server-lib.html">server-lib</a>.fileRemovePromise</p>
-<p>▸ <strong>fileRemovePromise</strong>(<code>filePath</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../exports/DefiniteError.html'>DefiniteError</a></code> | { <code>data</code>: <code>never</code> = filePath }&gt;</p>
+    <h1>Function: fileUploadFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.fileUploadFunction</p>
+<p>▸ <strong>fileUploadFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/UploadResult.html'>UploadResult</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -7109,12 +6855,16 @@ value is string</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>filePath</code></td>
-<td align="left"><code>string</code></td>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/RequestArgs.html'>RequestArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code><a href='../exports/JobOptions.html'>JobOptions</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../exports/DefiniteError.html'>DefiniteError</a></code> | { <code>data</code>: <code>never</code> = filePath }&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/UploadResult.html'>UploadResult</a></code>&gt;&gt;</p>
 
   </div>
 </section>
@@ -7144,68 +6894,6 @@ value is string</p>
 </tbody></table>
 <p>Returns
 <code>void</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="fileWriteJsonPromise"><h2>fileWriteJsonPromise</h2></a>
-  <div class="section">
-    <h1>Function: fileWriteJsonPromise</h1>
-<p><a href="../server-lib.html">server-lib</a>.fileWriteJsonPromise</p>
-<p>▸ <strong>fileWriteJsonPromise</strong>(<code>filePath</code>, <code>data</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>filePath</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>data</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="fileWritePromise"><h2>fileWritePromise</h2></a>
-  <div class="section">
-    <h1>Function: fileWritePromise</h1>
-<p><a href="../server-lib.html">server-lib</a>.fileWritePromise</p>
-<p>▸ <strong>fileWritePromise</strong>(<code>filePath</code>, <code>content</code>, <code>dontReplace?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>filePath</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>content</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>dontReplace?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 
   </div>
 </section>
@@ -7353,7 +7041,7 @@ value is string</p>
   <div class="section">
     <h1>Function: fontRetrieveFunction</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.fontRetrieveFunction</p>
-<p>▸ <strong>fontRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<p>▸ <strong>fontRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -7363,7 +7051,7 @@ value is string</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -7406,39 +7094,6 @@ value is string</p>
 <td align="left"><code>pix_fmts</code></td>
 <td align="left"><code>string</code></td>
 <td align="left"><code>&#39;yuva420p&#39;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="fpsFilter"><h2>fpsFilter</h2></a>
-  <div class="section">
-    <h1>Function: fpsFilter</h1>
-<p><a href="../server-lib.html">server-lib</a>.fpsFilter</p>
-<p>▸ <strong>fpsFilter</strong>(<code>inputId</code>, <code>outputId</code>, <code>fps</code>): <code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>inputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>fps</code></td>
-<td align="left"><code>number</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -7580,11 +7235,11 @@ value is string</p>
 </section>
   
 <section>
-  <a id="imageRetrieveFunction"><h2>imageRetrieveFunction</h2></a>
+  <a id="imageColorAssetFunction"><h2>imageColorAssetFunction</h2></a>
   <div class="section">
-    <h1>Function: imageRetrieveFunction</h1>
-<p><a href="../client-lib.html">client-lib</a>.imageRetrieveFunction</p>
-<p>▸ <strong>imageRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+    <h1>Function: imageColorAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.imageColorAssetFunction</p>
+<p>▸ <strong>imageColorAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -7594,7 +7249,65 @@ value is string</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="imageRawAssetFunction"><h2>imageRawAssetFunction</h2></a>
+  <div class="section">
+    <h1>Function: imageRawAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.imageRawAssetFunction</p>
+<p>▸ <strong>imageRawAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="imageRetrieveFunction"><h2>imageRetrieveFunction</h2></a>
+  <div class="section">
+    <h1>Function: imageRetrieveFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.imageRetrieveFunction</p>
+<p>▸ <strong>imageRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -7604,6 +7317,93 @@ value is string</p>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="imageSaveFunction"><h2>imageSaveFunction</h2></a>
+  <div class="section">
+    <h1>Function: imageSaveFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.imageSaveFunction</p>
+<p>▸ <strong>imageSaveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/Asset.html'>Asset</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code><a href='../exports/JobOptions.html'>JobOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="imageShapeAssetFunction"><h2>imageShapeAssetFunction</h2></a>
+  <div class="section">
+    <h1>Function: imageShapeAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.imageShapeAssetFunction</p>
+<p>▸ <strong>imageShapeAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="imageTextAssetFunction"><h2>imageTextAssetFunction</h2></a>
+  <div class="section">
+    <h1>Function: imageTextAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.imageTextAssetFunction</p>
+<p>▸ <strong>imageTextAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
 
   </div>
 </section>
@@ -7697,6 +7497,31 @@ value is T[]</p>
 </section>
   
 <section>
+  <a id="isAspect"><h2>isAspect</h2></a>
+  <div class="section">
+    <h1>Function: isAspect</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.isAspect</p>
+<p>▸ <strong>isAspect</strong>(<code>value</code>): value is Aspect</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+value is Aspect</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="isAsset"><h2>isAsset</h2></a>
   <div class="section">
     <h1>Function: isAsset</h1>
@@ -7750,150 +7575,6 @@ value is Asset</p>
 </tbody></table>
 <p>Returns
 value is AssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is AudioAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;audio&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>undefined</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is AudioAssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is ImageAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;image&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>undefined</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is ImageAssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is VideoAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;video&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>undefined</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is VideoAssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is RawAudioAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;audio&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>&quot;raw&quot;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is RawAudioAssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is RawImageAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;image&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>&quot;raw&quot;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is RawImageAssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is RawVideoAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;video&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>&quot;raw&quot;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is RawVideoAssetObject</p>
 <p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is MashAudioAssetObject</p>
 <h4>Parameters</h4>
 <table>
@@ -8062,30 +7743,6 @@ value is PromptVideoAssetObject</p>
 </tbody></table>
 <p>Returns
 value is TextAssetObject</p>
-<p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is ColorAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-<tr>
-<td align="left"><code>type?</code></td>
-<td align="left"><code>&quot;image&quot;</code></td>
-</tr>
-<tr>
-<td align="left"><code>source?</code></td>
-<td align="left"><code>&quot;color&quot;</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is ColorAssetObject</p>
 <p>▸ <strong>isAssetObject</strong>(<code>value</code>, <code>type?</code>, <code>source?</code>): value is ShapeAssetObject</p>
 <h4>Parameters</h4>
 <table>
@@ -8164,6 +7821,31 @@ value is AudibleAsset</p>
 </section>
   
 <section>
+  <a id="isAudibleInstance"><h2>isAudibleInstance</h2></a>
+  <div class="section">
+    <h1>Function: isAudibleInstance</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.isAudibleInstance</p>
+<p>▸ <strong>isAudibleInstance</strong>(<code>value</code>): value is AudibleInstance</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+value is AudibleInstance</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="isAudibleType"><h2>isAudibleType</h2></a>
   <div class="section">
     <h1>Function: isAudibleType</h1>
@@ -8209,31 +7891,6 @@ value is AudibleType</p>
 </tbody></table>
 <p>Returns
 value is AudioAsset</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="isAudioAssetObject"><h2>isAudioAssetObject</h2></a>
-  <div class="section">
-    <h1>Function: isAudioAssetObject</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.isAudioAssetObject</p>
-<p>▸ <strong>isAudioAssetObject</strong>(<code>value</code>): value is AudioAssetObject</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is AudioAssetObject</p>
 
   </div>
 </section>
@@ -8317,7 +7974,7 @@ value is boolean</p>
   <a id="isChangeEdit"><h2>isChangeEdit</h2></a>
   <div class="section">
     <h1>Function: isChangeEdit</h1>
-<p><a href="../client-lib.html">client-lib</a>.isChangeEdit</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isChangeEdit</p>
 <p>▸ <strong>isChangeEdit</strong>(<code>value</code>): value is ChangeEdit</p>
 <h4>Parameters</h4>
 <table>
@@ -8342,7 +7999,7 @@ value is ChangeEdit</p>
   <a id="isChangeEditObject"><h2>isChangeEditObject</h2></a>
   <div class="section">
     <h1>Function: isChangeEditObject</h1>
-<p><a href="../client-lib.html">client-lib</a>.isChangeEditObject</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isChangeEditObject</p>
 <p>▸ <strong>isChangeEditObject</strong>(<code>value</code>): value is ChangeEditObject</p>
 <h4>Parameters</h4>
 <table>
@@ -8367,7 +8024,7 @@ value is ChangeEditObject</p>
   <a id="isChangePropertyEdit"><h2>isChangePropertyEdit</h2></a>
   <div class="section">
     <h1>Function: isChangePropertyEdit</h1>
-<p><a href="../client-lib.html">client-lib</a>.isChangePropertyEdit</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isChangePropertyEdit</p>
 <p>▸ <strong>isChangePropertyEdit</strong>(<code>value</code>): value is ChangePropertyEdit</p>
 <h4>Parameters</h4>
 <table>
@@ -8392,7 +8049,7 @@ value is ChangePropertyEdit</p>
   <a id="isChangePropertyEditObject"><h2>isChangePropertyEditObject</h2></a>
   <div class="section">
     <h1>Function: isChangePropertyEditObject</h1>
-<p><a href="../client-lib.html">client-lib</a>.isChangePropertyEditObject</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isChangePropertyEditObject</p>
 <p>▸ <strong>isChangePropertyEditObject</strong>(<code>value</code>): value is ChangePropertyEditObject</p>
 <h4>Parameters</h4>
 <table>
@@ -8417,7 +8074,7 @@ value is ChangePropertyEditObject</p>
   <a id="isClientAsset"><h2>isClientAsset</h2></a>
   <div class="section">
     <h1>Function: isClientAsset</h1>
-<p><a href="../client-lib.html">client-lib</a>.isClientAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isClientAsset</p>
 <p>▸ <strong>isClientAsset</strong>(<code>value</code>): value is ClientAsset</p>
 <h4>Parameters</h4>
 <table>
@@ -8442,7 +8099,7 @@ value is ClientAsset</p>
   <a id="isClientAudibleInstance"><h2>isClientAudibleInstance</h2></a>
   <div class="section">
     <h1>Function: isClientAudibleInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.isClientAudibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isClientAudibleInstance</p>
 <p>▸ <strong>isClientAudibleInstance</strong>(<code>value</code>): value is ClientAudibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -8567,7 +8224,7 @@ value is ClientImage</p>
   <a id="isClientInstance"><h2>isClientInstance</h2></a>
   <div class="section">
     <h1>Function: isClientInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.isClientInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isClientInstance</p>
 <p>▸ <strong>isClientInstance</strong>(<code>value</code>): value is ClientInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -8642,7 +8299,7 @@ value is ClientMashInstance</p>
   <a id="isClientTrack"><h2>isClientTrack</h2></a>
   <div class="section">
     <h1>Function: isClientTrack</h1>
-<p><a href="../client-lib.html">client-lib</a>.isClientTrack</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isClientTrack</p>
 <p>▸ <strong>isClientTrack</strong>(<code>value</code>): value is ClientTrack</p>
 <h4>Parameters</h4>
 <table>
@@ -8692,7 +8349,7 @@ value is ClientVideo</p>
   <a id="isClientVisibleInstance"><h2>isClientVisibleInstance</h2></a>
   <div class="section">
     <h1>Function: isClientVisibleInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.isClientVisibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isClientVisibleInstance</p>
 <p>▸ <strong>isClientVisibleInstance</strong>(<code>value</code>): value is ClientVisibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -8792,8 +8449,8 @@ value is ComplexSvgItem</p>
   <a id="isDatasetElement"><h2>isDatasetElement</h2></a>
   <div class="section">
     <h1>Function: isDatasetElement</h1>
-<p><a href="../client-lib.html">client-lib</a>.isDatasetElement</p>
-<p>▸ <strong>isDatasetElement</strong>(<code>value</code>): value is DatasetElement</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isDatasetElement</p>
+<p>▸ <strong>isDatasetElement</strong>(<code>value</code>): value is HTMLElement | SVGElement</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -8808,7 +8465,7 @@ value is ComplexSvgItem</p>
 </tr>
 </tbody></table>
 <p>Returns
-value is DatasetElement</p>
+value is HTMLElement | SVGElement</p>
 
   </div>
 </section>
@@ -9615,6 +9272,31 @@ value is ProbingOptions</p>
 </section>
   
 <section>
+  <a id="isPropertied"><h2>isPropertied</h2></a>
+  <div class="section">
+    <h1>Function: isPropertied</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.isPropertied</p>
+<p>▸ <strong>isPropertied</strong>(<code>target</code>): target is Propertied</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>target</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+target is Propertied</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="isPropertyId"><h2>isPropertyId</h2></a>
   <div class="section">
     <h1>Function: isPropertyId</h1>
@@ -9635,31 +9317,6 @@ value is ProbingOptions</p>
 </tbody></table>
 <p>Returns
 value is `asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="isRawAsset"><h2>isRawAsset</h2></a>
-  <div class="section">
-    <h1>Function: isRawAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.isRawAsset</p>
-<p>▸ <strong>isRawAsset</strong>(<code>value</code>): value is RawAsset</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is RawAsset</p>
 
   </div>
 </section>
@@ -9790,6 +9447,31 @@ value is Resource</p>
 </section>
   
 <section>
+  <a id="isScalar"><h2>isScalar</h2></a>
+  <div class="section">
+    <h1>Function: isScalar</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.isScalar</p>
+<p>▸ <strong>isScalar</strong>(<code>value</code>): value is Scalar</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+value is Scalar</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="isScanning"><h2>isScanning</h2></a>
   <div class="section">
     <h1>Function: isScanning</h1>
@@ -9818,7 +9500,7 @@ value is Scanning</p>
   <a id="isSelectorType"><h2>isSelectorType</h2></a>
   <div class="section">
     <h1>Function: isSelectorType</h1>
-<p><a href="../client-lib.html">client-lib</a>.isSelectorType</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isSelectorType</p>
 <p>▸ <strong>isSelectorType</strong>(<code>value</code>): value is SelectorType</p>
 <h4>Parameters</h4>
 <table>
@@ -9843,7 +9525,7 @@ value is SelectorType</p>
   <a id="isServerAsset"><h2>isServerAsset</h2></a>
   <div class="section">
     <h1>Function: isServerAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isServerAsset</p>
 <p>▸ <strong>isServerAsset</strong>(<code>value</code>): value is ServerAsset</p>
 <h4>Parameters</h4>
 <table>
@@ -9868,7 +9550,7 @@ value is ServerAsset</p>
   <a id="isServerAudibleAsset"><h2>isServerAudibleAsset</h2></a>
   <div class="section">
     <h1>Function: isServerAudibleAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerAudibleAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isServerAudibleAsset</p>
 <p>▸ <strong>isServerAudibleAsset</strong>(<code>value</code>): value is ServerAudibleAsset</p>
 <h4>Parameters</h4>
 <table>
@@ -9893,7 +9575,7 @@ value is ServerAudibleAsset</p>
   <a id="isServerAudibleInstance"><h2>isServerAudibleInstance</h2></a>
   <div class="section">
     <h1>Function: isServerAudibleInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerAudibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isServerAudibleInstance</p>
 <p>▸ <strong>isServerAudibleInstance</strong>(<code>value</code>): value is ServerAudibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -9915,11 +9597,11 @@ value is ServerAudibleInstance</p>
 </section>
   
 <section>
-  <a id="isServerContainerInstance"><h2>isServerContainerInstance</h2></a>
+  <a id="isServerClip"><h2>isServerClip</h2></a>
   <div class="section">
-    <h1>Function: isServerContainerInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerContainerInstance</p>
-<p>▸ <strong>isServerContainerInstance</strong>(<code>value</code>): value is ServerContainerInstance</p>
+    <h1>Function: isServerClip</h1>
+<p><a href="../server-lib.html">server-lib</a>.isServerClip</p>
+<p>▸ <strong>isServerClip</strong>(<code>value</code>): value is ServerClip</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -9934,32 +9616,7 @@ value is ServerAudibleInstance</p>
 </tr>
 </tbody></table>
 <p>Returns
-value is ServerContainerInstance</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="isServerContentInstance"><h2>isServerContentInstance</h2></a>
-  <div class="section">
-    <h1>Function: isServerContentInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerContentInstance</p>
-<p>▸ <strong>isServerContentInstance</strong>(<code>value</code>): value is ServerContentInstance</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is ServerContentInstance</p>
+value is ServerClip</p>
 
   </div>
 </section>
@@ -9990,35 +9647,10 @@ value is ServerMashAsset</p>
 </section>
   
 <section>
-  <a id="isServerRawVideoInstance"><h2>isServerRawVideoInstance</h2></a>
-  <div class="section">
-    <h1>Function: isServerRawVideoInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerRawVideoInstance</p>
-<p>▸ <strong>isServerRawVideoInstance</strong>(<code>value</code>): value is ServerRawVideoInstance</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is ServerRawVideoInstance</p>
-
-  </div>
-</section>
-  
-<section>
   <a id="isServerVisibleAsset"><h2>isServerVisibleAsset</h2></a>
   <div class="section">
     <h1>Function: isServerVisibleAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerVisibleAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isServerVisibleAsset</p>
 <p>▸ <strong>isServerVisibleAsset</strong>(<code>value</code>): value is ServerVisibleAsset</p>
 <h4>Parameters</h4>
 <table>
@@ -10043,7 +9675,7 @@ value is ServerVisibleAsset</p>
   <a id="isServerVisibleInstance"><h2>isServerVisibleInstance</h2></a>
   <div class="section">
     <h1>Function: isServerVisibleInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.isServerVisibleInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isServerVisibleInstance</p>
 <p>▸ <strong>isServerVisibleInstance</strong>(<code>value</code>): value is ServerVisibleInstance</p>
 <h4>Parameters</h4>
 <table>
@@ -10181,7 +9813,7 @@ value is StringTuple</p>
   <a id="isTargetId"><h2>isTargetId</h2></a>
   <div class="section">
     <h1>Function: isTargetId</h1>
-<p><a href="../client-lib.html">client-lib</a>.isTargetId</p>
+<p><a href="../shared-lib.html">shared-lib</a>.isTargetId</p>
 <p>▸ <strong>isTargetId</strong>(<code>value</code>): value is TargetId</p>
 <h4>Parameters</h4>
 <table>
@@ -10328,6 +9960,31 @@ type is TranscodingType</p>
 </section>
   
 <section>
+  <a id="isTransparency"><h2>isTransparency</h2></a>
+  <div class="section">
+    <h1>Function: isTransparency</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.isTransparency</p>
+<p>▸ <strong>isTransparency</strong>(<code>value</code>): value is Transparency</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+value is Transparency</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="isTuple"><h2>isTuple</h2></a>
   <div class="section">
     <h1>Function: isTuple</h1>
@@ -10416,6 +10073,31 @@ value is void</p>
 </section>
   
 <section>
+  <a id="isUsage"><h2>isUsage</h2></a>
+  <div class="section">
+    <h1>Function: isUsage</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.isUsage</p>
+<p>▸ <strong>isUsage</strong>(<code>value</code>): value is Usage</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+value is Usage</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="isValue"><h2>isValue</h2></a>
   <div class="section">
     <h1>Function: isValue</h1>
@@ -10461,31 +10143,6 @@ value is Value</p>
 </tbody></table>
 <p>Returns
 value is VideoAsset</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="isVideoInstance"><h2>isVideoInstance</h2></a>
-  <div class="section">
-    <h1>Function: isVideoInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.isVideoInstance</p>
-<p>▸ <strong>isVideoInstance</strong>(<code>value</code>): value is VideoInstance</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-value is VideoInstance</p>
 
   </div>
 </section>
@@ -10741,6 +10398,35 @@ value is VisibleType</p>
 </section>
   
 <section>
+  <a id="mashViewFunction"><h2>mashViewFunction</h2></a>
+  <div class="section">
+    <h1>Function: mashViewFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.mashViewFunction</p>
+<p>▸ <strong>mashViewFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='../exports/ClientMashDescription.html'>ClientMashDescription</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/ClientMashDescriptionArgs.html'>ClientMashDescriptionArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../exports/ClientMashDescription.html'>ClientMashDescription</a></code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="masherInstance"><h2>masherInstance</h2></a>
   <div class="section">
     <h1>Function: masherInstance</h1>
@@ -10866,6 +10552,60 @@ value is VisibleType</p>
 </tbody></table>
 <p>Returns
 <code><a href='../exports/DefiniteError.html'>DefiniteError</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="newProgress"><h2>newProgress</h2></a>
+  <div class="section">
+    <h1>Function: newProgress</h1>
+<p><a href="../client-lib.html">client-lib</a>.newProgress</p>
+<p>▸ <strong>newProgress</strong>(<code>id?</code>): <code><a href='../exports/ServerProgress.html'>ServerProgress</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../exports/ServerProgress.html'>ServerProgress</a></code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="noneViewFunction"><h2>noneViewFunction</h2></a>
+  <div class="section">
+    <h1>Function: noneViewFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.noneViewFunction</p>
+<p>▸ <strong>noneViewFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='../exports/ClientMashDescription.html'>ClientMashDescription</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/ClientMashDescriptionArgs.html'>ClientMashDescriptionArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../exports/ClientMashDescription.html'>ClientMashDescription</a></code></p>
 
   </div>
 </section>
@@ -11054,47 +10794,6 @@ value is VisibleType</p>
 </section>
   
 <section>
-  <a id="overlayFilter"><h2>overlayFilter</h2></a>
-  <div class="section">
-    <h1>Function: overlayFilter</h1>
-<p><a href="../server-lib.html">server-lib</a>.overlayFilter</p>
-<p>▸ <strong>overlayFilter</strong>(<code>bottomInput</code>, <code>topInput</code>, <code>outputId</code>, <code>alpha?</code>, <code>values?</code>): <code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>bottomInput</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>topInput</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>alpha?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-<tr>
-<td align="left"><code>values?</code></td>
-<td align="left"><code><a href='../exports/ValueRecord.html'>ValueRecord</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="patchSvg"><h2>patchSvg</h2></a>
   <div class="section">
     <h1>Function: patchSvg</h1>
@@ -11174,7 +10873,7 @@ value is VisibleType</p>
   <div class="section">
     <h1>Function: pathJoin</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.pathJoin</p>
-<p>▸ <strong>pathJoin</strong>(<code>url</code>, <code>path</code>): <code>string</code></p>
+<p>▸ <strong>pathJoin</strong>(<code>...strings</code>): <code>string</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -11184,12 +10883,8 @@ value is VisibleType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>url</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>path</code></td>
-<td align="left"><code>string</code></td>
+<td align="left"><code>...strings</code></td>
+<td align="left"><code><a href='../exports/Strings.html'>Strings</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -11202,7 +10897,7 @@ value is VisibleType</p>
   <a id="pixelFromFrame"><h2>pixelFromFrame</h2></a>
   <div class="section">
     <h1>Function: pixelFromFrame</h1>
-<p><a href="../client-lib.html">client-lib</a>.pixelFromFrame</p>
+<p><a href="../shared-lib.html">shared-lib</a>.pixelFromFrame</p>
 <p>▸ <strong>pixelFromFrame</strong>(<code>frame</code>, <code>perFrame</code>, <code>rounding?</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
@@ -11239,7 +10934,7 @@ value is VisibleType</p>
   <a id="pixelPerFrame"><h2>pixelPerFrame</h2></a>
   <div class="section">
     <h1>Function: pixelPerFrame</h1>
-<p><a href="../client-lib.html">client-lib</a>.pixelPerFrame</p>
+<p><a href="../shared-lib.html">shared-lib</a>.pixelPerFrame</p>
 <p>▸ <strong>pixelPerFrame</strong>(<code>frames</code>, <code>width</code>, <code>zoom?</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
@@ -11276,7 +10971,7 @@ value is VisibleType</p>
   <a id="pixelToFrame"><h2>pixelToFrame</h2></a>
   <div class="section">
     <h1>Function: pixelToFrame</h1>
-<p><a href="../client-lib.html">client-lib</a>.pixelToFrame</p>
+<p><a href="../shared-lib.html">shared-lib</a>.pixelToFrame</p>
 <p>▸ <strong>pixelToFrame</strong>(<code>pixels</code>, <code>perFrame</code>, <code>rounding?</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
@@ -11414,6 +11109,73 @@ value is VisibleType</p>
 </section>
   
 <section>
+  <a id="readFileFunction"><h2>readFileFunction</h2></a>
+  <div class="section">
+    <h1>Function: readFileFunction</h1>
+<p><a href="../server-lib.html">server-lib</a>.readFileFunction</p>
+<p>▸ <strong>readFileFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/FileWriteArgs.html'>FileWriteArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code><a href='../exports/JobOptions.html'>JobOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="readJsonFilePromise"><h2>readJsonFilePromise</h2></a>
+  <div class="section">
+    <h1>Function: readJsonFilePromise</h1>
+<p><a href="../server-lib.html">server-lib</a>.readJsonFilePromise</p>
+<p>▸ <strong>readJsonFilePromise</strong>&lt;<code>T</code>&gt;(<code>file?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>T</code>&gt;&gt;</p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>file?</code></td>
+<td align="left">`/${string}`</td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>T</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
   <a id="recordFromItems"><h2>recordFromItems</h2></a>
   <div class="section">
     <h1>Function: recordFromItems</h1>
@@ -11496,6 +11258,31 @@ value is VisibleType</p>
 </tbody></table>
 <p>Returns
 <code>boolean</code></p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="removeFilePromise"><h2>removeFilePromise</h2></a>
+  <div class="section">
+    <h1>Function: removeFilePromise</h1>
+<p><a href="../server-lib.html">server-lib</a>.removeFilePromise</p>
+<p>▸ <strong>removeFilePromise</strong>(<code>filePath</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../exports/DefiniteError.html'>DefiniteError</a></code> | { <code>data</code>: <code>string</code> = filePath }&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>filePath</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../exports/DefiniteError.html'>DefiniteError</a></code> | { <code>data</code>: <code>string</code> = filePath }&gt;</p>
 
   </div>
 </section>
@@ -11827,11 +11614,11 @@ value is VisibleType</p>
 </section>
   
 <section>
-  <a id="scaleFilter"><h2>scaleFilter</h2></a>
+  <a id="serverAudioRawAssetFunction"><h2>serverAudioRawAssetFunction</h2></a>
   <div class="section">
-    <h1>Function: scaleFilter</h1>
-<p><a href="../server-lib.html">server-lib</a>.scaleFilter</p>
-<p>▸ <strong>scaleFilter</strong>(<code>inputId</code>, <code>outputId</code>, <code>size</code>): <code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
+    <h1>Function: serverAudioRawAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.serverAudioRawAssetFunction</p>
+<p>▸ <strong>serverAudioRawAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -11841,20 +11628,45 @@ value is VisibleType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>inputId</code></td>
-<td align="left"><code>string</code></td>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='../exports/EvaluationSize.html'>EvaluationSize</a></code></td>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="serverCommandFunction"><h2>serverCommandFunction</h2></a>
+  <div class="section">
+    <h1>Function: serverCommandFunction</h1>
+<p><a href="../server-lib.html">server-lib</a>.serverCommandFunction</p>
+<p>▸ <strong>serverCommandFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/ShellArgs.html'>ShellArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code>object</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
 
   </div>
 </section>
@@ -11864,7 +11676,7 @@ value is VisibleType</p>
   <div class="section">
     <h1>Function: serverDecodeFunction</h1>
 <p><a href="../server-lib.html">server-lib</a>.serverDecodeFunction</p>
-<p>▸ <strong>serverDecodeFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Decoding.html'>Decoding</a></code>&gt;&gt;</p>
+<p>▸ <strong>serverDecodeFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Decoding.html'>Decoding</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -11874,7 +11686,7 @@ value is VisibleType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/DecodeArgs.html'>DecodeArgs</a></code></td>
 </tr>
 <tr>
@@ -11893,7 +11705,7 @@ value is VisibleType</p>
   <div class="section">
     <h1>Function: serverEncodeFunction</h1>
 <p><a href="../server-lib.html">server-lib</a>.serverEncodeFunction</p>
-<p>▸ <strong>serverEncodeFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Encoding.html'>Encoding</a></code>&gt;&gt;</p>
+<p>▸ <strong>serverEncodeFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Encoding.html'>Encoding</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -11903,7 +11715,7 @@ value is VisibleType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/EncodeArgs.html'>EncodeArgs</a></code></td>
 </tr>
 <tr>
@@ -11922,7 +11734,7 @@ value is VisibleType</p>
   <div class="section">
     <h1>Function: serverRetrieveFunction</h1>
 <p><a href="../server-lib.html">server-lib</a>.serverRetrieveFunction</p>
-<p>▸ <strong>serverRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<p>▸ <strong>serverRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -11932,7 +11744,7 @@ value is VisibleType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -11951,7 +11763,7 @@ value is VisibleType</p>
   <div class="section">
     <h1>Function: serverTranscodeFunction</h1>
 <p><a href="../server-lib.html">server-lib</a>.serverTranscodeFunction</p>
-<p>▸ <strong>serverTranscodeFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Transcoding.html'>Transcoding</a></code>&gt;&gt;</p>
+<p>▸ <strong>serverTranscodeFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Transcoding.html'>Transcoding</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -11961,7 +11773,7 @@ value is VisibleType</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/TranscodeArgs.html'>TranscodeArgs</a></code></td>
 </tr>
 <tr>
@@ -11971,72 +11783,6 @@ value is VisibleType</p>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Transcoding.html'>Transcoding</a></code>&gt;&gt;</p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="setPtsSpeedFilters"><h2>setPtsSpeedFilters</h2></a>
-  <div class="section">
-    <h1>Function: setPtsSpeedFilters</h1>
-<p><a href="../server-lib.html">server-lib</a>.setPtsSpeedFilters</p>
-<p>▸ <strong>setPtsSpeedFilters</strong>(<code>inputId</code>, <code>outputId</code>, <code>instance</code>): <code><a href='../exports/CommandFilters.html'>CommandFilters</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>inputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>instance</code></td>
-<td align="left"><code><a href='../exports/ServerAudioInstance.html'>ServerAudioInstance</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilters.html'>CommandFilters</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="setsarFilter"><h2>setsarFilter</h2></a>
-  <div class="section">
-    <h1>Function: setsarFilter</h1>
-<p><a href="../server-lib.html">server-lib</a>.setsarFilter</p>
-<p>▸ <strong>setsarFilter</strong>(<code>inputId</code>, <code>outputId</code>, <code>size?</code>): <code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>inputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>outputId</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
-<td align="left"><code>size?</code></td>
-<td align="left"><code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/CommandFilter.html'>CommandFilter</a></code></p>
 
   </div>
 </section>
@@ -12262,43 +12008,6 @@ size is NonZeroSize</p>
 </section>
   
 <section>
-  <a id="sizeTranslate"><h2>sizeTranslate</h2></a>
-  <div class="section">
-    <h1>Function: sizeTranslate</h1>
-<p><a href="../client-lib.html">client-lib</a>.sizeTranslate</p>
-<p>▸ <strong>sizeTranslate</strong>(<code>size</code>, <code>translate</code>, <code>negate?</code>): <code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-<th align="left">Default value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-<td align="left"><code>undefined</code></td>
-</tr>
-<tr>
-<td align="left"><code>translate</code></td>
-<td align="left"><code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-<td align="left"><code>undefined</code></td>
-</tr>
-<tr>
-<td align="left"><code>negate</code></td>
-<td align="left"><code>boolean</code></td>
-<td align="left"><code>false</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
-
-  </div>
-</section>
-  
-<section>
   <a id="sizeValid"><h2>sizeValid</h2></a>
   <div class="section">
     <h1>Function: sizeValid</h1>
@@ -12328,7 +12037,7 @@ size is NonZeroSize</p>
   <a id="sizeValueString"><h2>sizeValueString</h2></a>
   <div class="section">
     <h1>Function: sizeValueString</h1>
-<p><a href="../server-lib.html">server-lib</a>.sizeValueString</p>
+<p><a href="../shared-lib.html">shared-lib</a>.sizeValueString</p>
 <p>▸ <strong>sizeValueString</strong>(<code>size</code>): <code>string</code></p>
 <h4>Parameters</h4>
 <table>
@@ -12728,7 +12437,7 @@ size is NonZeroSize</p>
   <a id="svgColorMask"><h2>svgColorMask</h2></a>
   <div class="section">
     <h1>Function: svgColorMask</h1>
-<p><a href="../client-lib.html">client-lib</a>.svgColorMask</p>
+<p><a href="../shared-lib.html">shared-lib</a>.svgColorMask</p>
 <p>▸ <strong>svgColorMask</strong>(<code>svgImage</code>, <code>size</code>, <code>transparency?</code>, <code>className?</code>, <code>rect?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGSVGElement"><code>SVGSVGElement</code></a></p>
 <h4>Parameters</h4>
 <table>
@@ -13523,7 +13232,7 @@ size is NonZeroSize</p>
   <a id="svgStringElement"><h2>svgStringElement</h2></a>
   <div class="section">
     <h1>Function: svgStringElement</h1>
-<p><a href="../client-lib.html">client-lib</a>.svgStringElement</p>
+<p><a href="../shared-lib.html">shared-lib</a>.svgStringElement</p>
 <p>▸ <strong>svgStringElement</strong>(<code>svgString</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a></p>
 <h4>Parameters</h4>
 <table>
@@ -13696,31 +13405,6 @@ size is NonZeroSize</p>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGViewElement"><code>SVGViewElement</code></a></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="textRect"><h2>textRect</h2></a>
-  <div class="section">
-    <h1>Function: textRect</h1>
-<p><a href="../shared-lib.html">shared-lib</a>.textRect</p>
-<p>▸ <strong>textRect</strong>(<code>args</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='../exports/TextRectArgs.html'>TextRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;&gt;</p>
 
   </div>
 </section>
@@ -13929,7 +13613,7 @@ size is NonZeroSize</p>
   <div class="section">
     <h1>Function: transcodeFunction</h1>
 <p><a href="../client-lib.html">client-lib</a>.transcodeFunction</p>
-<p>▸ <strong>transcodeFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Transcoding.html'>Transcoding</a></code>&gt;&gt;</p>
+<p>▸ <strong>transcodeFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code> | <code><a href='../exports/Transcoding.html'>Transcoding</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -13939,7 +13623,7 @@ size is NonZeroSize</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/TranscodeArgs.html'>TranscodeArgs</a></code></td>
 </tr>
 <tr>
@@ -14597,7 +14281,7 @@ size is NonZeroSize</p>
   <div class="section">
     <h1>Function: urlRetrieveFunction</h1>
 <p><a href="../client-lib.html">client-lib</a>.urlRetrieveFunction</p>
-<p>▸ <strong>urlRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<p>▸ <strong>urlRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -14607,7 +14291,7 @@ size is NonZeroSize</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -14622,11 +14306,11 @@ size is NonZeroSize</p>
 </section>
   
 <section>
-  <a id="videoRetrieveFunction"><h2>videoRetrieveFunction</h2></a>
+  <a id="videoMashAssetFunction"><h2>videoMashAssetFunction</h2></a>
   <div class="section">
-    <h1>Function: videoRetrieveFunction</h1>
-<p><a href="../client-lib.html">client-lib</a>.videoRetrieveFunction</p>
-<p>▸ <strong>videoRetrieveFunction</strong>(<code>args</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+    <h1>Function: videoMashAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.videoMashAssetFunction</p>
+<p>▸ <strong>videoMashAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -14636,7 +14320,65 @@ size is NonZeroSize</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="videoRawAssetFunction"><h2>videoRawAssetFunction</h2></a>
+  <div class="section">
+    <h1>Function: videoRawAssetFunction</h1>
+<p><a href="../shared-lib.html">shared-lib</a>.videoRawAssetFunction</p>
+<p>▸ <strong>videoRawAssetFunction</strong>(<code>args?</code>, <code>opts?</code>): <code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/AssetArgs.html'>AssetArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../exports/Asset.html'>Asset</a></code>&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="videoRetrieveFunction"><h2>videoRetrieveFunction</h2></a>
+  <div class="section">
+    <h1>Function: videoRetrieveFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.videoRetrieveFunction</p>
+<p>▸ <strong>videoRetrieveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
 <td align="left"><code><a href='../exports/Resource.html'>Resource</a></code></td>
 </tr>
 <tr>
@@ -14646,6 +14388,93 @@ size is NonZeroSize</p>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="videoSaveFunction"><h2>videoSaveFunction</h2></a>
+  <div class="section">
+    <h1>Function: videoSaveFunction</h1>
+<p><a href="../client-lib.html">client-lib</a>.videoSaveFunction</p>
+<p>▸ <strong>videoSaveFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/Asset.html'>Asset</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code><a href='../exports/JobOptions.html'>JobOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="writeFileFunction"><h2>writeFileFunction</h2></a>
+  <div class="section">
+    <h1>Function: writeFileFunction</h1>
+<p><a href="../server-lib.html">server-lib</a>.writeFileFunction</p>
+<p>▸ <strong>writeFileFunction</strong>(<code>args?</code>, <code>options?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>args?</code></td>
+<td align="left"><code><a href='../exports/FileWriteArgs.html'>FileWriteArgs</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>options?</code></td>
+<td align="left"><code><a href='../exports/JobOptions.html'>JobOptions</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#DataOrError'>DataOrError</a></code>&lt;<code>string</code>&gt;&gt;</p>
+
+  </div>
+</section>
+  
+<section>
+  <a id="writeJsonFilePromise"><h2>writeJsonFilePromise</h2></a>
+  <div class="section">
+    <h1>Function: writeJsonFilePromise</h1>
+<p><a href="../server-lib.html">server-lib</a>.writeJsonFilePromise</p>
+<p>▸ <strong>writeJsonFilePromise</strong>(<code>absolutePath?</code>, <code>data?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>absolutePath?</code></td>
+<td align="left">`/${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>data</code></td>
+<td align="left"><code>Object</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 
   </div>
 </section>
@@ -14669,7 +14498,6 @@ size is NonZeroSize</p>
 <li><a class='' href='#Button'>Button</a></li>
 <li><a class='' href='#ClientAssetElementListeners'>ClientAssetElementListeners</a></li>
 <li><a class='' href='#ClientAssetManagerListeners'>ClientAssetManagerListeners</a></li>
-<li><a class='' href='#ClientAssetUploadListeners'>ClientAssetUploadListeners</a></li>
 <li><a class='' href='#ClientAudibleAssetMixin'>ClientAudibleAssetMixin</a></li>
 <li><a class='' href='#ClientAudibleInstanceMixin'>ClientAudibleInstanceMixin</a></li>
 <li><a class='' href='#ClientControlAssetListeners'>ClientControlAssetListeners</a></li>
@@ -14682,13 +14510,7 @@ size is NonZeroSize</p>
 <li><a class='' href='#ClientGroupFillListeners'>ClientGroupFillListeners</a></li>
 <li><a class='' href='#ClientGroupLocationListeners'>ClientGroupLocationListeners</a></li>
 <li><a class='' href='#ClientGroupTimeListeners'>ClientGroupTimeListeners</a></li>
-<li><a class='' href='#ClientMashVideoListeners'>ClientMashVideoListeners</a></li>
-<li><a class='' href='#ClientRawAudioListeners'>ClientRawAudioListeners</a></li>
-<li><a class='' href='#ClientRawImageListeners'>ClientRawImageListeners</a></li>
 <li><a class='' href='#ClientRawImportListeners'>ClientRawImportListeners</a></li>
-<li><a class='' href='#ClientRawVideoListeners'>ClientRawVideoListeners</a></li>
-<li><a class='' href='#ClientShapeImageListeners'>ClientShapeImageListeners</a></li>
-<li><a class='' href='#ClientTextImageListeners'>ClientTextImageListeners</a></li>
 <li><a class='' href='#ClientTextImportListeners'>ClientTextImportListeners</a></li>
 <li><a class='' href='#ClientVisibleAssetMixin'>ClientVisibleAssetMixin</a></li>
 <li><a class='' href='#ClientVisibleInstanceMixin'>ClientVisibleInstanceMixin</a></li>
@@ -14729,19 +14551,11 @@ size is NonZeroSize</p>
 <li><a class='' href='#PlayerHeader'>PlayerHeader</a></li>
 <li><a class='' href='#PlayerRange'>PlayerRange</a></li>
 <li><a class='' href='#PlayerTime'>PlayerTime</a></li>
-<li><a class='' href='#RawAssetMixin'>RawAssetMixin</a></li>
 <li><a class='' href='#RectObserverMixin'>RectObserverMixin</a></li>
-<li><a class='' href='#ServerAssetManagerListeners'>ServerAssetManagerListeners</a></li>
 <li><a class='' href='#ServerAudibleAssetMixin'>ServerAudibleAssetMixin</a></li>
 <li><a class='' href='#ServerAudibleInstanceMixin'>ServerAudibleInstanceMixin</a></li>
 <li><a class='' href='#ServerDecodeStatusListeners'>ServerDecodeStatusListeners</a></li>
 <li><a class='' href='#ServerEncodeStatusListeners'>ServerEncodeStatusListeners</a></li>
-<li><a class='' href='#ServerMashVideoListeners'>ServerMashVideoListeners</a></li>
-<li><a class='' href='#ServerRawAudioListeners'>ServerRawAudioListeners</a></li>
-<li><a class='' href='#ServerRawImageListeners'>ServerRawImageListeners</a></li>
-<li><a class='' href='#ServerRawVideoListeners'>ServerRawVideoListeners</a></li>
-<li><a class='' href='#ServerShapeImageListeners'>ServerShapeImageListeners</a></li>
-<li><a class='' href='#ServerTextImageListeners'>ServerTextImageListeners</a></li>
 <li><a class='' href='#ServerTranscodeStatusListeners'>ServerTranscodeStatusListeners</a></li>
 <li><a class='' href='#ServerVisibleAssetMixin'>ServerVisibleAssetMixin</a></li>
 <li><a class='' href='#ServerVisibleInstanceMixin'>ServerVisibleInstanceMixin</a></li>
@@ -14765,7 +14579,6 @@ size is NonZeroSize</p>
 <li><a class='' href='#VisibleAssetMixin'>VisibleAssetMixin</a></li>
 <li><a class='' href='#VisibleInstanceMixin'>VisibleInstanceMixin</a></li>
 <li><a class='' href='#Word'>Word</a></li>
-<li><a class='' href='#alphamergeFilters'>alphamergeFilters</a></li>
 <li><a class='' href='#appendSvgItemsRecord'>appendSvgItemsRecord</a></li>
 <li><a class='' href='#arrayFromOneOrMore'>arrayFromOneOrMore</a></li>
 <li><a class='' href='#arrayLast'>arrayLast</a></li>
@@ -14775,9 +14588,11 @@ size is NonZeroSize</p>
 <li><a class='' href='#arrayUnique'>arrayUnique</a></li>
 <li><a class='' href='#assertAboveZero'>assertAboveZero</a></li>
 <li><a class='' href='#assertAbsolutePath'>assertAbsolutePath</a></li>
+<li><a class='' href='#assertAspect'>assertAspect</a></li>
 <li><a class='' href='#assertAsset'>assertAsset</a></li>
 <li><a class='' href='#assertAssetResource'>assertAssetResource</a></li>
 <li><a class='' href='#assertAudioInstance'>assertAudioInstance</a></li>
+<li><a class='' href='#assertBoolean'>assertBoolean</a></li>
 <li><a class='' href='#assertCanBeContainerInstance'>assertCanBeContainerInstance</a></li>
 <li><a class='' href='#assertCanBeContentInstance'>assertCanBeContentInstance</a></li>
 <li><a class='' href='#assertClientAudibleInstance'>assertClientAudibleInstance</a></li>
@@ -14785,6 +14600,7 @@ size is NonZeroSize</p>
 <li><a class='' href='#assertClientInstance'>assertClientInstance</a></li>
 <li><a class='' href='#assertClientMashAsset'>assertClientMashAsset</a></li>
 <li><a class='' href='#assertClientMashInstance'>assertClientMashInstance</a></li>
+<li><a class='' href='#assertClientTrack'>assertClientTrack</a></li>
 <li><a class='' href='#assertClientVisibleInstance'>assertClientVisibleInstance</a></li>
 <li><a class='' href='#assertClip'>assertClip</a></li>
 <li><a class='' href='#assertDatasetElement'>assertDatasetElement</a></li>
@@ -14794,6 +14610,7 @@ size is NonZeroSize</p>
 <li><a class='' href='#assertFilePathExists'>assertFilePathExists</a></li>
 <li><a class='' href='#assertIdentified'>assertIdentified</a></li>
 <li><a class='' href='#assertInteger'>assertInteger</a></li>
+<li><a class='' href='#assertNumber'>assertNumber</a></li>
 <li><a class='' href='#assertPoint'>assertPoint</a></li>
 <li><a class='' href='#assertPopulatedString'>assertPopulatedString</a></li>
 <li><a class='' href='#assertPositive'>assertPositive</a></li>
@@ -14803,33 +14620,31 @@ size is NonZeroSize</p>
 <li><a class='' href='#assertRectNotZero'>assertRectNotZero</a></li>
 <li><a class='' href='#assertScanning'>assertScanning</a></li>
 <li><a class='' href='#assertServerAudibleInstance'>assertServerAudibleInstance</a></li>
-<li><a class='' href='#assertServerContainerInstance'>assertServerContainerInstance</a></li>
-<li><a class='' href='#assertServerContentInstance'>assertServerContentInstance</a></li>
-<li><a class='' href='#assertServerMashAsset'>assertServerMashAsset</a></li>
-<li><a class='' href='#assertServerVisibleInstance'>assertServerVisibleInstance</a></li>
 <li><a class='' href='#assertSize'>assertSize</a></li>
 <li><a class='' href='#assertSizeNotZero'>assertSizeNotZero</a></li>
+<li><a class='' href='#assertString'>assertString</a></li>
 <li><a class='' href='#assertTime'>assertTime</a></li>
 <li><a class='' href='#assertTimeRange'>assertTimeRange</a></li>
+<li><a class='' href='#assertTransparency'>assertTransparency</a></li>
 <li><a class='' href='#assertTrue'>assertTrue</a></li>
 <li><a class='' href='#assertTuple'>assertTuple</a></li>
 <li><a class='' href='#assertTyped'>assertTyped</a></li>
 <li><a class='' href='#assertValue'>assertValue</a></li>
 <li><a class='' href='#assertVisibleInstance'>assertVisibleInstance</a></li>
+<li><a class='' href='#audioRawAssetFunction'>audioRawAssetFunction</a></li>
 <li><a class='' href='#audioRetrieveFunction'>audioRetrieveFunction</a></li>
+<li><a class='' href='#audioSaveFunction'>audioSaveFunction</a></li>
+<li><a class='' href='#audioViewFunction'>audioViewFunction</a></li>
 <li><a class='' href='#canBeContainerInstance'>canBeContainerInstance</a></li>
 <li><a class='' href='#canBeContentInstance'>canBeContentInstance</a></li>
 <li><a class='' href='#centerPoint'>centerPoint</a></li>
 <li><a class='' href='#clipClientListeners'>clipClientListeners</a></li>
-<li><a class='' href='#colorClientListeners'>colorClientListeners</a></li>
-<li><a class='' href='#colorFilter'>colorFilter</a></li>
 <li><a class='' href='#colorFromRgb'>colorFromRgb</a></li>
 <li><a class='' href='#colorMixRbg'>colorMixRbg</a></li>
 <li><a class='' href='#colorMixRbga'>colorMixRbga</a></li>
 <li><a class='' href='#colorRgbDifference'>colorRgbDifference</a></li>
 <li><a class='' href='#colorRgbToHex'>colorRgbToHex</a></li>
 <li><a class='' href='#colorRgbaToHex'>colorRgbaToHex</a></li>
-<li><a class='' href='#colorServerListeners'>colorServerListeners</a></li>
 <li><a class='' href='#colorToRgb'>colorToRgb</a></li>
 <li><a class='' href='#colorToRgba'>colorToRgba</a></li>
 <li><a class='' href='#colorValid'>colorValid</a></li>
@@ -14838,7 +14653,6 @@ size is NonZeroSize</p>
 <li><a class='' href='#commandError'>commandError</a></li>
 <li><a class='' href='#commandInstance'>commandInstance</a></li>
 <li><a class='' href='#commandPath'>commandPath</a></li>
-<li><a class='' href='#commandPromise'>commandPromise</a></li>
 <li><a class='' href='#commandString'>commandString</a></li>
 <li><a class='' href='#complexifySvgItem'>complexifySvgItem</a></li>
 <li><a class='' href='#containSize'>containSize</a></li>
@@ -14857,14 +14671,12 @@ size is NonZeroSize</p>
 <li><a class='' href='#copySize'>copySize</a></li>
 <li><a class='' href='#coverEvaluationSize'>coverEvaluationSize</a></li>
 <li><a class='' href='#coverSize'>coverSize</a></li>
-<li><a class='' href='#cropFilter'>cropFilter</a></li>
 <li><a class='' href='#cssRetrieveFunction'>cssRetrieveFunction</a></li>
 <li><a class='' href='#customEventClass'>customEventClass</a></li>
 <li><a class='' href='#decodeFunction'>decodeFunction</a></li>
 <li><a class='' href='#descriptionValue'>descriptionValue</a></li>
 <li><a class='' href='#directoryCreate'>directoryCreate</a></li>
 <li><a class='' href='#directoryCreatePromise'>directoryCreatePromise</a></li>
-<li><a class='' href='#domWindow'>domWindow</a></li>
 <li><a class='' href='#dragData'>dragData</a></li>
 <li><a class='' href='#dragTypeValid'>dragTypeValid</a></li>
 <li><a class='' href='#dropFile'>dropFile</a></li>
@@ -14872,6 +14684,7 @@ size is NonZeroSize</p>
 <li><a class='' href='#dropped'>dropped</a></li>
 <li><a class='' href='#droppedMashIndex'>droppedMashIndex</a></li>
 <li><a class='' href='#droppingFiles'>droppingFiles</a></li>
+<li><a class='' href='#editFunction'>editFunction</a></li>
 <li><a class='' href='#encode'>encode</a></li>
 <li><a class='' href='#encodeClientListeners'>encodeClientListeners</a></li>
 <li><a class='' href='#encodeFunction'>encodeFunction</a></li>
@@ -14884,6 +14697,7 @@ size is NonZeroSize</p>
 <li><a class='' href='#errorThrow'>errorThrow</a></li>
 <li><a class='' href='#evenEvaluationSize'>evenEvaluationSize</a></li>
 <li><a class='' href='#evenSize'>evenSize</a></li>
+<li><a class='' href='#eventFunction'>eventFunction</a></li>
 <li><a class='' href='#eventStop'>eventStop</a></li>
 <li><a class='' href='#familyFromCss'>familyFromCss</a></li>
 <li><a class='' href='#ffmpegCommand'>ffmpegCommand</a></li>
@@ -14900,20 +14714,15 @@ size is NonZeroSize</p>
 <li><a class='' href='#fileNameFromOptions'>fileNameFromOptions</a></li>
 <li><a class='' href='#filePathExists'>filePathExists</a></li>
 <li><a class='' href='#fileRead'>fileRead</a></li>
-<li><a class='' href='#fileReadJsonPromise'>fileReadJsonPromise</a></li>
-<li><a class='' href='#fileReadPromise'>fileReadPromise</a></li>
 <li><a class='' href='#fileRemove'>fileRemove</a></li>
-<li><a class='' href='#fileRemovePromise'>fileRemovePromise</a></li>
+<li><a class='' href='#fileUploadFunction'>fileUploadFunction</a></li>
 <li><a class='' href='#fileWrite'>fileWrite</a></li>
-<li><a class='' href='#fileWriteJsonPromise'>fileWriteJsonPromise</a></li>
-<li><a class='' href='#fileWritePromise'>fileWritePromise</a></li>
 <li><a class='' href='#filenameAppend'>filenameAppend</a></li>
 <li><a class='' href='#filtersString'>filtersString</a></li>
 <li><a class='' href='#flipPoint'>flipPoint</a></li>
 <li><a class='' href='#flipSize'>flipSize</a></li>
 <li><a class='' href='#fontRetrieveFunction'>fontRetrieveFunction</a></li>
 <li><a class='' href='#formatFilter'>formatFilter</a></li>
-<li><a class='' href='#fpsFilter'>fpsFilter</a></li>
 <li><a class='' href='#iconClientListeners'>iconClientListeners</a></li>
 <li><a class='' href='#idGenerate'>idGenerate</a></li>
 <li><a class='' href='#idGenerateString'>idGenerateString</a></li>
@@ -14921,16 +14730,22 @@ size is NonZeroSize</p>
 <li><a class='' href='#idReset'>idReset</a></li>
 <li><a class='' href='#idTemporary'>idTemporary</a></li>
 <li><a class='' href='#idUnique'>idUnique</a></li>
+<li><a class='' href='#imageColorAssetFunction'>imageColorAssetFunction</a></li>
+<li><a class='' href='#imageRawAssetFunction'>imageRawAssetFunction</a></li>
 <li><a class='' href='#imageRetrieveFunction'>imageRetrieveFunction</a></li>
+<li><a class='' href='#imageSaveFunction'>imageSaveFunction</a></li>
+<li><a class='' href='#imageShapeAssetFunction'>imageShapeAssetFunction</a></li>
+<li><a class='' href='#imageTextAssetFunction'>imageTextAssetFunction</a></li>
 <li><a class='' href='#isAboveZero'>isAboveZero</a></li>
 <li><a class='' href='#isAbsolutePath'>isAbsolutePath</a></li>
 <li><a class='' href='#isArray'>isArray</a></li>
+<li><a class='' href='#isAspect'>isAspect</a></li>
 <li><a class='' href='#isAsset'>isAsset</a></li>
 <li><a class='' href='#isAssetObject'>isAssetObject</a></li>
 <li><a class='' href='#isAudibleAsset'>isAudibleAsset</a></li>
+<li><a class='' href='#isAudibleInstance'>isAudibleInstance</a></li>
 <li><a class='' href='#isAudibleType'>isAudibleType</a></li>
 <li><a class='' href='#isAudioAsset'>isAudioAsset</a></li>
-<li><a class='' href='#isAudioAssetObject'>isAudioAssetObject</a></li>
 <li><a class='' href='#isAudioInstance'>isAudioInstance</a></li>
 <li><a class='' href='#isBelowOne'>isBelowOne</a></li>
 <li><a class='' href='#isBoolean'>isBoolean</a></li>
@@ -14985,22 +14800,21 @@ size is NonZeroSize</p>
 <li><a class='' href='#isPositive'>isPositive</a></li>
 <li><a class='' href='#isProbing'>isProbing</a></li>
 <li><a class='' href='#isProbingOptions'>isProbingOptions</a></li>
+<li><a class='' href='#isPropertied'>isPropertied</a></li>
 <li><a class='' href='#isPropertyId'>isPropertyId</a></li>
-<li><a class='' href='#isRawAsset'>isRawAsset</a></li>
 <li><a class='' href='#isRawResource'>isRawResource</a></li>
 <li><a class='' href='#isRawType'>isRawType</a></li>
 <li><a class='' href='#isRect'>isRect</a></li>
 <li><a class='' href='#isRequest'>isRequest</a></li>
 <li><a class='' href='#isRequestable'>isRequestable</a></li>
+<li><a class='' href='#isScalar'>isScalar</a></li>
 <li><a class='' href='#isScanning'>isScanning</a></li>
 <li><a class='' href='#isSelectorType'>isSelectorType</a></li>
 <li><a class='' href='#isServerAsset'>isServerAsset</a></li>
 <li><a class='' href='#isServerAudibleAsset'>isServerAudibleAsset</a></li>
 <li><a class='' href='#isServerAudibleInstance'>isServerAudibleInstance</a></li>
-<li><a class='' href='#isServerContainerInstance'>isServerContainerInstance</a></li>
-<li><a class='' href='#isServerContentInstance'>isServerContentInstance</a></li>
+<li><a class='' href='#isServerClip'>isServerClip</a></li>
 <li><a class='' href='#isServerMashAsset'>isServerMashAsset</a></li>
-<li><a class='' href='#isServerRawVideoInstance'>isServerRawVideoInstance</a></li>
 <li><a class='' href='#isServerVisibleAsset'>isServerVisibleAsset</a></li>
 <li><a class='' href='#isServerVisibleInstance'>isServerVisibleInstance</a></li>
 <li><a class='' href='#isSize'>isSize</a></li>
@@ -15013,12 +14827,13 @@ size is NonZeroSize</p>
 <li><a class='' href='#isTiming'>isTiming</a></li>
 <li><a class='' href='#isTranscoding'>isTranscoding</a></li>
 <li><a class='' href='#isTranscodingType'>isTranscodingType</a></li>
+<li><a class='' href='#isTransparency'>isTransparency</a></li>
 <li><a class='' href='#isTuple'>isTuple</a></li>
 <li><a class='' href='#isTyped'>isTyped</a></li>
 <li><a class='' href='#isUndefined'>isUndefined</a></li>
+<li><a class='' href='#isUsage'>isUsage</a></li>
 <li><a class='' href='#isValue'>isValue</a></li>
 <li><a class='' href='#isVideoAsset'>isVideoAsset</a></li>
-<li><a class='' href='#isVideoInstance'>isVideoInstance</a></li>
 <li><a class='' href='#isVisibleAsset'>isVisibleAsset</a></li>
 <li><a class='' href='#isVisibleInstance'>isVisibleInstance</a></li>
 <li><a class='' href='#isVisibleType'>isVisibleType</a></li>
@@ -15028,18 +14843,20 @@ size is NonZeroSize</p>
 <li><a class='' href='#jobHasStarted'>jobHasStarted</a></li>
 <li><a class='' href='#jsonParse'>jsonParse</a></li>
 <li><a class='' href='#jsonStringify'>jsonStringify</a></li>
+<li><a class='' href='#mashViewFunction'>mashViewFunction</a></li>
 <li><a class='' href='#masherInstance'>masherInstance</a></li>
 <li><a class='' href='#mergeSvgItemsRecords'>mergeSvgItemsRecords</a></li>
 <li><a class='' href='#mimeDropType'>mimeDropType</a></li>
 <li><a class='' href='#minimumEvaluationSize'>minimumEvaluationSize</a></li>
 <li><a class='' href='#namedError'>namedError</a></li>
+<li><a class='' href='#newProgress'>newProgress</a></li>
+<li><a class='' href='#noneViewFunction'>noneViewFunction</a></li>
 <li><a class='' href='#numberPoint'>numberPoint</a></li>
 <li><a class='' href='#numberSize'>numberSize</a></li>
 <li><a class='' href='#offsetLength'>offsetLength</a></li>
 <li><a class='' href='#operation'>operation</a></li>
 <li><a class='' href='#orientDirections'>orientDirections</a></li>
 <li><a class='' href='#orientPoint'>orientPoint</a></li>
-<li><a class='' href='#overlayFilter'>overlayFilter</a></li>
 <li><a class='' href='#patchSvg'>patchSvg</a></li>
 <li><a class='' href='#pathExtension'>pathExtension</a></li>
 <li><a class='' href='#pathFilename'>pathFilename</a></li>
@@ -15051,9 +14868,12 @@ size is NonZeroSize</p>
 <li><a class='' href='#pointValueString'>pointValueString</a></li>
 <li><a class='' href='#pointsEqual'>pointsEqual</a></li>
 <li><a class='' href='#promiseNumbers'>promiseNumbers</a></li>
+<li><a class='' href='#readFileFunction'>readFileFunction</a></li>
+<li><a class='' href='#readJsonFilePromise'>readJsonFilePromise</a></li>
 <li><a class='' href='#recordFromItems'>recordFromItems</a></li>
 <li><a class='' href='#rectTransformAttribute'>rectTransformAttribute</a></li>
 <li><a class='' href='#rectsEqual'>rectsEqual</a></li>
+<li><a class='' href='#removeFilePromise'>removeFilePromise</a></li>
 <li><a class='' href='#renderRoot'>renderRoot</a></li>
 <li><a class='' href='#requestCallbackPromise'>requestCallbackPromise</a></li>
 <li><a class='' href='#requestJsonRecordPromise'>requestJsonRecordPromise</a></li>
@@ -15065,13 +14885,12 @@ size is NonZeroSize</p>
 <li><a class='' href='#scaleContentEvaluationPoint'>scaleContentEvaluationPoint</a></li>
 <li><a class='' href='#scaleContentEvaluationSize'>scaleContentEvaluationSize</a></li>
 <li><a class='' href='#scaleEvaluationSize'>scaleEvaluationSize</a></li>
-<li><a class='' href='#scaleFilter'>scaleFilter</a></li>
+<li><a class='' href='#serverAudioRawAssetFunction'>serverAudioRawAssetFunction</a></li>
+<li><a class='' href='#serverCommandFunction'>serverCommandFunction</a></li>
 <li><a class='' href='#serverDecodeFunction'>serverDecodeFunction</a></li>
 <li><a class='' href='#serverEncodeFunction'>serverEncodeFunction</a></li>
 <li><a class='' href='#serverRetrieveFunction'>serverRetrieveFunction</a></li>
 <li><a class='' href='#serverTranscodeFunction'>serverTranscodeFunction</a></li>
-<li><a class='' href='#setPtsSpeedFilters'>setPtsSpeedFilters</a></li>
-<li><a class='' href='#setsarFilter'>setsarFilter</a></li>
 <li><a class='' href='#simpleSvgItem'>simpleSvgItem</a></li>
 <li><a class='' href='#simplifyRecord'>simplifyRecord</a></li>
 <li><a class='' href='#simplifySvgItem'>simplifySvgItem</a></li>
@@ -15080,7 +14899,6 @@ size is NonZeroSize</p>
 <li><a class='' href='#sizeNotZero'>sizeNotZero</a></li>
 <li><a class='' href='#sizeString'>sizeString</a></li>
 <li><a class='' href='#sizeSvgD'>sizeSvgD</a></li>
-<li><a class='' href='#sizeTranslate'>sizeTranslate</a></li>
 <li><a class='' href='#sizeValid'>sizeValid</a></li>
 <li><a class='' href='#sizeValueString'>sizeValueString</a></li>
 <li><a class='' href='#sizesEqual'>sizesEqual</a></li>
@@ -15124,7 +14942,6 @@ size is NonZeroSize</p>
 <li><a class='' href='#svgText'>svgText</a></li>
 <li><a class='' href='#svgUrl'>svgUrl</a></li>
 <li><a class='' href='#svgViewElement'>svgViewElement</a></li>
-<li><a class='' href='#textRect'>textRect</a></li>
 <li><a class='' href='#timeFromArgs'>timeFromArgs</a></li>
 <li><a class='' href='#timeFromSeconds'>timeFromSeconds</a></li>
 <li><a class='' href='#timeRangeFromArgs'>timeRangeFromArgs</a></li>
@@ -15149,7 +14966,12 @@ size is NonZeroSize</p>
 <li><a class='' href='#urlIsHttp'>urlIsHttp</a></li>
 <li><a class='' href='#urlName'>urlName</a></li>
 <li><a class='' href='#urlRetrieveFunction'>urlRetrieveFunction</a></li>
-<li><a class='' href='#videoRetrieveFunction'>videoRetrieveFunction</a></li></ul>
+<li><a class='' href='#videoMashAssetFunction'>videoMashAssetFunction</a></li>
+<li><a class='' href='#videoRawAssetFunction'>videoRawAssetFunction</a></li>
+<li><a class='' href='#videoRetrieveFunction'>videoRetrieveFunction</a></li>
+<li><a class='' href='#videoSaveFunction'>videoSaveFunction</a></li>
+<li><a class='' href='#writeFileFunction'>writeFileFunction</a></li>
+<li><a class='' href='#writeJsonFilePromise'>writeJsonFilePromise</a></li></ul>
       </nav>
     </main>
   </body>

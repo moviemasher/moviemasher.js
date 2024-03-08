@@ -19,10 +19,6 @@
       }
     ]
   },
-  "exclude": [
-    "src/**/*.e2e.ts", 
-    "src/**/*.test.ts"
-  ],
   "include": [
     "./src/*.ts",
     "./src/**/*.ts", 

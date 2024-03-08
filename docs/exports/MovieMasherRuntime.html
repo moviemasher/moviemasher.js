@@ -134,7 +134,7 @@
 <p><a href="../shared-lib.html">shared-lib</a>.MovieMasherRuntime</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code><a href='EventDispatcher.html'>EventDispatcher</a></code></p>
+<li><p><code><a href='CustomEventDispatcher.html'>CustomEventDispatcher</a></code></p>
 <p>↳ <strong><code><a href='#'>MovieMasherRuntime</a></code></strong></p>
 <p>↳↳ <code><a href='MovieMasherInstance.html'>MovieMasherInstance</a></code></p>
 </li>
@@ -142,7 +142,7 @@
 <h2>Properties</h2>
 <h3><a id="MovieMasherRuntime.context">context</a></h3><p>• <strong>context</strong>: <code><a href='../combined/Types.html#ClientOrServer'>ClientOrServer</a></code></p>
 <hr>
-<h3><a id="MovieMasherRuntime.dispatch">dispatch</a></h3><p>• <strong>dispatch</strong>: &lt;T&gt;(<code>typeOrEvent</code>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code>T</code>&gt;) =&gt; <code>boolean</code></p>
+<h3><a id="MovieMasherRuntime.dispatchCustom">dispatchCustom</a></h3><p>• <strong>dispatchCustom</strong>: &lt;T&gt;(<code>typeOrEvent</code>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code>T</code>&gt;) =&gt; <code>boolean</code></p>
 <h4>Type declaration</h4>
 <p>▸ &lt;<code>T</code>&gt;(<code>typeOrEvent</code>): <code>boolean</code></p>
 <h5>Type parameters</h5>
@@ -174,7 +174,7 @@
 <h5>Returns</h5>
 <p><code>boolean</code></p>
 <p>Inherited from
-<a href="EventDispatcher.html">EventDispatcher</a>.<a href="EventDispatcher.html#EventDispatcher.dispatch">dispatch</a></p>
+<a href="CustomEventDispatcher.html">CustomEventDispatcher</a>.<a href="CustomEventDispatcher.html#CustomEventDispatcher.dispatchCustom">dispatchCustom</a></p>
 <hr>
 <h3><a id="MovieMasherRuntime.imports">imports</a></h3><p>• <strong>imports</strong>: <code><a href='StringRecord.html'>StringRecord</a></code></p>
 <hr>
@@ -182,7 +182,7 @@
 <hr>
 <h3><a id="MovieMasherRuntime.window">window</a></h3><p>• <strong>window</strong>: <code><a href='DocumentWindow.html'>DocumentWindow</a></code></p>
 <h2>Methods</h2>
-<h3><a id="MovieMasherRuntime.call">call</a></h3><p>▸ <strong>call</strong>&lt;<code>RET</code>&gt;(<code>moduleType</code>, <code>id</code>, <code>args?</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>RET</code>&gt;</p>
+<h3><a id="MovieMasherRuntime.call">call</a></h3><p>▸ <strong>call</strong>&lt;<code>RET</code>, <code>ARGS</code>, <code>OPTS</code>&gt;(<code>id</code>, <code>args?</code>, <code>moduleType?</code>, <code>opts?</code>): <code>RET</code></p>
 <h4>Type parameters</h4>
 <table>
 <thead>
@@ -195,6 +195,14 @@
 <td align="left"><code>RET</code></td>
 <td align="left"><code>any</code></td>
 </tr>
+<tr>
+<td align="left"><code>ARGS</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>OPTS</code></td>
+<td align="left"><code>any</code></td>
+</tr>
 </tbody></table>
 <h4>Parameters</h4>
 <table>
@@ -205,27 +213,47 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>moduleType</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
 <td align="left"><code>id</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 <tr>
 <td align="left"><code>args?</code></td>
-<td align="left"><code>object</code></td>
+<td align="left"><code>ARGS</code></td>
+</tr>
+<tr>
+<td align="left"><code>moduleType?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts?</code></td>
+<td align="left"><code>OPTS</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>RET</code>&gt;</p>
+<code>RET</code></p>
 <hr>
-<h3><a id="MovieMasherRuntime.importPromise">importPromise</a></h3><p>▸ <strong>importPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ImportResult.html'>ImportResult</a></code>&gt;&gt;</p>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ImportResult.html'>ImportResult</a></code>&gt;&gt;</p>
-<hr>
-<h3><a id="MovieMasherRuntime.install">install</a></h3><p>▸ <strong>install</strong>(<code>moduleType</code>, <code>id</code>, <code>moduleId</code>, <code>exported?</code>): <code><a href='DefiniteError.html'>DefiniteError</a></code></p>
-<p>Install a PromiseFunction for a module type, aside from asset.</p>
+<h3><a id="MovieMasherRuntime.dispatch">dispatch</a></h3><p>▸ <strong>dispatch</strong>&lt;<code>RET</code>, <code>ARGS</code>, <code>OPTS</code>&gt;(<code>id</code>, <code>args?</code>, <code>...opts</code>): <code>RET</code></p>
+<h4>Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>RET</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>ARGS</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>OPTS</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody></table>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -235,24 +263,76 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>moduleType</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
 <td align="left"><code>id</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 <tr>
-<td align="left"><code>moduleId</code></td>
+<td align="left"><code>args?</code></td>
+<td align="left"><code>ARGS</code></td>
+</tr>
+<tr>
+<td align="left"><code>...opts</code></td>
+<td align="left"><code>OPTS</code>[]</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>RET</code></p>
+<hr>
+<h3><a id="MovieMasherRuntime.importPromise">importPromise</a></h3><p>▸ <strong>importPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ImportResult.html'>ImportResult</a></code>&gt;&gt;</p>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ImportResult.html'>ImportResult</a></code>&gt;&gt;</p>
+<hr>
+<h3><a id="MovieMasherRuntime.installAsync">installAsync</a></h3><p>▸ <strong>installAsync</strong>(<code>id</code>, <code>moduleOrFunction</code>, <code>moduleType?</code>): <code>void</code></p>
+<p>Install an async function for a module type.</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 <tr>
-<td align="left"><code>exported?</code></td>
+<td align="left"><code>moduleOrFunction</code></td>
+<td align="left"><code><a href='../combined/Types.html#ModuleOrAsyncFunction'>ModuleOrAsyncFunction</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>moduleType?</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='DefiniteError.html'>DefiniteError</a></code></p>
+<code>void</code></p>
+<hr>
+<h3><a id="MovieMasherRuntime.installSync">installSync</a></h3><p>▸ <strong>installSync</strong>(<code>id</code>, <code>moduleOrFunction</code>, <code>moduleType?</code>): <code>void</code></p>
+<p>Install a function for a module type.</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>moduleOrFunction</code></td>
+<td align="left"><code><a href='../combined/Types.html#ModuleOrSyncFunction'>ModuleOrSyncFunction</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>moduleType?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
 <hr>
 <h3><a id="MovieMasherRuntime.listenersAdd">listenersAdd</a></h3><p>▸ <strong>listenersAdd</strong>(<code>record</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -271,7 +351,7 @@
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-<a href="EventDispatcher.html">EventDispatcher</a>.<a href="EventDispatcher.html#EventDispatcher.listenersAdd">listenersAdd</a></p>
+<a href="CustomEventDispatcher.html">CustomEventDispatcher</a>.<a href="CustomEventDispatcher.html#CustomEventDispatcher.listenersAdd">listenersAdd</a></p>
 <hr>
 <h3><a id="MovieMasherRuntime.listenersRemove">listenersRemove</a></h3><p>▸ <strong>listenersRemove</strong>(<code>record</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -290,10 +370,10 @@
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-<a href="EventDispatcher.html">EventDispatcher</a>.<a href="EventDispatcher.html#EventDispatcher.listenersRemove">listenersRemove</a></p>
+<a href="CustomEventDispatcher.html">CustomEventDispatcher</a>.<a href="CustomEventDispatcher.html#CustomEventDispatcher.listenersRemove">listenersRemove</a></p>
 <hr>
-<h3><a id="MovieMasherRuntime.load">load</a></h3><p>▸ <strong>load</strong>&lt;<code>RET</code>&gt;(<code>moduleType</code>, <code>id</code>, <code>moduleId</code>, <code>exported?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ReturningFunction.html'>ReturningFunction</a></code>&lt;<code>RET</code>, <code>object</code>&gt;&gt;&gt;</p>
-<p>install and load a function asyncronously</p>
+<h3><a id="MovieMasherRuntime.load">load</a></h3><p>▸ <strong>load</strong>&lt;<code>RET</code>, <code>ARGS</code>, <code>OPTS</code>&gt;(<code>id</code>, <code>moduleOrFunction</code>, <code>moduleType?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SyncFunction.html'>SyncFunction</a></code>&lt;<code>RET</code>, <code>ARGS</code>, <code>OPTS</code>&gt;&gt;&gt;</p>
+<p>install and load a function asynchronously</p>
 <h4>Type parameters</h4>
 <table>
 <thead>
@@ -306,6 +386,14 @@
 <td align="left"><code>RET</code></td>
 <td align="left"><code>any</code></td>
 </tr>
+<tr>
+<td align="left"><code>ARGS</code></td>
+<td align="left">extends <code>object</code> = <code>object</code></td>
+</tr>
+<tr>
+<td align="left"><code>OPTS</code></td>
+<td align="left">extends <code>object</code> = <code>object</code></td>
+</tr>
 </tbody></table>
 <h4>Parameters</h4>
 <table>
@@ -316,26 +404,22 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>moduleType</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
 <td align="left"><code>id</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 <tr>
-<td align="left"><code>moduleId</code></td>
-<td align="left"><code>string</code></td>
+<td align="left"><code>moduleOrFunction</code></td>
+<td align="left"><code><a href='../combined/Types.html#ModuleOrAsyncFunction'>ModuleOrAsyncFunction</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>exported?</code></td>
+<td align="left"><code>moduleType?</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ReturningFunction.html'>ReturningFunction</a></code>&lt;<code>RET</code>, <code>object</code>&gt;&gt;&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SyncFunction.html'>SyncFunction</a></code>&lt;<code>RET</code>, <code>ARGS</code>, <code>OPTS</code>&gt;&gt;&gt;</p>
 <hr>
-<h3><a id="MovieMasherRuntime.promise">promise</a></h3><p>▸ <strong>promise</strong>&lt;<code>RET</code>, <code>OPTS</code>, <code>ARGS</code>&gt;(<code>moduleType</code>, <code>args</code>, <code>opts?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>RET</code>&gt;&gt;</p>
+<h3><a id="MovieMasherRuntime.promise">promise</a></h3><p>▸ <strong>promise</strong>&lt;<code>RET</code>, <code>ARGS</code>, <code>OPTS</code>&gt;(<code>args</code>, <code>moduleType?</code>, <code>opts?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>RET</code>&gt;</p>
 <p>Call installed promise function, loading if needed.</p>
 <h4>Type parameters</h4>
 <table>
@@ -350,12 +434,12 @@
 <td align="left"><code>any</code></td>
 </tr>
 <tr>
-<td align="left"><code>OPTS</code></td>
-<td align="left">extends <code>object</code> = <code>object</code></td>
+<td align="left"><code>ARGS</code></td>
+<td align="left">extends <code>string</code> | <code><a href='Typed.html'>Typed</a></code> = <code><a href='Typed.html'>Typed</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>ARGS</code></td>
-<td align="left">extends <code><a href='Typed.html'>Typed</a></code> = <code><a href='Typed.html'>Typed</a></code></td>
+<td align="left"><code>OPTS</code></td>
+<td align="left">extends <code>object</code> = <code>object</code></td>
 </tr>
 </tbody></table>
 <h4>Parameters</h4>
@@ -367,12 +451,12 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>moduleType</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-<tr>
 <td align="left"><code>args</code></td>
 <td align="left"><code>ARGS</code></td>
+</tr>
+<tr>
+<td align="left"><code>moduleType?</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 <tr>
 <td align="left"><code>opts?</code></td>
@@ -380,7 +464,7 @@
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>RET</code>&gt;&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>RET</code>&gt;</p>
 
   </div>
 </section>
@@ -391,13 +475,15 @@
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#MovieMasherRuntime'>MovieMasherRuntime</a></li>
 <li><a class='' href='#MovieMasherRuntime.context'>context</a></li>
-<li><a class='' href='#MovieMasherRuntime.dispatch'>dispatch</a></li>
+<li><a class='' href='#MovieMasherRuntime.dispatchCustom'>dispatchCustom</a></li>
 <li><a class='' href='#MovieMasherRuntime.imports'>imports</a></li>
 <li><a class='' href='#MovieMasherRuntime.options'>options</a></li>
 <li><a class='' href='#MovieMasherRuntime.window'>window</a></li>
 <li><a class='' href='#MovieMasherRuntime.call'>call</a></li>
+<li><a class='' href='#MovieMasherRuntime.dispatch'>dispatch</a></li>
 <li><a class='' href='#MovieMasherRuntime.importPromise'>importPromise</a></li>
-<li><a class='' href='#MovieMasherRuntime.install'>install</a></li>
+<li><a class='' href='#MovieMasherRuntime.installAsync'>installAsync</a></li>
+<li><a class='' href='#MovieMasherRuntime.installSync'>installSync</a></li>
 <li><a class='' href='#MovieMasherRuntime.listenersAdd'>listenersAdd</a></li>
 <li><a class='' href='#MovieMasherRuntime.listenersRemove'>listenersRemove</a></li>
 <li><a class='' href='#MovieMasherRuntime.load'>load</a></li>

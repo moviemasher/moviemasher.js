@@ -128,7 +128,7 @@ export class ClientRawAssetClass extends ClientAssetClass implements ClientAsset
 
     const { objectUrl, response, mediaPromise, urlPromise } = request
     if (objectUrl) {
-      globalThis.window.alert(`ClientRawAssetClass revokeObjectURL ${objectUrl}`)
+      // globalThis.window.alert(`ClientRawAssetClass revokeObjectURL ${objectUrl}`)
       URL.revokeObjectURL(objectUrl)
       delete request.objectUrl
     }

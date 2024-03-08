@@ -40,7 +40,6 @@
   "scripts": {
     "clean": "rm -rf ./dist/*",
     "script": "run-s",
-    "build": "rollup --config dev/rollup.config.mjs",
-    "build-rollup": "run-s clean build-rollup"
+    "build": "rollup --config dev/rollup.config.mjs"
   }
 }

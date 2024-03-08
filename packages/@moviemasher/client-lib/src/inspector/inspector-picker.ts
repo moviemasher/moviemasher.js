@@ -5,7 +5,7 @@ import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertPositive, isSelectorType } from '@moviemasher/shared-lib/utility/guards.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { StringEvent, EventChangedInspectorSelectors, EventInspectorSelectors } from '../utility/events.js'
+import { StringEvent, EventChangedInspectorSelectors, EventInspectorSelectors } from '../module/event.js'
 import { COMMA, $MASH, TARGET_IDS } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
 import { Component } from '../base/component.js'
@@ -49,7 +49,7 @@ export class InspectorPickerElement extends InspectorPickerDisablable {
     const types = this.partSelectorTypes(part)
     this.selectedPart = part
     const setEvent = new EventChangedInspectorSelectors(types)
-    MOVIE_MASHER.dispatch(setEvent)
+    MOVIE_MASHER.dispatchCustom(setEvent)
   }
 
   protected handleInspectorChooser(event: StringEvent): void {

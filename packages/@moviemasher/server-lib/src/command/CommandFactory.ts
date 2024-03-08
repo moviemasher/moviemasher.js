@@ -1,15 +1,13 @@
-import type { CommandFilters, CommandInput, CommandInputRecord, CommandInputs } from '../types.js'
-import type { OutputOptions, StringDataOrError, ValueRecord, VideoOutputOptions, } from '@moviemasher/shared-lib/types.js'
-import type { CommandOptions } from '../types.js'
-import type { Command } from '../type/Command.js'
+import type { CommandFilters, CommandInput, CommandInputRecord, OutputOptions, StringDataOrError, ValueRecord, VideoOutputOptions, } from '@moviemasher/shared-lib/types.js'
+import type { Command, CommandOptions } from '../types.js'
 
-import { $AUDIO, ERROR, $VIDEO, errorCaught, errorPromise, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIO, $VIDEO, errorCaught } from '@moviemasher/shared-lib/runtime.js'
+import { isNumber, isString } from '@moviemasher/shared-lib/utility/guard.js'
+import { sizeNotZero, sizeValueString } from '@moviemasher/shared-lib/utility/rect.js'
 import ffmpeg, { FfmpegCommand, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import path from 'path'
-import { commandError, sizeValueString } from '../utility/command.js'
-import { directoryCreate } from '../module/file-write.js'
-import { sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
-import { isNumber, isString } from '@moviemasher/shared-lib/utility/guard.js'
+import { directoryCreate } from '../module/file.js'
+import { commandError } from '../utility/command.js'
 
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(
   ([key, value]) => {
@@ -39,24 +37,9 @@ const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[
   })
 }
 
-export const commandPromise = async (command: FfmpegCommand) => {
-  return await new Promise<StringDataOrError>(resolve => {
-    command.on('error', (...args: any[]) => {
-      resolve(namedError(ERROR.Ffmpeg, args.join(','))) 
-    })
-    command.on('end', () => { resolve({ data: 'OK' }) })
-    try {
-      // console.log('ARGUMENTS', ...command._getArguments())
-      command.run()
-    }
-    catch (err) { resolve(errorCaught(err)) }
-  }).catch(error => errorPromise(ERROR.Ffmpeg, error))
-}
-
 export const ffmpegCommand = (): FfmpegCommand => {
   const ffmpegCommandOptions: FfmpegCommandOptions = { logger: console }
   const instance: FfmpegCommand = ffmpeg(ffmpegCommandOptions)
-  // instance.addOption('-hide_banner')
   return instance
 }
 

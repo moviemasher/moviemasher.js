@@ -1,19 +1,16 @@
-import type { Timeout } from '../types.js'
 import type { Point } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { TemplateContent, TemplateContents, OptionalContent } from '../client-types.js'
+import type { OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
+import type { Timeout } from '../types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertSizeNotZero, copyPoint, containSize } from '@moviemasher/shared-lib/utility/rect.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventChangeClipId, EventChangedPreviews, EventPreviews, EventRect } from '../utility/events.js'
+import { assertSizeNotZero, containSize, copyPoint } from '@moviemasher/shared-lib/utility/rect.js'
 import { html } from 'lit-html'
-import { Component } from '../base/component.js'
-import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
-import { DROP_TARGET_CSS, DropTargetMixin } from '../mixin/component.js'
-import { RectObserverMixin } from '../mixin/component.js'
 import { Scroller } from '../base/component-view.js'
-import { SizeReactiveMixin, SIZE_REACTIVE_DECLARATIONS } from '../mixin/component.js'
+import { Component } from '../base/component.js'
+import { DISABLABLE_DECLARATIONS, DROP_TARGET_CSS, DisablableMixin, DropTargetMixin, RectObserverMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
+import { EventChangeClipId, EventChangedPreviews, EventPreviews, EventRect } from '../module/event.js'
 
 const PlayerRefreshTics = 1
 export const PlayerContentCenterTag = 'movie-masher-player-content-center'
@@ -73,7 +70,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
   protected handlePointerDown(event: Event) {
     // console.log(this.tagName, 'deselecting clip')
     event.stopPropagation()
-    MOVIE_MASHER.dispatch(new EventChangeClipId())
+    MOVIE_MASHER.dispatch(EventChangeClipId.Type)
   }
 
   private handleRect(event: EventRect) {
@@ -99,7 +96,7 @@ export class PlayerContentCenterElement extends WithSizeReactive {
     if (disabled) return Promise.resolve()
 
     const event = new EventPreviews(this.variable('size-preview'))
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { promise } = event.detail
     if (!promise) {
       console.warn(this.tagName, 'requestItemsPromise NO PROMISE')

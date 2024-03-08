@@ -16,24 +16,28 @@
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
   "scripts": {
-    "build-image-code": "npm run build-image --image=build-packages",
-    "build-image-docs": "npm run build-image --image=build-docs",
+    "start": "docker compose --file dev/docker/docker-compose-express.yml up -d",
+    "stop": "docker compose --file dev/docker/docker-compose-express.yml down -v",
+    "build": "docker compose --file dev/docker/docker-compose-builder.yml run -T --rm service",
+    "clean": "npm run --workspaces clean",
+    "test-shared": "docker compose --file dev/docker/docker-compose-tester.yml run -it --rm shared test --dir=tests/shared --just=${npm_config_just:=*}",
+    "test-server": "rm -r temporary/tester/server/* && docker compose --file dev/docker/docker-compose-tester.yml run -it --rm server test --dir=tests/server --just=${npm_config_just:=*}",
+    
+    "build-image-tests": "run-s build-image-test-shared build-image-test-client build-image-test-server",
     "build-image-test-client": "npm run build-image --image=test-client",
     "build-image-test-shared": "npm run build-image --image=test-shared",
     "build-image-test-server": "npm run build-image --image=test-server",
-    "build-image-ffmpeg": "run-s build-image-node-ffmpeg build-image-server-express",
-    "build-image-node-ffmpeg": "npm run build-image --image=node-ffmpeg",
-    "build-image-server-express": "docker build --load --tag fuckyou:5.2.0-amd --builder multiplatform --file packages/@moviemasher/server-express/dev/Dockerfile.cnf --platform linux/amd64 .",
-    ",linux/arm/v8": " amd64, arm64v8  multiplatform0 desktop-linux    running v0.12.5  linux/amd64, linux/amd64/v2, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/mips64le, linux/amd64,linux/mips64, linux/arm/v7, linux/arm/v6",
-    "build-image-server-express-old": "npm run docker build --dir=packages/@moviemasher/server-express/dev",
-    "build-image-tests": "run-s build-image-test-shared build-image-test-client build-image-test-server",
-    "build-images": "run-s build-image-code build-image-ffmpeg build-image-docs build-image-tests",
+    
+    "build-images": "run-s build-image-tests",
+    
+    "build-code": "npm run docker-run-with --with=packages",
+
+    
     "build-client": "npm run docker-run-with --with=client",
     "build-docs": "npm run docker-run-with --with=docs",
     "build-image": "npm run docker-build --dir=images/${npm_config_image:=test-server}/dev",
     "update-package-json": "node ./dev/package/update-json.mjs",
-    "build-code": "npm run docker-run-with --with=packages",
-    "build": "run-s update-package-json build-images build-code build-docs",
+    "build-old": "run-s update-package-json build-images build-code build-docs",
     "docker-build": "npm run docker-do --do='build' --dir=${npm_config_dir}",
     "docker-do": "docker compose --env-file dev/local.env --file ${npm_config_dir}/docker-compose.yml ${npm_config_do} service",
     "docker-down": "docker compose --env-file dev/local.env --file ${npm_config_dir:=packages}/${npm_config_space:=docs}/dev/docker-compose.yml down -v",
@@ -43,27 +47,25 @@
     "docker-run": "npm run docker-do --do='run -it --rm' --dir=${npm_config_dir}",
     "docker-up": "docker compose --env-file dev/local.env --file ${npm_config_dir:=packages}/${npm_config_space:=docs}/dev/docker-compose.yml up -d ${npm_config_service:=service}",
     "publish": "npm publish --access public --workspace @moviemasher/${npm_config_space}",
-    "start": "npm run docker-up --space=${npm_config_space:=@moviemasher/server-express}",
-    "stop": "npm run docker-down --space=${npm_config_space:=@moviemasher/server-express}",
     "test-client": "npm run docker-run --dir=images/test-client/dev",
-    "test-shared": "docker compose --env-file dev/local.env --file images/test-shared/dev/docker-compose.yml run -it --rm service",
-    "test-server": "docker compose --env-file dev/local.env --file images/test-server/dev/docker-compose.yml run -it --rm service",
+    "test-server-old": "docker compose --env-file dev/local.env --file images/test-server/dev/docker-compose.yml run -it --rm service",
     "test": "run-s test-shared test-server test-client",
     "restart-build-server": "npm run build-code server",
     "restart-build-lib": "npm run build-code lib",
     "restart-build-shared": "npm run build-code shared",
-    "restart": "run-s stop restart-build-lib start",
     "restart-shared": "run-s stop restart-build-shared start",
     "restart-server": "run-s stop restart-build-server start",
     "versions": "echo \"NodeJs: $(node -v)\" ; echo \"NPM: $(npm -v)\" ; echo \"TypeScript: $(tsc -v)\""
   },
-  "devDependencies": {
+  "dependencies": {
+    "@moviemasher/shared-lib": "5.2.0",
+    "@moviemasher/client-lib": "5.2.0",
+    "@moviemasher/server-lib": "5.2.0",
     "@types/node": "20.9.0",
     "npm-run-all": "^4.1.5",
     "typescript": "5.1.3"
   },
   "workspaces": [
-    "packages/@moviemasher/*",
-    "images/*"
+    "packages/@moviemasher/*"
   ]
 }

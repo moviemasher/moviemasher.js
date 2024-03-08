@@ -1,5 +1,6 @@
-import type { ManageType } from '@moviemasher/shared-lib/types.js'
 import type { EventServerDecodeStatusDetail, EventServerEncodeStatusDetail, EventServerTranscodeStatusDetail } from './event-types.js'
+
+console.trace('server-lib events.js')
 
 import '../runtime.js'
 

@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerAsset"><h2>ServerAsset</h2></a>
   <div class="section">
     <h1>Interface: ServerAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerAsset</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='Asset.html'>Asset</a></code></p>
@@ -139,69 +139,79 @@
 <p>↳↳ <code><a href='ServerAudibleAsset.html'>ServerAudibleAsset</a></code></p>
 <p>↳↳ <code><a href='ServerVisibleAsset.html'>ServerVisibleAsset</a></code></p>
 <p>↳↳ <code><a href='ServerMashAsset.html'>ServerMashAsset</a></code></p>
-<p>↳↳ <code><a href='ServerRawAsset.html'>ServerRawAsset</a></code></p>
 </li>
+</ul>
+<h2>Implemented by</h2>
+<ul>
+<li><code><a href='ServerAssetClass.html'>ServerAssetClass</a></code></li>
+<li><code><a href='ServerRawAssetClass.html'>ServerRawAssetClass</a></code></li>
 </ul>
 <h2>Properties</h2>
 <h3><a id="ServerAsset.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <p>Inherited from
-Asset.assetIds</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ServerAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h3><a id="ServerAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetManager">assetManager</a></p>
 <hr>
 <h3><a id="ServerAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <p>Inherited from
-Asset.assetObject</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="ServerAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-Asset.assets</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assets">assets</a></p>
 <hr>
 <h3><a id="ServerAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-Asset.decoding</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decoding">decoding</a></p>
 <hr>
 <h3><a id="ServerAsset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <p>Inherited from
-Asset.decodings</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodings">decodings</a></p>
+<hr>
+<h3><a id="ServerAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<hr>
+<h3><a id="ServerAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
 <hr>
 <h3><a id="ServerAsset.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
-Asset.id</p>
-<hr>
-<h3><a id="ServerAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
-<p>Inherited from
-Asset.label</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.id">id</a></p>
 <hr>
 <h3><a id="ServerAsset.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
-Asset.properties</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.properties">properties</a></p>
 <hr>
 <h3><a id="ServerAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
-Asset.request</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.request">request</a></p>
 <hr>
 <h3><a id="ServerAsset.resource">resource</a></h3><p>• <code>Optional</code> <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <p>Inherited from
-Asset.resource</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resource">resource</a></p>
 <hr>
 <h3><a id="ServerAsset.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
 <p>Inherited from
-Asset.resources</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resources">resources</a></p>
 <hr>
 <h3><a id="ServerAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
-Asset.source</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.source">source</a></p>
 <hr>
 <h3><a id="ServerAsset.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
-Asset.targetId</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.targetId">targetId</a></p>
 <hr>
 <h3><a id="ServerAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
-Asset.type</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.type">type</a></p>
 <h2>Methods</h2>
-<h3><a id="ServerAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h3><a id="ServerAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -211,14 +221,14 @@ Asset.type</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Asset.html'>Asset</a></code></p>
 <p>Inherited from
-Asset.asset</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.asset">asset</a></p>
 <hr>
 <h3><a id="ServerAsset.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -237,7 +247,7 @@ Asset.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <p>Inherited from
-Asset.assetCachePromise</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetCachePromise">assetCachePromise</a></p>
 <hr>
 <h3><a id="ServerAsset.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>args</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <p>All files needed for audible and/or visible encode commands.</p>
@@ -257,6 +267,67 @@ Asset.assetCachePromise</p>
 <p>Returns
 <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <hr>
+<h3><a id="ServerAsset.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.boolean">boolean</a></p>
+<hr>
+<h3><a id="ServerAsset.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="ServerAsset.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.changeScalars">changeScalars</a></p>
+<hr>
 <h3><a id="ServerAsset.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -274,7 +345,7 @@ Asset.assetCachePromise</p>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <p>Inherited from
-Asset.clipObject</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.clipObject">clipObject</a></p>
 <hr>
 <h3><a id="ServerAsset.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <p>Writes a command file, if it&#39;s not a raw asset.</p>
@@ -319,7 +390,7 @@ Asset.clipObject</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-Asset.constrainedValue</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.constrainedValue">constrainedValue</a></p>
 <hr>
 <h3><a id="ServerAsset.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -338,26 +409,7 @@ Asset.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
-Asset.decodingOfType</p>
-<hr>
-<h3><a id="ServerAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-Asset.initializeProperties</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodingOfType">decodingOfType</a></p>
 <hr>
 <h3><a id="ServerAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -376,7 +428,7 @@ Asset.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <p>Inherited from
-Asset.instanceArgs</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.instanceArgs">instanceArgs</a></p>
 <hr>
 <h3><a id="ServerAsset.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
@@ -395,7 +447,26 @@ Asset.instanceArgs</p>
 <p>Returns
 <code><a href='Instance.html'>Instance</a></code></p>
 <p>Inherited from
-Asset.instanceFromObject</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.instanceFromObject">instanceFromObject</a></p>
+<hr>
+<h3><a id="ServerAsset.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.number">number</a></p>
 <hr>
 <h3><a id="ServerAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -414,7 +485,7 @@ Asset.instanceFromObject</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-Asset.propertyFind</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyFind">propertyFind</a></p>
 <hr>
 <h3><a id="ServerAsset.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -433,7 +504,7 @@ Asset.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <p>Inherited from
-Asset.propertyIds</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyIds">propertyIds</a></p>
 <hr>
 <h3><a id="ServerAsset.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -452,9 +523,9 @@ Asset.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-Asset.propertyInstance</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ServerAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h3><a id="ServerAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -464,14 +535,14 @@ Asset.propertyInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>...type</code></td>
-<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <p>Inherited from
-Asset.resourceOfType</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.resourceOfType">resourceOfType</a></p>
 <hr>
 <h3><a id="ServerAsset.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -494,13 +565,55 @@ Asset.resourceOfType</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
-Asset.setValue</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.setValue">setValue</a></p>
+<hr>
+<h3><a id="ServerAsset.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ServerAsset.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.string">string</a></p>
 <hr>
 <h3><a id="ServerAsset.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
-Asset.toJSON</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.toJSON">toJSON</a></p>
 <hr>
 <h3><a id="ServerAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
 <h4>Parameters</h4>
@@ -527,7 +640,7 @@ Asset.toJSON</p>
 <p>Returns
 <code><a href='Scalars.html'>Scalars</a></code></p>
 <p>Inherited from
-Asset.tweenValues</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ServerAsset.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -546,7 +659,7 @@ Asset.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-Asset.value</p>
+<a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.value">value</a></p>
 
   </div>
 </section>
@@ -562,8 +675,9 @@ Asset.value</p>
 <li><a class='' href='#ServerAsset.assets'>assets</a></li>
 <li><a class='' href='#ServerAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ServerAsset.decodings'>decodings</a></li>
+<li><a class='' href='#ServerAsset.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerAsset.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerAsset.id'>id</a></li>
-<li><a class='' href='#ServerAsset.label'>label</a></li>
 <li><a class='' href='#ServerAsset.properties'>properties</a></li>
 <li><a class='' href='#ServerAsset.request'>request</a></li>
 <li><a class='' href='#ServerAsset.resource'>resource</a></li>
@@ -574,18 +688,23 @@ Asset.value</p>
 <li><a class='' href='#ServerAsset.asset'>asset</a></li>
 <li><a class='' href='#ServerAsset.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerAsset.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerAsset.boolean'>boolean</a></li>
+<li><a class='' href='#ServerAsset.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#ServerAsset.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerAsset.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerAsset.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerAsset.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#ServerAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerAsset.instanceFromObject'>instanceFromObject</a></li>
+<li><a class='' href='#ServerAsset.number'>number</a></li>
 <li><a class='' href='#ServerAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerAsset.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerAsset.setValue'>setValue</a></li>
+<li><a class='' href='#ServerAsset.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerAsset.string'>string</a></li>
 <li><a class='' href='#ServerAsset.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerAsset.value'>value</a></li></ul>

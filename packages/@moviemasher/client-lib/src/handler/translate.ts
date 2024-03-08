@@ -1,6 +1,6 @@
 import type { ListenersFunction } from '@moviemasher/shared-lib/types.js'
 
-import { EventTranslate } from '../utility/events.js'
+import { EventTranslate } from '../module/event.js'
 
 export class TranslateHandler {
   static handle(event: EventTranslate): void {

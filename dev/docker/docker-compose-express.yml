@@ -1,0 +1,14 @@
+version: "3"
+name: moviemasher-server-express
+services:
+  service:
+    image: moviemasher/server-express:5.2.0-amd64
+    container_name: moviemasher-server-express-5775
+    volumes:
+      - ../../temporary:/moviemasher/temporary
+      - ../../packages/@moviemasher/server-lib/dist:/moviemasher/node_modules/@moviemasher/server-lib/dist
+      - ../../packages/@moviemasher/shared-lib/dist:/moviemasher/node_modules/@moviemasher/shared-lib/dist
+      - ../../packages/@moviemasher/client-lib/dist:/moviemasher/node_modules/@moviemasher/client-lib/dist
+      - ../../packages/@moviemasher/server-express/dist:/moviemasher/dist
+    ports:
+      - 5775:5775

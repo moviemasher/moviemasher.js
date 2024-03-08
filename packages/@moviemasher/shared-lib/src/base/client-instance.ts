@@ -1,7 +1,7 @@
 import type { ClientAsset, ClientClip, ClientInstance, ChangeEditObject, PropertyId, Scalar } from '../types.js'
 
 import { assertDefined, isChangePropertyEditObject } from '../utility/guards.js'
-import { DOT, $FRAME, $CHANGE_FRAME } from '../runtime.js'
+import { DOT, $FRAME } from '../runtime.js'
 import { InstanceClass } from '../base/instance.js'
 
 export class ClientInstanceClass extends InstanceClass implements ClientInstance {
@@ -15,7 +15,7 @@ export class ClientInstanceClass extends InstanceClass implements ClientInstance
     assertDefined(name)
 
     const property = this.propertyFind(name) 
-    if (property?.type === $FRAME) object.type = $CHANGE_FRAME
+    if (property?.type === $FRAME) object.type = $FRAME
     return object
   }
   

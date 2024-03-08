@@ -1,17 +1,16 @@
-import type { AbsolutePath, AbsolutePaths, EndpointRequest, RetrieveFunction, PromiseFunction, Resource, StringData, StringDataOrError, Strings } from '@moviemasher/shared-lib/types.js'
+import type { AbsolutePath, AbsolutePaths, EndpointRequest, RetrieveFunction, StringData, StringDataOrError, Strings } from '@moviemasher/shared-lib/types.js'
 
 import { $HTTP, $HTTPS, $TTF, $TXT, $WOFF2, COLON, DOT, ERROR, SLASH, arrayUnique, errorCaught, errorPromise, isDefiniteError, jsonStringify, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { isPopulatedString, isString } from '@moviemasher/shared-lib/utility/guard.js'
-import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertAbsolutePath, assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 import { requestUrl } from '@moviemasher/shared-lib/utility/request.js'
 import fs from 'fs'
 import path from 'path'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import { ReadableStream } from 'stream/web'
-import { assertAbsolutePath } from '../utility/guard.js'
-import { ENV, ENV_KEY } from '../utility/env.js'
-import { directoryCreatePromise, fileCopyPromise, fileNameFromContent, filePathExists } from './file-write.js'
+import { ENV, $RelativeRequestRoot, $ApiDirCache, $OutputRoot, $ApiDirValid, $FontDir } from '../utility/env.js'
+import { directoryCreatePromise, fileCopyPromise, fileNameFromContent, filePathExists } from './file.js'
 
 const ProtocolSuffix = [COLON, SLASH, SLASH].join('')
 
@@ -21,7 +20,7 @@ const FetchingPromises = new Map<string, Promise<StringDataOrError>>()
 const requestArgsHash = (args: any): string => fileNameFromContent(jsonStringify(args))
 
 const pathResolvedToPrefix = (url: string, prefix?: string): AbsolutePath => {
-  const root = prefix || ENV.get(ENV_KEY.RelativeRequestRoot)
+  const root = prefix || ENV.get($RelativeRequestRoot)
   const absolutePath = path.resolve(root, url)
   assertAbsolutePath(absolutePath)
 
@@ -50,7 +49,7 @@ const requestFilePath = (request: EndpointRequest, type: string = $TXT ): Absolu
   const requestExt = requestExtension(request) 
   const ext = isPopulatedString(requestExt) ? requestExt : type
   const hash = requestArgsHash(request)
-  const filePath = path.resolve(ENV.get(ENV_KEY.ApiDirCache), urlFilename(hash, ext))
+  const filePath = path.resolve(ENV.get($ApiDirCache), urlFilename(hash, ext))
   assertAbsolutePath(filePath)
   return filePath
 }
@@ -97,11 +96,10 @@ export const urlIsHttp = (url: string) => (
 )
 
 const isValidDirectory = (absolutePath: string, validDirectories: Strings = []): boolean => {
-  const dirValid = ENV.getArray(ENV_KEY.ApiDirValid)
-  const outputDir = ENV.get(ENV_KEY.OutputRoot)
+  const dirValid = ENV.getArray($ApiDirValid)
+  const outputDir = ENV.get($OutputRoot)
   const relative = [outputDir, ...dirValid, ...validDirectories]
   const absolute = relative.map(valid => pathResolvedToPrefix(valid))
-  
   const unique = arrayUnique(absolute)
   const valid = unique.some(valid => absolutePath.startsWith(valid)) 
   if (!valid) console.log('isValidDirectory', { valid, absolutePath, unique })
@@ -123,7 +121,6 @@ const localPromise = (url: string, request: EndpointRequest, validDirectories: A
 }
 
 const retrieveRequestPromise = (request: EndpointRequest, type: string, validDirectories?: AbsolutePaths): Promise<StringDataOrError> => {
-
   const url = requestUrl(request)
   if (urlIsHttp(url)) return fetchUrlPromise(url, request, type)
   return localPromise(url, request, validDirectories)
@@ -142,15 +139,17 @@ const fetchRequestPromise = (request: EndpointRequest, type: string, validDirect
     const { data: filePath } = orError
     if (!filePath) return namedError(ERROR.Unavailable, type)
 
-    const ttfFile = path.join(ENV.get(ENV_KEY.FontDir), path.basename(filePath))
+    const ttfFile = path.join(ENV.get($FontDir), path.basename(filePath))
     return fileCopyPromise(filePath, ttfFile).then(copyOrError => (
       isDefiniteError(copyOrError) ? copyOrError : { data: ttfFile }
     ))
   })
 }
 
-export const serverRetrieveFunction: RetrieveFunction = (resource, options = {}): Promise<StringDataOrError> => {
-  const { request, type } = resource
+export const serverRetrieveFunction: RetrieveFunction = (args, options = {}): Promise<StringDataOrError> => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
+
+  const { request, type } = args
   const { validDirectories } = options
   return fetchRequestPromise(request, type, validDirectories)
 }

@@ -3,50 +3,49 @@ import type { EnvironmentKey, EnvironmentRecord, ServerEnvironment } from '../ty
 
 import { $BOOLEAN, COMMA, $NUMBER, $STRING } from '@moviemasher/shared-lib/runtime.js'
 
-export const ENV_KEY = {
-  ApiDirCache: 'MOVIEMASHER_API_DIR_CACHE',
-  ApiDirTemporary: 'MOVIEMASHER_API_DIR_TEMPORARY',
-  ApiDirValid: 'MOVIEMASHER_API_DIR_VALID',
-  ApiKeypathJob: 'MOVIEMASHER_API_KEYPATH_JOB',
-  ApiKeypathType: 'MOVIEMASHER_API_KEYPATH_TYPE',
-  AppColumnOwner: 'MOVIEMASHER_APP_COLUMN_OWNER',
-  AppColumnSource: 'MOVIEMASHER_APP_COLUMN_SOURCE',
-  Debug: 'MOVIEMASHER_DEBUG',
-  DirRoot: 'MOVIEMASHER_DIR_ROOT',
-  ExampleHost: 'MOVIEMASHER_EXAMPLE_HOST',
-  ExamplePort: 'MOVIEMASHER_EXAMPLE_PORT',
-  ExampleRoot: 'MOVIEMASHER_EXAMPLE_ROOT',
-  ExampleDataFile: 'MOVIEMASHER_EXAMPLE_DATA_FILE',
-  ExampleDataDir: 'MOVIEMASHER_EXAMPLE_DATA_DIR', 
-  FontDir: 'MOVIEMASHER_FONT_DIR',
-  Languages: 'MOVIEMASHER_LANGUAGES',
-  OutputRoot: 'MOVIEMASHER_OUTPUT_ROOT',
-  RelativeRequestRoot: 'MOVIEMASHER_RELATIVE_REQUEST_ROOT',
-  SharedAssets: 'MOVIEMASHER_SHARED_ASSETS',
-  SharedUser: 'MOVIEMASHER_SHARED_USER',
-  Version: 'MOVIEMASHER_VERSION',
-} as const
+export const $AppColumnOwner = 'MOVIEMASHER_APP_COLUMN_OWNER' as const
+export const $AppColumnSource = 'MOVIEMASHER_APP_COLUMN_SOURCE' as const
+export const $ApiKeypathJob = 'MOVIEMASHER_API_KEYPATH_JOB' as const
+export const $ApiKeypathType = 'MOVIEMASHER_API_KEYPATH_TYPE' as const
+
+
+export const $ApiDirCache = 'MOVIEMASHER_API_DIR_CACHE' as const
+export const $ApiDirTemporary = 'MOVIEMASHER_API_DIR_TEMPORARY' as const
+export const $ApiDirValid = 'MOVIEMASHER_API_DIR_VALID' as const
+export const $Debug = 'MOVIEMASHER_DEBUG' as const
+export const $DirRoot = 'MOVIEMASHER_DIR_ROOT' as const
+export const $ExampleDataDir = 'MOVIEMASHER_EXAMPLE_DATA_DIR' as const
+export const $ExampleDataFile = 'MOVIEMASHER_EXAMPLE_DATA_FILE' as const
+export const $ExampleHost = 'MOVIEMASHER_EXAMPLE_HOST' as const
+export const $ExamplePort = 'MOVIEMASHER_EXAMPLE_PORT' as const
+export const $ExampleRoot = 'MOVIEMASHER_EXAMPLE_ROOT' as const
+export const $FontDir = 'MOVIEMASHER_FONT_DIR' as const
+export const $OutputRoot = 'MOVIEMASHER_OUTPUT_ROOT' as const
+export const $RelativeRequestRoot = 'MOVIEMASHER_RELATIVE_REQUEST_ROOT' as const
+export const $SharedAssets = 'MOVIEMASHER_SHARED_ASSETS' as const
+export const $SharedUser = 'MOVIEMASHER_SHARED_USER' as const
+export const $Version = 'MOVIEMASHER_VERSION' as const
 
 const ENV_DEFAULTS: EnvironmentRecord = {
-  [ENV_KEY.ApiDirCache]: '/app/temporary/server-express/cache',
-  [ENV_KEY.ApiDirTemporary]: '/app/temporary/server-express',
-  [ENV_KEY.ApiDirValid]: '/app',
-  [ENV_KEY.ApiKeypathJob]: 'job',
-  [ENV_KEY.ApiKeypathType]: 'type',
-  [ENV_KEY.AppColumnOwner]: 'user_id',
-  [ENV_KEY.AppColumnSource]: 'object_id',
-  [ENV_KEY.DirRoot]: '/app/',
-  [ENV_KEY.ExampleHost]: 'localhost',
-  [ENV_KEY.ExamplePort]: '8570',
-  [ENV_KEY.ExampleRoot]: '/app/packages/@moviemasher/server-express/dist/public',
-  [ENV_KEY.ExampleDataFile]: '/app/temporary/server-express/sqlite.db',
-  [ENV_KEY.ExampleDataDir]: '/app/packages/@moviemasher/server-express/dev/data-migrations',
-  [ENV_KEY.FontDir]: '/usr/share/fonts',
-  [ENV_KEY.OutputRoot]: '/app/temporary/server-express/assets',
-  [ENV_KEY.RelativeRequestRoot]: '/app/temporary/server-express',
-  [ENV_KEY.SharedAssets]: '/app/packages/@moviemasher/client-lib/dist/json/asset-objects.json',
-  [ENV_KEY.SharedUser]: 'shared-user',
-  [ENV_KEY.Version]: '5.2.0',
+  [$ApiDirCache]: '/moviemasher/temporary/server-express/cache',
+  [$ApiDirTemporary]: '/moviemasher/temporary/server-express/temporary',
+  [$ApiDirValid]: '/moviemasher',
+  [$ApiKeypathJob]: 'job',
+  [$ApiKeypathType]: 'type',
+  [$AppColumnOwner]: 'user_id',
+  [$AppColumnSource]: 'object_id',
+  [$DirRoot]: '/moviemasher',
+  [$ExampleHost]: '0.0.0.0',
+  [$ExamplePort]: '5775',
+  [$ExampleRoot]: '/moviemasher/dist/public',
+  [$ExampleDataFile]: '/moviemasher/temporary/server-express/sqlite.db',
+  [$ExampleDataDir]: '/moviemasher/dist/sql',
+  [$FontDir]: '/usr/share/fonts',
+  [$OutputRoot]: '/moviemasher/temporary/server-express/assets',
+  [$RelativeRequestRoot]: '/moviemasher/temporary/server-express',
+  [$SharedAssets]: '/moviemasher/node_modules/@moviemasher/client-lib/dist/json/asset-objects.json',
+  [$SharedUser]: 'shared-user',
+  [$Version]: '5.2.0',
 } as const
 
 const ENV_RECORD: EnvironmentRecord = {}

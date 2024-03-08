@@ -6,7 +6,7 @@ import { isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
 import { Component } from '../base/component.js'
 import { CONTROL_PROPERTY_DECLARATIONS, ControlPropertyMixin } from '../handler/controls.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventControl, EventDataType } from '../utility/events.js'
+import { EventControl, EventDataType } from '../module/event.js'
 
 export const ControlInputTag = 'movie-masher-control-input'
 const WithControlProperty = ControlPropertyMixin(Component)
@@ -31,7 +31,7 @@ export class ControlInputElement extends WithControlProperty {
     // console.log(this.tagName, 'controlInitialize', type, propertyId)
 
     const event = new EventControl(type, propertyId)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     return event.detail.control
   }
 
@@ -48,7 +48,7 @@ export class ControlInputElement extends WithControlProperty {
 
   private propertyDataType(propertyId: PropertyId): DataType | undefined {
     const event = new EventDataType(propertyId)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     return event.detail.dataType
   }
 

@@ -125,7 +125,7 @@ export interface Edit {
 }
 
 export interface ClientMashAsset extends ClientAsset, MashAsset {
-  actions: Edits
+  edits: Edits
   addClipToTrack(clip : Clip | Clips, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(object?: TrackObject): Track
   assetObject: MashAssetObject
@@ -957,18 +957,28 @@ export interface Data<T = unknown> {
   data: T
 }
 
-export interface ErrorObject {
+/** ES2020 only specifies an optional, unknown `cause` property. */
+export interface BaseError extends Partial<Error> {}
+
+// TODO: rename to LabeledError
+/** Error that has been caught or generated.  */
+export interface ErrorObject extends BaseError {
+  cause?: string | BaseError
   message: string
   name: string
-  cause?: unknown
 }
 
+/** Error that is safe to return from server.  */
+export interface ResponseError extends ErrorObject {
+  cause?: string
+}
+
+// TODO: rename to Errored
 export interface DefiniteError {
-  error: ErrorObject
+  error: ErrorObject 
 }
 
-export interface PotentialError extends Partial<DefiniteError> {}
-
+// TODO: rename to OkayOrError?
 export type DataOrError<T = unknown> = DefiniteError | Data<T>
 
 export type DataType = string | BooleanDataType | NumberDataType | StringDataType
@@ -1023,8 +1033,8 @@ export interface EventDispatcherOptions {
 
 export type EventOptions = EventDispatcherOptions | boolean
 
-export interface EventDispatcher {
-  dispatch: <T=any>(typeOrEvent: CustomEvent<T> | Event) => boolean
+export interface CustomEventDispatcher {
+  dispatchCustom: <T=any>(typeOrEvent: CustomEvent<T> | Event) => boolean
   listenersAdd(record: EventDispatcherListeners): void
   listenersRemove(record: EventDispatcherListeners): void
 }
@@ -1248,6 +1258,13 @@ export interface ChangePropertyEditObject extends ChangeEditObject {
   undoValue?: Scalar
 }
 
+export interface ChangePropertyEdit extends ChangeEdit {
+  property: PropertyId
+  value?: Scalar
+  valueNumber?: number
+  updateEdit(object: ChangePropertyEditObject): void
+}
+
 export interface ChangePropertiesEditObject extends ChangeEditObject {
   redoValues: ScalarsById
   undoValues: ScalarsById
@@ -1279,6 +1296,25 @@ export interface MashDescriptionOptions {
 
 export interface MashDescriptionArgs extends MashDescriptionOptions {
   mash: MashAsset
+}
+
+export interface ClientMashDescriptionArgs extends MashDescriptionArgs, ClientMashDescriptionOptions {
+  selectedClip?: Clip
+  clip?: Clip
+  mash: ClientMashAsset
+  time: Time
+}
+
+export interface AudioPreview {
+  adjustGain(audible: AudibleInstance): void
+  buffer: number
+  bufferClips(clips: Clip[], quantize: number): boolean 
+  seconds: number
+  // setGain(value : number, quantize: number): void
+  startContext(): void
+  startPlaying(time: Time, clips: Clip[], quantize: number): boolean 
+  stopContext(): void
+  stopPlaying(): void  
 }
 
 export interface SegmentDescription {}
@@ -1425,7 +1461,6 @@ export interface EventResourcePromiseDetail {
   promise?: Promise<StringDataOrError>
 }
 
-
 export interface AssetResource extends Resource {
   type: RawType
 }
@@ -1453,26 +1488,28 @@ export interface DecodeArgs {
   options?: DecodeOptions
 }
 
-export interface ReturningFunction<RET = any, OPTS extends object = object> {
-  (args?: OPTS): DataOrError<RET>
+export interface SyncFunction<RET = any, ARGS = any, OPTS = any> {
+(args?: ARGS, opts?: OPTS, id?: string): RET
 }
 
+export interface AsyncFunction<RET = any, ARGS = any, OPTS = any> {
+  (args?: ARGS, options?: OPTS): Promise<RET>
+} 
 
-export interface PromiseFunction<RET = any, OPTS extends object = object, ARGS extends Typed = Typed> {
-  (args: ARGS, options?: OPTS): Promise<DataOrError<RET>>
-}
+export interface DecodeFunction extends AsyncFunction<DataOrError<Decoding>, DecodeArgs, JobOptions> {}
+export interface TranscodeFunction extends AsyncFunction<DataOrError<string | Transcoding>, TranscodeArgs, JobOptions> {}
+export interface RetrieveFunction extends AsyncFunction<DataOrError<string>, Resource, JobOptions> {}
 
-export interface DecodeFunction extends PromiseFunction<Decoding, JobOptions, DecodeArgs> {}
-export interface TranscodeFunction extends PromiseFunction<string | Transcoding, JobOptions, TranscodeArgs> {}
-export interface RetrieveFunction extends PromiseFunction<string, JobOptions, Resource> {}
-
-export interface FileWriteArgs extends Typed {
+export interface FileReadArgs extends Typed {
   path: AbsolutePath
-  content: string
+}
+
+export interface FileWriteArgs extends FileReadArgs {
+  content?: string
   dontReplace?: boolean
 }
 
-export interface FileFunction extends PromiseFunction<string, JobOptions, FileWriteArgs> {}
+export interface FileFunction extends AsyncFunction<DataOrError<string>, FileWriteArgs, JobOptions> {}
 
 
 export interface UploadResult {
@@ -1484,9 +1521,9 @@ export interface RequestArgs extends Typed {
 }
 
 
-export interface SaveFunction extends PromiseFunction<string, JobOptions, Asset> {}
+export interface SaveFunction extends AsyncFunction<DataOrError<string>, Asset, JobOptions> {}
 
-export interface FileUploadFunction extends PromiseFunction<UploadResult, JobOptions, RequestArgs> {}
+export interface FileUploadFunction extends AsyncFunction<DataOrError<UploadResult>, RequestArgs, JobOptions> {}
 
 export interface TextRectArgs {
   size: number
@@ -1501,8 +1538,8 @@ export interface EncodeArgs extends Typed {
   options?: EncodeOptions
 }
 
-export interface EncodeFunction extends PromiseFunction<string | Encoding, JobOptions, EncodeArgs> {}
-export interface AssetFunction extends ReturningFunction<Asset, AssetArgs> {}
+export interface EncodeFunction extends AsyncFunction<DataOrError<string | Encoding>, EncodeArgs, JobOptions> {}
+export interface AssetFunction extends SyncFunction<DataOrError<Asset>, AssetArgs> {}
 
 export interface TranscodeArgs {
   resource: AssetResource
@@ -1521,28 +1558,40 @@ export type AssetType = 'asset'
 
 export type ModuleType = string | FetchType | RawType | JobType
 
-export interface MovieMasherRuntime extends EventDispatcher {
+
+export type ModuleDescription = string | StringTuple
+export type ModuleOrAsyncFunction = ModuleDescription | AsyncFunction
+export type ModuleOrSyncFunction = ModuleDescription | SyncFunction
+
+export type InstalledFunction = SyncFunction | AsyncFunction
+
+
+export interface MovieMasherRuntime extends CustomEventDispatcher {
   context: ClientOrServer
   imports: StringRecord
   options: MovieMasherOptions
   importPromise(): Promise<DataOrError<ImportResult>>
   window: DocumentWindow
 //* Call a loaded function. */
-  call<RET = any, OPTS extends object = object>(id: string, moduleType?: ModuleType, args?: OPTS): DataOrError<RET> 
+  call<RET = any, ARGS = any, OPTS = any>(id: string, args?: ARGS, moduleType?: ModuleType, opts?: OPTS): RET 
 
-  /** install and load a function asyncronously  */
-  load<RET=any, OPTS extends object = object>(moduleType: ModuleType, id: string, moduleId: string, exported?: string): Promise<DataOrError<ReturningFunction<RET, OPTS>>>
+  dispatch<RET = any, ARGS = any, OPTS = any>(id: string, args?: ARGS, ...opts: OPTS[]): RET 
 
-  /** Install a PromiseFunction for a module type, aside from asset.  */
-  install(moduleType: ModuleType, id: string, moduleId: string, exported?: string): DefiniteError | undefined
+  /** install and load a function asynchronously  */
+  load<RET=any, ARGS extends object = object, OPTS extends object = object>(id: string, moduleOrFunction: ModuleOrAsyncFunction, moduleType?: ModuleType): Promise<DataOrError<SyncFunction<RET, ARGS, OPTS>>>
+
+  /** Install an async function for a module type.  */
+  installAsync(id: string, moduleOrFunction: ModuleOrAsyncFunction, moduleType?: ModuleType): void
+
+  /** Install a function for a module type.  */
+  installSync(id: string, moduleOrFunction: ModuleOrSyncFunction, moduleType?: ModuleType): void
 
   /** Call installed promise function, loading if needed. */
-  promise<RET=any, OPTS extends object = object, ARGS extends Typed=Typed>(args: ARGS, moduleType?: ModuleType, opts?: OPTS): Promise<DataOrError<RET>>
-
+  promise<RET=any, ARGS extends string | Typed=Typed, OPTS extends object = object>(args: ARGS, moduleType?: ModuleType, opts?: OPTS): Promise<RET>
 }
 
 export interface MovieMasherInstance extends MovieMasherRuntime {
-  eventDispatcher: EventDispatcher
+  eventDispatcher: CustomEventDispatcher
 }
 
 export interface Instance extends Propertied, Identified {
@@ -1673,6 +1722,225 @@ export interface Track extends Propertied, Indexed {
 }
 
 export interface Tracks extends Array<Track>{}
+
+
+export interface ServerAudioAsset extends AudioAsset, ServerAudibleAsset {}
+export interface ServerImageAsset extends ImageAsset, ServerVisibleAsset {}
+export interface ServerVideoAsset extends VideoAsset, ServerAudibleAsset, ServerVisibleAsset {}
+
+
+export interface ClientImageAsset extends ImageAsset, ClientVisibleAsset {}
+
+export interface ClientVideoAsset extends VideoAsset, ClientAudibleAsset, ClientVisibleAsset {}
+
+export interface ClientAudioAsset extends AudioAsset, ClientAsset, AudibleAsset {}
+
+export interface ClientAudioInstance extends AudioInstance, ClientInstance, AudibleInstance {
+  asset: ClientAudioAsset
+  clip: ClientClip
+}
+
+
+export interface ClientRawAudioAsset extends ClientAsset, ClientAudioAsset, ClientAudibleAsset {}
+
+export interface ClientRawImageAsset extends ClientAsset, ClientImageAsset {}
+
+export interface ClientRawVideoAsset extends ClientAsset, ClientVideoAsset {
+  clientImagePromise(assetTime: Time, size?: Size): Promise<DataOrError<ClientImage>>
+  clientImage(assetTime: Time, size?: Size): DataOrError<ClientImage>
+}
+
+export interface ClientRawInstance extends Instance, ClientInstance {
+  asset: ClientAsset
+  clip: ClientClip
+}
+
+export interface ClientRawAudioInstance extends AudioInstance, ClientInstance, AudibleInstance {
+  asset: ClientRawAudioAsset
+  clip: ClientClip
+}
+
+export interface ClientRawImageInstance extends ImageInstance, ClientInstance {
+  asset: ClientRawImageAsset
+  clip: ClientClip
+}
+
+export interface ClientRawVideoInstance extends VideoInstance, ClientInstance {
+  clip: ClientClip
+  asset: ClientRawVideoAsset
+}
+
+export interface ServerAudioAsset extends AudioAsset, ServerAudibleAsset {}
+export interface ServerImageAsset extends ImageAsset, ServerVisibleAsset {}
+export interface ServerVideoAsset extends VideoAsset, ServerAudibleAsset, ServerVisibleAsset {}
+
+export interface CommandInput {
+  avType: AVType
+  source: string
+  inputOptions?: ValueRecord
+  outputOptions?: ValueRecord
+}
+
+export interface CommandInputs extends Array<CommandInput>{}
+
+
+export interface CommandInputRecord extends Record<string, CommandInput> { }
+
+export interface PrecodeDescription {
+  duration: number
+  inputsById: CommandInputRecord
+  commandFilters: CommandFilters
+  clip: Clip
+}
+export interface PrecodeDescriptions extends Array<PrecodeDescription> {}
+
+export interface EncodeDescription extends Partial<Omit<PrecodeDescription, "clip">> {
+  avType: AVType
+}
+
+export interface EncodeDescriptions extends Array<EncodeDescription> {}
+
+export interface PrecodeCommands {
+  commandDescriptions: PrecodeDescriptions
+  outputOptions: VideoOutputOptions
+  times: Times
+}
+
+export interface EncodeCommands {
+  audibleDescriptions?: EncodeDescriptions
+  visibleDescriptions?: EncodeDescriptions
+  outputOptions: OutputOptions
+  encodingType: RawType
+}
+
+export interface ServerMashDescription extends MashDescription {
+  needsPrecoding: boolean
+  encodePath: AbsolutePath
+  duration: number
+  mash: MashAsset
+  audioRate: number
+  background: string
+  videoRate: number
+  intrinsicsPromise: Promise<DataOrError<number>>
+  encodeCommandsPromise(): Promise<DataOrError<EncodeCommands>>
+  precodeCommandsPromise(): Promise<DataOrError<PrecodeCommands>>
+}
+
+export interface ServerMashDescriptionOptions extends MashDescriptionOptions { 
+  encodePath: AbsolutePath
+  outputOptions?: OutputOptions
+  mute?: boolean
+  audioRate?: number
+  videoRate?: number
+  background?: string
+}
+export interface ServerMashAsset extends MashAsset, ServerAsset {
+  mashDescription(options: ServerMashDescriptionOptions): ServerMashDescription
+}
+
+export interface ServerMashAudioAsset extends ServerMashAsset, ServerAudioAsset {
+  assetObject: MashAudioAssetObject
+}
+
+export interface ServerMashImageAsset extends ServerMashAsset, ServerImageAsset {
+  assetObject: MashImageAssetObject
+}
+
+export interface ServerMashVideoAsset extends ServerMashAsset, ServerVideoAsset {
+  assetObject: MashVideoAssetObject
+}
+
+export interface ServerMashInstance extends MashInstance, ServerInstance {
+  asset: ServerMashAsset
+}
+
+export interface ServerMashAudioInstance extends AudioInstance, ServerInstance {
+  asset: ServerMashAudioAsset
+}
+
+export interface ServerMashImageInstance extends ImageInstance, ServerInstance {
+  asset: ServerMashImageAsset
+}
+
+export interface ServerMashVideoInstance extends VideoInstance, ServerInstance {
+  asset: ServerMashVideoAsset
+}
+
+
+export interface ServerAudioInstance extends ServerInstance, AudioInstance {
+  asset: ServerAsset & AudioAsset 
+}
+
+
+
+export interface Tweening {
+  point?: boolean
+  size?: boolean
+  color?: boolean
+  canColor?: boolean
+}
+
+export interface CommandFilterArgs  {
+  track: number
+  commandFiles: CommandFiles
+  chainInput: string
+  filterInput?: string
+  duration: number
+  clipTime: TimeRange
+}
+
+export interface VisibleCommandFilterArgs extends VideoCommandFilterArgs {
+  containerRects: RectTuple
+}
+
+export type ServerContentInstance = ServerVisibleInstance | ServerAudibleInstance
+
+export interface ServerContainerInstance extends ServerVisibleInstance, ContainerInstance {
+  asset: ServerAsset & ContainerAsset 
+}
+
+export interface CommandFilter {
+  ffmpegFilter: string
+  inputs: string[]
+  outputs: string[]
+  options: ValueRecord
+}
+
+
+export interface CommandFilters extends Array<CommandFilter>{}
+
+export interface AudibleCommandFilterArgs extends CommandFilterArgs, AudioCommandFileOptions {}
+
+export interface VideoCommandFilterArgs extends CommandFilterArgs, VideoCommandFileOptions {}
+
+export interface ServerClip extends Clip {
+  requiresPrecoding: boolean
+  precoding?: AbsolutePath
+  videoCommandFiles(args: VideoCommandFileOptions): CommandFiles
+  audioCommandFiles(args: AudioCommandFileOptions): CommandFiles
+  videoCommandFilters(args: VideoCommandFilterArgs): CommandFilters
+  audioCommandFilters(args: AudibleCommandFilterArgs): CommandFilters
+  container?: ServerContainerInstance
+  content: ServerContentInstance
+}
+
+export interface ServerClips extends Array<ServerClip>{}
+
+export interface ServerTrack extends Track {
+  clips: ServerClips
+  mash: ServerMashAsset
+}
+
+export interface ServerTracks extends Array<ServerTrack>{}
+
+export interface ClientMashVideoAsset extends ClientMashAsset, ClientVideoAsset {
+  assetObject: MashVideoAssetObject
+}
+
+export interface ClientMashVideoInstance extends VideoInstance, ClientInstance {
+  asset: ClientMashVideoAsset
+  clip: ClientClip
+}
 
 
 // interface Animation {

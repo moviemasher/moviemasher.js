@@ -145,7 +145,18 @@ export class ClipClass extends PropertiedClass implements Clip {
   protected _containerObject: InstanceObject = {}
 
   protected _container?: ContainerInstance
-  get container(): ContainerInstance | undefined { return this._container ||= this.containerInitialize }
+  get container(): ContainerInstance | undefined { 
+    const { _container } = this
+    if (_container) return _container
+
+    const instance = this.containerInitialize
+    this._container = instance
+
+    const timing = this.value('timing')
+    if (timing === $CONTAINER && this.track) this.resetTiming(instance)
+
+    return instance
+  }
   protected get containerInitialize(): VisibleInstance | undefined {
     const { _containerObject: containerObject } = this
     const containerId = this.value('containerId')
@@ -159,8 +170,6 @@ export class ClipClass extends PropertiedClass implements Clip {
 
     this.assureTimingAndSizing($CONTAINER, $CONTAINER, instance)
     instance.clip = this
-    const timing = this.value('timing')
-    if (timing === $CONTAINER && this.track) this.resetTiming(instance)
     return instance
   }
 
@@ -175,7 +184,16 @@ export class ClipClass extends PropertiedClass implements Clip {
 
   protected _contentObject: InstanceObject = {}
   
-  get content(): ContentInstance | AudioInstance { return this._content ||= this.contentInitialize }
+  get content(): ContentInstance | AudioInstance { 
+    const { _content } = this
+    if (_content) return _content
+
+    const instance = this.contentInitialize
+    this._content = instance
+    const timing = this.value('timing')
+    if (timing === $CONTENT && this.track) this.resetTiming(instance)
+    return instance
+  }
   
   protected _content?: ContentInstance | AudioInstance
   
@@ -188,7 +206,8 @@ export class ClipClass extends PropertiedClass implements Clip {
     const asset = this.asset(assetId)
     const object: InstanceObject = { ...contentObject, assetId }
     const content = asset.instanceFromObject(object)
-    if (isAudioAsset(asset)) {
+    const isAudio = isAudioAsset(asset)
+    if (isAudio) {
       this._container = undefined
       this._containerObject = {}
       this.setValue('containerId', '')
@@ -196,15 +215,11 @@ export class ClipClass extends PropertiedClass implements Clip {
     } else {
       assertCanBeContentInstance(content)
     }
-    if (this.assureTimingAndSizing($CONTENT, $CONTENT, content)) {
+    if (this.assureTimingAndSizing($CONTENT, $CONTENT, content) && !isAudio) {
       const { container } = this
-      if (container) {
-        this.assureTimingAndSizing($CONTAINER, $CONTAINER, container)
-      }
+      if (container)  this.assureTimingAndSizing($CONTAINER, $CONTAINER, container)
     }
     content.clip = this
-    const timing = this.value('timing')
-    if (timing === $CONTENT && this.track) this.resetTiming(content)
     return content
   }
 
@@ -286,19 +301,19 @@ export class ClipClass extends PropertiedClass implements Clip {
       case $CONTAINER: {
         const container = canBeContainerInstance(instance) ? instance : this.container
         if (!container?.asset.hasIntrinsicTiming) {
-          // console.log(this.constructor.name, 'resetTiming SET timing from container to content')
+          // console.log(this.constructor.name, 'resetFrames SET timing from container to content')
           this.setValue('timing', $CONTENT)
           break
         }
         return container.frames(quantize || this.quantizeNumber)
-        // console.log('resetTiming SET frames from container', this.frames, { quantize })
+        // console.log('resetFrames SET frames from container', this.frames, { quantize })
       }
       case $CONTENT: {
         const content = canBeContentInstance(instance) ? instance : this.content
         if (!content) break
 
         if (!content.asset.hasIntrinsicTiming) {
-          // console.log(this.constructor.name, 'resetTiming SET timing content to custom')
+          // console.log(this.constructor.name, 'resetFrames SET timing content to custom')
           this.setValue('timing', $CUSTOM)
           break
         }

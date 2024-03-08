@@ -5,13 +5,13 @@
     "rootDir": "./src",
   },
   "exclude": [
-    "**/dist/*",
-    "src/**/*.e2e.ts", 
-    "src/**/*.test.ts"
+    "**/dist/*"
   ],
   "include": [
     "./src/*.ts",
     "./src/**/*.ts"
 
+
+    
   ]
 }

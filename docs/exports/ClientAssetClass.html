@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,11 +131,12 @@
   <a id="ClientAssetClass"><h2>ClientAssetClass</h2></a>
   <div class="section">
     <h1>Class: ClientAssetClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='AssetClass.html'>AssetClass</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientAssetClass</a></code></strong></p>
+<p>↳↳ <code><a href='ClientRawAssetClass.html'>ClientRawAssetClass</a></code></p>
 </li>
 </ul>
 <h2>Implements</h2>
@@ -154,63 +155,75 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Inherited from
-AssetClass.constructor</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="ClientAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<h3><a id="ClientAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
 <p>Inherited from
-AssetClass._assets</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass._assets">_assets</a></p>
 <hr>
-<h3><a id="ClientAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ClientAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetManager">assetManager</a></p>
+<p>Inherited from
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.assetManager">assetManager</a></p>
+<hr>
+<h3><a id="ClientAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decodings">decodings</a></p>
 <p>Inherited from
-AssetClass.decodings</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.decodings">decodings</a></p>
+<hr>
+<h3><a id="ClientAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>Inherited from
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<hr>
+<h3><a id="ClientAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<p>Inherited from
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
 <hr>
 <h3><a id="ClientAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.id">id</a></p>
 <p>Inherited from
-AssetClass.id</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.id">id</a></p>
 <hr>
-<h3><a id="ClientAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.label">label</a></p>
-<p>Inherited from
-AssetClass.label</p>
-<hr>
-<h3><a id="ClientAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.properties">properties</a></p>
 <p>Inherited from
-AssetClass.properties</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.properties">properties</a></p>
 <hr>
-<h3><a id="ClientAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ClientAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resources">resources</a></p>
 <p>Inherited from
-AssetClass.resources</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.resources">resources</a></p>
 <hr>
 <h3><a id="ClientAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.source">source</a></p>
 <p>Inherited from
-AssetClass.source</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.source">source</a></p>
 <hr>
 <h3><a id="ClientAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$ASSET'>$ASSET</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.targetId">targetId</a></p>
 <p>Overrides
-AssetClass.targetId</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.targetId">targetId</a></p>
 <hr>
 <h3><a id="ClientAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.type">type</a></p>
 <p>Inherited from
-AssetClass.type</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.type">type</a></p>
 <h2>Accessors</h2>
 <h3><a id="ClientAssetClass.assetIds">assetIds</a></h3><p>• <code>get</code> <strong>assetIds</strong>(): <code><a href='Strings.html'>Strings</a></code></p>
 <p>Returns
@@ -272,7 +285,7 @@ AssetClass.resource</p>
 <p>Inherited from
 AssetClass.scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ClientAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -282,16 +295,16 @@ AssetClass.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<code><a href='Asset.html'>Asset</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.asset">asset</a></p>
-<p>Overrides
-AssetClass.asset</p>
+<p>Inherited from
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.asset">asset</a></p>
 <hr>
 <h3><a id="ClientAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -312,9 +325,9 @@ AssetClass.asset</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetCachePromise">assetCachePromise</a></p>
 <p>Inherited from
-AssetClass.assetCachePromise</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.assetCachePromise">assetCachePromise</a></p>
 <hr>
-<h3><a id="ClientAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
+<h3><a id="ClientAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_size</code>, <code>_cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -324,8 +337,12 @@ AssetClass.assetCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_</code></td>
+<td align="left"><code>_size</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>_cover?</code></td>
+<td align="left"><code>boolean</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -348,7 +365,7 @@ AssetClass.assetCachePromise</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -359,6 +376,27 @@ AssetClass.assetCachePromise</p>
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetIconPromise">assetIconPromise</a></p>
+<hr>
+<h3><a id="ClientAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.boolean">boolean</a></p>
+<p>Inherited from
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.boolean">boolean</a></p>
 <hr>
 <h3><a id="ClientAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -383,7 +421,7 @@ AssetClass.assetCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.changeScalar">changeScalar</a></p>
 <p>Inherited from
-AssetClass.changeScalar</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.changeScalar">changeScalar</a></p>
 <hr>
 <h3><a id="ClientAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -404,7 +442,7 @@ AssetClass.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.changeScalars">changeScalars</a></p>
 <p>Inherited from
-AssetClass.changeScalars</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="ClientAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -416,7 +454,7 @@ AssetClass.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -425,7 +463,7 @@ AssetClass.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.clipObject">clipObject</a></p>
 <p>Inherited from
-AssetClass.clipObject</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.clipObject">clipObject</a></p>
 <hr>
 <h3><a id="ClientAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -450,7 +488,7 @@ AssetClass.clipObject</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-AssetClass.constrainedValue</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.constrainedValue">constrainedValue</a></p>
 <hr>
 <h3><a id="ClientAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -471,9 +509,9 @@ AssetClass.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decodingOfType">decodingOfType</a></p>
 <p>Inherited from
-AssetClass.decodingOfType</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.decodingOfType">decodingOfType</a></p>
 <hr>
-<h3><a id="ClientAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -488,30 +526,9 @@ AssetClass.decodingOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.imagePromise">imagePromise</a></p>
-<hr>
-<h3><a id="ClientAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-AssetClass.initializeProperties</p>
 <hr>
 <h3><a id="ClientAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -532,7 +549,7 @@ AssetClass.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.instanceArgs">instanceArgs</a></p>
 <p>Overrides
-AssetClass.instanceArgs</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.instanceArgs">instanceArgs</a></p>
 <hr>
 <h3><a id="ClientAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>_?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
@@ -544,7 +561,7 @@ AssetClass.instanceArgs</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_?</code></td>
+<td align="left"><code>_</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -553,9 +570,9 @@ AssetClass.instanceArgs</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Inherited from
-AssetClass.instanceFromObject</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.instanceFromObject">instanceFromObject</a></p>
 <hr>
-<h3><a id="ClientAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -565,14 +582,16 @@ AssetClass.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.number">number</a></p>
 <p>Inherited from
-AssetClass.propertiesInitialize</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.number">number</a></p>
 <hr>
 <h3><a id="ClientAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -593,7 +612,7 @@ AssetClass.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.propertyFind">propertyFind</a></p>
 <p>Inherited from
-AssetClass.propertyFind</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.propertyFind">propertyFind</a></p>
 <hr>
 <h3><a id="ClientAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -614,7 +633,7 @@ AssetClass.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.propertyIds">propertyIds</a></p>
 <p>Inherited from
-AssetClass.propertyIds</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.propertyIds">propertyIds</a></p>
 <hr>
 <h3><a id="ClientAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -635,7 +654,7 @@ AssetClass.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-AssetClass.propertyInstance</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.propertyInstance">propertyInstance</a></p>
 <hr>
 <h3><a id="ClientAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -648,7 +667,7 @@ AssetClass.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -656,7 +675,7 @@ AssetClass.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resourceOfType">resourceOfType</a></p>
 <p>Inherited from
-AssetClass.resourceOfType</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.resourceOfType">resourceOfType</a></p>
 <hr>
 <h3><a id="ClientAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -734,9 +753,9 @@ AssetClass.resourceOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.setValue">setValue</a></p>
 <p>Inherited from
-AssetClass.setValue</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.setValue">setValue</a></p>
 <hr>
-<h3><a id="ClientAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -756,8 +775,31 @@ AssetClass.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-AssetClass.shouldSelectProperty</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ClientAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.string">string</a></p>
+<p>Inherited from
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.string">string</a></p>
 <hr>
 <h3><a id="ClientAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -765,7 +807,7 @@ AssetClass.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.toJSON">toJSON</a></p>
 <p>Inherited from
-AssetClass.toJSON</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.toJSON">toJSON</a></p>
 <hr>
 <h3><a id="ClientAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -794,7 +836,7 @@ AssetClass.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.tweenValues">tweenValues</a></p>
 <p>Inherited from
-AssetClass.tweenValues</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ClientAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -821,7 +863,7 @@ AssetClass.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.value">value</a></p>
 <p>Inherited from
-AssetClass.value</p>
+<a href="AssetClass.html">AssetClass</a>.<a href="AssetClass.html#AssetClass.value">value</a></p>
 
   </div>
 </section>
@@ -833,9 +875,11 @@ AssetClass.value</p>
         <ul><li><a class='' href='#ClientAssetClass'>ClientAssetClass</a></li>
 <li><a class='' href='#ClientAssetClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientAssetClass._assets'>_assets</a></li>
+<li><a class='' href='#ClientAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientAssetClass.decodings'>decodings</a></li>
+<li><a class='' href='#ClientAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientAssetClass.id'>id</a></li>
-<li><a class='' href='#ClientAssetClass.label'>label</a></li>
 <li><a class='' href='#ClientAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ClientAssetClass.resources'>resources</a></li>
 <li><a class='' href='#ClientAssetClass.source'>source</a></li>
@@ -853,16 +897,16 @@ AssetClass.value</p>
 <li><a class='' href='#ClientAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ClientAssetClass.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientAssetClass.assetIconPromise'>assetIconPromise</a></li>
+<li><a class='' href='#ClientAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ClientAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientAssetClass.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientAssetClass.number'>number</a></li>
 <li><a class='' href='#ClientAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientAssetClass.propertyInstance'>propertyInstance</a></li>
@@ -872,6 +916,7 @@ AssetClass.value</p>
 <li><a class='' href='#ClientAssetClass.savingPromise'>savingPromise</a></li>
 <li><a class='' href='#ClientAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientAssetClass.unload'>unload</a></li>

@@ -1,4 +1,4 @@
-import type { Server, ServerArgs } from './Server.js'
+import type { Server, ServerArgs } from '../types.js'
 
 import Express from 'express'
 import basicAuth from 'express-basic-auth'

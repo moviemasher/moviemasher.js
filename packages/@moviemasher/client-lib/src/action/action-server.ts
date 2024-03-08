@@ -1,12 +1,11 @@
 import type { PropertyDeclarations, PropertyValues } from 'lit'
 import type { Htmls, OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
 
-import { $STRING, MOVIE_MASHER, arraySet } from '@moviemasher/shared-lib/runtime.js'
+import { $ICON, $STRING, MOVIE_MASHER, arraySet } from '@moviemasher/shared-lib/runtime.js'
 import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 import { html } from 'lit-html'
 import { ButtonElement } from '../component/button.js'
-import { ICON } from '../runtime.js'
-import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, StringEvent } from '../utility/events.js'
+import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, StringEvent } from '../module/event.js'
 
 export const ServerActionTag = 'movie-masher-action-server'
 
@@ -55,6 +54,7 @@ export class ServerActionElement extends ButtonElement {
   }
   
   private handleChangedAction(event: StringEvent): void {
+    console.log(this.tagName, 'handleChangedAction', this.detail, event.detail)
     if (this.detail === event.detail) this.handleChanged()
   }
 
@@ -63,7 +63,7 @@ export class ServerActionElement extends ButtonElement {
     // console.log(this.tagName, this.detail, 'handleChanged', enabledEvent)
     if (!enabledEvent) return
     
-    MOVIE_MASHER.dispatch(enabledEvent)
+    MOVIE_MASHER.dispatchCustom(enabledEvent)
     this.disabled = !enabledEvent.detail.enabled
   } 
 
@@ -72,7 +72,7 @@ export class ServerActionElement extends ButtonElement {
     if (detail) {
       clickEvent.stopPropagation()
       const event = new EventDoServerAction(detail, progress ? detail : undefined)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise } = event.detail
       if (promise && progress) this.currentProgress = 0
     }
@@ -98,7 +98,7 @@ export class ServerActionElement extends ButtonElement {
           if (progressInserting === 'replace-string') return this.partProgress
           break
         }
-        case ICON: {
+        case $ICON: {
           if (progressInserting === 'replace-icon') return this.partProgress
           break
         }

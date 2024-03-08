@@ -1,7 +1,7 @@
-import type { Aspect, AssetResource, AudibleAsset, AudibleInstance, AudibleType, AudioAsset, AudioInstance, ChangeEdit, ChangeEditObject, ChangePropertyEditObject, Clip, ClipObject, ComplexSvgItem, ContainerAsset, ContainerInstance, ContentAsset, ContentInstance, DropResource, Edit, EditObject, Encoding, Endpoint, EndpointRequest, ImageAsset, Instance, Integer, MashAsset, OkNumber, Point, PopulatedString, Propertied, PropertyId, Rect, Resource, SelectorType, ServerAsset, Size, TargetId, Transcoding, TranscodingType, TranscodingTypes, Transparency, Usage, Value, VideoAsset, VisibleAsset, VisibleInstance } from '../types.js'
+import type { AbsolutePath, Aspect, AssetResource, AudibleAsset, AudibleInstance, AudibleType, AudioAsset, AudioInstance, ChangeEdit, ChangeEditObject, ChangePropertyEdit, ChangePropertyEditObject, Clip, ClipObject, ComplexSvgItem, ContainerAsset, ContainerInstance, ContentAsset, ContentInstance, DropResource, Edit, EditObject, Encoding, Endpoint, EndpointRequest, ImageAsset, Instance, Integer, MashAsset, OkNumber, Point, PopulatedString, Propertied, PropertyId, Rect, Resource, SelectorType, ServerAsset, ServerAudibleAsset, ServerAudibleInstance, Size, TargetId, Transcoding, TranscodingType, TranscodingTypes, Transparency, Usage, Value, VideoAsset, VisibleAsset, VisibleInstance } from '../types.js'
 
 import { $AUDIO, $BITMAPS, $HEIGHT, $IMAGE, $MASH, $VIDEO, $WAVEFORM, $WIDTH, RAW_TYPES, AUDIBLE_TYPES, TARGET_IDS, VISIBLE_TYPES, errorThrow, isAsset, isRawType, isSourceAsset, $TTF, TRANSPARENCIES, ASPECTS, $ENCODE, $TRANSCODE, $STRING, $BOOLEAN, $NUMBER, isTyped } from '../runtime.js'
-import { isAboveZero, isArray, isBoolean, isDefined, isInteger, isNumber, isObject, isPopulatedString, isPositive, isString, isValue } from './guard.js'
+import { isAboveZero, isAbsolutePath, isArray, isBoolean, isDefined, isInteger, isNumber, isObject, isPopulatedString, isPositive, isString, isValue } from './guard.js'
 
 export const isTranscoding = (value: any): value is Transcoding => {
   return isRequestable(value) && isTranscodingType(value.type)
@@ -254,22 +254,8 @@ export const isPropertied = (target: any): target is Propertied => {
   return isObject(target) && 'properties' in target && isArray(target.properties)
 }
 
-const isEditObject = (value: any): value is EditObject => {
-  return isTyped(value)  
-}
-
-const isEdit = (value: any): value is Edit => {
-  return isObject(value) && 'redo' in value && 'undo' in value
-}
-
-export const isChangeEdit = (value: any): value is ChangeEdit => (
-  isEdit(value) 
-  && 'updateEdit' in value 
-  && 'target' in value && isPropertied(value.target)
-)
-
 export const isChangeEditObject = (value: any): value is ChangeEditObject => (
-  isEditObject(value) 
+  isTyped(value) 
   && 'target' in value && isPropertied(value.target)
 )
 
@@ -277,3 +263,31 @@ export const isChangePropertyEditObject = (value: any): value is ChangePropertyE
   isChangeEditObject(value) 
   && 'property' in value && isPopulatedString(value.property)
 )
+
+export const isChangeEdit = (value: any): value is ChangeEdit => (
+  isObject(value) && 'redo' in value && 'undo' in value
+  && 'updateEdit' in value 
+  && 'target' in value && isPropertied(value.target)
+)
+
+export const isChangePropertyEdit = (value: any): value is ChangePropertyEdit => (
+  isChangeEdit(value)
+  && 'property' in value && isPopulatedString(value.property)
+)
+
+export function assertAbsolutePath(value: any, name?: string): asserts value is AbsolutePath {
+  if (!isAbsolutePath(value)) errorThrow(value, 'AbsolutePath', name)
+}
+
+export const isServerAudibleAsset = (value: any): value is ServerAudibleAsset => {
+  return isServerAsset(value) && isAudibleAsset(value)
+}
+
+export const isServerAudibleInstance = (value: any): value is ServerAudibleInstance => {
+  return isAudibleInstance(value) && isServerAudibleAsset(value.asset)
+}
+
+export function assertServerAudibleInstance(value: any, name?: string): asserts value is ServerAudibleInstance {
+  if (!isServerAudibleInstance(value)) errorThrow(value, 'AbsolutePath', name)
+}
+

@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerTextAssetClass"><h2>ServerTextAssetClass</h2></a>
   <div class="section">
     <h1>Class: ServerTextAssetClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerTextAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerTextAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithTextAsset</code></p>
+<li><p><code><a href='ServerAssetClass.html'>ServerAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleAsset.html'>VisibleAsset</a></code> &amp; <code><a href='ServerVisibleAsset.html'>ServerVisibleAsset</a></code> &amp; <code><a href='TextAsset.html'>TextAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerTextAssetClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerTextAsset.html'>ServerTextAsset</a></code></li>
+<li><code>ServerTextAsset</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerTextAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerTextAssetClass</strong>(<code>args</code>, <code>manager?</code>)</p>
+<h3><a id="ServerTextAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerTextAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,188 +153,214 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='TextAssetObject.html'>TextAssetObject</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>manager?</code></td>
-<td align="left"><code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithTextAsset.constructor</p>
-<h2>Properties</h2>
-<h3><a id="ServerTextAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-WithTextAsset._assets</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).constructor</p>
+<h2>Properties</h2>
+<h3><a id="ServerTextAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
+<p>Inherited from
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+)._assets</p>
 <hr>
 <h3><a id="ServerTextAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.alpha">alpha</a></p>
+<p>ServerTextAsset.alpha</p>
 <p>Inherited from
-WithTextAsset.alpha</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).alpha</p>
 <hr>
 <h3><a id="ServerTextAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.assetIds">assetIds</a></p>
+<p>ServerTextAsset.assetIds</p>
 <p>Inherited from
-WithTextAsset.assetIds</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetIds</p>
 <hr>
-<h3><a id="ServerTextAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h3><a id="ServerTextAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.assetManager">assetManager</a></p>
+<p>ServerTextAsset.assetManager</p>
 <p>Inherited from
-WithTextAsset.assetManager</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetManager</p>
 <hr>
-<h3><a id="ServerTextAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code> &amp; <code><a href='TextAssetObject.html'>TextAssetObject</a></code></p>
+<h3><a id="ServerTextAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='TextAssetObject.html'>TextAssetObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.assetObject">assetObject</a></p>
+<p>ServerTextAsset.assetObject</p>
 <p>Inherited from
-WithTextAsset.assetObject</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetObject</p>
 <hr>
 <h3><a id="ServerTextAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.assets">assets</a></p>
+<p>ServerTextAsset.assets</p>
 <p>Inherited from
-WithTextAsset.assets</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assets</p>
 <hr>
 <h3><a id="ServerTextAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.canBeContainer">canBeContainer</a></p>
+<p>ServerTextAsset.canBeContainer</p>
 <p>Inherited from
-WithTextAsset.canBeContainer</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).canBeContainer</p>
 <hr>
 <h3><a id="ServerTextAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.canBeContent">canBeContent</a></p>
+<p>ServerTextAsset.canBeContent</p>
 <p>Inherited from
-WithTextAsset.canBeContent</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).canBeContent</p>
 <hr>
 <h3><a id="ServerTextAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.canBeFill">canBeFill</a></p>
+<p>ServerTextAsset.canBeFill</p>
 <p>Inherited from
-WithTextAsset.canBeFill</p>
-<hr>
-<h3><a id="ServerTextAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.container">container</a></p>
-<p>Inherited from
-WithTextAsset.container</p>
-<hr>
-<h3><a id="ServerTextAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.content">content</a></p>
-<p>Inherited from
-WithTextAsset.content</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).canBeFill</p>
 <hr>
 <h3><a id="ServerTextAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.decoding">decoding</a></p>
+<p>ServerTextAsset.decoding</p>
 <p>Inherited from
-WithTextAsset.decoding</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).decoding</p>
 <hr>
-<h3><a id="ServerTextAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ServerTextAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.decodings">decodings</a></p>
+<p>ServerTextAsset.decodings</p>
 <p>Inherited from
-WithTextAsset.decodings</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).decodings</p>
 <hr>
 <h3><a id="ServerTextAssetClass.family">family</a></h3><p>• <strong>family</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.family">family</a></p>
+<p>ServerTextAsset.family</p>
 <p>Inherited from
-WithTextAsset.family</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).family</p>
 <hr>
 <h3><a id="ServerTextAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>ServerTextAsset.hasIntrinsicSizing</p>
 <p>Inherited from
-WithTextAsset.hasIntrinsicSizing</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ServerTextAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.hasIntrinsicTiming</p>
+<p>Inherited from
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerTextAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.id">id</a></p>
+<p>ServerTextAsset.id</p>
 <p>Inherited from
-WithTextAsset.id</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).id</p>
 <hr>
 <h3><a id="ServerTextAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.isVector">isVector</a></p>
+<p>ServerTextAsset.isVector</p>
 <p>Inherited from
-WithTextAsset.isVector</p>
-<hr>
-<h3><a id="ServerTextAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.label">label</a></p>
-<p>Inherited from
-WithTextAsset.label</p>
-<hr>
-<h3><a id="ServerTextAssetClass.manager">manager</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>manager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<p>Inherited from
-WithTextAsset.manager</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).isVector</p>
 <hr>
 <h3><a id="ServerTextAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.probeSize">probeSize</a></p>
+<p>ServerTextAsset.probeSize</p>
 <p>Inherited from
-WithTextAsset.probeSize</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).probeSize</p>
 <hr>
-<h3><a id="ServerTextAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerTextAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.properties">properties</a></p>
+<p>ServerTextAsset.properties</p>
 <p>Inherited from
-WithTextAsset.properties</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).properties</p>
 <hr>
 <h3><a id="ServerTextAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.request">request</a></p>
+<p>ServerTextAsset.request</p>
 <p>Inherited from
-WithTextAsset.request</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).request</p>
 <hr>
 <h3><a id="ServerTextAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.resource">resource</a></p>
+<p>ServerTextAsset.resource</p>
 <p>Inherited from
-WithTextAsset.resource</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).resource</p>
 <hr>
-<h3><a id="ServerTextAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ServerTextAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.resources">resources</a></p>
+<p>ServerTextAsset.resources</p>
 <p>Inherited from
-WithTextAsset.resources</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).resources</p>
 <hr>
 <h3><a id="ServerTextAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.source">source</a></p>
+<p>ServerTextAsset.source</p>
 <p>Inherited from
-WithTextAsset.source</p>
-<hr>
-<h3><a id="ServerTextAssetClass.string">string</a></h3><p>• <strong>string</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.string">string</a></p>
-<p>Inherited from
-WithTextAsset.string</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).source</p>
 <hr>
 <h3><a id="ServerTextAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.targetId">targetId</a></p>
+<p>ServerTextAsset.targetId</p>
 <p>Inherited from
-WithTextAsset.targetId</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerTextAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.type">type</a></p>
+<p>ServerTextAsset.type</p>
 <p>Inherited from
-WithTextAsset.type</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ServerTextAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithTextAsset.scalarRecord</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ServerTextAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
+<h3><a id="ServerTextAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -345,27 +371,7 @@ WithTextAsset.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>assetId</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ServerAsset.html'>ServerAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.asset">asset</a></p>
-<p>Inherited from
-WithTextAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -373,7 +379,9 @@ WithTextAsset.asset</p>
 <h4>Implementation of</h4>
 <p>ServerTextAsset.asset</p>
 <p>Inherited from
-WithTextAsset.asset</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).asset</p>
 <hr>
 <h3><a id="ServerTextAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -392,12 +400,13 @@ WithTextAsset.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.assetCachePromise">assetCachePromise</a></p>
+<p>ServerTextAsset.assetCachePromise</p>
 <p>Inherited from
-WithTextAsset.assetCachePromise</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetCachePromise</p>
 <hr>
 <h3><a id="ServerTextAssetClass.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>args</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
-<p>All files needed for audible and/or visible encode commands.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -414,9 +423,34 @@ WithTextAsset.assetCachePromise</p>
 <p>Returns
 <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.assetFiles">assetFiles</a></p>
+<p>ServerTextAsset.assetFiles</p>
 <p>Overrides
-WithTextAsset.assetFiles</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetFiles</p>
+<hr>
+<h3><a id="ServerTextAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.boolean</p>
+<p>Inherited from
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerTextAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -438,8 +472,12 @@ WithTextAsset.assetFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.changeScalar</p>
 <p>Inherited from
-WithTextAsset.changeScalar</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerTextAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -457,8 +495,12 @@ WithTextAsset.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.changeScalars</p>
 <p>Inherited from
-WithTextAsset.changeScalars</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerTextAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -470,19 +512,20 @@ WithTextAsset.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.clipObject">clipObject</a></p>
+<p>ServerTextAsset.clipObject</p>
 <p>Inherited from
-WithTextAsset.clipObject</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).clipObject</p>
 <hr>
 <h3><a id="ServerTextAssetClass.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<p>Writes a command file, if it&#39;s not a raw asset.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -503,9 +546,11 @@ WithTextAsset.clipObject</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.commandFilePromise">commandFilePromise</a></p>
+<p>ServerTextAsset.commandFilePromise</p>
 <p>Inherited from
-WithTextAsset.commandFilePromise</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).commandFilePromise</p>
 <hr>
 <h3><a id="ServerTextAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -528,9 +573,11 @@ WithTextAsset.commandFilePromise</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.constrainedValue">constrainedValue</a></p>
+<p>ServerTextAsset.constrainedValue</p>
 <p>Inherited from
-WithTextAsset.constrainedValue</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerTextAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -549,50 +596,11 @@ WithTextAsset.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.decodingOfType">decodingOfType</a></p>
+<p>ServerTextAsset.decodingOfType</p>
 <p>Inherited from
-WithTextAsset.decodingOfType</p>
-<hr>
-<h3><a id="ServerTextAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithTextAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerTextAsset.initializeProperties</p>
-<p>Inherited from
-WithTextAsset.initializeProperties</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).decodingOfType</p>
 <hr>
 <h3><a id="ServerTextAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -611,11 +619,13 @@ WithTextAsset.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.instanceArgs">instanceArgs</a></p>
+<p>ServerTextAsset.instanceArgs</p>
 <p>Inherited from
-WithTextAsset.instanceArgs</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).instanceArgs</p>
 <hr>
-<h3><a id="ServerTextAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='ServerTextInstance.html'>ServerTextInstance</a></code></p>
+<h3><a id="ServerTextAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code>ServerTextInstance</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -630,13 +640,15 @@ WithTextAsset.instanceArgs</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='ServerTextInstance.html'>ServerTextInstance</a></code></p>
+<code>ServerTextInstance</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.instanceFromObject">instanceFromObject</a></p>
+<p>ServerTextAsset.instanceFromObject</p>
 <p>Overrides
-WithTextAsset.instanceFromObject</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).instanceFromObject</p>
 <hr>
-<h3><a id="ServerTextAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerTextAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -646,14 +658,18 @@ WithTextAsset.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.number</p>
 <p>Inherited from
-WithTextAsset.propertiesInitialize</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).number</p>
 <hr>
 <h3><a id="ServerTextAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -672,9 +688,11 @@ WithTextAsset.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.propertyFind">propertyFind</a></p>
+<p>ServerTextAsset.propertyFind</p>
 <p>Inherited from
-WithTextAsset.propertyFind</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerTextAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -693,9 +711,11 @@ WithTextAsset.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.propertyIds">propertyIds</a></p>
+<p>ServerTextAsset.propertyIds</p>
 <p>Inherited from
-WithTextAsset.propertyIds</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerTextAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -714,9 +734,11 @@ WithTextAsset.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.propertyInstance">propertyInstance</a></p>
+<p>ServerTextAsset.propertyInstance</p>
 <p>Inherited from
-WithTextAsset.propertyInstance</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerTextAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -729,15 +751,17 @@ WithTextAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.resourceOfType">resourceOfType</a></p>
+<p>ServerTextAsset.resourceOfType</p>
 <p>Inherited from
-WithTextAsset.resourceOfType</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).resourceOfType</p>
 <hr>
 <h3><a id="ServerTextAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -760,11 +784,13 @@ WithTextAsset.resourceOfType</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.setValue">setValue</a></p>
+<p>ServerTextAsset.setValue</p>
 <p>Inherited from
-WithTextAsset.setValue</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerTextAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerTextAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -784,8 +810,35 @@ WithTextAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.shouldSelectProperty</p>
 <p>Inherited from
-WithTextAsset.shouldSelectProperty</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerTextAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextAsset.string</p>
+<p>Inherited from
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).string</p>
 <hr>
 <h3><a id="ServerTextAssetClass.style">style</a></h3><p>▸ <strong>style</strong>(<code>prefix?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGStyleElement"><code>SVGStyleElement</code></a></p>
 <h4>Parameters</h4>
@@ -804,17 +857,21 @@ WithTextAsset.shouldSelectProperty</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGStyleElement"><code>SVGStyleElement</code></a></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.style">style</a></p>
+<p>ServerTextAsset.style</p>
 <p>Inherited from
-WithTextAsset.style</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).style</p>
 <hr>
 <h3><a id="ServerTextAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.toJSON">toJSON</a></p>
+<p>ServerTextAsset.toJSON</p>
 <p>Inherited from
-WithTextAsset.toJSON</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerTextAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -841,9 +898,11 @@ WithTextAsset.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.tweenValues">tweenValues</a></p>
+<p>ServerTextAsset.tweenValues</p>
 <p>Inherited from
-WithTextAsset.tweenValues</p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerTextAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -862,26 +921,11 @@ WithTextAsset.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextAsset.html">ServerTextAsset</a>.<a href="ServerTextAsset.html#ServerTextAsset.value">value</a></p>
+<p>ServerTextAsset.value</p>
 <p>Inherited from
-WithTextAsset.value</p>
-<hr>
-<h3><a id="ServerTextAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ServerEvents.html#EventServerAsset'>EventServerAsset</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
+TextAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).value</p>
 
   </div>
 </section>
@@ -901,50 +945,46 @@ WithTextAsset.value</p>
 <li><a class='' href='#ServerTextAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ServerTextAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ServerTextAssetClass.canBeFill'>canBeFill</a></li>
-<li><a class='' href='#ServerTextAssetClass.container'>container</a></li>
-<li><a class='' href='#ServerTextAssetClass.content'>content</a></li>
 <li><a class='' href='#ServerTextAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ServerTextAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ServerTextAssetClass.family'>family</a></li>
 <li><a class='' href='#ServerTextAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerTextAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerTextAssetClass.id'>id</a></li>
 <li><a class='' href='#ServerTextAssetClass.isVector'>isVector</a></li>
-<li><a class='' href='#ServerTextAssetClass.label'>label</a></li>
-<li><a class='' href='#ServerTextAssetClass.manager'>manager</a></li>
 <li><a class='' href='#ServerTextAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ServerTextAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ServerTextAssetClass.request'>request</a></li>
 <li><a class='' href='#ServerTextAssetClass.resource'>resource</a></li>
 <li><a class='' href='#ServerTextAssetClass.resources'>resources</a></li>
 <li><a class='' href='#ServerTextAssetClass.source'>source</a></li>
-<li><a class='' href='#ServerTextAssetClass.string'>string</a></li>
 <li><a class='' href='#ServerTextAssetClass.targetId'>targetId</a></li>
 <li><a class='' href='#ServerTextAssetClass.type'>type</a></li>
 <li><a class='' href='#ServerTextAssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerTextAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ServerTextAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerTextAssetClass.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerTextAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerTextAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerTextAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerTextAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerTextAssetClass.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerTextAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerTextAssetClass.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#ServerTextAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerTextAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerTextAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ServerTextAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerTextAssetClass.number'>number</a></li>
 <li><a class='' href='#ServerTextAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerTextAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerTextAssetClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerTextAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerTextAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerTextAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerTextAssetClass.string'>string</a></li>
 <li><a class='' href='#ServerTextAssetClass.style'>style</a></li>
 <li><a class='' href='#ServerTextAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerTextAssetClass.tweenValues'>tweenValues</a></li>
-<li><a class='' href='#ServerTextAssetClass.value'>value</a></li>
-<li><a class='' href='#ServerTextAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ServerTextAssetClass.value'>value</a></li></ul>
       </nav>
     </main>
   </body>

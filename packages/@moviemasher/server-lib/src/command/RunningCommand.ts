@@ -1,5 +1,5 @@
 import type { Identified, StringDataOrError, Strings } from '@moviemasher/shared-lib/types.js'
-import type { Command } from '../type/Command.js'
+import type { Command } from '../types.js'
 
 export interface CommandResult {
   error?: string

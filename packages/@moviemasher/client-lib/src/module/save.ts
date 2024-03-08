@@ -1,7 +1,7 @@
-import type { Asset, ClientAssets, JobOptions, ListenersFunction, SaveFunction, ServerProgress, StringDataOrError } from '@moviemasher/shared-lib/types.js'
+import type { Asset, ClientAssets, JobOptions, ListenersFunction, SaveFunction, StringDataOrError } from '@moviemasher/shared-lib/types.js'
 
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
-import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventProgress, EventSavableManagedAsset, EventSavableManagedAssets } from '../utility/events.js'
+import { EventChangedServerAction, EventDoServerAction, EventEnabledServerAction, EventSavableManagedAsset, EventSavableManagedAssets, newProgress } from './event.js'
 import { MOVIE_MASHER, $ENCODE, $POST, VOID_FUNCTION, isDefiniteError, namedError, ERROR, $SAVE } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../utility/request.js'
 import { isString } from '@moviemasher/shared-lib/utility/guard.js'
@@ -11,35 +11,8 @@ export class SaveHandler {
     if (SaveHandler.saving) return false
   
     const event = new EventSavableManagedAsset()
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     return event.detail.savable
-  }
-
-  private static progress(id?: string): ServerProgress | undefined {
-    if (!id) return 
-
-    let total = 2
-    let current = 1
-    const dispatch = () => {
-      MOVIE_MASHER.dispatch(new EventProgress(id, current / total))
-    }
-    return {
-      do: (steps: number) => { 
-        total += steps
-        // console.log('SaveHandler progress do', steps, current, total)
-        dispatch()
-       },
-      did: (steps: number) => { 
-        current += steps
-        // console.log('SaveHandler progress did', steps, current, total)
-        dispatch()
-       },
-       done: () => {
-        // console.log('SaveHandler progress done', total)
-        current = total
-        dispatch()
-       },
-    }
   }
 
   static handleDoServerAction(doEvent: EventDoServerAction) {
@@ -47,7 +20,7 @@ export class SaveHandler {
     if (detail.serverAction !== $SAVE) return 
     
     const assets: ClientAssets = []
-    MOVIE_MASHER.dispatch(new EventSavableManagedAssets(assets))
+    MOVIE_MASHER.dispatchCustom(new EventSavableManagedAssets(assets))
     
     const { length } = assets
     if (length) {
@@ -55,7 +28,7 @@ export class SaveHandler {
       SaveHandler.saving = true
       const firstAsset = assets.shift()
       assertDefined(firstAsset) 
-      const progress = SaveHandler.progress(detail.id)
+      const progress = newProgress(detail.id)
       let promise = firstAsset.savePromise(progress)
       progress?.do(length - 1)
       assets.forEach(asset =>  {
@@ -76,11 +49,12 @@ export class SaveHandler {
   static handleEnabledServerAction(enabledEvent: EventEnabledServerAction) {
     const { detail } = enabledEvent
     const { serverAction } = detail
+    console.log('SaveHandler.handleEnabledServerAction', serverAction)
+
     if (serverAction !== $SAVE) return 
   
     enabledEvent.stopImmediatePropagation()
     detail.enabled = SaveHandler.enabled
-    // console.log('SaveHandler.handleEnabledServerAction', detail.enabled)
   }
 
   static save(asset: Asset, _options: JobOptions = {}): Promise<StringDataOrError> {
@@ -102,20 +76,24 @@ export class SaveHandler {
   private static set saving(value) {
     if (SaveHandler._saving !== value) {
       SaveHandler._saving = value
-      MOVIE_MASHER.dispatch(new EventChangedServerAction($SAVE))
-      MOVIE_MASHER.dispatch(new EventChangedServerAction($ENCODE))
+      MOVIE_MASHER.dispatchCustom(new EventChangedServerAction($SAVE))
+      MOVIE_MASHER.dispatchCustom(new EventChangedServerAction($ENCODE))
     }
   }
 }
 
 
 export const audioSaveFunction: SaveFunction = (args, jobOptions) => {
+  assertDefined(args)
+
   return SaveHandler.save(args, jobOptions)
 }
 export const imageSaveFunction: SaveFunction = (args, jobOptions) => {
+  assertDefined(args)
   return SaveHandler.save(args, jobOptions)
 }
 export const videoSaveFunction: SaveFunction = (args, jobOptions) => {
+  assertDefined(args)
   return SaveHandler.save(args, jobOptions)
 }
 

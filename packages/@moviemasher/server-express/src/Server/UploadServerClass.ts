@@ -1,9 +1,9 @@
 import type { DropType, Strings } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { UploadFileRequest, UploadFileResponse, UploadRequestRequest, UploadResponse, VersionedDataOrError } from '../Api/Api.js'
-import type { ExpressHandler, UploadServerArgs } from './Server.js'
+import type { ExpressHandler, UploadServerArgs } from '../types.js'
 
-import { $UPLOAD, CONTENT_TYPE, DROP_TYPES, ERROR, MIME_MULTI, $POST, SLASH, VERSION, errorMessageObject, errorObjectCaught, errorThrow, isDropType } from '@moviemasher/shared-lib/runtime.js'
+import { $UPLOAD, CONTENT_TYPE, DROP_TYPES, ERROR, MIME_MULTI, $POST, SLASH, VERSION, errorObjectCaught, errorThrow, isDropType } from '@moviemasher/shared-lib/runtime.js'
 import basicAuth from 'express-basic-auth'
 import fs from 'fs'
 import multer from 'multer'
@@ -13,7 +13,7 @@ import { ServerClass } from './ServerClass.js'
 import { isNumber, isString } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertAboveZero } from '@moviemasher/shared-lib/utility/guards.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
-import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
+import { ENV, $OutputRoot, $RelativeRequestRoot } from '@moviemasher/server-lib/utility/env.js'
 
 const FileServerMeg = 1024 * 1024
 const FileServerFilename = 'original'
@@ -90,10 +90,10 @@ export class UploadServerClass extends ServerClass {
       if (!this.withinLimits(size, supportedType)) {
         errorThrow(ERROR.ImportSize, `${size} > ${this.args.uploadLimits[supportedType]}`)
       }
-      const outputRoot = ENV.get(ENV_KEY.OutputRoot)
+      const outputRoot = ENV.get($OutputRoot)
       const outputPath = path.resolve(outputRoot, user, id, `${FileServerFilename}.${extension}`)
 
-      const endpoint = path.relative(ENV.get(ENV_KEY.RelativeRequestRoot), outputPath)
+      const endpoint = path.relative(ENV.get($RelativeRequestRoot), outputPath)
       const { fileProperty } = this
       const data = {
         id,
@@ -118,15 +118,17 @@ export class UploadServerClass extends ServerClass {
       // console.debug(this.constructor.name, 'startServer')
       const fileSize = FileServerMeg * Math.max(...Object.values(this.args.uploadLimits).filter(isNumber))
 
-      const outputRoot = ENV.get(ENV_KEY.OutputRoot)
+      const outputRoot = ENV.get($OutputRoot)
       const { extensions } = this
 
       const storage = multer.diskStorage({
-        destination: function (req, _file, cb) {
+        destination: function (req, file, cb) {
+          const { filename } = file
+
           const { id } = req.body
           const request = req as basicAuth.IBasicAuthedRequest
           const { user } = request.auth
-          if (!user) cb(errorMessageObject(ERROR.ServerAuthentication), '')
+          if (!user) cb(new Error(ERROR.ServerAuthentication), filename)
           else {
             const filePath = path.resolve(outputRoot, `${user}/${id}`)
             fs.mkdirSync(filePath, { recursive: true })
@@ -134,9 +136,9 @@ export class UploadServerClass extends ServerClass {
           }
         },
         filename: function (_req, file, cb) {
-          const { originalname } = file
+          const { originalname, filename } = file
           const ext = path.extname(originalname).slice(1).toLowerCase()
-          if (!extensions.includes(ext)) cb(errorMessageObject(`Invalid extension ${ext}`), '')
+          if (!extensions.includes(ext)) cb(new Error(`Invalid extension ${ext}`), filename)
           else cb(null, `${FileServerFilename}.${ext}`)
         }
       })

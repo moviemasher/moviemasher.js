@@ -2,7 +2,7 @@ import type { PropertyDeclarations } from '@lit/reactive-element'
 import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
-import { REDO, UNDO } from '../runtime.js'
+import { REDO, UNDO } from '../utility/constants.js'
 import { FooterBase } from '../base/component-view.js'
 import { $SAVE } from '@moviemasher/shared-lib/runtime.js'
 

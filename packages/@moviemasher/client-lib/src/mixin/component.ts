@@ -3,8 +3,9 @@ import type { Constrained, Rect, Size } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { DROPPING, INDEX_CURRENT, eventStop } from '../runtime.js'
-import { EventChangedMashAsset, EventChangedSize, EventMashAsset, EventSize } from '../utility/events.js'
+import { DROPPING, INDEX_CURRENT } from '../utility/constants.js'
+import { eventStop } from '../module/event.js'
+import { EventChangedMashAsset, EventChangedSize, EventMashAsset, EventSize } from '../module/event.js'
 import { Component } from '../base/component.js'
 import { dragTypeValid, dropped } from '../utility/draganddrop.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
@@ -21,7 +22,7 @@ T & Constrained<Disablable> {
     override connectedCallback(): void {
       super.connectedCallback()
       const event = new EventMashAsset()
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       this.disabled = !event.detail.mashAsset
     }
     
@@ -173,7 +174,7 @@ export function SizeReactiveMixin<T extends Constrained<Component>>(Base: T):
     override connectedCallback(): void {
       this.listeners[EventChangedSize.Type] = this.handleChangedSize.bind(this)
       const event = new EventSize()
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { size } = event.detail
       if (size) this.size = size
       else {

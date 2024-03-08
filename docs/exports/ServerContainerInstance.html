@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerContainerInstance"><h2>ServerContainerInstance</h2></a>
   <div class="section">
     <h1>Interface: ServerContainerInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerContainerInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerContainerInstance</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code></p>
@@ -141,137 +141,65 @@
 </li>
 </ul>
 <h2>Properties</h2>
-<h3><a id="ServerContainerInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerVisibleAsset.html'>ServerVisibleAsset</a></code></p>
+<h3><a id="ServerContainerInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerAsset.html'>ServerAsset</a></code> &amp; <code><a href='ContainerAsset.html'>ContainerAsset</a></code></p>
 <p>Overrides
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.asset">asset</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.asset">asset</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.assetId">assetId</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.assetId">assetId</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.assetIds">assetIds</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.bottomCrop">bottomCrop</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.assetIds">assetIds</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.canBeMuted">canBeMuted</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.canBeMuted">canBeMuted</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.clip">clip</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.container">container</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.clip">clip</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.cropDirections">cropDirections</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.height">height</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.heightEnd">heightEnd</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.cropDirections">cropDirections</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.id">id</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.id">id</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.instanceObject">instanceObject</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.instanceObject">instanceObject</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.intrinsicRect">intrinsicRect</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.intrinsicRect">intrinsicRect</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.isDefault">isDefault</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.leftCrop">leftCrop</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.lock">lock</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.isDefault">isDefault</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.muted">muted</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.opacityEnd">opacityEnd</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.pointAspect">pointAspect</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.muted">muted</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.properties">properties</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.rightCrop">rightCrop</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.sizeAspect">sizeAspect</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.properties">properties</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.sizeKey">sizeKey</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.sizeKey">sizeKey</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.targetId">targetId</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.topCrop">topCrop</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.targetId">targetId</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.tweening">tweening</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.width">width</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.widthEnd">widthEnd</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.x">x</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.xEnd">xEnd</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.y">y</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.yEnd">yEnd</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.tweening">tweening</a></p>
 <h2>Methods</h2>
 <h3><a id="ServerContainerInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -290,7 +218,68 @@
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.assetTime">assetTime</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.assetTime">assetTime</a></p>
+<hr>
+<h3><a id="ServerContainerInstance.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.boolean">boolean</a></p>
+<hr>
+<h3><a id="ServerContainerInstance.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="ServerContainerInstance.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -303,7 +292,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -313,7 +302,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.clippedElement">clippedElement</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.clippedElement">clippedElement</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>args</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -355,7 +344,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.constrainedValue">constrainedValue</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.constrainedValue">constrainedValue</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -382,7 +371,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.containedItem">containedItem</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.containedItem">containedItem</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -405,7 +394,7 @@
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.containerRects">containerRects</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.containerRects">containerRects</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -424,7 +413,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.containerSvgItem">containerSvgItem</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.containerSvgItem">containerSvgItem</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -451,7 +440,7 @@
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.contentRect">contentRect</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.contentRect">contentRect</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -470,7 +459,7 @@
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.contentRects">contentRects</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.contentRects">contentRects</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -489,7 +478,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.contentSvgItem">contentSvgItem</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.contentSvgItem">contentSvgItem</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -508,26 +497,7 @@
 <p>Returns
 <code>number</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.frames">frames</a></p>
-<hr>
-<h3><a id="ServerContainerInstance.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.initializeProperties">initializeProperties</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.frames">frames</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -546,7 +516,7 @@
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.instanceCachePromise">instanceCachePromise</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.instanceCachePromise">instanceCachePromise</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>options</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -565,7 +535,26 @@
 <p>Returns
 <code>boolean</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<hr>
+<h3><a id="ServerContainerInstance.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.number">number</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -584,7 +573,7 @@
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.propertyFind">propertyFind</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.propertyFind">propertyFind</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -603,7 +592,7 @@
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.propertyIds">propertyIds</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.propertyIds">propertyIds</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -622,7 +611,7 @@
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.propertyInstance">propertyInstance</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.propertyInstance">propertyInstance</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -645,7 +634,7 @@
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.scaleRects">scaleRects</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.scaleRects">scaleRects</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -668,7 +657,49 @@
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.setValue">setValue</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.setValue">setValue</a></p>
+<hr>
+<h3><a id="ServerContainerInstance.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ServerContainerInstance.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.string">string</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -695,13 +726,13 @@
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.svgVector">svgVector</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.svgVector">svgVector</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.toJSON">toJSON</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.toJSON">toJSON</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
 <h4>Parameters</h4>
@@ -728,7 +759,7 @@
 <p>Returns
 <code><a href='Scalars.html'>Scalars</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.tweenValues">tweenValues</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -747,7 +778,7 @@
 <p>Returns
 <code>boolean</code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.tweens">tweens</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.tweens">tweens</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -766,7 +797,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-<a href="ServerVisibleInstance.html">ServerVisibleInstance</a>.<a href="ServerVisibleInstance.html#ServerVisibleInstance.value">value</a></p>
+<a href="ContainerInstance.html">ContainerInstance</a>.<a href="ContainerInstance.html#ContainerInstance.value">value</a></p>
 <hr>
 <h3><a id="ServerContainerInstance.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>, <code>content?</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -802,37 +833,22 @@
 <li><a class='' href='#ServerContainerInstance.asset'>asset</a></li>
 <li><a class='' href='#ServerContainerInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ServerContainerInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerContainerInstance.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerContainerInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerContainerInstance.clip'>clip</a></li>
-<li><a class='' href='#ServerContainerInstance.container'>container</a></li>
 <li><a class='' href='#ServerContainerInstance.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ServerContainerInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerContainerInstance.height'>height</a></li>
-<li><a class='' href='#ServerContainerInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerContainerInstance.id'>id</a></li>
 <li><a class='' href='#ServerContainerInstance.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ServerContainerInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerContainerInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerContainerInstance.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerContainerInstance.lock'>lock</a></li>
 <li><a class='' href='#ServerContainerInstance.muted'>muted</a></li>
-<li><a class='' href='#ServerContainerInstance.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerContainerInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerContainerInstance.properties'>properties</a></li>
-<li><a class='' href='#ServerContainerInstance.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerContainerInstance.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ServerContainerInstance.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerContainerInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ServerContainerInstance.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerContainerInstance.tweening'>tweening</a></li>
-<li><a class='' href='#ServerContainerInstance.width'>width</a></li>
-<li><a class='' href='#ServerContainerInstance.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerContainerInstance.x'>x</a></li>
-<li><a class='' href='#ServerContainerInstance.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerContainerInstance.y'>y</a></li>
-<li><a class='' href='#ServerContainerInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ServerContainerInstance.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerContainerInstance.boolean'>boolean</a></li>
+<li><a class='' href='#ServerContainerInstance.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#ServerContainerInstance.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerContainerInstance.clippedElement'>clippedElement</a></li>
 <li><a class='' href='#ServerContainerInstance.commandFiles'>commandFiles</a></li>
 <li><a class='' href='#ServerContainerInstance.constrainedValue'>constrainedValue</a></li>
@@ -843,14 +859,16 @@
 <li><a class='' href='#ServerContainerInstance.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerContainerInstance.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ServerContainerInstance.frames'>frames</a></li>
-<li><a class='' href='#ServerContainerInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerContainerInstance.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerContainerInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
+<li><a class='' href='#ServerContainerInstance.number'>number</a></li>
 <li><a class='' href='#ServerContainerInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerContainerInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerContainerInstance.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerContainerInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerContainerInstance.setValue'>setValue</a></li>
+<li><a class='' href='#ServerContainerInstance.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerContainerInstance.string'>string</a></li>
 <li><a class='' href='#ServerContainerInstance.svgVector'>svgVector</a></li>
 <li><a class='' href='#ServerContainerInstance.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerContainerInstance.tweenValues'>tweenValues</a></li>

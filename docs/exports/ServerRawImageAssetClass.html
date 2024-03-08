@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerRawImageAssetClass"><h2>ServerRawImageAssetClass</h2></a>
   <div class="section">
     <h1>Class: ServerRawImageAssetClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawImageAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerRawImageAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithImageAsset</code></p>
+<li><p><code><a href='ServerRawAssetClass.html'>ServerRawAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleAsset.html'>VisibleAsset</a></code> &amp; <code><a href='ServerVisibleAsset.html'>ServerVisibleAsset</a></code> &amp; <code><a href='ImageAsset.html'>ImageAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerRawImageAssetClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerRawImageAsset.html'>ServerRawImageAsset</a></code></li>
+<li><code>ServerRawImageAsset</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerRawImageAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerRawImageAssetClass</strong>(<code>args</code>, <code>manager?</code>)</p>
+<h3><a id="ServerRawImageAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerRawImageAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,176 +153,206 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='RawImageAssetObject.html'>RawImageAssetObject</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>manager?</code></td>
-<td align="left"><code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithImageAsset.constructor</p>
-<h2>Properties</h2>
-<h3><a id="ServerRawImageAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-WithImageAsset._assets</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).constructor</p>
+<h2>Properties</h2>
+<h3><a id="ServerRawImageAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
+<p>Inherited from
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+)._assets</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.alpha">alpha</a></p>
+<p>ServerRawImageAsset.alpha</p>
 <p>Inherited from
-WithImageAsset.alpha</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).alpha</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.assetIds">assetIds</a></p>
+<p>ServerRawImageAsset.assetIds</p>
 <p>Inherited from
-WithImageAsset.assetIds</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).assetIds</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h3><a id="ServerRawImageAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.assetManager">assetManager</a></p>
+<p>ServerRawImageAsset.assetManager</p>
 <p>Inherited from
-WithImageAsset.assetManager</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).assetManager</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='RawAssetObject.html'>RawAssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code></p>
+<h3><a id="ServerRawImageAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.assetObject">assetObject</a></p>
+<p>ServerRawImageAsset.assetObject</p>
 <p>Inherited from
-WithImageAsset.assetObject</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).assetObject</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.assets">assets</a></p>
+<p>ServerRawImageAsset.assets</p>
 <p>Inherited from
-WithImageAsset.assets</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).assets</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.canBeContainer">canBeContainer</a></p>
+<p>ServerRawImageAsset.canBeContainer</p>
 <p>Inherited from
-WithImageAsset.canBeContainer</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).canBeContainer</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.canBeContent">canBeContent</a></p>
+<p>ServerRawImageAsset.canBeContent</p>
 <p>Inherited from
-WithImageAsset.canBeContent</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).canBeContent</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.canBeFill">canBeFill</a></p>
+<p>ServerRawImageAsset.canBeFill</p>
 <p>Inherited from
-WithImageAsset.canBeFill</p>
-<hr>
-<h3><a id="ServerRawImageAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.container">container</a></p>
-<p>Inherited from
-WithImageAsset.container</p>
-<hr>
-<h3><a id="ServerRawImageAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.content">content</a></p>
-<p>Inherited from
-WithImageAsset.content</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).canBeFill</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.decoding">decoding</a></p>
+<p>ServerRawImageAsset.decoding</p>
 <p>Inherited from
-WithImageAsset.decoding</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).decoding</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ServerRawImageAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.decodings">decodings</a></p>
+<p>ServerRawImageAsset.decodings</p>
 <p>Inherited from
-WithImageAsset.decodings</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).decodings</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>ServerRawImageAsset.hasIntrinsicSizing</p>
 <p>Inherited from
-WithImageAsset.hasIntrinsicSizing</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ServerRawImageAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.hasIntrinsicTiming</p>
+<p>Inherited from
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.id">id</a></p>
+<p>ServerRawImageAsset.id</p>
 <p>Inherited from
-WithImageAsset.id</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).id</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.isVector">isVector</a></p>
+<p>ServerRawImageAsset.isVector</p>
 <p>Inherited from
-WithImageAsset.isVector</p>
-<hr>
-<h3><a id="ServerRawImageAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.label">label</a></p>
-<p>Inherited from
-WithImageAsset.label</p>
-<hr>
-<h3><a id="ServerRawImageAssetClass.manager">manager</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>manager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<p>Inherited from
-WithImageAsset.manager</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).isVector</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.probeSize">probeSize</a></p>
+<p>ServerRawImageAsset.probeSize</p>
 <p>Inherited from
-WithImageAsset.probeSize</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).probeSize</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerRawImageAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.properties">properties</a></p>
+<p>ServerRawImageAsset.properties</p>
 <p>Inherited from
-WithImageAsset.properties</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).properties</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.request">request</a></p>
+<p>ServerRawImageAsset.request</p>
 <p>Inherited from
-WithImageAsset.request</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).request</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.resource">resource</a></p>
+<p>ServerRawImageAsset.resource</p>
 <p>Inherited from
-WithImageAsset.resource</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).resource</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ServerRawImageAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.resources">resources</a></p>
+<p>ServerRawImageAsset.resources</p>
 <p>Inherited from
-WithImageAsset.resources</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).resources</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.source">source</a></p>
+<p>ServerRawImageAsset.source</p>
 <p>Inherited from
-WithImageAsset.source</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).source</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.targetId">targetId</a></p>
+<p>ServerRawImageAsset.targetId</p>
 <p>Inherited from
-WithImageAsset.targetId</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code>&quot;image&quot;</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.type">type</a></p>
+<p>ServerRawImageAsset.type</p>
 <p>Overrides
-WithImageAsset.type</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ServerRawImageAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithImageAsset.scalarRecord</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ServerRawImageAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
+<h3><a id="ServerRawImageAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -333,27 +363,7 @@ WithImageAsset.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>assetId</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ServerAsset.html'>ServerAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.asset">asset</a></p>
-<p>Inherited from
-WithImageAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -361,7 +371,9 @@ WithImageAsset.asset</p>
 <h4>Implementation of</h4>
 <p>ServerRawImageAsset.asset</p>
 <p>Inherited from
-WithImageAsset.asset</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).asset</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -380,12 +392,13 @@ WithImageAsset.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.assetCachePromise">assetCachePromise</a></p>
+<p>ServerRawImageAsset.assetCachePromise</p>
 <p>Inherited from
-WithImageAsset.assetCachePromise</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).assetCachePromise</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>args</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
-<p>All files needed for audible and/or visible encode commands.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -402,9 +415,34 @@ WithImageAsset.assetCachePromise</p>
 <p>Returns
 <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.assetFiles">assetFiles</a></p>
+<p>ServerRawImageAsset.assetFiles</p>
 <p>Overrides
-WithImageAsset.assetFiles</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).assetFiles</p>
+<hr>
+<h3><a id="ServerRawImageAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.boolean</p>
+<p>Inherited from
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -426,8 +464,12 @@ WithImageAsset.assetFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.changeScalar</p>
 <p>Inherited from
-WithImageAsset.changeScalar</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -445,8 +487,12 @@ WithImageAsset.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.changeScalars</p>
 <p>Inherited from
-WithImageAsset.changeScalars</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -458,19 +504,20 @@ WithImageAsset.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.clipObject">clipObject</a></p>
+<p>ServerRawImageAsset.clipObject</p>
 <p>Inherited from
-WithImageAsset.clipObject</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).clipObject</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<p>Writes a command file, if it&#39;s not a raw asset.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -491,9 +538,11 @@ WithImageAsset.clipObject</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.commandFilePromise">commandFilePromise</a></p>
+<p>ServerRawImageAsset.commandFilePromise</p>
 <p>Overrides
-WithImageAsset.commandFilePromise</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).commandFilePromise</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -516,9 +565,11 @@ WithImageAsset.commandFilePromise</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.constrainedValue">constrainedValue</a></p>
+<p>ServerRawImageAsset.constrainedValue</p>
 <p>Inherited from
-WithImageAsset.constrainedValue</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -537,50 +588,11 @@ WithImageAsset.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.decodingOfType">decodingOfType</a></p>
+<p>ServerRawImageAsset.decodingOfType</p>
 <p>Inherited from
-WithImageAsset.decodingOfType</p>
-<hr>
-<h3><a id="ServerRawImageAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithImageAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerRawImageAsset.initializeProperties</p>
-<p>Inherited from
-WithImageAsset.initializeProperties</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).decodingOfType</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -599,11 +611,13 @@ WithImageAsset.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.instanceArgs">instanceArgs</a></p>
+<p>ServerRawImageAsset.instanceArgs</p>
 <p>Inherited from
-WithImageAsset.instanceArgs</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).instanceArgs</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='ServerRawImageInstance.html'>ServerRawImageInstance</a></code></p>
+<h3><a id="ServerRawImageAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code>ServerRawImageInstance</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -618,13 +632,15 @@ WithImageAsset.instanceArgs</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='ServerRawImageInstance.html'>ServerRawImageInstance</a></code></p>
+<code>ServerRawImageInstance</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.instanceFromObject">instanceFromObject</a></p>
+<p>ServerRawImageAsset.instanceFromObject</p>
 <p>Overrides
-WithImageAsset.instanceFromObject</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).instanceFromObject</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerRawImageAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -634,14 +650,18 @@ WithImageAsset.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.number</p>
 <p>Inherited from
-WithImageAsset.propertiesInitialize</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).number</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -660,9 +680,11 @@ WithImageAsset.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.propertyFind">propertyFind</a></p>
+<p>ServerRawImageAsset.propertyFind</p>
 <p>Inherited from
-WithImageAsset.propertyFind</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -681,9 +703,11 @@ WithImageAsset.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.propertyIds">propertyIds</a></p>
+<p>ServerRawImageAsset.propertyIds</p>
 <p>Inherited from
-WithImageAsset.propertyIds</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -702,9 +726,11 @@ WithImageAsset.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.propertyInstance">propertyInstance</a></p>
+<p>ServerRawImageAsset.propertyInstance</p>
 <p>Inherited from
-WithImageAsset.propertyInstance</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -717,15 +743,17 @@ WithImageAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.resourceOfType">resourceOfType</a></p>
+<p>ServerRawImageAsset.resourceOfType</p>
 <p>Inherited from
-WithImageAsset.resourceOfType</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).resourceOfType</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -748,11 +776,13 @@ WithImageAsset.resourceOfType</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.setValue">setValue</a></p>
+<p>ServerRawImageAsset.setValue</p>
 <p>Inherited from
-WithImageAsset.setValue</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerRawImageAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerRawImageAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -772,16 +802,45 @@ WithImageAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.shouldSelectProperty</p>
 <p>Inherited from
-WithImageAsset.shouldSelectProperty</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerRawImageAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageAsset.string</p>
+<p>Inherited from
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).string</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.toJSON">toJSON</a></p>
+<p>ServerRawImageAsset.toJSON</p>
 <p>Inherited from
-WithImageAsset.toJSON</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -808,9 +867,11 @@ WithImageAsset.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.tweenValues">tweenValues</a></p>
+<p>ServerRawImageAsset.tweenValues</p>
 <p>Inherited from
-WithImageAsset.tweenValues</p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerRawImageAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -829,26 +890,11 @@ WithImageAsset.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageAsset.html">ServerRawImageAsset</a>.<a href="ServerRawImageAsset.html#ServerRawImageAsset.value">value</a></p>
+<p>ServerRawImageAsset.value</p>
 <p>Inherited from
-WithImageAsset.value</p>
-<hr>
-<h3><a id="ServerRawImageAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ServerEvents.html#EventServerAsset'>EventServerAsset</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
+ImageAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerRawAssetClass))
+).value</p>
 
   </div>
 </section>
@@ -868,15 +914,12 @@ WithImageAsset.value</p>
 <li><a class='' href='#ServerRawImageAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.canBeFill'>canBeFill</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.container'>container</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.content'>content</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerRawImageAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.id'>id</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.isVector'>isVector</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.label'>label</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.manager'>manager</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.request'>request</a></li>
@@ -889,26 +932,26 @@ WithImageAsset.value</p>
 <li><a class='' href='#ServerRawImageAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerRawImageAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerRawImageAssetClass.number'>number</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerRawImageAssetClass.string'>string</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerRawImageAssetClass.tweenValues'>tweenValues</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.value'>value</a></li>
-<li><a class='' href='#ServerRawImageAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ServerRawImageAssetClass.value'>value</a></li></ul>
       </nav>
     </main>
   </body>

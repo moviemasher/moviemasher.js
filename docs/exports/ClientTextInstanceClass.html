@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientTextInstanceClass"><h2>ClientTextInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ClientTextInstanceClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientTextInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientTextInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithTextInstance</code></p>
+<li><p><code><a href='ClientInstanceClass.html'>ClientInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='TextInstance.html'>TextInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientTextInstanceClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ClientTextInstance.html'>ClientTextInstance</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientTextInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientTextInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientTextInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientTextInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,272 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='TextInstanceObject.html'>TextInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithTextInstance.constructor</p>
+<p>Inherited from
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ClientTextInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithTextInstance._id</p>
-<hr>
-<h3><a id="ClientTextInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithTextInstance._label</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+)._id</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ClientTextAsset.html'>ClientTextAsset</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.asset">asset</a></p>
 <p>Overrides
-WithTextInstance.asset</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.assetId">assetId</a></p>
 <p>Inherited from
-WithTextInstance.assetId</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.assetIds">assetIds</a></p>
 <p>Inherited from
-WithTextInstance.assetIds</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithTextInstance.bottomCrop</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.canBeMuted">canBeMuted</a></p>
 <p>Inherited from
-WithTextInstance.canBeMuted</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='ClientClip.html'>ClientClip</a></code> &amp; <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.clip">clip</a></p>
 <p>Inherited from
-WithTextInstance.clip</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.container">container</a></p>
-<p>Inherited from
-WithTextInstance.container</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.cropDirections">cropDirections</a></p>
 <p>Inherited from
-WithTextInstance.cropDirections</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ClientTextInstanceClass.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.directions">directions</a></p>
+<h3><a id="ClientTextInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithTextInstance.directions</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<p>Inherited from
-WithTextInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.height">height</a></p>
-<p>Inherited from
-WithTextInstance.height</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithTextInstance.heightEnd</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.id">id</a></p>
 <p>Inherited from
-WithTextInstance.id</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.instanceObject">instanceObject</a></p>
 <p>Inherited from
-WithTextInstance.instanceObject</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.intrinsic">intrinsic</a></h3><p>• <code>Optional</code> <strong>intrinsic</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.intrinsic">intrinsic</a></p>
-<p>Inherited from
-WithTextInstance.intrinsic</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.intrinsicRect">intrinsicRect</a></p>
 <p>Inherited from
-WithTextInstance.intrinsicRect</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.isDefault">isDefault</a></p>
 <p>Inherited from
-WithTextInstance.isDefault</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithTextInstance.leftCrop</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.lock">lock</a></p>
-<p>Inherited from
-WithTextInstance.lock</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.muted">muted</a></p>
 <p>Inherited from
-WithTextInstance.muted</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ClientTextInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.opacityEnd">opacityEnd</a></p>
-<p>Inherited from
-WithTextInstance.opacityEnd</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.pointAspect">pointAspect</a></p>
-<p>Inherited from
-WithTextInstance.pointAspect</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientTextInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.properties">properties</a></p>
 <p>Inherited from
-WithTextInstance.properties</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ClientTextInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithTextInstance.rightCrop</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithTextInstance.sizeAspect</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
+<h3><a id="ClientTextInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.sizeKey">sizeKey</a></p>
 <p>Inherited from
-WithTextInstance.sizeKey</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.string">string</a></h3><p>• <strong>string</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.string">string</a></p>
-<p>Inherited from
-WithTextInstance.string</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).sizeKey</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.targetId">targetId</a></p>
 <p>Inherited from
-WithTextInstance.targetId</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithTextInstance.topCrop</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.tweening">tweening</a></p>
 <p>Inherited from
-WithTextInstance.tweening</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.width">width</a></p>
-<p>Inherited from
-WithTextInstance.width</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithTextInstance.widthEnd</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.x">x</a></p>
-<p>Inherited from
-WithTextInstance.x</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithTextInstance.xEnd</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.y">y</a></p>
-<p>Inherited from
-WithTextInstance.y</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithTextInstance.yEnd</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ClientTextInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithTextInstance.isAudio</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithTextInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithTextInstance.label</p>
-<hr>
 <h3><a id="ClientTextInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithTextInstance.scalarRecord</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ClientTextInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -439,7 +321,32 @@ WithTextInstance.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.assetTime">assetTime</a></p>
 <p>Inherited from
-WithTextInstance.assetTime</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ClientTextInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.boolean">boolean</a></p>
+<p>Inherited from
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -464,7 +371,9 @@ WithTextInstance.assetTime</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithTextInstance.changeScalar</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -485,7 +394,9 @@ WithTextInstance.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithTextInstance.changeScalars</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -498,7 +409,7 @@ WithTextInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -510,7 +421,9 @@ WithTextInstance.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.clippedElement">clippedElement</a></p>
 <p>Inherited from
-WithTextInstance.clippedElement</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.clippedElementPromise">clippedElementPromise</a></h3><p>▸ <strong>clippedElementPromise</strong>(<code>content</code>, <code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -533,7 +446,9 @@ WithTextInstance.clippedElement</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithTextInstance.clippedElementPromise</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clippedElementPromise</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -558,7 +473,9 @@ WithTextInstance.clippedElementPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithTextInstance.constrainedValue</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -587,9 +504,11 @@ WithTextInstance.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.containedItem">containedItem</a></p>
 <p>Inherited from
-WithTextInstance.containedItem</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ClientTextInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ClientTextInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -603,7 +522,7 @@ WithTextInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
@@ -612,7 +531,9 @@ WithTextInstance.containedItem</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.containerRects">containerRects</a></p>
 <p>Inherited from
-WithTextInstance.containerRects</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -633,7 +554,9 @@ WithTextInstance.containerRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.containerSvgItem">containerSvgItem</a></p>
 <p>Inherited from
-WithTextInstance.containerSvgItem</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.containerSvgItemPromise">containerSvgItemPromise</a></h3><p>▸ <strong>containerSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -652,7 +575,9 @@ WithTextInstance.containerSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithTextInstance.containerSvgItemPromise</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItemPromise</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -681,7 +606,9 @@ WithTextInstance.containerSvgItemPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.contentRect">contentRect</a></p>
 <p>Inherited from
-WithTextInstance.contentRect</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -702,7 +629,9 @@ WithTextInstance.contentRect</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.contentRects">contentRects</a></p>
 <p>Inherited from
-WithTextInstance.contentRects</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -723,7 +652,9 @@ WithTextInstance.contentRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.contentSvgItem">contentSvgItem</a></p>
 <p>Inherited from
-WithTextInstance.contentSvgItem</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.contentSvgItemPromise">contentSvgItemPromise</a></h3><p>▸ <strong>contentSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -742,7 +673,9 @@ WithTextInstance.contentSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithTextInstance.contentSvgItemPromise</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItemPromise</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -763,48 +696,9 @@ WithTextInstance.contentSvgItemPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.frames">frames</a></p>
 <p>Inherited from
-WithTextInstance.frames</p>
-<hr>
-<h3><a id="ClientTextInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithTextInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientTextInstance.initializeProperties</p>
-<p>Inherited from
-WithTextInstance.initializeProperties</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -825,7 +719,9 @@ WithTextInstance.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.instanceCachePromise">instanceCachePromise</a></p>
 <p>Inherited from
-WithTextInstance.instanceCachePromise</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -846,9 +742,11 @@ WithTextInstance.instanceCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.intrinsicsKnown">intrinsicsKnown</a></p>
 <p>Inherited from
-WithTextInstance.intrinsicsKnown</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ClientTextInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientTextInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -858,14 +756,18 @@ WithTextInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.number">number</a></p>
 <p>Inherited from
-WithTextInstance.propertiesInitialize</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -886,7 +788,9 @@ WithTextInstance.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithTextInstance.propertyFind</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -907,7 +811,9 @@ WithTextInstance.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithTextInstance.propertyIds</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -928,7 +834,9 @@ WithTextInstance.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithTextInstance.propertyInstance</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -953,7 +861,9 @@ WithTextInstance.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.scaleRects">scaleRects</a></p>
 <p>Inherited from
-WithTextInstance.scaleRects</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -978,9 +888,11 @@ WithTextInstance.scaleRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.setValue">setValue</a></p>
 <p>Inherited from
-WithTextInstance.setValue</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ClientTextInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientTextInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1000,8 +912,35 @@ WithTextInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithTextInstance.shouldSelectProperty</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientTextInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.string">string</a></p>
+<p>Inherited from
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -1030,7 +969,9 @@ WithTextInstance.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.svgVector">svgVector</a></p>
 <p>Inherited from
-WithTextInstance.svgVector</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -1038,7 +979,9 @@ WithTextInstance.svgVector</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.toJSON">toJSON</a></p>
 <p>Inherited from
-WithTextInstance.toJSON</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1067,7 +1010,9 @@ WithTextInstance.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithTextInstance.tweenValues</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1088,7 +1033,9 @@ WithTextInstance.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.tweens">tweens</a></p>
 <p>Inherited from
-WithTextInstance.tweens</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -1096,7 +1043,9 @@ WithTextInstance.tweens</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.unload">unload</a></p>
 <p>Inherited from
-WithTextInstance.unload</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).unload</p>
 <hr>
 <h3><a id="ClientTextInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>name</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1117,7 +1066,9 @@ WithTextInstance.unload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientTextInstance.html">ClientTextInstance</a>.<a href="ClientTextInstance.html#ClientTextInstance.value">value</a></p>
 <p>Inherited from
-WithTextInstance.value</p>
+TextInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).value</p>
 
   </div>
 </section>
@@ -1129,47 +1080,25 @@ WithTextInstance.value</p>
         <ul><li><a class='' href='#ClientTextInstanceClass'>ClientTextInstanceClass</a></li>
 <li><a class='' href='#ClientTextInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientTextInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ClientTextInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ClientTextInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ClientTextInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ClientTextInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientTextInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientTextInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientTextInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ClientTextInstanceClass.container'>container</a></li>
 <li><a class='' href='#ClientTextInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientTextInstanceClass.directions'>directions</a></li>
 <li><a class='' href='#ClientTextInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientTextInstanceClass.height'>height</a></li>
-<li><a class='' href='#ClientTextInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientTextInstanceClass.id'>id</a></li>
 <li><a class='' href='#ClientTextInstanceClass.instanceObject'>instanceObject</a></li>
-<li><a class='' href='#ClientTextInstanceClass.intrinsic'>intrinsic</a></li>
 <li><a class='' href='#ClientTextInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientTextInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientTextInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientTextInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ClientTextInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ClientTextInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientTextInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientTextInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ClientTextInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientTextInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ClientTextInstanceClass.sizeKey'>sizeKey</a></li>
-<li><a class='' href='#ClientTextInstanceClass.string'>string</a></li>
 <li><a class='' href='#ClientTextInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ClientTextInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ClientTextInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ClientTextInstanceClass.width'>width</a></li>
-<li><a class='' href='#ClientTextInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientTextInstanceClass.x'>x</a></li>
-<li><a class='' href='#ClientTextInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientTextInstanceClass.y'>y</a></li>
-<li><a class='' href='#ClientTextInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ClientTextInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ClientTextInstanceClass.label'>label</a></li>
 <li><a class='' href='#ClientTextInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientTextInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ClientTextInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientTextInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientTextInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientTextInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1184,16 +1113,16 @@ WithTextInstance.value</p>
 <li><a class='' href='#ClientTextInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ClientTextInstanceClass.contentSvgItemPromise'>contentSvgItemPromise</a></li>
 <li><a class='' href='#ClientTextInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ClientTextInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientTextInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientTextInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ClientTextInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientTextInstanceClass.number'>number</a></li>
 <li><a class='' href='#ClientTextInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientTextInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientTextInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientTextInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientTextInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientTextInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientTextInstanceClass.string'>string</a></li>
 <li><a class='' href='#ClientTextInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ClientTextInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientTextInstanceClass.tweenValues'>tweenValues</a></li>

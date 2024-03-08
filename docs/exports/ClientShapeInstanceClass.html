@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ClientShapeInstanceClass"><h2>ClientShapeInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ClientShapeInstanceClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientShapeInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientShapeInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithShapeInstance</code></p>
+<li><p><code><a href='ClientInstanceClass.html'>ClientInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='ShapeInstance.html'>ShapeInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientShapeInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ClientShapeInstance.html'>ClientShapeInstance</a></code></li>
+<li><code>ClientShapeInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientShapeInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientShapeInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientShapeInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientShapeInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,260 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ShapeInstanceObject.html'>ShapeInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithShapeInstance.constructor</p>
+<p>Inherited from
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ClientShapeInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithShapeInstance._id</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+)._id</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithShapeInstance._label</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ClientShapeAsset.html'>ClientShapeAsset</a></code></p>
+<h3><a id="ClientShapeInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ClientShapeAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.asset">asset</a></p>
+<p>ClientShapeInstance.asset</p>
 <p>Overrides
-WithShapeInstance.asset</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.assetId">assetId</a></p>
+<p>ClientShapeInstance.assetId</p>
 <p>Inherited from
-WithShapeInstance.assetId</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.assetIds">assetIds</a></p>
+<p>ClientShapeInstance.assetIds</p>
 <p>Inherited from
-WithShapeInstance.assetIds</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithShapeInstance.bottomCrop</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.canBeMuted">canBeMuted</a></p>
+<p>ClientShapeInstance.canBeMuted</p>
 <p>Inherited from
-WithShapeInstance.canBeMuted</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='ClientClip.html'>ClientClip</a></code> &amp; <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.clip">clip</a></p>
+<p>ClientShapeInstance.clip</p>
 <p>Inherited from
-WithShapeInstance.clip</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.container">container</a></p>
-<p>Inherited from
-WithShapeInstance.container</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.cropDirections">cropDirections</a></p>
+<p>ClientShapeInstance.cropDirections</p>
 <p>Inherited from
-WithShapeInstance.cropDirections</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.directions">directions</a></p>
+<h3><a id="ClientShapeInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithShapeInstance.directions</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<p>Inherited from
-WithShapeInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.height">height</a></p>
-<p>Inherited from
-WithShapeInstance.height</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithShapeInstance.heightEnd</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.id">id</a></p>
+<p>ClientShapeInstance.id</p>
 <p>Inherited from
-WithShapeInstance.id</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.instanceObject">instanceObject</a></p>
+<p>ClientShapeInstance.instanceObject</p>
 <p>Inherited from
-WithShapeInstance.instanceObject</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ClientShapeInstance.intrinsicRect</p>
 <p>Inherited from
-WithShapeInstance.intrinsicRect</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.isDefault">isDefault</a></p>
+<p>ClientShapeInstance.isDefault</p>
 <p>Inherited from
-WithShapeInstance.isDefault</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithShapeInstance.leftCrop</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.lock">lock</a></p>
-<p>Inherited from
-WithShapeInstance.lock</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.muted">muted</a></p>
+<p>ClientShapeInstance.muted</p>
 <p>Inherited from
-WithShapeInstance.muted</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ClientShapeInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.opacityEnd">opacityEnd</a></p>
+<p>ClientShapeInstance.properties</p>
 <p>Inherited from
-WithShapeInstance.opacityEnd</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ClientShapeInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.pointAspect">pointAspect</a></p>
+<p>ClientShapeInstance.sizeKey</p>
 <p>Inherited from
-WithShapeInstance.pointAspect</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.properties">properties</a></p>
-<p>Inherited from
-WithShapeInstance.properties</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithShapeInstance.rightCrop</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithShapeInstance.sizeAspect</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithShapeInstance.sizeKey</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).sizeKey</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.targetId">targetId</a></p>
+<p>ClientShapeInstance.targetId</p>
 <p>Inherited from
-WithShapeInstance.targetId</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithShapeInstance.topCrop</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.tweening">tweening</a></p>
+<p>ClientShapeInstance.tweening</p>
 <p>Inherited from
-WithShapeInstance.tweening</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.width">width</a></p>
-<p>Inherited from
-WithShapeInstance.width</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithShapeInstance.widthEnd</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.x">x</a></p>
-<p>Inherited from
-WithShapeInstance.x</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithShapeInstance.xEnd</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.y">y</a></p>
-<p>Inherited from
-WithShapeInstance.y</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithShapeInstance.yEnd</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ClientShapeInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithShapeInstance.isAudio</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithShapeInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithShapeInstance.label</p>
-<hr>
 <h3><a id="ClientShapeInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithShapeInstance.scalarRecord</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ClientShapeInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -425,9 +319,34 @@ WithShapeInstance.scalarRecord</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.assetTime">assetTime</a></p>
+<p>ClientShapeInstance.assetTime</p>
 <p>Inherited from
-WithShapeInstance.assetTime</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ClientShapeInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeInstance.boolean</p>
+<p>Inherited from
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -450,9 +369,11 @@ WithShapeInstance.assetTime</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.changeScalar">changeScalar</a></p>
+<p>ClientShapeInstance.changeScalar</p>
 <p>Inherited from
-WithShapeInstance.changeScalar</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -471,9 +392,11 @@ WithShapeInstance.changeScalar</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.changeScalars">changeScalars</a></p>
+<p>ClientShapeInstance.changeScalars</p>
 <p>Inherited from
-WithShapeInstance.changeScalars</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -486,7 +409,7 @@ WithShapeInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -496,9 +419,11 @@ WithShapeInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.clippedElement">clippedElement</a></p>
+<p>ClientShapeInstance.clippedElement</p>
 <p>Inherited from
-WithShapeInstance.clippedElement</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.clippedElementPromise">clippedElementPromise</a></h3><p>▸ <strong>clippedElementPromise</strong>(<code>content</code>, <code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -521,7 +446,9 @@ WithShapeInstance.clippedElement</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithShapeInstance.clippedElementPromise</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clippedElementPromise</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -544,9 +471,11 @@ WithShapeInstance.clippedElementPromise</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.constrainedValue">constrainedValue</a></p>
+<p>ClientShapeInstance.constrainedValue</p>
 <p>Inherited from
-WithShapeInstance.constrainedValue</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -573,11 +502,13 @@ WithShapeInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.containedItem">containedItem</a></p>
+<p>ClientShapeInstance.containedItem</p>
 <p>Inherited from
-WithShapeInstance.containedItem</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ClientShapeInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -591,16 +522,18 @@ WithShapeInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.containerRects">containerRects</a></p>
+<p>ClientShapeInstance.containerRects</p>
 <p>Inherited from
-WithShapeInstance.containerRects</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -619,9 +552,11 @@ WithShapeInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ClientShapeInstance.containerSvgItem</p>
 <p>Inherited from
-WithShapeInstance.containerSvgItem</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.containerSvgItemPromise">containerSvgItemPromise</a></h3><p>▸ <strong>containerSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -640,7 +575,9 @@ WithShapeInstance.containerSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithShapeInstance.containerSvgItemPromise</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItemPromise</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -667,9 +604,11 @@ WithShapeInstance.containerSvgItemPromise</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.contentRect">contentRect</a></p>
+<p>ClientShapeInstance.contentRect</p>
 <p>Inherited from
-WithShapeInstance.contentRect</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -688,9 +627,11 @@ WithShapeInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.contentRects">contentRects</a></p>
+<p>ClientShapeInstance.contentRects</p>
 <p>Inherited from
-WithShapeInstance.contentRects</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -709,9 +650,11 @@ WithShapeInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ClientShapeInstance.contentSvgItem</p>
 <p>Inherited from
-WithShapeInstance.contentSvgItem</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.contentSvgItemPromise">contentSvgItemPromise</a></h3><p>▸ <strong>contentSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -730,7 +673,9 @@ WithShapeInstance.contentSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithShapeInstance.contentSvgItemPromise</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItemPromise</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -749,11 +694,13 @@ WithShapeInstance.contentSvgItemPromise</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.frames">frames</a></p>
+<p>ClientShapeInstance.frames</p>
 <p>Inherited from
-WithShapeInstance.frames</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).frames</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientShapeInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -763,57 +710,18 @@ WithShapeInstance.frames</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithShapeInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientShapeInstance.initializeProperties</p>
-<p>Inherited from
-WithShapeInstance.initializeProperties</p>
-<hr>
-<h3><a id="ClientShapeInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>_args</code></td>
+<td align="left"><code>args</code></td>
 <td align="left"><code><a href='InstanceCacheArgs.html'>InstanceCacheArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.instanceCachePromise">instanceCachePromise</a></p>
-<p>Overrides
-WithShapeInstance.instanceCachePromise</p>
+<p>ClientShapeInstance.instanceCachePromise</p>
+<p>Inherited from
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -832,11 +740,13 @@ WithShapeInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ClientShapeInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithShapeInstance.intrinsicsKnown</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientShapeInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -846,14 +756,18 @@ WithShapeInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeInstance.number</p>
 <p>Inherited from
-WithShapeInstance.propertiesInitialize</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -872,9 +786,11 @@ WithShapeInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.propertyFind">propertyFind</a></p>
+<p>ClientShapeInstance.propertyFind</p>
 <p>Inherited from
-WithShapeInstance.propertyFind</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -893,9 +809,11 @@ WithShapeInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.propertyIds">propertyIds</a></p>
+<p>ClientShapeInstance.propertyIds</p>
 <p>Inherited from
-WithShapeInstance.propertyIds</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -914,9 +832,11 @@ WithShapeInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.propertyInstance">propertyInstance</a></p>
+<p>ClientShapeInstance.propertyInstance</p>
 <p>Inherited from
-WithShapeInstance.propertyInstance</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -939,9 +859,11 @@ WithShapeInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.scaleRects">scaleRects</a></p>
+<p>ClientShapeInstance.scaleRects</p>
 <p>Inherited from
-WithShapeInstance.scaleRects</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -964,11 +886,13 @@ WithShapeInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.setValue">setValue</a></p>
+<p>ClientShapeInstance.setValue</p>
 <p>Inherited from
-WithShapeInstance.setValue</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ClientShapeInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientShapeInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -988,8 +912,35 @@ WithShapeInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithShapeInstance.shouldSelectProperty</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientShapeInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeInstance.string</p>
+<p>Inherited from
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -1016,17 +967,21 @@ WithShapeInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.svgVector">svgVector</a></p>
+<p>ClientShapeInstance.svgVector</p>
 <p>Inherited from
-WithShapeInstance.svgVector</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.toJSON">toJSON</a></p>
+<p>ClientShapeInstance.toJSON</p>
 <p>Inherited from
-WithShapeInstance.toJSON</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1053,9 +1008,11 @@ WithShapeInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.tweenValues">tweenValues</a></p>
+<p>ClientShapeInstance.tweenValues</p>
 <p>Inherited from
-WithShapeInstance.tweenValues</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1074,17 +1031,21 @@ WithShapeInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.tweens">tweens</a></p>
+<p>ClientShapeInstance.tweens</p>
 <p>Inherited from
-WithShapeInstance.tweens</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.unload">unload</a></p>
+<p>ClientShapeInstance.unload</p>
 <p>Inherited from
-WithShapeInstance.unload</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).unload</p>
 <hr>
 <h3><a id="ClientShapeInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>name</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1103,9 +1064,11 @@ WithShapeInstance.unload</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeInstance.html">ClientShapeInstance</a>.<a href="ClientShapeInstance.html#ClientShapeInstance.value">value</a></p>
+<p>ClientShapeInstance.value</p>
 <p>Inherited from
-WithShapeInstance.value</p>
+ShapeInstanceMixin(
+   ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).value</p>
 
   </div>
 </section>
@@ -1117,45 +1080,25 @@ WithShapeInstance.value</p>
         <ul><li><a class='' href='#ClientShapeInstanceClass'>ClientShapeInstanceClass</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientShapeInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ClientShapeInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.container'>container</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.directions'>directions</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.height'>height</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.id'>id</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.width'>width</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.x'>x</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.y'>y</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.label'>label</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ClientShapeInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1170,16 +1113,16 @@ WithShapeInstance.value</p>
 <li><a class='' href='#ClientShapeInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.contentSvgItemPromise'>contentSvgItemPromise</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ClientShapeInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientShapeInstanceClass.number'>number</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientShapeInstanceClass.string'>string</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientShapeInstanceClass.tweenValues'>tweenValues</a></li>

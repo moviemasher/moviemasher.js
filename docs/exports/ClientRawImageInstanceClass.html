@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientRawImageInstanceClass"><h2>ClientRawImageInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ClientRawImageInstanceClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawImageInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawImageInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithImageInstance</code></p>
+<li><p><code><a href='ClientInstanceClass.html'>ClientInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='ImageInstance.html'>ImageInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientRawImageInstanceClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ClientRawImageInstance.html'>ClientRawImageInstance</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientRawImageInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientRawImageInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientRawImageInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientRawImageInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,260 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ImageInstanceObject.html'>ImageInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithImageInstance.constructor</p>
+<p>Inherited from
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ClientRawImageInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithImageInstance._id</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithImageInstance._label</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+)._id</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ClientRawImageAsset.html'>ClientRawImageAsset</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.asset">asset</a></p>
 <p>Overrides
-WithImageInstance.asset</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.assetId">assetId</a></p>
 <p>Inherited from
-WithImageInstance.assetId</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.assetIds">assetIds</a></p>
 <p>Inherited from
-WithImageInstance.assetIds</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithImageInstance.bottomCrop</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.canBeMuted">canBeMuted</a></p>
 <p>Inherited from
-WithImageInstance.canBeMuted</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='ClientClip.html'>ClientClip</a></code> &amp; <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.clip">clip</a></p>
 <p>Inherited from
-WithImageInstance.clip</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.container">container</a></p>
-<p>Inherited from
-WithImageInstance.container</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.cropDirections">cropDirections</a></p>
 <p>Inherited from
-WithImageInstance.cropDirections</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ClientRawImageInstanceClass.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.directions">directions</a></p>
+<h3><a id="ClientRawImageInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithImageInstance.directions</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<p>Inherited from
-WithImageInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.height">height</a></p>
-<p>Inherited from
-WithImageInstance.height</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithImageInstance.heightEnd</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.id">id</a></p>
 <p>Inherited from
-WithImageInstance.id</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.instanceObject">instanceObject</a></p>
 <p>Inherited from
-WithImageInstance.instanceObject</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.intrinsicRect">intrinsicRect</a></p>
 <p>Inherited from
-WithImageInstance.intrinsicRect</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.isDefault">isDefault</a></p>
 <p>Inherited from
-WithImageInstance.isDefault</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithImageInstance.leftCrop</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.lock">lock</a></p>
-<p>Inherited from
-WithImageInstance.lock</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.muted">muted</a></p>
 <p>Inherited from
-WithImageInstance.muted</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ClientRawImageInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.opacityEnd">opacityEnd</a></p>
-<p>Inherited from
-WithImageInstance.opacityEnd</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.pointAspect">pointAspect</a></p>
-<p>Inherited from
-WithImageInstance.pointAspect</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientRawImageInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.properties">properties</a></p>
 <p>Inherited from
-WithImageInstance.properties</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ClientRawImageInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithImageInstance.rightCrop</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithImageInstance.sizeAspect</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
+<h3><a id="ClientRawImageInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.sizeKey">sizeKey</a></p>
 <p>Inherited from
-WithImageInstance.sizeKey</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).sizeKey</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.targetId">targetId</a></p>
 <p>Inherited from
-WithImageInstance.targetId</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithImageInstance.topCrop</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.tweening">tweening</a></p>
 <p>Inherited from
-WithImageInstance.tweening</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.width">width</a></p>
-<p>Inherited from
-WithImageInstance.width</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithImageInstance.widthEnd</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.x">x</a></p>
-<p>Inherited from
-WithImageInstance.x</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithImageInstance.xEnd</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.y">y</a></p>
-<p>Inherited from
-WithImageInstance.y</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithImageInstance.yEnd</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ClientRawImageInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithImageInstance.isAudio</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithImageInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithImageInstance.label</p>
-<hr>
 <h3><a id="ClientRawImageInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithImageInstance.scalarRecord</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ClientRawImageInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -427,7 +321,32 @@ WithImageInstance.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.assetTime">assetTime</a></p>
 <p>Inherited from
-WithImageInstance.assetTime</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ClientRawImageInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.boolean">boolean</a></p>
+<p>Inherited from
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -452,7 +371,9 @@ WithImageInstance.assetTime</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithImageInstance.changeScalar</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -473,7 +394,9 @@ WithImageInstance.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithImageInstance.changeScalars</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -486,7 +409,7 @@ WithImageInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -498,7 +421,9 @@ WithImageInstance.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.clippedElement">clippedElement</a></p>
 <p>Inherited from
-WithImageInstance.clippedElement</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.clippedElementPromise">clippedElementPromise</a></h3><p>▸ <strong>clippedElementPromise</strong>(<code>content</code>, <code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -521,7 +446,9 @@ WithImageInstance.clippedElement</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithImageInstance.clippedElementPromise</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).clippedElementPromise</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -546,7 +473,9 @@ WithImageInstance.clippedElementPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithImageInstance.constrainedValue</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -575,9 +504,11 @@ WithImageInstance.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.containedItem">containedItem</a></p>
 <p>Inherited from
-WithImageInstance.containedItem</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ClientRawImageInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ClientRawImageInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -591,7 +522,7 @@ WithImageInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
@@ -600,7 +531,9 @@ WithImageInstance.containedItem</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.containerRects">containerRects</a></p>
 <p>Inherited from
-WithImageInstance.containerRects</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -621,7 +554,9 @@ WithImageInstance.containerRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.containerSvgItem">containerSvgItem</a></p>
 <p>Inherited from
-WithImageInstance.containerSvgItem</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.containerSvgItemPromise">containerSvgItemPromise</a></h3><p>▸ <strong>containerSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -640,7 +575,9 @@ WithImageInstance.containerSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Overrides
-WithImageInstance.containerSvgItemPromise</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItemPromise</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -669,7 +606,9 @@ WithImageInstance.containerSvgItemPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.contentRect">contentRect</a></p>
 <p>Inherited from
-WithImageInstance.contentRect</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -690,7 +629,9 @@ WithImageInstance.contentRect</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.contentRects">contentRects</a></p>
 <p>Inherited from
-WithImageInstance.contentRects</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -711,7 +652,9 @@ WithImageInstance.contentRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.contentSvgItem">contentSvgItem</a></p>
 <p>Inherited from
-WithImageInstance.contentSvgItem</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.contentSvgItemPromise">contentSvgItemPromise</a></h3><p>▸ <strong>contentSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -730,7 +673,9 @@ WithImageInstance.contentSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Overrides
-WithImageInstance.contentSvgItemPromise</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItemPromise</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -751,48 +696,9 @@ WithImageInstance.contentSvgItemPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.frames">frames</a></p>
 <p>Inherited from
-WithImageInstance.frames</p>
-<hr>
-<h3><a id="ClientRawImageInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithImageInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientRawImageInstance.initializeProperties</p>
-<p>Inherited from
-WithImageInstance.initializeProperties</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -813,7 +719,9 @@ WithImageInstance.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.instanceCachePromise">instanceCachePromise</a></p>
 <p>Inherited from
-WithImageInstance.instanceCachePromise</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -834,9 +742,11 @@ WithImageInstance.instanceCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.intrinsicsKnown">intrinsicsKnown</a></p>
 <p>Inherited from
-WithImageInstance.intrinsicsKnown</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ClientRawImageInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientRawImageInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -846,14 +756,18 @@ WithImageInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.number">number</a></p>
 <p>Inherited from
-WithImageInstance.propertiesInitialize</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -874,7 +788,9 @@ WithImageInstance.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithImageInstance.propertyFind</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -895,7 +811,9 @@ WithImageInstance.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithImageInstance.propertyIds</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -916,7 +834,9 @@ WithImageInstance.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithImageInstance.propertyInstance</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -941,7 +861,9 @@ WithImageInstance.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.scaleRects">scaleRects</a></p>
 <p>Inherited from
-WithImageInstance.scaleRects</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -966,9 +888,11 @@ WithImageInstance.scaleRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.setValue">setValue</a></p>
 <p>Inherited from
-WithImageInstance.setValue</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ClientRawImageInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientRawImageInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -988,8 +912,35 @@ WithImageInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithImageInstance.shouldSelectProperty</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientRawImageInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.string">string</a></p>
+<p>Inherited from
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -1018,7 +969,9 @@ WithImageInstance.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.svgVector">svgVector</a></p>
 <p>Inherited from
-WithImageInstance.svgVector</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -1026,7 +979,9 @@ WithImageInstance.svgVector</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.toJSON">toJSON</a></p>
 <p>Inherited from
-WithImageInstance.toJSON</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1055,7 +1010,9 @@ WithImageInstance.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithImageInstance.tweenValues</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1076,7 +1033,9 @@ WithImageInstance.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.tweens">tweens</a></p>
 <p>Inherited from
-WithImageInstance.tweens</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -1084,7 +1043,9 @@ WithImageInstance.tweens</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.unload">unload</a></p>
 <p>Inherited from
-WithImageInstance.unload</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).unload</p>
 <hr>
 <h3><a id="ClientRawImageInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>name</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1105,7 +1066,9 @@ WithImageInstance.unload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageInstance.html">ClientRawImageInstance</a>.<a href="ClientRawImageInstance.html#ClientRawImageInstance.value">value</a></p>
 <p>Inherited from
-WithImageInstance.value</p>
+ImageInstanceMixin(
+  ClientVisibleInstanceMixin(VisibleInstanceMixin(ClientInstanceClass))
+).value</p>
 
   </div>
 </section>
@@ -1117,45 +1080,25 @@ WithImageInstance.value</p>
         <ul><li><a class='' href='#ClientRawImageInstanceClass'>ClientRawImageInstanceClass</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.container'>container</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.directions'>directions</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.height'>height</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.id'>id</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.width'>width</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.x'>x</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.y'>y</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.label'>label</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ClientRawImageInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1170,16 +1113,16 @@ WithImageInstance.value</p>
 <li><a class='' href='#ClientRawImageInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.contentSvgItemPromise'>contentSvgItemPromise</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ClientRawImageInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientRawImageInstanceClass.number'>number</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawImageInstanceClass.string'>string</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawImageInstanceClass.tweenValues'>tweenValues</a></li>

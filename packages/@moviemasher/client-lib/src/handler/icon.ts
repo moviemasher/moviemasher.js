@@ -1,7 +1,7 @@
 import type { DataOrError, ListenersFunction, StringRecord } from '@moviemasher/shared-lib/types.js'
 
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventIcon } from '../utility/events.js'
+import { EventIcon } from '../module/event.js'
 import { IconResponse } from '../types.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../utility/request.js'

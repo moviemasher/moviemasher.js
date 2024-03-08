@@ -29,8 +29,7 @@
   "scripts": {
     "clean": "rm -rf ./dist/*",
     "script": "run-s",
-    "build-rollup": "rollup --config dev/rollup.config.mjs",
-    "build": "run-s clean build-rollup"
+    "build": "rollup --config dev/rollup.config.mjs"
   },
   "dependencies": {
     "@moviemasher/shared-lib": "5.2.0",

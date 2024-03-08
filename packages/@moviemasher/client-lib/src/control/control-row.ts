@@ -2,7 +2,7 @@ import type { DataType, PropertyId } from '@moviemasher/shared-lib/types.js';
 import type { CSSResultGroup, PropertyDeclarations } from 'lit-element/lit-element.js';
 import type { TemplateContent, TemplateContents, OptionalContent } from '../client-types.js';
 import { css } from '@lit/reactive-element/css-tag.js';
-import { ROW } from '../runtime.js';
+import { ROW } from '../utility/constants.js';
 import { DOT, $END } from '@moviemasher/shared-lib/runtime.js';
 import { html, nothing } from 'lit-html';
 import { Component, ComponentLoader } from '../base/component.js';

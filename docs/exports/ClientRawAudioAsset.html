@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientRawAudioAsset"><h2>ClientRawAudioAsset</h2></a>
   <div class="section">
     <h1>Interface: ClientRawAudioAsset</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawAudioAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawAudioAsset</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code><a href='ClientRawAsset.html'>ClientRawAsset</a></code></p>
+<li><p><code><a href='ClientAsset.html'>ClientAsset</a></code></p>
 </li>
 <li><p><code><a href='ClientAudioAsset.html'>ClientAudioAsset</a></code></p>
 </li>
@@ -151,19 +151,19 @@
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ClientRawAudioAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='ClientRawAudioAssetObject.html'>ClientRawAudioAssetObject</a></code></p>
-<p>Overrides
+<h3><a id="ClientRawAudioAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.assetManager">assetManager</a></p>
+<hr>
+<h3><a id="ClientRawAudioAsset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.assetObject">assetObject</a></p>
 <hr>
 <h3><a id="ClientRawAudioAsset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.assets">assets</a></p>
 <hr>
-<h3><a id="ClientRawAudioAsset.audioUrl">audioUrl</a></h3><p>• <strong>audioUrl</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.audioUrl">audioUrl</a></p>
-<hr>
-<h3><a id="ClientRawAudioAsset.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<h3><a id="ClientRawAudioAsset.canBeMuted">canBeMuted</a></h3><p>• <code>Optional</code> <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.canBeMuted">canBeMuted</a></p>
 <hr>
@@ -179,21 +179,17 @@
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.duration">duration</a></p>
 <hr>
+<h3><a id="ClientRawAudioAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<hr>
+<h3><a id="ClientRawAudioAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<hr>
 <h3><a id="ClientRawAudioAsset.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.id">id</a></p>
-<hr>
-<h3><a id="ClientRawAudioAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.label">label</a></p>
-<hr>
-<h3><a id="ClientRawAudioAsset.loadedAudio">loadedAudio</a></h3><p>• <code>Optional</code> <strong>loadedAudio</strong>: <code><a href='ClientAudio.html'>ClientAudio</a></code></p>
-<p>Inherited from
-<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.loadedAudio">loadedAudio</a></p>
-<hr>
-<h3><a id="ClientRawAudioAsset.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.loop">loop</a></p>
 <hr>
 <h3><a id="ClientRawAudioAsset.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
@@ -227,7 +223,7 @@
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.type">type</a></p>
 <h2>Methods</h2>
-<h3><a id="ClientRawAudioAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h3><a id="ClientRawAudioAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -237,8 +233,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -303,7 +299,7 @@
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -320,6 +316,25 @@
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode"><code>AudioBufferSourceNode</code></a></p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.audibleSource">audibleSource</a></p>
+<hr>
+<h3><a id="ClientRawAudioAsset.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.boolean">boolean</a></p>
 <hr>
 <h3><a id="ClientRawAudioAsset.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -443,7 +458,7 @@
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.frames">frames</a></p>
 <hr>
-<h3><a id="ClientRawAudioAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientRawAudioAsset.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -458,28 +473,9 @@
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.imagePromise">imagePromise</a></p>
-<hr>
-<h3><a id="ClientRawAudioAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.initializeProperties">initializeProperties</a></p>
 <hr>
 <h3><a id="ClientRawAudioAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -518,6 +514,25 @@
 <code><a href='Instance.html'>Instance</a></code></p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.instanceFromObject">instanceFromObject</a></p>
+<hr>
+<h3><a id="ClientRawAudioAsset.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.number">number</a></p>
 <hr>
 <h3><a id="ClientRawAudioAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -576,7 +591,7 @@
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ClientRawAudioAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h3><a id="ClientRawAudioAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -586,8 +601,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>...type</code></td>
-<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -636,6 +651,48 @@
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.setValue">setValue</a></p>
+<hr>
+<h3><a id="ClientRawAudioAsset.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ClientRawAudioAsset.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ClientAudibleAsset.html">ClientAudibleAsset</a>.<a href="ClientAudibleAsset.html#ClientAudibleAsset.string">string</a></p>
 <hr>
 <h3><a id="ClientRawAudioAsset.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -704,17 +761,16 @@
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ClientRawAudioAsset'>ClientRawAudioAsset</a></li>
 <li><a class='' href='#ClientRawAudioAsset.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientRawAudioAsset.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientRawAudioAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientRawAudioAsset.assets'>assets</a></li>
-<li><a class='' href='#ClientRawAudioAsset.audioUrl'>audioUrl</a></li>
 <li><a class='' href='#ClientRawAudioAsset.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientRawAudioAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ClientRawAudioAsset.decodings'>decodings</a></li>
 <li><a class='' href='#ClientRawAudioAsset.duration'>duration</a></li>
+<li><a class='' href='#ClientRawAudioAsset.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientRawAudioAsset.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientRawAudioAsset.id'>id</a></li>
-<li><a class='' href='#ClientRawAudioAsset.label'>label</a></li>
-<li><a class='' href='#ClientRawAudioAsset.loadedAudio'>loadedAudio</a></li>
-<li><a class='' href='#ClientRawAudioAsset.loop'>loop</a></li>
 <li><a class='' href='#ClientRawAudioAsset.properties'>properties</a></li>
 <li><a class='' href='#ClientRawAudioAsset.request'>request</a></li>
 <li><a class='' href='#ClientRawAudioAsset.resource'>resource</a></li>
@@ -728,6 +784,7 @@
 <li><a class='' href='#ClientRawAudioAsset.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientRawAudioAsset.assetIconPromise'>assetIconPromise</a></li>
 <li><a class='' href='#ClientRawAudioAsset.audibleSource'>audibleSource</a></li>
+<li><a class='' href='#ClientRawAudioAsset.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawAudioAsset.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawAudioAsset.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientRawAudioAsset.clipObject'>clipObject</a></li>
@@ -735,15 +792,17 @@
 <li><a class='' href='#ClientRawAudioAsset.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientRawAudioAsset.frames'>frames</a></li>
 <li><a class='' href='#ClientRawAudioAsset.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientRawAudioAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawAudioAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientRawAudioAsset.instanceFromObject'>instanceFromObject</a></li>
+<li><a class='' href='#ClientRawAudioAsset.number'>number</a></li>
 <li><a class='' href='#ClientRawAudioAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawAudioAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawAudioAsset.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientRawAudioAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ClientRawAudioAsset.savePromise'>savePromise</a></li>
 <li><a class='' href='#ClientRawAudioAsset.setValue'>setValue</a></li>
+<li><a class='' href='#ClientRawAudioAsset.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawAudioAsset.string'>string</a></li>
 <li><a class='' href='#ClientRawAudioAsset.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawAudioAsset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientRawAudioAsset.unload'>unload</a></li>

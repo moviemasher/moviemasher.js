@@ -1,0 +1,14 @@
+version: "3"
+name: moviemasher-builder
+services:
+  service:
+    image: moviemasher/builder:5.2.0
+    container_name: moviemasher-builder
+    volumes:
+      - ../../temporary/builder/:/moviemasher/temporary/builder/
+      - ../docs/:/moviemasher/dev/docs/
+      - ../tsconfig:/moviemasher/dev/tsconfig
+      - ../../packages:/moviemasher/packages
+      - ../../README.md:/moviemasher/README.md
+      - ../../docs/:/moviemasher/docs/
+      - ../../examples/:/moviemasher/examples/

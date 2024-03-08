@@ -1,7 +1,6 @@
-import { PLAY } from '../runtime.js'
-import { EventChangedClientAction, EventDoClientAction, EventEnabledClientAction } from '../utility/events.js'
+import { $PLAY, MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { ComponentClicker } from '../base/component.js'
-import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
+import { EventChangedClientAction, EventDoClientAction, EventEnabledClientAction } from '../module/event.js'
 
 export const PlayerButtonTag = 'movie-masher-player-button'
 
@@ -11,8 +10,8 @@ export const PlayerButtonTag = 'movie-masher-player-button'
 export class PlayerButtonElement extends ComponentClicker {
   override connectedCallback(): void {
     this.emit = EventDoClientAction.Type 
-    this.detail = PLAY
-    this.icon = PLAY
+    this.detail = $PLAY
+    this.icon = $PLAY
     this.listeners[EventChangedClientAction.Type] = this.handleChangedAction.bind(this)
     super.connectedCallback() 
   }
@@ -23,9 +22,9 @@ export class PlayerButtonElement extends ComponentClicker {
 
     if (detail === event.detail) {
       const enabledEvent = new EventEnabledClientAction(detail)
-      MOVIE_MASHER.dispatch(enabledEvent)
+      MOVIE_MASHER.dispatchCustom(enabledEvent)
 
-      this.icon = enabledEvent.detail.enabled ? PLAY : 'pause'
+      this.icon = enabledEvent.detail.enabled ? $PLAY : 'pause'
     }
   }
 }

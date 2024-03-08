@@ -45,6 +45,7 @@ export default {
     copy({ targets: [
       { src: 'src/html/*', dest: 'dist/public' },
       { src: 'src/img/*', dest: 'dist/public' },
+      { src: 'src/sql/*', dest: 'dist/sql' },
     ] }),
 
     typescript(typescriptConfig),

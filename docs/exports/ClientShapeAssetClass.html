@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ClientShapeAssetClass"><h2>ClientShapeAssetClass</h2></a>
   <div class="section">
     <h1>Class: ClientShapeAssetClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientShapeAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientShapeAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithShapeAsset</code></p>
+<li><p><code><a href='ClientAssetClass.html'>ClientAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleAsset.html'>VisibleAsset</a></code> &amp; <code><a href='ClientVisibleAsset.html'>ClientVisibleAsset</a></code> &amp; <code><a href='ShapeAsset.html'>ShapeAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientShapeAssetClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ClientShapeAsset.html'>ClientShapeAsset</a></code></li>
+<li><code>ClientShapeAsset</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientShapeAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientShapeAssetClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientShapeAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientShapeAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,186 +153,222 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ShapeAssetObject.html'>ShapeAssetObject</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithShapeAsset.constructor</p>
-<h2>Properties</h2>
-<h3><a id="ClientShapeAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-WithShapeAsset._assets</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).constructor</p>
+<h2>Properties</h2>
+<h3><a id="ClientShapeAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
+<p>Inherited from
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+)._assets</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.alpha">alpha</a></p>
+<p>ClientShapeAsset.alpha</p>
 <p>Inherited from
-WithShapeAsset.alpha</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).alpha</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.assetIds">assetIds</a></p>
+<p>ClientShapeAsset.assetIds</p>
 <p>Inherited from
-WithShapeAsset.assetIds</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetIds</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code></p>
+<h3><a id="ClientShapeAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.assetObject">assetObject</a></p>
+<p>ClientShapeAsset.assetManager</p>
 <p>Inherited from
-WithShapeAsset.assetObject</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetManager</p>
+<hr>
+<h3><a id="ClientShapeAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeAsset.assetObject</p>
+<p>Inherited from
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetObject</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.assets">assets</a></p>
+<p>ClientShapeAsset.assets</p>
 <p>Inherited from
-WithShapeAsset.assets</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assets</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.canBeContainer">canBeContainer</a></p>
+<p>ClientShapeAsset.canBeContainer</p>
 <p>Inherited from
-WithShapeAsset.canBeContainer</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).canBeContainer</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.canBeContent">canBeContent</a></p>
+<p>ClientShapeAsset.canBeContent</p>
 <p>Inherited from
-WithShapeAsset.canBeContent</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).canBeContent</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.canBeFill">canBeFill</a></p>
+<p>ClientShapeAsset.canBeFill</p>
 <p>Inherited from
-WithShapeAsset.canBeFill</p>
-<hr>
-<h3><a id="ClientShapeAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.container">container</a></p>
-<p>Inherited from
-WithShapeAsset.container</p>
-<hr>
-<h3><a id="ClientShapeAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.content">content</a></p>
-<p>Inherited from
-WithShapeAsset.content</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).canBeFill</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.decoding">decoding</a></p>
+<p>ClientShapeAsset.decoding</p>
 <p>Inherited from
-WithShapeAsset.decoding</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).decoding</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ClientShapeAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.decodings">decodings</a></p>
+<p>ClientShapeAsset.decodings</p>
 <p>Inherited from
-WithShapeAsset.decodings</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).decodings</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>ClientShapeAsset.hasIntrinsicSizing</p>
 <p>Inherited from
-WithShapeAsset.hasIntrinsicSizing</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ClientShapeAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeAsset.hasIntrinsicTiming</p>
+<p>Inherited from
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.id">id</a></p>
+<p>ClientShapeAsset.id</p>
 <p>Inherited from
-WithShapeAsset.id</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).id</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.isVector">isVector</a></p>
+<p>ClientShapeAsset.isVector</p>
 <p>Inherited from
-WithShapeAsset.isVector</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).isVector</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
+<h3><a id="ClientShapeAssetClass.pathSize">pathSize</a></h3><p>• <strong>pathSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.label">label</a></p>
+<p>ClientShapeAsset.pathSize</p>
 <p>Inherited from
-WithShapeAsset.label</p>
-<hr>
-<h3><a id="ClientShapeAssetClass.path">path</a></h3><p>• <strong>path</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.path">path</a></p>
-<p>Inherited from
-WithShapeAsset.path</p>
-<hr>
-<h3><a id="ClientShapeAssetClass.pathHeight">pathHeight</a></h3><p>• <strong>pathHeight</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.pathHeight">pathHeight</a></p>
-<p>Inherited from
-WithShapeAsset.pathHeight</p>
-<hr>
-<h3><a id="ClientShapeAssetClass.pathWidth">pathWidth</a></h3><p>• <strong>pathWidth</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.pathWidth">pathWidth</a></p>
-<p>Inherited from
-WithShapeAsset.pathWidth</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).pathSize</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.probeSize">probeSize</a></p>
+<p>ClientShapeAsset.probeSize</p>
 <p>Inherited from
-WithShapeAsset.probeSize</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).probeSize</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientShapeAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.properties">properties</a></p>
+<p>ClientShapeAsset.properties</p>
 <p>Inherited from
-WithShapeAsset.properties</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).properties</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.request">request</a></p>
+<p>ClientShapeAsset.request</p>
 <p>Inherited from
-WithShapeAsset.request</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).request</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.resource">resource</a></p>
+<p>ClientShapeAsset.resource</p>
 <p>Inherited from
-WithShapeAsset.resource</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).resource</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ClientShapeAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.resources">resources</a></p>
+<p>ClientShapeAsset.resources</p>
 <p>Inherited from
-WithShapeAsset.resources</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).resources</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.saveNeeded">saveNeeded</a></p>
+<p>ClientShapeAsset.saveNeeded</p>
 <p>Inherited from
-WithShapeAsset.saveNeeded</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).saveNeeded</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.source">source</a></p>
+<p>ClientShapeAsset.source</p>
 <p>Inherited from
-WithShapeAsset.source</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).source</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$ASSET'>$ASSET</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.targetId">targetId</a></p>
+<p>ClientShapeAsset.targetId</p>
 <p>Inherited from
-WithShapeAsset.targetId</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).targetId</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.type">type</a></p>
+<p>ClientShapeAsset.type</p>
 <p>Inherited from
-WithShapeAsset.type</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ClientShapeAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithShapeAsset.scalarRecord</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ClientShapeAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientShapeAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -342,28 +378,8 @@ WithShapeAsset.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ClientAsset.html'>ClientAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.asset">asset</a></p>
-<p>Inherited from
-WithShapeAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -371,7 +387,9 @@ WithShapeAsset.asset</p>
 <h4>Implementation of</h4>
 <p>ClientShapeAsset.asset</p>
 <p>Inherited from
-WithShapeAsset.asset</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).asset</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -390,9 +408,11 @@ WithShapeAsset.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.assetCachePromise">assetCachePromise</a></p>
+<p>ClientShapeAsset.assetCachePromise</p>
 <p>Inherited from
-WithShapeAsset.assetCachePromise</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetCachePromise</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>size</code>, <code>_cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -415,9 +435,11 @@ WithShapeAsset.assetCachePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.assetIcon">assetIcon</a></p>
+<p>ClientShapeAsset.assetIcon</p>
 <p>Overrides
-WithShapeAsset.assetIcon</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetIcon</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -434,7 +456,7 @@ WithShapeAsset.assetIcon</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -444,9 +466,11 @@ WithShapeAsset.assetIcon</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.assetIconPromise">assetIconPromise</a></p>
+<p>ClientShapeAsset.assetIconPromise</p>
 <p>Inherited from
-WithShapeAsset.assetIconPromise</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetIconPromise</p>
 <p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
@@ -462,7 +486,7 @@ WithShapeAsset.assetIconPromise</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -474,7 +498,32 @@ WithShapeAsset.assetIconPromise</p>
 <h4>Implementation of</h4>
 <p>ClientShapeAsset.assetIconPromise</p>
 <p>Inherited from
-WithShapeAsset.assetIconPromise</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).assetIconPromise</p>
+<hr>
+<h3><a id="ClientShapeAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeAsset.boolean</p>
+<p>Inherited from
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).boolean</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -497,9 +546,11 @@ WithShapeAsset.assetIconPromise</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.changeScalar">changeScalar</a></p>
+<p>ClientShapeAsset.changeScalar</p>
 <p>Inherited from
-WithShapeAsset.changeScalar</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -518,9 +569,11 @@ WithShapeAsset.changeScalar</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.changeScalars">changeScalars</a></p>
+<p>ClientShapeAsset.changeScalars</p>
 <p>Inherited from
-WithShapeAsset.changeScalars</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -532,16 +585,18 @@ WithShapeAsset.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.clipObject">clipObject</a></p>
+<p>ClientShapeAsset.clipObject</p>
 <p>Inherited from
-WithShapeAsset.clipObject</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).clipObject</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -564,9 +619,11 @@ WithShapeAsset.clipObject</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.constrainedValue">constrainedValue</a></p>
+<p>ClientShapeAsset.constrainedValue</p>
 <p>Inherited from
-WithShapeAsset.constrainedValue</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -585,11 +642,13 @@ WithShapeAsset.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.decodingOfType">decodingOfType</a></p>
+<p>ClientShapeAsset.decodingOfType</p>
 <p>Inherited from
-WithShapeAsset.decodingOfType</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).decodingOfType</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientShapeAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -604,52 +663,13 @@ WithShapeAsset.decodingOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.imagePromise">imagePromise</a></p>
+<p>ClientShapeAsset.imagePromise</p>
 <p>Inherited from
-WithShapeAsset.imagePromise</p>
-<hr>
-<h3><a id="ClientShapeAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithShapeAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientShapeAsset.initializeProperties</p>
-<p>Inherited from
-WithShapeAsset.initializeProperties</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).imagePromise</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -668,9 +688,11 @@ WithShapeAsset.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.instanceArgs">instanceArgs</a></p>
+<p>ClientShapeAsset.instanceArgs</p>
 <p>Inherited from
-WithShapeAsset.instanceArgs</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).instanceArgs</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='ShapeInstance.html'>ShapeInstance</a></code></p>
 <h4>Parameters</h4>
@@ -689,11 +711,13 @@ WithShapeAsset.instanceArgs</p>
 <p>Returns
 <code><a href='ShapeInstance.html'>ShapeInstance</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.instanceFromObject">instanceFromObject</a></p>
+<p>ClientShapeAsset.instanceFromObject</p>
 <p>Overrides
-WithShapeAsset.instanceFromObject</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).instanceFromObject</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientShapeAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -703,14 +727,18 @@ WithShapeAsset.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeAsset.number</p>
 <p>Inherited from
-WithShapeAsset.propertiesInitialize</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).number</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -729,9 +757,11 @@ WithShapeAsset.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.propertyFind">propertyFind</a></p>
+<p>ClientShapeAsset.propertyFind</p>
 <p>Inherited from
-WithShapeAsset.propertyFind</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -750,9 +780,11 @@ WithShapeAsset.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.propertyIds">propertyIds</a></p>
+<p>ClientShapeAsset.propertyIds</p>
 <p>Inherited from
-WithShapeAsset.propertyIds</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -771,9 +803,11 @@ WithShapeAsset.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.propertyInstance">propertyInstance</a></p>
+<p>ClientShapeAsset.propertyInstance</p>
 <p>Inherited from
-WithShapeAsset.propertyInstance</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -786,15 +820,17 @@ WithShapeAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.resourceOfType">resourceOfType</a></p>
+<p>ClientShapeAsset.resourceOfType</p>
 <p>Inherited from
-WithShapeAsset.resourceOfType</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).resourceOfType</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -813,7 +849,9 @@ WithShapeAsset.resourceOfType</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-WithShapeAsset.saveId</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).saveId</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -832,9 +870,11 @@ WithShapeAsset.saveId</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.savePromise">savePromise</a></p>
+<p>ClientShapeAsset.savePromise</p>
 <p>Inherited from
-WithShapeAsset.savePromise</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).savePromise</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.savingPromise">savingPromise</a></h3><p>▸ <code>Protected</code> <strong>savingPromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -853,7 +893,9 @@ WithShapeAsset.savePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <p>Inherited from
-WithShapeAsset.savingPromise</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).savingPromise</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -876,11 +918,13 @@ WithShapeAsset.savingPromise</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.setValue">setValue</a></p>
+<p>ClientShapeAsset.setValue</p>
 <p>Inherited from
-WithShapeAsset.setValue</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).setValue</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientShapeAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -900,16 +944,45 @@ WithShapeAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeAsset.shouldSelectProperty</p>
 <p>Inherited from
-WithShapeAsset.shouldSelectProperty</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientShapeAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ClientShapeAsset.string</p>
+<p>Inherited from
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).string</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.toJSON">toJSON</a></p>
+<p>ClientShapeAsset.toJSON</p>
 <p>Inherited from
-WithShapeAsset.toJSON</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).toJSON</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -936,17 +1009,21 @@ WithShapeAsset.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.tweenValues">tweenValues</a></p>
+<p>ClientShapeAsset.tweenValues</p>
 <p>Inherited from
-WithShapeAsset.tweenValues</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.unload">unload</a></p>
+<p>ClientShapeAsset.unload</p>
 <p>Inherited from
-WithShapeAsset.unload</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).unload</p>
 <hr>
 <h3><a id="ClientShapeAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -965,11 +1042,13 @@ WithShapeAsset.unload</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientShapeAsset.html">ClientShapeAsset</a>.<a href="ClientShapeAsset.html#ClientShapeAsset.value">value</a></p>
+<p>ClientShapeAsset.value</p>
 <p>Inherited from
-WithShapeAsset.value</p>
+ShapeAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientAssetClass))
+).value</p>
 <hr>
-<h3><a id="ClientShapeAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
+<h3><a id="ClientShapeAssetClass.defaultAsset">defaultAsset</a></h3><p>▸ <code>Static</code> <strong>defaultAsset</strong>(<code>assetManager</code>): <code>ClientShapeAsset</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -979,12 +1058,12 @@ WithShapeAsset.value</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ClientEvents.html#EventAsset'>EventAsset</a></code></td>
+<td align="left"><code>assetManager</code></td>
+<td align="left"><code><a href='AssetManager.html'>AssetManager</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>ClientShapeAsset</code></p>
 
   </div>
 </section>
@@ -998,22 +1077,19 @@ WithShapeAsset.value</p>
 <li><a class='' href='#ClientShapeAssetClass._assets'>_assets</a></li>
 <li><a class='' href='#ClientShapeAssetClass.alpha'>alpha</a></li>
 <li><a class='' href='#ClientShapeAssetClass.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientShapeAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientShapeAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientShapeAssetClass.assets'>assets</a></li>
 <li><a class='' href='#ClientShapeAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ClientShapeAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ClientShapeAssetClass.canBeFill'>canBeFill</a></li>
-<li><a class='' href='#ClientShapeAssetClass.container'>container</a></li>
-<li><a class='' href='#ClientShapeAssetClass.content'>content</a></li>
 <li><a class='' href='#ClientShapeAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ClientShapeAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ClientShapeAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientShapeAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientShapeAssetClass.id'>id</a></li>
 <li><a class='' href='#ClientShapeAssetClass.isVector'>isVector</a></li>
-<li><a class='' href='#ClientShapeAssetClass.label'>label</a></li>
-<li><a class='' href='#ClientShapeAssetClass.path'>path</a></li>
-<li><a class='' href='#ClientShapeAssetClass.pathHeight'>pathHeight</a></li>
-<li><a class='' href='#ClientShapeAssetClass.pathWidth'>pathWidth</a></li>
+<li><a class='' href='#ClientShapeAssetClass.pathSize'>pathSize</a></li>
 <li><a class='' href='#ClientShapeAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ClientShapeAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ClientShapeAssetClass.request'>request</a></li>
@@ -1028,16 +1104,16 @@ WithShapeAsset.value</p>
 <li><a class='' href='#ClientShapeAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ClientShapeAssetClass.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientShapeAssetClass.assetIconPromise'>assetIconPromise</a></li>
+<li><a class='' href='#ClientShapeAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientShapeAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientShapeAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientShapeAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientShapeAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ClientShapeAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientShapeAssetClass.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientShapeAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientShapeAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientShapeAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientShapeAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientShapeAssetClass.number'>number</a></li>
 <li><a class='' href='#ClientShapeAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientShapeAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientShapeAssetClass.propertyInstance'>propertyInstance</a></li>
@@ -1047,11 +1123,12 @@ WithShapeAsset.value</p>
 <li><a class='' href='#ClientShapeAssetClass.savingPromise'>savingPromise</a></li>
 <li><a class='' href='#ClientShapeAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientShapeAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientShapeAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientShapeAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientShapeAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientShapeAssetClass.unload'>unload</a></li>
 <li><a class='' href='#ClientShapeAssetClass.value'>value</a></li>
-<li><a class='' href='#ClientShapeAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ClientShapeAssetClass.defaultAsset'>defaultAsset</a></li></ul>
       </nav>
     </main>
   </body>

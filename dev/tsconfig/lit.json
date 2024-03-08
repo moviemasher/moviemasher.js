@@ -9,8 +9,8 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "inlineSources": true,
-    "lib": ["es2020", "DOM", "DOM.Iterable"],
-    "module": "es2020",
+    "lib": ["ES2022", "es2020", "DOM", "DOM.Iterable"],
+    "module": "ES2022",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
@@ -21,7 +21,7 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2020",
+    "target": "ES2022",
     "useDefineForClassFields": false
   }
 }

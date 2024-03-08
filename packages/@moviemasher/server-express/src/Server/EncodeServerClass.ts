@@ -1,7 +1,7 @@
 import type { Encoding, EndpointRequest, JobOptions } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { EncodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
-import type { EncodeServerArgs, ExpressHandler } from './Server.js'
+import type { EncodeServerArgs, ExpressHandler } from '../types.js'
 
 import { EventServerEncodeStatus } from '@moviemasher/server-lib/utility/events.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
@@ -48,7 +48,7 @@ export class EncodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerEncodeStatus(id)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerEncodeStatus.Type)
 

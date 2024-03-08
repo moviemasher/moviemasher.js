@@ -586,3 +586,8 @@ export const tweenEvaluationPoint = (points: EvaluationPoints, position: Evaluat
   }
   return tweenPoint
 }
+
+export const sizeValueString = (size: Size): string => {
+  const { width, height } = size
+  return [width, height].join('x')
+}

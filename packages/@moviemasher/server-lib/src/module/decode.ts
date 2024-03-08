@@ -1,14 +1,15 @@
 import type { DecodeFunction, Decoding, Numbers, ProbingData, Scalar, ScalarRecord, Scanning, Sizes, Strings } from '@moviemasher/shared-lib/types.js'
 
-import { $AUDIBLE, $DURATION, $RETRIEVE, $HEIGHT, $PROBE, $SCAN, $SIZE, $WIDTH, ERROR, MOVIE_MASHER, NEWLINE, assertDecoding, errorCaught, errorPromise, isDefiniteError, isScanning, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { $AUDIBLE, $DURATION, $HEIGHT, $PROBE, $RETRIEVE, $SCAN, $SIZE, $WIDTH, ERROR, MOVIE_MASHER, NEWLINE, assertDecoding, errorCaught, errorPromise, errorThrow, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { isNumeric, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
 import { execSync } from 'child_process'
 import ffmpeg from 'fluent-ffmpeg'
 import path from 'path'
-import { filePathExists } from './file-write.js'
-import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
 import { isProbingOptions } from '../utility/guard.js'
-import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
+import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
+import { filePathExists } from './file.js'
+import { $COMMAND } from '../runtime.js'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 
@@ -21,7 +22,16 @@ const alphaFormatsInitialize = (): Strings => {
   return result.split(NEWLINE)
 }
 
+const alphaFormatsPromise = (): Promise<Strings> => {
+  MOVIE_MASHER.promise($COMMAND, AlphaFormatsCommand)
+
+return errorThrow(ERROR.Unimplemented, 'alphaFormatsPromise')
+}
+
+
 const decode: DecodeFunction = async (args, options = {}) => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
+
   const { id } = options
   if (id) {
     const startedOrError = await jobHasStarted(id)
@@ -40,6 +50,8 @@ const decode: DecodeFunction = async (args, options = {}) => {
 }
 
 const decodePromise: DecodeFunction = async (args, options) => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
+
   const { resource } = args
   const assetOrError = await MOVIE_MASHER.promise(resource, $RETRIEVE)
   if (isDefiniteError(assetOrError)) return assetOrError
@@ -53,6 +65,8 @@ const decodePromise: DecodeFunction = async (args, options) => {
 }
 
 const scanPromise: DecodeFunction = async args => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
+
   const { path: inputPath } = args.resource.request
   if (!filePathExists(inputPath)) return namedError(ERROR.Unavailable, inputPath)
 
@@ -86,6 +100,8 @@ const scanPromise: DecodeFunction = async args => {
 }
 
 const probePromise: DecodeFunction = args => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
+  
   const { resource, options } = args
   const { path: inputPath } = resource.request
   if (!filePathExists(inputPath)) return errorPromise(ERROR.Unavailable, inputPath)
@@ -180,7 +196,7 @@ const probePromise: DecodeFunction = args => {
   // if (isDefiniteError(writeOrError)) return writeOrError
 
   // // not sure why we return this path??
-  // const pathFragments = [ENV.get(ENV_KEY.OutputRoot)]
+  // const pathFragments = [ENV.get($OutputRoot)]
   // if (prefix) pathFragments.push(prefix)
   // pathFragments.push(id)
   // pathFragments.push([$PROBE, $JSON].join(DOT))
@@ -189,5 +205,6 @@ const probePromise: DecodeFunction = args => {
 }
 
 export const serverDecodeFunction: DecodeFunction = (args, jobOptions) => {
+
   return decode(args, jobOptions)
 }

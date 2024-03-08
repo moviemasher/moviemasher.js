@@ -135,10 +135,10 @@
 <h2>Hierarchy</h2>
 <ul>
 <li><p><strong><code><a href='#'>Propertied</a></code></strong></p>
-<p>↳ <code><a href='Track.html'>Track</a></code></p>
-<p>↳ <code><a href='Clip.html'>Clip</a></code></p>
 <p>↳ <code><a href='Asset.html'>Asset</a></code></p>
 <p>↳ <code><a href='Instance.html'>Instance</a></code></p>
+<p>↳ <code><a href='Clip.html'>Clip</a></code></p>
+<p>↳ <code><a href='Track.html'>Track</a></code></p>
 </li>
 </ul>
 <h2>Implemented by</h2>
@@ -150,6 +150,61 @@
 <hr>
 <h3><a id="Propertied.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <h2>Methods</h2>
+<h3><a id="Propertied.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<hr>
+<h3><a id="Propertied.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<hr>
+<h3><a id="Propertied.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<hr>
 <h3><a id="Propertied.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -171,7 +226,7 @@
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <hr>
-<h3><a id="Propertied.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="Propertied.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -181,12 +236,12 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
 <hr>
 <h3><a id="Propertied.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -260,6 +315,44 @@
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <hr>
+<h3><a id="Propertied.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<hr>
+<h3><a id="Propertied.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<hr>
 <h3><a id="Propertied.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
@@ -316,12 +409,17 @@
         <ul><li><a class='' href='#Propertied'>Propertied</a></li>
 <li><a class='' href='#Propertied.properties'>properties</a></li>
 <li><a class='' href='#Propertied.targetId'>targetId</a></li>
+<li><a class='' href='#Propertied.boolean'>boolean</a></li>
+<li><a class='' href='#Propertied.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#Propertied.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#Propertied.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#Propertied.initializeProperties'>initializeProperties</a></li>
+<li><a class='' href='#Propertied.number'>number</a></li>
 <li><a class='' href='#Propertied.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#Propertied.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#Propertied.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#Propertied.setValue'>setValue</a></li>
+<li><a class='' href='#Propertied.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#Propertied.string'>string</a></li>
 <li><a class='' href='#Propertied.toJSON'>toJSON</a></li>
 <li><a class='' href='#Propertied.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#Propertied.value'>value</a></li></ul>

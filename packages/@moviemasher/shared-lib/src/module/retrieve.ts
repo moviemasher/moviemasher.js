@@ -3,8 +3,11 @@ import type { RetrieveFunction } from '../types.js'
 import { ERROR, MOVIE_MASHER, errorCaught, errorPromise } from '../runtime.js'
 import { isClientFont, isString } from '../utility/guard.js'
 import { requestUrl, urlName } from '../utility/request.js'
+import { assertDefined } from '../utility/guards.js'
 
-export const cssRetrieveFunction: RetrieveFunction = (resource) => {
+export const cssRetrieveFunction: RetrieveFunction = resource => {
+  assertDefined(resource)
+
   const { request } = resource
   const { response, init, resourcePromise } = request
   if (isString(response)) return Promise.resolve({ data: response })
@@ -23,8 +26,9 @@ export const cssRetrieveFunction: RetrieveFunction = (resource) => {
   })
 }
 
-
 export const fontRetrieveFunction: RetrieveFunction = resource => {
+  assertDefined(resource)
+  
   const result = { data: 'OK' }
   const { request } = resource
   const { response, init, resourcePromise } = request

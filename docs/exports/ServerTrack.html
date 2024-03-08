@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerTrack"><h2>ServerTrack</h2></a>
   <div class="section">
     <h1>Interface: ServerTrack</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerTrack</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerTrack</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='Track.html'>Track</a></code></p>
@@ -145,43 +145,43 @@
 <h2>Properties</h2>
 <h3><a id="ServerTrack.clips">clips</a></h3><p>• <strong>clips</strong>: <code><a href='ServerClips.html'>ServerClips</a></code></p>
 <p>Overrides
-Track.clips</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.clips">clips</a></p>
 <hr>
 <h3><a id="ServerTrack.dense">dense</a></h3><p>• <strong>dense</strong>: <code>boolean</code></p>
 <p>Inherited from
-Track.dense</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.dense">dense</a></p>
 <hr>
 <h3><a id="ServerTrack.frames">frames</a></h3><p>• <strong>frames</strong>: <code>number</code></p>
 <p>Inherited from
-Track.frames</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.frames">frames</a></p>
 <hr>
 <h3><a id="ServerTrack.identifier">identifier</a></h3><p>• <strong>identifier</strong>: <code>string</code></p>
 <p>Inherited from
-Track.identifier</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.identifier">identifier</a></p>
 <hr>
 <h3><a id="ServerTrack.index">index</a></h3><p>• <strong>index</strong>: <code>number</code></p>
 <p>Inherited from
-Track.index</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.index">index</a></p>
 <hr>
 <h3><a id="ServerTrack.mash">mash</a></h3><p>• <strong>mash</strong>: <code><a href='ServerMashAsset.html'>ServerMashAsset</a></code></p>
 <p>Overrides
-Track.mash</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.mash">mash</a></p>
 <hr>
 <h3><a id="ServerTrack.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
-Track.properties</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.properties">properties</a></p>
 <hr>
 <h3><a id="ServerTrack.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
-Track.targetId</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.targetId">targetId</a></p>
 <hr>
 <h3><a id="ServerTrack.trackIndex">trackIndex</a></h3><p>• <strong>trackIndex</strong>: <code><a href='TrackIndex.html'>TrackIndex</a></code></p>
 <p>Inherited from
-Track.trackIndex</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.trackIndex">trackIndex</a></p>
 <hr>
 <h3><a id="ServerTrack.trackObject">trackObject</a></h3><p>• <strong>trackObject</strong>: <code><a href='TrackObject.html'>TrackObject</a></code></p>
 <p>Inherited from
-Track.trackObject</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.trackObject">trackObject</a></p>
 <h2>Methods</h2>
 <h3><a id="ServerTrack.assureFrames">assureFrames</a></h3><p>▸ <strong>assureFrames</strong>(<code>quantize</code>, <code>clips?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -204,7 +204,68 @@ Track.trackObject</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-Track.assureFrames</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.assureFrames">assureFrames</a></p>
+<hr>
+<h3><a id="ServerTrack.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="Track.html">Track</a>.<a href="Track.html#Track.boolean">boolean</a></p>
+<hr>
+<h3><a id="ServerTrack.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Track.html">Track</a>.<a href="Track.html#Track.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="ServerTrack.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Track.html">Track</a>.<a href="Track.html#Track.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="ServerTrack.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>found</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -227,9 +288,9 @@ Track.assureFrames</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-Track.constrainedValue</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.constrainedValue">constrainedValue</a></p>
 <hr>
-<h3><a id="ServerTrack.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerTrack.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -239,14 +300,14 @@ Track.constrainedValue</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
 <p>Inherited from
-Track.initializeProperties</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.number">number</a></p>
 <hr>
 <h3><a id="ServerTrack.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -265,7 +326,7 @@ Track.initializeProperties</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-Track.propertyFind</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.propertyFind">propertyFind</a></p>
 <hr>
 <h3><a id="ServerTrack.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -284,7 +345,7 @@ Track.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <p>Inherited from
-Track.propertyIds</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.propertyIds">propertyIds</a></p>
 <hr>
 <h3><a id="ServerTrack.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -303,7 +364,7 @@ Track.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-Track.propertyInstance</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.propertyInstance">propertyInstance</a></p>
 <hr>
 <h3><a id="ServerTrack.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -326,7 +387,30 @@ Track.propertyInstance</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
-Track.setValue</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.setValue">setValue</a></p>
+<hr>
+<h3><a id="ServerTrack.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="Track.html">Track</a>.<a href="Track.html#Track.shouldSelectProperty">shouldSelectProperty</a></p>
 <hr>
 <h3><a id="ServerTrack.sortClips">sortClips</a></h3><p>▸ <strong>sortClips</strong>(<code>clips?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -345,13 +429,32 @@ Track.setValue</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-Track.sortClips</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.sortClips">sortClips</a></p>
+<hr>
+<h3><a id="ServerTrack.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="Track.html">Track</a>.<a href="Track.html#Track.string">string</a></p>
 <hr>
 <h3><a id="ServerTrack.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
-Track.toJSON</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.toJSON">toJSON</a></p>
 <hr>
 <h3><a id="ServerTrack.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
 <h4>Parameters</h4>
@@ -378,7 +481,7 @@ Track.toJSON</p>
 <p>Returns
 <code><a href='Scalars.html'>Scalars</a></code></p>
 <p>Inherited from
-Track.tweenValues</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ServerTrack.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -397,7 +500,7 @@ Track.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-Track.value</p>
+<a href="Track.html">Track</a>.<a href="Track.html#Track.value">value</a></p>
 
   </div>
 </section>
@@ -418,13 +521,18 @@ Track.value</p>
 <li><a class='' href='#ServerTrack.trackIndex'>trackIndex</a></li>
 <li><a class='' href='#ServerTrack.trackObject'>trackObject</a></li>
 <li><a class='' href='#ServerTrack.assureFrames'>assureFrames</a></li>
+<li><a class='' href='#ServerTrack.boolean'>boolean</a></li>
+<li><a class='' href='#ServerTrack.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#ServerTrack.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerTrack.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ServerTrack.initializeProperties'>initializeProperties</a></li>
+<li><a class='' href='#ServerTrack.number'>number</a></li>
 <li><a class='' href='#ServerTrack.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerTrack.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerTrack.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerTrack.setValue'>setValue</a></li>
+<li><a class='' href='#ServerTrack.shouldSelectProperty'>shouldSelectProperty</a></li>
 <li><a class='' href='#ServerTrack.sortClips'>sortClips</a></li>
+<li><a class='' href='#ServerTrack.string'>string</a></li>
 <li><a class='' href='#ServerTrack.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerTrack.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerTrack.value'>value</a></li></ul>

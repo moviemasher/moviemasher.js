@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ClientRawInstance"><h2>ClientRawInstance</h2></a>
   <div class="section">
     <h1>Interface: ClientRawInstance</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawInstance</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='Instance.html'>Instance</a></code></p>
@@ -141,7 +141,7 @@
 </li>
 </ul>
 <h2>Properties</h2>
-<h3><a id="ClientRawInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ClientRawAsset.html'>ClientRawAsset</a></code></p>
+<h3><a id="ClientRawInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
 <p>Overrides
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.asset">asset</a></p>
 <hr>
@@ -153,10 +153,6 @@
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ClientRawInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.bottomCrop">bottomCrop</a></p>
-<hr>
 <h3><a id="ClientRawInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.canBeMuted">canBeMuted</a></p>
@@ -164,30 +160,6 @@
 <h3><a id="ClientRawInstance.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='ClientClip.html'>ClientClip</a></code></p>
 <p>Overrides
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.clip">clip</a></p>
-<hr>
-<h3><a id="ClientRawInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.container">container</a></p>
-<hr>
-<h3><a id="ClientRawInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.cropDirections">cropDirections</a></p>
-<hr>
-<h3><a id="ClientRawInstance.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.directions">directions</a></p>
-<hr>
-<h3><a id="ClientRawInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<hr>
-<h3><a id="ClientRawInstance.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.height">height</a></p>
-<hr>
-<h3><a id="ClientRawInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.heightEnd">heightEnd</a></p>
 <hr>
 <h3><a id="ClientRawInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
@@ -197,81 +169,21 @@
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.instanceObject">instanceObject</a></p>
 <hr>
-<h3><a id="ClientRawInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.intrinsicRect">intrinsicRect</a></p>
-<hr>
 <h3><a id="ClientRawInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.isDefault">isDefault</a></p>
-<hr>
-<h3><a id="ClientRawInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.leftCrop">leftCrop</a></p>
-<hr>
-<h3><a id="ClientRawInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.lock">lock</a></p>
 <hr>
 <h3><a id="ClientRawInstance.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.muted">muted</a></p>
 <hr>
-<h3><a id="ClientRawInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.opacityEnd">opacityEnd</a></p>
-<hr>
-<h3><a id="ClientRawInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.pointAspect">pointAspect</a></p>
-<hr>
 <h3><a id="ClientRawInstance.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.properties">properties</a></p>
 <hr>
-<h3><a id="ClientRawInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.rightCrop">rightCrop</a></p>
-<hr>
-<h3><a id="ClientRawInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.sizeAspect">sizeAspect</a></p>
-<hr>
-<h3><a id="ClientRawInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.sizeKey">sizeKey</a></p>
-<hr>
 <h3><a id="ClientRawInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.targetId">targetId</a></p>
-<hr>
-<h3><a id="ClientRawInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.topCrop">topCrop</a></p>
-<hr>
-<h3><a id="ClientRawInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.width">width</a></p>
-<hr>
-<h3><a id="ClientRawInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.widthEnd">widthEnd</a></p>
-<hr>
-<h3><a id="ClientRawInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.x">x</a></p>
-<hr>
-<h3><a id="ClientRawInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.xEnd">xEnd</a></p>
-<hr>
-<h3><a id="ClientRawInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.y">y</a></p>
-<hr>
-<h3><a id="ClientRawInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.yEnd">yEnd</a></p>
 <h2>Methods</h2>
 <h3><a id="ClientRawInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -291,6 +203,25 @@
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.assetTime">assetTime</a></p>
+<hr>
+<h3><a id="ClientRawInstance.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.boolean">boolean</a></p>
 <hr>
 <h3><a id="ClientRawInstance.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -357,48 +288,6 @@
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.constrainedValue">constrainedValue</a></p>
 <hr>
-<h3><a id="ClientRawInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>sizingSize</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.containerRects">containerRects</a></p>
-<hr>
-<h3><a id="ClientRawInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContentRectArgs.html'>ContentRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.contentRects">contentRects</a></p>
-<hr>
 <h3><a id="ClientRawInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
@@ -417,25 +306,6 @@
 <code>number</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.frames">frames</a></p>
-<hr>
-<h3><a id="ClientRawInstance.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.initializeProperties">initializeProperties</a></p>
 <hr>
 <h3><a id="ClientRawInstance.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -474,6 +344,25 @@
 <code>boolean</code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<hr>
+<h3><a id="ClientRawInstance.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.number">number</a></p>
 <hr>
 <h3><a id="ClientRawInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -532,29 +421,6 @@
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ClientRawInstance.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>range</code></td>
-<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.scaleRects">scaleRects</a></p>
-<hr>
 <h3><a id="ClientRawInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -577,6 +443,48 @@
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.setValue">setValue</a></p>
+<hr>
+<h3><a id="ClientRawInstance.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ClientRawInstance.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ClientInstance.html">ClientInstance</a>.<a href="ClientInstance.html#ClientInstance.string">string</a></p>
 <hr>
 <h3><a id="ClientRawInstance.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -647,51 +555,29 @@
 <li><a class='' href='#ClientRawInstance.asset'>asset</a></li>
 <li><a class='' href='#ClientRawInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ClientRawInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientRawInstance.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientRawInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientRawInstance.clip'>clip</a></li>
-<li><a class='' href='#ClientRawInstance.container'>container</a></li>
-<li><a class='' href='#ClientRawInstance.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientRawInstance.directions'>directions</a></li>
-<li><a class='' href='#ClientRawInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientRawInstance.height'>height</a></li>
-<li><a class='' href='#ClientRawInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientRawInstance.id'>id</a></li>
 <li><a class='' href='#ClientRawInstance.instanceObject'>instanceObject</a></li>
-<li><a class='' href='#ClientRawInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientRawInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientRawInstance.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientRawInstance.lock'>lock</a></li>
 <li><a class='' href='#ClientRawInstance.muted'>muted</a></li>
-<li><a class='' href='#ClientRawInstance.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientRawInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientRawInstance.properties'>properties</a></li>
-<li><a class='' href='#ClientRawInstance.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientRawInstance.sizeAspect'>sizeAspect</a></li>
-<li><a class='' href='#ClientRawInstance.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ClientRawInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ClientRawInstance.topCrop'>topCrop</a></li>
-<li><a class='' href='#ClientRawInstance.width'>width</a></li>
-<li><a class='' href='#ClientRawInstance.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientRawInstance.x'>x</a></li>
-<li><a class='' href='#ClientRawInstance.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientRawInstance.y'>y</a></li>
-<li><a class='' href='#ClientRawInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ClientRawInstance.assetTime'>assetTime</a></li>
+<li><a class='' href='#ClientRawInstance.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawInstance.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawInstance.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientRawInstance.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ClientRawInstance.containerRects'>containerRects</a></li>
-<li><a class='' href='#ClientRawInstance.contentRects'>contentRects</a></li>
 <li><a class='' href='#ClientRawInstance.frames'>frames</a></li>
-<li><a class='' href='#ClientRawInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawInstance.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientRawInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
+<li><a class='' href='#ClientRawInstance.number'>number</a></li>
 <li><a class='' href='#ClientRawInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawInstance.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ClientRawInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientRawInstance.setValue'>setValue</a></li>
+<li><a class='' href='#ClientRawInstance.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawInstance.string'>string</a></li>
 <li><a class='' href='#ClientRawInstance.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawInstance.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientRawInstance.unload'>unload</a></li>

@@ -1,29 +1,14 @@
-import type { DataServerArgs, DecodeServerArgs, EncodeServerArgs, ServerAuthentication, TranscodeServerArgs, UploadServerArgs, WebServerArgs } from '../Server/Server.js'
-import type { HostOptions } from './Host.js'
+import type { DataServerArgs, DecodeServerArgs, EncodeServerArgs, HostOptionsDefault, ServerAuthentication, TranscodeServerArgs, UploadServerArgs, WebServerArgs } from '../types.js'
+import type { HostOptions } from '../types.js'
 
-import { $AUDIO, $FONT, $IMAGE, $NUMBER, $VIDEO } from '@moviemasher/shared-lib/runtime.js'
-import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
+import {$Version, $ExamplePort, $ExampleHost, ENV, $ExampleRoot, $OutputRoot, $SharedAssets } from '@moviemasher/server-lib/utility/env.js'
+import { $AUDIO, $FONT, $IMAGE, $NUMBER, $VIDEO, SLASH } from '@moviemasher/shared-lib/runtime.js'
+import path from 'path'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
-export interface HostOptionsDefault {
-  port?: number
-  host?: string
-  auth?: ServerAuthentication
-  publicDirectory?: string
-  version?: string
-}
-
 export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions => {
-  const {
-    publicDirectory: dirOrUndefined,
-    port: portOrUndefined, auth, host: hostOrUndefined, version: versionOrUndefined,
-  } = args
-  const host = hostOrUndefined || ENV.get(ENV_KEY.ExampleHost)
-  
-  const version = versionOrUndefined || ENV.get(ENV_KEY.Version)
-  const publicDirectory = dirOrUndefined || ENV.get(ENV_KEY.ExampleRoot)
-  const port = portOrUndefined || ENV.get(ENV_KEY.ExamplePort, $NUMBER)
+  const { auth } = args
   const authentication = auth || OpenAuthentication
   const data: DataServerArgs = { authentication }
   const upload: UploadServerArgs = {
@@ -64,11 +49,10 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   const transcode: TranscodeServerArgs = { authentication }
   const web: WebServerArgs = {
     sources: { 
-      '/': `${publicDirectory}/index.html`,
-      '/assets/': ENV.get(ENV_KEY.OutputRoot),
-      '/docs/': `./docs/index.html`,
-      '/json/': './packages/@moviemasher/client-lib/dist/json',
-      '/@moviemasher/': './packages/@moviemasher',
+      '/': [ENV.get($ExampleRoot), 'index.html'].join(SLASH),
+      '/assets/': ENV.get($OutputRoot),
+      '/json/': path.dirname(ENV.get($SharedAssets)), 
+      '/@moviemasher/': './node_modules/@moviemasher',
       '/@lit/': './node_modules/@lit',
       '/lit': './node_modules/lit',
       '/lit-html': './node_modules/lit-html',
@@ -77,7 +61,9 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     }, authentication
   }
   const options: HostOptions = {
-    port, host, version,
+    port: ENV.get($ExamplePort, $NUMBER), 
+    host: ENV.get($ExampleHost), 
+    version: ENV.get($Version),
     corsOptions: { origin: '*' },
     data, upload, encode, web, decode, transcode
   }

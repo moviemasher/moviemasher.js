@@ -135,80 +135,6 @@
   </div>
 </section>
 <section>
-  <a id="EventReleaseServerManagedAssets"><h2>EventReleaseServerManagedAssets</h2></a>
-  <div class="section">
-    <h1>Class: EventReleaseServerManagedAssets</h1>
-<p><a href="../server-lib.html">server-lib</a>.EventReleaseServerManagedAssets</p>
-<p>Dispatch to release managed assets.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code>string</code>, <code>this</code>&gt;</p>
-<p>↳ <strong><code><a href='ServerEvents.html#EventReleaseServerManagedAssets'>EventReleaseServerManagedAssets</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventReleaseServerManagedAssets.constructor">constructor</a></h3><p>• <strong>new EventReleaseServerManagedAssets</strong>(<code>detail?</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>detail?</code></td>
-<td align="left"><code><a href='../combined/Types.html#ManageType'>ManageType</a></code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-customEventClass&lt;string | undefined&gt;().constructor</p>
-<h2>Properties</h2>
-<h3><a id="EventReleaseServerManagedAssets.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;release-assets&#39;</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="EventServerAsset"><h2>EventServerAsset</h2></a>
-  <div class="section">
-    <h1>Class: EventServerAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.EventServerAsset</p>
-<p>Dispatch to retrieve an asset from an asset id or object.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventServerAssetDetail.html'>EventServerAssetDetail</a></code>, <code>this</code>&gt;</p>
-<p>↳ <strong><code><a href='ServerEvents.html#EventServerAsset'>EventServerAsset</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventServerAsset.constructor">constructor</a></h3><p>• <strong>new EventServerAsset</strong>(<code>assetIdOrObject</code>, <code>manager</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='../exports/AssetObject.html'>AssetObject</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>manager</code></td>
-<td align="left"><code><a href='../exports/ServerAssetManager.html'>ServerAssetManager</a></code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-customEventClass&lt;EventServerAssetDetail&gt;().constructor</p>
-<h2>Properties</h2>
-<h3><a id="EventServerAsset.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>&quot;asset&quot;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="EventServerDecodeStatus"><h2>EventServerDecodeStatus</h2></a>
   <div class="section">
     <h1>Class: EventServerDecodeStatus</h1>
@@ -279,41 +205,6 @@ customEventClass&lt;EventServerEncodeStatusDetail&gt;().constructor</p>
 </section>
   
 <section>
-  <a id="EventServerManagedAsset"><h2>EventServerManagedAsset</h2></a>
-  <div class="section">
-    <h1>Class: EventServerManagedAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.EventServerManagedAsset</p>
-<p>Dispatch to retrieve a managed asset from an asset id or object.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventServerManagedAssetDetail.html'>EventServerManagedAssetDetail</a></code>, <code>this</code>&gt;</p>
-<p>↳ <strong><code><a href='ServerEvents.html#EventServerManagedAsset'>EventServerManagedAsset</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventServerManagedAsset.constructor">constructor</a></h3><p>• <strong>new EventServerManagedAsset</strong>(<code>assetIdOrObject</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='../exports/AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-customEventClass&lt;EventServerManagedAssetDetail&gt;().constructor</p>
-<h2>Properties</h2>
-<h3><a id="EventServerManagedAsset.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;managed-asset&#39;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="EventServerTranscodeStatus"><h2>EventServerTranscodeStatus</h2></a>
   <div class="section">
     <h1>Class: EventServerTranscodeStatus</h1>
@@ -354,11 +245,8 @@ customEventClass&lt;EventServerTranscodeStatusDetail&gt;().constructor</p>
         <input type='checkbox' id='nav-input-last'>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ServerEvents'>ServerEvents</a></li>
-<li><a class='' href='#EventReleaseServerManagedAssets'>EventReleaseServerManagedAssets</a></li>
-<li><a class='' href='#EventServerAsset'>EventServerAsset</a></li>
 <li><a class='' href='#EventServerDecodeStatus'>EventServerDecodeStatus</a></li>
 <li><a class='' href='#EventServerEncodeStatus'>EventServerEncodeStatus</a></li>
-<li><a class='' href='#EventServerManagedAsset'>EventServerManagedAsset</a></li>
 <li><a class='' href='#EventServerTranscodeStatus'>EventServerTranscodeStatus</a></li></ul>
       </nav>
     </main>

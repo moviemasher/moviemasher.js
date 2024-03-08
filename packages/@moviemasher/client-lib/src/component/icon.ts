@@ -4,7 +4,7 @@ import type { OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventIcon } from '../utility/events.js'
+import { EventIcon } from '../module/event.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { Component } from '../base/component.js'
@@ -59,7 +59,7 @@ export class IconElement extends Component {
   private get iconEventPromise() {
     const { icon } = this
     const event = new EventIcon(icon) 
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     return event.detail.promise
   }
 

@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerColorAssetClass"><h2>ServerColorAssetClass</h2></a>
   <div class="section">
     <h1>Class: ServerColorAssetClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerColorAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerColorAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithColorAsset</code></p>
+<li><p><code><a href='ServerAssetClass.html'>ServerAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleAsset.html'>VisibleAsset</a></code> &amp; <code><a href='ServerVisibleAsset.html'>ServerVisibleAsset</a></code> &amp; <code><a href='ColorAsset.html'>ColorAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerColorAssetClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerColorAsset.html'>ServerColorAsset</a></code></li>
+<li><code>ServerColorAsset</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerColorAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerColorAssetClass</strong>(<code>args</code>, <code>manager?</code>)</p>
+<h3><a id="ServerColorAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerColorAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,180 +153,206 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ColorAssetObject.html'>ColorAssetObject</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>manager?</code></td>
-<td align="left"><code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithColorAsset.constructor</p>
-<h2>Properties</h2>
-<h3><a id="ServerColorAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-WithColorAsset._assets</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).constructor</p>
+<h2>Properties</h2>
+<h3><a id="ServerColorAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
+<p>Inherited from
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+)._assets</p>
 <hr>
 <h3><a id="ServerColorAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.alpha">alpha</a></p>
+<p>ServerColorAsset.alpha</p>
 <p>Inherited from
-WithColorAsset.alpha</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).alpha</p>
 <hr>
 <h3><a id="ServerColorAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.assetIds">assetIds</a></p>
+<p>ServerColorAsset.assetIds</p>
 <p>Inherited from
-WithColorAsset.assetIds</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetIds</p>
 <hr>
-<h3><a id="ServerColorAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h3><a id="ServerColorAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.assetManager">assetManager</a></p>
+<p>ServerColorAsset.assetManager</p>
 <p>Inherited from
-WithColorAsset.assetManager</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetManager</p>
 <hr>
-<h3><a id="ServerColorAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code></p>
+<h3><a id="ServerColorAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.assetObject">assetObject</a></p>
+<p>ServerColorAsset.assetObject</p>
 <p>Inherited from
-WithColorAsset.assetObject</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetObject</p>
 <hr>
 <h3><a id="ServerColorAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.assets">assets</a></p>
+<p>ServerColorAsset.assets</p>
 <p>Inherited from
-WithColorAsset.assets</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assets</p>
 <hr>
 <h3><a id="ServerColorAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.canBeContainer">canBeContainer</a></p>
+<p>ServerColorAsset.canBeContainer</p>
 <p>Inherited from
-WithColorAsset.canBeContainer</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).canBeContainer</p>
 <hr>
 <h3><a id="ServerColorAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.canBeContent">canBeContent</a></p>
+<p>ServerColorAsset.canBeContent</p>
 <p>Inherited from
-WithColorAsset.canBeContent</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).canBeContent</p>
 <hr>
 <h3><a id="ServerColorAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.canBeFill">canBeFill</a></p>
+<p>ServerColorAsset.canBeFill</p>
 <p>Inherited from
-WithColorAsset.canBeFill</p>
-<hr>
-<h3><a id="ServerColorAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.container">container</a></p>
-<p>Inherited from
-WithColorAsset.container</p>
-<hr>
-<h3><a id="ServerColorAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.content">content</a></p>
-<p>Inherited from
-WithColorAsset.content</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).canBeFill</p>
 <hr>
 <h3><a id="ServerColorAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.decoding">decoding</a></p>
+<p>ServerColorAsset.decoding</p>
 <p>Inherited from
-WithColorAsset.decoding</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).decoding</p>
 <hr>
-<h3><a id="ServerColorAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ServerColorAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.decodings">decodings</a></p>
+<p>ServerColorAsset.decodings</p>
 <p>Inherited from
-WithColorAsset.decodings</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).decodings</p>
 <hr>
 <h3><a id="ServerColorAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>ServerColorAsset.hasIntrinsicSizing</p>
 <p>Inherited from
-WithColorAsset.hasIntrinsicSizing</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ServerColorAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.hasIntrinsicTiming</p>
+<p>Inherited from
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerColorAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.id">id</a></p>
+<p>ServerColorAsset.id</p>
 <p>Inherited from
-WithColorAsset.id</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).id</p>
 <hr>
 <h3><a id="ServerColorAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.isVector">isVector</a></p>
+<p>ServerColorAsset.isVector</p>
 <p>Inherited from
-WithColorAsset.isVector</p>
-<hr>
-<h3><a id="ServerColorAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.label">label</a></p>
-<p>Inherited from
-WithColorAsset.label</p>
-<hr>
-<h3><a id="ServerColorAssetClass.manager">manager</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>manager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<p>Inherited from
-WithColorAsset.manager</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).isVector</p>
 <hr>
 <h3><a id="ServerColorAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.probeSize">probeSize</a></p>
+<p>ServerColorAsset.probeSize</p>
 <p>Inherited from
-WithColorAsset.probeSize</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).probeSize</p>
 <hr>
-<h3><a id="ServerColorAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerColorAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.properties">properties</a></p>
+<p>ServerColorAsset.properties</p>
 <p>Inherited from
-WithColorAsset.properties</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).properties</p>
 <hr>
 <h3><a id="ServerColorAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.request">request</a></p>
+<p>ServerColorAsset.request</p>
 <p>Inherited from
-WithColorAsset.request</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).request</p>
 <hr>
 <h3><a id="ServerColorAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.resource">resource</a></p>
+<p>ServerColorAsset.resource</p>
 <p>Inherited from
-WithColorAsset.resource</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).resource</p>
 <hr>
-<h3><a id="ServerColorAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ServerColorAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.resources">resources</a></p>
+<p>ServerColorAsset.resources</p>
 <p>Inherited from
-WithColorAsset.resources</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).resources</p>
 <hr>
 <h3><a id="ServerColorAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.source">source</a></p>
+<p>ServerColorAsset.source</p>
 <p>Inherited from
-WithColorAsset.source</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).source</p>
 <hr>
 <h3><a id="ServerColorAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.targetId">targetId</a></p>
+<p>ServerColorAsset.targetId</p>
 <p>Inherited from
-WithColorAsset.targetId</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerColorAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.type">type</a></p>
+<p>ServerColorAsset.type</p>
 <p>Inherited from
-WithColorAsset.type</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ServerColorAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithColorAsset.scalarRecord</p>
-<hr>
-<h3><a id="ServerColorAssetClass.defaultAsset">defaultAsset</a></h3><p>• <code>Static</code> <code>get</code> <strong>defaultAsset</strong>(): <code><a href='ServerColorAsset.html'>ServerColorAsset</a></code></p>
-<p>Returns
-<code><a href='ServerColorAsset.html'>ServerColorAsset</a></code></p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ServerColorAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
+<h3><a id="ServerColorAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -337,27 +363,7 @@ WithColorAsset.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>assetId</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ServerAsset.html'>ServerAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.asset">asset</a></p>
-<p>Inherited from
-WithColorAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -365,7 +371,9 @@ WithColorAsset.asset</p>
 <h4>Implementation of</h4>
 <p>ServerColorAsset.asset</p>
 <p>Inherited from
-WithColorAsset.asset</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).asset</p>
 <hr>
 <h3><a id="ServerColorAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -384,12 +392,13 @@ WithColorAsset.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.assetCachePromise">assetCachePromise</a></p>
+<p>ServerColorAsset.assetCachePromise</p>
 <p>Inherited from
-WithColorAsset.assetCachePromise</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetCachePromise</p>
 <hr>
 <h3><a id="ServerColorAssetClass.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>args</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
-<p>All files needed for audible and/or visible encode commands.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -406,9 +415,34 @@ WithColorAsset.assetCachePromise</p>
 <p>Returns
 <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.assetFiles">assetFiles</a></p>
+<p>ServerColorAsset.assetFiles</p>
 <p>Inherited from
-WithColorAsset.assetFiles</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).assetFiles</p>
+<hr>
+<h3><a id="ServerColorAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.boolean</p>
+<p>Inherited from
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerColorAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -430,8 +464,12 @@ WithColorAsset.assetFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.changeScalar</p>
 <p>Inherited from
-WithColorAsset.changeScalar</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerColorAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -449,8 +487,12 @@ WithColorAsset.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.changeScalars</p>
 <p>Inherited from
-WithColorAsset.changeScalars</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerColorAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -462,19 +504,20 @@ WithColorAsset.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.clipObject">clipObject</a></p>
+<p>ServerColorAsset.clipObject</p>
 <p>Inherited from
-WithColorAsset.clipObject</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).clipObject</p>
 <hr>
 <h3><a id="ServerColorAssetClass.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<p>Writes a command file, if it&#39;s not a raw asset.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -495,9 +538,11 @@ WithColorAsset.clipObject</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.commandFilePromise">commandFilePromise</a></p>
+<p>ServerColorAsset.commandFilePromise</p>
 <p>Inherited from
-WithColorAsset.commandFilePromise</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).commandFilePromise</p>
 <hr>
 <h3><a id="ServerColorAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -520,9 +565,11 @@ WithColorAsset.commandFilePromise</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.constrainedValue">constrainedValue</a></p>
+<p>ServerColorAsset.constrainedValue</p>
 <p>Inherited from
-WithColorAsset.constrainedValue</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerColorAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -541,50 +588,11 @@ WithColorAsset.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.decodingOfType">decodingOfType</a></p>
+<p>ServerColorAsset.decodingOfType</p>
 <p>Inherited from
-WithColorAsset.decodingOfType</p>
-<hr>
-<h3><a id="ServerColorAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithColorAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerColorAsset.initializeProperties</p>
-<p>Inherited from
-WithColorAsset.initializeProperties</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).decodingOfType</p>
 <hr>
 <h3><a id="ServerColorAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -603,11 +611,13 @@ WithColorAsset.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.instanceArgs">instanceArgs</a></p>
+<p>ServerColorAsset.instanceArgs</p>
 <p>Inherited from
-WithColorAsset.instanceArgs</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).instanceArgs</p>
 <hr>
-<h3><a id="ServerColorAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='ServerColorInstance.html'>ServerColorInstance</a></code></p>
+<h3><a id="ServerColorAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code>ServerColorInstance</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -622,13 +632,15 @@ WithColorAsset.instanceArgs</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='ServerColorInstance.html'>ServerColorInstance</a></code></p>
+<code>ServerColorInstance</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.instanceFromObject">instanceFromObject</a></p>
+<p>ServerColorAsset.instanceFromObject</p>
 <p>Overrides
-WithColorAsset.instanceFromObject</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).instanceFromObject</p>
 <hr>
-<h3><a id="ServerColorAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerColorAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -638,14 +650,18 @@ WithColorAsset.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.number</p>
 <p>Inherited from
-WithColorAsset.propertiesInitialize</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).number</p>
 <hr>
 <h3><a id="ServerColorAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -664,9 +680,11 @@ WithColorAsset.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.propertyFind">propertyFind</a></p>
+<p>ServerColorAsset.propertyFind</p>
 <p>Inherited from
-WithColorAsset.propertyFind</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerColorAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -685,9 +703,11 @@ WithColorAsset.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.propertyIds">propertyIds</a></p>
+<p>ServerColorAsset.propertyIds</p>
 <p>Inherited from
-WithColorAsset.propertyIds</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerColorAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -706,9 +726,11 @@ WithColorAsset.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.propertyInstance">propertyInstance</a></p>
+<p>ServerColorAsset.propertyInstance</p>
 <p>Inherited from
-WithColorAsset.propertyInstance</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerColorAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -721,15 +743,17 @@ WithColorAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.resourceOfType">resourceOfType</a></p>
+<p>ServerColorAsset.resourceOfType</p>
 <p>Inherited from
-WithColorAsset.resourceOfType</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).resourceOfType</p>
 <hr>
 <h3><a id="ServerColorAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -752,11 +776,13 @@ WithColorAsset.resourceOfType</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.setValue">setValue</a></p>
+<p>ServerColorAsset.setValue</p>
 <p>Inherited from
-WithColorAsset.setValue</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerColorAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerColorAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -776,16 +802,45 @@ WithColorAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.shouldSelectProperty</p>
 <p>Inherited from
-WithColorAsset.shouldSelectProperty</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerColorAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorAsset.string</p>
+<p>Inherited from
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).string</p>
 <hr>
 <h3><a id="ServerColorAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.toJSON">toJSON</a></p>
+<p>ServerColorAsset.toJSON</p>
 <p>Inherited from
-WithColorAsset.toJSON</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerColorAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -812,9 +867,11 @@ WithColorAsset.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.tweenValues">tweenValues</a></p>
+<p>ServerColorAsset.tweenValues</p>
 <p>Inherited from
-WithColorAsset.tweenValues</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerColorAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -833,11 +890,13 @@ WithColorAsset.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorAsset.html">ServerColorAsset</a>.<a href="ServerColorAsset.html#ServerColorAsset.value">value</a></p>
+<p>ServerColorAsset.value</p>
 <p>Inherited from
-WithColorAsset.value</p>
+ColorAssetMixin(
+  ServerVisibleAssetMixin(VisibleAssetMixin(ServerAssetClass))
+).value</p>
 <hr>
-<h3><a id="ServerColorAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
+<h3><a id="ServerColorAssetClass.defaultAsset">defaultAsset</a></h3><p>▸ <code>Static</code> <strong>defaultAsset</strong>(<code>assetManager</code>): <code>ServerColorAsset</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -847,12 +906,12 @@ WithColorAsset.value</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ServerEvents.html#EventServerAsset'>EventServerAsset</a></code></td>
+<td align="left"><code>assetManager</code></td>
+<td align="left"><code><a href='AssetManager.html'>AssetManager</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>ServerColorAsset</code></p>
 
   </div>
 </section>
@@ -872,15 +931,12 @@ WithColorAsset.value</p>
 <li><a class='' href='#ServerColorAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ServerColorAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ServerColorAssetClass.canBeFill'>canBeFill</a></li>
-<li><a class='' href='#ServerColorAssetClass.container'>container</a></li>
-<li><a class='' href='#ServerColorAssetClass.content'>content</a></li>
 <li><a class='' href='#ServerColorAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ServerColorAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ServerColorAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerColorAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerColorAssetClass.id'>id</a></li>
 <li><a class='' href='#ServerColorAssetClass.isVector'>isVector</a></li>
-<li><a class='' href='#ServerColorAssetClass.label'>label</a></li>
-<li><a class='' href='#ServerColorAssetClass.manager'>manager</a></li>
 <li><a class='' href='#ServerColorAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ServerColorAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ServerColorAssetClass.request'>request</a></li>
@@ -890,30 +946,30 @@ WithColorAsset.value</p>
 <li><a class='' href='#ServerColorAssetClass.targetId'>targetId</a></li>
 <li><a class='' href='#ServerColorAssetClass.type'>type</a></li>
 <li><a class='' href='#ServerColorAssetClass.scalarRecord'>scalarRecord</a></li>
-<li><a class='' href='#ServerColorAssetClass.defaultAsset'>defaultAsset</a></li>
 <li><a class='' href='#ServerColorAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ServerColorAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerColorAssetClass.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerColorAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerColorAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerColorAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerColorAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerColorAssetClass.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerColorAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerColorAssetClass.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#ServerColorAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerColorAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerColorAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ServerColorAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerColorAssetClass.number'>number</a></li>
 <li><a class='' href='#ServerColorAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerColorAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerColorAssetClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerColorAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerColorAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerColorAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerColorAssetClass.string'>string</a></li>
 <li><a class='' href='#ServerColorAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerColorAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerColorAssetClass.value'>value</a></li>
-<li><a class='' href='#ServerColorAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ServerColorAssetClass.defaultAsset'>defaultAsset</a></li></ul>
       </nav>
     </main>
   </body>

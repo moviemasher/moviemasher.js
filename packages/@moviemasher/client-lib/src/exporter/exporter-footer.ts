@@ -18,39 +18,10 @@ export class ExporterFooterElement extends FooterBase {
 
   count = 0
 
-  // private handleExporterComplete(): void { 
-  //   this.count = 0
-  // }
-
-  // private handleExporterAdd(event: EventExporterAdd): void {
-  //   const { detail: assetObjects } = event
-  //   this.count += assetObjects.length
-  // }
-
-  // private handleExporterRemove(): void {
-  //   this.count -= 1
-  // }
-
   protected override rightContent(slots: Htmls): OptionalContent {
     this.loadComponent('movie-masher-button')
     const htmls = [...slots]
     htmls.push(html`$RIGHT $CONTENT`)
-    // const { count } = this
-    // no detail means close any current dialog
-    // htmls.push(html`
-    //   <movie-masher-button
-    //     emit='${EventDialog.Type}' 
-    //     string='Cancel'
-    //   ></movie-masher-button>
-    // `)
-    // htmls.push(html`
-    //   <movie-masher-button 
-    //     icon='add'
-    //     string='Import ${count}'
-    //     emit='${EventExporterComplete.Type}' 
-    //     disabled='${count ? nothing : true}' 
-    //   ></movie-masher-button>
-    // `)
     return super.rightContent(htmls)
   }
 

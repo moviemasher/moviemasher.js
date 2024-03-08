@@ -1,7 +1,7 @@
 import type { AssetObject } from '@moviemasher/shared-lib/types.js'
 
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventAssetObjects } from '../../utility/events.js'
+import { EventAssetObjects } from '../../module/event.js'
 import { ERROR, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { requestJsonRecordPromise } from '../../utility/request.js'
 import { isArray } from '@moviemasher/shared-lib/utility/guard.js'

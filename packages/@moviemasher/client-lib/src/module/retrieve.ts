@@ -15,6 +15,8 @@ const audioContext = () => {
 }
 
 export const audioRetrieveFunction: RetrieveFunction = resource => {
+  assertDefined(resource)
+
   const result = { data: 'OK' }
   const { request } = resource
   const { response } = request
@@ -58,6 +60,7 @@ export const audioRetrieveFunction: RetrieveFunction = resource => {
 }
 
 export const videoRetrieveFunction: RetrieveFunction = resource => {
+  assertDefined(resource)
   const result = { data: 'OK' }
   const { request } = resource
   const { response, resourcePromise } = request
@@ -98,6 +101,7 @@ export const videoRetrieveFunction: RetrieveFunction = resource => {
 }
 
 export const imageRetrieveFunction: RetrieveFunction = resource => {
+  assertDefined(resource)
   const result = { data: 'OK' }
   const { request } = resource
   const { response, resourcePromise } = request
@@ -125,6 +129,8 @@ export const imageRetrieveFunction: RetrieveFunction = resource => {
 }
 
 export const urlRetrieveFunction: RetrieveFunction = resource => {
+  assertDefined(resource)
+  
   const { request } = resource
   const { objectUrl, urlPromise } = request
   if (objectUrl) return Promise.resolve({ data: objectUrl })

@@ -1,12 +1,14 @@
-import type {  ClipLocation } from '../types.js'
+import type { ClipLocation } from '../types.js'
 import type { ClientAssets,AssetObject, AssetObjects, RawType, DataOrError, Source, Strings, Clips } from '@moviemasher/shared-lib/types.js'
 
-import { INDEX_LAST, X_MOVIEMASHER, eventStop, isClientAsset } from '../runtime.js'
-import { EventManagedAssetPromise, EventAddAssets, EventImport, EventImportFile, EventImportManagedAssets, EventMoveClip, EventTrackClips } from './events.js'
+import { INDEX_LAST, X_MOVIEMASHER } from './constants.js'
+import { eventStop } from '../module/event.js'
+import { EventManagedAssetPromise, EventAddAssets, EventImport, EventImportFile, EventImportManagedAssets, EventMoveClip, EventTrackClips } from '../module/event.js'
 import { ERROR, MOVIE_MASHER, $RAW, errorPromise, isRawType, isDefiniteError, jsonParse, isAssetObject } from '@moviemasher/shared-lib/runtime.js'
 import { isNumber, isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 import { pixelToFrame } from '@moviemasher/shared-lib/utility/pixel.js'
 import { isObject, isString } from '@moviemasher/shared-lib/utility/guard.js'
+import { isClientAsset } from '@moviemasher/shared-lib/utility/client-guards.js'
 
 interface DragAssetObject {
   assetObject: AssetObject
@@ -49,7 +51,7 @@ const dropFiles = async (fileList: FileList, mashIndex?: ClipLocation): Promise<
       for (const assetObject of assetObjects) {
         
         const event = new EventManagedAssetPromise(assetObject)
-        MOVIE_MASHER.dispatch(event)
+        MOVIE_MASHER.dispatchCustom(event)
         const { promise } = event.detail
         if (!promise) continue
         
@@ -63,11 +65,11 @@ const dropFiles = async (fileList: FileList, mashIndex?: ClipLocation): Promise<
       }
       if (assets.length) {
         const addEvent = new EventAddAssets(assets, mashIndex)
-        MOVIE_MASHER.dispatch(addEvent) 
+        MOVIE_MASHER.dispatchCustom(addEvent) 
       }
     }
     // console.log('dropFiles EventImportManagedAssets', assetObjects.length)
-    MOVIE_MASHER.dispatch(new EventImportManagedAssets(assetObjects)) 
+    MOVIE_MASHER.dispatchCustom(new EventImportManagedAssets(assetObjects)) 
   }
   return assetObjects
 }
@@ -98,14 +100,14 @@ export const dragData = (dataTransfer?: DataTransfer, type?: TransferType) => {
 
 export const dropFile = (file: File, source: Source = $RAW): Promise<DataOrError<AssetObject>> => {
   const event = new EventImportFile(file, source)
-  MOVIE_MASHER.dispatch(event)
+  MOVIE_MASHER.dispatchCustom(event)
   const { promise } = event.detail
   return promise || errorPromise(ERROR.Unimplemented, EventImportFile.Type)
 }
 
 export const dropRawFiles = (fileList: FileList) => {
   const event = new EventImport(fileList)
-  MOVIE_MASHER.dispatch(event)
+  MOVIE_MASHER.dispatchCustom(event)
   return event.detail.promise
 }
 
@@ -135,7 +137,7 @@ export const dropped = async (event: DragEvent, clipLocation?: ClipLocation) => 
         const { assetObject } = data
         if (clipLocation) {
           const event = new EventManagedAssetPromise(assetObject)
-          MOVIE_MASHER.dispatch(event)
+          MOVIE_MASHER.dispatchCustom(event)
           const { promise } = event.detail
           if (!promise) return
         
@@ -145,11 +147,11 @@ export const dropped = async (event: DragEvent, clipLocation?: ClipLocation) => 
           const { data: asset } = orError
           if (!isClientAsset(asset)) return
 
-          MOVIE_MASHER.dispatch(new EventAddAssets([asset], clipLocation)) 
+          MOVIE_MASHER.dispatchCustom(new EventAddAssets([asset], clipLocation)) 
         }
       } else if (clipLocation) {
         const moveEvent = new EventMoveClip(clipLocation)
-        MOVIE_MASHER.dispatch(moveEvent)
+        MOVIE_MASHER.dispatchCustom(moveEvent)
       }
     } else {
       // console.log('dropped with no offset', data)
@@ -164,7 +166,7 @@ export const droppedMashIndex = (dataTransfer: DataTransfer, trackIndex = INDEX_
   let isDense = false
   if (isPositive(trackIndex)) {
     const event = new EventTrackClips(trackIndex)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { clips, dense } = event.detail
     if (clips) {
       clientClips.push(...clips)

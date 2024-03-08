@@ -1,5 +1,5 @@
 import type { Application } from 'express'
-import type { WebServerArgs } from './Server.js'
+import type { WebServerArgs } from '../types.js'
 import type { ServeStaticOptions } from 'serve-static'
 
 import Express from 'express'

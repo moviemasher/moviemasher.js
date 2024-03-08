@@ -1,22 +1,29 @@
-import type { RawTypes, Assets, DataOrError, ManageTypes, Size, Sources } from '@moviemasher/shared-lib/types.js'
+import type { RawTypes, Assets, DataOrError, ManageTypes, Size, Sources, ManageType } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
 import type { ClipLocation } from '../types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { $BROWSER, DASH, MOVIE_MASHER, SIZE_ZERO, arrayFromOneOrMore, arrayRemove, isRawType, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { $BROWSER, DASH, MOVIE_MASHER, SIZE_ZERO, arrayFromOneOrMore, arrayRemove, isRawType, isDefiniteError, $IMPORT } from '@moviemasher/shared-lib/runtime.js'
 import { isAboveZero } from '@moviemasher/shared-lib/utility/guard.js'
 import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
 import { html } from 'lit-html'
 import { Component, ComponentLoader } from '../base/component.js'
 import { Scroller } from '../base/component-view.js'
 import { DISABLABLE_DECLARATIONS, DROP_TARGET_CSS, DisablableMixin, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
-import { isManageType } from '../runtime.js'
-import { EventAssetElement, EventPick, EventPicked, EventChangedManagedAssets, EventManagedAssets, EventWillDestroy, EventCanDestroy } from '../utility/events.js'
+import { EventAssetElement, EventPick, EventPicked, EventChangedManagedAssets, EventManagedAssets, EventWillDestroy, EventCanDestroy } from '../module/event.js'
 import { AssetObjectsParams } from '../types.js'
 import { droppingFiles } from '../utility/draganddrop.js'
+import { $REFERENCE } from '../utility/constants.js'
+
+const MANAGE_TYPES = [$IMPORT, $REFERENCE]
+
+export const isManageType = (value: any): value is ManageType => (
+  MANAGE_TYPES.includes(value as ManageType)
+)
 
 export const BrowserContentCenterTag = 'movie-masher-browser-content-center'
+
 const WithDisablable = DisablableMixin(Scroller)
 const WithSizeReactive = SizeReactiveMixin(WithDisablable)
 const WithDropTarget = DropTargetMixin(WithSizeReactive)
@@ -38,7 +45,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
     if (isAboveZero(types.length + sources.length)) {
       const params: AssetObjectsParams = { manageTypes, sorts, sources, types }
       const event = new EventManagedAssets(params)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise } = event.detail
       if (promise) {
         this.assetsPromise = promise
@@ -48,7 +55,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
             const { data } = orError
             const assetIds = this.assets.map(asset => asset.id)
             this.assets = data          
-            MOVIE_MASHER.dispatch(new EventCanDestroy(assetIds))
+            MOVIE_MASHER.dispatchCustom(new EventCanDestroy(assetIds))
             this.requestUpdate()
           }
         })
@@ -64,7 +71,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
     this.listeners[EventWillDestroy.Type] = this.handleWillDestroy.bind(this)
     this.listeners[EventChangedManagedAssets.Type] = this.handleChangedManagedAssets.bind(this)
     const event = new EventPicked($BROWSER)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     this.pick(event.detail.picked)
     super.connectedCallback()
   }
@@ -106,7 +113,7 @@ export class BrowserContentCenterElement extends WithDropTarget {
           }
           const label = String(asset.value('label') || '')
           const event = new EventAssetElement(id, iconSize, cover, label, icons, labels)
-          MOVIE_MASHER.dispatch(event)
+          MOVIE_MASHER.dispatchCustom(event)
           const { element } = event.detail
           if (element) {
             contents.push(element)

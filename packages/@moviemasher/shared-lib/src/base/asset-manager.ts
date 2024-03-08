@@ -1,6 +1,6 @@
 import type { Asset, AssetArgs, AssetManager, AssetObject, AssetObjects, Assets, DataOrError, Identified, Strings } from '../types.js'
 
-import { $COLOR, $IMAGE, $JS, $SHAPE, COLON, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, ERROR, MOVIE_MASHER, errorPromise, isAssetObject, isDefiniteError, namedError } from '../runtime.js'
+import { $COLOR, $DEFAULT, $IMAGE, $JS, $SHAPE, COLON, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, ERROR, MOVIE_MASHER, assertTuple, errorPromise, isAssetObject, isDefiniteError, namedError } from '../runtime.js'
 import { requestUrl } from '../utility/request.js'
 
 export class AssetManagerClass implements AssetManager {
@@ -37,7 +37,7 @@ export class AssetManagerClass implements AssetManager {
   protected fromCall(assetObject: AssetObject): Asset | undefined {
     const args: AssetArgs = { ...assetObject, assetManager: this }
     const { id, source, type } = args
-    const assetOrError = MOVIE_MASHER.call<Asset, AssetArgs>(source, type, args)
+    const assetOrError = MOVIE_MASHER.call<DataOrError<Asset>, AssetArgs>(source, args, type)
     if (isDefiniteError(assetOrError)) return 
 
     const { data: asset } = assetOrError
@@ -64,9 +64,10 @@ export class AssetManagerClass implements AssetManager {
     if (!resource) return errorPromise(ERROR.Unavailable, id)
 
     const { request } = resource
-    const [moduleId, exportedAs] = requestUrl(request).split(COLON)
-    
-    const functionOrError = await MOVIE_MASHER.load<Asset, AssetArgs>(type, source, moduleId, exportedAs)
+    const [moduleId, exportedAs = $DEFAULT] = requestUrl(request).split(COLON)
+    const tuple = [moduleId, exportedAs]
+    assertTuple<string>(tuple)
+    const functionOrError = await MOVIE_MASHER.load<DataOrError<Asset>, AssetArgs>(source, tuple, type)
 
     if (isDefiniteError(functionOrError)) return functionOrError
   

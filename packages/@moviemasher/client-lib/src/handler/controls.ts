@@ -1,21 +1,21 @@
-import type { ControlInput, ControlProperty, SelectedProperties, SelectedProperty, Timeout } from '../types.js'
 import type { BooleanRecord, Constrained, DataType, ListenersFunction, Property, PropertyId, PropertyIds, Scalar, Size, Strings, TargetId } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit-element/lit-element.js'
-import type { TemplateContents, Control, ControlGroup, OptionalContent } from '../client-types.js'
+import type { Control, ControlGroup, OptionalContent, TemplateContents } from '../client-types.js'
+import type { ControlInput, ControlProperty, SelectedProperties, SelectedProperty, Timeout } from '../types.js'
+import type { EventControlDetail } from '../utility/event-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
+import { $ASPECT, $ASSET, $BOOLEAN, $BOTTOM, $CLIP, $CONTAINER, $CONTAINER_ID, $CONTENT_ID, $CROP, $END, $FLIP, $FRAME, $FRAMES, $HEIGHT, $LEFT, $LOCK, $MASH, $NUMBER, $OPACITY, $PERCENT, $RGB, $RIGHT, $SIZE, $STRING, $TOP, $WIDTH, DIRECTIONS_SIDE, DOT, MOVIE_MASHER, POINT_KEYS, SIZE_KEYS, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { isClientAsset } from '@moviemasher/shared-lib/utility/client-guards.js'
+import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertDefined, assertPopulatedString, isPropertyId, isTargetId } from '@moviemasher/shared-lib/utility/guards.js'
 import { containSize } from '@moviemasher/shared-lib/utility/rect.js'
-import { $FRAMES, $LOCK, $OPACITY, $SIZE, MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventManagedAssetPromise, EventAssetId, EventChangeFrame, EventChangeScalar, EventEdited, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventControl, EventControlGroup, EventManagedAssetIcon, EventMashAsset, EventScalar, EventSelectedProperties, EventTimeRange, StringEvent, EventRequestUpdate } from '../utility/events.js'
-import { $ASPECT, $ASSET, $BOOLEAN, $BOTTOM, $CLIP, $CONTAINER, $CONTAINER_ID, $CONTENT_ID, $CROP, DIRECTIONS_SIDE, DOT, $END, $FLIP, $FRAME, $HEIGHT, $LEFT, $MASH, $NUMBER, $PERCENT, POINT_KEYS, $RGB, $RIGHT, SIZE_KEYS, $STRING, $TOP, $WIDTH, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
 import { Component, ComponentLoader } from '../base/component.js'
 import { DROP_TARGET_CSS, DropTargetMixin, SIZE_REACTIVE_DECLARATIONS, SizeReactiveMixin } from '../mixin/component.js'
+import { EventAssetId, EventChangeFrame, EventChangeScalar, EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventClipId, EventControl, EventControlGroup, EventEdited, EventManagedAssetIcon, EventManagedAssetPromise, EventMashAsset, EventRequestUpdate, EventScalar, EventSelectedProperties, EventTimeRange, StringEvent } from '../module/event.js'
+import { $INSERT, $REMOVE } from '../utility/constants.js'
 import { dragData, dropRawFiles, droppingFiles, isDragAssetObject } from '../utility/draganddrop.js'
-import { EventControlDetail } from '../types.js'
-import { isClientAsset } from '../runtime.js'
-import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
 
 export function ControlGroupMixin
 <T extends Constrained<ComponentLoader>>(Base: T): 
@@ -27,15 +27,12 @@ T & Constrained<ControlGroup> {
     }
 
     addOrRemoveEnd(addOrRemove: string, propertyNamePrefix: string): void {
-      const value = addOrRemove ==='remove' ? undefined : this.currentValue(propertyNamePrefix)
+      const value = addOrRemove === $REMOVE ? undefined : this.currentValue(propertyNamePrefix)
       const endName = `${propertyNamePrefix}${$END}`
       const endPropertyId = this.namePropertyId(endName)
-      if (!endPropertyId) {
-        // console.warn(this.tagName, 'addOrRemoveEnd', { endPropertyId, addOrRemove, value })
-        return
-      }
-      // console.log(this.tagName, 'addOrRemoveEnd', endPropertyId)
-      MOVIE_MASHER.dispatch(new EventChangeScalar(endPropertyId, value))
+      if (!endPropertyId) return
+    
+      MOVIE_MASHER.dispatchCustom(new EventChangeScalar(endPropertyId, value))
     }
 
     controlContent(name: string, icon?: string, more?: OptionalContent): OptionalContent {
@@ -75,9 +72,9 @@ T & Constrained<ControlGroup> {
   
       this.loadComponent('movie-masher-link')
       const event = new EventScalar(endPropertyId)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const defined = isDefined(event.detail.value)
-      const addOrRemove = defined ? 'remove' : 'add'
+      const addOrRemove = defined ? $REMOVE : $INSERT
       const input = defined ? this.controlInputContent(endPropertyId): undefined
       return html`
         ${input}
@@ -123,7 +120,7 @@ T & Constrained<ControlGroup> {
 
     selectedProperty(propertyId: PropertyId): SelectedProperty | undefined {
       const propertiesEvent = new EventSelectedProperties([propertyId])
-      MOVIE_MASHER.dispatch(propertiesEvent)
+      MOVIE_MASHER.dispatchCustom(propertiesEvent)
       const { selectedProperties } = propertiesEvent.detail
       if (!selectedProperties?.length) {
         // console.warn(this.tagName, 'addOrRemoveEnd', 'no selected properties')
@@ -138,7 +135,7 @@ T & Constrained<ControlGroup> {
       if (!propertyId) return
 
       const event = new EventScalar(propertyId)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       return event.detail.value 
     }
 
@@ -209,7 +206,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (!propertyId) return false
 
       const event = new EventScalar(`${propertyId}${$END}`)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       return isDefined(event.detail.value)
     }
 
@@ -232,18 +229,18 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (isEnd || this.endValueDefined) {
         // console.debug(this.tagName, propertyId, 'handleInput $END DEFINED')
         const event = new EventTimeRange()
-        MOVIE_MASHER.dispatch(event)
+        MOVIE_MASHER.dispatchCustom(event)
         const { detail: { timeRange } } = event
         if (timeRange) {
           const frame = isEnd ? timeRange.last : timeRange.frame
           // console.debug(this.tagName, propertyId, 'handleInput GOING', frame)
-          MOVIE_MASHER.dispatch(new EventChangeFrame(frame))
+          MOVIE_MASHER.dispatchCustom(new EventChangeFrame(frame))
         }
       }
       // console.debug(this.tagName, this.propertyId, 'handleInput', inputValue)
       selectedProperty.value = inputValue
 
-      MOVIE_MASHER.dispatch(new EventChangeScalar(propertyId, inputValue))
+      MOVIE_MASHER.dispatchCustom(new EventChangeScalar(propertyId, inputValue))
     }
 
     get input(): ControlInput | undefined {
@@ -285,7 +282,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       if (!propertyId) return
 
       const event = new EventScalar(propertyId)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       return event.detail.value
     }
 
@@ -303,7 +300,7 @@ export function ControlMixin<T extends Constrained<Component & ControlProperty>>
       }
       const selectedProperties: SelectedProperties = []
       const event = new EventSelectedProperties([propertyId], selectedProperties)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { length } = selectedProperties
       switch (length) {
         case 0: {
@@ -410,18 +407,18 @@ export function ControlPropertyMixin<T extends Constrained<Component>>(Base: T):
       switch (targetId) {
         case $MASH: {
           const event = new EventMashAsset()
-          MOVIE_MASHER.dispatch(event)
+          MOVIE_MASHER.dispatchCustom(event)
           return event.detail.mashAsset?.id
         }
         case $ASSET: {
           const event = new EventAssetId()
-          MOVIE_MASHER.dispatch(event)
-          return event.detail.assetId
+          MOVIE_MASHER.dispatchCustom(event)
+          return event.detail.id
         }
         default: {
           const event = new EventClipId()
-          MOVIE_MASHER.dispatch(event)
-          return event.detail.clipId
+          MOVIE_MASHER.dispatchCustom(event)
+          return event.detail.id
         }
       }
     }
@@ -488,7 +485,6 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
   private _iconPromise?: Promise<void>
 
   private get iconPromise() {
-    // if (this._iconPromise) console.debug(this.tagName, this.propertyId, 'iconPromise', 'returning existing promise')
     return this._iconPromise ||= this.iconPromiseInitialize
   }
 
@@ -502,7 +498,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
 
     // console.debug(this.tagName, this.propertyId, 'iconPromiseInitialize', { scalar, iconSize })
     const event = new EventManagedAssetIcon(scalar, iconSize, true)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { promise } = event.detail 
     if (!promise) return Promise.resolve()
 
@@ -558,7 +554,7 @@ export class AssetControlElement extends AssetWithDropTarget implements Control 
       if (!assetObject) return
 
       const assetEvent = new EventManagedAssetPromise(assetObject)
-      MOVIE_MASHER.dispatch(assetEvent)
+      MOVIE_MASHER.dispatchCustom(assetEvent)
 
       const { promise } = assetEvent.detail
       if (!promise) return
@@ -1434,7 +1430,7 @@ export class LocationControlGroupElement extends LocationWithSizeReactive implem
     if (!propertyId) return
     
     const scalar = this.propertyIdValue(propertyId)
-    MOVIE_MASHER.dispatch(new EventChangeScalar(propertyId, !scalar))
+    MOVIE_MASHER.dispatchCustom(new EventChangeScalar(propertyId, !scalar))
   }
 
   protected handleX(event: StringEvent) {

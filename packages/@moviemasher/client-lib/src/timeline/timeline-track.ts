@@ -6,7 +6,7 @@ import { ResizeController } from '@lit-labs/observers/resize-controller.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventEdited, EventClipElement, EventTrackClips, EventScrollRoot } from '../utility/events.js'
+import { EventEdited, EventClipElement, EventTrackClips, EventScrollRoot } from '../module/event.js'
 import { html } from 'lit-html'
 import { Component, ComponentLoader } from '../base/component.js'
 import { DropTargetMixin } from '../mixin/component.js'
@@ -44,7 +44,7 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
 
     const contents: TemplateContents = []
     const event = new EventTrackClips(trackIndex)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { clips } = event.detail
     const byId: Record<string, Element> = {}
     if (clips?.length) {
@@ -55,7 +55,7 @@ export class TimelineTrackElement extends WithDropTargetMixin implements DropTar
         const left = pixelFromFrame(frame, scale, 'floor')
         const existing = elementsById[clip.id]
         const event = new EventClipElement(clip.id, maxWidth, scale, trackIndex, trackWidth, width, left, label, existing)
-        MOVIE_MASHER.dispatch(event)
+        MOVIE_MASHER.dispatchCustom(event)
         const { element } = event.detail
         if (!element) return
         

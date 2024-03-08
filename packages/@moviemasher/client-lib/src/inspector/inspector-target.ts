@@ -5,8 +5,8 @@ import type { TemplateContent, TemplateContents, OptionalContent } from '../clie
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventPropertyIds } from '../utility/events.js'
-import { EventControlGroupDetail } from '../types.js'
+import { EventChangedAssetId, EventChangedClipId, EventChangedMashAsset, EventControlGroup, EventPropertyIds } from '../module/event.js'
+import { EventControlGroupDetail } from '../utility/event-types.js'
 import { $ASSET, $MASH, arraySet, sortByOrder } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { Component } from '../base/component.js'
@@ -37,7 +37,7 @@ export class InspectorTargetElement extends ComponentLoader {
 
       // see if anyone wants to group some of the remaining selected properties
       const event = new EventControlGroup(propertyIds, groupedPropertyIds)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       if (!groupedPropertyIds.length) break
 
       const { detail } = event
@@ -89,7 +89,7 @@ export class InspectorTargetElement extends ComponentLoader {
     if (!targetId) return []
     
     const event = new EventPropertyIds([targetId])
-    MOVIE_MASHER.dispatch(event)  
+    MOVIE_MASHER.dispatchCustom(event)  
     const { propertyIds } = event.detail
     return propertyIds
   }

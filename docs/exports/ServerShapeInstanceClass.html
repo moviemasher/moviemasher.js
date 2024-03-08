@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerShapeInstanceClass"><h2>ServerShapeInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ServerShapeInstanceClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerShapeInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerShapeInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithShapeInstance</code></p>
+<li><p><code><a href='ServerInstanceClass.html'>ServerInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code> &amp; <code><a href='ShapeInstance.html'>ShapeInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerShapeInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerShapeInstance.html'>ServerShapeInstance</a></code></li>
+<li><code>ServerShapeInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerShapeInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerShapeInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ServerShapeInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerShapeInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,254 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ShapeInstanceObject.html'>ShapeInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithShapeInstance.constructor</p>
+<p>Inherited from
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ServerShapeInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithShapeInstance._id</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+)._id</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithShapeInstance._label</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerShapeAsset.html'>ServerShapeAsset</a></code></p>
+<h3><a id="ServerShapeInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ServerShapeAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.asset">asset</a></p>
+<p>ServerShapeInstance.asset</p>
 <p>Overrides
-WithShapeInstance.asset</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.assetId">assetId</a></p>
+<p>ServerShapeInstance.assetId</p>
 <p>Inherited from
-WithShapeInstance.assetId</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.assetIds">assetIds</a></p>
+<p>ServerShapeInstance.assetIds</p>
 <p>Inherited from
-WithShapeInstance.assetIds</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithShapeInstance.bottomCrop</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.canBeMuted">canBeMuted</a></p>
+<p>ServerShapeInstance.canBeMuted</p>
 <p>Inherited from
-WithShapeInstance.canBeMuted</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.clip">clip</a></p>
+<p>ServerShapeInstance.clip</p>
 <p>Inherited from
-WithShapeInstance.clip</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.container">container</a></p>
-<p>Inherited from
-WithShapeInstance.container</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.cropDirections">cropDirections</a></p>
+<p>ServerShapeInstance.cropDirections</p>
 <p>Inherited from
-WithShapeInstance.cropDirections</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<h3><a id="ServerShapeInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithShapeInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.height">height</a></p>
-<p>Inherited from
-WithShapeInstance.height</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithShapeInstance.heightEnd</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.id">id</a></p>
+<p>ServerShapeInstance.id</p>
 <p>Inherited from
-WithShapeInstance.id</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.instanceObject">instanceObject</a></p>
+<p>ServerShapeInstance.instanceObject</p>
 <p>Inherited from
-WithShapeInstance.instanceObject</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ServerShapeInstance.intrinsicRect</p>
 <p>Inherited from
-WithShapeInstance.intrinsicRect</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.isDefault">isDefault</a></p>
+<p>ServerShapeInstance.isDefault</p>
 <p>Inherited from
-WithShapeInstance.isDefault</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithShapeInstance.leftCrop</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.lock">lock</a></p>
-<p>Inherited from
-WithShapeInstance.lock</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.muted">muted</a></p>
+<p>ServerShapeInstance.muted</p>
 <p>Inherited from
-WithShapeInstance.muted</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ServerShapeInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.opacityEnd">opacityEnd</a></p>
+<p>ServerShapeInstance.properties</p>
 <p>Inherited from
-WithShapeInstance.opacityEnd</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ServerShapeInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.pointAspect">pointAspect</a></p>
+<p>ServerShapeInstance.sizeKey</p>
 <p>Inherited from
-WithShapeInstance.pointAspect</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).sizeKey</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerShapeInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.properties">properties</a></p>
+<p>ServerShapeInstance.targetId</p>
 <p>Inherited from
-WithShapeInstance.properties</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithShapeInstance.rightCrop</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithShapeInstance.sizeAspect</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithShapeInstance.sizeKey</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.targetId">targetId</a></p>
-<p>Inherited from
-WithShapeInstance.targetId</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithShapeInstance.topCrop</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.tweening">tweening</a></p>
+<p>ServerShapeInstance.tweening</p>
 <p>Inherited from
-WithShapeInstance.tweening</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.width">width</a></p>
-<p>Inherited from
-WithShapeInstance.width</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithShapeInstance.widthEnd</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.x">x</a></p>
-<p>Inherited from
-WithShapeInstance.x</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithShapeInstance.xEnd</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.y">y</a></p>
-<p>Inherited from
-WithShapeInstance.y</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithShapeInstance.yEnd</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ServerShapeInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithShapeInstance.isAudio</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithShapeInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithShapeInstance.label</p>
-<hr>
 <h3><a id="ServerShapeInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithShapeInstance.scalarRecord</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ServerShapeInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -419,9 +319,34 @@ WithShapeInstance.scalarRecord</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.assetTime">assetTime</a></p>
+<p>ServerShapeInstance.assetTime</p>
 <p>Inherited from
-WithShapeInstance.assetTime</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ServerShapeInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerShapeInstance.boolean</p>
+<p>Inherited from
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -443,8 +368,12 @@ WithShapeInstance.assetTime</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerShapeInstance.changeScalar</p>
 <p>Inherited from
-WithShapeInstance.changeScalar</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -462,8 +391,12 @@ WithShapeInstance.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerShapeInstance.changeScalars</p>
 <p>Inherited from
-WithShapeInstance.changeScalars</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -476,7 +409,7 @@ WithShapeInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -486,9 +419,11 @@ WithShapeInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.clippedElement">clippedElement</a></p>
+<p>ServerShapeInstance.clippedElement</p>
 <p>Inherited from
-WithShapeInstance.clippedElement</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>cacheArgs</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -507,9 +442,11 @@ WithShapeInstance.clippedElement</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.commandFiles">commandFiles</a></p>
+<p>ServerShapeInstance.commandFiles</p>
 <p>Inherited from
-WithShapeInstance.commandFiles</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).commandFiles</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -532,9 +469,11 @@ WithShapeInstance.commandFiles</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.constrainedValue">constrainedValue</a></p>
+<p>ServerShapeInstance.constrainedValue</p>
 <p>Inherited from
-WithShapeInstance.constrainedValue</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -561,11 +500,13 @@ WithShapeInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.containedItem">containedItem</a></p>
+<p>ServerShapeInstance.containedItem</p>
 <p>Inherited from
-WithShapeInstance.containedItem</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ServerShapeInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -579,16 +520,18 @@ WithShapeInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.containerRects">containerRects</a></p>
+<p>ServerShapeInstance.containerRects</p>
 <p>Inherited from
-WithShapeInstance.containerRects</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -607,9 +550,11 @@ WithShapeInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ServerShapeInstance.containerSvgItem</p>
 <p>Inherited from
-WithShapeInstance.containerSvgItem</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -636,9 +581,11 @@ WithShapeInstance.containerSvgItem</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.contentRect">contentRect</a></p>
+<p>ServerShapeInstance.contentRect</p>
 <p>Inherited from
-WithShapeInstance.contentRect</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -657,9 +604,11 @@ WithShapeInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.contentRects">contentRects</a></p>
+<p>ServerShapeInstance.contentRects</p>
 <p>Inherited from
-WithShapeInstance.contentRects</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -678,9 +627,11 @@ WithShapeInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ServerShapeInstance.contentSvgItem</p>
 <p>Inherited from
-WithShapeInstance.contentSvgItem</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -699,50 +650,11 @@ WithShapeInstance.contentSvgItem</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.frames">frames</a></p>
+<p>ServerShapeInstance.frames</p>
 <p>Inherited from
-WithShapeInstance.frames</p>
-<hr>
-<h3><a id="ServerShapeInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithShapeInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerShapeInstance.initializeProperties</p>
-<p>Inherited from
-WithShapeInstance.initializeProperties</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -761,9 +673,11 @@ WithShapeInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ServerShapeInstance.instanceCachePromise</p>
 <p>Inherited from
-WithShapeInstance.instanceCachePromise</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -782,11 +696,13 @@ WithShapeInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ServerShapeInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithShapeInstance.intrinsicsKnown</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerShapeInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -796,14 +712,18 @@ WithShapeInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerShapeInstance.number</p>
 <p>Inherited from
-WithShapeInstance.propertiesInitialize</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -822,9 +742,11 @@ WithShapeInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.propertyFind">propertyFind</a></p>
+<p>ServerShapeInstance.propertyFind</p>
 <p>Inherited from
-WithShapeInstance.propertyFind</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -843,9 +765,11 @@ WithShapeInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.propertyIds">propertyIds</a></p>
+<p>ServerShapeInstance.propertyIds</p>
 <p>Inherited from
-WithShapeInstance.propertyIds</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -864,9 +788,11 @@ WithShapeInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.propertyInstance">propertyInstance</a></p>
+<p>ServerShapeInstance.propertyInstance</p>
 <p>Inherited from
-WithShapeInstance.propertyInstance</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -889,9 +815,11 @@ WithShapeInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.scaleRects">scaleRects</a></p>
+<p>ServerShapeInstance.scaleRects</p>
 <p>Inherited from
-WithShapeInstance.scaleRects</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -914,11 +842,13 @@ WithShapeInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.setValue">setValue</a></p>
+<p>ServerShapeInstance.setValue</p>
 <p>Inherited from
-WithShapeInstance.setValue</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerShapeInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerShapeInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -938,8 +868,35 @@ WithShapeInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerShapeInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithShapeInstance.shouldSelectProperty</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerShapeInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerShapeInstance.string</p>
+<p>Inherited from
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -966,17 +923,21 @@ WithShapeInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.svgVector">svgVector</a></p>
+<p>ServerShapeInstance.svgVector</p>
 <p>Inherited from
-WithShapeInstance.svgVector</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.toJSON">toJSON</a></p>
+<p>ServerShapeInstance.toJSON</p>
 <p>Inherited from
-WithShapeInstance.toJSON</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1003,9 +964,11 @@ WithShapeInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.tweenValues">tweenValues</a></p>
+<p>ServerShapeInstance.tweenValues</p>
 <p>Inherited from
-WithShapeInstance.tweenValues</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1024,9 +987,11 @@ WithShapeInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.tweens">tweens</a></p>
+<p>ServerShapeInstance.tweens</p>
 <p>Inherited from
-WithShapeInstance.tweens</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1045,9 +1010,11 @@ WithShapeInstance.tweens</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.value">value</a></p>
+<p>ServerShapeInstance.value</p>
 <p>Inherited from
-WithShapeInstance.value</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).value</p>
 <hr>
 <h3><a id="ServerShapeInstanceClass.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>, <code>content?</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -1070,9 +1037,11 @@ WithShapeInstance.value</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerShapeInstance.html">ServerShapeInstance</a>.<a href="ServerShapeInstance.html#ServerShapeInstance.visibleCommandFiles">visibleCommandFiles</a></p>
+<p>ServerShapeInstance.visibleCommandFiles</p>
 <p>Inherited from
-WithShapeInstance.visibleCommandFiles</p>
+ShapeInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).visibleCommandFiles</p>
 
   </div>
 </section>
@@ -1084,44 +1053,25 @@ WithShapeInstance.visibleCommandFiles</p>
         <ul><li><a class='' href='#ServerShapeInstanceClass'>ServerShapeInstanceClass</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerShapeInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ServerShapeInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.container'>container</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.cropDirections'>cropDirections</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.height'>height</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.id'>id</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.width'>width</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.x'>x</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.y'>y</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.label'>label</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerShapeInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1134,16 +1084,16 @@ WithShapeInstance.visibleCommandFiles</p>
 <li><a class='' href='#ServerShapeInstanceClass.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerShapeInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerShapeInstanceClass.number'>number</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerShapeInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerShapeInstanceClass.tweenValues'>tweenValues</a></li>

@@ -2,7 +2,7 @@ import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventTranslate } from '../utility/events.js'
+import { EventTranslate } from '../module/event.js'
 import { isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { OptionalContent } from '../client-types.js'
 import { Component } from '../base/component.js'
@@ -37,7 +37,7 @@ export class WordElement extends Component {
   private get stringEventPromise() {
     const { string } = this
     const event = new EventTranslate(string) 
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     return event.detail.promise
   }
 

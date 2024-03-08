@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientRawVideoInstanceClass"><h2>ClientRawVideoInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ClientRawVideoInstanceClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawVideoInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawVideoInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithVideoInstance</code></p>
+<li><p><code><a href='ClientInstanceClass.html'>ClientInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='AudibleInstance.html'>AudibleInstance</a></code> &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ClientAudibleInstance.html'>ClientAudibleInstance</a></code> &amp; <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='VideoInstance.html'>VideoInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientRawVideoInstanceClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ClientRawVideoInstance.html'>ClientRawVideoInstance</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientRawVideoInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientRawVideoInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientRawVideoInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientRawVideoInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,290 +153,230 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VideoInstanceObject.html'>VideoInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithVideoInstance.constructor</p>
+<p>Inherited from
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ClientRawVideoInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithVideoInstance._id</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithVideoInstance._label</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+)._id</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ClientRawVideoAsset.html'>ClientRawVideoAsset</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.asset">asset</a></p>
 <p>Overrides
-WithVideoInstance.asset</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).asset</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.assetId">assetId</a></p>
 <p>Inherited from
-WithVideoInstance.assetId</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).assetId</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.assetIds">assetIds</a></p>
 <p>Inherited from
-WithVideoInstance.assetIds</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithVideoInstance.bottomCrop</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).assetIds</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.canBeMuted">canBeMuted</a></p>
 <p>Inherited from
-WithVideoInstance.canBeMuted</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).canBeMuted</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='ClientClip.html'>ClientClip</a></code> &amp; <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.clip">clip</a></p>
 <p>Inherited from
-WithVideoInstance.clip</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.container">container</a></p>
-<p>Inherited from
-WithVideoInstance.container</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).clip</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.cropDirections">cropDirections</a></p>
 <p>Inherited from
-WithVideoInstance.cropDirections</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).cropDirections</p>
 <hr>
-<h3><a id="ClientRawVideoInstanceClass.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.directions">directions</a></p>
+<h3><a id="ClientRawVideoInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithVideoInstance.directions</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.endTrim">endTrim</a></h3><p>• <strong>endTrim</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.endTrim">endTrim</a></p>
-<p>Inherited from
-WithVideoInstance.endTrim</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.gain">gain</a></h3><p>• <strong>gain</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.gain">gain</a></p>
-<p>Inherited from
-WithVideoInstance.gain</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.gainPairs">gainPairs</a></h3><p>• <strong>gainPairs</strong>: <code><a href='Numbers.html'>Numbers</a></code>[]</p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.gainPairs">gainPairs</a></p>
-<p>Inherited from
-WithVideoInstance.gainPairs</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<p>Inherited from
-WithVideoInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.height">height</a></p>
-<p>Inherited from
-WithVideoInstance.height</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithVideoInstance.heightEnd</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.id">id</a></p>
 <p>Inherited from
-WithVideoInstance.id</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).id</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.instanceObject">instanceObject</a></p>
 <p>Inherited from
-WithVideoInstance.instanceObject</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).instanceObject</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.intrinsicRect">intrinsicRect</a></p>
 <p>Inherited from
-WithVideoInstance.intrinsicRect</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).intrinsicRect</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.isDefault">isDefault</a></p>
 <p>Inherited from
-WithVideoInstance.isDefault</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithVideoInstance.leftCrop</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.lock">lock</a></p>
-<p>Inherited from
-WithVideoInstance.lock</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).isDefault</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.muted">muted</a></p>
 <p>Inherited from
-WithVideoInstance.muted</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).muted</p>
 <hr>
-<h3><a id="ClientRawVideoInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.opacityEnd">opacityEnd</a></p>
-<p>Inherited from
-WithVideoInstance.opacityEnd</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.pointAspect">pointAspect</a></p>
-<p>Inherited from
-WithVideoInstance.pointAspect</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientRawVideoInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.properties">properties</a></p>
 <p>Inherited from
-WithVideoInstance.properties</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).properties</p>
 <hr>
-<h3><a id="ClientRawVideoInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithVideoInstance.rightCrop</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithVideoInstance.sizeAspect</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
+<h3><a id="ClientRawVideoInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.sizeKey">sizeKey</a></p>
 <p>Inherited from
-WithVideoInstance.sizeKey</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.speed">speed</a></h3><p>• <strong>speed</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.speed">speed</a></p>
-<p>Inherited from
-WithVideoInstance.speed</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.startTrim">startTrim</a></h3><p>• <strong>startTrim</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.startTrim">startTrim</a></p>
-<p>Inherited from
-WithVideoInstance.startTrim</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).sizeKey</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.targetId">targetId</a></p>
 <p>Inherited from
-WithVideoInstance.targetId</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithVideoInstance.topCrop</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).targetId</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.tweening">tweening</a></p>
 <p>Inherited from
-WithVideoInstance.tweening</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.width">width</a></p>
-<p>Inherited from
-WithVideoInstance.width</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithVideoInstance.widthEnd</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.x">x</a></p>
-<p>Inherited from
-WithVideoInstance.x</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithVideoInstance.xEnd</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.y">y</a></p>
-<p>Inherited from
-WithVideoInstance.y</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithVideoInstance.yEnd</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ClientRawVideoInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithVideoInstance.isAudio</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithVideoInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithVideoInstance.label</p>
-<hr>
 <h3><a id="ClientRawVideoInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithVideoInstance.scalarRecord</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ClientRawVideoInstanceClass.assetFrames">assetFrames</a></h3><p>▸ <strong>assetFrames</strong>(<code>quantize</code>): <code><a href='Numbers.html'>Numbers</a></code></p>
 <h4>Parameters</h4>
@@ -458,7 +398,13 @@ WithVideoInstance.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.assetFrames">assetFrames</a></p>
 <p>Inherited from
-WithVideoInstance.assetFrames</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).assetFrames</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -479,7 +425,13 @@ WithVideoInstance.assetFrames</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.assetTime">assetTime</a></p>
 <p>Inherited from
-WithVideoInstance.assetTime</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).assetTime</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.audiblePreviewPromise">audiblePreviewPromise</a></h3><p>▸ <strong>audiblePreviewPromise</strong>(<code>outputSize</code>, <code>scale?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -502,7 +454,40 @@ WithVideoInstance.assetTime</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithVideoInstance.audiblePreviewPromise</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).audiblePreviewPromise</p>
+<hr>
+<h3><a id="ClientRawVideoInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.boolean">boolean</a></p>
+<p>Inherited from
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).boolean</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -527,7 +512,13 @@ WithVideoInstance.audiblePreviewPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithVideoInstance.changeScalar</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).changeScalar</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -548,7 +539,13 @@ WithVideoInstance.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithVideoInstance.changeScalars</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).changeScalars</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -561,7 +558,7 @@ WithVideoInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -573,7 +570,13 @@ WithVideoInstance.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.clippedElement">clippedElement</a></p>
 <p>Inherited from
-WithVideoInstance.clippedElement</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).clippedElement</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.clippedElementPromise">clippedElementPromise</a></h3><p>▸ <strong>clippedElementPromise</strong>(<code>content</code>, <code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -596,7 +599,13 @@ WithVideoInstance.clippedElement</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithVideoInstance.clippedElementPromise</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).clippedElementPromise</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -621,7 +630,13 @@ WithVideoInstance.clippedElementPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithVideoInstance.constrainedValue</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -650,9 +665,15 @@ WithVideoInstance.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.containedItem">containedItem</a></p>
 <p>Inherited from
-WithVideoInstance.containedItem</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).containedItem</p>
 <hr>
-<h3><a id="ClientRawVideoInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ClientRawVideoInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -666,7 +687,7 @@ WithVideoInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
@@ -675,7 +696,13 @@ WithVideoInstance.containedItem</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.containerRects">containerRects</a></p>
 <p>Inherited from
-WithVideoInstance.containerRects</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).containerRects</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -696,7 +723,13 @@ WithVideoInstance.containerRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.containerSvgItem">containerSvgItem</a></p>
 <p>Overrides
-WithVideoInstance.containerSvgItem</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).containerSvgItem</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.containerSvgItemPromise">containerSvgItemPromise</a></h3><p>▸ <strong>containerSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -715,7 +748,13 @@ WithVideoInstance.containerSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Overrides
-WithVideoInstance.containerSvgItemPromise</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).containerSvgItemPromise</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -744,7 +783,13 @@ WithVideoInstance.containerSvgItemPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.contentRect">contentRect</a></p>
 <p>Inherited from
-WithVideoInstance.contentRect</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).contentRect</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -765,7 +810,13 @@ WithVideoInstance.contentRect</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.contentRects">contentRects</a></p>
 <p>Inherited from
-WithVideoInstance.contentRects</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).contentRects</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -786,7 +837,13 @@ WithVideoInstance.contentRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.contentSvgItem">contentSvgItem</a></p>
 <p>Overrides
-WithVideoInstance.contentSvgItem</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).contentSvgItem</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.contentSvgItemPromise">contentSvgItemPromise</a></h3><p>▸ <strong>contentSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -805,7 +862,13 @@ WithVideoInstance.contentSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Overrides
-WithVideoInstance.contentSvgItemPromise</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).contentSvgItemPromise</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -826,48 +889,13 @@ WithVideoInstance.contentSvgItemPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.frames">frames</a></p>
 <p>Inherited from
-WithVideoInstance.frames</p>
-<hr>
-<h3><a id="ClientRawVideoInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithVideoInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientRawVideoInstance.initializeProperties</p>
-<p>Inherited from
-WithVideoInstance.initializeProperties</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).frames</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -888,7 +916,13 @@ WithVideoInstance.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.instanceCachePromise">instanceCachePromise</a></p>
 <p>Inherited from
-WithVideoInstance.instanceCachePromise</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -909,9 +943,15 @@ WithVideoInstance.instanceCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.intrinsicsKnown">intrinsicsKnown</a></p>
 <p>Inherited from
-WithVideoInstance.intrinsicsKnown</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ClientRawVideoInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientRawVideoInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -921,14 +961,22 @@ WithVideoInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.number">number</a></p>
 <p>Inherited from
-WithVideoInstance.propertiesInitialize</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).number</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -949,7 +997,13 @@ WithVideoInstance.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithVideoInstance.propertyFind</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).propertyFind</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -970,7 +1024,13 @@ WithVideoInstance.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithVideoInstance.propertyIds</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).propertyIds</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -991,7 +1051,13 @@ WithVideoInstance.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithVideoInstance.propertyInstance</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -1016,7 +1082,13 @@ WithVideoInstance.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.scaleRects">scaleRects</a></p>
 <p>Inherited from
-WithVideoInstance.scaleRects</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).scaleRects</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -1041,9 +1113,15 @@ WithVideoInstance.scaleRects</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.setValue">setValue</a></p>
 <p>Inherited from
-WithVideoInstance.setValue</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).setValue</p>
 <hr>
-<h3><a id="ClientRawVideoInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientRawVideoInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1063,8 +1141,43 @@ WithVideoInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithVideoInstance.shouldSelectProperty</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientRawVideoInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.string">string</a></p>
+<p>Inherited from
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).string</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -1093,7 +1206,13 @@ WithVideoInstance.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.svgVector">svgVector</a></p>
 <p>Inherited from
-WithVideoInstance.svgVector</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).svgVector</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -1101,7 +1220,13 @@ WithVideoInstance.svgVector</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.toJSON">toJSON</a></p>
 <p>Inherited from
-WithVideoInstance.toJSON</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).toJSON</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1130,7 +1255,13 @@ WithVideoInstance.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithVideoInstance.tweenValues</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).tweenValues</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1151,15 +1282,27 @@ WithVideoInstance.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.tweens">tweens</a></p>
 <p>Inherited from
-WithVideoInstance.tweens</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).tweens</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.unload">unload</a></p>
-<p>Overrides
-WithVideoInstance.unload</p>
+<p>Inherited from
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).unload</p>
 <hr>
 <h3><a id="ClientRawVideoInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>name</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1180,7 +1323,13 @@ WithVideoInstance.unload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawVideoInstance.html">ClientRawVideoInstance</a>.<a href="ClientRawVideoInstance.html#ClientRawVideoInstance.value">value</a></p>
 <p>Inherited from
-WithVideoInstance.value</p>
+VideoInstanceMixin(
+  ClientVisibleInstanceMixin(
+    ClientAudibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ClientInstanceClass))
+    )
+  )
+).value</p>
 
   </div>
 </section>
@@ -1192,52 +1341,27 @@ WithVideoInstance.value</p>
         <ul><li><a class='' href='#ClientRawVideoInstanceClass'>ClientRawVideoInstanceClass</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.container'>container</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.directions'>directions</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.endTrim'>endTrim</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.gain'>gain</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.gainPairs'>gainPairs</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.height'>height</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.id'>id</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.sizeKey'>sizeKey</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.speed'>speed</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.startTrim'>startTrim</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.width'>width</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.x'>x</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.y'>y</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.label'>label</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.assetFrames'>assetFrames</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.assetTime'>assetTime</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.audiblePreviewPromise'>audiblePreviewPromise</a></li>
+<li><a class='' href='#ClientRawVideoInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1252,16 +1376,16 @@ WithVideoInstance.value</p>
 <li><a class='' href='#ClientRawVideoInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.contentSvgItemPromise'>contentSvgItemPromise</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ClientRawVideoInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientRawVideoInstanceClass.number'>number</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawVideoInstanceClass.string'>string</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawVideoInstanceClass.tweenValues'>tweenValues</a></li>

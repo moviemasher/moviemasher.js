@@ -3,8 +3,8 @@ import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { SELECTED } from '../runtime.js'
-import { EventPick, EventPicked, StringEvent } from '../utility/events.js'
+import { $SELECTED } from '../utility/constants.js'
+import { EventPick, EventPicked, StringEvent } from '../module/event.js'
 import { $BROWSER, RAW_TYPES,MOVIE_MASHER,  $AUDIO, DASH, $IMAGE, $MASH, $RAW, $SHAPE, $TEXT, $VIDEO, VISIBLE_TYPES } from '@moviemasher/shared-lib/runtime.js'
 import { html, nothing } from 'lit-html'
 import { Component } from '../base/component.js'
@@ -28,7 +28,7 @@ export class PickerElement extends ComponentSlotter {
     this.listeners[PickerEventType] = this.handlePicker.bind(this)
     this.listeners[EventPick.Type] = this.handlePick.bind(this)
     this.listeners[EventPicked.Type] = this.handlePicked.bind(this)
-    this.dispatch()
+    this.dispatchPickEvent()
     super.connectedCallback()
   }
  
@@ -38,12 +38,12 @@ export class PickerElement extends ComponentSlotter {
     `
   }
 
-  private dispatch() {
+  private dispatchPickEvent() {
     const { selected, picker } = this
     if (!selected) return
 
     const event = new EventPick(picker, selected)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
   }
 
   private handlePick(event: EventPick) {
@@ -74,7 +74,7 @@ export class PickerElement extends ComponentSlotter {
     const part = rest.join(DASH) 
     // console.log(this.tagName, 'handlePicker', this.picker, part)
 
-    MOVIE_MASHER.dispatch(new EventPick(picker, part))
+    MOVIE_MASHER.dispatchCustom(new EventPick(picker, part))
     event.stopImmediatePropagation()
   }
 
@@ -122,7 +122,7 @@ export class PickerElement extends ComponentSlotter {
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties)
-    if (changedProperties.has(SELECTED)) this.dispatch()
+    if (changedProperties.has($SELECTED)) this.dispatchPickEvent()
   }
   static override properties: PropertyDeclarations = {
     ...ComponentSlotter.properties,

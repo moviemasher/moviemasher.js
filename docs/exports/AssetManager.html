@@ -132,6 +132,82 @@
   <div class="section">
     <h1>Interface: AssetManager</h1>
 <p><a href="../shared-lib.html">shared-lib</a>.AssetManager</p>
+<h2>Implemented by</h2>
+<ul>
+<li><code><a href='AssetManagerClass.html'>AssetManagerClass</a></code></li>
+</ul>
+<h2>Methods</h2>
+<h3><a id="AssetManager.define">define</a></h3><p>▸ <strong>define</strong>(<code>...assetObjects</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Assets.html'>Assets</a></code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...assetObjects</code></td>
+<td align="left">(<code><a href='Identified.html'>Identified</a></code> | <code><a href='AssetObject.html'>AssetObject</a></code>)[]</td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Assets.html'>Assets</a></code>&gt;&gt;</p>
+<hr>
+<h3><a id="AssetManager.get">get</a></h3><p>▸ <strong>get</strong>(<code>id</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Asset.html'>Asset</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Asset.html'>Asset</a></code>&gt;</p>
+<hr>
+<h3><a id="AssetManager.undefine">undefine</a></h3><p>▸ <strong>undefine</strong>(<code>id?</code>): <code>void</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id?</code></td>
+<td align="left"><code>string</code> | <code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
+<hr>
+<h3><a id="AssetManager.updateDefinitionId">updateDefinitionId</a></h3><p>▸ <strong>updateDefinitionId</strong>(<code>previousId</code>, <code>currentId</code>): <code>void</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>previousId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>currentId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
 
   </div>
 </section>
@@ -140,7 +216,11 @@
       <nav>
         <input type='checkbox' id='nav-input-last'>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
-        <ul><li><a class='' href='#AssetManager'>AssetManager</a></li></ul>
+        <ul><li><a class='' href='#AssetManager'>AssetManager</a></li>
+<li><a class='' href='#AssetManager.define'>define</a></li>
+<li><a class='' href='#AssetManager.get'>get</a></li>
+<li><a class='' href='#AssetManager.undefine'>undefine</a></li>
+<li><a class='' href='#AssetManager.updateDefinitionId'>updateDefinitionId</a></li></ul>
       </nav>
     </main>
   </body>

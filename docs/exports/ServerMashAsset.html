@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerMashAsset"><h2>ServerMashAsset</h2></a>
   <div class="section">
     <h1>Interface: ServerMashAsset</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerMashAsset</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerMashAsset</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='MashAsset.html'>MashAsset</a></code></p>
@@ -152,7 +152,7 @@
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ServerMashAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h3><a id="ServerMashAsset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetManager">assetManager</a></p>
 <hr>
@@ -164,13 +164,9 @@
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assets">assets</a></p>
 <hr>
-<h3><a id="ServerMashAsset.clips">clips</a></h3><p>• <strong>clips</strong>: <code><a href='ServerClips.html'>ServerClips</a></code></p>
-<p>Overrides
-MashAsset.clips</p>
-<hr>
-<h3><a id="ServerMashAsset.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
+<h3><a id="ServerMashAsset.clips">clips</a></h3><p>• <strong>clips</strong>: <code><a href='Clips.html'>Clips</a></code></p>
 <p>Inherited from
-MashAsset.color</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.clips">clips</a></p>
 <hr>
 <h3><a id="ServerMashAsset.decoding">decoding</a></h3><p>• <code>Optional</code> <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <p>Inherited from
@@ -182,35 +178,31 @@ MashAsset.color</p>
 <hr>
 <h3><a id="ServerMashAsset.duration">duration</a></h3><p>• <strong>duration</strong>: <code>number</code></p>
 <p>Inherited from
-MashAsset.duration</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.duration">duration</a></p>
 <hr>
 <h3><a id="ServerMashAsset.endTime">endTime</a></h3><p>• <strong>endTime</strong>: <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
-MashAsset.endTime</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.endTime">endTime</a></p>
+<hr>
+<h3><a id="ServerMashAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<hr>
+<h3><a id="ServerMashAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
 <hr>
 <h3><a id="ServerMashAsset.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.id">id</a></p>
 <hr>
-<h3><a id="ServerMashAsset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.label">label</a></p>
-<hr>
-<h3><a id="ServerMashAsset.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<p>Inherited from
-MashAsset.loop</p>
-<hr>
 <h3><a id="ServerMashAsset.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
 <p>Inherited from
-MashAsset.mashIndex</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.mashIndex">mashIndex</a></p>
 <hr>
 <h3><a id="ServerMashAsset.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.properties">properties</a></p>
-<hr>
-<h3><a id="ServerMashAsset.quantize">quantize</a></h3><p>• <strong>quantize</strong>: <code>number</code></p>
-<p>Inherited from
-MashAsset.quantize</p>
 <hr>
 <h3><a id="ServerMashAsset.request">request</a></h3><p>• <code>Optional</code> <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <p>Inherited from
@@ -226,7 +218,7 @@ MashAsset.quantize</p>
 <hr>
 <h3><a id="ServerMashAsset.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-MashAsset.size</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.size">size</a></p>
 <hr>
 <h3><a id="ServerMashAsset.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <p>Inherited from
@@ -238,17 +230,17 @@ MashAsset.size</p>
 <hr>
 <h3><a id="ServerMashAsset.totalFrames">totalFrames</a></h3><p>• <strong>totalFrames</strong>: <code>number</code></p>
 <p>Inherited from
-MashAsset.totalFrames</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.totalFrames">totalFrames</a></p>
 <hr>
 <h3><a id="ServerMashAsset.tracks">tracks</a></h3><p>• <strong>tracks</strong>: <code><a href='Track.html'>Track</a></code>[]</p>
 <p>Inherited from
-MashAsset.tracks</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.tracks">tracks</a></p>
 <hr>
 <h3><a id="ServerMashAsset.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.type">type</a></p>
 <h2>Methods</h2>
-<h3><a id="ServerMashAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h3><a id="ServerMashAsset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -258,8 +250,8 @@ MashAsset.tracks</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -306,6 +298,67 @@ MashAsset.tracks</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.assetFiles">assetFiles</a></p>
 <hr>
+<h3><a id="ServerMashAsset.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.boolean">boolean</a></p>
+<hr>
+<h3><a id="ServerMashAsset.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="ServerMashAsset.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.changeScalars">changeScalars</a></p>
+<hr>
 <h3><a id="ServerMashAsset.clipInstance">clipInstance</a></h3><p>▸ <strong>clipInstance</strong>(<code>object</code>): <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -323,7 +376,7 @@ MashAsset.tracks</p>
 <p>Returns
 <code><a href='Clip.html'>Clip</a></code></p>
 <p>Inherited from
-MashAsset.clipInstance</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.clipInstance">clipInstance</a></p>
 <hr>
 <h3><a id="ServerMashAsset.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -361,9 +414,9 @@ MashAsset.clipInstance</p>
 <p>Returns
 <code><a href='Clips.html'>Clips</a></code></p>
 <p>Inherited from
-MashAsset.clipsAudibleInTime</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.clipsAudibleInTime">clipsAudibleInTime</a></p>
 <hr>
-<h3><a id="ServerMashAsset.clipsInTimeOfType">clipsInTimeOfType</a></h3><p>▸ <strong>clipsInTimeOfType</strong>(<code>time</code>, <code>avType?</code>): <code><a href='ServerClips.html'>ServerClips</a></code></p>
+<h3><a id="ServerMashAsset.clipsInTimeOfType">clipsInTimeOfType</a></h3><p>▸ <strong>clipsInTimeOfType</strong>(<code>time</code>, <code>avType?</code>): <code><a href='Clips.html'>Clips</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -382,9 +435,9 @@ MashAsset.clipsAudibleInTime</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='ServerClips.html'>ServerClips</a></code></p>
-<p>Overrides
-MashAsset.clipsInTimeOfType</p>
+<code><a href='Clips.html'>Clips</a></code></p>
+<p>Inherited from
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.clipsInTimeOfType">clipsInTimeOfType</a></p>
 <hr>
 <h3><a id="ServerMashAsset.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <p>Writes a command file, if it&#39;s not a raw asset.</p>
@@ -452,25 +505,6 @@ MashAsset.clipsInTimeOfType</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.decodingOfType">decodingOfType</a></p>
 <hr>
-<h3><a id="ServerMashAsset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.initializeProperties">initializeProperties</a></p>
-<hr>
 <h3><a id="ServerMashAsset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -526,7 +560,26 @@ MashAsset.clipsInTimeOfType</p>
 <p>Returns
 <code><a href='ServerMashDescription.html'>ServerMashDescription</a></code></p>
 <p>Overrides
-MashAsset.mashDescription</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.mashDescription">mashDescription</a></p>
+<hr>
+<h3><a id="ServerMashAsset.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.number">number</a></p>
 <hr>
 <h3><a id="ServerMashAsset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -585,7 +638,7 @@ MashAsset.mashDescription</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ServerMashAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h3><a id="ServerMashAsset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -595,8 +648,8 @@ MashAsset.mashDescription</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>...type</code></td>
-<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -627,6 +680,48 @@ MashAsset.mashDescription</p>
 <p>Inherited from
 <a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.setValue">setValue</a></p>
 <hr>
+<h3><a id="ServerMashAsset.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ServerMashAsset.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ServerAsset.html">ServerAsset</a>.<a href="ServerAsset.html#ServerAsset.string">string</a></p>
+<hr>
 <h3><a id="ServerMashAsset.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
@@ -650,7 +745,7 @@ MashAsset.mashDescription</p>
 <p>Returns
 <code><a href='Track.html'>Track</a></code></p>
 <p>Inherited from
-MashAsset.trackInstance</p>
+<a href="MashAsset.html">MashAsset</a>.<a href="MashAsset.html#MashAsset.trackInstance">trackInstance</a></p>
 <hr>
 <h3><a id="ServerMashAsset.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
 <h4>Parameters</h4>
@@ -711,17 +806,15 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ServerMashAsset.assetObject'>assetObject</a></li>
 <li><a class='' href='#ServerMashAsset.assets'>assets</a></li>
 <li><a class='' href='#ServerMashAsset.clips'>clips</a></li>
-<li><a class='' href='#ServerMashAsset.color'>color</a></li>
 <li><a class='' href='#ServerMashAsset.decoding'>decoding</a></li>
 <li><a class='' href='#ServerMashAsset.decodings'>decodings</a></li>
 <li><a class='' href='#ServerMashAsset.duration'>duration</a></li>
 <li><a class='' href='#ServerMashAsset.endTime'>endTime</a></li>
+<li><a class='' href='#ServerMashAsset.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerMashAsset.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerMashAsset.id'>id</a></li>
-<li><a class='' href='#ServerMashAsset.label'>label</a></li>
-<li><a class='' href='#ServerMashAsset.loop'>loop</a></li>
 <li><a class='' href='#ServerMashAsset.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#ServerMashAsset.properties'>properties</a></li>
-<li><a class='' href='#ServerMashAsset.quantize'>quantize</a></li>
 <li><a class='' href='#ServerMashAsset.request'>request</a></li>
 <li><a class='' href='#ServerMashAsset.resource'>resource</a></li>
 <li><a class='' href='#ServerMashAsset.resources'>resources</a></li>
@@ -734,6 +827,9 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ServerMashAsset.asset'>asset</a></li>
 <li><a class='' href='#ServerMashAsset.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerMashAsset.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerMashAsset.boolean'>boolean</a></li>
+<li><a class='' href='#ServerMashAsset.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#ServerMashAsset.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerMashAsset.clipInstance'>clipInstance</a></li>
 <li><a class='' href='#ServerMashAsset.clipObject'>clipObject</a></li>
 <li><a class='' href='#ServerMashAsset.clipsAudibleInTime'>clipsAudibleInTime</a></li>
@@ -741,15 +837,17 @@ MashAsset.trackInstance</p>
 <li><a class='' href='#ServerMashAsset.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerMashAsset.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerMashAsset.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#ServerMashAsset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerMashAsset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerMashAsset.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#ServerMashAsset.mashDescription'>mashDescription</a></li>
+<li><a class='' href='#ServerMashAsset.number'>number</a></li>
 <li><a class='' href='#ServerMashAsset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerMashAsset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerMashAsset.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerMashAsset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerMashAsset.setValue'>setValue</a></li>
+<li><a class='' href='#ServerMashAsset.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerMashAsset.string'>string</a></li>
 <li><a class='' href='#ServerMashAsset.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerMashAsset.trackInstance'>trackInstance</a></li>
 <li><a class='' href='#ServerMashAsset.tweenValues'>tweenValues</a></li>

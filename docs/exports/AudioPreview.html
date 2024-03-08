@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,13 +131,13 @@
   <a id="AudioPreview"><h2>AudioPreview</h2></a>
   <div class="section">
     <h1>Interface: AudioPreview</h1>
-<p><a href="../client-lib.html">client-lib</a>.AudioPreview</p>
+<p><a href="../shared-lib.html">shared-lib</a>.AudioPreview</p>
 <h2>Properties</h2>
 <h3><a id="AudioPreview.buffer">buffer</a></h3><p>• <strong>buffer</strong>: <code>number</code></p>
 <hr>
 <h3><a id="AudioPreview.seconds">seconds</a></h3><p>• <strong>seconds</strong>: <code>number</code></p>
 <h2>Methods</h2>
-<h3><a id="AudioPreview.adjustClipGain">adjustClipGain</a></h3><p>▸ <strong>adjustClipGain</strong>(<code>clip</code>, <code>quantize</code>): <code>void</code></p>
+<h3><a id="AudioPreview.adjustGain">adjustGain</a></h3><p>▸ <strong>adjustGain</strong>(<code>audible</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -147,12 +147,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>clip</code></td>
-<td align="left"><code><a href='Clip.html'>Clip</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>quantize</code></td>
-<td align="left"><code>number</code></td>
+<td align="left"><code>audible</code></td>
+<td align="left"><code><a href='AudibleInstance.html'>AudibleInstance</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -178,27 +174,6 @@
 </tbody></table>
 <p>Returns
 <code>boolean</code></p>
-<hr>
-<h3><a id="AudioPreview.setGain">setGain</a></h3><p>▸ <strong>setGain</strong>(<code>value</code>, <code>quantize</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-<tr>
-<td align="left"><code>quantize</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
 <hr>
 <h3><a id="AudioPreview.startContext">startContext</a></h3><p>▸ <strong>startContext</strong>(): <code>void</code></p>
 <p>Returns
@@ -247,9 +222,8 @@
         <ul><li><a class='' href='#AudioPreview'>AudioPreview</a></li>
 <li><a class='' href='#AudioPreview.buffer'>buffer</a></li>
 <li><a class='' href='#AudioPreview.seconds'>seconds</a></li>
-<li><a class='' href='#AudioPreview.adjustClipGain'>adjustClipGain</a></li>
+<li><a class='' href='#AudioPreview.adjustGain'>adjustGain</a></li>
 <li><a class='' href='#AudioPreview.bufferClips'>bufferClips</a></li>
-<li><a class='' href='#AudioPreview.setGain'>setGain</a></li>
 <li><a class='' href='#AudioPreview.startContext'>startContext</a></li>
 <li><a class='' href='#AudioPreview.startPlaying'>startPlaying</a></li>
 <li><a class='' href='#AudioPreview.stopContext'>stopContext</a></li>

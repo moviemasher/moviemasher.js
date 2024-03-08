@@ -1,7 +1,7 @@
-import type { ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, DataType, PopulatedString, Propertied, Properties, Property, PropertyId, PropertyIds, Scalar, ScalarRecord, ScalarTuple, ScalarsById, Strings, TargetId, TargetIds, Time, TimeRange, UnknownRecord } from '../types.js'
+import type { BooleanRecord, ChangeEditObject, ChangePropertiesEditObject, ChangePropertyEditObject, DataType, NumberRecord, PopulatedString, Propertied, Properties, Property, PropertyId, PropertyIds, Scalar, ScalarRecord, ScalarTuple, ScalarsById, Strings, TargetId, TargetIds, Time, TimeRange, UnknownRecord } from '../types.js'
 
 import { $BOOLEAN, $CHANGE, $CHANGES, $CONTAINER_ID, $CONTENT_ID, $END, $FRAME, $NUMBER, $PERCENT, $RGB, $STRING, DEFAULT_CONTAINER_ID, DEFAULT_CONTENT_ID, DOT, RGB_BLACK, arrayUnique, sortByOrder, } from '../runtime.js'
-import { isBoolean, isPopulatedString, isScalar } from '../utility/guard.js'
+import { isBoolean, isObject, isPopulatedString, isScalar } from '../utility/guard.js'
 import { isNumeric } from '../utility/guard.js'
 import { isNumber } from '../utility/guard.js'
 import { isString } from '../utility/guard.js'
@@ -68,11 +68,9 @@ const propertyTypeRepresentedAsNumber = (dataType: DataType): boolean => {
 
 export class PropertiedClass implements Propertied {
   constructor(object: any) {
-    Object.entries(object).forEach(([key, value]) => {
-      if (isScalar(value)) {
-        // console.log(this.constructor.name, 'scalars', key, value)
-        this.scalars[key] = value
-      }
+    this.scalars = {}
+    const keys = Object.entries(object).forEach(([key, value]) => {
+      if (isScalar(value)) this.scalars[key] = value
     })
   }
 
@@ -209,7 +207,7 @@ export class PropertiedClass implements Propertied {
     if (property.targetId === targetId) return  property 
   }
 
-  private scalars: Partial<ScalarRecord> = {}
+  private scalars: Partial<ScalarRecord>
 
   string(id: string): string {
     const value = this.value(id)

@@ -1,9 +1,8 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
-import { VIEW } from '../runtime.js'
+import { $ENCODE, $VIEW } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { HeaderBase } from '../base/component-view.js'
-import { $ENCODE } from '@moviemasher/shared-lib/runtime.js'
 
 export const TimelineHeaderTag = 'movie-masher-timeline-header'
 /**
@@ -21,8 +20,8 @@ export class TimelineHeaderElement extends HeaderBase {
       ></movie-masher-action-server>
       <movie-masher-action-client
         icon='visible' 
-        string='${VIEW}'
-        detail='${VIEW}'
+        string='${$VIEW}'
+        detail='${$VIEW}'
       ></movie-masher-action-client>
     `)
     return super.rightContent(htmls)

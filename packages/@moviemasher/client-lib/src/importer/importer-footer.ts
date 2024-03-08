@@ -2,9 +2,10 @@ import type { PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from '../client-types.js'
 import type { DefiniteError } from '@moviemasher/shared-lib/types.js'
 
-import { EventDialog, EventImporterComplete, EventImporterAdd, EventImporterRemove, EventImporterError } from '../utility/events.js'
+import { EventDialog, EventImporterComplete, EventImporterAdd, EventImporterRemove, EventImporterError } from '../module/event.js'
 import { html, nothing } from 'lit-html'
 import { FooterBase } from '../base/component-view.js'
+import { $INSERT } from '../utility/constants.js'
 
 export const ImporterFooterTag = 'movie-masher-importer-footer'
 /**
@@ -61,7 +62,7 @@ export class ImporterFooterElement extends FooterBase {
         string='Cancel'
       ></movie-masher-button>`)
     htmls.push(html`<movie-masher-button 
-        icon='add'
+        icon='${$INSERT}'
         string='Import ${count || ''}'
         emit='${EventImporterComplete.Type}' 
         disabled='${count ? nothing : true}' 

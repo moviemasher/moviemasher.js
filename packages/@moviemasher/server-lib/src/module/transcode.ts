@@ -1,17 +1,16 @@
 
-import type { AbsolutePath, AbsolutePaths, AlphaType, DataOrError, DecodeArgs, DecodeOptions, DropResource, DropType, EndpointRequest, Probing, RawType, Resource, StringDataOrError, TranscodeFunction, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/shared-lib/types.js'
-import type { CommandFilter } from '../types.js'
+import type { CommandFilter, AbsolutePath, AbsolutePaths, AlphaType, DataOrError, DecodeArgs, DecodeOptions, DropResource, DropType, EndpointRequest, Probing, RawType, Resource, StringDataOrError, TranscodeFunction, TranscodeOptions, Transcoding, TranscodingType } from '@moviemasher/shared-lib/types.js'
+import type {  } from '../types.js'
 
 import { $ALPHA, $BITMAPS, $CEIL, $DECODE, $RETRIEVE, $IMAGE, $PROBE, $VIDEO, $WAVEFORM, ERROR, MOVIE_MASHER, PROBING_TYPES, errorPromise, isDefiniteError, isProbing, isRawType, namedError, typeOutputAlphaOptions, typeOutputOptions } from '@moviemasher/shared-lib/runtime.js'
 import { isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
-import { assertAboveZero, assertAssetResource } from '@moviemasher/shared-lib/utility/guards.js'
-import { assertSizeNotZero, coverSize, evenSize, sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
+import { assertAbsolutePath, assertAboveZero, assertAssetResource, assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
+import { sizeValueString, assertSizeNotZero, coverSize, evenSize, sizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
 import path from 'path'
 import { ffmpegCommand, ffmpegFilters, ffmpegInput, ffmpegOptions, ffmpegSavePromise } from '../command/CommandFactory.js'
-import { sizeValueString } from '../utility/command.js'
-import { ENV, ENV_KEY } from '../utility/env.js'
-import { fileNameFromOptions } from './file-write.js'
-import { assertAbsolutePath } from '../utility/guard.js'
+import {  } from '../utility/command.js'
+import { ENV, $RelativeRequestRoot, $OutputRoot } from '../utility/env.js'
+import { fileNameFromOptions } from './file.js'
 import { idUnique } from '../utility/id.js'
 import { jobHasErrored, jobHasFinished, jobHasStarted } from '../utility/job.js'
 
@@ -111,12 +110,12 @@ const transcodePromise = async (request: EndpointRequest, id: string, transcodeO
   
   const fileName = transcodingType === $BITMAPS ? transcodeFileName(duration, options) : fileNameFromOptions(options, transcodingType)
 
-  const pathFragments = [ENV.get(ENV_KEY.OutputRoot)]
+  const pathFragments = [ENV.get($OutputRoot)]
   if (prefix) pathFragments.push(prefix)
   pathFragments.push(id)
   pathFragments.push(fileName)
   const outputPath = path.join(...pathFragments)
-  const relativeRoot = ENV.get(ENV_KEY.RelativeRequestRoot)
+  const relativeRoot = ENV.get($RelativeRequestRoot)
   if (isOutputType(transcodingType)) {
     const command = ffmpegCommand()
     ffmpegInput(command, inputPath)
@@ -160,6 +159,8 @@ const transcodePromise = async (request: EndpointRequest, id: string, transcodeO
 }
 
 export const serverTranscodeFunction: TranscodeFunction = (args, jobOptions = {}) => {
+  if (!args) return errorPromise(ERROR.Syntax, args)
+
   const { user, id } = jobOptions
   const { resource, options, type: transcodingType} = args
   const { request, type: assetType } = resource

@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ServerMashAssetClass"><h2>ServerMashAssetClass</h2></a>
   <div class="section">
     <h1>Class: ServerMashAssetClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerMashAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerMashAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithMashAsset</code></p>
+<li><p><code><a href='ServerAssetClass.html'>ServerAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='MashAsset.html'>MashAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerMashAssetClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ServerMashAsset.html'>ServerMashAsset</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerMashAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerMashAssetClass</strong>(<code>object</code>, <code>manager?</code>)</p>
+<h3><a id="ServerMashAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerMashAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -154,185 +154,163 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>manager?</code></td>
-<td align="left"><code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Inherited from
-WithMashAsset.constructor</p>
+MashAssetMixin(ServerAssetClass).constructor</p>
 <h2>Properties</h2>
-<h3><a id="ServerMashAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<h3><a id="ServerMashAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
 <p>Inherited from
-WithMashAsset._assets</p>
+MashAssetMixin(ServerAssetClass)._assets</p>
 <hr>
 <h3><a id="ServerMashAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetIds">assetIds</a></p>
 <p>Inherited from
-WithMashAsset.assetIds</p>
+MashAssetMixin(ServerAssetClass).assetIds</p>
+<hr>
+<h3><a id="ServerMashAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetManager">assetManager</a></p>
+<p>Inherited from
+MashAssetMixin(ServerAssetClass).assetManager</p>
 <hr>
 <h3><a id="ServerMashAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetObject">assetObject</a></p>
 <p>Inherited from
-WithMashAsset.assetObject</p>
+MashAssetMixin(ServerAssetClass).assetObject</p>
 <hr>
 <h3><a id="ServerMashAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assets">assets</a></p>
 <p>Inherited from
-WithMashAsset.assets</p>
-<hr>
-<h3><a id="ServerMashAssetClass.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.color">color</a></p>
-<p>Inherited from
-WithMashAsset.color</p>
+MashAssetMixin(ServerAssetClass).assets</p>
 <hr>
 <h3><a id="ServerMashAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.decoding">decoding</a></p>
 <p>Inherited from
-WithMashAsset.decoding</p>
+MashAssetMixin(ServerAssetClass).decoding</p>
 <hr>
-<h3><a id="ServerMashAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ServerMashAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.decodings">decodings</a></p>
 <p>Inherited from
-WithMashAsset.decodings</p>
+MashAssetMixin(ServerAssetClass).decodings</p>
 <hr>
 <h3><a id="ServerMashAssetClass.duration">duration</a></h3><p>• <strong>duration</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.duration">duration</a></p>
 <p>Inherited from
-WithMashAsset.duration</p>
+MashAssetMixin(ServerAssetClass).duration</p>
 <hr>
 <h3><a id="ServerMashAssetClass.endTime">endTime</a></h3><p>• <strong>endTime</strong>: <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.endTime">endTime</a></p>
 <p>Inherited from
-WithMashAsset.endTime</p>
+MashAssetMixin(ServerAssetClass).endTime</p>
+<hr>
+<h3><a id="ServerMashAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<p>Inherited from
+MashAssetMixin(ServerAssetClass).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ServerMashAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<p>Inherited from
+MashAssetMixin(ServerAssetClass).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerMashAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.id">id</a></p>
 <p>Inherited from
-WithMashAsset.id</p>
-<hr>
-<h3><a id="ServerMashAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.label">label</a></p>
-<p>Inherited from
-WithMashAsset.label</p>
-<hr>
-<h3><a id="ServerMashAssetClass.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.loop">loop</a></p>
-<p>Inherited from
-WithMashAsset.loop</p>
-<hr>
-<h3><a id="ServerMashAssetClass.manager">manager</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>manager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<p>Inherited from
-WithMashAsset.manager</p>
+MashAssetMixin(ServerAssetClass).id</p>
 <hr>
 <h3><a id="ServerMashAssetClass.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.mashIndex">mashIndex</a></p>
 <p>Inherited from
-WithMashAsset.mashIndex</p>
+MashAssetMixin(ServerAssetClass).mashIndex</p>
 <hr>
-<h3><a id="ServerMashAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerMashAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.properties">properties</a></p>
 <p>Inherited from
-WithMashAsset.properties</p>
-<hr>
-<h3><a id="ServerMashAssetClass.quantize">quantize</a></h3><p>• <strong>quantize</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.quantize">quantize</a></p>
-<p>Inherited from
-WithMashAsset.quantize</p>
+MashAssetMixin(ServerAssetClass).properties</p>
 <hr>
 <h3><a id="ServerMashAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.request">request</a></p>
 <p>Inherited from
-WithMashAsset.request</p>
+MashAssetMixin(ServerAssetClass).request</p>
 <hr>
 <h3><a id="ServerMashAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.resource">resource</a></p>
 <p>Inherited from
-WithMashAsset.resource</p>
+MashAssetMixin(ServerAssetClass).resource</p>
 <hr>
-<h3><a id="ServerMashAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ServerMashAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.resources">resources</a></p>
 <p>Inherited from
-WithMashAsset.resources</p>
+MashAssetMixin(ServerAssetClass).resources</p>
 <hr>
 <h3><a id="ServerMashAssetClass.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.size">size</a></p>
 <p>Inherited from
-WithMashAsset.size</p>
+MashAssetMixin(ServerAssetClass).size</p>
 <hr>
 <h3><a id="ServerMashAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.source">source</a></p>
 <p>Inherited from
-WithMashAsset.source</p>
+MashAssetMixin(ServerAssetClass).source</p>
 <hr>
 <h3><a id="ServerMashAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.targetId">targetId</a></p>
 <p>Inherited from
-WithMashAsset.targetId</p>
+MashAssetMixin(ServerAssetClass).targetId</p>
 <hr>
 <h3><a id="ServerMashAssetClass.totalFrames">totalFrames</a></h3><p>• <strong>totalFrames</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.totalFrames">totalFrames</a></p>
 <p>Inherited from
-WithMashAsset.totalFrames</p>
+MashAssetMixin(ServerAssetClass).totalFrames</p>
 <hr>
 <h3><a id="ServerMashAssetClass.tracks">tracks</a></h3><p>• <strong>tracks</strong>: <code><a href='Track.html'>Track</a></code>[]</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.tracks">tracks</a></p>
 <p>Inherited from
-WithMashAsset.tracks</p>
+MashAssetMixin(ServerAssetClass).tracks</p>
 <hr>
 <h3><a id="ServerMashAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.type">type</a></p>
 <p>Inherited from
-WithMashAsset.type</p>
+MashAssetMixin(ServerAssetClass).type</p>
 <h2>Accessors</h2>
-<h3><a id="ServerMashAssetClass.assetManager">assetManager</a></h3><p>• <code>get</code> <strong>assetManager</strong>(): <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<p>Returns
-<code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetManager">assetManager</a></p>
-<p>Inherited from
-WithMashAsset.assetManager</p>
-<hr>
 <h3><a id="ServerMashAssetClass.clips">clips</a></h3><p>• <code>get</code> <strong>clips</strong>(): <code><a href='ServerClips.html'>ServerClips</a></code></p>
 <p>Returns
 <code><a href='ServerClips.html'>ServerClips</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.clips">clips</a></p>
 <p>Overrides
-WithMashAsset.clips</p>
+MashAssetMixin(ServerAssetClass).clips</p>
 <hr>
 <h3><a id="ServerMashAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithMashAsset.scalarRecord</p>
+MashAssetMixin(ServerAssetClass).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ServerMashAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
+<h3><a id="ServerMashAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -343,35 +321,15 @@ WithMashAsset.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>assetId</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ServerAsset.html'>ServerAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.asset">asset</a></p>
-<p>Inherited from
-WithMashAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Implementation of</h4>
-<p>ServerMashAsset.asset</p>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.asset">asset</a></p>
 <p>Inherited from
-WithMashAsset.asset</p>
+MashAssetMixin(ServerAssetClass).asset</p>
 <hr>
 <h3><a id="ServerMashAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -392,7 +350,7 @@ WithMashAsset.asset</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetCachePromise">assetCachePromise</a></p>
 <p>Inherited from
-WithMashAsset.assetCachePromise</p>
+MashAssetMixin(ServerAssetClass).assetCachePromise</p>
 <hr>
 <h3><a id="ServerMashAssetClass.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>_</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <p>All files needed for audible and/or visible encode commands.</p>
@@ -414,7 +372,28 @@ WithMashAsset.assetCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.assetFiles">assetFiles</a></p>
 <p>Overrides
-WithMashAsset.assetFiles</p>
+MashAssetMixin(ServerAssetClass).assetFiles</p>
+<hr>
+<h3><a id="ServerMashAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.boolean">boolean</a></p>
+<p>Inherited from
+MashAssetMixin(ServerAssetClass).boolean</p>
 <hr>
 <h3><a id="ServerMashAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -436,8 +415,10 @@ WithMashAsset.assetFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithMashAsset.changeScalar</p>
+MashAssetMixin(ServerAssetClass).changeScalar</p>
 <hr>
 <h3><a id="ServerMashAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -455,8 +436,10 @@ WithMashAsset.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithMashAsset.changeScalars</p>
+MashAssetMixin(ServerAssetClass).changeScalars</p>
 <hr>
 <h3><a id="ServerMashAssetClass.clipInstance">clipInstance</a></h3><p>▸ <strong>clipInstance</strong>(<code>object</code>): <code><a href='ServerClip.html'>ServerClip</a></code></p>
 <h4>Parameters</h4>
@@ -477,7 +460,7 @@ WithMashAsset.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.clipInstance">clipInstance</a></p>
 <p>Overrides
-WithMashAsset.clipInstance</p>
+MashAssetMixin(ServerAssetClass).clipInstance</p>
 <hr>
 <h3><a id="ServerMashAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -489,7 +472,7 @@ WithMashAsset.clipInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -498,7 +481,7 @@ WithMashAsset.clipInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.clipObject">clipObject</a></p>
 <p>Inherited from
-WithMashAsset.clipObject</p>
+MashAssetMixin(ServerAssetClass).clipObject</p>
 <hr>
 <h3><a id="ServerMashAssetClass.clipsAudibleInTime">clipsAudibleInTime</a></h3><p>▸ <strong>clipsAudibleInTime</strong>(<code>time</code>): <code><a href='Clips.html'>Clips</a></code></p>
 <h4>Parameters</h4>
@@ -519,7 +502,7 @@ WithMashAsset.clipObject</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.clipsAudibleInTime">clipsAudibleInTime</a></p>
 <p>Inherited from
-WithMashAsset.clipsAudibleInTime</p>
+MashAssetMixin(ServerAssetClass).clipsAudibleInTime</p>
 <hr>
 <h3><a id="ServerMashAssetClass.clipsInTimeOfType">clipsInTimeOfType</a></h3><p>▸ <strong>clipsInTimeOfType</strong>(<code>time</code>, <code>avType?</code>): <code><a href='ServerClips.html'>ServerClips</a></code></p>
 <h4>Parameters</h4>
@@ -544,7 +527,7 @@ WithMashAsset.clipsAudibleInTime</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.clipsInTimeOfType">clipsInTimeOfType</a></p>
 <p>Overrides
-WithMashAsset.clipsInTimeOfType</p>
+MashAssetMixin(ServerAssetClass).clipsInTimeOfType</p>
 <hr>
 <h3><a id="ServerMashAssetClass.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <p>Writes a command file, if it&#39;s not a raw asset.</p>
@@ -570,7 +553,7 @@ WithMashAsset.clipsInTimeOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.commandFilePromise">commandFilePromise</a></p>
 <p>Inherited from
-WithMashAsset.commandFilePromise</p>
+MashAssetMixin(ServerAssetClass).commandFilePromise</p>
 <hr>
 <h3><a id="ServerMashAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -595,7 +578,7 @@ WithMashAsset.commandFilePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithMashAsset.constrainedValue</p>
+MashAssetMixin(ServerAssetClass).constrainedValue</p>
 <hr>
 <h3><a id="ServerMashAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -616,48 +599,7 @@ WithMashAsset.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.decodingOfType">decodingOfType</a></p>
 <p>Inherited from
-WithMashAsset.decodingOfType</p>
-<hr>
-<h3><a id="ServerMashAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithMashAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerMashAsset.initializeProperties</p>
-<p>Inherited from
-WithMashAsset.initializeProperties</p>
+MashAssetMixin(ServerAssetClass).decodingOfType</p>
 <hr>
 <h3><a id="ServerMashAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -678,7 +620,7 @@ WithMashAsset.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.instanceArgs">instanceArgs</a></p>
 <p>Inherited from
-WithMashAsset.instanceArgs</p>
+MashAssetMixin(ServerAssetClass).instanceArgs</p>
 <hr>
 <h3><a id="ServerMashAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>_?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
@@ -690,7 +632,7 @@ WithMashAsset.instanceArgs</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_?</code></td>
+<td align="left"><code>_</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -699,7 +641,7 @@ WithMashAsset.instanceArgs</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Inherited from
-WithMashAsset.instanceFromObject</p>
+MashAssetMixin(ServerAssetClass).instanceFromObject</p>
 <hr>
 <h3><a id="ServerMashAssetClass.mashDescription">mashDescription</a></h3><p>▸ <strong>mashDescription</strong>(<code>options</code>): <code><a href='ServerMashDescription.html'>ServerMashDescription</a></code></p>
 <h4>Parameters</h4>
@@ -720,9 +662,9 @@ WithMashAsset.instanceFromObject</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.mashDescription">mashDescription</a></p>
 <p>Overrides
-WithMashAsset.mashDescription</p>
+MashAssetMixin(ServerAssetClass).mashDescription</p>
 <hr>
-<h3><a id="ServerMashAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerMashAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -732,14 +674,16 @@ WithMashAsset.mashDescription</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.number">number</a></p>
 <p>Inherited from
-WithMashAsset.propertiesInitialize</p>
+MashAssetMixin(ServerAssetClass).number</p>
 <hr>
 <h3><a id="ServerMashAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -760,7 +704,7 @@ WithMashAsset.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithMashAsset.propertyFind</p>
+MashAssetMixin(ServerAssetClass).propertyFind</p>
 <hr>
 <h3><a id="ServerMashAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -781,7 +725,7 @@ WithMashAsset.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithMashAsset.propertyIds</p>
+MashAssetMixin(ServerAssetClass).propertyIds</p>
 <hr>
 <h3><a id="ServerMashAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -802,7 +746,7 @@ WithMashAsset.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithMashAsset.propertyInstance</p>
+MashAssetMixin(ServerAssetClass).propertyInstance</p>
 <hr>
 <h3><a id="ServerMashAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -815,7 +759,7 @@ WithMashAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -823,7 +767,7 @@ WithMashAsset.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.resourceOfType">resourceOfType</a></p>
 <p>Inherited from
-WithMashAsset.resourceOfType</p>
+MashAssetMixin(ServerAssetClass).resourceOfType</p>
 <hr>
 <h3><a id="ServerMashAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -848,9 +792,9 @@ WithMashAsset.resourceOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.setValue">setValue</a></p>
 <p>Inherited from
-WithMashAsset.setValue</p>
+MashAssetMixin(ServerAssetClass).setValue</p>
 <hr>
-<h3><a id="ServerMashAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerMashAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -870,8 +814,31 @@ WithMashAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithMashAsset.shouldSelectProperty</p>
+MashAssetMixin(ServerAssetClass).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerMashAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.string">string</a></p>
+<p>Inherited from
+MashAssetMixin(ServerAssetClass).string</p>
 <hr>
 <h3><a id="ServerMashAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -879,7 +846,7 @@ WithMashAsset.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.toJSON">toJSON</a></p>
 <p>Inherited from
-WithMashAsset.toJSON</p>
+MashAssetMixin(ServerAssetClass).toJSON</p>
 <hr>
 <h3><a id="ServerMashAssetClass.trackInstance">trackInstance</a></h3><p>▸ <strong>trackInstance</strong>(<code>args</code>): <code><a href='ServerTrack.html'>ServerTrack</a></code></p>
 <h4>Parameters</h4>
@@ -900,7 +867,7 @@ WithMashAsset.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.trackInstance">trackInstance</a></p>
 <p>Overrides
-WithMashAsset.trackInstance</p>
+MashAssetMixin(ServerAssetClass).trackInstance</p>
 <hr>
 <h3><a id="ServerMashAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -929,7 +896,7 @@ WithMashAsset.trackInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithMashAsset.tweenValues</p>
+MashAssetMixin(ServerAssetClass).tweenValues</p>
 <hr>
 <h3><a id="ServerMashAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -950,7 +917,7 @@ WithMashAsset.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ServerMashAsset.html">ServerMashAsset</a>.<a href="ServerMashAsset.html#ServerMashAsset.value">value</a></p>
 <p>Inherited from
-WithMashAsset.value</p>
+MashAssetMixin(ServerAssetClass).value</p>
 
   </div>
 </section>
@@ -963,20 +930,18 @@ WithMashAsset.value</p>
 <li><a class='' href='#ServerMashAssetClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerMashAssetClass._assets'>_assets</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetIds'>assetIds</a></li>
+<li><a class='' href='#ServerMashAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ServerMashAssetClass.assets'>assets</a></li>
-<li><a class='' href='#ServerMashAssetClass.color'>color</a></li>
 <li><a class='' href='#ServerMashAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ServerMashAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ServerMashAssetClass.duration'>duration</a></li>
 <li><a class='' href='#ServerMashAssetClass.endTime'>endTime</a></li>
+<li><a class='' href='#ServerMashAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerMashAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerMashAssetClass.id'>id</a></li>
-<li><a class='' href='#ServerMashAssetClass.label'>label</a></li>
-<li><a class='' href='#ServerMashAssetClass.loop'>loop</a></li>
-<li><a class='' href='#ServerMashAssetClass.manager'>manager</a></li>
 <li><a class='' href='#ServerMashAssetClass.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#ServerMashAssetClass.properties'>properties</a></li>
-<li><a class='' href='#ServerMashAssetClass.quantize'>quantize</a></li>
 <li><a class='' href='#ServerMashAssetClass.request'>request</a></li>
 <li><a class='' href='#ServerMashAssetClass.resource'>resource</a></li>
 <li><a class='' href='#ServerMashAssetClass.resources'>resources</a></li>
@@ -986,12 +951,12 @@ WithMashAsset.value</p>
 <li><a class='' href='#ServerMashAssetClass.totalFrames'>totalFrames</a></li>
 <li><a class='' href='#ServerMashAssetClass.tracks'>tracks</a></li>
 <li><a class='' href='#ServerMashAssetClass.type'>type</a></li>
-<li><a class='' href='#ServerMashAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ServerMashAssetClass.clips'>clips</a></li>
 <li><a class='' href='#ServerMashAssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerMashAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerMashAssetClass.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerMashAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerMashAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerMashAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerMashAssetClass.clipInstance'>clipInstance</a></li>
@@ -1001,17 +966,17 @@ WithMashAsset.value</p>
 <li><a class='' href='#ServerMashAssetClass.commandFilePromise'>commandFilePromise</a></li>
 <li><a class='' href='#ServerMashAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerMashAssetClass.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#ServerMashAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerMashAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerMashAssetClass.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#ServerMashAssetClass.mashDescription'>mashDescription</a></li>
-<li><a class='' href='#ServerMashAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerMashAssetClass.number'>number</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerMashAssetClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerMashAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerMashAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerMashAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerMashAssetClass.string'>string</a></li>
 <li><a class='' href='#ServerMashAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerMashAssetClass.trackInstance'>trackInstance</a></li>
 <li><a class='' href='#ServerMashAssetClass.tweenValues'>tweenValues</a></li>

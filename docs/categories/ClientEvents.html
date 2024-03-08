@@ -174,41 +174,6 @@ customEventClass&lt;EventAddAssetsDetail&gt;().constructor</p>
 </section>
   
 <section>
-  <a id="EventAsset"><h2>EventAsset</h2></a>
-  <div class="section">
-    <h1>Class: EventAsset</h1>
-<p><a href="../client-lib.html">client-lib</a>.EventAsset</p>
-<p>Dispatch to retrieve an asset from an asset id or object.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/AssetEventDetail.html'>AssetEventDetail</a></code>, <code>this</code>&gt;</p>
-<p>↳ <strong><code><a href='ClientEvents.html#EventAsset'>EventAsset</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventAsset.constructor">constructor</a></h3><p>• <strong>new EventAsset</strong>(<code>assetIdOrObject</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='../exports/AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-customEventClass&lt;AssetEventDetail&gt;().constructor</p>
-<h2>Properties</h2>
-<h3><a id="EventAsset.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>&quot;asset&quot;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="EventAssetElement"><h2>EventAssetElement</h2></a>
   <div class="section">
     <h1>Class: EventAssetElement</h1>
@@ -271,7 +236,7 @@ customEventClass&lt;EventAssetElementDetail&gt;().constructor</p>
 <p>Dispatch to retrieve the mash&#39;s selected asset id.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;{ <code>assetId?</code>: <code>string</code>  }, <code>this</code>&gt;</p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;{ <code>id?</code>: <code>string</code>  }, <code>this</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventAssetId'>EventAssetId</a></code></strong></p>
 </li>
 </ul>
@@ -291,7 +256,7 @@ customEventClass&lt;EventAssetElementDetail&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;{ assetId?: string }&gt;().constructor</p>
+customEventClass&lt;{ id?: string }&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventAssetId.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;asset-id&#39;</code></p>
 
@@ -306,7 +271,7 @@ customEventClass&lt;{ assetId?: string }&gt;().constructor</p>
 <p>Dispatch to retrieve the mash asset object to edit.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/AssetObjectEventDetail.html'>AssetObjectEventDetail</a></code>, <code>this</code>&gt;</p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventAssetObjectDetail.html'>EventAssetObjectDetail</a></code>, <code>this</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventAssetObject'>EventAssetObject</a></code></strong></p>
 </li>
 </ul>
@@ -326,7 +291,7 @@ customEventClass&lt;{ assetId?: string }&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;AssetObjectEventDetail&gt;().constructor</p>
+customEventClass&lt;EventAssetObjectDetail&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventAssetObject.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;asset-object&#39;</code></p>
 
@@ -423,19 +388,17 @@ customEventClass&lt;string | undefined&gt;().constructor</p>
 <tr>
 <th align="left">Name</th>
 <th align="left">Type</th>
-<th align="left">Default value</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>detail</code></td>
+<td align="left"><code>detail?</code></td>
 <td align="left"><code>string</code></td>
-<td align="left"><code>&#39;&#39;</code></td>
 </tr>
 </tbody></table>
 <p>Overrides
 <a href="../exports/StringEvent.html">StringEvent</a>.<a href="../exports/StringEvent.html#StringEvent.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="EventChangeClipId.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;change-clip-id&#39;</code></p>
+<h3><a id="EventChangeClipId.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -505,7 +468,7 @@ customEventClass&lt;boolean&gt;().constructor</p>
 <p>Overrides
 <a href="../exports/NumberEvent.html">NumberEvent</a>.<a href="../exports/NumberEvent.html#NumberEvent.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="EventChangeFrame.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;change-frame&#39;</code></p>
+<h3><a id="EventChangeFrame.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -579,7 +542,7 @@ customEventClass&lt;EventChangeScalarDetail&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;ScalarsById&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventChangeScalars.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;change-scalars&#39;</code></p>
+<h3><a id="EventChangeScalars.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -647,9 +610,9 @@ customEventClass&lt;string | undefined&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;ClientAction&gt;().constructor</p>
+customEventClass&lt;string&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventChangedClientAction.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;changed-client-action&#39;</code></p>
+<h3><a id="EventChangedClientAction.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -693,42 +656,6 @@ customEventClass&lt;ClientAction&gt;().constructor</p>
 </section>
   
 <section>
-  <a id="EventChangedFrame"><h2>EventChangedFrame</h2></a>
-  <div class="section">
-    <h1>Class: EventChangedFrame</h1>
-<p><a href="../client-lib.html">client-lib</a>.EventChangedFrame</p>
-<p>Dispatched when the mash&#39;s current frame has changed.
-Note that EventChangedFrame.Type value matches HTMLMediaElement.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><code><a href='../exports/NumberEvent.html'>NumberEvent</a></code></p>
-<p>↳ <strong><code><a href='ClientEvents.html#EventChangedFrame'>EventChangedFrame</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventChangedFrame.constructor">constructor</a></h3><p>• <strong>new EventChangedFrame</strong>(<code>detail</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>detail</code></td>
-<td align="left"><code>number</code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-<a href="../exports/NumberEvent.html">NumberEvent</a>.<a href="../exports/NumberEvent.html#NumberEvent.constructor">constructor</a></p>
-<h2>Properties</h2>
-<h3><a id="EventChangedFrame.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;timeupdate&#39;</code></p>
-
-  </div>
-</section>
-  
-<section>
   <a id="EventChangedFrames"><h2>EventChangedFrames</h2></a>
   <div class="section">
     <h1>Class: EventChangedFrames</h1>
@@ -758,7 +685,7 @@ Note that EventChangedFrame.Type value matches HTMLMediaElement.</p>
 <p>Overrides
 <a href="../exports/NumberEvent.html">NumberEvent</a>.<a href="../exports/NumberEvent.html#NumberEvent.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="EventChangedFrames.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;changed-frames&#39;</code></p>
+<h3><a id="EventChangedFrames.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -882,29 +809,16 @@ customEventClass&lt;ClientMashAsset | undefined&gt;().constructor</p>
 <p>Dispatched when the mash has new previews to display.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code>Event</code></a></p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code>undefined</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventChangedPreviews'>EventChangedPreviews</a></code></strong></p>
 </li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="EventChangedPreviews.constructor">constructor</a></h3><p>• <strong>new EventChangedPreviews</strong>(<code>_?</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>_?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
+<h3><a id="EventChangedPreviews.constructor">constructor</a></h3><p>• <strong>new EventChangedPreviews</strong>()</p>
 <p>Overrides
-Event.constructor</p>
+CustomEvent&lt;undefined&gt;.constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventChangedPreviews.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;changed-previews&#39;</code></p>
+<h3><a id="EventChangedPreviews.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -972,9 +886,9 @@ customEventClass&lt;PropertyIds&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;ServerAction&gt;().constructor</p>
+customEventClass&lt;string&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventChangedServerAction.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;changed-server-action&#39;</code></p>
+<h3><a id="EventChangedServerAction.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -1009,7 +923,7 @@ customEventClass&lt;ServerAction&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;Size&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventChangedSize.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;changed-size&#39;</code></p>
+<h3><a id="EventChangedSize.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -1079,7 +993,7 @@ customEventClass&lt;TargetIds&gt;().constructor</p>
 <p>Overrides
 <a href="../exports/NumberEvent.html">NumberEvent</a>.<a href="../exports/NumberEvent.html#NumberEvent.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="EventChangedTracks.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;changed-tracks&#39;</code></p>
+<h3><a id="EventChangedTracks.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -1167,7 +1081,7 @@ customEventClass&lt;EventClipElementDetail&gt;().constructor</p>
 <p>Dispatch to retrieve the id of the mash&#39;s currently selected clip.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventClipIdDetail.html'>EventClipIdDetail</a></code>, <code>this</code>&gt;</p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;{ <code>id</code>: <code>string</code>  }, <code>this</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventClipId'>EventClipId</a></code></strong></p>
 </li>
 </ul>
@@ -1187,7 +1101,7 @@ customEventClass&lt;EventClipElementDetail&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;EventClipIdDetail&gt;().constructor</p>
+customEventClass&lt;{ id: string }&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventClipId.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;clip-id&#39;</code></p>
 
@@ -1375,7 +1289,7 @@ customEventClass&lt;EventDataTypeDetail&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;ClientAction&gt;().constructor</p>
+customEventClass&lt;string&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventDoClientAction.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;do-client-action&#39;</code></p>
 
@@ -1473,7 +1387,7 @@ customEventClass&lt;{ dragging?: boolean }&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;Edit&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventEdited.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;edited&#39;</code></p>
+<h3><a id="EventEdited.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -1602,7 +1516,7 @@ customEventClass&lt;EventExportersDetail&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;{ frames: number }&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventFrames.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;frames&#39;</code></p>
+<h3><a id="EventFrames.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>&quot;frames&quot;</code></p>
 
   </div>
 </section>
@@ -1641,7 +1555,7 @@ customEventClass&lt;{ frames: number }&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;EventIconDetail&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventIcon.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code><a href='../combined/Variables.html#ICON'>ICON</a></code></p>
+<h3><a id="EventIcon.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code><a href='../combined/Variables.html#$ICON'>$ICON</a></code></p>
 
   </div>
 </section>
@@ -1715,7 +1629,7 @@ customEventClass&lt;EventImportDetail&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;EventImportFileDetail&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventImportFile.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code><a href='../combined/Types.html#ManageType'>ManageType</a></code> = <code><a href='../combined/Variables.html#IMPORT'>IMPORT</a></code></p>
+<h3><a id="EventImportFile.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code><a href='../combined/Types.html#ManageType'>ManageType</a></code> = <code><a href='../combined/Variables.html#$IMPORT'>$IMPORT</a></code></p>
 
   </div>
 </section>
@@ -1728,7 +1642,7 @@ customEventClass&lt;EventImportFileDetail&gt;().constructor</p>
 <p>Dispatch to import managed assets from client asset objects.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/ClientAssetObjects.html'>ClientAssetObjects</a></code>, <code>this</code>&gt;</p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/AssetObjects.html'>AssetObjects</a></code>, <code>this</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventImportManagedAssets'>EventImportManagedAssets</a></code></strong></p>
 </li>
 </ul>
@@ -1744,11 +1658,11 @@ customEventClass&lt;EventImportFileDetail&gt;().constructor</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>detail</code></td>
-<td align="left"><code><a href='../exports/ClientAssetObjects.html'>ClientAssetObjects</a></code></td>
+<td align="left"><code><a href='../exports/AssetObjects.html'>AssetObjects</a></code></td>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;ClientAssetObjects&gt;().constructor</p>
+customEventClass&lt;AssetObjects&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventImportManagedAssets.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;import-asset-objects&#39;</code></p>
 
@@ -1779,7 +1693,7 @@ customEventClass&lt;ClientAssetObjects&gt;().constructor</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>assetObject</code></td>
-<td align="left"><code><a href='../exports/ClientAssetObject.html'>ClientAssetObject</a></code></td>
+<td align="left"><code><a href='../exports/AssetObject.html'>AssetObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Overrides
@@ -2016,7 +1930,7 @@ customEventClass&lt;EventInspectorSelectorsDetail&gt;().constructor</p>
 <p>Dispatch to retrieve a managed asset from an asset id or object.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/AssetEventDetail.html'>AssetEventDetail</a></code>, <code>this</code>&gt;</p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventManagedAssetDetail.html'>EventManagedAssetDetail</a></code>, <code>this</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventManagedAsset'>EventManagedAsset</a></code></strong></p>
 </li>
 </ul>
@@ -2036,7 +1950,7 @@ customEventClass&lt;EventInspectorSelectorsDetail&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;AssetEventDetail&gt;().constructor</p>
+customEventClass&lt;EventManagedAssetDetail&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventManagedAsset.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;managed-asset&#39;</code></p>
 
@@ -2514,7 +2428,7 @@ customEventClass&lt;EventPropertyIdsDetail&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;{ rect?: Rect }&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventRect.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;change-rect&#39;</code></p>
+<h3><a id="EventRect.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code></p>
 
   </div>
 </section>
@@ -2633,45 +2547,6 @@ customEventClass&lt;{ savable: boolean }&gt;().constructor</p>
 customEventClass&lt;{ assets: ClientAssets }&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventSavableManagedAssets.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;savable-managed-assets&#39;</code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="EventSave"><h2>EventSave</h2></a>
-  <div class="section">
-    <h1>Class: EventSave</h1>
-<p><a href="../client-lib.html">client-lib</a>.EventSave</p>
-<p>Dispatch to initiate a save request for an asset.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventSaveDetail.html'>EventSaveDetail</a></code>, <code>this</code>&gt;</p>
-<p>↳ <strong><code><a href='ClientEvents.html#EventSave'>EventSave</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventSave.constructor">constructor</a></h3><p>• <strong>new EventSave</strong>(<code>asset</code>, <code>progress?</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>asset</code></td>
-<td align="left"><code><a href='../exports/ClientAsset.html'>ClientAsset</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>progress?</code></td>
-<td align="left"><code><a href='../exports/ServerProgress.html'>ServerProgress</a></code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-customEventClass&lt;EventSaveDetail&gt;().constructor</p>
-<h2>Properties</h2>
-<h3><a id="EventSave.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code><a href='../combined/Variables.html#SAVE'>SAVE</a></code></p>
 
   </div>
 </section>
@@ -2805,7 +2680,7 @@ customEventClass&lt;EventSelectedPropertiesDetail&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;{ size?: Size }&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventSize.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;size&#39;</code></p>
+<h3><a id="EventSize.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>&quot;size&quot;</code></p>
 
   </div>
 </section>
@@ -2883,6 +2758,42 @@ customEventClass&lt;{ timeRange?: TimeRange }&gt;().constructor</p>
 </section>
   
 <section>
+  <a id="EventTimeUpdate"><h2>EventTimeUpdate</h2></a>
+  <div class="section">
+    <h1>Class: EventTimeUpdate</h1>
+<p><a href="../client-lib.html">client-lib</a>.EventTimeUpdate</p>
+<p>Dispatched when the mash&#39;s current frame has changed.
+Note that EventTimeUpdate.Type value matches HTMLMediaElement.</p>
+<h2>Hierarchy</h2>
+<ul>
+<li><p><code><a href='../exports/NumberEvent.html'>NumberEvent</a></code></p>
+<p>↳ <strong><code><a href='ClientEvents.html#EventTimeUpdate'>EventTimeUpdate</a></code></strong></p>
+</li>
+</ul>
+<h2>Constructors</h2>
+<h3><a id="EventTimeUpdate.constructor">constructor</a></h3><p>• <strong>new EventTimeUpdate</strong>(<code>detail</code>)</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>detail</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody></table>
+<p>Overrides
+<a href="../exports/NumberEvent.html">NumberEvent</a>.<a href="../exports/NumberEvent.html#NumberEvent.constructor">constructor</a></p>
+<h2>Properties</h2>
+<h3><a id="EventTimeUpdate.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>&quot;timeupdate&quot;</code></p>
+
+  </div>
+</section>
+  
+<section>
   <a id="EventTrackClipIcon"><h2>EventTrackClipIcon</h2></a>
   <div class="section">
     <h1>Class: EventTrackClipIcon</h1>
@@ -2937,7 +2848,7 @@ customEventClass&lt;EventTrackClipIconDetail&gt;().constructor</p>
 <p>Dispatch to retrieve the clips for a track.</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/TrackClipsEventDetail.html'>TrackClipsEventDetail</a></code>, <code>this</code>&gt;</p>
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventTrackClipsDetail.html'>EventTrackClipsDetail</a></code>, <code>this</code>&gt;</p>
 <p>↳ <strong><code><a href='ClientEvents.html#EventTrackClips'>EventTrackClips</a></code></strong></p>
 </li>
 </ul>
@@ -2957,7 +2868,7 @@ customEventClass&lt;EventTrackClipIconDetail&gt;().constructor</p>
 </tr>
 </tbody></table>
 <p>Overrides
-customEventClass&lt;TrackClipsEventDetail&gt;().constructor</p>
+customEventClass&lt;EventTrackClipsDetail&gt;().constructor</p>
 <h2>Properties</h2>
 <h3><a id="EventTrackClips.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;track-clips&#39;</code></p>
 
@@ -2998,50 +2909,7 @@ customEventClass&lt;TrackClipsEventDetail&gt;().constructor</p>
 <p>Overrides
 customEventClass&lt;EventTranslateDetail&gt;().constructor</p>
 <h2>Properties</h2>
-<h3><a id="EventTranslate.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code><a href='../combined/Variables.html#TRANSLATE'>TRANSLATE</a></code></p>
-
-  </div>
-</section>
-  
-<section>
-  <a id="EventUpload"><h2>EventUpload</h2></a>
-  <div class="section">
-    <h1>Class: EventUpload</h1>
-<p><a href="../client-lib.html">client-lib</a>.EventUpload</p>
-<p>Dispatch to initiate an upload request, optionally replacing an existing asset.</p>
-<h2>Hierarchy</h2>
-<ul>
-<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent"><code>CustomEvent</code></a>&lt;<code><a href='../exports/EventUploadDetail.html'>EventUploadDetail</a></code>, <code>this</code>&gt;</p>
-<p>↳ <strong><code><a href='ClientEvents.html#EventUpload'>EventUpload</a></code></strong></p>
-</li>
-</ul>
-<h2>Constructors</h2>
-<h3><a id="EventUpload.constructor">constructor</a></h3><p>• <strong>new EventUpload</strong>(<code>request</code>, <code>progress?</code>, <code>id?</code>)</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>request</code></td>
-<td align="left"><code><a href='../exports/EndpointRequest.html'>EndpointRequest</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>progress?</code></td>
-<td align="left"><code><a href='../exports/ServerProgress.html'>ServerProgress</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>id?</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Overrides
-customEventClass&lt;EventUploadDetail&gt;().constructor</p>
-<h2>Properties</h2>
-<h3><a id="EventUpload.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code>&#39;upload&#39;</code></p>
+<h3><a id="EventTranslate.Type">Type</a></h3><p>▪ <code>Static</code> <strong>Type</strong>: <code>string</code> = <code><a href='../combined/Variables.html#$TRANSLATE'>$TRANSLATE</a></code></p>
 
   </div>
 </section>
@@ -3088,7 +2956,6 @@ customEventClass&lt;EventUploadDetail&gt;().constructor</p>
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ClientEvents'>ClientEvents</a></li>
 <li><a class='' href='#EventAddAssets'>EventAddAssets</a></li>
-<li><a class='' href='#EventAsset'>EventAsset</a></li>
 <li><a class='' href='#EventAssetElement'>EventAssetElement</a></li>
 <li><a class='' href='#EventAssetId'>EventAssetId</a></li>
 <li><a class='' href='#EventAssetObject'>EventAssetObject</a></li>
@@ -3102,7 +2969,6 @@ customEventClass&lt;EventUploadDetail&gt;().constructor</p>
 <li><a class='' href='#EventChangedAssetId'>EventChangedAssetId</a></li>
 <li><a class='' href='#EventChangedClientAction'>EventChangedClientAction</a></li>
 <li><a class='' href='#EventChangedClipId'>EventChangedClipId</a></li>
-<li><a class='' href='#EventChangedFrame'>EventChangedFrame</a></li>
 <li><a class='' href='#EventChangedFrames'>EventChangedFrames</a></li>
 <li><a class='' href='#EventChangedInspectorSelectors'>EventChangedInspectorSelectors</a></li>
 <li><a class='' href='#EventChangedManagedAssets'>EventChangedManagedAssets</a></li>
@@ -3156,17 +3022,16 @@ customEventClass&lt;EventUploadDetail&gt;().constructor</p>
 <li><a class='' href='#EventRequestUpdate'>EventRequestUpdate</a></li>
 <li><a class='' href='#EventSavableManagedAsset'>EventSavableManagedAsset</a></li>
 <li><a class='' href='#EventSavableManagedAssets'>EventSavableManagedAssets</a></li>
-<li><a class='' href='#EventSave'>EventSave</a></li>
 <li><a class='' href='#EventScalar'>EventScalar</a></li>
 <li><a class='' href='#EventScrollRoot'>EventScrollRoot</a></li>
 <li><a class='' href='#EventSelectedProperties'>EventSelectedProperties</a></li>
 <li><a class='' href='#EventSize'>EventSize</a></li>
 <li><a class='' href='#EventTargetIds'>EventTargetIds</a></li>
 <li><a class='' href='#EventTimeRange'>EventTimeRange</a></li>
+<li><a class='' href='#EventTimeUpdate'>EventTimeUpdate</a></li>
 <li><a class='' href='#EventTrackClipIcon'>EventTrackClipIcon</a></li>
 <li><a class='' href='#EventTrackClips'>EventTrackClips</a></li>
 <li><a class='' href='#EventTranslate'>EventTranslate</a></li>
-<li><a class='' href='#EventUpload'>EventUpload</a></li>
 <li><a class='' href='#EventZoom'>EventZoom</a></li></ul>
       </nav>
     </main>

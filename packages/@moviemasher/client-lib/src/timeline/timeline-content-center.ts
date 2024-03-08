@@ -1,19 +1,19 @@
-import type { DropTarget } from '../types.js'
 import type { MashAsset } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { TemplateContent, TemplateContents, OptionalContent } from '../client-types.js'
+import type { OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
+import type { DropTarget } from '../types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
-import { LAYER, eventStop } from '../runtime.js'
-import { EventChangeClipId, NumberEvent, EventChangeFrame, EventChangedFrame, EventChangedFrames, EventChangedMashAsset, EventFrames, EventChangedTracks, EventZoom } from '../utility/events.js'
-import { MOVIE_MASHER, $FRAME, $WIDTH, arrayOfNumbers, $FRAMES } from '@moviemasher/shared-lib/runtime.js'
-import { html, nothing } from 'lit-html'
-import { DISABLABLE_DECLARATIONS, DisablableMixin } from '../mixin/component.js'
-import { DROP_TARGET_CSS, DropTargetMixin } from '../mixin/component.js'
-import { Scroller } from '../base/component-view.js'
-import { pixelToFrame, pixelFromFrame, pixelPerFrame } from '@moviemasher/shared-lib/utility/pixel.js'
+import { $FRAME, $FRAMES, $WIDTH, MOVIE_MASHER, arrayOfNumbers } from '@moviemasher/shared-lib/runtime.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
+import { pixelFromFrame, pixelPerFrame, pixelToFrame } from '@moviemasher/shared-lib/utility/pixel.js'
+import { html, nothing } from 'lit-html'
+import { Scroller } from '../base/component-view.js'
+import { DISABLABLE_DECLARATIONS, DROP_TARGET_CSS, DisablableMixin, DropTargetMixin } from '../mixin/component.js'
+import { EventChangeClipId, EventChangeFrame, EventChangedFrames, EventChangedMashAsset, EventChangedTracks, EventFrames, EventTimeUpdate, EventZoom, NumberEvent } from '../module/event.js'
+import { LAYER } from '../utility/constants.js'
+import { eventStop } from '../module/event.js'
 
 export const TimelineContentCenterTag = 'movie-masher-timeline-content-center'
 
@@ -29,7 +29,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
     this.handleScrubberPointerUp = this.handleScrubberPointerUp.bind(this)
     this.handleScrubberPointerMove = this.handleScrubberPointerMove.bind(this)
     
-    this.listeners[EventChangedFrame.Type] = this.handleChangedFrame.bind(this)
+    this.listeners[EventTimeUpdate.Type] = this.handleChangedFrame.bind(this)
     this.listeners[EventChangedFrames.Type] = this.handleChangedFrames.bind(this)
     this.listeners[EventChangedTracks.Type] = this.handleTracks.bind(this)
     this.listeners[EventZoom.Type] = this.handleZoom.bind(this)
@@ -39,7 +39,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -138,7 +138,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
   private framesWidth = 0
 
-  private handleChangedFrame(event: EventChangedFrame): void {
+  private handleChangedFrame(event: EventTimeUpdate): void {
     const { detail: frame } = event
     this.frame = frame
   }
@@ -190,7 +190,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
 
     const pixel = Math.max(0, Math.min(max, clientX - x))
     const frame = pixelToFrame(pixel, this.scale, 'floor')
-    MOVIE_MASHER.dispatch(new EventChangeFrame(frame))
+    MOVIE_MASHER.dispatchCustom(new EventChangeFrame(frame))
   }
 
   private handleScrubberPointerUp(event: MouseEvent) {
@@ -215,7 +215,7 @@ export class TimelineContentCenterElement extends TimelineContentCenterDropTarge
   override onpointerdown = (event: Event): void => {
     // console.log(this.tagName, 'deselecting clip')
     eventStop(event)
-    MOVIE_MASHER.dispatch(new EventChangeClipId())
+    MOVIE_MASHER.dispatch(EventChangeClipId.Type)
   }
 
   private recalculateLeft() {

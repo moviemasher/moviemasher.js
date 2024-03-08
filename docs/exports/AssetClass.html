@@ -136,6 +136,8 @@
 <ul>
 <li><p><code><a href='PropertiedClass.html'>PropertiedClass</a></code></p>
 <p>↳ <strong><code><a href='#'>AssetClass</a></code></strong></p>
+<p>↳↳ <code><a href='ClientAssetClass.html'>ClientAssetClass</a></code></p>
+<p>↳↳ <code><a href='ServerAssetClass.html'>ServerAssetClass</a></code></p>
 </li>
 </ul>
 <h2>Implements</h2>
@@ -154,7 +156,7 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Overrides
@@ -162,17 +164,25 @@
 <h2>Properties</h2>
 <h3><a id="AssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
 <hr>
+<h3><a id="AssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetManager">assetManager</a></p>
+<hr>
 <h3><a id="AssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodings">decodings</a></p>
 <hr>
+<h3><a id="AssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
+<hr>
+<h3><a id="AssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<hr>
 <h3><a id="AssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.id">id</a></p>
-<hr>
-<h3><a id="AssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.label">label</a></p>
 <hr>
 <h3><a id="AssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
@@ -240,7 +250,7 @@
 <p>Inherited from
 PropertiedClass.scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="AssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>_</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h3><a id="AssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -250,8 +260,8 @@ PropertiedClass.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -278,6 +288,27 @@ PropertiedClass.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.assetCachePromise">assetCachePromise</a></p>
 <hr>
+<h3><a id="AssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.boolean">boolean</a></p>
+<p>Inherited from
+<a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.boolean">boolean</a></p>
+<hr>
 <h3><a id="AssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -298,6 +329,8 @@ PropertiedClass.scalarRecord</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.changeScalar">changeScalar</a></p>
 <p>Inherited from
 <a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.changeScalar">changeScalar</a></p>
 <hr>
@@ -317,6 +350,8 @@ PropertiedClass.scalarRecord</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.changeScalars">changeScalars</a></p>
 <p>Inherited from
 <a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.changeScalars">changeScalars</a></p>
 <hr>
@@ -383,27 +418,6 @@ PropertiedClass.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.decodingOfType">decodingOfType</a></p>
 <hr>
-<h3><a id="AssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.initializeProperties">initializeProperties</a></p>
-<p>Overrides
-<a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.initializeProperties">initializeProperties</a></p>
-<hr>
 <h3><a id="AssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -442,7 +456,7 @@ PropertiedClass.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.instanceFromObject">instanceFromObject</a></p>
 <hr>
-<h3><a id="AssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="AssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -452,14 +466,16 @@ PropertiedClass.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.number">number</a></p>
 <p>Inherited from
-<a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.propertiesInitialize">propertiesInitialize</a></p>
+<a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.number">number</a></p>
 <hr>
 <h3><a id="AssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -535,7 +551,7 @@ PropertiedClass.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -568,7 +584,7 @@ PropertiedClass.scalarRecord</p>
 <p>Inherited from
 <a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.setValue">setValue</a></p>
 <hr>
-<h3><a id="AssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="AssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -588,8 +604,31 @@ PropertiedClass.scalarRecord</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
 <a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="AssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="Asset.html">Asset</a>.<a href="Asset.html#Asset.string">string</a></p>
+<p>Inherited from
+<a href="PropertiedClass.html">PropertiedClass</a>.<a href="PropertiedClass.html#PropertiedClass.string">string</a></p>
 <hr>
 <h3><a id="AssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -659,9 +698,11 @@ PropertiedClass.scalarRecord</p>
         <ul><li><a class='' href='#AssetClass'>AssetClass</a></li>
 <li><a class='' href='#AssetClass.constructor'>constructor</a></li>
 <li><a class='' href='#AssetClass._assets'>_assets</a></li>
+<li><a class='' href='#AssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#AssetClass.decodings'>decodings</a></li>
+<li><a class='' href='#AssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#AssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#AssetClass.id'>id</a></li>
-<li><a class='' href='#AssetClass.label'>label</a></li>
 <li><a class='' href='#AssetClass.properties'>properties</a></li>
 <li><a class='' href='#AssetClass.resources'>resources</a></li>
 <li><a class='' href='#AssetClass.source'>source</a></li>
@@ -676,21 +717,22 @@ PropertiedClass.scalarRecord</p>
 <li><a class='' href='#AssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#AssetClass.asset'>asset</a></li>
 <li><a class='' href='#AssetClass.assetCachePromise'>assetCachePromise</a></li>
+<li><a class='' href='#AssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#AssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#AssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#AssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#AssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#AssetClass.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#AssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#AssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#AssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#AssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#AssetClass.number'>number</a></li>
 <li><a class='' href='#AssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#AssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#AssetClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#AssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#AssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#AssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#AssetClass.string'>string</a></li>
 <li><a class='' href='#AssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#AssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#AssetClass.value'>value</a></li></ul>

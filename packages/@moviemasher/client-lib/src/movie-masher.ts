@@ -3,8 +3,9 @@ import type { AssetObject, AssetObjects } from '@moviemasher/shared-lib/types.js
 import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { Htmls, OptionalContent } from './client-types.js'
 
+import './runtime.js'
 import { css } from '@lit/reactive-element/css-tag.js'
-import { EventAssetObject, EventAssetObjects, EventEdited, EventChangedMashAsset, EventManagedAssets } from './utility/events.js'
+import { EventAssetObject, EventAssetObjects, EventEdited, EventChangedMashAsset, EventManagedAssets } from './module/event.js'
 import { COMMA, $GET, $MASH, MOVIE_MASHER, PIPE, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { Component } from './base/component.js'
@@ -139,7 +140,7 @@ export class MovieMasherElement extends ComponentSlotter {
       if (this.mashingAssetObject) return  
       
       const event = new EventAssetObject()
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise } = event.detail
       if (!promise) return
 
@@ -157,7 +158,7 @@ export class MovieMasherElement extends ComponentSlotter {
     
     const { detail } = event
     detail.promise = this.assetObjectPromise.then(() => {
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       return detail.promise!
     })
   }
@@ -167,7 +168,7 @@ export class MovieMasherElement extends ComponentSlotter {
 
     const { detail } = event
     detail.promise = this.assetObjectsPromise.then(() => {
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       return detail.promise!
     })
   }
@@ -195,7 +196,7 @@ export class MovieMasherElement extends ComponentSlotter {
   private handleManagedAssets(event: EventManagedAssets) {
     const { detail } = event
     detail.promise = this.managedAssetsPromise.then(() => {
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       return detail.promise!
     })
   }
@@ -218,7 +219,7 @@ export class MovieMasherElement extends ComponentSlotter {
     return this._masherPromise ||= this.masherPromiseInitialize
   }
   private get masherPromiseInitialize(): Promise<void> {
-    return import('./source/mash/masher.js').then(lib => {
+    return import('./utility/masher.js').then(lib => {
       const { masherInstance } = lib
       this.masher = masherInstance()
     })

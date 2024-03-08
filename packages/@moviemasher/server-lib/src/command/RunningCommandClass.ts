@@ -1,16 +1,15 @@
-import type { StringDataOrError, Strings, } from '@moviemasher/shared-lib/types.js'
-import type { Command } from '../type/Command.js'
-import type { CommandInputRecord, CommandOptions } from '../types.js'
-import type { CommandFilters, CommandInput, CommandInputs } from '../types.js'
+import type { CommandFilters, CommandInput, CommandInputRecord, CommandInputs, StringDataOrError, Strings, } from '@moviemasher/shared-lib/types.js'
+import type { Command, CommandOptions } from '../types.js'
 import type { RunningCommand } from './RunningCommand.js'
 
 import { COLON, ERROR, errorThrow, isDefiniteError } from '@moviemasher/shared-lib/runtime.js'
+import { isPositive, isString } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertPopulatedString } from '@moviemasher/shared-lib/utility/guards.js'
 import path from 'path'
+import { directoryCreatePromise } from '../module/file.js'
 import { commandError, commandString } from '../utility/command.js'
-import { directoryCreatePromise } from '../module/file-write.js'
 import { commandInstance } from './CommandFactory.js'
-import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
+import { $RelativeRequestRoot, ENV } from '../utility/env.js'
 
 export class RunningCommandClass implements RunningCommand {
   constructor(public id: string, public commandOptions: CommandOptions) {
@@ -75,9 +74,7 @@ export class RunningCommandClass implements RunningCommand {
       return is
     }
     
-
     const { commandOptions, inputs } = this
-
     const { commandFilters = [], output } = commandOptions
     const { options = {} } = output
     // find all referenced input ids 
@@ -93,10 +90,7 @@ export class RunningCommandClass implements RunningCommand {
 
     // remove unused inputs from our input record
     const unusedInputIds = initialInputIds.filter(id => !usedInputIds.includes(id))
-    // console.log(this.constructor.name, 'optionsInitialize', { initialInputIds, usedInputIds, unusedInputIds, all })
-  
     if (unusedInputIds.length) {
-      // console.log(this.constructor.name, 'optionsInitialize', { unusedInputIds })
       const { _inputRecord = {} } = this
       unusedInputIds.forEach(id => delete _inputRecord[id])
     }
@@ -120,7 +114,12 @@ export class RunningCommandClass implements RunningCommand {
       })
     })
     this.inputs.forEach(input => {
-      const { outputOptions = {} } = input
+      const { outputOptions = {}, inputOptions = {} } = input
+      const { base_uri } = inputOptions
+      if (isString(base_uri) && !base_uri) {
+        // this is true for $SVGS
+        inputOptions.base_uri = `file://${ENV.get($RelativeRequestRoot)}`
+      }
       Object.keys(outputOptions).forEach(key => {
         const [inputId] = idAndType(key)
         if (!inputId) return

@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerColorInstanceClass"><h2>ServerColorInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ServerColorInstanceClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerColorInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerColorInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithColorInstance</code></p>
+<li><p><code><a href='ServerInstanceClass.html'>ServerInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code> &amp; <code><a href='ColorInstance.html'>ColorInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerColorInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerColorInstance.html'>ServerColorInstance</a></code></li>
+<li><code>ServerColorInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerColorInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerColorInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ServerColorInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerColorInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,260 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ColorInstanceObject.html'>ColorInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithColorInstance.constructor</p>
+<p>Inherited from
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ServerColorInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithColorInstance._id</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+)._id</p>
 <hr>
-<h3><a id="ServerColorInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithColorInstance._label</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerColorAsset.html'>ServerColorAsset</a></code></p>
+<h3><a id="ServerColorInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ServerColorAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.asset">asset</a></p>
+<p>ServerColorInstance.asset</p>
 <p>Overrides
-WithColorInstance.asset</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.assetId">assetId</a></p>
+<p>ServerColorInstance.assetId</p>
 <p>Inherited from
-WithColorInstance.assetId</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.assetIds">assetIds</a></p>
+<p>ServerColorInstance.assetIds</p>
 <p>Inherited from
-WithColorInstance.assetIds</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithColorInstance.bottomCrop</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.canBeMuted">canBeMuted</a></p>
+<p>ServerColorInstance.canBeMuted</p>
 <p>Inherited from
-WithColorInstance.canBeMuted</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.clip">clip</a></p>
+<p>ServerColorInstance.clip</p>
 <p>Inherited from
-WithColorInstance.clip</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.color">color</a></p>
-<p>Inherited from
-WithColorInstance.color</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.container">container</a></p>
-<p>Inherited from
-WithColorInstance.container</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.cropDirections">cropDirections</a></p>
+<p>ServerColorInstance.cropDirections</p>
 <p>Inherited from
-WithColorInstance.cropDirections</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<h3><a id="ServerColorInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithColorInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.height">height</a></p>
-<p>Inherited from
-WithColorInstance.height</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithColorInstance.heightEnd</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.id">id</a></p>
+<p>ServerColorInstance.id</p>
 <p>Inherited from
-WithColorInstance.id</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.instanceObject">instanceObject</a></p>
+<p>ServerColorInstance.instanceObject</p>
 <p>Inherited from
-WithColorInstance.instanceObject</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ServerColorInstance.intrinsicRect</p>
 <p>Inherited from
-WithColorInstance.intrinsicRect</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.isDefault">isDefault</a></p>
+<p>ServerColorInstance.isDefault</p>
 <p>Inherited from
-WithColorInstance.isDefault</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithColorInstance.leftCrop</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.lock">lock</a></p>
-<p>Inherited from
-WithColorInstance.lock</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.muted">muted</a></p>
+<p>ServerColorInstance.muted</p>
 <p>Inherited from
-WithColorInstance.muted</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ServerColorInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.opacityEnd">opacityEnd</a></p>
+<p>ServerColorInstance.properties</p>
 <p>Inherited from
-WithColorInstance.opacityEnd</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ServerColorInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.pointAspect">pointAspect</a></p>
+<p>ServerColorInstance.sizeKey</p>
 <p>Inherited from
-WithColorInstance.pointAspect</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).sizeKey</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerColorInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.properties">properties</a></p>
+<p>ServerColorInstance.targetId</p>
 <p>Inherited from
-WithColorInstance.properties</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithColorInstance.rightCrop</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithColorInstance.sizeAspect</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithColorInstance.sizeKey</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.targetId">targetId</a></p>
-<p>Inherited from
-WithColorInstance.targetId</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithColorInstance.topCrop</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.tweening">tweening</a></p>
+<p>ServerColorInstance.tweening</p>
 <p>Inherited from
-WithColorInstance.tweening</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.width">width</a></p>
-<p>Inherited from
-WithColorInstance.width</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithColorInstance.widthEnd</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.x">x</a></p>
-<p>Inherited from
-WithColorInstance.x</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithColorInstance.xEnd</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.y">y</a></p>
-<p>Inherited from
-WithColorInstance.y</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithColorInstance.yEnd</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ServerColorInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithColorInstance.isAudio</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithColorInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithColorInstance.label</p>
-<hr>
 <h3><a id="ServerColorInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithColorInstance.scalarRecord</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ServerColorInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -425,9 +319,34 @@ WithColorInstance.scalarRecord</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.assetTime">assetTime</a></p>
+<p>ServerColorInstance.assetTime</p>
 <p>Inherited from
-WithColorInstance.assetTime</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ServerColorInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorInstance.boolean</p>
+<p>Inherited from
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -449,8 +368,12 @@ WithColorInstance.assetTime</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerColorInstance.changeScalar</p>
 <p>Inherited from
-WithColorInstance.changeScalar</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -468,8 +391,12 @@ WithColorInstance.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerColorInstance.changeScalars</p>
 <p>Inherited from
-WithColorInstance.changeScalars</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -482,7 +409,7 @@ WithColorInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -492,9 +419,11 @@ WithColorInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.clippedElement">clippedElement</a></p>
+<p>ServerColorInstance.clippedElement</p>
 <p>Inherited from
-WithColorInstance.clippedElement</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>cacheArgs</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -513,9 +442,11 @@ WithColorInstance.clippedElement</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.commandFiles">commandFiles</a></p>
+<p>ServerColorInstance.commandFiles</p>
 <p>Inherited from
-WithColorInstance.commandFiles</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).commandFiles</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -538,9 +469,11 @@ WithColorInstance.commandFiles</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.constrainedValue">constrainedValue</a></p>
+<p>ServerColorInstance.constrainedValue</p>
 <p>Inherited from
-WithColorInstance.constrainedValue</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -567,11 +500,13 @@ WithColorInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.containedItem">containedItem</a></p>
+<p>ServerColorInstance.containedItem</p>
 <p>Inherited from
-WithColorInstance.containedItem</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ServerColorInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -585,16 +520,18 @@ WithColorInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.containerRects">containerRects</a></p>
+<p>ServerColorInstance.containerRects</p>
 <p>Inherited from
-WithColorInstance.containerRects</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -613,9 +550,11 @@ WithColorInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ServerColorInstance.containerSvgItem</p>
 <p>Inherited from
-WithColorInstance.containerSvgItem</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -642,9 +581,11 @@ WithColorInstance.containerSvgItem</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.contentRect">contentRect</a></p>
+<p>ServerColorInstance.contentRect</p>
 <p>Inherited from
-WithColorInstance.contentRect</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -663,9 +604,11 @@ WithColorInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.contentRects">contentRects</a></p>
+<p>ServerColorInstance.contentRects</p>
 <p>Inherited from
-WithColorInstance.contentRects</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -684,9 +627,11 @@ WithColorInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ServerColorInstance.contentSvgItem</p>
 <p>Inherited from
-WithColorInstance.contentSvgItem</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -705,50 +650,11 @@ WithColorInstance.contentSvgItem</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.frames">frames</a></p>
+<p>ServerColorInstance.frames</p>
 <p>Inherited from
-WithColorInstance.frames</p>
-<hr>
-<h3><a id="ServerColorInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithColorInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerColorInstance.initializeProperties</p>
-<p>Inherited from
-WithColorInstance.initializeProperties</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -767,9 +673,11 @@ WithColorInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ServerColorInstance.instanceCachePromise</p>
 <p>Inherited from
-WithColorInstance.instanceCachePromise</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -788,11 +696,13 @@ WithColorInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ServerColorInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithColorInstance.intrinsicsKnown</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerColorInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -802,14 +712,18 @@ WithColorInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorInstance.number</p>
 <p>Inherited from
-WithColorInstance.propertiesInitialize</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -828,9 +742,11 @@ WithColorInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.propertyFind">propertyFind</a></p>
+<p>ServerColorInstance.propertyFind</p>
 <p>Inherited from
-WithColorInstance.propertyFind</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -849,9 +765,11 @@ WithColorInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.propertyIds">propertyIds</a></p>
+<p>ServerColorInstance.propertyIds</p>
 <p>Inherited from
-WithColorInstance.propertyIds</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -870,9 +788,11 @@ WithColorInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.propertyInstance">propertyInstance</a></p>
+<p>ServerColorInstance.propertyInstance</p>
 <p>Inherited from
-WithColorInstance.propertyInstance</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -895,9 +815,11 @@ WithColorInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.scaleRects">scaleRects</a></p>
+<p>ServerColorInstance.scaleRects</p>
 <p>Inherited from
-WithColorInstance.scaleRects</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -920,11 +842,13 @@ WithColorInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.setValue">setValue</a></p>
+<p>ServerColorInstance.setValue</p>
 <p>Inherited from
-WithColorInstance.setValue</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerColorInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerColorInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -944,8 +868,35 @@ WithColorInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerColorInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithColorInstance.shouldSelectProperty</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerColorInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerColorInstance.string</p>
+<p>Inherited from
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -972,17 +923,21 @@ WithColorInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.svgVector">svgVector</a></p>
+<p>ServerColorInstance.svgVector</p>
 <p>Inherited from
-WithColorInstance.svgVector</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.toJSON">toJSON</a></p>
+<p>ServerColorInstance.toJSON</p>
 <p>Inherited from
-WithColorInstance.toJSON</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1009,9 +964,11 @@ WithColorInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.tweenValues">tweenValues</a></p>
+<p>ServerColorInstance.tweenValues</p>
 <p>Inherited from
-WithColorInstance.tweenValues</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1030,9 +987,11 @@ WithColorInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.tweens">tweens</a></p>
+<p>ServerColorInstance.tweens</p>
 <p>Inherited from
-WithColorInstance.tweens</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1051,9 +1010,11 @@ WithColorInstance.tweens</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.value">value</a></p>
+<p>ServerColorInstance.value</p>
 <p>Inherited from
-WithColorInstance.value</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).value</p>
 <hr>
 <h3><a id="ServerColorInstanceClass.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>, <code>content?</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -1076,9 +1037,11 @@ WithColorInstance.value</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerColorInstance.html">ServerColorInstance</a>.<a href="ServerColorInstance.html#ServerColorInstance.visibleCommandFiles">visibleCommandFiles</a></p>
+<p>ServerColorInstance.visibleCommandFiles</p>
 <p>Inherited from
-WithColorInstance.visibleCommandFiles</p>
+ColorInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).visibleCommandFiles</p>
 
   </div>
 </section>
@@ -1090,45 +1053,25 @@ WithColorInstance.visibleCommandFiles</p>
         <ul><li><a class='' href='#ServerColorInstanceClass'>ServerColorInstanceClass</a></li>
 <li><a class='' href='#ServerColorInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerColorInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ServerColorInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ServerColorInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ServerColorInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ServerColorInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerColorInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerColorInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerColorInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ServerColorInstanceClass.color'>color</a></li>
-<li><a class='' href='#ServerColorInstanceClass.container'>container</a></li>
 <li><a class='' href='#ServerColorInstanceClass.cropDirections'>cropDirections</a></li>
 <li><a class='' href='#ServerColorInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerColorInstanceClass.height'>height</a></li>
-<li><a class='' href='#ServerColorInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerColorInstanceClass.id'>id</a></li>
 <li><a class='' href='#ServerColorInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ServerColorInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerColorInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerColorInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerColorInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ServerColorInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ServerColorInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerColorInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerColorInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ServerColorInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerColorInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ServerColorInstanceClass.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerColorInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ServerColorInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerColorInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ServerColorInstanceClass.width'>width</a></li>
-<li><a class='' href='#ServerColorInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerColorInstanceClass.x'>x</a></li>
-<li><a class='' href='#ServerColorInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerColorInstanceClass.y'>y</a></li>
-<li><a class='' href='#ServerColorInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ServerColorInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ServerColorInstanceClass.label'>label</a></li>
 <li><a class='' href='#ServerColorInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerColorInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerColorInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerColorInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerColorInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerColorInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1141,16 +1084,16 @@ WithColorInstance.visibleCommandFiles</p>
 <li><a class='' href='#ServerColorInstanceClass.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerColorInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ServerColorInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ServerColorInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerColorInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerColorInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerColorInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerColorInstanceClass.number'>number</a></li>
 <li><a class='' href='#ServerColorInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerColorInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerColorInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerColorInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerColorInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerColorInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerColorInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerColorInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ServerColorInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerColorInstanceClass.tweenValues'>tweenValues</a></li>

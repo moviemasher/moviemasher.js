@@ -2,7 +2,7 @@ import type { CSSResultGroup, PropertyDeclarations } from 'lit'
 import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { EventDialog } from '../utility/events.js'
+import { EventDialog } from '../module/event.js'
 import { html } from 'lit-html'
 import { ComponentSlotter } from '../base/component.js'
 

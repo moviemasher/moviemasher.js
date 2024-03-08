@@ -7,9 +7,9 @@ import type { TemplateContents, OptionalContent } from '../client-types.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 import { assertSizeNotZero } from '@moviemasher/shared-lib/utility/rect.js'
-import { SELECTED, X_MOVIEMASHER } from '../runtime.js'
-import { EventAssetElement, EventAssetId, EventChangeAssetId, EventChangedAssetId, EventManagedAsset, EventManagedAssetIcon } from '../utility/events.js'
-import { EventAssetElementDetail } from '../types.js'
+import { $SELECTED, X_MOVIEMASHER } from '../utility/constants.js'
+import { EventAssetElement, EventAssetId, EventChangeAssetId, EventChangedAssetId, EventManagedAsset, EventManagedAssetIcon } from '../module/event.js'
+import { EventAssetElementDetail } from '../utility/event-types.js'
 import { MOVIE_MASHER, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { Component } from '../base/component.js'
@@ -37,7 +37,7 @@ export class BrowserAssetElement extends Component {
     if (!assetId) return 
 
     const event = new EventManagedAsset(assetId)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     return event.detail.asset
   }
 
@@ -90,7 +90,7 @@ export class BrowserAssetElement extends Component {
 
     // console.log('BrowserAssetElement.iconPromiseInitialize', {assetId, size, cover})
     const event = new EventManagedAssetIcon(assetId, size, cover)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
    
     const { promise } = event.detail 
     if (!promise) {        
@@ -126,7 +126,7 @@ export class BrowserAssetElement extends Component {
     const { assetId } = this
     assertDefined(assetId)
 
-    MOVIE_MASHER.dispatch(new EventChangeAssetId(assetId))
+    MOVIE_MASHER.dispatchCustom(new EventChangeAssetId(assetId))
   }
 
   override ondragstart = (event: DragEvent) => {
@@ -151,13 +151,13 @@ export class BrowserAssetElement extends Component {
     if (this._selected === value) return
   
     this._selected = value
-    this.classList.toggle(SELECTED, value)
+    this.classList.toggle($SELECTED, value)
   }
   
   private get selectedAssetId(): string | undefined {
     const event = new EventAssetId()
-    MOVIE_MASHER.dispatch(event)
-    return event.detail.assetId
+    MOVIE_MASHER.dispatchCustom(event)
+    return event.detail.id
   }
 
   size?: Size

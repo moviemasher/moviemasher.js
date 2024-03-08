@@ -1,0 +1,37 @@
+version: "3"
+name: moviemasher-tester
+services:
+  shared:    
+    container_name: moviemasher-tester
+    image: moviemasher/tester-shared:5.2.0
+    volumes:
+      - ../../tests/shared:/moviemasher/tests/shared
+      - ../../packages/:/moviemasher/packages/
+  server:
+    # entrypoint: ls -al 
+    # command: /moviemasher/node_modules/@moviemasher/
+    image: moviemasher/tester-server:5.2.0
+    environment:
+      - MOVIEMASHER_API_DIR_CACHE=/moviemasher/temporary/cache
+      - MOVIEMASHER_OUTPUT_ROOT=/moviemasher/temporary/output
+      - MOVIEMASHER_RELATIVE_REQUEST_ROOT=/moviemasher/temporary/assets
+      - MOVIEMASHER_FOO=foo
+      - MOVIEMASHER_DEBUG=1
+      - MOVIEMASHER_API_DIR_TEMPORARY=/moviemasher/temporary
+      - MOVIEMASHER_API_DIR_VALID=/moviemasher/temporary/assets,/moviemasher/temporary/cache
+    volumes:
+      - ../../tests/server:/moviemasher/tests/server
+      # - ../../package.json:/moviemasher/package.json
+      # - ../../images/tester/server:/moviemasher/images/test-server
+      # - ../../dev/shared:/moviemasher/dev/shared
+      # - ../../dev/tsconfig:/moviemasher/dev/tsconfig
+      - ../../packages/@moviemasher/shared-lib:/moviemasher/node_modules/@moviemasher/shared-lib
+      - ../../packages/@moviemasher/server-lib/dist:/moviemasher/node_modules/@moviemasher/server-lib/dist
+      - ../../packages/@moviemasher/server-lib/src:/moviemasher/packages/@moviemasher/server-lib/src
+      - ../../temporary/tester/server/output:/moviemasher/temporary/output
+      - ../../temporary/tester/server/cache:/moviemasher/temporary/cache
+      - ../../tests/server/assets:/moviemasher/temporary/assets
+
+    
+
+

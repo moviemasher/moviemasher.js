@@ -1,9 +1,9 @@
 import type { EndpointRequest, JobOptions, Transcoding } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { StatusRequest, TranscodeStartRequest, VersionedDataOrError } from '../Api/Api.js'
-import type { ExpressHandler, TranscodeServerArgs } from './Server.js'
+import type { ExpressHandler, TranscodeServerArgs } from '../types.js'
 
-import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
+import { ENV, $RelativeRequestRoot } from '@moviemasher/server-lib/utility/env.js'
 import { EventServerTranscodeStatus } from '@moviemasher/server-lib/utility/events.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
 import { $POST, $TRANSCODE, CONTENT_TYPE, ERROR, MIME_JSON, MOVIE_MASHER, VERSION, errorCaught, errorObjectCaught, errorThrow, isDefiniteError, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
@@ -27,7 +27,7 @@ export class TranscodeServerClass extends ServerClass {
       const { endpoint } = request
       assertPopulatedString(endpoint)
 
-      const outputRoot = ENV.get(ENV_KEY.RelativeRequestRoot)
+      const outputRoot = ENV.get($RelativeRequestRoot)
       request.endpoint = path.join(outputRoot, endpoint)
 
       const jobOptions: JobOptions = { id, user }
@@ -51,7 +51,7 @@ export class TranscodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerTranscodeStatus(id)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerTranscodeStatus.Type)
 

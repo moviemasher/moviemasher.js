@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientMashVideoAssetClass"><h2>ClientMashVideoAssetClass</h2></a>
   <div class="section">
     <h1>Class: ClientMashVideoAssetClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientMashVideoAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientMashVideoAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithVideoAsset</code></p>
+<li><p><code><a href='ClientMashAssetClass.html'>ClientMashAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='AudibleAsset.html'>AudibleAsset</a></code> &amp; <code><a href='VisibleAsset.html'>VisibleAsset</a></code> &amp; <code><a href='ClientAudibleAsset.html'>ClientAudibleAsset</a></code> &amp; <code><a href='ClientVisibleAsset.html'>ClientVisibleAsset</a></code> &amp; <code><a href='VideoAsset.html'>VideoAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientMashVideoAssetClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ClientMashVideoAsset.html'>ClientMashVideoAsset</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientMashVideoAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientMashVideoAssetClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientMashVideoAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientMashVideoAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,266 +153,424 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='MashAssetObject.html'>MashAssetObject</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='MashAssetObject.html'>MashAssetObject</a></code> &amp; <code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithVideoAsset.constructor</p>
+<p>Inherited from
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).constructor</p>
 <h2>Properties</h2>
-<h3><a id="ClientMashVideoAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<h3><a id="ClientMashVideoAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
 <p>Inherited from
-WithVideoAsset._assets</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.actions">actions</a></h3><p>• <strong>actions</strong>: <code><a href='Edits.html'>Edits</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.actions">actions</a></p>
-<p>Inherited from
-WithVideoAsset.actions</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+)._assets</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.alpha">alpha</a></p>
 <p>Inherited from
-WithVideoAsset.alpha</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).alpha</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assetIds">assetIds</a></p>
 <p>Inherited from
-WithVideoAsset.assetIds</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetIds</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code> &amp; <code><a href='AudibleAssetObject.html'>AudibleAssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code> &amp; <code><a href='VideoAssetObject.html'>VideoAssetObject</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assetManager">assetManager</a></p>
+<p>Inherited from
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetManager</p>
+<hr>
+<h3><a id="ClientMashVideoAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assetObject">assetObject</a></p>
 <p>Inherited from
-WithVideoAsset.assetObject</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetObject</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assets">assets</a></p>
 <p>Inherited from
-WithVideoAsset.assets</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.audioUrl">audioUrl</a></h3><p>• <strong>audioUrl</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.audioUrl">audioUrl</a></p>
-<p>Inherited from
-WithVideoAsset.audioUrl</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assets</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.buffer">buffer</a></h3><p>• <strong>buffer</strong>: <code>number</code> = <code>10</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.buffer">buffer</a></p>
 <p>Inherited from
-WithVideoAsset.buffer</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).buffer</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.canBeContainer">canBeContainer</a></p>
 <p>Inherited from
-WithVideoAsset.canBeContainer</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).canBeContainer</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.canBeContent">canBeContent</a></p>
 <p>Inherited from
-WithVideoAsset.canBeContent</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).canBeContent</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.canBeFill">canBeFill</a></p>
 <p>Inherited from
-WithVideoAsset.canBeFill</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).canBeFill</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
+<h3><a id="ClientMashVideoAssetClass.canBeMuted">canBeMuted</a></h3><p>• <code>Optional</code> <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.canBeMuted">canBeMuted</a></p>
 <p>Inherited from
-WithVideoAsset.canBeMuted</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.color">color</a></p>
-<p>Inherited from
-WithVideoAsset.color</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.container">container</a></p>
-<p>Inherited from
-WithVideoAsset.container</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.content">content</a></p>
-<p>Inherited from
-WithVideoAsset.content</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).canBeMuted</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.decoding">decoding</a></p>
 <p>Inherited from
-WithVideoAsset.decoding</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).decoding</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.decodings">decodings</a></p>
 <p>Inherited from
-WithVideoAsset.decodings</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).decodings</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.drawnTime">drawnTime</a></h3><p>• <code>Optional</code> <strong>drawnTime</strong>: <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.drawnTime">drawnTime</a></p>
 <p>Inherited from
-WithVideoAsset.drawnTime</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).drawnTime</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.duration">duration</a></h3><p>• <strong>duration</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.duration">duration</a></p>
 <p>Inherited from
-WithVideoAsset.duration</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).duration</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.encoding">encoding</a></h3><p>• <strong>encoding</strong>: <code>string</code></p>
+<h3><a id="ClientMashVideoAssetClass.edits">edits</a></h3><p>• <strong>edits</strong>: <code><a href='Edits.html'>Edits</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.encoding">encoding</a></p>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.edits">edits</a></p>
 <p>Inherited from
-WithVideoAsset.encoding</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.encodings">encodings</a></h3><p>• <strong>encodings</strong>: <code><a href='Encodings.html'>Encodings</a></code> = <code>[]</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.encodings">encodings</a></p>
-<p>Inherited from
-WithVideoAsset.encodings</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).edits</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.endTime">endTime</a></h3><p>• <strong>endTime</strong>: <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.endTime">endTime</a></p>
 <p>Inherited from
-WithVideoAsset.endTime</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).endTime</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
 <p>Inherited from
-WithVideoAsset.hasIntrinsicSizing</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ClientMashVideoAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<p>Inherited from
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.id">id</a></p>
 <p>Inherited from
-WithVideoAsset.id</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).id</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.isVector">isVector</a></p>
 <p>Inherited from
-WithVideoAsset.isVector</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.label">label</a></p>
-<p>Inherited from
-WithVideoAsset.label</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.listeners">listeners</a></h3><p>• <code>Protected</code> <strong>listeners</strong>: <code><a href='EventDispatcherListeners.html'>EventDispatcherListeners</a></code> = <code>{}</code></p>
-<p>Inherited from
-WithVideoAsset.listeners</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.loadedAudio">loadedAudio</a></h3><p>• <code>Optional</code> <strong>loadedAudio</strong>: <code><a href='ClientAudio.html'>ClientAudio</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.loadedAudio">loadedAudio</a></p>
-<p>Inherited from
-WithVideoAsset.loadedAudio</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.loop">loop</a></p>
-<p>Inherited from
-WithVideoAsset.loop</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).isVector</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.mashIndex">mashIndex</a></h3><p>• <strong>mashIndex</strong>: <code><a href='MashIndex.html'>MashIndex</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.mashIndex">mashIndex</a></p>
 <p>Inherited from
-WithVideoAsset.mashIndex</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).mashIndex</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.probeSize">probeSize</a></p>
 <p>Inherited from
-WithVideoAsset.probeSize</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).probeSize</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.properties">properties</a></p>
 <p>Inherited from
-WithVideoAsset.properties</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.quantize">quantize</a></h3><p>• <strong>quantize</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.quantize">quantize</a></p>
-<p>Inherited from
-WithVideoAsset.quantize</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).properties</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.request">request</a></p>
 <p>Inherited from
-WithVideoAsset.request</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).request</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.resource">resource</a></p>
 <p>Inherited from
-WithVideoAsset.resource</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).resource</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.resources">resources</a></p>
 <p>Inherited from
-WithVideoAsset.resources</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).resources</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.saveNeeded">saveNeeded</a></p>
 <p>Inherited from
-WithVideoAsset.saveNeeded</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).saveNeeded</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.size">size</a></h3><p>• <strong>size</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.size">size</a></p>
 <p>Inherited from
-WithVideoAsset.size</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).size</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.source">source</a></p>
 <p>Inherited from
-WithVideoAsset.source</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).source</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$MASH'>$MASH</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.targetId">targetId</a></p>
 <p>Inherited from
-WithVideoAsset.targetId</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).targetId</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.totalFrames">totalFrames</a></h3><p>• <strong>totalFrames</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.totalFrames">totalFrames</a></p>
 <p>Inherited from
-WithVideoAsset.totalFrames</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).totalFrames</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.tracks">tracks</a></h3><p>• <strong>tracks</strong>: <code><a href='ClientTracks.html'>ClientTracks</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.tracks">tracks</a></p>
 <p>Inherited from
-WithVideoAsset.tracks</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).tracks</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.type">type</a></p>
 <p>Inherited from
-WithVideoAsset.type</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ClientMashVideoAssetClass.clips">clips</a></h3><p>• <code>get</code> <strong>clips</strong>(): <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <p>Returns
@@ -420,15 +578,27 @@ WithVideoAsset.type</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.clips">clips</a></p>
 <p>Inherited from
-WithVideoAsset.clips</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).clips</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.composition">composition</a></h3><p>• <code>get</code> <strong>composition</strong>(): <code><a href='AudioPreview.html'>AudioPreview</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.encoding">encoding</a></h3><p>• <code>get</code> <strong>encoding</strong>(): <code><a href='Resource.html'>Resource</a></code></p>
 <p>Returns
-<code><a href='AudioPreview.html'>AudioPreview</a></code></p>
+<code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.composition">composition</a></p>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.encoding">encoding</a></p>
 <p>Inherited from
-WithVideoAsset.composition</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).encoding</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.frame">frame</a></h3><p>• <code>get</code> <strong>frame</strong>(): <code>number</code></p>
 <p>Returns
@@ -436,7 +606,13 @@ WithVideoAsset.composition</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.frame">frame</a></p>
 <p>Inherited from
-WithVideoAsset.frame</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).frame</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.loading">loading</a></h3><p>• <code>get</code> <strong>loading</strong>(): <code>boolean</code></p>
 <p>Returns
@@ -444,7 +620,13 @@ WithVideoAsset.frame</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.loading">loading</a></p>
 <p>Inherited from
-WithVideoAsset.loading</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).loading</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.paused">paused</a></h3><p>• <code>get</code> <strong>paused</strong>(): <code>boolean</code></p>
 <p>Returns
@@ -452,7 +634,13 @@ WithVideoAsset.loading</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.paused">paused</a></p>
 <p>Inherited from
-WithVideoAsset.paused</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).paused</p>
 <p>• <code>set</code> <strong>paused</strong>(<code>value</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -472,13 +660,25 @@ WithVideoAsset.paused</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.paused">paused</a></p>
 <p>Inherited from
-WithVideoAsset.paused</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).paused</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithVideoAsset.scalarRecord</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).scalarRecord</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.time">time</a></h3><p>• <code>get</code> <strong>time</strong>(): <code><a href='Time.html'>Time</a></code></p>
 <p>Returns
@@ -486,7 +686,13 @@ WithVideoAsset.scalarRecord</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.time">time</a></p>
 <p>Inherited from
-WithVideoAsset.time</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).time</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.timeRange">timeRange</a></h3><p>• <code>get</code> <strong>timeRange</strong>(): <code><a href='TimeRange.html'>TimeRange</a></code></p>
 <p>Returns
@@ -494,7 +700,13 @@ WithVideoAsset.time</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.timeRange">timeRange</a></p>
 <p>Inherited from
-WithVideoAsset.timeRange</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).timeRange</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.timeToBuffer">timeToBuffer</a></h3><p>• <code>get</code> <strong>timeToBuffer</strong>(): <code><a href='Time.html'>Time</a></code></p>
 <p>Returns
@@ -502,7 +714,13 @@ WithVideoAsset.timeRange</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.timeToBuffer">timeToBuffer</a></p>
 <p>Inherited from
-WithVideoAsset.timeToBuffer</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).timeToBuffer</p>
 <h2>Methods</h2>
 <h3><a id="ClientMashVideoAssetClass.addClipToTrack">addClipToTrack</a></h3><p>▸ <strong>addClipToTrack</strong>(<code>clip</code>, <code>trackIndex?</code>, <code>insertIndex?</code>, <code>frame?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -516,7 +734,7 @@ WithVideoAsset.timeToBuffer</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>clip</code></td>
-<td align="left"><code><a href='ClientClips.html'>ClientClips</a></code> | <code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code> | <code><a href='ClientClips.html'>ClientClips</a></code></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
@@ -540,7 +758,13 @@ WithVideoAsset.timeToBuffer</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.addClipToTrack">addClipToTrack</a></p>
 <p>Inherited from
-WithVideoAsset.addClipToTrack</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).addClipToTrack</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.addTrack">addTrack</a></h3><p>▸ <strong>addTrack</strong>(<code>options?</code>): <code><a href='Track.html'>Track</a></code></p>
 <h4>Parameters</h4>
@@ -561,9 +785,15 @@ WithVideoAsset.addClipToTrack</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.addTrack">addTrack</a></p>
 <p>Inherited from
-WithVideoAsset.addTrack</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).addTrack</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -573,36 +803,22 @@ WithVideoAsset.addTrack</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ClientAsset.html'>ClientAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.asset">asset</a></p>
-<p>Inherited from
-WithVideoAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Implementation of</h4>
-<p>ClientMashVideoAsset.asset</p>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.asset">asset</a></p>
 <p>Inherited from
-WithVideoAsset.asset</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).asset</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -623,9 +839,15 @@ WithVideoAsset.asset</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assetCachePromise">assetCachePromise</a></p>
 <p>Inherited from
-WithVideoAsset.assetCachePromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetCachePromise</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
+<h3><a id="ClientMashVideoAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_size</code>, <code>_cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -635,8 +857,12 @@ WithVideoAsset.assetCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_</code></td>
+<td align="left"><code>_size</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>_cover?</code></td>
+<td align="left"><code>boolean</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -644,31 +870,13 @@ WithVideoAsset.assetCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assetIcon">assetIcon</a></p>
 <p>Inherited from
-WithVideoAsset.assetIcon</p>
-<p>▸ <strong>assetIcon</strong>(<code>size</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>size</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-<tr>
-<td align="left"><code>cover?</code></td>
-<td align="left"><code>boolean</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
-<h4>Implementation of</h4>
-<p>ClientMashVideoAsset.assetIcon</p>
-<p>Inherited from
-WithVideoAsset.assetIcon</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetIcon</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -685,7 +893,7 @@ WithVideoAsset.assetIcon</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -697,7 +905,13 @@ WithVideoAsset.assetIcon</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.assetIconPromise">assetIconPromise</a></p>
 <p>Inherited from
-WithVideoAsset.assetIconPromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetIconPromise</p>
 <p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
@@ -713,7 +927,7 @@ WithVideoAsset.assetIconPromise</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -725,7 +939,13 @@ WithVideoAsset.assetIconPromise</p>
 <h4>Implementation of</h4>
 <p>ClientMashVideoAsset.assetIconPromise</p>
 <p>Inherited from
-WithVideoAsset.assetIconPromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).assetIconPromise</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.audibleSource">audibleSource</a></h3><p>▸ <strong>audibleSource</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode"><code>AudioBufferSourceNode</code></a></p>
 <p>Returns
@@ -733,7 +953,40 @@ WithVideoAsset.assetIconPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.audibleSource">audibleSource</a></p>
 <p>Inherited from
-WithVideoAsset.audibleSource</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).audibleSource</p>
+<hr>
+<h3><a id="ClientMashVideoAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.boolean">boolean</a></p>
+<p>Inherited from
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).boolean</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -758,7 +1011,13 @@ WithVideoAsset.audibleSource</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithVideoAsset.changeScalar</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).changeScalar</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -779,7 +1038,13 @@ WithVideoAsset.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithVideoAsset.changeScalars</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).changeScalars</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.changeTiming">changeTiming</a></h3><p>▸ <strong>changeTiming</strong>(<code>propertied</code>, <code>property</code>, <code>value</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -808,7 +1073,13 @@ WithVideoAsset.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.changeTiming">changeTiming</a></p>
 <p>Inherited from
-WithVideoAsset.changeTiming</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).changeTiming</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.clearPreview">clearPreview</a></h3><p>▸ <strong>clearPreview</strong>(): <code>void</code></p>
 <p>Returns
@@ -816,7 +1087,13 @@ WithVideoAsset.changeTiming</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.clearPreview">clearPreview</a></p>
 <p>Inherited from
-WithVideoAsset.clearPreview</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).clearPreview</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.clipInstance">clipInstance</a></h3><p>▸ <strong>clipInstance</strong>(<code>object</code>): <code><a href='ClientClip.html'>ClientClip</a></code></p>
 <h4>Parameters</h4>
@@ -837,7 +1114,13 @@ WithVideoAsset.clearPreview</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.clipInstance">clipInstance</a></p>
 <p>Inherited from
-WithVideoAsset.clipInstance</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).clipInstance</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -849,7 +1132,7 @@ WithVideoAsset.clipInstance</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -858,7 +1141,13 @@ WithVideoAsset.clipInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.clipObject">clipObject</a></p>
 <p>Inherited from
-WithVideoAsset.clipObject</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).clipObject</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.clipsAudibleInTime">clipsAudibleInTime</a></h3><p>▸ <strong>clipsAudibleInTime</strong>(<code>time</code>): <code><a href='Clips.html'>Clips</a></code></p>
 <h4>Parameters</h4>
@@ -879,7 +1168,13 @@ WithVideoAsset.clipObject</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.clipsAudibleInTime">clipsAudibleInTime</a></p>
 <p>Inherited from
-WithVideoAsset.clipsAudibleInTime</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).clipsAudibleInTime</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.clipsInTimeOfType">clipsInTimeOfType</a></h3><p>▸ <strong>clipsInTimeOfType</strong>(<code>time</code>, <code>avType?</code>): <code><a href='ClientClips.html'>ClientClips</a></code></p>
 <h4>Parameters</h4>
@@ -904,7 +1199,13 @@ WithVideoAsset.clipsAudibleInTime</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.clipsInTimeOfType">clipsInTimeOfType</a></p>
 <p>Inherited from
-WithVideoAsset.clipsInTimeOfType</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).clipsInTimeOfType</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -929,7 +1230,13 @@ WithVideoAsset.clipsInTimeOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithVideoAsset.constrainedValue</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -950,7 +1257,13 @@ WithVideoAsset.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.decodingOfType">decodingOfType</a></p>
 <p>Inherited from
-WithVideoAsset.decodingOfType</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).decodingOfType</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.dispatchChanged">dispatchChanged</a></h3><p>▸ <strong>dispatchChanged</strong>(<code>edit</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -971,7 +1284,13 @@ WithVideoAsset.decodingOfType</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.dispatchChanged">dispatchChanged</a></p>
 <p>Inherited from
-WithVideoAsset.dispatchChanged</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).dispatchChanged</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.draw">draw</a></h3><p>▸ <strong>draw</strong>(): <code>void</code></p>
 <p>Returns
@@ -979,7 +1298,13 @@ WithVideoAsset.dispatchChanged</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.draw">draw</a></p>
 <p>Inherited from
-WithVideoAsset.draw</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).draw</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.elementsPromise">elementsPromise</a></h3><p>▸ <strong>elementsPromise</strong>(<code>outputSize?</code>, <code>selectedClip?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='SvgItems.html'>SvgItems</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -996,7 +1321,7 @@ WithVideoAsset.draw</p>
 </tr>
 <tr>
 <td align="left"><code>selectedClip?</code></td>
-<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='Clip.html'>Clip</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1004,7 +1329,13 @@ WithVideoAsset.draw</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.elementsPromise">elementsPromise</a></p>
 <p>Inherited from
-WithVideoAsset.elementsPromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).elementsPromise</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -1025,7 +1356,13 @@ WithVideoAsset.elementsPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.frames">frames</a></p>
 <p>Inherited from
-WithVideoAsset.frames</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).frames</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.framesHaveChanged">framesHaveChanged</a></h3><p>▸ <strong>framesHaveChanged</strong>(<code>frames?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1046,9 +1383,15 @@ WithVideoAsset.frames</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.framesHaveChanged">framesHaveChanged</a></p>
 <p>Inherited from
-WithVideoAsset.framesHaveChanged</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).framesHaveChanged</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientMashVideoAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1063,52 +1406,17 @@ WithVideoAsset.framesHaveChanged</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.imagePromise">imagePromise</a></p>
 <p>Inherited from
-WithVideoAsset.imagePromise</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='ClientMashAssetObject.html'>ClientMashAssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithVideoAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientMashVideoAsset.initializeProperties</p>
-<p>Inherited from
-WithVideoAsset.initializeProperties</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).imagePromise</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -1129,7 +1437,13 @@ WithVideoAsset.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.instanceArgs">instanceArgs</a></p>
 <p>Inherited from
-WithVideoAsset.instanceArgs</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).instanceArgs</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>_?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
@@ -1141,7 +1455,7 @@ WithVideoAsset.instanceArgs</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_?</code></td>
+<td align="left"><code>_</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -1150,7 +1464,13 @@ WithVideoAsset.instanceArgs</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Inherited from
-WithVideoAsset.instanceFromObject</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).instanceFromObject</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.mashDescription">mashDescription</a></h3><p>▸ <strong>mashDescription</strong>(<code>options</code>, <code>selectedClip?</code>): <code><a href='ClientMashDescription.html'>ClientMashDescription</a></code></p>
 <h4>Parameters</h4>
@@ -1167,7 +1487,7 @@ WithVideoAsset.instanceFromObject</p>
 </tr>
 <tr>
 <td align="left"><code>selectedClip?</code></td>
-<td align="left"><code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='Clip.html'>Clip</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1175,9 +1495,15 @@ WithVideoAsset.instanceFromObject</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.mashDescription">mashDescription</a></p>
 <p>Inherited from
-WithVideoAsset.mashDescription</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).mashDescription</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientMashVideoAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1187,14 +1513,22 @@ WithVideoAsset.mashDescription</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.number">number</a></p>
 <p>Inherited from
-WithVideoAsset.propertiesInitialize</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).number</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -1215,7 +1549,13 @@ WithVideoAsset.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithVideoAsset.propertyFind</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).propertyFind</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -1236,7 +1576,13 @@ WithVideoAsset.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithVideoAsset.propertyIds</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).propertyIds</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -1257,15 +1603,13 @@ WithVideoAsset.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithVideoAsset.propertyInstance</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.putPromise">putPromise</a></h3><p>▸ <strong>putPromise</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
-<p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.putPromise">putPromise</a></p>
-<p>Inherited from
-WithVideoAsset.putPromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.reload">reload</a></h3><p>▸ <strong>reload</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <p>Returns
@@ -1273,7 +1617,13 @@ WithVideoAsset.putPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.reload">reload</a></p>
 <p>Inherited from
-WithVideoAsset.reload</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).reload</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.removeClipFromTrack">removeClipFromTrack</a></h3><p>▸ <strong>removeClipFromTrack</strong>(<code>clip</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1286,7 +1636,7 @@ WithVideoAsset.reload</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>clip</code></td>
-<td align="left"><code><a href='ClientClips.html'>ClientClips</a></code> | <code><a href='ClientClip.html'>ClientClip</a></code></td>
+<td align="left"><code><a href='Clip.html'>Clip</a></code> | <code><a href='Clips.html'>Clips</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1294,7 +1644,13 @@ WithVideoAsset.reload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.removeClipFromTrack">removeClipFromTrack</a></p>
 <p>Inherited from
-WithVideoAsset.removeClipFromTrack</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).removeClipFromTrack</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.removeTrack">removeTrack</a></h3><p>▸ <strong>removeTrack</strong>(<code>index?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1315,7 +1671,13 @@ WithVideoAsset.removeClipFromTrack</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.removeTrack">removeTrack</a></p>
 <p>Inherited from
-WithVideoAsset.removeTrack</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).removeTrack</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -1328,7 +1690,7 @@ WithVideoAsset.removeTrack</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -1336,7 +1698,13 @@ WithVideoAsset.removeTrack</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.resourceOfType">resourceOfType</a></p>
 <p>Inherited from
-WithVideoAsset.resourceOfType</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).resourceOfType</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1355,7 +1723,13 @@ WithVideoAsset.resourceOfType</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-WithVideoAsset.saveId</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).saveId</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -1376,7 +1750,13 @@ WithVideoAsset.saveId</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.savePromise">savePromise</a></p>
 <p>Inherited from
-WithVideoAsset.savePromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).savePromise</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.savingPromise">savingPromise</a></h3><p>▸ <code>Protected</code> <strong>savingPromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -1395,7 +1775,13 @@ WithVideoAsset.savePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <p>Inherited from
-WithVideoAsset.savingPromise</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).savingPromise</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.seekToTime">seekToTime</a></h3><p>▸ <strong>seekToTime</strong>(<code>time</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <h4>Parameters</h4>
@@ -1416,7 +1802,13 @@ WithVideoAsset.savingPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.seekToTime">seekToTime</a></p>
 <p>Inherited from
-WithVideoAsset.seekToTime</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).seekToTime</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>scalar?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -1441,9 +1833,15 @@ WithVideoAsset.seekToTime</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.setValue">setValue</a></p>
 <p>Inherited from
-WithVideoAsset.setValue</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).setValue</p>
 <hr>
-<h3><a id="ClientMashVideoAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientMashVideoAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1463,8 +1861,43 @@ WithVideoAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithVideoAsset.shouldSelectProperty</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientMashVideoAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.string">string</a></p>
+<p>Inherited from
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).string</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -1472,7 +1905,13 @@ WithVideoAsset.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.toJSON">toJSON</a></p>
 <p>Inherited from
-WithVideoAsset.toJSON</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).toJSON</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.trackInstance">trackInstance</a></h3><p>▸ <strong>trackInstance</strong>(<code>args</code>): <code><a href='ClientTrack.html'>ClientTrack</a></code></p>
 <h4>Parameters</h4>
@@ -1493,7 +1932,13 @@ WithVideoAsset.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.trackInstance">trackInstance</a></p>
 <p>Inherited from
-WithVideoAsset.trackInstance</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).trackInstance</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1522,7 +1967,13 @@ WithVideoAsset.trackInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithVideoAsset.tweenValues</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).tweenValues</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -1530,7 +1981,13 @@ WithVideoAsset.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.unload">unload</a></p>
 <p>Inherited from
-WithVideoAsset.unload</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).unload</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.updateAssetId">updateAssetId</a></h3><p>▸ <strong>updateAssetId</strong>(<code>oldId</code>, <code>newId</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -1555,7 +2012,13 @@ WithVideoAsset.unload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.updateAssetId">updateAssetId</a></p>
 <p>Inherited from
-WithVideoAsset.updateAssetId</p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).updateAssetId</p>
 <hr>
 <h3><a id="ClientMashVideoAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1576,24 +2039,13 @@ WithVideoAsset.updateAssetId</p>
 <h4>Implementation of</h4>
 <p><a href="ClientMashVideoAsset.html">ClientMashVideoAsset</a>.<a href="ClientMashVideoAsset.html#ClientMashVideoAsset.value">value</a></p>
 <p>Inherited from
-WithVideoAsset.value</p>
-<hr>
-<h3><a id="ClientMashVideoAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ClientEvents.html#EventAsset'>EventAsset</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
+VideoAssetMixin(
+  ClientVisibleAssetMixin(
+    ClientAudibleAssetMixin(
+      VisibleAssetMixin(AudibleAssetMixin(ClientMashAssetClass))
+    )
+  )
+).value</p>
 
   </div>
 </section>
@@ -1605,38 +2057,29 @@ WithVideoAsset.value</p>
         <ul><li><a class='' href='#ClientMashVideoAssetClass'>ClientMashVideoAssetClass</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass._assets'>_assets</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.actions'>actions</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.alpha'>alpha</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.assets'>assets</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.audioUrl'>audioUrl</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.buffer'>buffer</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.canBeFill'>canBeFill</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.canBeMuted'>canBeMuted</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.color'>color</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.container'>container</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.content'>content</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.drawnTime'>drawnTime</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.duration'>duration</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.encoding'>encoding</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.encodings'>encodings</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.edits'>edits</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.endTime'>endTime</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.id'>id</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.isVector'>isVector</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.label'>label</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.listeners'>listeners</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.loadedAudio'>loadedAudio</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.loop'>loop</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.mashIndex'>mashIndex</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.properties'>properties</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.quantize'>quantize</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.request'>request</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.resource'>resource</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.resources'>resources</a></li>
@@ -1648,7 +2091,7 @@ WithVideoAsset.value</p>
 <li><a class='' href='#ClientMashVideoAssetClass.tracks'>tracks</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.type'>type</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.clips'>clips</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.composition'>composition</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.encoding'>encoding</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.frame'>frame</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.loading'>loading</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.paused'>paused</a></li>
@@ -1663,6 +2106,7 @@ WithVideoAsset.value</p>
 <li><a class='' href='#ClientMashVideoAssetClass.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.assetIconPromise'>assetIconPromise</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.audibleSource'>audibleSource</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.changeTiming'>changeTiming</a></li>
@@ -1679,15 +2123,13 @@ WithVideoAsset.value</p>
 <li><a class='' href='#ClientMashVideoAssetClass.frames'>frames</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.framesHaveChanged'>framesHaveChanged</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.instanceFromObject'>instanceFromObject</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.mashDescription'>mashDescription</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.number'>number</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.putPromise'>putPromise</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.reload'>reload</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.removeClipFromTrack'>removeClipFromTrack</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.removeTrack'>removeTrack</a></li>
@@ -1698,13 +2140,13 @@ WithVideoAsset.value</p>
 <li><a class='' href='#ClientMashVideoAssetClass.seekToTime'>seekToTime</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientMashVideoAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.trackInstance'>trackInstance</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.unload'>unload</a></li>
 <li><a class='' href='#ClientMashVideoAssetClass.updateAssetId'>updateAssetId</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.value'>value</a></li>
-<li><a class='' href='#ClientMashVideoAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ClientMashVideoAssetClass.value'>value</a></li></ul>
       </nav>
     </main>
   </body>

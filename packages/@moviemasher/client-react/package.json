@@ -15,6 +15,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "clean": "rm -rf ./dist/*",
     "build": "run-s build-code build-rollup",
     "build-code": "node dev/build-code.mjs",
     "build-rollup": "rollup -c dev/rollup.config.mjs",

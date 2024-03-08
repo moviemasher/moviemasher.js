@@ -61,10 +61,6 @@ T & Constrained<MashAsset> {
       this.assureTrack()
       this.tracks.sort(sortByIndex)
     }
-  
-    // declare aspectWidth: number
-    // declare aspectHeight: number
-    // declare aspectShortest: number
 
     override assetCachePromise(args: AssetCacheArgs): Promise<DataOrError<number>> {
       const preloadOptions = this.assetCacheArgs(args)
@@ -162,9 +158,7 @@ T & Constrained<MashAsset> {
       const clipsVisible = this.clips.filter(clip => clip.visible)
       return this.filterIntersecting(clipsVisible, time)
     }
-  
-    // declare color: string
-    
+ 
     get duration(): number { return this.endTime.seconds }
   
 
@@ -173,20 +167,7 @@ T & Constrained<MashAsset> {
     private filterIntersecting(clips: Clips, time: Time): Clip[] {
       const scaled = time.scale(this.quantize)
       return clips.filter(clip => this.clipIntersects(clip, scaled))
-    }
-  
-    // private _gain = 1.0
-  
-    // get gain(): number { return this._gain }
-  
-    // set gain(value: number) {
-    //   assertPositive(value, 'gain')
-  
-    //   if (this._gain !== value) {
-    //     this._gain = value
-    //   }
-    // }
-  
+    }  
 
     instanceArgs(object?: InstanceObject): InstanceArgs {
       return { ...super.instanceArgs(object), asset: this, assetId: this.id }
@@ -202,8 +183,6 @@ T & Constrained<MashAsset> {
       return Number(this.value('quantize'))
     }
 
-  
-  
     get size(): Size {
       const aspectHeight = this.value('aspectHeight')
       const aspectWidth = this.value('aspectWidth')

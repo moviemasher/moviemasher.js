@@ -1,10 +1,12 @@
 import type { DecodeFunction } from '@moviemasher/shared-lib/types.js'
 
 import { $DECODE, $POST, ERROR, copyResource, errorPromise, isDecoding, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
-import { isDropResource } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertDefined, isDropResource } from '@moviemasher/shared-lib/utility/guards.js'
 import { requestCallbackPromise } from '../utility/request.js'
 
 export const decodeFunction: DecodeFunction = (args, jobOptions = {}) => {
+  assertDefined(args)
+
   const { progress } = jobOptions
   const resource = copyResource(args.resource)
   if (!isDropResource(resource)) return errorPromise(ERROR.Internal)

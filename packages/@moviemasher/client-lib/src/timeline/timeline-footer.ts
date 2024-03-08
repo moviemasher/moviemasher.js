@@ -1,7 +1,7 @@
 import type { Htmls, OptionalContent } from '../client-types.js'
 
-import { ADD, ADD_TRACK, REMOVE } from '../runtime.js'
-import { EventDoClientAction, EventZoom } from '../utility/events.js'
+import { $INSERT, ADD_TRACK, $REMOVE } from '../utility/constants.js'
+import { EventDoClientAction, EventZoom } from '../module/event.js'
 import { html } from 'lit-html'
 import { FooterBase } from '../base/component-view.js'
 
@@ -31,13 +31,13 @@ export class TimelineFooterElement extends FooterBase {
     this.loadComponent('movie-masher-action-client')
     htmls.push(html`
       <movie-masher-action-client         
-        icon='add' emit='${EventDoClientAction.Type}' detail='${ADD}'
+        icon='${$INSERT}' emit='${EventDoClientAction.Type}' detail='${$INSERT}'
         string='clip'
       ></movie-masher-action-client>
     `)
     htmls.push(html`
       <movie-masher-action-client 
-        icon='add' emit='${EventDoClientAction.Type}' detail='${ADD_TRACK}'
+        icon='${$INSERT}' emit='${EventDoClientAction.Type}' detail='${ADD_TRACK}'
         string='track'
       ></movie-masher-action-client>
     `)
@@ -45,8 +45,8 @@ export class TimelineFooterElement extends FooterBase {
     this.loadComponent('movie-masher-action-client')
     htmls.push(html`
       <movie-masher-action-client
-        detail='${REMOVE}'
-        icon='remove'
+        detail='${$REMOVE}'
+        icon='${$REMOVE}'
       ></movie-masher-action-client>
     `)
     return super.rightContent(htmls)

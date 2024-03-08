@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerRawVideoInstanceClass"><h2>ServerRawVideoInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ServerRawVideoInstanceClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawVideoInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerRawVideoInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithVideoInstance</code></p>
+<li><p><code><a href='ServerInstanceClass.html'>ServerInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='AudibleInstance.html'>AudibleInstance</a></code> &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code> &amp; <code><a href='ServerAudibleInstance.html'>ServerAudibleInstance</a></code> &amp; <code><a href='VideoInstance.html'>VideoInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerRawVideoInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerRawVideoInstance.html'>ServerRawVideoInstance</a></code></li>
+<li><code>ServerRawVideoInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerRawVideoInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerRawVideoInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ServerRawVideoInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerRawVideoInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,284 +153,230 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='VideoInstanceObject.html'>VideoInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithVideoInstance.constructor</p>
+<p>Inherited from
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ServerRawVideoInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithVideoInstance._id</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+)._id</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithVideoInstance._label</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerRawVideoAsset.html'>ServerRawVideoAsset</a></code></p>
+<h3><a id="ServerRawVideoInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ServerRawVideoAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.asset">asset</a></p>
+<p>ServerRawVideoInstance.asset</p>
 <p>Overrides
-WithVideoInstance.asset</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).asset</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.assetId">assetId</a></p>
+<p>ServerRawVideoInstance.assetId</p>
 <p>Inherited from
-WithVideoInstance.assetId</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).assetId</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.assetIds">assetIds</a></p>
+<p>ServerRawVideoInstance.assetIds</p>
 <p>Inherited from
-WithVideoInstance.assetIds</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithVideoInstance.bottomCrop</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).assetIds</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.canBeMuted">canBeMuted</a></p>
+<p>ServerRawVideoInstance.canBeMuted</p>
 <p>Inherited from
-WithVideoInstance.canBeMuted</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).canBeMuted</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.clip">clip</a></p>
+<p>ServerRawVideoInstance.clip</p>
 <p>Inherited from
-WithVideoInstance.clip</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.container">container</a></p>
-<p>Inherited from
-WithVideoInstance.container</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).clip</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.cropDirections">cropDirections</a></p>
+<p>ServerRawVideoInstance.cropDirections</p>
 <p>Inherited from
-WithVideoInstance.cropDirections</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).cropDirections</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.endTrim">endTrim</a></h3><p>• <strong>endTrim</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.endTrim">endTrim</a></p>
+<h3><a id="ServerRawVideoInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithVideoInstance.endTrim</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.gain">gain</a></h3><p>• <strong>gain</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.gain">gain</a></p>
-<p>Inherited from
-WithVideoInstance.gain</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.gainPairs">gainPairs</a></h3><p>• <strong>gainPairs</strong>: <code><a href='Numbers.html'>Numbers</a></code>[]</p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.gainPairs">gainPairs</a></p>
-<p>Inherited from
-WithVideoInstance.gainPairs</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<p>Inherited from
-WithVideoInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.height">height</a></p>
-<p>Inherited from
-WithVideoInstance.height</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithVideoInstance.heightEnd</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.id">id</a></p>
+<p>ServerRawVideoInstance.id</p>
 <p>Inherited from
-WithVideoInstance.id</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).id</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.instanceObject">instanceObject</a></p>
+<p>ServerRawVideoInstance.instanceObject</p>
 <p>Inherited from
-WithVideoInstance.instanceObject</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).instanceObject</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ServerRawVideoInstance.intrinsicRect</p>
 <p>Inherited from
-WithVideoInstance.intrinsicRect</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).intrinsicRect</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.isDefault">isDefault</a></p>
+<p>ServerRawVideoInstance.isDefault</p>
 <p>Inherited from
-WithVideoInstance.isDefault</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithVideoInstance.leftCrop</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.lock">lock</a></p>
-<p>Inherited from
-WithVideoInstance.lock</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).isDefault</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.muted">muted</a></p>
+<p>ServerRawVideoInstance.muted</p>
 <p>Inherited from
-WithVideoInstance.muted</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).muted</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ServerRawVideoInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.opacityEnd">opacityEnd</a></p>
+<p>ServerRawVideoInstance.properties</p>
 <p>Inherited from
-WithVideoInstance.opacityEnd</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).properties</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ServerRawVideoInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.pointAspect">pointAspect</a></p>
+<p>ServerRawVideoInstance.sizeKey</p>
 <p>Inherited from
-WithVideoInstance.pointAspect</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).sizeKey</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerRawVideoInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.properties">properties</a></p>
+<p>ServerRawVideoInstance.targetId</p>
 <p>Inherited from
-WithVideoInstance.properties</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithVideoInstance.rightCrop</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithVideoInstance.sizeAspect</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithVideoInstance.sizeKey</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.speed">speed</a></h3><p>• <strong>speed</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.speed">speed</a></p>
-<p>Inherited from
-WithVideoInstance.speed</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.startTrim">startTrim</a></h3><p>• <strong>startTrim</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.startTrim">startTrim</a></p>
-<p>Inherited from
-WithVideoInstance.startTrim</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.targetId">targetId</a></p>
-<p>Inherited from
-WithVideoInstance.targetId</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithVideoInstance.topCrop</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).targetId</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.tweening">tweening</a></p>
+<p>ServerRawVideoInstance.tweening</p>
 <p>Inherited from
-WithVideoInstance.tweening</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.width">width</a></p>
-<p>Inherited from
-WithVideoInstance.width</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithVideoInstance.widthEnd</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.x">x</a></p>
-<p>Inherited from
-WithVideoInstance.x</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithVideoInstance.xEnd</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.y">y</a></p>
-<p>Inherited from
-WithVideoInstance.y</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithVideoInstance.yEnd</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ServerRawVideoInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithVideoInstance.isAudio</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithVideoInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithVideoInstance.label</p>
-<hr>
 <h3><a id="ServerRawVideoInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithVideoInstance.scalarRecord</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ServerRawVideoInstanceClass.assetFrames">assetFrames</a></h3><p>▸ <strong>assetFrames</strong>(<code>quantize</code>): <code><a href='Numbers.html'>Numbers</a></code></p>
 <h4>Parameters</h4>
@@ -450,9 +396,15 @@ WithVideoInstance.scalarRecord</p>
 <code><a href='Numbers.html'>Numbers</a></code></p>
 <p>Array containing duration, start trim, and end trim in frames.</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.assetFrames">assetFrames</a></p>
+<p>ServerRawVideoInstance.assetFrames</p>
 <p>Inherited from
-WithVideoInstance.assetFrames</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).assetFrames</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -471,9 +423,15 @@ WithVideoInstance.assetFrames</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.assetTime">assetTime</a></p>
+<p>ServerRawVideoInstance.assetTime</p>
 <p>Inherited from
-WithVideoInstance.assetTime</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).assetTime</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.audibleCommandFiles">audibleCommandFiles</a></h3><p>▸ <strong>audibleCommandFiles</strong>(<code>args</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -492,7 +450,40 @@ WithVideoInstance.assetTime</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <p>Inherited from
-WithVideoInstance.audibleCommandFiles</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).audibleCommandFiles</p>
+<hr>
+<h3><a id="ServerRawVideoInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawVideoInstance.boolean</p>
+<p>Inherited from
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).boolean</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -514,8 +505,16 @@ WithVideoInstance.audibleCommandFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawVideoInstance.changeScalar</p>
 <p>Inherited from
-WithVideoInstance.changeScalar</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).changeScalar</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -533,8 +532,16 @@ WithVideoInstance.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawVideoInstance.changeScalars</p>
 <p>Inherited from
-WithVideoInstance.changeScalars</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).changeScalars</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -547,7 +554,7 @@ WithVideoInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -557,9 +564,15 @@ WithVideoInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.clippedElement">clippedElement</a></p>
+<p>ServerRawVideoInstance.clippedElement</p>
 <p>Inherited from
-WithVideoInstance.clippedElement</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).clippedElement</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>cacheArgs</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -578,9 +591,15 @@ WithVideoInstance.clippedElement</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.commandFiles">commandFiles</a></p>
+<p>ServerRawVideoInstance.commandFiles</p>
 <p>Inherited from
-WithVideoInstance.commandFiles</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).commandFiles</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -603,9 +622,15 @@ WithVideoInstance.commandFiles</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.constrainedValue">constrainedValue</a></p>
+<p>ServerRawVideoInstance.constrainedValue</p>
 <p>Inherited from
-WithVideoInstance.constrainedValue</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -632,11 +657,17 @@ WithVideoInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.containedItem">containedItem</a></p>
+<p>ServerRawVideoInstance.containedItem</p>
 <p>Inherited from
-WithVideoInstance.containedItem</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).containedItem</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ServerRawVideoInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -650,16 +681,22 @@ WithVideoInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.containerRects">containerRects</a></p>
+<p>ServerRawVideoInstance.containerRects</p>
 <p>Inherited from
-WithVideoInstance.containerRects</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).containerRects</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -678,9 +715,15 @@ WithVideoInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ServerRawVideoInstance.containerSvgItem</p>
 <p>Inherited from
-WithVideoInstance.containerSvgItem</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).containerSvgItem</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -707,9 +750,15 @@ WithVideoInstance.containerSvgItem</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.contentRect">contentRect</a></p>
+<p>ServerRawVideoInstance.contentRect</p>
 <p>Inherited from
-WithVideoInstance.contentRect</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).contentRect</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -728,9 +777,15 @@ WithVideoInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.contentRects">contentRects</a></p>
+<p>ServerRawVideoInstance.contentRects</p>
 <p>Inherited from
-WithVideoInstance.contentRects</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).contentRects</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -749,9 +804,15 @@ WithVideoInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ServerRawVideoInstance.contentSvgItem</p>
 <p>Inherited from
-WithVideoInstance.contentSvgItem</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).contentSvgItem</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -770,50 +831,15 @@ WithVideoInstance.contentSvgItem</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.frames">frames</a></p>
+<p>ServerRawVideoInstance.frames</p>
 <p>Inherited from
-WithVideoInstance.frames</p>
-<hr>
-<h3><a id="ServerRawVideoInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithVideoInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerRawVideoInstance.initializeProperties</p>
-<p>Inherited from
-WithVideoInstance.initializeProperties</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).frames</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -832,9 +858,15 @@ WithVideoInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ServerRawVideoInstance.instanceCachePromise</p>
 <p>Inherited from
-WithVideoInstance.instanceCachePromise</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -853,11 +885,17 @@ WithVideoInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ServerRawVideoInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithVideoInstance.intrinsicsKnown</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerRawVideoInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -867,14 +905,22 @@ WithVideoInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawVideoInstance.number</p>
 <p>Inherited from
-WithVideoInstance.propertiesInitialize</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).number</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -893,9 +939,15 @@ WithVideoInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.propertyFind">propertyFind</a></p>
+<p>ServerRawVideoInstance.propertyFind</p>
 <p>Inherited from
-WithVideoInstance.propertyFind</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).propertyFind</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -914,9 +966,15 @@ WithVideoInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.propertyIds">propertyIds</a></p>
+<p>ServerRawVideoInstance.propertyIds</p>
 <p>Inherited from
-WithVideoInstance.propertyIds</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).propertyIds</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -935,9 +993,15 @@ WithVideoInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.propertyInstance">propertyInstance</a></p>
+<p>ServerRawVideoInstance.propertyInstance</p>
 <p>Inherited from
-WithVideoInstance.propertyInstance</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -960,9 +1024,15 @@ WithVideoInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.scaleRects">scaleRects</a></p>
+<p>ServerRawVideoInstance.scaleRects</p>
 <p>Inherited from
-WithVideoInstance.scaleRects</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).scaleRects</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -985,11 +1055,17 @@ WithVideoInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.setValue">setValue</a></p>
+<p>ServerRawVideoInstance.setValue</p>
 <p>Inherited from
-WithVideoInstance.setValue</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).setValue</p>
 <hr>
-<h3><a id="ServerRawVideoInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerRawVideoInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -1009,8 +1085,43 @@ WithVideoInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawVideoInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithVideoInstance.shouldSelectProperty</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerRawVideoInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawVideoInstance.string</p>
+<p>Inherited from
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).string</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -1037,17 +1148,29 @@ WithVideoInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.svgVector">svgVector</a></p>
+<p>ServerRawVideoInstance.svgVector</p>
 <p>Inherited from
-WithVideoInstance.svgVector</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).svgVector</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.toJSON">toJSON</a></p>
+<p>ServerRawVideoInstance.toJSON</p>
 <p>Inherited from
-WithVideoInstance.toJSON</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).toJSON</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1074,9 +1197,15 @@ WithVideoInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.tweenValues">tweenValues</a></p>
+<p>ServerRawVideoInstance.tweenValues</p>
 <p>Inherited from
-WithVideoInstance.tweenValues</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).tweenValues</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1095,9 +1224,15 @@ WithVideoInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.tweens">tweens</a></p>
+<p>ServerRawVideoInstance.tweens</p>
 <p>Inherited from
-WithVideoInstance.tweens</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).tweens</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1116,9 +1251,15 @@ WithVideoInstance.tweens</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawVideoInstance.html">ServerRawVideoInstance</a>.<a href="ServerRawVideoInstance.html#ServerRawVideoInstance.value">value</a></p>
+<p>ServerRawVideoInstance.value</p>
 <p>Inherited from
-WithVideoInstance.value</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).value</p>
 <hr>
 <h3><a id="ServerRawVideoInstanceClass.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>, <code>content?</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -1141,7 +1282,13 @@ WithVideoInstance.value</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <p>Inherited from
-WithVideoInstance.visibleCommandFiles</p>
+VideoInstanceMixin(
+  ServerAudibleInstanceMixin(
+    ServerVisibleInstanceMixin(
+      VisibleInstanceMixin(AudibleInstanceMixin(ServerInstanceClass))
+    )
+  )
+).visibleCommandFiles</p>
 
   </div>
 </section>
@@ -1153,51 +1300,27 @@ WithVideoInstance.visibleCommandFiles</p>
         <ul><li><a class='' href='#ServerRawVideoInstanceClass'>ServerRawVideoInstanceClass</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.container'>container</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.endTrim'>endTrim</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.gain'>gain</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.gainPairs'>gainPairs</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.height'>height</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.id'>id</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.sizeKey'>sizeKey</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.speed'>speed</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.startTrim'>startTrim</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.width'>width</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.x'>x</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.y'>y</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.label'>label</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.assetFrames'>assetFrames</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.assetTime'>assetTime</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.audibleCommandFiles'>audibleCommandFiles</a></li>
+<li><a class='' href='#ServerRawVideoInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1210,16 +1333,16 @@ WithVideoInstance.visibleCommandFiles</p>
 <li><a class='' href='#ServerRawVideoInstanceClass.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerRawVideoInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerRawVideoInstanceClass.number'>number</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerRawVideoInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerRawVideoInstanceClass.tweenValues'>tweenValues</a></li>

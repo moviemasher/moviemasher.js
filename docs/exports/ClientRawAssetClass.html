@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,16 +131,16 @@
   <a id="ClientRawAssetClass"><h2>ClientRawAssetClass</h2></a>
   <div class="section">
     <h1>Class: ClientRawAssetClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithRawAssetMixin</code></p>
+<li><p><code><a href='ClientAssetClass.html'>ClientAssetClass</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientRawAssetClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ClientRawAsset.html'>ClientRawAsset</a></code></li>
+<li><code><a href='ClientAsset.html'>ClientAsset</a></code></li>
 </ul>
 <h2>Constructors</h2>
 <h3><a id="ClientRawAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientRawAssetClass</strong>(<code>object</code>)</p>
@@ -154,115 +154,139 @@
 </thead>
 <tbody><tr>
 <td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
 <p>Inherited from
-WithRawAssetMixin.constructor</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.constructor">constructor</a></p>
 <h2>Properties</h2>
-<h3><a id="ClientRawAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<h3><a id="ClientRawAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
 <p>Inherited from
-WithRawAssetMixin._assets</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass._assets">_assets</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
+<h3><a id="ClientRawAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.assetIds">assetIds</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetManager">assetManager</a></p>
 <p>Inherited from
-WithRawAssetMixin.assetIds</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.assetManager">assetManager</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='RawAssetObject.html'>RawAssetObject</a></code></p>
+<h3><a id="ClientRawAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.assetObject">assetObject</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decodings">decodings</a></p>
 <p>Inherited from
-WithRawAssetMixin.assetObject</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.decodings">decodings</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
+<h3><a id="ClientRawAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.assets">assets</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
 <p>Inherited from
-WithRawAssetMixin.assets</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
+<h3><a id="ClientRawAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.decoding">decoding</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
 <p>Inherited from
-WithRawAssetMixin.decoding</p>
-<hr>
-<h3><a id="ClientRawAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.decodings">decodings</a></p>
-<p>Inherited from
-WithRawAssetMixin.decodings</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.id">id</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.id">id</a></p>
 <p>Inherited from
-WithRawAssetMixin.id</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.id">id</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
+<h3><a id="ClientRawAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.label">label</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.properties">properties</a></p>
 <p>Inherited from
-WithRawAssetMixin.label</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.properties">properties</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientRawAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.properties">properties</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resources">resources</a></p>
 <p>Inherited from
-WithRawAssetMixin.properties</p>
-<hr>
-<h3><a id="ClientRawAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.request">request</a></p>
-<p>Inherited from
-WithRawAssetMixin.request</p>
-<hr>
-<h3><a id="ClientRawAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.resource">resource</a></p>
-<p>Inherited from
-WithRawAssetMixin.resource</p>
-<hr>
-<h3><a id="ClientRawAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.resources">resources</a></p>
-<p>Inherited from
-WithRawAssetMixin.resources</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.resources">resources</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.source">source</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.source">source</a></p>
 <p>Inherited from
-WithRawAssetMixin.source</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.source">source</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$ASSET'>$ASSET</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.targetId">targetId</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.targetId">targetId</a></p>
 <p>Inherited from
-WithRawAssetMixin.targetId</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.targetId">targetId</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.type">type</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.type">type</a></p>
 <p>Inherited from
-WithRawAssetMixin.type</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.type">type</a></p>
 <h2>Accessors</h2>
+<h3><a id="ClientRawAssetClass.assetIds">assetIds</a></h3><p>• <code>get</code> <strong>assetIds</strong>(): <code><a href='Strings.html'>Strings</a></code></p>
+<p>Returns
+<code><a href='Strings.html'>Strings</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetIds">assetIds</a></p>
+<p>Inherited from
+ClientAssetClass.assetIds</p>
+<hr>
+<h3><a id="ClientRawAssetClass.assetObject">assetObject</a></h3><p>• <code>get</code> <strong>assetObject</strong>(): <code><a href='AssetObject.html'>AssetObject</a></code></p>
+<p>Returns
+<code><a href='AssetObject.html'>AssetObject</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetObject">assetObject</a></p>
+<p>Inherited from
+ClientAssetClass.assetObject</p>
+<hr>
+<h3><a id="ClientRawAssetClass.assets">assets</a></h3><p>• <code>get</code> <strong>assets</strong>(): <code><a href='Assets.html'>Assets</a></code></p>
+<p>Returns
+<code><a href='Assets.html'>Assets</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assets">assets</a></p>
+<p>Inherited from
+ClientAssetClass.assets</p>
+<hr>
+<h3><a id="ClientRawAssetClass.decoding">decoding</a></h3><p>• <code>get</code> <strong>decoding</strong>(): <code><a href='Decoding.html'>Decoding</a></code></p>
+<p>Returns
+<code><a href='Decoding.html'>Decoding</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decoding">decoding</a></p>
+<p>Inherited from
+ClientAssetClass.decoding</p>
+<hr>
+<h3><a id="ClientRawAssetClass.request">request</a></h3><p>• <code>get</code> <strong>request</strong>(): <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
+<p>Returns
+<code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.request">request</a></p>
+<p>Inherited from
+ClientAssetClass.request</p>
+<hr>
+<h3><a id="ClientRawAssetClass.resource">resource</a></h3><p>• <code>get</code> <strong>resource</strong>(): <code><a href='Resource.html'>Resource</a></code></p>
+<p>Returns
+<code><a href='Resource.html'>Resource</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resource">resource</a></p>
+<p>Inherited from
+ClientAssetClass.resource</p>
+<hr>
 <h3><a id="ClientRawAssetClass.saveNeeded">saveNeeded</a></h3><p>• <code>get</code> <strong>saveNeeded</strong>(): <code>boolean</code></p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.saveNeeded">saveNeeded</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.saveNeeded">saveNeeded</a></p>
 <p>Inherited from
-WithRawAssetMixin.saveNeeded</p>
+ClientAssetClass.saveNeeded</p>
 <hr>
 <h3><a id="ClientRawAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithRawAssetMixin.scalarRecord</p>
+ClientAssetClass.scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ClientRawAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientRawAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -272,36 +296,16 @@ WithRawAssetMixin.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ClientAsset.html'>ClientAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.asset">asset</a></p>
-<p>Inherited from
-WithRawAssetMixin.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Implementation of</h4>
-<p>ClientRawAsset.asset</p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.asset">asset</a></p>
 <p>Inherited from
-WithRawAssetMixin.asset</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.asset">asset</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>_args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -320,11 +324,11 @@ WithRawAssetMixin.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.assetCachePromise">assetCachePromise</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetCachePromise">assetCachePromise</a></p>
 <p>Inherited from
-WithRawAssetMixin.assetCachePromise</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.assetCachePromise">assetCachePromise</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
+<h3><a id="ClientRawAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>_size</code>, <code>_cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -334,16 +338,20 @@ WithRawAssetMixin.assetCachePromise</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_</code></td>
+<td align="left"><code>_size</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+</tr>
+<tr>
+<td align="left"><code>_cover?</code></td>
+<td align="left"><code>boolean</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.assetIcon">assetIcon</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetIcon">assetIcon</a></p>
 <p>Inherited from
-WithRawAssetMixin.assetIcon</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.assetIcon">assetIcon</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -360,7 +368,7 @@ WithRawAssetMixin.assetIcon</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -370,9 +378,30 @@ WithRawAssetMixin.assetIcon</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.assetIconPromise">assetIconPromise</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.assetIconPromise">assetIconPromise</a></p>
 <p>Inherited from
-WithRawAssetMixin.assetIconPromise</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.assetIconPromise">assetIconPromise</a></p>
+<hr>
+<h3><a id="ClientRawAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.boolean">boolean</a></p>
+<p>Inherited from
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.boolean">boolean</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -395,9 +424,9 @@ WithRawAssetMixin.assetIconPromise</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.changeScalar">changeScalar</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithRawAssetMixin.changeScalar</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.changeScalar">changeScalar</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -416,9 +445,9 @@ WithRawAssetMixin.changeScalar</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.changeScalars">changeScalars</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithRawAssetMixin.changeScalars</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -430,16 +459,16 @@ WithRawAssetMixin.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.clipObject">clipObject</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.clipObject">clipObject</a></p>
 <p>Inherited from
-WithRawAssetMixin.clipObject</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.clipObject">clipObject</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -462,9 +491,9 @@ WithRawAssetMixin.clipObject</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.constrainedValue">constrainedValue</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithRawAssetMixin.constrainedValue</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.constrainedValue">constrainedValue</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -483,11 +512,11 @@ WithRawAssetMixin.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.decodingOfType">decodingOfType</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.decodingOfType">decodingOfType</a></p>
 <p>Inherited from
-WithRawAssetMixin.decodingOfType</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.decodingOfType">decodingOfType</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientRawAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -502,52 +531,11 @@ WithRawAssetMixin.decodingOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.imagePromise">imagePromise</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.imagePromise">imagePromise</a></p>
 <p>Inherited from
-WithRawAssetMixin.imagePromise</p>
-<hr>
-<h3><a id="ClientRawAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithRawAssetMixin.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientRawAsset.initializeProperties</p>
-<p>Inherited from
-WithRawAssetMixin.initializeProperties</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.imagePromise">imagePromise</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -566,9 +554,9 @@ WithRawAssetMixin.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.instanceArgs">instanceArgs</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.instanceArgs">instanceArgs</a></p>
 <p>Inherited from
-WithRawAssetMixin.instanceArgs</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.instanceArgs">instanceArgs</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>_?</code>): <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Parameters</h4>
@@ -580,18 +568,18 @@ WithRawAssetMixin.instanceArgs</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>_?</code></td>
+<td align="left"><code>_</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Instance.html'>Instance</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.instanceFromObject">instanceFromObject</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Inherited from
-WithRawAssetMixin.instanceFromObject</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.instanceFromObject">instanceFromObject</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientRawAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -601,14 +589,16 @@ WithRawAssetMixin.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.number">number</a></p>
 <p>Inherited from
-WithRawAssetMixin.propertiesInitialize</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.number">number</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -627,9 +617,9 @@ WithRawAssetMixin.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.propertyFind">propertyFind</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithRawAssetMixin.propertyFind</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.propertyFind">propertyFind</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -648,9 +638,9 @@ WithRawAssetMixin.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.propertyIds">propertyIds</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithRawAssetMixin.propertyIds</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.propertyIds">propertyIds</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -669,9 +659,9 @@ WithRawAssetMixin.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.propertyInstance">propertyInstance</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithRawAssetMixin.propertyInstance</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.propertyInstance">propertyInstance</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -684,15 +674,15 @@ WithRawAssetMixin.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.resourceOfType">resourceOfType</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.resourceOfType">resourceOfType</a></p>
 <p>Inherited from
-WithRawAssetMixin.resourceOfType</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.resourceOfType">resourceOfType</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -711,7 +701,7 @@ WithRawAssetMixin.resourceOfType</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-WithRawAssetMixin.saveId</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.saveId">saveId</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -730,9 +720,9 @@ WithRawAssetMixin.saveId</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.savePromise">savePromise</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.savePromise">savePromise</a></p>
 <p>Overrides
-WithRawAssetMixin.savePromise</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.savePromise">savePromise</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.savingPromise">savingPromise</a></h3><p>▸ <code>Protected</code> <strong>savingPromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -751,7 +741,7 @@ WithRawAssetMixin.savePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <p>Inherited from
-WithRawAssetMixin.savingPromise</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.savingPromise">savingPromise</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -774,11 +764,11 @@ WithRawAssetMixin.savingPromise</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.setValue">setValue</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.setValue">setValue</a></p>
 <p>Inherited from
-WithRawAssetMixin.setValue</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.setValue">setValue</a></p>
 <hr>
-<h3><a id="ClientRawAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientRawAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -798,16 +788,39 @@ WithRawAssetMixin.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithRawAssetMixin.shouldSelectProperty</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ClientRawAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.string">string</a></p>
+<p>Inherited from
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.string">string</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.toJSON">toJSON</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.toJSON">toJSON</a></p>
 <p>Inherited from
-WithRawAssetMixin.toJSON</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.toJSON">toJSON</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -834,17 +847,17 @@ WithRawAssetMixin.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.tweenValues">tweenValues</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithRawAssetMixin.tweenValues</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.unload">unload</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.unload">unload</a></p>
 <p>Overrides
-WithRawAssetMixin.unload</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.unload">unload</a></p>
 <hr>
 <h3><a id="ClientRawAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -863,9 +876,9 @@ WithRawAssetMixin.unload</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientRawAsset.html">ClientRawAsset</a>.<a href="ClientRawAsset.html#ClientRawAsset.value">value</a></p>
+<p><a href="ClientAsset.html">ClientAsset</a>.<a href="ClientAsset.html#ClientAsset.value">value</a></p>
 <p>Inherited from
-WithRawAssetMixin.value</p>
+<a href="ClientAssetClass.html">ClientAssetClass</a>.<a href="ClientAssetClass.html#ClientAssetClass.value">value</a></p>
 
   </div>
 </section>
@@ -877,36 +890,38 @@ WithRawAssetMixin.value</p>
         <ul><li><a class='' href='#ClientRawAssetClass'>ClientRawAssetClass</a></li>
 <li><a class='' href='#ClientRawAssetClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientRawAssetClass._assets'>_assets</a></li>
-<li><a class='' href='#ClientRawAssetClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientRawAssetClass.assetObject'>assetObject</a></li>
-<li><a class='' href='#ClientRawAssetClass.assets'>assets</a></li>
-<li><a class='' href='#ClientRawAssetClass.decoding'>decoding</a></li>
+<li><a class='' href='#ClientRawAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientRawAssetClass.decodings'>decodings</a></li>
+<li><a class='' href='#ClientRawAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientRawAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientRawAssetClass.id'>id</a></li>
-<li><a class='' href='#ClientRawAssetClass.label'>label</a></li>
 <li><a class='' href='#ClientRawAssetClass.properties'>properties</a></li>
-<li><a class='' href='#ClientRawAssetClass.request'>request</a></li>
-<li><a class='' href='#ClientRawAssetClass.resource'>resource</a></li>
 <li><a class='' href='#ClientRawAssetClass.resources'>resources</a></li>
 <li><a class='' href='#ClientRawAssetClass.source'>source</a></li>
 <li><a class='' href='#ClientRawAssetClass.targetId'>targetId</a></li>
 <li><a class='' href='#ClientRawAssetClass.type'>type</a></li>
+<li><a class='' href='#ClientRawAssetClass.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientRawAssetClass.assetObject'>assetObject</a></li>
+<li><a class='' href='#ClientRawAssetClass.assets'>assets</a></li>
+<li><a class='' href='#ClientRawAssetClass.decoding'>decoding</a></li>
+<li><a class='' href='#ClientRawAssetClass.request'>request</a></li>
+<li><a class='' href='#ClientRawAssetClass.resource'>resource</a></li>
 <li><a class='' href='#ClientRawAssetClass.saveNeeded'>saveNeeded</a></li>
 <li><a class='' href='#ClientRawAssetClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientRawAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ClientRawAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ClientRawAssetClass.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientRawAssetClass.assetIconPromise'>assetIconPromise</a></li>
+<li><a class='' href='#ClientRawAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientRawAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientRawAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ClientRawAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientRawAssetClass.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientRawAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientRawAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientRawAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientRawAssetClass.number'>number</a></li>
 <li><a class='' href='#ClientRawAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawAssetClass.propertyInstance'>propertyInstance</a></li>
@@ -916,6 +931,7 @@ WithRawAssetMixin.value</p>
 <li><a class='' href='#ClientRawAssetClass.savingPromise'>savingPromise</a></li>
 <li><a class='' href='#ClientRawAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientRawAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientRawAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientRawAssetClass.unload'>unload</a></li>

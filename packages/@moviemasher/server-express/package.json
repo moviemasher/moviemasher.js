@@ -23,6 +23,7 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
+    "clean": "rm -rf ./dist/*",
     "start": "node dist/server.js",
     "script": "run-s",
     "build": "run-s package",

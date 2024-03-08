@@ -1,16 +1,15 @@
-import type { Elements, Nodes, EventDispatcherListeners, Scalar, Strings } from '@moviemasher/shared-lib/types.js'
+import type { Elements, EventDispatcherListeners, Nodes, Scalar, Strings } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
-import type { TemplateContent, TemplateContents, Htmls, OptionalContent } from '../client-types.js'
+import type { Htmls, OptionalContent, TemplateContent, TemplateContents } from '../client-types.js'
 
 import { css } from '@lit/reactive-element/css-tag.js'
-import { SELECTED } from '../runtime.js'
-import { StringEvent } from '../utility/events.js'
-import { MOVIE_MASHER, DASH, PIPE, SLASH, $STRING, arrayUnique } from '@moviemasher/shared-lib/runtime.js'
+import { $ICON, $STRING, DASH, MOVIE_MASHER, PIPE, SLASH, arrayUnique } from '@moviemasher/shared-lib/runtime.js'
+import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
 import { LitElement } from 'lit-element/lit-element.js'
 import { html, nothing } from 'lit-html'
-import { ICON } from '../runtime.js'
-import { assertDefined } from '@moviemasher/shared-lib/utility/guards.js'
-import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
+import { $SELECTED } from '../utility/constants.js'
+import { StringEvent } from '../module/event.js'
 
 const EventTypeExportParts = 'export-parts'
 
@@ -50,7 +49,6 @@ export class Component extends LitElement {
     const init = { bubbles: true, composed: true }
     this.dispatchEvent(new CustomEvent(EventTypeExportParts, init))
   }
-
 
   protected element<T extends Element = Element>(selector: string = 'div.root'): T {
     return this.selectElement(selector)!
@@ -294,7 +292,7 @@ export class ComponentClicker extends ComponentSlotter {
     const { selected } = this
 
     return html`<a 
-      class='${selected ? SELECTED : ''}' 
+      class='${selected ? $SELECTED : ''}' 
       tabindex='0'
       @click='${this.handleClick}'
       @keydown='${this.handleKeydown}'
@@ -309,7 +307,7 @@ export class ComponentClicker extends ComponentSlotter {
   private dispatchStringEvent() {
     const { emit, detail } = this
     const stringEvent: StringEvent = new CustomEvent(emit, { detail })
-    MOVIE_MASHER.dispatch(stringEvent)
+    MOVIE_MASHER.dispatchCustom(stringEvent)
   }
 
   protected handleClick(event: PointerEvent): void {
@@ -339,19 +337,19 @@ export class ComponentClicker extends ComponentSlotter {
 
     this.loadComponent('movie-masher-icon')
     return html`<movie-masher-icon 
-      part='${ICON}' icon='${icon}'
+      part='${$ICON}' icon='${icon}'
     ></movie-masher-icon>`
   }
 
   protected override partContent(part: string, slots: Htmls): OptionalContent {
     switch (part) {
       case $STRING: return this.stringContent(slots)
-      case ICON: return this.iconContent(slots)
+      case $ICON: return this.iconContent(slots)
     }
     return super.partContent(part, slots)
   }
 
-  override parts = [$STRING, ICON].join(ComponentSlotter.partSeparator)
+  override parts = [$STRING, $ICON].join(ComponentSlotter.partSeparator)
 
   selected = false
 

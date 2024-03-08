@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,7 +131,7 @@
   <a id="ServerMashInstance"><h2>ServerMashInstance</h2></a>
   <div class="section">
     <h1>Interface: ServerMashInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerMashInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerMashInstance</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='MashInstance.html'>MashInstance</a></code></p>
@@ -153,10 +153,6 @@
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.assetIds">assetIds</a></p>
 <hr>
-<h3><a id="ServerMashInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.bottomCrop">bottomCrop</a></p>
-<hr>
 <h3><a id="ServerMashInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.canBeMuted">canBeMuted</a></p>
@@ -164,26 +160,6 @@
 <h3><a id="ServerMashInstance.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.clip">clip</a></p>
-<hr>
-<h3><a id="ServerMashInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.container">container</a></p>
-<hr>
-<h3><a id="ServerMashInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.cropDirections">cropDirections</a></p>
-<hr>
-<h3><a id="ServerMashInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<hr>
-<h3><a id="ServerMashInstance.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.height">height</a></p>
-<hr>
-<h3><a id="ServerMashInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.heightEnd">heightEnd</a></p>
 <hr>
 <h3><a id="ServerMashInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
@@ -193,81 +169,21 @@
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.instanceObject">instanceObject</a></p>
 <hr>
-<h3><a id="ServerMashInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.intrinsicRect">intrinsicRect</a></p>
-<hr>
 <h3><a id="ServerMashInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.isDefault">isDefault</a></p>
-<hr>
-<h3><a id="ServerMashInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.leftCrop">leftCrop</a></p>
-<hr>
-<h3><a id="ServerMashInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.lock">lock</a></p>
 <hr>
 <h3><a id="ServerMashInstance.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.muted">muted</a></p>
 <hr>
-<h3><a id="ServerMashInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.opacityEnd">opacityEnd</a></p>
-<hr>
-<h3><a id="ServerMashInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.pointAspect">pointAspect</a></p>
-<hr>
 <h3><a id="ServerMashInstance.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.properties">properties</a></p>
 <hr>
-<h3><a id="ServerMashInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.rightCrop">rightCrop</a></p>
-<hr>
-<h3><a id="ServerMashInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.sizeAspect">sizeAspect</a></p>
-<hr>
-<h3><a id="ServerMashInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.sizeKey">sizeKey</a></p>
-<hr>
 <h3><a id="ServerMashInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.targetId">targetId</a></p>
-<hr>
-<h3><a id="ServerMashInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.topCrop">topCrop</a></p>
-<hr>
-<h3><a id="ServerMashInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.width">width</a></p>
-<hr>
-<h3><a id="ServerMashInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.widthEnd">widthEnd</a></p>
-<hr>
-<h3><a id="ServerMashInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.x">x</a></p>
-<hr>
-<h3><a id="ServerMashInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.xEnd">xEnd</a></p>
-<hr>
-<h3><a id="ServerMashInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.y">y</a></p>
-<hr>
-<h3><a id="ServerMashInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.yEnd">yEnd</a></p>
 <h2>Methods</h2>
 <h3><a id="ServerMashInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -287,6 +203,67 @@
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.assetTime">assetTime</a></p>
+<hr>
+<h3><a id="ServerMashInstance.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.boolean">boolean</a></p>
+<hr>
+<h3><a id="ServerMashInstance.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="ServerMashInstance.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="ServerMashInstance.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>args</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -330,48 +307,6 @@
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.constrainedValue">constrainedValue</a></p>
 <hr>
-<h3><a id="ServerMashInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>sizingSize</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.containerRects">containerRects</a></p>
-<hr>
-<h3><a id="ServerMashInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContentRectArgs.html'>ContentRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.contentRects">contentRects</a></p>
-<hr>
 <h3><a id="ServerMashInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
@@ -390,25 +325,6 @@
 <code>number</code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.frames">frames</a></p>
-<hr>
-<h3><a id="ServerMashInstance.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.initializeProperties">initializeProperties</a></p>
 <hr>
 <h3><a id="ServerMashInstance.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -447,6 +363,25 @@
 <code>boolean</code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<hr>
+<h3><a id="ServerMashInstance.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.number">number</a></p>
 <hr>
 <h3><a id="ServerMashInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -505,29 +440,6 @@
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="ServerMashInstance.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>range</code></td>
-<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.scaleRects">scaleRects</a></p>
-<hr>
 <h3><a id="ServerMashInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -550,6 +462,48 @@
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.setValue">setValue</a></p>
+<hr>
+<h3><a id="ServerMashInstance.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ServerMashInstance.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="ServerInstance.html">ServerInstance</a>.<a href="ServerInstance.html#ServerInstance.string">string</a></p>
 <hr>
 <h3><a id="ServerMashInstance.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -614,49 +568,30 @@
 <li><a class='' href='#ServerMashInstance.asset'>asset</a></li>
 <li><a class='' href='#ServerMashInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ServerMashInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerMashInstance.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerMashInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerMashInstance.clip'>clip</a></li>
-<li><a class='' href='#ServerMashInstance.container'>container</a></li>
-<li><a class='' href='#ServerMashInstance.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ServerMashInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerMashInstance.height'>height</a></li>
-<li><a class='' href='#ServerMashInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerMashInstance.id'>id</a></li>
 <li><a class='' href='#ServerMashInstance.instanceObject'>instanceObject</a></li>
-<li><a class='' href='#ServerMashInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerMashInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerMashInstance.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerMashInstance.lock'>lock</a></li>
 <li><a class='' href='#ServerMashInstance.muted'>muted</a></li>
-<li><a class='' href='#ServerMashInstance.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerMashInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerMashInstance.properties'>properties</a></li>
-<li><a class='' href='#ServerMashInstance.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerMashInstance.sizeAspect'>sizeAspect</a></li>
-<li><a class='' href='#ServerMashInstance.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerMashInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ServerMashInstance.topCrop'>topCrop</a></li>
-<li><a class='' href='#ServerMashInstance.width'>width</a></li>
-<li><a class='' href='#ServerMashInstance.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerMashInstance.x'>x</a></li>
-<li><a class='' href='#ServerMashInstance.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerMashInstance.y'>y</a></li>
-<li><a class='' href='#ServerMashInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ServerMashInstance.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerMashInstance.boolean'>boolean</a></li>
+<li><a class='' href='#ServerMashInstance.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#ServerMashInstance.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerMashInstance.commandFiles'>commandFiles</a></li>
 <li><a class='' href='#ServerMashInstance.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ServerMashInstance.containerRects'>containerRects</a></li>
-<li><a class='' href='#ServerMashInstance.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerMashInstance.frames'>frames</a></li>
-<li><a class='' href='#ServerMashInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerMashInstance.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerMashInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
+<li><a class='' href='#ServerMashInstance.number'>number</a></li>
 <li><a class='' href='#ServerMashInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerMashInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerMashInstance.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ServerMashInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerMashInstance.setValue'>setValue</a></li>
+<li><a class='' href='#ServerMashInstance.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerMashInstance.string'>string</a></li>
 <li><a class='' href='#ServerMashInstance.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerMashInstance.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerMashInstance.value'>value</a></li></ul>

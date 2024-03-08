@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ClientColorInstanceClass"><h2>ClientColorInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ClientColorInstanceClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientColorInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientColorInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithColorInstance</code></p>
+<li><p><code><a href='ClientInstanceClass.html'>ClientInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ClientVisibleInstance.html'>ClientVisibleInstance</a></code> &amp; <code><a href='ColorInstance.html'>ColorInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientColorInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ClientColorInstance.html'>ClientColorInstance</a></code></li>
+<li><code>ClientColorInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientColorInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientColorInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientColorInstanceClass.constructor">constructor</a></h3><p>• <strong>new ClientColorInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,266 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ColorInstanceObject.html'>ColorInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithColorInstance.constructor</p>
+<p>Inherited from
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ClientColorInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithColorInstance._id</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+)._id</p>
 <hr>
-<h3><a id="ClientColorInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithColorInstance._label</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ColorAsset.html'>ColorAsset</a></code> &amp; <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientColorInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ClientColorAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.asset">asset</a></p>
+<p>ClientColorInstance.asset</p>
 <p>Overrides
-WithColorInstance.asset</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.assetId">assetId</a></p>
+<p>ClientColorInstance.assetId</p>
 <p>Inherited from
-WithColorInstance.assetId</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.assetIds">assetIds</a></p>
+<p>ClientColorInstance.assetIds</p>
 <p>Inherited from
-WithColorInstance.assetIds</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithColorInstance.bottomCrop</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.canBeMuted">canBeMuted</a></p>
+<p>ClientColorInstance.canBeMuted</p>
 <p>Inherited from
-WithColorInstance.canBeMuted</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='ClientClip.html'>ClientClip</a></code> &amp; <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.clip">clip</a></p>
+<p>ClientColorInstance.clip</p>
 <p>Inherited from
-WithColorInstance.clip</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.color">color</a></h3><p>• <strong>color</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.color">color</a></p>
-<p>Inherited from
-WithColorInstance.color</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.container">container</a></p>
-<p>Inherited from
-WithColorInstance.container</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.cropDirections">cropDirections</a></p>
+<p>ClientColorInstance.cropDirections</p>
 <p>Inherited from
-WithColorInstance.cropDirections</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ClientColorInstanceClass.directions">directions</a></h3><p>• <strong>directions</strong>: <code><a href='Directions.html'>Directions</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.directions">directions</a></p>
+<h3><a id="ClientColorInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithColorInstance.directions</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
-<p>Inherited from
-WithColorInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.height">height</a></p>
-<p>Inherited from
-WithColorInstance.height</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithColorInstance.heightEnd</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.id">id</a></p>
+<p>ClientColorInstance.id</p>
 <p>Inherited from
-WithColorInstance.id</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.instanceObject">instanceObject</a></p>
+<p>ClientColorInstance.instanceObject</p>
 <p>Inherited from
-WithColorInstance.instanceObject</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ClientColorInstance.intrinsicRect</p>
 <p>Inherited from
-WithColorInstance.intrinsicRect</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.isDefault">isDefault</a></p>
+<p>ClientColorInstance.isDefault</p>
 <p>Inherited from
-WithColorInstance.isDefault</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithColorInstance.leftCrop</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.lock">lock</a></p>
-<p>Inherited from
-WithColorInstance.lock</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.muted">muted</a></p>
+<p>ClientColorInstance.muted</p>
 <p>Inherited from
-WithColorInstance.muted</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ClientColorInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ClientColorInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.opacityEnd">opacityEnd</a></p>
+<p>ClientColorInstance.properties</p>
 <p>Inherited from
-WithColorInstance.opacityEnd</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ClientColorInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ClientColorInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.pointAspect">pointAspect</a></p>
+<p>ClientColorInstance.sizeKey</p>
 <p>Inherited from
-WithColorInstance.pointAspect</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.properties">properties</a></p>
-<p>Inherited from
-WithColorInstance.properties</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithColorInstance.rightCrop</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithColorInstance.sizeAspect</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithColorInstance.sizeKey</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).sizeKey</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.targetId">targetId</a></p>
+<p>ClientColorInstance.targetId</p>
 <p>Inherited from
-WithColorInstance.targetId</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithColorInstance.topCrop</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.tweening">tweening</a></p>
+<p>ClientColorInstance.tweening</p>
 <p>Inherited from
-WithColorInstance.tweening</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.width">width</a></p>
-<p>Inherited from
-WithColorInstance.width</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithColorInstance.widthEnd</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.x">x</a></p>
-<p>Inherited from
-WithColorInstance.x</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithColorInstance.xEnd</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.y">y</a></p>
-<p>Inherited from
-WithColorInstance.y</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithColorInstance.yEnd</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ClientColorInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithColorInstance.isAudio</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithColorInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithColorInstance.label</p>
-<hr>
 <h3><a id="ClientColorInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithColorInstance.scalarRecord</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ClientColorInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -431,9 +319,34 @@ WithColorInstance.scalarRecord</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.assetTime">assetTime</a></p>
+<p>ClientColorInstance.assetTime</p>
 <p>Inherited from
-WithColorInstance.assetTime</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ClientColorInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ClientColorInstance.boolean</p>
+<p>Inherited from
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -456,9 +369,11 @@ WithColorInstance.assetTime</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.changeScalar">changeScalar</a></p>
+<p>ClientColorInstance.changeScalar</p>
 <p>Inherited from
-WithColorInstance.changeScalar</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -477,9 +392,11 @@ WithColorInstance.changeScalar</p>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.changeScalars">changeScalars</a></p>
+<p>ClientColorInstance.changeScalars</p>
 <p>Inherited from
-WithColorInstance.changeScalars</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -492,7 +409,7 @@ WithColorInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -502,9 +419,11 @@ WithColorInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.clippedElement">clippedElement</a></p>
+<p>ClientColorInstance.clippedElement</p>
 <p>Inherited from
-WithColorInstance.clippedElement</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.clippedElementPromise">clippedElementPromise</a></h3><p>▸ <strong>clippedElementPromise</strong>(<code>content</code>, <code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -527,7 +446,9 @@ WithColorInstance.clippedElement</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithColorInstance.clippedElementPromise</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).clippedElementPromise</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -550,9 +471,11 @@ WithColorInstance.clippedElementPromise</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.constrainedValue">constrainedValue</a></p>
+<p>ClientColorInstance.constrainedValue</p>
 <p>Inherited from
-WithColorInstance.constrainedValue</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -579,11 +502,13 @@ WithColorInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.containedItem">containedItem</a></p>
+<p>ClientColorInstance.containedItem</p>
 <p>Inherited from
-WithColorInstance.containedItem</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ClientColorInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ClientColorInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -597,16 +522,18 @@ WithColorInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.containerRects">containerRects</a></p>
+<p>ClientColorInstance.containerRects</p>
 <p>Inherited from
-WithColorInstance.containerRects</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -625,9 +552,11 @@ WithColorInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ClientColorInstance.containerSvgItem</p>
 <p>Inherited from
-WithColorInstance.containerSvgItem</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.containerSvgItemPromise">containerSvgItemPromise</a></h3><p>▸ <strong>containerSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -646,7 +575,9 @@ WithColorInstance.containerSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithColorInstance.containerSvgItemPromise</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).containerSvgItemPromise</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -673,9 +604,11 @@ WithColorInstance.containerSvgItemPromise</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.contentRect">contentRect</a></p>
+<p>ClientColorInstance.contentRect</p>
 <p>Inherited from
-WithColorInstance.contentRect</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -694,9 +627,11 @@ WithColorInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.contentRects">contentRects</a></p>
+<p>ClientColorInstance.contentRects</p>
 <p>Inherited from
-WithColorInstance.contentRects</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -715,9 +650,11 @@ WithColorInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ClientColorInstance.contentSvgItem</p>
 <p>Inherited from
-WithColorInstance.contentSvgItem</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.contentSvgItemPromise">contentSvgItemPromise</a></h3><p>▸ <strong>contentSvgItemPromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -736,7 +673,9 @@ WithColorInstance.contentSvgItem</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;&gt;</p>
 <p>Inherited from
-WithColorInstance.contentSvgItemPromise</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).contentSvgItemPromise</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -755,50 +694,11 @@ WithColorInstance.contentSvgItemPromise</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.frames">frames</a></p>
+<p>ClientColorInstance.frames</p>
 <p>Inherited from
-WithColorInstance.frames</p>
-<hr>
-<h3><a id="ClientColorInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithColorInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ClientColorInstance.initializeProperties</p>
-<p>Inherited from
-WithColorInstance.initializeProperties</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -817,9 +717,11 @@ WithColorInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ClientColorInstance.instanceCachePromise</p>
 <p>Inherited from
-WithColorInstance.instanceCachePromise</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -838,11 +740,13 @@ WithColorInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ClientColorInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithColorInstance.intrinsicsKnown</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ClientColorInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientColorInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -852,14 +756,18 @@ WithColorInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ClientColorInstance.number</p>
 <p>Inherited from
-WithColorInstance.propertiesInitialize</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -878,9 +786,11 @@ WithColorInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.propertyFind">propertyFind</a></p>
+<p>ClientColorInstance.propertyFind</p>
 <p>Inherited from
-WithColorInstance.propertyFind</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -899,9 +809,11 @@ WithColorInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.propertyIds">propertyIds</a></p>
+<p>ClientColorInstance.propertyIds</p>
 <p>Inherited from
-WithColorInstance.propertyIds</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -920,9 +832,11 @@ WithColorInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.propertyInstance">propertyInstance</a></p>
+<p>ClientColorInstance.propertyInstance</p>
 <p>Inherited from
-WithColorInstance.propertyInstance</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -945,9 +859,11 @@ WithColorInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.scaleRects">scaleRects</a></p>
+<p>ClientColorInstance.scaleRects</p>
 <p>Inherited from
-WithColorInstance.scaleRects</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -970,11 +886,13 @@ WithColorInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.setValue">setValue</a></p>
+<p>ClientColorInstance.setValue</p>
 <p>Inherited from
-WithColorInstance.setValue</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ClientColorInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientColorInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -994,8 +912,35 @@ WithColorInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ClientColorInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithColorInstance.shouldSelectProperty</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientColorInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ClientColorInstance.string</p>
+<p>Inherited from
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -1022,17 +967,21 @@ WithColorInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.svgVector">svgVector</a></p>
+<p>ClientColorInstance.svgVector</p>
 <p>Inherited from
-WithColorInstance.svgVector</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.toJSON">toJSON</a></p>
+<p>ClientColorInstance.toJSON</p>
 <p>Inherited from
-WithColorInstance.toJSON</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1059,9 +1008,11 @@ WithColorInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.tweenValues">tweenValues</a></p>
+<p>ClientColorInstance.tweenValues</p>
 <p>Inherited from
-WithColorInstance.tweenValues</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1080,17 +1031,21 @@ WithColorInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.tweens">tweens</a></p>
+<p>ClientColorInstance.tweens</p>
 <p>Inherited from
-WithColorInstance.tweens</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.unload">unload</a></p>
+<p>ClientColorInstance.unload</p>
 <p>Inherited from
-WithColorInstance.unload</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).unload</p>
 <hr>
 <h3><a id="ClientColorInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>name</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1109,9 +1064,11 @@ WithColorInstance.unload</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ClientColorInstance.html">ClientColorInstance</a>.<a href="ClientColorInstance.html#ClientColorInstance.value">value</a></p>
+<p>ClientColorInstance.value</p>
 <p>Inherited from
-WithColorInstance.value</p>
+ColorInstanceMixin(
+  ClientVisibleInstanceMixin( VisibleInstanceMixin(ClientInstanceClass))
+).value</p>
 
   </div>
 </section>
@@ -1123,46 +1080,25 @@ WithColorInstance.value</p>
         <ul><li><a class='' href='#ClientColorInstanceClass'>ClientColorInstanceClass</a></li>
 <li><a class='' href='#ClientColorInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ClientColorInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ClientColorInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ClientColorInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ClientColorInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ClientColorInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ClientColorInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ClientColorInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ClientColorInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ClientColorInstanceClass.color'>color</a></li>
-<li><a class='' href='#ClientColorInstanceClass.container'>container</a></li>
 <li><a class='' href='#ClientColorInstanceClass.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ClientColorInstanceClass.directions'>directions</a></li>
 <li><a class='' href='#ClientColorInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ClientColorInstanceClass.height'>height</a></li>
-<li><a class='' href='#ClientColorInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ClientColorInstanceClass.id'>id</a></li>
 <li><a class='' href='#ClientColorInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ClientColorInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ClientColorInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ClientColorInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ClientColorInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ClientColorInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ClientColorInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ClientColorInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ClientColorInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ClientColorInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ClientColorInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ClientColorInstanceClass.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ClientColorInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ClientColorInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ClientColorInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ClientColorInstanceClass.width'>width</a></li>
-<li><a class='' href='#ClientColorInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ClientColorInstanceClass.x'>x</a></li>
-<li><a class='' href='#ClientColorInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ClientColorInstanceClass.y'>y</a></li>
-<li><a class='' href='#ClientColorInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ClientColorInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ClientColorInstanceClass.label'>label</a></li>
 <li><a class='' href='#ClientColorInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ClientColorInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ClientColorInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientColorInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientColorInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientColorInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1177,16 +1113,16 @@ WithColorInstance.value</p>
 <li><a class='' href='#ClientColorInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ClientColorInstanceClass.contentSvgItemPromise'>contentSvgItemPromise</a></li>
 <li><a class='' href='#ClientColorInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ClientColorInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientColorInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ClientColorInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ClientColorInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientColorInstanceClass.number'>number</a></li>
 <li><a class='' href='#ClientColorInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientColorInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientColorInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ClientColorInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ClientColorInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientColorInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientColorInstanceClass.string'>string</a></li>
 <li><a class='' href='#ClientColorInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ClientColorInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientColorInstanceClass.tweenValues'>tweenValues</a></li>

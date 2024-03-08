@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerTextInstanceClass"><h2>ServerTextInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ServerTextInstanceClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerTextInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerTextInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithTextInstance</code></p>
+<li><p><code><a href='ServerInstanceClass.html'>ServerInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code> &amp; <code><a href='TextInstance.html'>TextInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerTextInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerTextInstance.html'>ServerTextInstance</a></code></li>
+<li><code>ServerTextInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerTextInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerTextInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ServerTextInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerTextInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,266 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='TextInstanceObject.html'>TextInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithTextInstance.constructor</p>
+<p>Inherited from
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ServerTextInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithTextInstance._id</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+)._id</p>
 <hr>
-<h3><a id="ServerTextInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithTextInstance._label</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerTextAsset.html'>ServerTextAsset</a></code></p>
+<h3><a id="ServerTextInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ServerTextAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.asset">asset</a></p>
+<p>ServerTextInstance.asset</p>
 <p>Overrides
-WithTextInstance.asset</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.assetId">assetId</a></p>
+<p>ServerTextInstance.assetId</p>
 <p>Inherited from
-WithTextInstance.assetId</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.assetIds">assetIds</a></p>
+<p>ServerTextInstance.assetIds</p>
 <p>Inherited from
-WithTextInstance.assetIds</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithTextInstance.bottomCrop</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.canBeMuted">canBeMuted</a></p>
+<p>ServerTextInstance.canBeMuted</p>
 <p>Inherited from
-WithTextInstance.canBeMuted</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.clip">clip</a></p>
+<p>ServerTextInstance.clip</p>
 <p>Inherited from
-WithTextInstance.clip</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.container">container</a></p>
-<p>Inherited from
-WithTextInstance.container</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.cropDirections">cropDirections</a></p>
+<p>ServerTextInstance.cropDirections</p>
 <p>Inherited from
-WithTextInstance.cropDirections</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<h3><a id="ServerTextInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithTextInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.height">height</a></p>
-<p>Inherited from
-WithTextInstance.height</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithTextInstance.heightEnd</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.id">id</a></p>
+<p>ServerTextInstance.id</p>
 <p>Inherited from
-WithTextInstance.id</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.instanceObject">instanceObject</a></p>
+<p>ServerTextInstance.instanceObject</p>
 <p>Inherited from
-WithTextInstance.instanceObject</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.intrinsic">intrinsic</a></h3><p>• <code>Optional</code> <strong>intrinsic</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.intrinsic">intrinsic</a></p>
-<p>Inherited from
-WithTextInstance.intrinsic</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ServerTextInstance.intrinsicRect</p>
 <p>Inherited from
-WithTextInstance.intrinsicRect</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.isDefault">isDefault</a></p>
+<p>ServerTextInstance.isDefault</p>
 <p>Inherited from
-WithTextInstance.isDefault</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithTextInstance.leftCrop</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.lock">lock</a></p>
-<p>Inherited from
-WithTextInstance.lock</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.muted">muted</a></p>
+<p>ServerTextInstance.muted</p>
 <p>Inherited from
-WithTextInstance.muted</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ServerTextInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.opacityEnd">opacityEnd</a></p>
+<p>ServerTextInstance.properties</p>
 <p>Inherited from
-WithTextInstance.opacityEnd</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ServerTextInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.pointAspect">pointAspect</a></p>
+<p>ServerTextInstance.sizeKey</p>
 <p>Inherited from
-WithTextInstance.pointAspect</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).sizeKey</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerTextInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.properties">properties</a></p>
+<p>ServerTextInstance.targetId</p>
 <p>Inherited from
-WithTextInstance.properties</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithTextInstance.rightCrop</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithTextInstance.sizeAspect</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithTextInstance.sizeKey</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.string">string</a></h3><p>• <strong>string</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.string">string</a></p>
-<p>Inherited from
-WithTextInstance.string</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.targetId">targetId</a></p>
-<p>Inherited from
-WithTextInstance.targetId</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithTextInstance.topCrop</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.tweening">tweening</a></p>
+<p>ServerTextInstance.tweening</p>
 <p>Inherited from
-WithTextInstance.tweening</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.width">width</a></p>
-<p>Inherited from
-WithTextInstance.width</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithTextInstance.widthEnd</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.x">x</a></p>
-<p>Inherited from
-WithTextInstance.x</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithTextInstance.xEnd</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.y">y</a></p>
-<p>Inherited from
-WithTextInstance.y</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithTextInstance.yEnd</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ServerTextInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithTextInstance.isAudio</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithTextInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithTextInstance.label</p>
-<hr>
 <h3><a id="ServerTextInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithTextInstance.scalarRecord</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ServerTextInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -431,9 +319,34 @@ WithTextInstance.scalarRecord</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.assetTime">assetTime</a></p>
+<p>ServerTextInstance.assetTime</p>
 <p>Inherited from
-WithTextInstance.assetTime</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ServerTextInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextInstance.boolean</p>
+<p>Inherited from
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -455,8 +368,12 @@ WithTextInstance.assetTime</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerTextInstance.changeScalar</p>
 <p>Inherited from
-WithTextInstance.changeScalar</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -474,8 +391,12 @@ WithTextInstance.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerTextInstance.changeScalars</p>
 <p>Inherited from
-WithTextInstance.changeScalars</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -488,7 +409,7 @@ WithTextInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -498,9 +419,11 @@ WithTextInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.clippedElement">clippedElement</a></p>
+<p>ServerTextInstance.clippedElement</p>
 <p>Inherited from
-WithTextInstance.clippedElement</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>cacheArgs</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -519,9 +442,11 @@ WithTextInstance.clippedElement</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.commandFiles">commandFiles</a></p>
+<p>ServerTextInstance.commandFiles</p>
 <p>Inherited from
-WithTextInstance.commandFiles</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).commandFiles</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -544,9 +469,11 @@ WithTextInstance.commandFiles</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.constrainedValue">constrainedValue</a></p>
+<p>ServerTextInstance.constrainedValue</p>
 <p>Inherited from
-WithTextInstance.constrainedValue</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -573,11 +500,13 @@ WithTextInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.containedItem">containedItem</a></p>
+<p>ServerTextInstance.containedItem</p>
 <p>Inherited from
-WithTextInstance.containedItem</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ServerTextInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -591,16 +520,18 @@ WithTextInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.containerRects">containerRects</a></p>
+<p>ServerTextInstance.containerRects</p>
 <p>Inherited from
-WithTextInstance.containerRects</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -619,9 +550,11 @@ WithTextInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ServerTextInstance.containerSvgItem</p>
 <p>Inherited from
-WithTextInstance.containerSvgItem</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -648,9 +581,11 @@ WithTextInstance.containerSvgItem</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.contentRect">contentRect</a></p>
+<p>ServerTextInstance.contentRect</p>
 <p>Inherited from
-WithTextInstance.contentRect</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -669,9 +604,11 @@ WithTextInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.contentRects">contentRects</a></p>
+<p>ServerTextInstance.contentRects</p>
 <p>Inherited from
-WithTextInstance.contentRects</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -690,9 +627,11 @@ WithTextInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ServerTextInstance.contentSvgItem</p>
 <p>Inherited from
-WithTextInstance.contentSvgItem</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -711,50 +650,11 @@ WithTextInstance.contentSvgItem</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.frames">frames</a></p>
+<p>ServerTextInstance.frames</p>
 <p>Inherited from
-WithTextInstance.frames</p>
-<hr>
-<h3><a id="ServerTextInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithTextInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerTextInstance.initializeProperties</p>
-<p>Inherited from
-WithTextInstance.initializeProperties</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -773,9 +673,11 @@ WithTextInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ServerTextInstance.instanceCachePromise</p>
 <p>Inherited from
-WithTextInstance.instanceCachePromise</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -794,11 +696,13 @@ WithTextInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ServerTextInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithTextInstance.intrinsicsKnown</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerTextInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -808,14 +712,18 @@ WithTextInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextInstance.number</p>
 <p>Inherited from
-WithTextInstance.propertiesInitialize</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -834,9 +742,11 @@ WithTextInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.propertyFind">propertyFind</a></p>
+<p>ServerTextInstance.propertyFind</p>
 <p>Inherited from
-WithTextInstance.propertyFind</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -855,9 +765,11 @@ WithTextInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.propertyIds">propertyIds</a></p>
+<p>ServerTextInstance.propertyIds</p>
 <p>Inherited from
-WithTextInstance.propertyIds</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -876,9 +788,11 @@ WithTextInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.propertyInstance">propertyInstance</a></p>
+<p>ServerTextInstance.propertyInstance</p>
 <p>Inherited from
-WithTextInstance.propertyInstance</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -901,9 +815,11 @@ WithTextInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.scaleRects">scaleRects</a></p>
+<p>ServerTextInstance.scaleRects</p>
 <p>Inherited from
-WithTextInstance.scaleRects</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -926,11 +842,13 @@ WithTextInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.setValue">setValue</a></p>
+<p>ServerTextInstance.setValue</p>
 <p>Inherited from
-WithTextInstance.setValue</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerTextInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerTextInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -950,8 +868,35 @@ WithTextInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerTextInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithTextInstance.shouldSelectProperty</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerTextInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerTextInstance.string</p>
+<p>Inherited from
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -978,17 +923,21 @@ WithTextInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.svgVector">svgVector</a></p>
+<p>ServerTextInstance.svgVector</p>
 <p>Inherited from
-WithTextInstance.svgVector</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.toJSON">toJSON</a></p>
+<p>ServerTextInstance.toJSON</p>
 <p>Inherited from
-WithTextInstance.toJSON</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1015,9 +964,11 @@ WithTextInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.tweenValues">tweenValues</a></p>
+<p>ServerTextInstance.tweenValues</p>
 <p>Inherited from
-WithTextInstance.tweenValues</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1036,9 +987,11 @@ WithTextInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.tweens">tweens</a></p>
+<p>ServerTextInstance.tweens</p>
 <p>Inherited from
-WithTextInstance.tweens</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1057,9 +1010,11 @@ WithTextInstance.tweens</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.value">value</a></p>
+<p>ServerTextInstance.value</p>
 <p>Inherited from
-WithTextInstance.value</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).value</p>
 <hr>
 <h3><a id="ServerTextInstanceClass.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>, <code>content?</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -1082,9 +1037,11 @@ WithTextInstance.value</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerTextInstance.html">ServerTextInstance</a>.<a href="ServerTextInstance.html#ServerTextInstance.visibleCommandFiles">visibleCommandFiles</a></p>
+<p>ServerTextInstance.visibleCommandFiles</p>
 <p>Inherited from
-WithTextInstance.visibleCommandFiles</p>
+TextInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).visibleCommandFiles</p>
 
   </div>
 </section>
@@ -1096,46 +1053,25 @@ WithTextInstance.visibleCommandFiles</p>
         <ul><li><a class='' href='#ServerTextInstanceClass'>ServerTextInstanceClass</a></li>
 <li><a class='' href='#ServerTextInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerTextInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ServerTextInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ServerTextInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ServerTextInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ServerTextInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerTextInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerTextInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerTextInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ServerTextInstanceClass.container'>container</a></li>
 <li><a class='' href='#ServerTextInstanceClass.cropDirections'>cropDirections</a></li>
 <li><a class='' href='#ServerTextInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerTextInstanceClass.height'>height</a></li>
-<li><a class='' href='#ServerTextInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerTextInstanceClass.id'>id</a></li>
 <li><a class='' href='#ServerTextInstanceClass.instanceObject'>instanceObject</a></li>
-<li><a class='' href='#ServerTextInstanceClass.intrinsic'>intrinsic</a></li>
 <li><a class='' href='#ServerTextInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerTextInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerTextInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerTextInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ServerTextInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ServerTextInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerTextInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerTextInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ServerTextInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerTextInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ServerTextInstanceClass.sizeKey'>sizeKey</a></li>
-<li><a class='' href='#ServerTextInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerTextInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ServerTextInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerTextInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ServerTextInstanceClass.width'>width</a></li>
-<li><a class='' href='#ServerTextInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerTextInstanceClass.x'>x</a></li>
-<li><a class='' href='#ServerTextInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerTextInstanceClass.y'>y</a></li>
-<li><a class='' href='#ServerTextInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ServerTextInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ServerTextInstanceClass.label'>label</a></li>
 <li><a class='' href='#ServerTextInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerTextInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerTextInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerTextInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerTextInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerTextInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1148,16 +1084,16 @@ WithTextInstance.visibleCommandFiles</p>
 <li><a class='' href='#ServerTextInstanceClass.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerTextInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ServerTextInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ServerTextInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerTextInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerTextInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerTextInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerTextInstanceClass.number'>number</a></li>
 <li><a class='' href='#ServerTextInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerTextInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerTextInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerTextInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerTextInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerTextInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerTextInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerTextInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ServerTextInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerTextInstanceClass.tweenValues'>tweenValues</a></li>

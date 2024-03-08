@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerRawAudioAssetClass"><h2>ServerRawAudioAssetClass</h2></a>
   <div class="section">
     <h1>Class: ServerRawAudioAssetClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawAudioAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerRawAudioAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithAudioAsset</code></p>
+<li><p><code><a href='ServerRawAssetClass.html'>ServerRawAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='AudibleAsset.html'>AudibleAsset</a></code> &amp; <code><a href='ServerAudibleAsset.html'>ServerAudibleAsset</a></code> &amp; <code><a href='AudioAsset.html'>AudioAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerRawAudioAssetClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerRawAudioAsset.html'>ServerRawAudioAsset</a></code></li>
+<li><code>ServerRawAudioAsset</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerRawAudioAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerRawAudioAssetClass</strong>(<code>args</code>, <code>manager?</code>)</p>
+<h3><a id="ServerRawAudioAssetClass.constructor">constructor</a></h3><p>• <strong>new ServerRawAudioAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,146 +153,174 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='RawAudioAssetObject.html'>RawAudioAssetObject</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>manager?</code></td>
-<td align="left"><code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithAudioAsset.constructor</p>
-<h2>Properties</h2>
-<h3><a id="ServerRawAudioAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-WithAudioAsset._assets</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).constructor</p>
+<h2>Properties</h2>
+<h3><a id="ServerRawAudioAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
+<p>Inherited from
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+)._assets</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.assetIds">assetIds</a></p>
+<p>ServerRawAudioAsset.assetIds</p>
 <p>Inherited from
-WithAudioAsset.assetIds</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).assetIds</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.assetManager">assetManager</a></p>
+<p>ServerRawAudioAsset.assetManager</p>
 <p>Inherited from
-WithAudioAsset.assetManager</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).assetManager</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='RawAssetObject.html'>RawAssetObject</a></code> &amp; <code><a href='AudibleAssetObject.html'>AudibleAssetObject</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.assetObject">assetObject</a></p>
+<p>ServerRawAudioAsset.assetObject</p>
 <p>Inherited from
-WithAudioAsset.assetObject</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).assetObject</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.assets">assets</a></p>
+<p>ServerRawAudioAsset.assets</p>
 <p>Inherited from
-WithAudioAsset.assets</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).assets</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.audioUrl">audioUrl</a></h3><p>• <strong>audioUrl</strong>: <code>string</code></p>
+<h3><a id="ServerRawAudioAssetClass.canBeMuted">canBeMuted</a></h3><p>• <code>Optional</code> <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.audioUrl">audioUrl</a></p>
+<p>ServerRawAudioAsset.canBeMuted</p>
 <p>Inherited from
-WithAudioAsset.audioUrl</p>
-<hr>
-<h3><a id="ServerRawAudioAssetClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.canBeMuted">canBeMuted</a></p>
-<p>Inherited from
-WithAudioAsset.canBeMuted</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.decoding">decoding</a></p>
+<p>ServerRawAudioAsset.decoding</p>
 <p>Inherited from
-WithAudioAsset.decoding</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).decoding</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.decodings">decodings</a></p>
+<p>ServerRawAudioAsset.decodings</p>
 <p>Inherited from
-WithAudioAsset.decodings</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).decodings</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.duration">duration</a></h3><p>• <strong>duration</strong>: <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.duration">duration</a></p>
+<p>ServerRawAudioAsset.duration</p>
 <p>Inherited from
-WithAudioAsset.duration</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).duration</p>
+<hr>
+<h3><a id="ServerRawAudioAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.hasIntrinsicSizing</p>
+<p>Inherited from
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ServerRawAudioAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.hasIntrinsicTiming</p>
+<p>Inherited from
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.id">id</a></p>
+<p>ServerRawAudioAsset.id</p>
 <p>Inherited from
-WithAudioAsset.id</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).id</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
+<h3><a id="ServerRawAudioAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.label">label</a></p>
+<p>ServerRawAudioAsset.properties</p>
 <p>Inherited from
-WithAudioAsset.label</p>
-<hr>
-<h3><a id="ServerRawAudioAssetClass.loop">loop</a></h3><p>• <strong>loop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.loop">loop</a></p>
-<p>Inherited from
-WithAudioAsset.loop</p>
-<hr>
-<h3><a id="ServerRawAudioAssetClass.manager">manager</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>manager</strong>: <code><a href='ServerAssetManager.html'>ServerAssetManager</a></code></p>
-<p>Inherited from
-WithAudioAsset.manager</p>
-<hr>
-<h3><a id="ServerRawAudioAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.properties">properties</a></p>
-<p>Inherited from
-WithAudioAsset.properties</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).properties</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.request">request</a></p>
+<p>ServerRawAudioAsset.request</p>
 <p>Inherited from
-WithAudioAsset.request</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).request</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.resource">resource</a></p>
+<p>ServerRawAudioAsset.resource</p>
 <p>Inherited from
-WithAudioAsset.resource</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).resource</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.resources">resources</a></p>
+<p>ServerRawAudioAsset.resources</p>
 <p>Inherited from
-WithAudioAsset.resources</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).resources</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.source">source</a></p>
+<p>ServerRawAudioAsset.source</p>
 <p>Inherited from
-WithAudioAsset.source</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).source</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.targetId">targetId</a></p>
+<p>ServerRawAudioAsset.targetId</p>
 <p>Inherited from
-WithAudioAsset.targetId</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.type">type</a></p>
+<p>ServerRawAudioAsset.type</p>
 <p>Inherited from
-WithAudioAsset.type</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ServerRawAudioAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithAudioAsset.scalarRecord</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ServerRawAudioAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -303,27 +331,7 @@ WithAudioAsset.scalarRecord</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>assetId</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ServerAsset.html'>ServerAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.asset">asset</a></p>
-<p>Inherited from
-WithAudioAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -331,7 +339,9 @@ WithAudioAsset.asset</p>
 <h4>Implementation of</h4>
 <p>ServerRawAudioAsset.asset</p>
 <p>Inherited from
-WithAudioAsset.asset</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).asset</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -350,12 +360,13 @@ WithAudioAsset.asset</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.assetCachePromise">assetCachePromise</a></p>
+<p>ServerRawAudioAsset.assetCachePromise</p>
 <p>Inherited from
-WithAudioAsset.assetCachePromise</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).assetCachePromise</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.assetFiles">assetFiles</a></h3><p>▸ <strong>assetFiles</strong>(<code>args</code>): <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
-<p>All files needed for audible and/or visible encode commands.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -372,9 +383,34 @@ WithAudioAsset.assetCachePromise</p>
 <p>Returns
 <code><a href='AssetFiles.html'>AssetFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.assetFiles">assetFiles</a></p>
+<p>ServerRawAudioAsset.assetFiles</p>
 <p>Overrides
-WithAudioAsset.assetFiles</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).assetFiles</p>
+<hr>
+<h3><a id="ServerRawAudioAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.boolean</p>
+<p>Inherited from
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -396,8 +432,12 @@ WithAudioAsset.assetFiles</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.changeScalar</p>
 <p>Inherited from
-WithAudioAsset.changeScalar</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -415,8 +455,12 @@ WithAudioAsset.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.changeScalars</p>
 <p>Inherited from
-WithAudioAsset.changeScalars</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -428,19 +472,20 @@ WithAudioAsset.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.clipObject">clipObject</a></p>
+<p>ServerRawAudioAsset.clipObject</p>
 <p>Inherited from
-WithAudioAsset.clipObject</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).clipObject</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.commandFilePromise">commandFilePromise</a></h3><p>▸ <strong>commandFilePromise</strong>(<code>args</code>, <code>commandFile</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
-<p>Writes a command file, if it&#39;s not a raw asset.</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -461,9 +506,11 @@ WithAudioAsset.clipObject</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.commandFilePromise">commandFilePromise</a></p>
+<p>ServerRawAudioAsset.commandFilePromise</p>
 <p>Inherited from
-WithAudioAsset.commandFilePromise</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).commandFilePromise</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -486,9 +533,11 @@ WithAudioAsset.commandFilePromise</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.constrainedValue">constrainedValue</a></p>
+<p>ServerRawAudioAsset.constrainedValue</p>
 <p>Inherited from
-WithAudioAsset.constrainedValue</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -507,9 +556,11 @@ WithAudioAsset.constrainedValue</p>
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.decodingOfType">decodingOfType</a></p>
+<p>ServerRawAudioAsset.decodingOfType</p>
 <p>Inherited from
-WithAudioAsset.decodingOfType</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).decodingOfType</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -528,50 +579,11 @@ WithAudioAsset.decodingOfType</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.frames">frames</a></p>
+<p>ServerRawAudioAsset.frames</p>
 <p>Inherited from
-WithAudioAsset.frames</p>
-<hr>
-<h3><a id="ServerRawAudioAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithAudioAsset.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerRawAudioAsset.initializeProperties</p>
-<p>Inherited from
-WithAudioAsset.initializeProperties</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).frames</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -590,11 +602,13 @@ WithAudioAsset.initializeProperties</p>
 <p>Returns
 <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.instanceArgs">instanceArgs</a></p>
+<p>ServerRawAudioAsset.instanceArgs</p>
 <p>Inherited from
-WithAudioAsset.instanceArgs</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).instanceArgs</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='ServerRawAudioInstance.html'>ServerRawAudioInstance</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code>ServerRawAudioInstance</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -609,13 +623,15 @@ WithAudioAsset.instanceArgs</p>
 </tr>
 </tbody></table>
 <p>Returns
-<code><a href='ServerRawAudioInstance.html'>ServerRawAudioInstance</a></code></p>
+<code>ServerRawAudioInstance</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.instanceFromObject">instanceFromObject</a></p>
+<p>ServerRawAudioAsset.instanceFromObject</p>
 <p>Overrides
-WithAudioAsset.instanceFromObject</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).instanceFromObject</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerRawAudioAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -625,14 +641,18 @@ WithAudioAsset.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.number</p>
 <p>Inherited from
-WithAudioAsset.propertiesInitialize</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).number</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -651,9 +671,11 @@ WithAudioAsset.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.propertyFind">propertyFind</a></p>
+<p>ServerRawAudioAsset.propertyFind</p>
 <p>Inherited from
-WithAudioAsset.propertyFind</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -672,9 +694,11 @@ WithAudioAsset.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.propertyIds">propertyIds</a></p>
+<p>ServerRawAudioAsset.propertyIds</p>
 <p>Inherited from
-WithAudioAsset.propertyIds</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -693,9 +717,11 @@ WithAudioAsset.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.propertyInstance">propertyInstance</a></p>
+<p>ServerRawAudioAsset.propertyInstance</p>
 <p>Inherited from
-WithAudioAsset.propertyInstance</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -708,15 +734,17 @@ WithAudioAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.resourceOfType">resourceOfType</a></p>
+<p>ServerRawAudioAsset.resourceOfType</p>
 <p>Inherited from
-WithAudioAsset.resourceOfType</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).resourceOfType</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -739,11 +767,13 @@ WithAudioAsset.resourceOfType</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.setValue">setValue</a></p>
+<p>ServerRawAudioAsset.setValue</p>
 <p>Inherited from
-WithAudioAsset.setValue</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerRawAudioAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerRawAudioAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -763,16 +793,45 @@ WithAudioAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.shouldSelectProperty</p>
 <p>Inherited from
-WithAudioAsset.shouldSelectProperty</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerRawAudioAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawAudioAsset.string</p>
+<p>Inherited from
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).string</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.toJSON">toJSON</a></p>
+<p>ServerRawAudioAsset.toJSON</p>
 <p>Inherited from
-WithAudioAsset.toJSON</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -799,9 +858,11 @@ WithAudioAsset.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.tweenValues">tweenValues</a></p>
+<p>ServerRawAudioAsset.tweenValues</p>
 <p>Inherited from
-WithAudioAsset.tweenValues</p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerRawAudioAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -820,26 +881,11 @@ WithAudioAsset.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawAudioAsset.html">ServerRawAudioAsset</a>.<a href="ServerRawAudioAsset.html#ServerRawAudioAsset.value">value</a></p>
+<p>ServerRawAudioAsset.value</p>
 <p>Inherited from
-WithAudioAsset.value</p>
-<hr>
-<h3><a id="ServerRawAudioAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ServerEvents.html#EventServerAsset'>EventServerAsset</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
+AudioAssetMixin(
+  ServerAudibleAssetMixin(AudibleAssetMixin(ServerRawAssetClass))
+).value</p>
 
   </div>
 </section>
@@ -855,15 +901,13 @@ WithAudioAsset.value</p>
 <li><a class='' href='#ServerRawAudioAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.assets'>assets</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.audioUrl'>audioUrl</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.duration'>duration</a></li>
+<li><a class='' href='#ServerRawAudioAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ServerRawAudioAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.id'>id</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.label'>label</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.loop'>loop</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.manager'>manager</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.request'>request</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.resource'>resource</a></li>
@@ -875,6 +919,7 @@ WithAudioAsset.value</p>
 <li><a class='' href='#ServerRawAudioAssetClass.asset'>asset</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.assetFiles'>assetFiles</a></li>
+<li><a class='' href='#ServerRawAudioAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.clipObject'>clipObject</a></li>
@@ -882,20 +927,19 @@ WithAudioAsset.value</p>
 <li><a class='' href='#ServerRawAudioAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.frames'>frames</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerRawAudioAssetClass.number'>number</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerRawAudioAssetClass.string'>string</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerRawAudioAssetClass.tweenValues'>tweenValues</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.value'>value</a></li>
-<li><a class='' href='#ServerRawAudioAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ServerRawAudioAssetClass.value'>value</a></li></ul>
       </nav>
     </main>
   </body>

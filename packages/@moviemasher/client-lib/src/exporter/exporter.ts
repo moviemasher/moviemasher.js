@@ -3,6 +3,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 
 import { html } from 'lit-html'
 import { CONTENTS, FOOTER, HEADER, Section } from '../base/component-view.js'
+import { $INSERT } from '../utility/constants.js'
 
 export const ExporterTag = 'movie-masher-exporter'
 
@@ -30,7 +31,7 @@ export class ExporterElement extends Section {
     this.loadComponent('movie-masher-exporter-header')
     return html`<movie-masher-exporter-header
       part='${HEADER}' 
-      icon='add' 
+      icon='${$INSERT}' 
     >${htmls}</movie-masher-exporter-header>`
   }
   static override properties: PropertyDeclarations = {

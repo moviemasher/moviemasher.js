@@ -1,10 +1,9 @@
-import type { AudibleInstance, ErrorObject, EvaluationSize, Rect, Size, StringTuple, Strings, Transparency, ValueRecord } from '@moviemasher/shared-lib/types.js'
-import type { CommandFilter, CommandFilters } from '../types.js'
+import type { CommandFilter, CommandFilters, ErrorObject, Size, StringTuple, Strings, ValueRecord } from '@moviemasher/shared-lib/types.js'
 
-import { $ALPHA, $FRAME, COLON, COMMA, DASH, DOT, EQUALS, ERROR, NEWLINE, SEMICOLON, SIZE_KEYS, SLASH, SPACE, arrayFromOneOrMore, arrayLast, idGenerate, } from '@moviemasher/shared-lib/runtime.js'
+import { COLON, COMMA, DASH, DOT, EQUALS, ERROR, NEWLINE, SEMICOLON, SPACE, arrayFromOneOrMore, arrayLast, idGenerate } from '@moviemasher/shared-lib/runtime.js'
 import { isNumeric, isPopulatedString } from '@moviemasher/shared-lib/utility/guard.js'
-import { copyPoint } from '@moviemasher/shared-lib/utility/rect.js'
-import { ENV, ENV_KEY } from './env.js'
+import { $DirRoot, ENV } from './env.js'
+import { sizeValueString } from '@moviemasher/shared-lib/utility/rect.js'
 
 const commandExpandComplex = (trimmed: string): string => {
   if (!trimmed.includes(SEMICOLON)) return trimmed
@@ -24,17 +23,13 @@ const commandQuoteComplex = (trimmed: string): string => {
   return `'${trimmed}'`
 }
 
-export const sizeValueString = (size: Size): string => {
-  const { width, height } = size
-  return [width, height].join('x')
-}
 
 export const commandString = (args: string[], destination: string, expanded?: boolean): string => {
   let name = ''
   let foundYes = false
   const params: StringTuple[] = []
   
-  const rootPath = ENV.get(ENV_KEY.DirRoot) 
+  const rootPath = ENV.get($DirRoot) 
   args.forEach(arg => {
     if (!isPopulatedString(arg)) return
 
@@ -77,23 +72,6 @@ export const commandError = (args: Strings, destination: string, error: any, std
   return { name: ERROR.Ffmpeg, message, cause }
 }
 
-export const scaleFilter = (inputId: string, outputId: string, size: EvaluationSize): CommandFilter => {
-  const options: ValueRecord = { 
-    width: String(size.width),
-    height: String(size.height),
-    // sws_flags: 'accurate_rnd',
-  }
-  if (!(isNumeric(options.width) && isNumeric(options.height))) options.eval = $FRAME
-  const outputs = []
-  if (outputId) outputs.push(outputId)
-
-  const commandFilter: CommandFilter = {
-    ffmpegFilter: 'scale', options, inputs: [inputId], outputs
-  }
-  // console.log('scaleCommandFilter', commandFilter)
-  return commandFilter
-}
-
 export const formatFilter = (inputId: string, outputId: string, pix_fmts = 'yuva420p'): CommandFilter => {
   const formatCommandFilter: CommandFilter = {
     ffmpegFilter: 'format',  options: { pix_fmts },
@@ -101,45 +79,6 @@ export const formatFilter = (inputId: string, outputId: string, pix_fmts = 'yuva
   }
   return formatCommandFilter
 
-}
-
-export const setPtsSpeedFilters = (inputId: string, outputId: string, instance: AudibleInstance): CommandFilters => {
-  const filters: CommandFilters = []
-  const speed = instance.value('speed')
-  let filterInput = inputId
-  const setptsFilter = 'setpts'
-  const setptsId = idGenerate(setptsFilter)
-  if (speed !== 1) {
-    const firstSetptsCommandFilter: CommandFilter = {
-      ffmpegFilter: setptsFilter,
-      options: { expr: `PTS-STARTPTS` },
-      inputs: [filterInput], outputs: [setptsId]
-    }
-    filters.push(firstSetptsCommandFilter)
-    filterInput = setptsId
-  }
-  const secondSetptsCommandFilter: CommandFilter = {
-    ffmpegFilter: setptsFilter,
-    options: { expr: `((PTS)/${speed})-STARTPTS` },
-    inputs: [filterInput], outputs: [outputId]
-  }
-  filters.push(secondSetptsCommandFilter)
-  return filters
-}
-
-
-export const cropFilter = (inputId: string, outputId: string, rect: Rect): CommandFilter => {
-  const options: ValueRecord =  { ...copyPoint(rect) }// exact: 1 
-  const outputs = []
-  if (outputId) outputs.push(outputId)
-  const { width, height } = rect
-  if (width) options.w = width
-  if (height) options.h = height
-  const cropFilter: CommandFilter = {
-    ffmpegFilter: 'crop', options, inputs: [inputId], outputs
-  }
-  // console.log('cropFilter', cropFilter)
-  return cropFilter
 }
 
 export const spectrumFilter = (outputId: string, rate: number, size?: Size): CommandFilter => {
@@ -154,96 +93,6 @@ export const spectrumFilter = (outputId: string, rate: number, size?: Size): Com
   }
   // console.log('colorspectrum', rate, 'as', id)
   return commandFilter
-}
-
-export const colorFilter = (outputId: string, color: string, rate: number, size?: Size, duration?: number ) => {
-  const ffmpegFilter = 'color'
-  const id = outputId || idGenerate('color')
- 
-  const options: ValueRecord = { color, rate }
-  if (duration) options.duration = duration
-  if (size) options.size = sizeValueString(size)
-  const commandFilter: CommandFilter = {
-    ffmpegFilter, options, inputs: [], outputs: [id]
-  }
-  // console.log('colorFilter', color, size, 'as', id)
-  return commandFilter
-}
-
-export const setsarFilter = (inputId: string, outputId: string, size?: Size): CommandFilter => {
-  const options: ValueRecord = {sar: 1}
-  if (size) options.sar = SIZE_KEYS.map(key => size[key]).join(SLASH)
-  const commandFilter: CommandFilter = {
-    ffmpegFilter: 'setsar', options,
-    inputs: [inputId], outputs: [outputId]
-  }
-  return commandFilter
-}
-
-export const fpsFilter = (inputId: string, outputId: string, fps: number): CommandFilter => {
-  const id = outputId || idGenerate('setsar')
-  const options: ValueRecord = { fps }
-  const commandFilter: CommandFilter = {
-    ffmpegFilter: 'fps', options, 
-    inputs: [inputId], outputs: [outputId]
-  }
-  return commandFilter
-}
-
-export const copyFilter = (inputId: string, outputId: string, ) => {
-  const commandFilter: CommandFilter = {
-    ffmpegFilter: 'copy', options: {}, 
-    inputs: [inputId], outputs: [outputId]
-  }
-  // console.log('copyFilter', commandFilter)
-  return commandFilter
-}
-
-export const alphamergeFilters = (maskInput: string, maskedInput: string, outputId: string, transparency: Transparency, debug?: boolean): CommandFilters => {
-  const mergeFilter = debug ? 'overlay' : 'alphamerge'
-  const extract = debug ? false : (transparency === $ALPHA)
-  const extractFilter = 'alphaextract'
-  const extractId = idGenerate(extractFilter)
-  const filters: CommandFilters = []
-  let inputId: string = maskInput
-  if (extract) {
-    const alphaCommandFilter: CommandFilter = {
-      ffmpegFilter: extractFilter, options: {},
-      inputs: [inputId], outputs: [extractId]
-    }
-    filters.push(alphaCommandFilter)
-    inputId = extractId
-  }
-  const options: ValueRecord = {}
-  const outputs = []
-  if (outputId) outputs.push(outputId)
-  const commandFilter: CommandFilter = {
-    ffmpegFilter: mergeFilter, options,
-    inputs: [maskedInput, inputId], outputs
-  }
-  filters.push(commandFilter)
-  // console.log('alphamergeCommandFilters', filters)
-  return filters
-}
-
-export const overlayFilter = (bottomInput: string, topInput: string, outputId: string, alpha?:boolean, values?: ValueRecord): CommandFilter =>{
-  const doStack = false// !(alpha || values)
-  
-  const options: ValueRecord = doStack ? {} : { 
-    alpha: 'straight', ...(values || {}) //format: alpha ? 'yuv420p10' : 'yuv420', 
-  }
-  const ffmpegFilter = doStack ? 'vstack' : 'overlay'
-
-  const outputs: Strings = []
-  if (outputId) outputs.push(outputId)
-  
-  
-  const filter: CommandFilter = {
-    ffmpegFilter, options,
-    inputs: [bottomInput, topInput], outputs,
-  }
-  // console.log('overlayCommandFilter', topInput, 'over', bottomInput, 'as', outputId, values)
-  return filter
 }
 
 export const filtersString = (filters: CommandFilter | CommandFilters): string => {
@@ -344,3 +193,12 @@ export const filtersString = (filters: CommandFilter | CommandFilters): string =
     //   return commandFilters
     // }
     
+export const copyFilter = (inputId: string, outputId: string, ) => {
+  const commandFilter: CommandFilter = {
+    ffmpegFilter: 'copy', options: {}, 
+    inputs: [inputId], outputs: [outputId]
+  }
+  // console.log('copyFilter', commandFilter)
+  return commandFilter
+}
+

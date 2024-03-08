@@ -9,6 +9,8 @@ function assertRequest(value: any, name?: string): asserts value is EndpointRequ
 }
 
 export const fileUploadFunction: FileUploadFunction = (resource, options = {}) => {
+  assertDefined(resource)
+
   const { request: assetRequest } = resource
   const { progress } = options
 

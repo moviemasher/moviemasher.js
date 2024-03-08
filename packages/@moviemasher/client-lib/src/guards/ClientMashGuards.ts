@@ -1,9 +1,8 @@
 import type { ClientMashInstance } from '../types.js'
-import type { ClientClip, ClientMashAsset, ClientTrack, Track } from '@moviemasher/shared-lib/types.js'
+import type { ClientClip, ClientMashAsset } from '@moviemasher/shared-lib/types.js'
 
 import { isClip, isInstance, isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
 import { errorThrow } from '@moviemasher/shared-lib/runtime.js'
-import { isObject } from '@moviemasher/shared-lib/utility/guard.js'
 
 export const isClientMashAsset = (value: any): value is ClientMashAsset => {
   return isMashAsset(value) && 'addClipToTrack' in value
@@ -28,14 +27,4 @@ export function assertClientClip(value: any, name?: string): asserts value is Cl
   if (!isClientClip(value)) errorThrow(value, 'ClientClip', name)
 }
 
-const isTrack = (value?: any): value is Track => {
-  return isObject(value) && 'assureFrames' in value
-}
 
-export const isClientTrack = (value: any): value is ClientTrack => (
-  isTrack(value) && 'addClips' in value
-)
-
-export function assertClientTrack(value: any, name?: string): asserts value is ClientTrack {
-  if (!isClientTrack(value)) errorThrow(value, 'ClientTrack', name)
-}

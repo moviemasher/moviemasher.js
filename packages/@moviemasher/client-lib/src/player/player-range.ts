@@ -5,7 +5,7 @@ import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
 import { isNumber } from '@moviemasher/shared-lib/utility/guard.js'
 import { html } from 'lit-html'
 import { Component } from '../base/component.js'
-import { EventChangeFrame, EventChangedFrame, EventChangedFrames, EventFrames } from '../utility/events.js'
+import { EventChangeFrame, EventTimeUpdate, EventChangedFrames, EventFrames } from '../module/event.js'
 
 export const PlayerRangeTag = 'movie-masher-player-range'
 
@@ -15,13 +15,13 @@ export const PlayerRangeTag = 'movie-masher-player-range'
 export class PlayerRangeElement extends Component {
   constructor() {
     super()
-    this.listeners[EventChangedFrame.Type] = this.handleChangedFrame.bind(this)
+    this.listeners[EventTimeUpdate.Type] = this.handleChangedFrame.bind(this)
     this.listeners[EventChangedFrames.Type] = this.handleChangedFrames.bind(this)
   }
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -42,11 +42,11 @@ export class PlayerRangeElement extends Component {
     const detail = parseInt(value)
     if (isNumber(detail)) {
       // console.log('PlayerRangeElement.handleInput', detail)
-      MOVIE_MASHER.dispatch(new EventChangeFrame(detail))
+      MOVIE_MASHER.dispatchCustom(new EventChangeFrame(detail))
     }
   }
 
-  private handleChangedFrame(event: EventChangedFrame): void {
+  private handleChangedFrame(event: EventTimeUpdate): void {
     const { detail: frame } = event
     // console.log('PlayerRangeElement.handleChangedFrame', frame)
     this.frame = frame

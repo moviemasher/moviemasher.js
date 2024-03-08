@@ -5,7 +5,7 @@ import type { TemplateContents, OptionalContent } from '../client-types.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { isPropertyId, isTargetId } from '@moviemasher/shared-lib/utility/guards.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventChangedMashAsset, EventChangedInspectorSelectors, EventInspectorSelectors } from '../utility/events.js'
+import { EventChangedMashAsset, EventChangedInspectorSelectors, EventInspectorSelectors } from '../module/event.js'
 import { COMMA, TARGET_IDS } from '@moviemasher/shared-lib/runtime.js'
 import { html } from 'lit-html'
 import { DisablableMixin, DISABLABLE_DECLARATIONS } from '../mixin/component.js'
@@ -28,7 +28,7 @@ export class InspectorContentCenterElement extends InspectorContentCenterDisabla
       this.selectorsSupplied = Boolean(selectors.length)
       if (!this.selectorsSupplied) {
         const event = new EventInspectorSelectors()
-        MOVIE_MASHER.dispatch(event)
+        MOVIE_MASHER.dispatchCustom(event)
         this.selectors = event.detail.selectorTypes
         this.listeners[EventChangedInspectorSelectors.Type] = this.handleChangedInspectorSelectors.bind(this)
       }

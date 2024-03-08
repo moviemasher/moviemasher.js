@@ -4,7 +4,7 @@ import type { Htmls, OptionalContent } from '../client-types.js'
 import type { AssetObjects } from '@moviemasher/shared-lib/types.js'
 
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventExporters } from '../utility/events.js'
+import { EventExporters } from '../module/event.js'
 import { html, nothing } from 'lit-html'
 import { CENTER, ContentBase } from '../base/component-view.js'
 import { css } from '@lit/reactive-element/css-tag.js'
@@ -40,31 +40,6 @@ export class ExporterContentElement extends ContentBase {
     return super.centerContent(slots)
   }
 
-  //  private handleExporter(event: StringEvent): void {
-  //   const { detail: source } = event
-  //   this.exporterId = source
-  // }
-
-  // private handleExporterComplete(): void {
-  //   MOVIE_MASHER.dispatch(new EventDialog())
-
-  //   const { assetObjects } = this
-  //   this.assetObjects = []
-  //   MOVIE_MASHER.dispatch(new EventImportManagedAssets(assetObjects))
-  // }
-
-  // private handleExporterAdd(event: EventExporterAdd): void {
-  //   const { detail: assetObjects } = event
-  //   this.assetObjects = [...this.assetObjects, ...assetObjects]
-  // }
-
-  // private handleExporterRemove(event: EventExporterRemove): void {
-  //   const { detail: id } = event
-    
-  //   this.assetObjects = this.assetObjects.filter(assetObject => assetObject.id !== id)
-  // }
-
-
   private get exporter(): ClientExporter | undefined {
     const { exporterId } = this
     if (!exporterId) return 
@@ -83,7 +58,7 @@ export class ExporterContentElement extends ContentBase {
   private get exportersInitialize(): ClientExporters {
     const exporters: ClientExporters = []
     const event = new EventExporters(exporters)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const [exporter] = exporters
     if (exporter) this.exporterId ||= exporter.id
     return exporters
@@ -125,24 +100,6 @@ export class ExporterContentElement extends ContentBase {
   protected override rightContent(slots: Htmls): OptionalContent {
     const htmls = [...slots]
     htmls.push(html`$RIGHT $CONTENT`)
-    // const { assetObjects } = this
-    // this.loadComponent('movie-masher-link')
-    
-    // this.loadComponent('movie-masher-icon')
-
-    // htmls.push(...assetObjects.map(assetObject => {
-    //   return html`
-    //     <movie-masher-link
-    //       icon='remove-circle'
-    //       emit='${EventExporterRemove.Type}'
-    //       detail='${assetObject.id}'
-    //     ></movie-masher-link>
-    //     <span>${assetObject.label}</span>
-    //     <movie-masher-icon
-    //       icon='${assetObject.type}'
-    //     ></movie-masher-icon>
-    //   `
-    // }))
     return super.rightContent(htmls)
   }
 

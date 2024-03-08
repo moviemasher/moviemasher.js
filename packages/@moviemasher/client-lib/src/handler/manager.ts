@@ -1,13 +1,14 @@
 import type { Asset, AssetManager, AssetObject, AssetParams, Assets, ClientAsset, ClientAssets, ClientMashAsset, DataOrError, Identified, ListenersFunction, ManageType, ManageTypes, MashAsset, Strings } from '@moviemasher/shared-lib/types.js'
+import type { EventManagedAssetsDetail } from '../utility/event-types.js'
 
 import { AssetManagerClass } from '@moviemasher/shared-lib/base/asset-manager.js'
-import { $CACHE_ALL, $CACHE_NONE, $CACHE_SOURCE_TYPE, $RAW, $SAVE, DASH, ERROR, MOVIE_MASHER, arrayFromOneOrMore, arrayRemove, assertAsset, idIsTemporary, isAsset, isAssetObject, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
+import { $CACHE_ALL, $CACHE_NONE, $CACHE_SOURCE_TYPE, $IMPORT, $RAW, $SAVE, DASH, ERROR, MOVIE_MASHER, arrayFromOneOrMore, arrayRemove, assertAsset, idIsTemporary, isAsset, isAssetObject, isDefiniteError, namedError } from '@moviemasher/shared-lib/runtime.js'
 import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
 import { assertDefined, isMashAsset } from '@moviemasher/shared-lib/utility/guards.js'
 import { isClientMashAsset } from '../guards/ClientMashGuards.js'
-import { IMPORT, REFERENCE, isClientAsset } from '../runtime.js'
-import { EventManagedAssetsDetail } from '../types.js'
-import { EventAssetObjects, EventCanDestroy, EventChangedManagedAssets, EventChangedMashAsset, EventChangedServerAction, EventImportManagedAssets, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetPromise, EventManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, EventWillDestroy } from '../utility/events.js'
+import { EventAssetObjects, EventCanDestroy, EventChangedManagedAssets, EventChangedMashAsset, EventChangedServerAction, EventImportManagedAssets, EventManagedAsset, EventManagedAssetIcon, EventManagedAssetId, EventManagedAssetPromise, EventManagedAssets, EventSavableManagedAsset, EventSavableManagedAssets, EventWillDestroy } from '../module/event.js'
+import { $REFERENCE } from '../utility/constants.js'
+import { isClientAsset } from '@moviemasher/shared-lib/utility/client-guards.js'
 
 interface RawAsset extends Asset {}
 
@@ -101,7 +102,7 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
       }
     }
     const event = new EventAssetObjects(params)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { promise } = event.detail
     // console.log('ClientAssetManagerClass.assetObjectsPromise', !!promise)
     if (!promise) return Promise.resolve([])
@@ -119,8 +120,6 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
       return this.define(...objects).then(orError => {
         if (isDefiniteError(orError)) return []
         const { data: assets } = orError
-
-        // events.forEach(event => MOVIE_MASHER.dispatch(event))
         return assets.filter(isClientAsset)
       })
     })         
@@ -143,8 +142,8 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
 
   private assetFiltered(manageType: ManageType, asset: ClientAsset): boolean {
     switch (manageType) {
-      case REFERENCE: return this.mashAsset?.assetIds.includes(asset.id) ?? false
-      case IMPORT: return this.importingAssets.includes(asset)
+      case $REFERENCE: return this.mashAsset?.assetIds.includes(asset.id) ?? false
+      case $IMPORT: return this.importingAssets.includes(asset)
     }
     return true
   }
@@ -209,7 +208,10 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
     const uninstalled = ids.filter(id => !this.assetsById.has(id))
     if (uninstalled.length) {
       events.push(new EventChangedManagedAssets())
+      console.log(this.constructor.name, 'installEvents', EventChangedManagedAssets.Type)
+
       if (uninstalled.some(id => idIsTemporary(id))) {
+        console.log(this.constructor.name, 'installEvents', EventChangedServerAction.Type, $SAVE)
         events.push(new EventChangedServerAction($SAVE))
       }
     }
@@ -238,7 +240,7 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
     if (ids) arrayRemove(toRemove, this.importingAssets.map(asset => asset.id))
     // console.log(this.constructor.name, 'undefine', toRemove.join(', '))
     const willEvent = new EventWillDestroy(toRemove)
-    MOVIE_MASHER.dispatch(willEvent)
+    MOVIE_MASHER.dispatchCustom(willEvent)
     // console.log(this.constructor.name, 'undefine', toRemove.join(', '))
     toRemove.forEach(id => {
       const asset = this.assetsById.get(id)
@@ -253,7 +255,7 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
   }
 
   override updateDefinitionId(oldId: string, newId: string) {
-    // console.log(this.constructor.name, 'updateDefinitionId', oldId, '->', newId)
+    console.log(this.constructor.name, 'updateDefinitionId', oldId, '->', newId)
     const clientAsset = this.assetsById.get(oldId)
     assertAsset(clientAsset)
 
@@ -274,7 +276,7 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
     const mashAssets = this.assets.filter(isClientMashAsset)
     mashAssets.forEach(mashAsset => { mashAsset.updateAssetId(oldId, newId) })
     if (idIsTemporary(oldId)) {
-      MOVIE_MASHER.dispatch(new EventChangedServerAction($SAVE))
+      MOVIE_MASHER.dispatchCustom(new EventChangedServerAction($SAVE))
     }
   }
 
@@ -292,12 +294,16 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
     const { instance } = ClientAssetManagerClass
     const { detail: objects } = event
     const events = instance.installEvents(...objects.map(object => object.id))  
+    console.log('ClientAssetManagerClass.handleImportManagedAssets', events.length, objects.length)
     const orUndefines = objects.map(object => instance.fromCall(object))
     const assets = orUndefines.filter(isClientAsset)
     if (assets.length) {
       instance.importingAssets.push(...assets)
     }
-    events.forEach(event => MOVIE_MASHER.dispatch(event))
+    events.forEach(event => {
+      console.log('ClientAssetManagerClass.handleImportManagedAssets', event.type)
+      MOVIE_MASHER.dispatchCustom(event)
+  })
   }
 
   static handleManagedAsset(event: EventManagedAsset) {
@@ -342,13 +348,14 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
   }
   
   static handleManagedAssetId(event: EventManagedAssetId) {
+    console.log('ClientAssetManagerClass.handleManagedAssetId')
     const { instance } = ClientAssetManagerClass
     const { previousId, currentId } = event.detail
     instance.updateDefinitionId(previousId, currentId)
 
     event.stopImmediatePropagation()
     if (idIsTemporary(previousId)) {
-      MOVIE_MASHER.dispatch(new EventChangedServerAction($SAVE))
+      MOVIE_MASHER.dispatchCustom(new EventChangedServerAction($SAVE))
     }
   }
 
@@ -363,7 +370,9 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
     event.stopImmediatePropagation()
     const { instance } = ClientAssetManagerClass
     const needed = instance.mashAsset?.saveNeeded
-    event.detail.savable = needed || instance.assets.some(asset => asset.saveNeeded)
+    const savable = needed || instance.assets.some(asset => asset.saveNeeded)
+    console.log('ClientAssetManagerClass.handleSavableManagedAsset', needed, savable, !!instance.mashAsset)
+    event.detail.savable = savable
   }
 
   static handleSavableManagedAssets(event: EventSavableManagedAssets) {
@@ -372,6 +381,7 @@ export class ClientAssetManagerClass extends AssetManagerClass implements AssetM
     const savableAssets = allAssets.filter(asset => asset.saveNeeded)
     const sortedAssets = savableAssets.sort(sortByRaw)
     event.detail.assets.push(...sortedAssets)
+    console.log('ClientAssetManagerClass.handleSavableManagedAssets', sortedAssets.map(asset => asset.value('label')))
   }
 
   static handleUnload() { ClientAssetManagerClass.instance.undefine() }

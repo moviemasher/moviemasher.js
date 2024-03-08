@@ -132,8 +132,24 @@
   <div class="section">
     <h1>Class: ClientAssetManagerClass</h1>
 <p><a href="../client-lib.html">client-lib</a>.ClientAssetManagerClass</p>
+<h2>Hierarchy</h2>
+<ul>
+<li><p><code><a href='AssetManagerClass.html'>AssetManagerClass</a></code></p>
+<p>↳ <strong><code><a href='#'>ClientAssetManagerClass</a></code></strong></p>
+</li>
+</ul>
+<h2>Implements</h2>
+<ul>
+<li><code><a href='AssetManager.html'>AssetManager</a></code></li>
+</ul>
 <h2>Constructors</h2>
 <h3><a id="ClientAssetManagerClass.constructor">constructor</a></h3><p>• <strong>new ClientAssetManagerClass</strong>()</p>
+<p>Inherited from
+AssetManagerClass.constructor</p>
+<h2>Properties</h2>
+<h3><a id="ClientAssetManagerClass.assetsById">assetsById</a></h3><p>• <code>Protected</code> <strong>assetsById</strong>: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"><code>Map</code></a>&lt;<code>string</code>, <code><a href='Asset.html'>Asset</a></code>&gt;</p>
+<p>Inherited from
+AssetManagerClass.assetsById</p>
 <h2>Accessors</h2>
 <h3><a id="ClientAssetManagerClass.mashAsset">mashAsset</a></h3><p>• <code>get</code> <strong>mashAsset</strong>(): <code><a href='ClientMashAsset.html'>ClientMashAsset</a></code></p>
 <p>Returns
@@ -155,6 +171,151 @@
 <p>Returns
 <code>void</code></p>
 <h2>Methods</h2>
+<h3><a id="ClientAssetManagerClass.define">define</a></h3><p>▸ <strong>define</strong>(<code>...assetObjects</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Assets.html'>Assets</a></code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>...assetObjects</code></td>
+<td align="left">(<code><a href='Identified.html'>Identified</a></code> | <code><a href='AssetObject.html'>AssetObject</a></code>)[]</td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Assets.html'>Assets</a></code>&gt;&gt;</p>
+<h4>Implementation of</h4>
+<p>AssetManager.define</p>
+<p>Inherited from
+AssetManagerClass.define</p>
+<hr>
+<h3><a id="ClientAssetManagerClass.fromCall">fromCall</a></h3><p>▸ <code>Protected</code> <strong>fromCall</strong>(<code>assetObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Asset.html'>Asset</a></code></p>
+<p>Inherited from
+AssetManagerClass.fromCall</p>
+<hr>
+<h3><a id="ClientAssetManagerClass.fromId">fromId</a></h3><p>▸ <code>Protected</code> <strong>fromId</strong>(<code>id</code>): <code><a href='Asset.html'>Asset</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Asset.html'>Asset</a></code></p>
+<p>Inherited from
+AssetManagerClass.fromId</p>
+<hr>
+<h3><a id="ClientAssetManagerClass.fromResource">fromResource</a></h3><p>▸ <code>Protected</code> <strong>fromResource</strong>(<code>assetObject</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Asset.html'>Asset</a></code>&gt;&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code><a href='AssetObject.html'>AssetObject</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Asset.html'>Asset</a></code>&gt;&gt;</p>
+<p>Inherited from
+AssetManagerClass.fromResource</p>
+<hr>
+<h3><a id="ClientAssetManagerClass.get">get</a></h3><p>▸ <strong>get</strong>(<code>id</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Asset.html'>Asset</a></code>&gt;</p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='Asset.html'>Asset</a></code>&gt;</p>
+<h4>Implementation of</h4>
+<p>AssetManager.get</p>
+<p>Inherited from
+AssetManagerClass.get</p>
+<hr>
+<h3><a id="ClientAssetManagerClass.undefine">undefine</a></h3><p>▸ <strong>undefine</strong>(<code>objectOrArray?</code>): <code>void</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>objectOrArray?</code></td>
+<td align="left"><code>string</code> | <code><a href='Strings.html'>Strings</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
+<h4>Implementation of</h4>
+<p>AssetManager.undefine</p>
+<p>Overrides
+AssetManagerClass.undefine</p>
+<hr>
+<h3><a id="ClientAssetManagerClass.updateDefinitionId">updateDefinitionId</a></h3><p>▸ <strong>updateDefinitionId</strong>(<code>oldId</code>, <code>newId</code>): <code>void</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>oldId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>newId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>void</code></p>
+<h4>Implementation of</h4>
+<p>AssetManager.updateDefinitionId</p>
+<p>Overrides
+AssetManagerClass.updateDefinitionId</p>
+<hr>
 <h3><a id="ClientAssetManagerClass.handleCanDestroy">handleCanDestroy</a></h3><p>▸ <code>Static</code> <strong>handleCanDestroy</strong>(<code>event</code>): <code>void</code></p>
 <h4>Parameters</h4>
 <table>
@@ -338,7 +499,15 @@
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#ClientAssetManagerClass'>ClientAssetManagerClass</a></li>
 <li><a class='' href='#ClientAssetManagerClass.constructor'>constructor</a></li>
+<li><a class='' href='#ClientAssetManagerClass.assetsById'>assetsById</a></li>
 <li><a class='' href='#ClientAssetManagerClass.mashAsset'>mashAsset</a></li>
+<li><a class='' href='#ClientAssetManagerClass.define'>define</a></li>
+<li><a class='' href='#ClientAssetManagerClass.fromCall'>fromCall</a></li>
+<li><a class='' href='#ClientAssetManagerClass.fromId'>fromId</a></li>
+<li><a class='' href='#ClientAssetManagerClass.fromResource'>fromResource</a></li>
+<li><a class='' href='#ClientAssetManagerClass.get'>get</a></li>
+<li><a class='' href='#ClientAssetManagerClass.undefine'>undefine</a></li>
+<li><a class='' href='#ClientAssetManagerClass.updateDefinitionId'>updateDefinitionId</a></li>
 <li><a class='' href='#ClientAssetManagerClass.handleCanDestroy'>handleCanDestroy</a></li>
 <li><a class='' href='#ClientAssetManagerClass.handleChangedMashAsset'>handleChangedMashAsset</a></li>
 <li><a class='' href='#ClientAssetManagerClass.handleImportManagedAssets'>handleImportManagedAssets</a></li>

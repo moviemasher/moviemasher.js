@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,152 +131,68 @@
   <a id="ServerInstance"><h2>ServerInstance</h2></a>
   <div class="section">
     <h1>Interface: ServerInstance</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerInstance</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerInstance</p>
 <h2>Hierarchy</h2>
 <ul>
 <li><p><code><a href='Instance.html'>Instance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerInstance</a></code></strong></p>
+<p>↳↳ <code><a href='ServerAudibleInstance.html'>ServerAudibleInstance</a></code></p>
+<p>↳↳ <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashInstance.html'>ServerMashInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashAudioInstance.html'>ServerMashAudioInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashImageInstance.html'>ServerMashImageInstance</a></code></p>
 <p>↳↳ <code><a href='ServerMashVideoInstance.html'>ServerMashVideoInstance</a></code></p>
-<p>↳↳ <code><a href='ServerRawInstance.html'>ServerRawInstance</a></code></p>
-<p>↳↳ <code><a href='ServerRawAudioInstance.html'>ServerRawAudioInstance</a></code></p>
-<p>↳↳ <code><a href='ServerRawImageInstance.html'>ServerRawImageInstance</a></code></p>
-<p>↳↳ <code><a href='ServerRawVideoInstance.html'>ServerRawVideoInstance</a></code></p>
-<p>↳↳ <code><a href='ServerAudibleInstance.html'>ServerAudibleInstance</a></code></p>
-<p>↳↳ <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code></p>
 <p>↳↳ <code><a href='ServerAudioInstance.html'>ServerAudioInstance</a></code></p>
 </li>
+</ul>
+<h2>Implemented by</h2>
+<ul>
+<li><code><a href='ServerInstanceClass.html'>ServerInstanceClass</a></code></li>
 </ul>
 <h2>Properties</h2>
 <h3><a id="ServerInstance.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
 <p>Overrides
-Instance.asset</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.asset">asset</a></p>
 <hr>
 <h3><a id="ServerInstance.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <p>Inherited from
-Instance.assetId</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.assetId">assetId</a></p>
 <hr>
 <h3><a id="ServerInstance.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <p>Inherited from
-Instance.assetIds</p>
-<hr>
-<h3><a id="ServerInstance.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.bottomCrop</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.assetIds">assetIds</a></p>
 <hr>
 <h3><a id="ServerInstance.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.canBeMuted</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.canBeMuted">canBeMuted</a></p>
 <hr>
 <h3><a id="ServerInstance.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <p>Inherited from
-Instance.clip</p>
-<hr>
-<h3><a id="ServerInstance.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.container</p>
-<hr>
-<h3><a id="ServerInstance.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
-<p>Inherited from
-Instance.cropDirections</p>
-<hr>
-<h3><a id="ServerInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ServerInstance.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.height</p>
-<hr>
-<h3><a id="ServerInstance.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.heightEnd</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.clip">clip</a></p>
 <hr>
 <h3><a id="ServerInstance.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
-Instance.id</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.id">id</a></p>
 <hr>
 <h3><a id="ServerInstance.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <p>Inherited from
-Instance.instanceObject</p>
-<hr>
-<h3><a id="ServerInstance.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-Instance.intrinsicRect</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.instanceObject">instanceObject</a></p>
 <hr>
 <h3><a id="ServerInstance.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.isDefault</p>
-<hr>
-<h3><a id="ServerInstance.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.leftCrop</p>
-<hr>
-<h3><a id="ServerInstance.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<p>Inherited from
-Instance.lock</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.isDefault">isDefault</a></p>
 <hr>
 <h3><a id="ServerInstance.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <p>Inherited from
-Instance.muted</p>
-<hr>
-<h3><a id="ServerInstance.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.opacityEnd</p>
-<hr>
-<h3><a id="ServerInstance.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-Instance.pointAspect</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.muted">muted</a></p>
 <hr>
 <h3><a id="ServerInstance.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
-Instance.properties</p>
-<hr>
-<h3><a id="ServerInstance.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.rightCrop</p>
-<hr>
-<h3><a id="ServerInstance.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<p>Inherited from
-Instance.sizeAspect</p>
-<hr>
-<h3><a id="ServerInstance.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<p>Inherited from
-Instance.sizeKey</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.properties">properties</a></p>
 <hr>
 <h3><a id="ServerInstance.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
 <p>Inherited from
-Instance.targetId</p>
-<hr>
-<h3><a id="ServerInstance.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<p>Inherited from
-Instance.topCrop</p>
-<hr>
-<h3><a id="ServerInstance.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.width</p>
-<hr>
-<h3><a id="ServerInstance.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.widthEnd</p>
-<hr>
-<h3><a id="ServerInstance.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.x</p>
-<hr>
-<h3><a id="ServerInstance.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.xEnd</p>
-<hr>
-<h3><a id="ServerInstance.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.y</p>
-<hr>
-<h3><a id="ServerInstance.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<p>Inherited from
-Instance.yEnd</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.targetId">targetId</a></p>
 <h2>Methods</h2>
 <h3><a id="ServerInstance.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>masherTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -295,7 +211,68 @@ Instance.yEnd</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <p>Inherited from
-Instance.assetTime</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.assetTime">assetTime</a></p>
+<hr>
+<h3><a id="ServerInstance.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.boolean">boolean</a></p>
+<hr>
+<h3><a id="ServerInstance.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="ServerInstance.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="ServerInstance.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>args</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -335,49 +312,7 @@ Instance.assetTime</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-Instance.constrainedValue</p>
-<hr>
-<h3><a id="ServerInstance.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>sizingSize</code></td>
-<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-Instance.containerRects</p>
-<hr>
-<h3><a id="ServerInstance.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ContentRectArgs.html'>ContentRectArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-Instance.contentRects</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.constrainedValue">constrainedValue</a></p>
 <hr>
 <h3><a id="ServerInstance.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -396,26 +331,7 @@ Instance.contentRects</p>
 <p>Returns
 <code>number</code></p>
 <p>Inherited from
-Instance.frames</p>
-<hr>
-<h3><a id="ServerInstance.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-Instance.initializeProperties</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.frames">frames</a></p>
 <hr>
 <h3><a id="ServerInstance.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -434,7 +350,7 @@ Instance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <p>Inherited from
-Instance.instanceCachePromise</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.instanceCachePromise">instanceCachePromise</a></p>
 <hr>
 <h3><a id="ServerInstance.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>options</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -453,7 +369,26 @@ Instance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <p>Inherited from
-Instance.intrinsicsKnown</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.intrinsicsKnown">intrinsicsKnown</a></p>
+<hr>
+<h3><a id="ServerInstance.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.number">number</a></p>
 <hr>
 <h3><a id="ServerInstance.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -472,7 +407,7 @@ Instance.intrinsicsKnown</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-Instance.propertyFind</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.propertyFind">propertyFind</a></p>
 <hr>
 <h3><a id="ServerInstance.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -491,7 +426,7 @@ Instance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <p>Inherited from
-Instance.propertyIds</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.propertyIds">propertyIds</a></p>
 <hr>
 <h3><a id="ServerInstance.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -510,30 +445,7 @@ Instance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <p>Inherited from
-Instance.propertyInstance</p>
-<hr>
-<h3><a id="ServerInstance.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>time</code></td>
-<td align="left"><code><a href='Time.html'>Time</a></code></td>
-</tr>
-<tr>
-<td align="left"><code>range</code></td>
-<td align="left"><code><a href='TimeRange.html'>TimeRange</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
-<p>Inherited from
-Instance.scaleRects</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.propertyInstance">propertyInstance</a></p>
 <hr>
 <h3><a id="ServerInstance.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>name</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -556,13 +468,55 @@ Instance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
-Instance.setValue</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.setValue">setValue</a></p>
+<hr>
+<h3><a id="ServerInstance.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="ServerInstance.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.string">string</a></p>
 <hr>
 <h3><a id="ServerInstance.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Inherited from
-Instance.toJSON</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.toJSON">toJSON</a></p>
 <hr>
 <h3><a id="ServerInstance.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='Scalars.html'>Scalars</a></code></p>
 <h4>Parameters</h4>
@@ -589,7 +543,7 @@ Instance.toJSON</p>
 <p>Returns
 <code><a href='Scalars.html'>Scalars</a></code></p>
 <p>Inherited from
-Instance.tweenValues</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.tweenValues">tweenValues</a></p>
 <hr>
 <h3><a id="ServerInstance.value">value</a></h3><p>▸ <strong>value</strong>(<code>key</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -608,7 +562,7 @@ Instance.tweenValues</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <p>Inherited from
-Instance.value</p>
+<a href="Instance.html">Instance</a>.<a href="Instance.html#Instance.value">value</a></p>
 
   </div>
 </section>
@@ -621,49 +575,30 @@ Instance.value</p>
 <li><a class='' href='#ServerInstance.asset'>asset</a></li>
 <li><a class='' href='#ServerInstance.assetId'>assetId</a></li>
 <li><a class='' href='#ServerInstance.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerInstance.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerInstance.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerInstance.clip'>clip</a></li>
-<li><a class='' href='#ServerInstance.container'>container</a></li>
-<li><a class='' href='#ServerInstance.cropDirections'>cropDirections</a></li>
-<li><a class='' href='#ServerInstance.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerInstance.height'>height</a></li>
-<li><a class='' href='#ServerInstance.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerInstance.id'>id</a></li>
 <li><a class='' href='#ServerInstance.instanceObject'>instanceObject</a></li>
-<li><a class='' href='#ServerInstance.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerInstance.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerInstance.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerInstance.lock'>lock</a></li>
 <li><a class='' href='#ServerInstance.muted'>muted</a></li>
-<li><a class='' href='#ServerInstance.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerInstance.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerInstance.properties'>properties</a></li>
-<li><a class='' href='#ServerInstance.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerInstance.sizeAspect'>sizeAspect</a></li>
-<li><a class='' href='#ServerInstance.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerInstance.targetId'>targetId</a></li>
-<li><a class='' href='#ServerInstance.topCrop'>topCrop</a></li>
-<li><a class='' href='#ServerInstance.width'>width</a></li>
-<li><a class='' href='#ServerInstance.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerInstance.x'>x</a></li>
-<li><a class='' href='#ServerInstance.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerInstance.y'>y</a></li>
-<li><a class='' href='#ServerInstance.yEnd'>yEnd</a></li>
 <li><a class='' href='#ServerInstance.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerInstance.boolean'>boolean</a></li>
+<li><a class='' href='#ServerInstance.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#ServerInstance.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerInstance.commandFiles'>commandFiles</a></li>
 <li><a class='' href='#ServerInstance.constrainedValue'>constrainedValue</a></li>
-<li><a class='' href='#ServerInstance.containerRects'>containerRects</a></li>
-<li><a class='' href='#ServerInstance.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerInstance.frames'>frames</a></li>
-<li><a class='' href='#ServerInstance.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerInstance.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerInstance.intrinsicsKnown'>intrinsicsKnown</a></li>
+<li><a class='' href='#ServerInstance.number'>number</a></li>
 <li><a class='' href='#ServerInstance.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerInstance.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerInstance.propertyInstance'>propertyInstance</a></li>
-<li><a class='' href='#ServerInstance.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerInstance.setValue'>setValue</a></li>
+<li><a class='' href='#ServerInstance.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerInstance.string'>string</a></li>
 <li><a class='' href='#ServerInstance.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerInstance.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ServerInstance.value'>value</a></li></ul>

@@ -750,6 +750,7 @@ AssetWithDropTarget.propertyId</p>
 AssetWithDropTarget.scalar</p>
 <hr>
 <h3><a id="AssetControlElement.selectedId">selectedId</a></h3><p>• <code>Optional</code> <strong>selectedId</strong>: <code>string</code></p>
+<p>The id of the selected mash/asset/clip</p>
 <h4>Implementation of</h4>
 <p><a href="../exports/Control.html">Control</a>.<a href="../exports/Control.html#Control.selectedId">selectedId</a></p>
 <p>Inherited from
@@ -1184,6 +1185,7 @@ BooleanWithControl.propertyId</p>
 BooleanWithControl.scalar</p>
 <hr>
 <h3><a id="BooleanControlElement.selectedId">selectedId</a></h3><p>• <code>Optional</code> <strong>selectedId</strong>: <code>string</code></p>
+<p>The id of the selected mash/asset/clip</p>
 <h4>Implementation of</h4>
 <p><a href="../exports/Control.html">Control</a>.<a href="../exports/Control.html#Control.selectedId">selectedId</a></p>
 <p>Inherited from
@@ -4586,66 +4588,90 @@ ButtonElement.unslottedNodes</p>
 <p><a href="../client-lib.html">client-lib</a>.ClientRawElement</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>ClientRawDropTarget</code></p>
+<li><p><code><a href='../exports/Component.html'>Component</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='../exports/SizeReactive.html'>SizeReactive</a></code> &amp; <code><a href='../exports/DropTarget.html'>DropTarget</a></code></p>
 <p>↳ <strong><code><a href='Elements.html#ClientRawElement'>ClientRawElement</a></code></strong></p>
 </li>
 </ul>
 <h2>Constructors</h2>
 <h3><a id="ClientRawElement.constructor">constructor</a></h3><p>• <strong>new ClientRawElement</strong>()</p>
 <p>Inherited from
-ClientRawDropTarget.constructor</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ClientRawElement.acceptsClip">acceptsClip</a></h3><p>• <strong>acceptsClip</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Overrides
-ClientRawDropTarget.acceptsClip</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).acceptsClip</p>
 <hr>
 <h3><a id="ClientRawElement.listeners">listeners</a></h3><p>• <code>Protected</code> <strong>listeners</strong>: <code><a href='../exports/EventDispatcherListeners.html'>EventDispatcherListeners</a></code> = <code>{}</code></p>
 <p>Inherited from
-ClientRawDropTarget.listeners</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).listeners</p>
 <hr>
 <h3><a id="ClientRawElement.size">size</a></h3><p>• <code>Optional</code> <strong>size</strong>: <code><a href='../exports/Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <p>Inherited from
-ClientRawDropTarget.size</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).size</p>
 <hr>
 <h3><a id="ClientRawElement.sources">sources</a></h3><p>• <strong>sources</strong>: <code><a href='../exports/Sources.html'>Sources</a></code> = <code>[]</code></p>
 <hr>
 <h3><a id="ClientRawElement.cssBorderBoxSizing">cssBorderBoxSizing</a></h3><p>▪ <code>Static</code> <strong>cssBorderBoxSizing</strong>: <code>CSSResult</code></p>
 <p>Inherited from
-ClientRawDropTarget.cssBorderBoxSizing</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).cssBorderBoxSizing</p>
 <hr>
 <h3><a id="ClientRawElement.cssHostDropping">cssHostDropping</a></h3><p>▪ <code>Static</code> <strong>cssHostDropping</strong>: <code>CSSResult</code></p>
 <p>Inherited from
-ClientRawDropTarget.cssHostDropping</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).cssHostDropping</p>
 <hr>
 <h3><a id="ClientRawElement.cssHostFlex">cssHostFlex</a></h3><p>▪ <code>Static</code> <strong>cssHostFlex</strong>: <code>CSSResult</code></p>
 <p>Inherited from
-ClientRawDropTarget.cssHostFlex</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).cssHostFlex</p>
 <hr>
 <h3><a id="ClientRawElement.properties">properties</a></h3><p>▪ <code>Static</code> <strong>properties</strong>: <code>PropertyDeclarations</code></p>
 <p>Inherited from
-ClientRawDropTarget.properties</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).properties</p>
 <hr>
 <h3><a id="ClientRawElement.styles">styles</a></h3><p>▪ <code>Static</code> <strong>styles</strong>: <code>CSSResultGroup</code></p>
 <p>Overrides
-ClientRawDropTarget.styles</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).styles</p>
 <h2>Accessors</h2>
 <h3><a id="ClientRawElement.contents">contents</a></h3><p>• <code>Protected</code> <code>get</code> <strong>contents</strong>(): <code><a href='../exports/TemplateContents.html'>TemplateContents</a></code></p>
 <p>Returns
 <code><a href='../exports/TemplateContents.html'>TemplateContents</a></code></p>
 <p>Inherited from
-ClientRawDropTarget.contents</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).contents</p>
 <hr>
 <h3><a id="ClientRawElement.defaultContent">defaultContent</a></h3><p>• <code>Protected</code> <code>get</code> <strong>defaultContent</strong>(): <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <p>Returns
 <code><a href='../combined/Types.html#OptionalContent'>OptionalContent</a></code></p>
 <p>Overrides
-ClientRawDropTarget.defaultContent</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).defaultContent</p>
 <hr>
 <h3><a id="ClientRawElement.exportElements">exportElements</a></h3><p>• <code>Protected</code> <code>get</code> <strong>exportElements</strong>(): <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>[]</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>[]</p>
 <p>Inherited from
-ClientRawDropTarget.exportElements</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).exportElements</p>
 <hr>
 <h3><a id="ClientRawElement.exportParts">exportParts</a></h3><p>• <code>get</code> <strong>exportParts</strong>(): <code>string</code></p>
 <p>Returns
@@ -4654,31 +4680,41 @@ ClientRawDropTarget.exportElements</p>
 <p><strong><code>Attr</code></strong></p>
 <p>export-parts</p>
 <p>Inherited from
-ClientRawDropTarget.exportParts</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).exportParts</p>
 <hr>
 <h3><a id="ClientRawElement.unslottedNodes">unslottedNodes</a></h3><p>• <code>Protected</code> <code>get</code> <strong>unslottedNodes</strong>(): <code><a href='../exports/Nodes.html'>Nodes</a></code></p>
 <p>Returns
 <code><a href='../exports/Nodes.html'>Nodes</a></code></p>
 <p>Inherited from
-ClientRawDropTarget.unslottedNodes</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).unslottedNodes</p>
 <h2>Methods</h2>
 <h3><a id="ClientRawElement.connectedCallback">connectedCallback</a></h3><p>▸ <strong>connectedCallback</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.connectedCallback</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).connectedCallback</p>
 <hr>
 <h3><a id="ClientRawElement.disconnectedCallback">disconnectedCallback</a></h3><p>▸ <strong>disconnectedCallback</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.disconnectedCallback</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).disconnectedCallback</p>
 <hr>
 <h3><a id="ClientRawElement.dispatchExportParts">dispatchExportParts</a></h3><p>▸ <code>Protected</code> <strong>dispatchExportParts</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.dispatchExportParts</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).dispatchExportParts</p>
 <hr>
 <h3><a id="ClientRawElement.dropValid">dropValid</a></h3><p>▸ <strong>dropValid</strong>(<code>dataTransfer</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -4697,7 +4733,9 @@ ClientRawDropTarget.dispatchExportParts</p>
 <p>Returns
 <code>boolean</code></p>
 <p>Overrides
-ClientRawDropTarget.dropValid</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).dropValid</p>
 <hr>
 <h3><a id="ClientRawElement.element">element</a></h3><p>▸ <code>Protected</code> <strong>element</strong>&lt;<code>T</code>&gt;(<code>selector?</code>): <code>T</code></p>
 <h4>Type parameters</h4>
@@ -4731,7 +4769,9 @@ ClientRawDropTarget.dropValid</p>
 <p>Returns
 <code>T</code></p>
 <p>Inherited from
-ClientRawDropTarget.element</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).element</p>
 <hr>
 <h3><a id="ClientRawElement.handleChange">handleChange</a></h3><p>▸ <code>Protected</code> <strong>handleChange</strong>(<code>event</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <h4>Parameters</h4>
@@ -4754,7 +4794,9 @@ ClientRawDropTarget.element</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.handleDragged</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).handleDragged</p>
 <hr>
 <h3><a id="ClientRawElement.handleDropped">handleDropped</a></h3><p>▸ <strong>handleDropped</strong>(<code>event</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <h4>Parameters</h4>
@@ -4773,13 +4815,17 @@ ClientRawDropTarget.handleDragged</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code>void</code>&gt;</p>
 <p>Overrides
-ClientRawDropTarget.handleDropped</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).handleDropped</p>
 <hr>
 <h3><a id="ClientRawElement.handleExportParts">handleExportParts</a></h3><p>▸ <code>Protected</code> <strong>handleExportParts</strong>(): <code>void</code></p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.handleExportParts</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).handleExportParts</p>
 <hr>
 <h3><a id="ClientRawElement.mashIndex">mashIndex</a></h3><p>▸ <strong>mashIndex</strong>(<code>event</code>): <code><a href='../exports/ClipLocation.html'>ClipLocation</a></code></p>
 <h4>Parameters</h4>
@@ -4798,13 +4844,17 @@ ClientRawDropTarget.handleExportParts</p>
 <p>Returns
 <code><a href='../exports/ClipLocation.html'>ClipLocation</a></code></p>
 <p>Inherited from
-ClientRawDropTarget.mashIndex</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).mashIndex</p>
 <hr>
 <h3><a id="ClientRawElement.render">render</a></h3><p>▸ <code>Protected</code> <strong>render</strong>(): <code>unknown</code></p>
 <p>Returns
 <code>unknown</code></p>
 <p>Inherited from
-ClientRawDropTarget.render</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).render</p>
 <hr>
 <h3><a id="ClientRawElement.selectElement">selectElement</a></h3><p>▸ <code>Protected</code> <strong>selectElement</strong>&lt;<code>T</code>&gt;(<code>selector?</code>): <code>T</code></p>
 <h4>Type parameters</h4>
@@ -4836,7 +4886,9 @@ ClientRawDropTarget.render</p>
 <p>Returns
 <code>T</code></p>
 <p>Inherited from
-ClientRawDropTarget.selectElement</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).selectElement</p>
 <hr>
 <h3><a id="ClientRawElement.templateContent">templateContent</a></h3><p>▸ <code>Protected</code> <strong>templateContent</strong>(<code>contents</code>): <code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
 <h4>Parameters</h4>
@@ -4855,7 +4907,9 @@ ClientRawDropTarget.selectElement</p>
 <p>Returns
 <code><a href='../combined/Types.html#TemplateContent'>TemplateContent</a></code></p>
 <p>Inherited from
-ClientRawDropTarget.templateContent</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).templateContent</p>
 <hr>
 <h3><a id="ClientRawElement.variable">variable</a></h3><p>▸ <code>Protected</code> <strong>variable</strong>(<code>name</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -4874,7 +4928,9 @@ ClientRawDropTarget.templateContent</p>
 <p>Returns
 <code>number</code></p>
 <p>Inherited from
-ClientRawDropTarget.variable</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).variable</p>
 <hr>
 <h3><a id="ClientRawElement.variableSet">variableSet</a></h3><p>▸ <code>Protected</code> <strong>variableSet</strong>(<code>name</code>, <code>value?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -4897,7 +4953,9 @@ ClientRawDropTarget.variable</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.variableSet</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).variableSet</p>
 <hr>
 <h3><a id="ClientRawElement.willUpdate">willUpdate</a></h3><p>▸ <code>Protected</code> <strong>willUpdate</strong>(<code>changedProperties</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -4916,7 +4974,9 @@ ClientRawDropTarget.variableSet</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-ClientRawDropTarget.willUpdate</p>
+DropTargetMixin(
+  SizeReactiveMixin(Component)
+).willUpdate</p>
 
   </div>
 </section>
@@ -4948,6 +5008,7 @@ WithControlProperty.listeners</p>
 WithControlProperty.propertyId</p>
 <hr>
 <h3><a id="ControlInputElement.selectedId">selectedId</a></h3><p>• <code>Optional</code> <strong>selectedId</strong>: <code>string</code></p>
+<p>The id of the selected mash/asset/clip</p>
 <p>Inherited from
 WithControlProperty.selectedId</p>
 <hr>
@@ -14317,6 +14378,7 @@ NumericWithControl.propertyId</p>
 NumericWithControl.scalar</p>
 <hr>
 <h3><a id="NumericControlElement.selectedId">selectedId</a></h3><p>• <code>Optional</code> <strong>selectedId</strong>: <code>string</code></p>
+<p>The id of the selected mash/asset/clip</p>
 <p>Inherited from
 NumericWithControl.selectedId</p>
 <hr>
@@ -17939,6 +18001,7 @@ RgbWithControl.propertyId</p>
 RgbWithControl.scalar</p>
 <hr>
 <h3><a id="RgbControlElement.selectedId">selectedId</a></h3><p>• <code>Optional</code> <strong>selectedId</strong>: <code>string</code></p>
+<p>The id of the selected mash/asset/clip</p>
 <p>Inherited from
 RgbWithControl.selectedId</p>
 <hr>
@@ -18681,6 +18744,7 @@ StringWithControl.propertyId</p>
 StringWithControl.scalar</p>
 <hr>
 <h3><a id="StringControlElement.selectedId">selectedId</a></h3><p>• <code>Optional</code> <strong>selectedId</strong>: <code>string</code></p>
+<p>The id of the selected mash/asset/clip</p>
 <p>Inherited from
 StringWithControl.selectedId</p>
 <hr>

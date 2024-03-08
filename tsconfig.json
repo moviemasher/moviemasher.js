@@ -1,5 +1,6 @@
 {
-  "extends": "./dev/tsconfig/lit.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./dev/tsconfig/base.json",
   "compilerOptions": {
     "noImplicitReturns": false,
     "noImplicitOverride": false,
@@ -14,12 +15,9 @@
 
   "include": [
     "packages/**/*.ts",
-    "examples/**/*.ts",
-    "images/**/*.ts"
+    "test/**/*.ts",
   ],
   "exclude": [
     "**/dist/**/*",
-    "packages/**/src/**/*.e2e.ts",
-    "packages/**/src/**/*.test.ts",
   ]
 }

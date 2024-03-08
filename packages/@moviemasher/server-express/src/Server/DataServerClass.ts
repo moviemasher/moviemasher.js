@@ -1,13 +1,13 @@
-import type { AssetObject, AssetObjects, AssetObjectsResponse, Identified, Labeled, MashAssetObject, RawType, Sourced, Strings, Typed } from '@moviemasher/shared-lib/types.js'
+import type { AssetObject, AssetObjects, AssetObjectsResponse, Identified, MashAssetObject, RawType, Strings } from '@moviemasher/shared-lib/types.js'
 import type { DataAssetDefaultRequest, DataAssetDeleteRequest, DataAssetGetRequest, DataAssetListRequest, DataAssetPutRequest, VersionedDataOrError } from '../Api/Api.js'
-import type { DataServerArgs, ExpressHandler } from './Server.js'
+import type { DataServerArgs, ExpressHandler } from '../types.js'
 
-import { ENV, ENV_KEY } from '@moviemasher/server-lib/utility/env.js'
-import { directoryCreatePromise, fileReadJsonPromise } from '@moviemasher/server-lib/module/file-write.js'
+import { ENV, $SharedUser, $ExampleDataFile, $ExampleDataDir, $SharedAssets } from '@moviemasher/server-lib/utility/env.js'
+import { directoryCreatePromise, readJsonFilePromise } from '@moviemasher/server-lib/module/file.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
 import { $CACHE_NONE, $CACHE_SOURCE_TYPE, $MASH, $STRING, $VIDEO, ERROR, RGB_WHITE, SIZE_OUTPUT, VERSION, VOID_FUNCTION, arrayFromOneOrMore, arrayOfNumbers, errorObjectCaught, errorThrow, idIsTemporary, isDefiniteError, jsonParse, jsonStringify } from '@moviemasher/shared-lib/runtime.js'
 import { isDefined } from '@moviemasher/shared-lib/utility/guard.js'
-import { assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
+import { assertAbsolutePath, assertTrue } from '@moviemasher/shared-lib/utility/guards.js'
 import { Application } from 'express'
 import path from 'path'
 import { Database, open } from 'sqlite'
@@ -15,7 +15,7 @@ import sqlite3 from 'sqlite3'
 import { Endpoints } from '../Api/Endpoints.js'
 import { ServerClass } from './ServerClass.js'
 
-const USER_SHARED = ENV.get(ENV_KEY.SharedUser)
+const USER_SHARED = ENV.get($SharedUser)
 
 interface QueryResult<T> {
   rows: T[]
@@ -210,10 +210,12 @@ export class DataServerClass extends ServerClass {
     const { _sharedAssets } = this
     if (_sharedAssets) return _sharedAssets
 
-    const jsonPath = ENV.get(ENV_KEY.SharedAssets, $STRING)
+    const jsonPath = ENV.get($SharedAssets, $STRING)
     if (!(jsonPath && USER_SHARED)) return this._sharedAssets = []
 
-    const orError = await fileReadJsonPromise<AssetObjects>(jsonPath)
+    assertAbsolutePath(jsonPath)
+  
+    const orError = await readJsonFilePromise<AssetObjects>(jsonPath)
 
     if (isDefiniteError(orError)) {
       // console.error(this.constructor.name, 'sharedAssets', orError)
@@ -349,8 +351,8 @@ export class DataServerClass extends ServerClass {
 
     if (_clientPromise) return _clientPromise
 
-    const dbMigrationsPrefix = ENV.get(ENV_KEY.ExampleDataDir, $STRING)
-    const dbPath = ENV.get(ENV_KEY.ExampleDataFile, $STRING)
+    const dbMigrationsPrefix = ENV.get($ExampleDataDir, $STRING)
+    const dbPath = ENV.get($ExampleDataFile, $STRING)
     // console.debug(this.constructor.name, "startDatabase", dbPath)
     return this._clientPromise = directoryCreatePromise(path.dirname(dbPath)).then(() => {
       return open({ filename: dbPath, driver: sqlite3.Database }).then(db => {

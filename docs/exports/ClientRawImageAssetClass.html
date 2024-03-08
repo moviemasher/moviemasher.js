@@ -117,11 +117,11 @@
     @moviemasher
   </summary> 
   <ul>
-    <li><a class='selected' href='../client-lib.html'>client-lib</a></li>
+    <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
 <li><a class='' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,10 +131,10 @@
   <a id="ClientRawImageAssetClass"><h2>ClientRawImageAssetClass</h2></a>
   <div class="section">
     <h1>Class: ClientRawImageAssetClass</h1>
-<p><a href="../client-lib.html">client-lib</a>.ClientRawImageAssetClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ClientRawImageAssetClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithImageAsset</code></p>
+<li><p><code><a href='ClientRawAssetClass.html'>ClientRawAssetClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleAsset.html'>VisibleAsset</a></code> &amp; <code><a href='ClientVisibleAsset.html'>ClientVisibleAsset</a></code> &amp; <code><a href='ImageAsset.html'>ImageAsset</a></code></p>
 <p>↳ <strong><code><a href='#'>ClientRawImageAssetClass</a></code></strong></p>
 </li>
 </ul>
@@ -143,7 +143,7 @@
 <li><code><a href='ClientRawImageAsset.html'>ClientRawImageAsset</a></code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ClientRawImageAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientRawImageAssetClass</strong>(<code>args</code>)</p>
+<h3><a id="ClientRawImageAssetClass.constructor">constructor</a></h3><p>• <strong>new ClientRawImageAssetClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,168 +153,214 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ClientRawImageAssetObject.html'>ClientRawImageAssetObject</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='AssetArgs.html'>AssetArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithImageAsset.constructor</p>
-<h2>Properties</h2>
-<h3><a id="ClientRawImageAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <p>Inherited from
-WithImageAsset._assets</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).constructor</p>
+<h2>Properties</h2>
+<h3><a id="ClientRawImageAssetClass._assets">_assets</a></h3><p>• <code>Protected</code> <strong>_assets</strong>: <code><a href='Assets.html'>Assets</a></code> = <code>[]</code></p>
+<p>Inherited from
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+)._assets</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.alpha">alpha</a></h3><p>• <code>Optional</code> <strong>alpha</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.alpha">alpha</a></p>
 <p>Inherited from
-WithImageAsset.alpha</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).alpha</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assetIds">assetIds</a></p>
 <p>Inherited from
-WithImageAsset.assetIds</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetIds</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code> &amp; <code><a href='RawAssetObject.html'>RawAssetObject</a></code> &amp; <code><a href='VisibleAssetObject.html'>VisibleAssetObject</a></code></p>
+<h3><a id="ClientRawImageAssetClass.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assetManager">assetManager</a></p>
+<p>Inherited from
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetManager</p>
+<hr>
+<h3><a id="ClientRawImageAssetClass.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assetObject">assetObject</a></p>
 <p>Inherited from
-WithImageAsset.assetObject</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetObject</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assets">assets</a></p>
 <p>Inherited from
-WithImageAsset.assets</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assets</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.canBeContainer">canBeContainer</a></h3><p>• <code>Optional</code> <strong>canBeContainer</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.canBeContainer">canBeContainer</a></p>
 <p>Inherited from
-WithImageAsset.canBeContainer</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).canBeContainer</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.canBeContent">canBeContent</a></h3><p>• <code>Optional</code> <strong>canBeContent</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.canBeContent">canBeContent</a></p>
 <p>Inherited from
-WithImageAsset.canBeContent</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).canBeContent</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.canBeFill">canBeFill</a></h3><p>• <code>Optional</code> <strong>canBeFill</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.canBeFill">canBeFill</a></p>
 <p>Inherited from
-WithImageAsset.canBeFill</p>
-<hr>
-<h3><a id="ClientRawImageAssetClass.container">container</a></h3><p>• <code>Optional</code> <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.container">container</a></p>
-<p>Inherited from
-WithImageAsset.container</p>
-<hr>
-<h3><a id="ClientRawImageAssetClass.content">content</a></h3><p>• <code>Optional</code> <strong>content</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.content">content</a></p>
-<p>Inherited from
-WithImageAsset.content</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).canBeFill</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.decoding">decoding</a></h3><p>• <strong>decoding</strong>: <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.decoding">decoding</a></p>
 <p>Inherited from
-WithImageAsset.decoding</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).decoding</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
+<h3><a id="ClientRawImageAssetClass.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.decodings">decodings</a></p>
 <p>Inherited from
-WithImageAsset.decodings</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).decodings</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.hasIntrinsicSizing">hasIntrinsicSizing</a></p>
 <p>Inherited from
-WithImageAsset.hasIntrinsicSizing</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).hasIntrinsicSizing</p>
+<hr>
+<h3><a id="ClientRawImageAssetClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<p>Inherited from
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.id">id</a></p>
 <p>Inherited from
-WithImageAsset.id</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).id</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.isVector">isVector</a></h3><p>• <code>Optional</code> <strong>isVector</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.isVector">isVector</a></p>
 <p>Inherited from
-WithImageAsset.isVector</p>
-<hr>
-<h3><a id="ClientRawImageAssetClass.label">label</a></h3><p>• <strong>label</strong>: <code>string</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.label">label</a></p>
-<p>Inherited from
-WithImageAsset.label</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).isVector</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.probeSize">probeSize</a></h3><p>• <code>Optional</code> <strong>probeSize</strong>: <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.probeSize">probeSize</a></p>
 <p>Inherited from
-WithImageAsset.probeSize</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).probeSize</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ClientRawImageAssetClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.properties">properties</a></p>
 <p>Inherited from
-WithImageAsset.properties</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).properties</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.request">request</a></h3><p>• <strong>request</strong>: <code><a href='EndpointRequest.html'>EndpointRequest</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.request">request</a></p>
 <p>Inherited from
-WithImageAsset.request</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).request</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.resource">resource</a></h3><p>• <strong>resource</strong>: <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.resource">resource</a></p>
 <p>Inherited from
-WithImageAsset.resource</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).resource</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code></p>
+<h3><a id="ClientRawImageAssetClass.resources">resources</a></h3><p>• <strong>resources</strong>: <code><a href='Resources.html'>Resources</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.resources">resources</a></p>
 <p>Inherited from
-WithImageAsset.resources</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).resources</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.saveNeeded">saveNeeded</a></h3><p>• <strong>saveNeeded</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.saveNeeded">saveNeeded</a></p>
 <p>Inherited from
-WithImageAsset.saveNeeded</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).saveNeeded</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.source">source</a></h3><p>• <strong>source</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.source">source</a></p>
 <p>Inherited from
-WithImageAsset.source</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).source</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$ASSET'>$ASSET</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.targetId">targetId</a></p>
 <p>Inherited from
-WithImageAsset.targetId</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).targetId</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.type">type</a></h3><p>• <strong>type</strong>: <code><a href='../combined/Types.html#RawType'>RawType</a></code></p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.type">type</a></p>
 <p>Inherited from
-WithImageAsset.type</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).type</p>
 <h2>Accessors</h2>
 <h3><a id="ClientRawImageAssetClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithImageAsset.scalarRecord</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).scalarRecord</p>
 <h2>Methods</h2>
-<h3><a id="ClientRawImageAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<h3><a id="ClientRawImageAssetClass.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetId</code>): <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -324,36 +370,18 @@ WithImageAsset.scalarRecord</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code><a href='ClientAsset.html'>ClientAsset</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.asset">asset</a></p>
-<p>Inherited from
-WithImageAsset.asset</p>
-<p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='Asset.html'>Asset</a></code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetId</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='Asset.html'>Asset</a></code></p>
 <h4>Implementation of</h4>
-<p>ClientRawImageAsset.asset</p>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.asset">asset</a></p>
 <p>Inherited from
-WithImageAsset.asset</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).asset</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.assetCachePromise">assetCachePromise</a></h3><p>▸ <strong>assetCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -374,7 +402,9 @@ WithImageAsset.asset</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assetCachePromise">assetCachePromise</a></p>
 <p>Overrides
-WithImageAsset.assetCachePromise</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetCachePromise</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.assetIcon">assetIcon</a></h3><p>▸ <strong>assetIcon</strong>(<code>size</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -399,7 +429,9 @@ WithImageAsset.assetCachePromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assetIcon">assetIcon</a></p>
 <p>Overrides
-WithImageAsset.assetIcon</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetIcon</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.assetIconPromise">assetIconPromise</a></h3><p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGImageElement"><code>SVGImageElement</code></a>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -416,7 +448,7 @@ WithImageAsset.assetIcon</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -428,7 +460,9 @@ WithImageAsset.assetIcon</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.assetIconPromise">assetIconPromise</a></p>
 <p>Inherited from
-WithImageAsset.assetIconPromise</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetIconPromise</p>
 <p>▸ <strong>assetIconPromise</strong>(<code>resource</code>, <code>options</code>, <code>cover?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#SvgItem'>SvgItem</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
@@ -444,7 +478,7 @@ WithImageAsset.assetIconPromise</p>
 </tr>
 <tr>
 <td align="left"><code>options</code></td>
-<td align="left"><code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt; | <code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
+<td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt; | <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 <tr>
 <td align="left"><code>cover?</code></td>
@@ -456,7 +490,32 @@ WithImageAsset.assetIconPromise</p>
 <h4>Implementation of</h4>
 <p>ClientRawImageAsset.assetIconPromise</p>
 <p>Inherited from
-WithImageAsset.assetIconPromise</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).assetIconPromise</p>
+<hr>
+<h3><a id="ClientRawImageAssetClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.boolean">boolean</a></p>
+<p>Inherited from
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).boolean</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -481,7 +540,9 @@ WithImageAsset.assetIconPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.changeScalar">changeScalar</a></p>
 <p>Inherited from
-WithImageAsset.changeScalar</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -502,7 +563,9 @@ WithImageAsset.changeScalar</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.changeScalars">changeScalars</a></p>
 <p>Inherited from
-WithImageAsset.changeScalars</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -514,7 +577,7 @@ WithImageAsset.changeScalars</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object?</code></td>
+<td align="left"><code>object</code></td>
 <td align="left"><code><a href='InstanceObject.html'>InstanceObject</a></code></td>
 </tr>
 </tbody></table>
@@ -523,7 +586,9 @@ WithImageAsset.changeScalars</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.clipObject">clipObject</a></p>
 <p>Inherited from
-WithImageAsset.clipObject</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).clipObject</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -548,7 +613,9 @@ WithImageAsset.clipObject</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.constrainedValue">constrainedValue</a></p>
 <p>Inherited from
-WithImageAsset.constrainedValue</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.decodingOfType">decodingOfType</a></h3><p>▸ <strong>decodingOfType</strong>(<code>...types</code>): <code><a href='Decoding.html'>Decoding</a></code></p>
 <h4>Parameters</h4>
@@ -569,9 +636,11 @@ WithImageAsset.constrainedValue</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.decodingOfType">decodingOfType</a></p>
 <p>Inherited from
-WithImageAsset.decodingOfType</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).decodingOfType</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<h3><a id="ClientRawImageAssetClass.imagePromise">imagePromise</a></h3><p>▸ <strong>imagePromise</strong>(<code>resource</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -586,32 +655,13 @@ WithImageAsset.decodingOfType</p>
 </tr>
 </tbody></table>
 <p>Returns
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#ClientImageDataOrError'>ClientImageDataOrError</a></code>&gt;</p>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='ClientImage.html'>ClientImage</a></code>&gt;&gt;</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.imagePromise">imagePromise</a></p>
 <p>Inherited from
-WithImageAsset.imagePromise</p>
-<hr>
-<h3><a id="ClientRawImageAssetClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='ClientRawImageAssetObject.html'>ClientRawImageAssetObject</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.initializeProperties">initializeProperties</a></p>
-<p>Overrides
-WithImageAsset.initializeProperties</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).imagePromise</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
@@ -632,7 +682,9 @@ WithImageAsset.initializeProperties</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.instanceArgs">instanceArgs</a></p>
 <p>Inherited from
-WithImageAsset.instanceArgs</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).instanceArgs</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.instanceFromObject">instanceFromObject</a></h3><p>▸ <strong>instanceFromObject</strong>(<code>object?</code>): <code><a href='ImageInstance.html'>ImageInstance</a></code></p>
 <h4>Parameters</h4>
@@ -653,9 +705,11 @@ WithImageAsset.instanceArgs</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.instanceFromObject">instanceFromObject</a></p>
 <p>Overrides
-WithImageAsset.instanceFromObject</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).instanceFromObject</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ClientRawImageAssetClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -665,14 +719,18 @@ WithImageAsset.instanceFromObject</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.number">number</a></p>
 <p>Inherited from
-WithImageAsset.propertiesInitialize</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).number</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -693,7 +751,9 @@ WithImageAsset.propertiesInitialize</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.propertyFind">propertyFind</a></p>
 <p>Inherited from
-WithImageAsset.propertyFind</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -714,7 +774,9 @@ WithImageAsset.propertyFind</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.propertyIds">propertyIds</a></p>
 <p>Inherited from
-WithImageAsset.propertyIds</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -735,7 +797,9 @@ WithImageAsset.propertyIds</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.propertyInstance">propertyInstance</a></p>
 <p>Inherited from
-WithImageAsset.propertyInstance</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
@@ -748,7 +812,7 @@ WithImageAsset.propertyInstance</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>...types</code></td>
-<td align="left"><code><a href='Strings.html'>Strings</a></code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -756,7 +820,9 @@ WithImageAsset.propertyInstance</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.resourceOfType">resourceOfType</a></p>
 <p>Inherited from
-WithImageAsset.resourceOfType</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).resourceOfType</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.saveId">saveId</a></h3><p>▸ <code>Protected</code> <strong>saveId</strong>(<code>newId?</code>): <code>void</code></p>
 <h4>Parameters</h4>
@@ -775,7 +841,9 @@ WithImageAsset.resourceOfType</p>
 <p>Returns
 <code>void</code></p>
 <p>Inherited from
-WithImageAsset.saveId</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).saveId</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.savePromise">savePromise</a></h3><p>▸ <strong>savePromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -796,7 +864,9 @@ WithImageAsset.saveId</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.savePromise">savePromise</a></p>
 <p>Inherited from
-WithImageAsset.savePromise</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).savePromise</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.savingPromise">savingPromise</a></h3><p>▸ <code>Protected</code> <strong>savingPromise</strong>(<code>progress?</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -815,7 +885,9 @@ WithImageAsset.savePromise</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#StringDataOrError'>StringDataOrError</a></code>&gt;</p>
 <p>Inherited from
-WithImageAsset.savingPromise</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).savingPromise</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -840,9 +912,11 @@ WithImageAsset.savingPromise</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.setValue">setValue</a></p>
 <p>Inherited from
-WithImageAsset.setValue</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).setValue</p>
 <hr>
-<h3><a id="ClientRawImageAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ClientRawImageAssetClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -862,8 +936,35 @@ WithImageAsset.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.shouldSelectProperty">shouldSelectProperty</a></p>
 <p>Inherited from
-WithImageAsset.shouldSelectProperty</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ClientRawImageAssetClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.string">string</a></p>
+<p>Inherited from
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).string</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -871,7 +972,9 @@ WithImageAsset.shouldSelectProperty</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.toJSON">toJSON</a></p>
 <p>Inherited from
-WithImageAsset.toJSON</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).toJSON</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -900,7 +1003,9 @@ WithImageAsset.toJSON</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.tweenValues">tweenValues</a></p>
 <p>Inherited from
-WithImageAsset.tweenValues</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.unload">unload</a></h3><p>▸ <strong>unload</strong>(): <code>void</code></p>
 <p>Returns
@@ -908,7 +1013,9 @@ WithImageAsset.tweenValues</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.unload">unload</a></p>
 <p>Inherited from
-WithImageAsset.unload</p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).unload</p>
 <hr>
 <h3><a id="ClientRawImageAssetClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -929,24 +1036,9 @@ WithImageAsset.unload</p>
 <h4>Implementation of</h4>
 <p><a href="ClientRawImageAsset.html">ClientRawImageAsset</a>.<a href="ClientRawImageAsset.html#ClientRawImageAsset.value">value</a></p>
 <p>Inherited from
-WithImageAsset.value</p>
-<hr>
-<h3><a id="ClientRawImageAssetClass.handleAsset">handleAsset</a></h3><p>▸ <code>Static</code> <strong>handleAsset</strong>(<code>event</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>event</code></td>
-<td align="left"><code><a href='../categories/ClientEvents.html#EventAsset'>EventAsset</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
+ImageAssetMixin(
+  ClientVisibleAssetMixin(VisibleAssetMixin(ClientRawAssetClass))
+).value</p>
 
   </div>
 </section>
@@ -960,19 +1052,18 @@ WithImageAsset.value</p>
 <li><a class='' href='#ClientRawImageAssetClass._assets'>_assets</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.alpha'>alpha</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.assetIds'>assetIds</a></li>
+<li><a class='' href='#ClientRawImageAssetClass.assetManager'>assetManager</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.assetObject'>assetObject</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.assets'>assets</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.canBeContainer'>canBeContainer</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.canBeContent'>canBeContent</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.canBeFill'>canBeFill</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.container'>container</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.content'>content</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.decoding'>decoding</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.decodings'>decodings</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#ClientRawImageAssetClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.id'>id</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.isVector'>isVector</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.label'>label</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.probeSize'>probeSize</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.properties'>properties</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.request'>request</a></li>
@@ -987,16 +1078,16 @@ WithImageAsset.value</p>
 <li><a class='' href='#ClientRawImageAssetClass.assetCachePromise'>assetCachePromise</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.assetIcon'>assetIcon</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.assetIconPromise'>assetIconPromise</a></li>
+<li><a class='' href='#ClientRawImageAssetClass.boolean'>boolean</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.clipObject'>clipObject</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.decodingOfType'>decodingOfType</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.imagePromise'>imagePromise</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.instanceFromObject'>instanceFromObject</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ClientRawImageAssetClass.number'>number</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.propertyInstance'>propertyInstance</a></li>
@@ -1006,11 +1097,11 @@ WithImageAsset.value</p>
 <li><a class='' href='#ClientRawImageAssetClass.savingPromise'>savingPromise</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.setValue'>setValue</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ClientRawImageAssetClass.string'>string</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#ClientRawImageAssetClass.unload'>unload</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.value'>value</a></li>
-<li><a class='' href='#ClientRawImageAssetClass.handleAsset'>handleAsset</a></li></ul>
+<li><a class='' href='#ClientRawImageAssetClass.value'>value</a></li></ul>
       </nav>
     </main>
   </body>

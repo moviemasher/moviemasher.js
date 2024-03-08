@@ -1,16 +1,17 @@
+import type { AssetObjects, Nodes, RawTypes, Sources } from '@moviemasher/shared-lib/types.js'
 import type { CSSResultGroup, PropertyDeclarations, PropertyValues } from 'lit'
 import type { Htmls, OptionalContent } from '../client-types.js'
-import type { AssetObjects, RawTypes, Nodes, Sources } from '@moviemasher/shared-lib/types.js'
 import type { NodeFunction } from '../types.js'
 
-import { ICON, assertDatasetElement } from '../runtime.js'
-import { EventDialog, EventImporterNodeFunction, EventImportManagedAssets, EventImporterAdd, EventImporterComplete, EventImporterRemove, EventPick, EventPicked, StringEvent } from '../utility/events.js'
+import { css } from '@lit/reactive-element/css-tag.js'
+import { $ICON, $IMPORTER, DASH, MOVIE_MASHER, isRawType } from '@moviemasher/shared-lib/runtime.js'
+import { assertDatasetElement } from '@moviemasher/shared-lib/utility/client-guards.js'
+import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
+import { assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
 import { html, nothing } from 'lit-html'
 import { CENTER, ContentBase } from '../base/component-view.js'
-import { css } from '@lit/reactive-element/css-tag.js'
-import { MOVIE_MASHER, DASH, $IMPORTER, isRawType } from '@moviemasher/shared-lib/runtime.js'
-import { assertPositive } from '@moviemasher/shared-lib/utility/guards.js'
-import { isPositive } from '@moviemasher/shared-lib/utility/guard.js'
+import { EventDialog, EventImportManagedAssets, EventImporterAdd, EventImporterComplete, EventImporterNodeFunction, EventImporterRemove, EventPick, EventPicked, StringEvent } from '../module/event.js'
+import { $REMOVE, $SELECTED } from '../utility/constants.js'
 
 const EventTypeImporter = 'importer'
 
@@ -40,7 +41,7 @@ export class ImporterContentElement extends ContentBase {
     this.listeners[EventImporterComplete.Type] = this.handleImporterComplete.bind(this)
     this.listeners[EventPick.Type] = this.handlePick.bind(this)
     const event = new EventPicked($IMPORTER)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     this.pick(event.detail.picked)
     super.connectedCallback()
   }
@@ -56,11 +57,11 @@ export class ImporterContentElement extends ContentBase {
   }
 
   private handleImporterComplete(): void {
-    MOVIE_MASHER.dispatch(new EventDialog())
+    MOVIE_MASHER.dispatchCustom(new EventDialog())
 
     const { assetObjects } = this
     this.assetObjects = []
-    MOVIE_MASHER.dispatch(new EventImportManagedAssets(assetObjects))
+    MOVIE_MASHER.dispatchCustom(new EventImportManagedAssets(assetObjects))
   }
 
   private handleImporterAdd(event: EventImporterAdd): void {
@@ -89,7 +90,7 @@ export class ImporterContentElement extends ContentBase {
       const icon: Node = node.cloneNode(true)
       assertDatasetElement(icon)
 
-      icon.setAttribute('slot', ICON)
+      icon.setAttribute('slot', $ICON)
       return html`<movie-masher-link 
         selected='${(selected === index) || nothing}' 
         emit='${EventTypeImporter}' detail='${index}'
@@ -120,7 +121,7 @@ export class ImporterContentElement extends ContentBase {
     })
     // console.log(this.tagName, 'pick', sources, types)
     const event = new EventImporterNodeFunction(types, sources)
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { map } = event.detail
     const icons = [...map.keys()]
     const uis = [...map.values()]
@@ -140,7 +141,7 @@ export class ImporterContentElement extends ContentBase {
 
     htmls.push(...assetObjects.map(assetObject => {
       return html`<movie-masher-link
-          icon='remove-circle'
+          icon='${$REMOVE}-circle'
           emit='${EventImporterRemove.Type}'
           detail='${assetObject.id}'
         ></movie-masher-link>
@@ -166,7 +167,7 @@ export class ImporterContentElement extends ContentBase {
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     // console.log(this.tagName, 'willUpdate', changedProperties)
-    if (changedProperties.has('selected') || changedProperties.has('icons')) {
+    if (changedProperties.has($SELECTED) || changedProperties.has('icons')) {
       delete this._iconHtmls
     }
     super.willUpdate(changedProperties)

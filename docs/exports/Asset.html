@@ -139,15 +139,14 @@
 <li><p><code><a href='Identified.html'>Identified</a></code></p>
 </li>
 <li><p><code><a href='Typed.html'>Typed</a></code></p>
-</li>
-<li><p><code><a href='Labeled.html'>Labeled</a></code></p>
 <p>↳ <strong><code><a href='#'>Asset</a></code></strong></p>
-<p>↳↳ <code><a href='MashAsset.html'>MashAsset</a></code></p>
-<p>↳↳ <code><a href='PromptAsset.html'>PromptAsset</a></code></p>
-<p>↳↳ <code><a href='RawAsset.html'>RawAsset</a></code></p>
-<p>↳↳ <code><a href='SourceAsset.html'>SourceAsset</a></code></p>
+<p>↳↳ <code><a href='ClientAsset.html'>ClientAsset</a></code></p>
+<p>↳↳ <code><a href='ServerAsset.html'>ServerAsset</a></code></p>
 <p>↳↳ <code><a href='AudibleAsset.html'>AudibleAsset</a></code></p>
 <p>↳↳ <code><a href='VisibleAsset.html'>VisibleAsset</a></code></p>
+<p>↳↳ <code><a href='MashAsset.html'>MashAsset</a></code></p>
+<p>↳↳ <code><a href='PromptAsset.html'>PromptAsset</a></code></p>
+<p>↳↳ <code><a href='SourceAsset.html'>SourceAsset</a></code></p>
 </li>
 </ul>
 <h2>Implemented by</h2>
@@ -157,6 +156,8 @@
 <h2>Properties</h2>
 <h3><a id="Asset.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <hr>
+<h3><a id="Asset.assetManager">assetManager</a></h3><p>• <strong>assetManager</strong>: <code><a href='AssetManager.html'>AssetManager</a></code></p>
+<hr>
 <h3><a id="Asset.assetObject">assetObject</a></h3><p>• <strong>assetObject</strong>: <code><a href='AssetObject.html'>AssetObject</a></code></p>
 <hr>
 <h3><a id="Asset.assets">assets</a></h3><p>• <strong>assets</strong>: <code><a href='Assets.html'>Assets</a></code></p>
@@ -165,13 +166,13 @@
 <hr>
 <h3><a id="Asset.decodings">decodings</a></h3><p>• <strong>decodings</strong>: <code><a href='Decodings.html'>Decodings</a></code></p>
 <hr>
+<h3><a id="Asset.hasIntrinsicSizing">hasIntrinsicSizing</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicSizing</strong>: <code>boolean</code></p>
+<hr>
+<h3><a id="Asset.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <code>Optional</code> <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
+<hr>
 <h3><a id="Asset.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <p>Inherited from
 <a href="Identified.html">Identified</a>.<a href="Identified.html#Identified.id">id</a></p>
-<hr>
-<h3><a id="Asset.label">label</a></h3><p>• <code>Optional</code> <strong>label</strong>: <code>string</code></p>
-<p>Inherited from
-<a href="Labeled.html">Labeled</a>.<a href="Labeled.html#Labeled.label">label</a></p>
 <hr>
 <h3><a id="Asset.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
 <p>Inherited from
@@ -193,7 +194,7 @@
 <p>Overrides
 <a href="Typed.html">Typed</a>.<a href="Typed.html#Typed.type">type</a></p>
 <h2>Methods</h2>
-<h3><a id="Asset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetIdOrObject</code>): <code><a href='#'>Asset</a></code></p>
+<h3><a id="Asset.asset">asset</a></h3><p>▸ <strong>asset</strong>(<code>assetObject</code>): <code><a href='#'>Asset</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -203,8 +204,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>assetIdOrObject</code></td>
-<td align="left"><code>string</code> | <code><a href='AssetObject.html'>AssetObject</a></code></td>
+<td align="left"><code>assetObject</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -226,6 +227,67 @@
 </tbody></table>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
+<hr>
+<h3><a id="Asset.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.boolean">boolean</a></p>
+<hr>
+<h3><a id="Asset.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>propertyId</code></td>
+<td align="left">`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`</td>
+</tr>
+<tr>
+<td align="left"><code>scalar?</code></td>
+<td align="left"><code><a href='../combined/Types.html#Scalar'>Scalar</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.changeScalar">changeScalar</a></p>
+<hr>
+<h3><a id="Asset.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>scalars</code></td>
+<td align="left"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"><code>Partial</code></a>&lt;<a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"><code>Record</code></a>&lt;`asset.${string}` | `clip.${string}` | `container.${string}` | `content.${string}` | `mash.${string}`, <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>&gt;&gt;</td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.changeScalars">changeScalars</a></p>
 <hr>
 <h3><a id="Asset.clipObject">clipObject</a></h3><p>▸ <strong>clipObject</strong>(<code>object?</code>): <code><a href='ClipObject.html'>ClipObject</a></code></p>
 <h4>Parameters</h4>
@@ -284,25 +346,6 @@
 <p>Returns
 <code><a href='Decoding.html'>Decoding</a></code></p>
 <hr>
-<h3><a id="Asset.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.initializeProperties">initializeProperties</a></p>
-<hr>
 <h3><a id="Asset.instanceArgs">instanceArgs</a></h3><p>▸ <strong>instanceArgs</strong>(<code>object?</code>): <code><a href='InstanceArgs.html'>InstanceArgs</a></code></p>
 <h4>Parameters</h4>
 <table>
@@ -336,6 +379,25 @@
 </tbody></table>
 <p>Returns
 <code><a href='Instance.html'>Instance</a></code></p>
+<hr>
+<h3><a id="Asset.number">number</a></h3><p>▸ <strong>number</strong>(<code>key</code>): <code>number</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>number</code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.number">number</a></p>
 <hr>
 <h3><a id="Asset.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -394,7 +456,7 @@
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.propertyInstance">propertyInstance</a></p>
 <hr>
-<h3><a id="Asset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...type</code>): <code><a href='Resource.html'>Resource</a></code></p>
+<h3><a id="Asset.resourceOfType">resourceOfType</a></h3><p>▸ <strong>resourceOfType</strong>(<code>...types</code>): <code><a href='Resource.html'>Resource</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -404,8 +466,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>...type</code></td>
-<td align="left"><code><a href='ResourceTypes.html'>ResourceTypes</a></code></td>
+<td align="left"><code>...types</code></td>
+<td align="left"><code>string</code>[]</td>
 </tr>
 </tbody></table>
 <p>Returns
@@ -433,6 +495,48 @@
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <p>Inherited from
 <a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.setValue">setValue</a></p>
+<hr>
+<h3><a id="Asset.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>property</code></td>
+<td align="left"><code><a href='Property.html'>Property</a></code></td>
+</tr>
+<tr>
+<td align="left"><code>targetId</code></td>
+<td align="left"><code><a href='../combined/Types.html#TargetId'>TargetId</a></code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code><a href='Property.html'>Property</a></code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.shouldSelectProperty">shouldSelectProperty</a></p>
+<hr>
+<h3><a id="Asset.string">string</a></h3><p>▸ <strong>string</strong>(<code>key</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<p>Inherited from
+<a href="Propertied.html">Propertied</a>.<a href="Propertied.html#Propertied.string">string</a></p>
 <hr>
 <h3><a id="Asset.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
@@ -495,12 +599,14 @@
         <label for='nav-input-last' id='nav-label-last'><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="200px" width="200px" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></label>
         <ul><li><a class='' href='#Asset'>Asset</a></li>
 <li><a class='' href='#Asset.assetIds'>assetIds</a></li>
+<li><a class='' href='#Asset.assetManager'>assetManager</a></li>
 <li><a class='' href='#Asset.assetObject'>assetObject</a></li>
 <li><a class='' href='#Asset.assets'>assets</a></li>
 <li><a class='' href='#Asset.decoding'>decoding</a></li>
 <li><a class='' href='#Asset.decodings'>decodings</a></li>
+<li><a class='' href='#Asset.hasIntrinsicSizing'>hasIntrinsicSizing</a></li>
+<li><a class='' href='#Asset.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
 <li><a class='' href='#Asset.id'>id</a></li>
-<li><a class='' href='#Asset.label'>label</a></li>
 <li><a class='' href='#Asset.properties'>properties</a></li>
 <li><a class='' href='#Asset.request'>request</a></li>
 <li><a class='' href='#Asset.resource'>resource</a></li>
@@ -510,17 +616,22 @@
 <li><a class='' href='#Asset.type'>type</a></li>
 <li><a class='' href='#Asset.asset'>asset</a></li>
 <li><a class='' href='#Asset.assetCachePromise'>assetCachePromise</a></li>
+<li><a class='' href='#Asset.boolean'>boolean</a></li>
+<li><a class='' href='#Asset.changeScalar'>changeScalar</a></li>
+<li><a class='' href='#Asset.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#Asset.clipObject'>clipObject</a></li>
 <li><a class='' href='#Asset.constrainedValue'>constrainedValue</a></li>
 <li><a class='' href='#Asset.decodingOfType'>decodingOfType</a></li>
-<li><a class='' href='#Asset.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#Asset.instanceArgs'>instanceArgs</a></li>
 <li><a class='' href='#Asset.instanceFromObject'>instanceFromObject</a></li>
+<li><a class='' href='#Asset.number'>number</a></li>
 <li><a class='' href='#Asset.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#Asset.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#Asset.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#Asset.resourceOfType'>resourceOfType</a></li>
 <li><a class='' href='#Asset.setValue'>setValue</a></li>
+<li><a class='' href='#Asset.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#Asset.string'>string</a></li>
 <li><a class='' href='#Asset.toJSON'>toJSON</a></li>
 <li><a class='' href='#Asset.tweenValues'>tweenValues</a></li>
 <li><a class='' href='#Asset.value'>value</a></li></ul>

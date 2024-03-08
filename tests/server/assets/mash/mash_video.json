@@ -1,0 +1,26 @@
+
+{
+  "id": "mash-video",
+	"type": "video",
+	"source": "mash",
+  "backcolor": "red",
+  "tracks": [
+    {
+      "clips": [
+        {
+          "contentId": "video-rgb-id"
+        }
+      ]
+    }
+  ], 
+  "assets": [
+    {
+      "id": "video-rgb-id",
+      "type": "video",
+      "source": "raw",
+      "request": {
+        "endpoint": "/moviemasher/temporary/assets/video/rgb.mp4"
+      }
+    }
+  ]
+}

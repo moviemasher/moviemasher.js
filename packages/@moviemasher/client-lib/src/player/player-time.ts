@@ -5,7 +5,7 @@ import type { OptionalContent } from '../client-types.js'
 import { SLASH } from '@moviemasher/shared-lib/runtime.js'
 import { css } from '@lit/reactive-element/css-tag.js'
 import { MOVIE_MASHER } from '@moviemasher/shared-lib/runtime.js'
-import { EventChangedFrame, EventChangedFrames, EventChangedMashAsset, EventFrames } from '../utility/events.js'
+import { EventTimeUpdate, EventChangedFrames, EventChangedMashAsset, EventFrames } from '../module/event.js'
 import { html } from 'lit-html'
 import { Component } from '../base/component.js'
 import { DISABLABLE_DECLARATIONS, DisablableMixin } from '../mixin/component.js'
@@ -21,13 +21,13 @@ const PlayerTimeWithDisablarable = DisablableMixin(Component)
 export class PlayerTimeElement extends PlayerTimeWithDisablarable {
   constructor() {
     super()
-    this.listeners[EventChangedFrame.Type] = this.handleChangedFrame.bind(this)
+    this.listeners[EventTimeUpdate.Type] = this.handleChangedFrame.bind(this)
     this.listeners[EventChangedFrames.Type] = this.handleChangedFrames.bind(this)
   }
 
   override connectedCallback(): void {
     const event = new EventFrames()
-    MOVIE_MASHER.dispatch(event)
+    MOVIE_MASHER.dispatchCustom(event)
     const { frames } = event.detail
     this.frames = frames
     super.connectedCallback()
@@ -61,7 +61,7 @@ export class PlayerTimeElement extends PlayerTimeWithDisablarable {
     super.handleChangedMashAsset(event)
   }
 
-  private handleChangedFrame(event: EventChangedFrame): void {
+  private handleChangedFrame(event: EventTimeUpdate): void {
     this.frame = event.detail
   }
 

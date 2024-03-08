@@ -120,8 +120,8 @@
     <li><a class='' href='../client-lib.html'>client-lib</a></li>
 <li><a class='' href='../client-react.html'>client-react</a></li>
 <li><a class='' href='../server-express.html'>server-express</a></li>
-<li><a class='selected' href='../server-lib.html'>server-lib</a></li>
-<li><a class='' href='../shared-lib.html'>shared-lib</a></li>  
+<li><a class='' href='../server-lib.html'>server-lib</a></li>
+<li><a class='selected' href='../shared-lib.html'>shared-lib</a></li>  
   </ul>
 </details>
 </ul>
@@ -131,19 +131,19 @@
   <a id="ServerRawImageInstanceClass"><h2>ServerRawImageInstanceClass</h2></a>
   <div class="section">
     <h1>Class: ServerRawImageInstanceClass</h1>
-<p><a href="../server-lib.html">server-lib</a>.ServerRawImageInstanceClass</p>
+<p><a href="../shared-lib.html">shared-lib</a>.ServerRawImageInstanceClass</p>
 <h2>Hierarchy</h2>
 <ul>
-<li><p><code>WithImageInstance</code></p>
+<li><p><code><a href='ServerInstanceClass.html'>ServerInstanceClass</a></code>&lt;<code>this</code>&gt; &amp; <code><a href='VisibleInstance.html'>VisibleInstance</a></code> &amp; <code><a href='ServerVisibleInstance.html'>ServerVisibleInstance</a></code> &amp; <code><a href='ImageInstance.html'>ImageInstance</a></code></p>
 <p>↳ <strong><code><a href='#'>ServerRawImageInstanceClass</a></code></strong></p>
 </li>
 </ul>
 <h2>Implements</h2>
 <ul>
-<li><code><a href='ServerRawImageInstance.html'>ServerRawImageInstance</a></code></li>
+<li><code>ServerRawImageInstance</code></li>
 </ul>
 <h2>Constructors</h2>
-<h3><a id="ServerRawImageInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerRawImageInstanceClass</strong>(<code>args</code>)</p>
+<h3><a id="ServerRawImageInstanceClass.constructor">constructor</a></h3><p>• <strong>new ServerRawImageInstanceClass</strong>(<code>object</code>)</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -153,254 +153,154 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>args</code></td>
-<td align="left"><code><a href='ImageInstanceObject.html'>ImageInstanceObject</a></code> &amp; <code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
+<td align="left"><code>object</code></td>
+<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
 </tr>
 </tbody></table>
-<p>Overrides
-WithImageInstance.constructor</p>
+<p>Inherited from
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constructor</p>
 <h2>Properties</h2>
 <h3><a id="ServerRawImageInstanceClass._id">_id</a></h3><p>• <code>Protected</code> <code>Optional</code> <strong>_id</strong>: <code>string</code></p>
 <p>Inherited from
-WithImageInstance._id</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+)._id</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass._label">_label</a></h3><p>• <code>Protected</code> <strong>_label</strong>: <code>string</code></p>
-<p>Inherited from
-WithImageInstance._label</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code><a href='ServerRawImageAsset.html'>ServerRawImageAsset</a></code></p>
+<h3><a id="ServerRawImageInstanceClass.asset">asset</a></h3><p>• <strong>asset</strong>: <code>ServerRawImageAsset</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.asset">asset</a></p>
+<p>ServerRawImageInstance.asset</p>
 <p>Overrides
-WithImageInstance.asset</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).asset</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.assetId">assetId</a></h3><p>• <strong>assetId</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.assetId">assetId</a></p>
+<p>ServerRawImageInstance.assetId</p>
 <p>Inherited from
-WithImageInstance.assetId</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetId</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.assetIds">assetIds</a></h3><p>• <strong>assetIds</strong>: <code><a href='Strings.html'>Strings</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.assetIds">assetIds</a></p>
+<p>ServerRawImageInstance.assetIds</p>
 <p>Inherited from
-WithImageInstance.assetIds</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.bottomCrop">bottomCrop</a></h3><p>• <strong>bottomCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.bottomCrop">bottomCrop</a></p>
-<p>Inherited from
-WithImageInstance.bottomCrop</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetIds</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.canBeMuted">canBeMuted</a></h3><p>• <strong>canBeMuted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.canBeMuted">canBeMuted</a></p>
+<p>ServerRawImageInstance.canBeMuted</p>
 <p>Inherited from
-WithImageInstance.canBeMuted</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).canBeMuted</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.clip">clip</a></h3><p>• <strong>clip</strong>: <code><a href='Clip.html'>Clip</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.clip">clip</a></p>
+<p>ServerRawImageInstance.clip</p>
 <p>Inherited from
-WithImageInstance.clip</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.container">container</a></h3><p>• <strong>container</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.container">container</a></p>
-<p>Inherited from
-WithImageInstance.container</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clip</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.cropDirections">cropDirections</a></h3><p>• <strong>cropDirections</strong>: <code><a href='SideDirectionRecord.html'>SideDirectionRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.cropDirections">cropDirections</a></p>
+<p>ServerRawImageInstance.cropDirections</p>
 <p>Inherited from
-WithImageInstance.cropDirections</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).cropDirections</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.hasIntrinsicTiming">hasIntrinsicTiming</a></p>
+<h3><a id="ServerRawImageInstanceClass.hasIntrinsicTiming">hasIntrinsicTiming</a></h3><p>• <strong>hasIntrinsicTiming</strong>: <code>boolean</code> = <code>false</code></p>
 <p>Inherited from
-WithImageInstance.hasIntrinsicTiming</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.height">height</a></h3><p>• <strong>height</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.height">height</a></p>
-<p>Inherited from
-WithImageInstance.height</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.heightEnd">heightEnd</a></h3><p>• <code>Optional</code> <strong>heightEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.heightEnd">heightEnd</a></p>
-<p>Inherited from
-WithImageInstance.heightEnd</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).hasIntrinsicTiming</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.id">id</a></h3><p>• <strong>id</strong>: <code>string</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.id">id</a></p>
+<p>ServerRawImageInstance.id</p>
 <p>Inherited from
-WithImageInstance.id</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).id</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.instanceObject">instanceObject</a></h3><p>• <strong>instanceObject</strong>: <code><a href='InstanceObject.html'>InstanceObject</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.instanceObject">instanceObject</a></p>
+<p>ServerRawImageInstance.instanceObject</p>
 <p>Inherited from
-WithImageInstance.instanceObject</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceObject</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.intrinsicRect">intrinsicRect</a></h3><p>• <strong>intrinsicRect</strong>: <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.intrinsicRect">intrinsicRect</a></p>
+<p>ServerRawImageInstance.intrinsicRect</p>
 <p>Inherited from
-WithImageInstance.intrinsicRect</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicRect</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.isDefault">isDefault</a></h3><p>• <strong>isDefault</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.isDefault">isDefault</a></p>
+<p>ServerRawImageInstance.isDefault</p>
 <p>Inherited from
-WithImageInstance.isDefault</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.leftCrop">leftCrop</a></h3><p>• <strong>leftCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.leftCrop">leftCrop</a></p>
-<p>Inherited from
-WithImageInstance.leftCrop</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.lock">lock</a></h3><p>• <strong>lock</strong>: <code><a href='../combined/Types.html#Lock'>Lock</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.lock">lock</a></p>
-<p>Inherited from
-WithImageInstance.lock</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).isDefault</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.muted">muted</a></h3><p>• <strong>muted</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.muted">muted</a></p>
+<p>ServerRawImageInstance.muted</p>
 <p>Inherited from
-WithImageInstance.muted</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).muted</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.opacityEnd">opacityEnd</a></h3><p>• <code>Optional</code> <strong>opacityEnd</strong>: <code>number</code></p>
+<h3><a id="ServerRawImageInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code> = <code>[]</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.opacityEnd">opacityEnd</a></p>
+<p>ServerRawImageInstance.properties</p>
 <p>Inherited from
-WithImageInstance.opacityEnd</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).properties</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.pointAspect">pointAspect</a></h3><p>• <strong>pointAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
+<h3><a id="ServerRawImageInstanceClass.sizeKey">sizeKey</a></h3><p>• <code>Optional</code> <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.pointAspect">pointAspect</a></p>
+<p>ServerRawImageInstance.sizeKey</p>
 <p>Inherited from
-WithImageInstance.pointAspect</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).sizeKey</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.properties">properties</a></h3><p>• <strong>properties</strong>: <code><a href='Properties.html'>Properties</a></code></p>
+<h3><a id="ServerRawImageInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code> = <code><a href='../combined/Variables.html#$CONTENT'>$CONTENT</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.properties">properties</a></p>
+<p>ServerRawImageInstance.targetId</p>
 <p>Inherited from
-WithImageInstance.properties</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.rightCrop">rightCrop</a></h3><p>• <strong>rightCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.rightCrop">rightCrop</a></p>
-<p>Inherited from
-WithImageInstance.rightCrop</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.sizeAspect">sizeAspect</a></h3><p>• <strong>sizeAspect</strong>: <code><a href='../combined/Types.html#Aspect'>Aspect</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.sizeAspect">sizeAspect</a></p>
-<p>Inherited from
-WithImageInstance.sizeAspect</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.sizeKey">sizeKey</a></h3><p>• <strong>sizeKey</strong>: <code><a href='../combined/Types.html#SizeKey'>SizeKey</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.sizeKey">sizeKey</a></p>
-<p>Inherited from
-WithImageInstance.sizeKey</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.targetId">targetId</a></h3><p>• <strong>targetId</strong>: <code><a href='../combined/Types.html#TargetId'>TargetId</a></code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.targetId">targetId</a></p>
-<p>Inherited from
-WithImageInstance.targetId</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.topCrop">topCrop</a></h3><p>• <strong>topCrop</strong>: <code>boolean</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.topCrop">topCrop</a></p>
-<p>Inherited from
-WithImageInstance.topCrop</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).targetId</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.tweening">tweening</a></h3><p>• <strong>tweening</strong>: <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.tweening">tweening</a></p>
+<p>ServerRawImageInstance.tweening</p>
 <p>Inherited from
-WithImageInstance.tweening</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.width">width</a></h3><p>• <strong>width</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.width">width</a></p>
-<p>Inherited from
-WithImageInstance.width</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.widthEnd">widthEnd</a></h3><p>• <code>Optional</code> <strong>widthEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.widthEnd">widthEnd</a></p>
-<p>Inherited from
-WithImageInstance.widthEnd</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.x">x</a></h3><p>• <strong>x</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.x">x</a></p>
-<p>Inherited from
-WithImageInstance.x</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.xEnd">xEnd</a></h3><p>• <code>Optional</code> <strong>xEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.xEnd">xEnd</a></p>
-<p>Inherited from
-WithImageInstance.xEnd</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.y">y</a></h3><p>• <strong>y</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.y">y</a></p>
-<p>Inherited from
-WithImageInstance.y</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.yEnd">yEnd</a></h3><p>• <code>Optional</code> <strong>yEnd</strong>: <code>number</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.yEnd">yEnd</a></p>
-<p>Inherited from
-WithImageInstance.yEnd</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweening</p>
 <h2>Accessors</h2>
-<h3><a id="ServerRawImageInstanceClass.isAudio">isAudio</a></h3><p>• <code>get</code> <strong>isAudio</strong>(): <code>boolean</code></p>
-<p>Returns
-<code>boolean</code></p>
-<p>Inherited from
-WithImageInstance.isAudio</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.label">label</a></h3><p>• <code>get</code> <strong>label</strong>(): <code>string</code></p>
-<p>Returns
-<code>string</code></p>
-<p>Inherited from
-WithImageInstance.label</p>
-<p>• <code>set</code> <strong>label</strong>(<code>value</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>value</code></td>
-<td align="left"><code>string</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<p>Inherited from
-WithImageInstance.label</p>
-<hr>
 <h3><a id="ServerRawImageInstanceClass.scalarRecord">scalarRecord</a></h3><p>• <code>Protected</code> <code>get</code> <strong>scalarRecord</strong>(): <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Returns
 <code><a href='ScalarRecord.html'>ScalarRecord</a></code></p>
 <p>Inherited from
-WithImageInstance.scalarRecord</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scalarRecord</p>
 <h2>Methods</h2>
 <h3><a id="ServerRawImageInstanceClass.assetTime">assetTime</a></h3><p>▸ <strong>assetTime</strong>(<code>mashTime</code>): <code><a href='Time.html'>Time</a></code></p>
 <h4>Parameters</h4>
@@ -419,9 +319,34 @@ WithImageInstance.scalarRecord</p>
 <p>Returns
 <code><a href='Time.html'>Time</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.assetTime">assetTime</a></p>
+<p>ServerRawImageInstance.assetTime</p>
 <p>Inherited from
-WithImageInstance.assetTime</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).assetTime</p>
+<hr>
+<h3><a id="ServerRawImageInstanceClass.boolean">boolean</a></h3><p>▸ <strong>boolean</strong>(<code>key</code>): <code>boolean</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>boolean</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageInstance.boolean</p>
+<p>Inherited from
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).boolean</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.changeScalar">changeScalar</a></h3><p>▸ <strong>changeScalar</strong>(<code>propertyId</code>, <code>scalar?</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -443,8 +368,12 @@ WithImageInstance.assetTime</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageInstance.changeScalar</p>
 <p>Inherited from
-WithImageInstance.changeScalar</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalar</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.changeScalars">changeScalars</a></h3><p>▸ <strong>changeScalars</strong>(<code>scalars</code>): <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
 <h4>Parameters</h4>
@@ -462,8 +391,12 @@ WithImageInstance.changeScalar</p>
 </tbody></table>
 <p>Returns
 <code><a href='ChangeEditObject.html'>ChangeEditObject</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageInstance.changeScalars</p>
 <p>Inherited from
-WithImageInstance.changeScalars</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).changeScalars</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.clippedElement">clippedElement</a></h3><p>▸ <strong>clippedElement</strong>(<code>content</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -476,7 +409,7 @@ WithImageInstance.changeScalars</p>
 </thead>
 <tbody><tr>
 <td align="left"><code>content</code></td>
-<td align="left"><code><a href='ContentInstance.html'>ContentInstance</a></code></td>
+<td align="left"><code><a href='VisibleContentInstance.html'>VisibleContentInstance</a></code></td>
 </tr>
 <tr>
 <td align="left"><code>args</code></td>
@@ -486,9 +419,11 @@ WithImageInstance.changeScalars</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.clippedElement">clippedElement</a></p>
+<p>ServerRawImageInstance.clippedElement</p>
 <p>Inherited from
-WithImageInstance.clippedElement</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).clippedElement</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.commandFiles">commandFiles</a></h3><p>▸ <strong>commandFiles</strong>(<code>cacheArgs</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -507,9 +442,11 @@ WithImageInstance.clippedElement</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.commandFiles">commandFiles</a></p>
+<p>ServerRawImageInstance.commandFiles</p>
 <p>Inherited from
-WithImageInstance.commandFiles</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).commandFiles</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.constrainedValue">constrainedValue</a></h3><p>▸ <strong>constrainedValue</strong>(<code>property</code>, <code>value?</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -532,9 +469,11 @@ WithImageInstance.commandFiles</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.constrainedValue">constrainedValue</a></p>
+<p>ServerRawImageInstance.constrainedValue</p>
 <p>Inherited from
-WithImageInstance.constrainedValue</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).constrainedValue</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.containedItem">containedItem</a></h3><p>▸ <strong>containedItem</strong>(<code>contentItem</code>, <code>containerItem</code>, <code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -561,11 +500,13 @@ WithImageInstance.constrainedValue</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='SvgItemsRecord.html'>SvgItemsRecord</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.containedItem">containedItem</a></p>
+<p>ServerRawImageInstance.containedItem</p>
 <p>Inherited from
-WithImageInstance.containedItem</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containedItem</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>size</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
+<h3><a id="ServerRawImageInstanceClass.containerRects">containerRects</a></h3><p>▸ <strong>containerRects</strong>(<code>args</code>, <code>sizingSize</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -579,16 +520,18 @@ WithImageInstance.containedItem</p>
 <td align="left"><code><a href='ContainerRectArgs.html'>ContainerRectArgs</a></code></td>
 </tr>
 <tr>
-<td align="left"><code>size</code></td>
+<td align="left"><code>sizingSize</code></td>
 <td align="left"><code><a href='Size.html'>Size</a></code>&lt;<code>number</code>&gt;</td>
 </tr>
 </tbody></table>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.containerRects">containerRects</a></p>
+<p>ServerRawImageInstance.containerRects</p>
 <p>Inherited from
-WithImageInstance.containerRects</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerRects</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.containerSvgItem">containerSvgItem</a></h3><p>▸ <strong>containerSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -607,9 +550,11 @@ WithImageInstance.containerRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.containerSvgItem">containerSvgItem</a></p>
+<p>ServerRawImageInstance.containerSvgItem</p>
 <p>Inherited from
-WithImageInstance.containerSvgItem</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).containerSvgItem</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.contentRect">contentRect</a></h3><p>▸ <strong>contentRect</strong>(<code>time</code>, <code>containerRect</code>, <code>outputSize</code>): <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -636,9 +581,11 @@ WithImageInstance.containerSvgItem</p>
 <p>Returns
 <code><a href='Rect.html'>Rect</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.contentRect">contentRect</a></p>
+<p>ServerRawImageInstance.contentRect</p>
 <p>Inherited from
-WithImageInstance.contentRect</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRect</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.contentRects">contentRects</a></h3><p>▸ <strong>contentRects</strong>(<code>args</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -657,9 +604,11 @@ WithImageInstance.contentRect</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.contentRects">contentRects</a></p>
+<p>ServerRawImageInstance.contentRects</p>
 <p>Inherited from
-WithImageInstance.contentRects</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentRects</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.contentSvgItem">contentSvgItem</a></h3><p>▸ <strong>contentSvgItem</strong>(<code>args</code>): <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Parameters</h4>
@@ -678,9 +627,11 @@ WithImageInstance.contentRects</p>
 <p>Returns
 <code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code><a href='../combined/Types.html#MaybeComplexSvgItem'>MaybeComplexSvgItem</a></code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.contentSvgItem">contentSvgItem</a></p>
+<p>ServerRawImageInstance.contentSvgItem</p>
 <p>Inherited from
-WithImageInstance.contentSvgItem</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).contentSvgItem</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.frames">frames</a></h3><p>▸ <strong>frames</strong>(<code>quantize</code>): <code>number</code></p>
 <h4>Parameters</h4>
@@ -699,50 +650,11 @@ WithImageInstance.contentSvgItem</p>
 <p>Returns
 <code>number</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.frames">frames</a></p>
+<p>ServerRawImageInstance.frames</p>
 <p>Inherited from
-WithImageInstance.frames</p>
-<hr>
-<h3><a id="ServerRawImageInstanceClass.initializeProperties">initializeProperties</a></h3><p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code><a href='InstanceArgs.html'>InstanceArgs</a></code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.initializeProperties">initializeProperties</a></p>
-<p>Inherited from
-WithImageInstance.initializeProperties</p>
-<p>▸ <strong>initializeProperties</strong>(<code>object</code>): <code>void</code></p>
-<h4>Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>unknown</code></td>
-</tr>
-</tbody></table>
-<p>Returns
-<code>void</code></p>
-<h4>Implementation of</h4>
-<p>ServerRawImageInstance.initializeProperties</p>
-<p>Inherited from
-WithImageInstance.initializeProperties</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).frames</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.instanceCachePromise">instanceCachePromise</a></h3><p>▸ <strong>instanceCachePromise</strong>(<code>args</code>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Parameters</h4>
@@ -761,9 +673,11 @@ WithImageInstance.initializeProperties</p>
 <p>Returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a>&lt;<code><a href='../combined/Types.html#DataOrError'>DataOrError</a></code>&lt;<code>number</code>&gt;&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.instanceCachePromise">instanceCachePromise</a></p>
+<p>ServerRawImageInstance.instanceCachePromise</p>
 <p>Inherited from
-WithImageInstance.instanceCachePromise</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).instanceCachePromise</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.intrinsicsKnown">intrinsicsKnown</a></h3><p>▸ <strong>intrinsicsKnown</strong>(<code>_</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -782,11 +696,13 @@ WithImageInstance.instanceCachePromise</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.intrinsicsKnown">intrinsicsKnown</a></p>
+<p>ServerRawImageInstance.intrinsicsKnown</p>
 <p>Inherited from
-WithImageInstance.intrinsicsKnown</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).intrinsicsKnown</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.propertiesInitialize">propertiesInitialize</a></h3><p>▸ <code>Protected</code> <strong>propertiesInitialize</strong>(<code>object</code>): <code>void</code></p>
+<h3><a id="ServerRawImageInstanceClass.number">number</a></h3><p>▸ <strong>number</strong>(<code>id</code>): <code>number</code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -796,14 +712,18 @@ WithImageInstance.intrinsicsKnown</p>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>object</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 </tbody></table>
 <p>Returns
-<code>void</code></p>
+<code>number</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageInstance.number</p>
 <p>Inherited from
-WithImageInstance.propertiesInitialize</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).number</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.propertyFind">propertyFind</a></h3><p>▸ <strong>propertyFind</strong>(<code>name</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -822,9 +742,11 @@ WithImageInstance.propertiesInitialize</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.propertyFind">propertyFind</a></p>
+<p>ServerRawImageInstance.propertyFind</p>
 <p>Inherited from
-WithImageInstance.propertyFind</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyFind</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.propertyIds">propertyIds</a></h3><p>▸ <strong>propertyIds</strong>(<code>targetIds?</code>): <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Parameters</h4>
@@ -843,9 +765,11 @@ WithImageInstance.propertyFind</p>
 <p>Returns
 <code><a href='PropertyIds.html'>PropertyIds</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.propertyIds">propertyIds</a></p>
+<p>ServerRawImageInstance.propertyIds</p>
 <p>Inherited from
-WithImageInstance.propertyIds</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyIds</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.propertyInstance">propertyInstance</a></h3><p>▸ <strong>propertyInstance</strong>(<code>object</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
@@ -864,9 +788,11 @@ WithImageInstance.propertyIds</p>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.propertyInstance">propertyInstance</a></p>
+<p>ServerRawImageInstance.propertyInstance</p>
 <p>Inherited from
-WithImageInstance.propertyInstance</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).propertyInstance</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.scaleRects">scaleRects</a></h3><p>▸ <strong>scaleRects</strong>(<code>time</code>, <code>range</code>): <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Parameters</h4>
@@ -889,9 +815,11 @@ WithImageInstance.propertyInstance</p>
 <p>Returns
 <code><a href='RectTuple.html'>RectTuple</a></code>&lt;<code>number</code>&gt;</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.scaleRects">scaleRects</a></p>
+<p>ServerRawImageInstance.scaleRects</p>
 <p>Inherited from
-WithImageInstance.scaleRects</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).scaleRects</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.setValue">setValue</a></h3><p>▸ <strong>setValue</strong>(<code>id</code>, <code>value?</code>): <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Parameters</h4>
@@ -914,11 +842,13 @@ WithImageInstance.scaleRects</p>
 <p>Returns
 <code><a href='ScalarTuple.html'>ScalarTuple</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.setValue">setValue</a></p>
+<p>ServerRawImageInstance.setValue</p>
 <p>Inherited from
-WithImageInstance.setValue</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).setValue</p>
 <hr>
-<h3><a id="ServerRawImageInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <code>Protected</code> <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
+<h3><a id="ServerRawImageInstanceClass.shouldSelectProperty">shouldSelectProperty</a></h3><p>▸ <strong>shouldSelectProperty</strong>(<code>property</code>, <code>targetId</code>): <code><a href='Property.html'>Property</a></code></p>
 <h4>Parameters</h4>
 <table>
 <thead>
@@ -938,8 +868,35 @@ WithImageInstance.setValue</p>
 </tbody></table>
 <p>Returns
 <code><a href='Property.html'>Property</a></code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageInstance.shouldSelectProperty</p>
 <p>Inherited from
-WithImageInstance.shouldSelectProperty</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).shouldSelectProperty</p>
+<hr>
+<h3><a id="ServerRawImageInstanceClass.string">string</a></h3><p>▸ <strong>string</strong>(<code>id</code>): <code>string</code></p>
+<h4>Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody></table>
+<p>Returns
+<code>string</code></p>
+<h4>Implementation of</h4>
+<p>ServerRawImageInstance.string</p>
+<p>Inherited from
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).string</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.svgVector">svgVector</a></h3><p>▸ <strong>svgVector</strong>(<code>rect</code>, <code>forecolor?</code>, <code>opacity?</code>): <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Parameters</h4>
@@ -966,17 +923,21 @@ WithImageInstance.shouldSelectProperty</p>
 <p>Returns
 <code><a href='../combined/Types.html#SvgVector'>SvgVector</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.svgVector">svgVector</a></p>
+<p>ServerRawImageInstance.svgVector</p>
 <p>Inherited from
-WithImageInstance.svgVector</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).svgVector</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.toJSON">toJSON</a></h3><p>▸ <strong>toJSON</strong>(): <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <p>Returns
 <code><a href='UnknownRecord.html'>UnknownRecord</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.toJSON">toJSON</a></p>
+<p>ServerRawImageInstance.toJSON</p>
 <p>Inherited from
-WithImageInstance.toJSON</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).toJSON</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.tweenValues">tweenValues</a></h3><p>▸ <strong>tweenValues</strong>(<code>key</code>, <code>time</code>, <code>range</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Parameters</h4>
@@ -1003,9 +964,11 @@ WithImageInstance.toJSON</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code>[]</p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.tweenValues">tweenValues</a></p>
+<p>ServerRawImageInstance.tweenValues</p>
 <p>Inherited from
-WithImageInstance.tweenValues</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweenValues</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.tweens">tweens</a></h3><p>▸ <strong>tweens</strong>(<code>key</code>): <code>boolean</code></p>
 <h4>Parameters</h4>
@@ -1024,9 +987,11 @@ WithImageInstance.tweenValues</p>
 <p>Returns
 <code>boolean</code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.tweens">tweens</a></p>
+<p>ServerRawImageInstance.tweens</p>
 <p>Inherited from
-WithImageInstance.tweens</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).tweens</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.value">value</a></h3><p>▸ <strong>value</strong>(<code>id</code>): <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Parameters</h4>
@@ -1045,9 +1010,11 @@ WithImageInstance.tweens</p>
 <p>Returns
 <code><a href='../combined/Types.html#Scalar'>Scalar</a></code></p>
 <h4>Implementation of</h4>
-<p><a href="ServerRawImageInstance.html">ServerRawImageInstance</a>.<a href="ServerRawImageInstance.html#ServerRawImageInstance.value">value</a></p>
+<p>ServerRawImageInstance.value</p>
 <p>Inherited from
-WithImageInstance.value</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).value</p>
 <hr>
 <h3><a id="ServerRawImageInstanceClass.visibleCommandFiles">visibleCommandFiles</a></h3><p>▸ <strong>visibleCommandFiles</strong>(<code>args</code>, <code>content?</code>): <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <h4>Parameters</h4>
@@ -1070,7 +1037,9 @@ WithImageInstance.value</p>
 <p>Returns
 <code><a href='CommandFiles.html'>CommandFiles</a></code></p>
 <p>Overrides
-WithImageInstance.visibleCommandFiles</p>
+ImageInstanceMixin(
+  ServerVisibleInstanceMixin(VisibleInstanceMixin(ServerInstanceClass))
+).visibleCommandFiles</p>
 
   </div>
 </section>
@@ -1082,44 +1051,25 @@ WithImageInstance.visibleCommandFiles</p>
         <ul><li><a class='' href='#ServerRawImageInstanceClass'>ServerRawImageInstanceClass</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.constructor'>constructor</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass._id'>_id</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass._label'>_label</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.asset'>asset</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.assetId'>assetId</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.assetIds'>assetIds</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.bottomCrop'>bottomCrop</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.canBeMuted'>canBeMuted</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.clip'>clip</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.container'>container</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.cropDirections'>cropDirections</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.hasIntrinsicTiming'>hasIntrinsicTiming</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.height'>height</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.heightEnd'>heightEnd</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.id'>id</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.instanceObject'>instanceObject</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.intrinsicRect'>intrinsicRect</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.isDefault'>isDefault</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.leftCrop'>leftCrop</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.lock'>lock</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.muted'>muted</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.opacityEnd'>opacityEnd</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.pointAspect'>pointAspect</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.properties'>properties</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.rightCrop'>rightCrop</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.sizeAspect'>sizeAspect</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.sizeKey'>sizeKey</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.targetId'>targetId</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.topCrop'>topCrop</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.tweening'>tweening</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.width'>width</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.widthEnd'>widthEnd</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.x'>x</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.xEnd'>xEnd</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.y'>y</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.yEnd'>yEnd</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.isAudio'>isAudio</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.label'>label</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.scalarRecord'>scalarRecord</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.assetTime'>assetTime</a></li>
+<li><a class='' href='#ServerRawImageInstanceClass.boolean'>boolean</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.changeScalar'>changeScalar</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.changeScalars'>changeScalars</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.clippedElement'>clippedElement</a></li>
@@ -1132,16 +1082,16 @@ WithImageInstance.visibleCommandFiles</p>
 <li><a class='' href='#ServerRawImageInstanceClass.contentRects'>contentRects</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.contentSvgItem'>contentSvgItem</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.frames'>frames</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.initializeProperties'>initializeProperties</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.instanceCachePromise'>instanceCachePromise</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.intrinsicsKnown'>intrinsicsKnown</a></li>
-<li><a class='' href='#ServerRawImageInstanceClass.propertiesInitialize'>propertiesInitialize</a></li>
+<li><a class='' href='#ServerRawImageInstanceClass.number'>number</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.propertyFind'>propertyFind</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.propertyIds'>propertyIds</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.propertyInstance'>propertyInstance</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.scaleRects'>scaleRects</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.setValue'>setValue</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.shouldSelectProperty'>shouldSelectProperty</a></li>
+<li><a class='' href='#ServerRawImageInstanceClass.string'>string</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.svgVector'>svgVector</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.toJSON'>toJSON</a></li>
 <li><a class='' href='#ServerRawImageInstanceClass.tweenValues'>tweenValues</a></li>

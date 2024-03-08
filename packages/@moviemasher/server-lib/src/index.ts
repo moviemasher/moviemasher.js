@@ -1,4 +1,3 @@
-export * from './asset/index.js'
 export * from './command/index.js'
 export * from './decode/index.js'
 export * from './encode/index.js'

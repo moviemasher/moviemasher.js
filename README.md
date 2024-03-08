@@ -125,10 +125,10 @@ Without additional styling the `MovieMasherElement` element will fill its contai
 A fully functional demo of the system can be launched locally within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/server-express:5.2.0
+docker run -d -p '5775:5775' --name moviemasher moviemasher/server-express:5.2.0
 ```
 
-Then navigate to http://localhost:8570 in your browser, supplying _any_ username/password
+Then navigate to http://localhost:5775 in your browser, supplying _any_ username/password
 combination when prompted. When you're done exploring the demo it can be terminated and cleaned up with:
 
 ```shell

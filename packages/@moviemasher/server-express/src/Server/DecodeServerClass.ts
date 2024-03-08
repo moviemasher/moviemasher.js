@@ -1,7 +1,7 @@
 import type { Decoding, EndpointRequest, JobOptions } from '@moviemasher/shared-lib/types.js'
 import type { Application } from 'express'
 import type { DecodeStartRequest, StatusRequest, VersionedDataOrError } from '../Api/Api.js'
-import type { DecodeServerArgs, ExpressHandler } from './Server.js'
+import type { DecodeServerArgs, ExpressHandler } from '../types.js'
 
 import { EventServerDecodeStatus } from '@moviemasher/server-lib/utility/events.js'
 import { idUnique } from '@moviemasher/server-lib/utility/id.js'
@@ -43,7 +43,7 @@ export class DecodeServerClass extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const event = new EventServerDecodeStatus(id)
-      MOVIE_MASHER.dispatch(event)
+      MOVIE_MASHER.dispatchCustom(event)
       const { promise } = event.detail
       if (!promise) errorThrow(ERROR.Unimplemented, EventServerDecodeStatus.Type)
 
